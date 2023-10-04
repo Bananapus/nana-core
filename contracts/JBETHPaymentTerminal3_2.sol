@@ -28,7 +28,6 @@ contract JBETHPaymentTerminal3_1_2 is JBPayoutRedemptionPaymentTerminal3_2 {
   // -------------------------- constructor ---------------------------- //
   //*********************************************************************//
 
-  /// @param _baseWeightCurrency The currency to base token issuance on.
   /// @param _operatorStore A contract storing operator assignments.
   /// @param _projects A contract which mints ERC-721's that represent project ownership and transfers.
   /// @param _directory A contract storing directories of terminals and controllers for each project.
@@ -37,7 +36,6 @@ contract JBETHPaymentTerminal3_1_2 is JBPayoutRedemptionPaymentTerminal3_2 {
   /// @param _store A contract that stores the terminal's data.
   /// @param _owner The address that will own this contract.
   constructor(
-    uint256 _baseWeightCurrency,
     IJBOperatorStore _operatorStore,
     IJBProjects _projects,
     IJBDirectory _directory,
@@ -46,11 +44,10 @@ contract JBETHPaymentTerminal3_1_2 is JBPayoutRedemptionPaymentTerminal3_2 {
     address _store,
     address _owner
   )
-    JBPayoutRedemptionPaymentTerminal3_1_2(
+    JBPayoutRedemptionPaymentTerminal3_2(
       JBTokens.ETH,
       18, // 18 decimals.
       JBCurrencies.ETH,
-      _baseWeightCurrency,
       JBSplitsGroups.ETH_PAYOUT,
       _operatorStore,
       _projects,

@@ -34,7 +34,7 @@ import {JBSplitAllocationData} from './structs/JBSplitAllocationData.sol';
 /// @dev This Controller has the same functionality as JBController3_0_1, except it is not backwards compatible with the original IJBController view methods.
 contract JBController3_2 is JBOperatable, ERC165, IJBController3_2, IJBMigratable {
   // A library that parses the packed funding cycle metadata into a more friendly format.
-  using JBFundingCycleMetadataResolver for JBFundingCycle;
+  using JBFundingCycleMetadataResolver3_2 for JBFundingCycle;
 
   //*********************************************************************//
   // --------------------------- custom errors ------------------------- //
@@ -678,7 +678,7 @@ contract JBController3_2 is JBOperatable, ERC165, IJBController3_2, IJBMigratabl
       JBFundingCycle memory _fundingCycle = fundingCycleStore.configureFor(
         _projectId,
         _configuration.data,
-        JBFundingCycleMetadataResolver.packFundingCycleMetadata(_configuration.metadata),
+        JBFundingCycleMetadataResolver3_2.packFundingCycleMetadata(_configuration.metadata),
         _configuration.mustStartAtOrAfter
       );
 
