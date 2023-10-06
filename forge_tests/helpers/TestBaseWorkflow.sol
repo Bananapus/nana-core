@@ -57,7 +57,7 @@ import {JBSplitAllocationData} from '@juicebox/structs/JBSplitAllocationData.sol
 
 import {IJBPaymentTerminal} from '@juicebox/interfaces/IJBPaymentTerminal.sol';
 import {IJBToken} from '@juicebox/interfaces/IJBToken.sol';
-import {JBController3_0_1} from '@juicebox/JBController3_0_1.sol';
+
 import {IJBController} from '@juicebox/interfaces/IJBController.sol';
 import {IJBMigratable} from '@juicebox/interfaces/IJBMigratable.sol';
 import {IJBOperatorStore} from '@juicebox/interfaces/IJBOperatorStore.sol';
