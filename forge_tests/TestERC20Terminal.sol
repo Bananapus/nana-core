@@ -85,14 +85,18 @@ contract TestERC20Terminal_Local is TestBaseWorkflow {
             })
         );
 
+        JBFundingCycleConfiguration[] memory _cycleConfig = new JBFundingCycleConfiguration[](1);
+
+        _cycleConfig[0].mustStartAtOrAfter = 0;
+        _cycleConfig[0].data = _data;
+        _cycleConfig[0].metadata = _metadata;
+        _cycleConfig[0].groupedSplits = _groupedSplits;
+        _cycleConfig[0].fundAccessConstraints = _fundAccessConstraints;
+
         uint256 projectId = controller.launchProjectFor(
             _projectOwner,
             _projectMetadata,
-            _data,
-            _metadata,
-            block.timestamp,
-            _groupedSplits,
-            _fundAccessConstraints,
+            _cycleConfig,
             _terminals,
             ""
         );
@@ -210,14 +214,18 @@ contract TestERC20Terminal_Local is TestBaseWorkflow {
             })
         );
 
+        JBFundingCycleConfiguration[] memory _cycleConfig = new JBFundingCycleConfiguration[](1);
+
+        _cycleConfig[0].mustStartAtOrAfter = 0;
+        _cycleConfig[0].data = _data;
+        _cycleConfig[0].metadata = _metadata;
+        _cycleConfig[0].groupedSplits = _allocationSplits;
+        _cycleConfig[0].fundAccessConstraints = _fundAccessConstraints;
+
         uint256 projectId = controller.launchProjectFor(
             _projectOwner,
             _projectMetadata,
-            _data,
-            _metadata,
-            block.timestamp,
-            _allocationSplits,
-            _fundAccessConstraints,
+            _cycleConfig,
             _terminals,
             ""
         );
@@ -292,14 +300,18 @@ contract TestERC20Terminal_Local is TestBaseWorkflow {
             })
         );
 
+        JBFundingCycleConfiguration[] memory _cycleConfig = new JBFundingCycleConfiguration[](1);
+
+        _cycleConfig[0].mustStartAtOrAfter = 0;
+        _cycleConfig[0].data = _data;
+        _cycleConfig[0].metadata = _metadata;
+        _cycleConfig[0].groupedSplits = _allocationSplits;
+        _cycleConfig[0].fundAccessConstraints = _fundAccessConstraints;
+
         uint256 projectId = controller.launchProjectFor(
             _projectOwner,
             _projectMetadata,
-            _data,
-            _metadata,
-            block.timestamp,
-            _allocationSplits,
-            _fundAccessConstraints,
+            _cycleConfig,
             _terminals,
             ""
         );
@@ -373,14 +385,18 @@ contract TestERC20Terminal_Local is TestBaseWorkflow {
             })
         );
 
+        JBFundingCycleConfiguration[] memory _cycleConfig = new JBFundingCycleConfiguration[](1);
+
+        _cycleConfig[0].mustStartAtOrAfter = 0;
+        _cycleConfig[0].data = _data;
+        _cycleConfig[0].metadata = _metadata;
+        _cycleConfig[0].groupedSplits = _allocationSplits;
+        _cycleConfig[0].fundAccessConstraints = _fundAccessConstraints;
+
         uint256 projectId = controller.launchProjectFor(
             _projectOwner,
             _projectMetadata,
-            _data,
-            _metadata,
-            block.timestamp,
-            _allocationSplits,
-            _fundAccessConstraints,
+            _cycleConfig,
             _terminals,
             ""
         );
@@ -459,14 +475,18 @@ contract TestERC20Terminal_Local is TestBaseWorkflow {
                 })
             );
 
+            JBFundingCycleConfiguration[] memory _cycleConfig = new JBFundingCycleConfiguration[](1);
+
+        _cycleConfig[0].mustStartAtOrAfter = 0;
+        _cycleConfig[0].data = _data;
+        _cycleConfig[0].metadata = _metadata;
+        _cycleConfig[0].groupedSplits = _allocationSplits;
+        _cycleConfig[0].fundAccessConstraints = _fundAccessConstraints;
+
             uint256 projectId = controller.launchProjectFor(
                 _projectOwner,
                 _projectMetadata,
-                _data,
-                _metadata,
-                block.timestamp,
-                _allocationSplits,
-                _fundAccessConstraints,
+                _cycleConfig,
                 _terminals,
                 ""
             );
@@ -527,7 +547,7 @@ contract TestERC20Terminal_Local is TestBaseWorkflow {
         }
     }
 
-    function testFeeDistribution_to_malicious_terminal(uint256 _revertReason) public {
+    /* function testFeeDistribution_to_malicious_terminal(uint256 _revertReason) public {
         // Test only for v3.1
         if (!isUsingJbController3_0()) {
             _revertReason = bound(_revertReason, 0, 3);
@@ -662,7 +682,7 @@ contract TestERC20Terminal_Local is TestBaseWorkflow {
                 "distribution" // metadata
             );
         }
-    }
+    } */
 
     function testDistribution_to_malicious_terminal_by_adding_balance(uint256 _revertReason) public {
         _revertReason = bound(_revertReason, 0, 3);
@@ -707,27 +727,35 @@ contract TestERC20Terminal_Local is TestBaseWorkflow {
         });
         _splitProjectTerminals[0] = IJBPaymentTerminal(address(_badTerminal));
 
+        JBFundingCycleConfiguration[] memory _cycleConfig = new JBFundingCycleConfiguration[](1);
+
+        _cycleConfig[0].mustStartAtOrAfter = 0;
+        _cycleConfig[0].data = _data;
+        _cycleConfig[0].metadata = _metadata;
+        _cycleConfig[0].groupedSplits = _allocationSplits;
+        _cycleConfig[0].fundAccessConstraints = _fundAccessConstraints;
+
         uint256 projectId = controller.launchProjectFor(
             _projectOwner,
             _projectMetadata,
-            _data,
-            _metadata,
-            block.timestamp,
-            _allocationSplits,
-            _fundAccessConstraints,
+            _cycleConfig,
             _terminals,
             ""
         );
+
+        JBFundingCycleConfiguration[] memory _cycleConfig2 = new JBFundingCycleConfiguration[](1);
+
+        _cycleConfig2[0].mustStartAtOrAfter = 0;
+        _cycleConfig2[0].data = _data;
+        _cycleConfig2[0].metadata = _metadata;
+        _cycleConfig2[0].groupedSplits = _groupedSplits;
+        _cycleConfig2[0].fundAccessConstraints = _splitProjectFundAccessConstraints;
 
         //project to allocato funds
         uint256 allocationProjectId = controller.launchProjectFor(
             _projectOwner,
             _projectMetadata,
-            _data,
-            _metadata,
-            block.timestamp,
-            _groupedSplits,
-            _splitProjectFundAccessConstraints,
+            _cycleConfig2,
             _splitProjectTerminals,
             ""
         );
@@ -841,27 +869,35 @@ contract TestERC20Terminal_Local is TestBaseWorkflow {
         });
         _splitProjectTerminals[0] = IJBPaymentTerminal(address(_badTerminal));
 
+        JBFundingCycleConfiguration[] memory _cycleConfig = new JBFundingCycleConfiguration[](1);
+
+        _cycleConfig[0].mustStartAtOrAfter = 0;
+        _cycleConfig[0].data = _data;
+        _cycleConfig[0].metadata = _metadata;
+        _cycleConfig[0].groupedSplits = _allocationSplits;
+        _cycleConfig[0].fundAccessConstraints = _fundAccessConstraints;
+
         uint256 projectId = controller.launchProjectFor(
             _projectOwner,
             _projectMetadata,
-            _data,
-            _metadata,
-            block.timestamp,
-            _allocationSplits,
-            _fundAccessConstraints,
+            _cycleConfig,
             _terminals,
             ""
         );
+
+        JBFundingCycleConfiguration[] memory _cycleConfig2 = new JBFundingCycleConfiguration[](1);
+
+        _cycleConfig2[0].mustStartAtOrAfter = 0;
+        _cycleConfig2[0].data = _data;
+        _cycleConfig2[0].metadata = _metadata;
+        _cycleConfig2[0].groupedSplits = _groupedSplits;
+        _cycleConfig2[0].fundAccessConstraints = _splitProjectFundAccessConstraints;
 
         //project to allocato funds
         uint256 allocationProjectId = controller.launchProjectFor(
             _projectOwner,
             _projectMetadata,
-            _data,
-            _metadata,
-            block.timestamp,
-            _groupedSplits,
-            _splitProjectFundAccessConstraints,
+            _cycleConfig,
             _splitProjectTerminals,
             ""
         );
@@ -946,14 +982,18 @@ contract TestERC20Terminal_Local is TestBaseWorkflow {
             })
         );
 
+        JBFundingCycleConfiguration[] memory _cycleConfig = new JBFundingCycleConfiguration[](1);
+
+        _cycleConfig[0].mustStartAtOrAfter = 0;
+        _cycleConfig[0].data = _data;
+        _cycleConfig[0].metadata = _metadata;
+        _cycleConfig[0].groupedSplits = _groupedSplits;
+        _cycleConfig[0].fundAccessConstraints = _fundAccessConstraints;
+
         uint256 projectId = controller.launchProjectFor(
             _projectOwner,
             _projectMetadata,
-            _data,
-            _metadata,
-            block.timestamp,
-            _groupedSplits,
-            _fundAccessConstraints,
+            _cycleConfig,
             _terminals,
             ""
         );

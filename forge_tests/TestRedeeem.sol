@@ -105,15 +105,19 @@ contract TestRedeem_Local is TestBaseWorkflow {
 
         _projectOwner = multisig();
 
+        JBFundingCycleConfiguration[] memory _cycleConfig = new JBFundingCycleConfiguration[](1);
+
+        _cycleConfig[0].mustStartAtOrAfter = block.timestamp;
+        _cycleConfig[0].data = _data;
+        _cycleConfig[0].metadata = _metadata;
+        _cycleConfig[0].groupedSplits = _groupedSplits;
+        _cycleConfig[0].fundAccessConstraints = _fundAccessConstraints;
+
         // Launch a protocol project first
         _controller.launchProjectFor(
             _projectOwner,
             _projectMetadata,
-            _data,
-            _metadata,
-            block.timestamp,
-            _groupedSplits,
-            _fundAccessConstraints,
+            _cycleConfig,
             _terminals,
             ""
         );
@@ -121,11 +125,7 @@ contract TestRedeem_Local is TestBaseWorkflow {
         _projectId = _controller.launchProjectFor(
             _projectOwner,
             _projectMetadata,
-            _data,
-            _metadata,
-            block.timestamp,
-            _groupedSplits,
-            _fundAccessConstraints,
+            _cycleConfig,
             _terminals,
             ""
         );

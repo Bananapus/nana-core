@@ -23,7 +23,7 @@ contract TestTerminal31_Fork is Test {
     // New contract
     JBETHPaymentTerminal3_1 jbEthTerminal3_1;
     JBSingleTokenPaymentTerminalStore3_1 jbTerminalStore3_1;
-    JBController3_1 jbController3_1;
+    JBController3_2 jbController3_2;
     JBFundAccessConstraintsStore jbFundsAccessConstraintsStore;
 
     // Contracts needed
@@ -441,7 +441,7 @@ contract TestTerminal31_Fork is Test {
         });
 
         vm.prank(_projectOwner);
-        jbController3_1.reconfigureFundingCyclesOf(
+        jbController3_2.reconfigureFundingCyclesOf(
             1, data, metadata, 0, _groupedSplits, fundAccessConstraints, ""
         );
 
@@ -634,7 +634,7 @@ contract TestTerminal31_Fork is Test {
         JBGroupedSplits[] memory _groupedSplits
     ) internal {
         // Create a new controller
-        jbController3_1 = new JBController3_1(
+        /* jbController3_2 = new jbController3_2(
             jbOperatorStore,
             jbProjects,
             jbDirectory,
@@ -642,7 +642,7 @@ contract TestTerminal31_Fork is Test {
             jbTokenStore,
             jbSplitsStore,
             jbFundsAccessConstraintsStore
-        );
+        ); */
 
         address _projectOwner = jbProjects.ownerOf(_projectId);
 
@@ -660,7 +660,7 @@ contract TestTerminal31_Fork is Test {
 
         // Migrate the project to the new controller (no prepForMigration(..) needed anymore)
         vm.prank(_projectOwner);
-        oldJbController.migrate(_projectId, jbController3_1);
+        oldJbController.migrate(_projectId, jbController3_2);
     }
 
     /**
