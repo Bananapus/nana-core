@@ -10,7 +10,7 @@ import {Ownable} from '@openzeppelin/contracts/access/Ownable.sol';
 import {ERC165, IERC165} from '@openzeppelin/contracts/utils/introspection/ERC165.sol';
 
 import {JBController} from '@juicebox/JBController.sol';
-import {JBController3_1} from '@juicebox/JBController3_1.sol';
+import {JBController3_2} from '@juicebox/JBController3_2.sol';
 import {JBDirectory} from '@juicebox/JBDirectory.sol';
 import {JBETHPaymentTerminal} from '@juicebox/JBETHPaymentTerminal.sol';
 import {JBETHPaymentTerminal3_1} from '@juicebox/JBETHPaymentTerminal3_1.sol';
@@ -42,6 +42,7 @@ import {JBFundAccessConstraints} from '@juicebox/structs/JBFundAccessConstraints
 import {JBFundingCycle} from '@juicebox/structs/JBFundingCycle.sol';
 import {JBFundingCycleData} from '@juicebox/structs/JBFundingCycleData.sol';
 import {JBFundingCycleMetadata} from '@juicebox/structs/JBFundingCycleMetadata.sol';
+import {JBFundingCycleConfiguration} from '@juicebox/structs/JBFundingCycleConfiguration.sol';
 import {JBGroupedSplits} from '@juicebox/structs/JBGroupedSplits.sol';
 import {JBOperatorData} from '@juicebox/structs/JBOperatorData.sol';
 import {JBPayParamsData} from '@juicebox/structs/JBPayParamsData.sol';
@@ -132,7 +133,7 @@ contract TestBaseWorkflow is Test {
 
   // JBController(s)
   JBController internal _jbController;
-  JBController3_1 internal _jbController3_1;
+  JBController3_2 internal _jbController3_2;
 
   JBFundAccessConstraintsStore internal _jbFundAccessConstraintsStore;
 
@@ -188,7 +189,7 @@ contract TestBaseWorkflow is Test {
 
   function jbController() internal returns (JBController) {
     // If no controller is specified we use the newest one by default
-    string memory controller = vm.envOr('JBX_CONTROLLER_VERSION', string('3_1'));
+    /* string memory controller = vm.envOr('JBX_CONTROLLER_VERSION', string('3_1'));
 
     if (strEqual(controller, '3_1')) {
       return JBController(address(_jbController3_1));
@@ -196,7 +197,10 @@ contract TestBaseWorkflow is Test {
       return _jbController;
     } else {
       revert("Invalid 'JBX_CONTROLLER_VERSION' specified");
-    }
+    } */
+
+    // For now default to new controller until later versions release
+    return JBController(address(_jbController3_2));
   }
 
   function jbAccessConstraintStore() internal view returns (JBFundAccessConstraintsStore) {
@@ -296,7 +300,7 @@ contract TestBaseWorkflow is Test {
 
     _jbFundAccessConstraintsStore = new JBFundAccessConstraintsStore(_jbDirectory);
 
-    _jbController3_1 = new JBController3_1(
+    _jbController3_2 = new JBController3_2(
       _jbOperatorStore,
       _jbProjects,
       _jbDirectory,
@@ -305,10 +309,10 @@ contract TestBaseWorkflow is Test {
       _jbSplitsStore,
       _jbFundAccessConstraintsStore
     );
-    vm.label(address(_jbController3_1), 'JBController3_1');
+    vm.label(address(_jbController3_2), 'JBController3_2');
 
     vm.prank(_multisig);
-    _jbDirectory.setIsAllowedToSetFirstController(address(_jbController3_1), true);
+    _jbDirectory.setIsAllowedToSetFirstController(address(_jbController3_2), true);
 
     // JBETHPaymentTerminalStore
     _jbPaymentTerminalStore = new JBSingleTokenPaymentTerminalStore(
