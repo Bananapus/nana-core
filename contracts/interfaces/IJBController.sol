@@ -12,6 +12,7 @@ import {JBGroupedSplits} from './../structs/JBGroupedSplits.sol';
 import {JBProjectMetadata} from './../structs/JBProjectMetadata.sol';
 import {JBSplit} from './../structs/JBSplit.sol';
 import {IJBDirectory} from './IJBDirectory.sol';
+import {IJBFundAccessConstraintsStore} from './IJBFundAccessConstraintsStore.sol';
 import {IJBFundingCycleStore} from './IJBFundingCycleStore.sol';
 import {IJBMigratable} from './IJBMigratable.sol';
 import {IJBPaymentTerminal} from './IJBPaymentTerminal.sol';
@@ -28,14 +29,6 @@ interface IJBController is IERC165 {
     uint256 configuration,
     uint256 projectId,
     string memo,
-    address caller
-  );
-
-  event SetFundAccessConstraints(
-    uint256 indexed fundingCycleConfiguration,
-    uint256 indexed fundingCycleNumber,
-    uint256 indexed projectId,
-    JBFundAccessConstraints constraints,
     address caller
   );
 
@@ -89,31 +82,13 @@ interface IJBController is IERC165 {
 
   function splitsStore() external view returns (IJBSplitsStore);
 
+  function fundAccessConstraintsStore() external view returns (IJBFundAccessConstraintsStore);
+
   function directory() external view returns (IJBDirectory);
 
-  function reservedTokenBalanceOf(uint256 projectId, uint256 reservedRate)
-    external
-    view
-    returns (uint256);
+  function reservedTokenBalanceOf(uint256 projectId) external view returns (uint256);
 
-  function distributionLimitOf(
-    uint256 projectId,
-    uint256 configuration,
-    IJBPaymentTerminal terminal,
-    address token
-  ) external view returns (uint256 distributionLimit, uint256 distributionLimitCurrency);
-
-  function overflowAllowanceOf(
-    uint256 projectId,
-    uint256 configuration,
-    IJBPaymentTerminal terminal,
-    address token
-  ) external view returns (uint256 overflowAllowance, uint256 overflowAllowanceCurrency);
-
-  function totalOutstandingTokensOf(uint256 projectId, uint256 reservedRate)
-    external
-    view
-    returns (uint256);
+  function totalOutstandingTokensOf(uint256 projectId) external view returns (uint256);
 
   function getFundingCycleOf(uint256 projectId, uint256 configuration)
     external
@@ -146,6 +121,13 @@ interface IJBController is IERC165 {
     IJBPaymentTerminal[] memory terminals,
     string calldata memo
   ) external returns (uint256 projectId);
+
+  function launchFundingCyclesFor(
+    uint256 projectId,
+    JBFundingCycleConfiguration[] calldata configurations,
+    IJBPaymentTerminal[] memory terminals,
+    string calldata memo
+  ) external returns (uint256 configured);
 
   function reconfigureFundingCyclesOf(
     uint256 projectId,
