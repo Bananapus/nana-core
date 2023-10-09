@@ -269,7 +269,7 @@ contract TestMultipleTerminals_Local is TestBaseWorkflow {
         // redeem eth from the overflow by the token holder:
         uint256 totalSupply;
         if (isUsingJbController3_0()) {
-            totalSupply = jbController().totalOutstandingTokensOf(projectId, 5000);
+            totalSupply = jbController().totalOutstandingTokensOf(projectId);
         } else {
             totalSupply = IJBController3_1(address(jbController())).totalOutstandingTokensOf(projectId);
         }

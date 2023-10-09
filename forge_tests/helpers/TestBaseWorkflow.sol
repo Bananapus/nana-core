@@ -16,7 +16,6 @@ import {JBETHPaymentTerminal} from '@juicebox/JBETHPaymentTerminal.sol';
 import {JBETHPaymentTerminal3_1} from '@juicebox/JBETHPaymentTerminal3_1.sol';
 import {JBERC20PaymentTerminal} from '@juicebox/JBERC20PaymentTerminal.sol';
 import {JBERC20PaymentTerminal3_1} from '@juicebox/JBERC20PaymentTerminal3_1.sol';
-import {JBSingleTokenPaymentTerminalStore} from '@juicebox/JBSingleTokenPaymentTerminalStore.sol';
 import {JBSingleTokenPaymentTerminalStore3_1} from '@juicebox/JBSingleTokenPaymentTerminalStore3_1.sol';
 import {JBFundAccessConstraintsStore} from '@juicebox/JBFundAccessConstraintsStore.sol';
 import {JBFundingCycleStore} from '@juicebox/JBFundingCycleStore.sol';
@@ -138,7 +137,6 @@ contract TestBaseWorkflow is Test {
   JBFundAccessConstraintsStore internal _jbFundAccessConstraintsStore;
 
   // JBETHPaymentTerminalStore
-  JBSingleTokenPaymentTerminalStore internal _jbPaymentTerminalStore;
   JBSingleTokenPaymentTerminalStore3_1 internal _jbPaymentTerminalStore3_1;
 
   // JBETHPaymentTerminal
@@ -150,6 +148,13 @@ contract TestBaseWorkflow is Test {
   JBERC20PaymentTerminal3_1 internal _jbERC20PaymentTerminal3_1;
   // AccessJBLib
   AccessJBLib internal _accessJBLib;
+
+  // Default funding cycle data
+  mapping(uint256 => JBFundingCycleConfiguration) public defaultCycles;
+  JBFundingCycleData _defaultData;
+  JBFundingCycleMetadata _defaultMetaData;
+  JBGroupedSplits[] _defaultSplits;
+  JBFundAccessConstraints[] _defaultFundAccess;
 
   //*********************************************************************//
   // ------------------------- internal views -------------------------- //
@@ -187,18 +192,7 @@ contract TestBaseWorkflow is Test {
     return _jbSplitsStore;
   }
 
-  function jbController() internal returns (JBController) {
-    // If no controller is specified we use the newest one by default
-    /* string memory controller = vm.envOr('JBX_CONTROLLER_VERSION', string('3_1'));
-
-    if (strEqual(controller, '3_1')) {
-      return JBController(address(_jbController3_1));
-    } else if (strEqual(controller, '3_0')) {
-      return _jbController;
-    } else {
-      revert("Invalid 'JBX_CONTROLLER_VERSION' specified");
-    } */
-
+  function jbController() internal view returns (JBController) {
     // For now default to new controller until later versions release
     return JBController(address(_jbController3_2));
   }
@@ -207,9 +201,8 @@ contract TestBaseWorkflow is Test {
     return _jbFundAccessConstraintsStore;
   }
 
-  function jbPaymentTerminalStore() internal returns (JBSingleTokenPaymentTerminalStore) {
-    if (isUsingJbController3_0()) return _jbPaymentTerminalStore;
-    else return JBSingleTokenPaymentTerminalStore(address(_jbPaymentTerminalStore3_1));
+  function jbPaymentTerminalStore() internal view returns (JBSingleTokenPaymentTerminalStore3_1) {
+    return JBSingleTokenPaymentTerminalStore3_1(address(_jbPaymentTerminalStore3_1));
   }
 
   function jbETHPaymentTerminal() internal returns (JBETHPaymentTerminal) {
@@ -228,6 +221,14 @@ contract TestBaseWorkflow is Test {
 
   function jbLibraries() internal view returns (AccessJBLib) {
     return _accessJBLib;
+  }
+
+  function getDefaultCycleConfig(uint256 index)
+    internal
+    view
+    returns (JBFundingCycleConfiguration memory)
+  {
+    return defaultCycles[index];
   }
 
   //*********************************************************************//
@@ -291,7 +292,8 @@ contract TestBaseWorkflow is Test {
       _jbDirectory,
       _jbFundingCycleStore,
       _jbTokenStore,
-      _jbSplitsStore
+      _jbSplitsStore,
+      _jbFundAccessConstraintsStore
     );
     vm.label(address(_jbController), 'JBController');
 
@@ -315,14 +317,6 @@ contract TestBaseWorkflow is Test {
     _jbDirectory.setIsAllowedToSetFirstController(address(_jbController3_2), true);
 
     // JBETHPaymentTerminalStore
-    _jbPaymentTerminalStore = new JBSingleTokenPaymentTerminalStore(
-      _jbDirectory,
-      _jbFundingCycleStore,
-      _jbPrices
-    );
-    vm.label(address(_jbPaymentTerminalStore), 'JBSingleTokenPaymentTerminalStore');
-
-    // JBETHPaymentTerminalStore
     _jbPaymentTerminalStore3_1 = new JBSingleTokenPaymentTerminalStore3_1(
       _jbDirectory,
       _jbFundingCycleStore,
@@ -332,19 +326,6 @@ contract TestBaseWorkflow is Test {
 
     // AccessJBLib
     _accessJBLib = new AccessJBLib();
-
-    // JBETHPaymentTerminal
-    _jbETHPaymentTerminal = new JBETHPaymentTerminal(
-      _accessJBLib.ETH(),
-      _jbOperatorStore,
-      _jbProjects,
-      _jbDirectory,
-      _jbSplitsStore,
-      _jbPrices,
-      address(_jbPaymentTerminalStore),
-      _multisig
-    );
-    vm.label(address(_jbETHPaymentTerminal), 'JBETHPaymentTerminal');
 
     // JBETHPaymentTerminal
     _jbETHPaymentTerminal3_1 = new JBETHPaymentTerminal3_1(
@@ -366,22 +347,6 @@ contract TestBaseWorkflow is Test {
     _jbToken.mint(1, _multisig, 100 * 10**18);
 
     // JBERC20PaymentTerminal
-    _jbERC20PaymentTerminal = new JBERC20PaymentTerminal(
-      _jbToken,
-      _accessJBLib.ETH(), // currency
-      _accessJBLib.ETH(), // base weight currency
-      1, // JBSplitsGroupe
-      _jbOperatorStore,
-      _jbProjects,
-      _jbDirectory,
-      _jbSplitsStore,
-      _jbPrices,
-      address(_jbPaymentTerminalStore),
-      _multisig
-    );
-    vm.label(address(_jbERC20PaymentTerminal), 'JBERC20PaymentTerminal');
-
-    // JBERC20PaymentTerminal
     _jbERC20PaymentTerminal3_1 = new JBERC20PaymentTerminal3_1(
       _jbToken,
       _accessJBLib.ETH(), // currency
@@ -397,6 +362,60 @@ contract TestBaseWorkflow is Test {
     );
 
     vm.label(address(_jbERC20PaymentTerminal3_1), 'JBERC20PaymentTerminal3_1');
+
+    _defaultData = JBFundingCycleData({
+      duration: 6 days,
+      weight: 1000 * 10**18,
+      discountRate: 0,
+      ballot: JBReconfigurationBufferBallot(address(0))
+    });
+
+    _defaultMetaData = JBFundingCycleMetadata({
+      global: JBGlobalFundingCycleMetadata({
+        allowSetTerminals: false,
+        allowSetController: false,
+        pauseTransfers: false
+      }),
+      reservedRate: 5000, //50%
+      redemptionRate: 5000, //50%
+      ballotRedemptionRate: 0,
+      pausePay: false,
+      pauseDistributions: false,
+      pauseRedeem: false,
+      pauseBurn: false,
+      allowMinting: false,
+      allowTerminalMigration: false,
+      allowControllerMigration: false,
+      holdFees: false,
+      preferClaimedTokenOverride: false,
+      useTotalOverflowForRedemptions: false,
+      useDataSourceForPay: false,
+      useDataSourceForRedeem: false,
+      dataSource: address(0),
+      metadata: 0
+    });
+
+    _defaultFundAccess.push(
+      JBFundAccessConstraints({
+        terminal: jbETHPaymentTerminal(),
+        token: jbLibraries().ETHToken(),
+        distributionLimit: 10 ether,
+        overflowAllowance: 5 ether,
+        distributionLimitCurrency: jbLibraries().ETH(),
+        overflowAllowanceCurrency: jbLibraries().ETH()
+      })
+    );
+
+    JBFundingCycleConfiguration storage config = defaultCycles[0];
+    config.mustStartAtOrAfter = 0;
+    config.data = _defaultData;
+    config.metadata = _defaultMetaData;
+
+    for (uint256 i = 0; i < _defaultSplits.length; i++) {
+      config.groupedSplits.push(_defaultSplits[i]);
+    }
+
+    config.fundAccessConstraints = _defaultFundAccess;
   }
 
   //https://ethereum.stackexchange.com/questions/24248/how-to-calculate-an-ethereum-contracts-address-during-its-creation-using-the-so
