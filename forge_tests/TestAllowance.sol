@@ -78,7 +78,11 @@ contract TestAllowance_Local is TestBaseWorkflow {
 
         JBFundingCycleConfiguration[] memory _cycleConfig = new JBFundingCycleConfiguration[](1);
 
-        _cycleConfig[0] = getDefaultCycleConfig(0);
+        _cycleConfig[0].mustStartAtOrAfter = 0;
+        _cycleConfig[0].data = _data;
+        _cycleConfig[0].metadata = _metadata;
+        _cycleConfig[0].groupedSplits = _groupedSplits;
+        _cycleConfig[0].fundAccessConstraints = _fundAccessConstraints;
 
         uint256 projectId = controller.launchProjectFor(
             _projectOwner,

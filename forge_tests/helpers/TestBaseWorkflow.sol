@@ -362,60 +362,6 @@ contract TestBaseWorkflow is Test {
     );
 
     vm.label(address(_jbERC20PaymentTerminal3_1), 'JBERC20PaymentTerminal3_1');
-
-    _defaultData = JBFundingCycleData({
-      duration: 6 days,
-      weight: 1000 * 10**18,
-      discountRate: 0,
-      ballot: JBReconfigurationBufferBallot(address(0))
-    });
-
-    _defaultMetaData = JBFundingCycleMetadata({
-      global: JBGlobalFundingCycleMetadata({
-        allowSetTerminals: false,
-        allowSetController: false,
-        pauseTransfers: false
-      }),
-      reservedRate: 5000, //50%
-      redemptionRate: 5000, //50%
-      ballotRedemptionRate: 0,
-      pausePay: false,
-      pauseDistributions: false,
-      pauseRedeem: false,
-      pauseBurn: false,
-      allowMinting: false,
-      allowTerminalMigration: false,
-      allowControllerMigration: false,
-      holdFees: false,
-      preferClaimedTokenOverride: false,
-      useTotalOverflowForRedemptions: false,
-      useDataSourceForPay: false,
-      useDataSourceForRedeem: false,
-      dataSource: address(0),
-      metadata: 0
-    });
-
-    _defaultFundAccess.push(
-      JBFundAccessConstraints({
-        terminal: jbETHPaymentTerminal(),
-        token: jbLibraries().ETHToken(),
-        distributionLimit: 10 ether,
-        overflowAllowance: 5 ether,
-        distributionLimitCurrency: jbLibraries().ETH(),
-        overflowAllowanceCurrency: jbLibraries().ETH()
-      })
-    );
-
-    JBFundingCycleConfiguration storage config = defaultCycles[0];
-    config.mustStartAtOrAfter = 0;
-    config.data = _defaultData;
-    config.metadata = _defaultMetaData;
-
-    for (uint256 i = 0; i < _defaultSplits.length; i++) {
-      config.groupedSplits.push(_defaultSplits[i]);
-    }
-
-    config.fundAccessConstraints = _defaultFundAccess;
   }
 
   //https://ethereum.stackexchange.com/questions/24248/how-to-calculate-an-ethereum-contracts-address-during-its-creation-using-the-so
