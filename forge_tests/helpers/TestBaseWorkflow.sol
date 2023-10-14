@@ -40,7 +40,7 @@ import {JBFee} from '@juicebox/structs/JBFee.sol';
 import {JBFundAccessConstraints} from '@juicebox/structs/JBFundAccessConstraints.sol';
 import {JBFundingCycle} from '@juicebox/structs/JBFundingCycle.sol';
 import {JBFundingCycleData} from '@juicebox/structs/JBFundingCycleData.sol';
-import {JBFundingCycleMetadata} from '@juicebox/structs/JBFundingCycleMetadata.sol';
+import {JBFundingCycleMetadata3_2} from '@juicebox/structs/JBFundingCycleMetadata3_2.sol';
 import {JBFundingCycleConfiguration} from '@juicebox/structs/JBFundingCycleConfiguration.sol';
 import {JBGroupedSplits} from '@juicebox/structs/JBGroupedSplits.sol';
 import {JBOperatorData} from '@juicebox/structs/JBOperatorData.sol';
@@ -90,7 +90,7 @@ import {IJBPriceFeed} from '@juicebox/interfaces/IJBPriceFeed.sol';
 import {IJBSplitsPayer} from '@juicebox/interfaces/IJBSplitsPayer.sol';
 
 import {JBTokens} from '@juicebox/libraries/JBTokens.sol';
-import {JBFundingCycleMetadataResolver} from '@juicebox/libraries/JBFundingCycleMetadataResolver.sol';
+import {JBFundingCycleMetadataResolver3_2} from '@juicebox/libraries/JBFundingCycleMetadataResolver3_2.sol';
 import {JBConstants} from '@juicebox/libraries/JBConstants.sol';
 import {JBSplitsGroups} from '@juicebox/libraries/JBSplitsGroups.sol';
 import {JBOperations} from '@juicebox/libraries/JBOperations.sol';
@@ -152,7 +152,7 @@ contract TestBaseWorkflow is Test {
   // Default funding cycle data
   mapping(uint256 => JBFundingCycleConfiguration) public defaultCycles;
   JBFundingCycleData _defaultData;
-  JBFundingCycleMetadata _defaultMetaData;
+  JBFundingCycleMetadata3_2 _defaultMetaData;
   JBGroupedSplits[] _defaultSplits;
   JBFundAccessConstraints[] _defaultFundAccess;
 

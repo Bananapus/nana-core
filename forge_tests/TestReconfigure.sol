@@ -11,7 +11,7 @@ contract TestReconfigureProject_Local is TestBaseWorkflow {
     JBFundingCycleData _data;
     JBFundingCycleData _dataReconfiguration;
     JBFundingCycleData _dataWithoutBallot;
-    JBFundingCycleMetadata _metadata;
+    JBFundingCycleMetadata3_2 _metadata;
     JBReconfigurationBufferBallot _ballot;
     JBGroupedSplits[] _groupedSplits; // Default empty
     JBFundAccessConstraints[] _fundAccessConstraints; // Default empty
@@ -44,7 +44,7 @@ contract TestReconfigureProject_Local is TestBaseWorkflow {
             ballot: JBReconfigurationBufferBallot(address(0))
         });
 
-        _metadata = JBFundingCycleMetadata({
+        _metadata = JBFundingCycleMetadata3_2({
             global: JBGlobalFundingCycleMetadata({
                 allowSetTerminals: false,
                 allowSetController: false,
@@ -52,7 +52,7 @@ contract TestReconfigureProject_Local is TestBaseWorkflow {
             }),
             reservedRate: 5000,
             redemptionRate: 5000,
-            ballotRedemptionRate: 0,
+            baseCurrency: 0,
             pausePay: false,
             pauseDistributions: false,
             pauseRedeem: false,
@@ -354,7 +354,7 @@ contract TestReconfigureProject_Local is TestBaseWorkflow {
 
         _reconfig[0].mustStartAtOrAfter = 0;
         _reconfig[0].data = _dataWithoutBallot;
-        _reconfig[0].metadata = JBFundingCycleMetadata({
+        _reconfig[0].metadata = JBFundingCycleMetadata3_2({
                 global: JBGlobalFundingCycleMetadata({
                     allowSetTerminals: false,
                     allowSetController: false,
@@ -362,7 +362,7 @@ contract TestReconfigureProject_Local is TestBaseWorkflow {
                 }),
                 reservedRate: RESERVED_RATE,
                 redemptionRate: REDEMPTION_RATE,
-                ballotRedemptionRate: 0,
+                baseCurrency: 0,
                 pausePay: false,
                 pauseDistributions: false,
                 pauseRedeem: false,
