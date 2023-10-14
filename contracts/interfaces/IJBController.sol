@@ -6,7 +6,7 @@ import {JBBallotState} from './../enums/JBBallotState.sol';
 import {JBFundAccessConstraints} from './../structs/JBFundAccessConstraints.sol';
 import {JBFundingCycle} from './../structs/JBFundingCycle.sol';
 import {JBFundingCycleData} from './../structs/JBFundingCycleData.sol';
-import {JBFundingCycleMetadata} from './../structs/JBFundingCycleMetadata.sol';
+import {JBFundingCycleMetadata3_2} from './../structs/JBFundingCycleMetadata3_2.sol';
 import {JBFundingCycleConfiguration} from './../structs/JBFundingCycleConfiguration.sol';
 import {JBGroupedSplits} from './../structs/JBGroupedSplits.sol';
 import {JBProjectMetadata} from './../structs/JBProjectMetadata.sol';
@@ -93,26 +93,26 @@ interface IJBController is IERC165 {
   function getFundingCycleOf(uint256 projectId, uint256 configuration)
     external
     view
-    returns (JBFundingCycle memory fundingCycle, JBFundingCycleMetadata memory metadata);
+    returns (JBFundingCycle memory fundingCycle, JBFundingCycleMetadata3_2 memory metadata);
 
   function latestConfiguredFundingCycleOf(uint256 projectId)
     external
     view
     returns (
       JBFundingCycle memory,
-      JBFundingCycleMetadata memory metadata,
+      JBFundingCycleMetadata3_2 memory metadata,
       JBBallotState
     );
 
   function currentFundingCycleOf(uint256 projectId)
     external
     view
-    returns (JBFundingCycle memory fundingCycle, JBFundingCycleMetadata memory metadata);
+    returns (JBFundingCycle memory fundingCycle, JBFundingCycleMetadata3_2 memory metadata);
 
   function queuedFundingCycleOf(uint256 projectId)
     external
     view
-    returns (JBFundingCycle memory fundingCycle, JBFundingCycleMetadata memory metadata);
+    returns (JBFundingCycle memory fundingCycle, JBFundingCycleMetadata3_2 memory metadata);
 
   function launchProjectFor(
     address owner,

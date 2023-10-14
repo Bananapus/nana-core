@@ -19,31 +19,27 @@ import {IJBSplitAllocator} from './interfaces/IJBSplitAllocator.sol';
 import {IJBSplitsStore} from './interfaces/IJBSplitsStore.sol';
 import {IJBTokenStore} from './interfaces/IJBTokenStore.sol';
 import {JBConstants} from './libraries/JBConstants.sol';
-import {JBFundingCycleMetadataResolver} from './libraries/JBFundingCycleMetadataResolver.sol';
+import {JBFundingCycleMetadataResolver3_2} from './libraries/JBFundingCycleMetadataResolver3_2.sol';
 import {JBOperations} from './libraries/JBOperations.sol';
 import {JBSplitsGroups} from './libraries/JBSplitsGroups.sol';
-import {JBSplitAllocationData} from './structs/JBSplitAllocationData.sol';
-import {JBFundAccessConstraints} from './structs/JBFundAccessConstraints.sol';
 import {JBFundingCycle} from './structs/JBFundingCycle.sol';
-import {JBFundingCycleData} from './structs/JBFundingCycleData.sol';
-import {JBFundingCycleMetadata} from './structs/JBFundingCycleMetadata.sol';
-import {JBGroupedSplits} from './structs/JBGroupedSplits.sol';
+import {JBFundingCycleConfiguration} from './structs/JBFundingCycleConfiguration.sol';
+import {JBFundingCycleMetadata3_2} from './structs/JBFundingCycleMetadata3_2.sol';
 import {JBProjectMetadata} from './structs/JBProjectMetadata.sol';
 import {JBSplit} from './structs/JBSplit.sol';
-
-import {JBFundingCycleConfiguration} from './structs/JBFundingCycleConfiguration.sol';
+import {JBSplitAllocationData} from './structs/JBSplitAllocationData.sol';
 
 /// @notice Stitches together funding cycles and project tokens, making sure all activity is accounted for and correct.
 contract JBController is JBOperatable, ERC165, IJBController, IJBMigratable {
   // A library that parses the packed funding cycle metadata into a more friendly format.
-  using JBFundingCycleMetadataResolver for JBFundingCycle;
+  using JBFundingCycleMetadataResolver3_2 for JBFundingCycle;
 
   //*********************************************************************//
   // --------------------------- custom errors ------------------------- //
   //*********************************************************************//
   error BURN_PAUSED_AND_SENDER_NOT_VALID_TERMINAL_DELEGATE();
   error FUNDING_CYCLE_ALREADY_LAUNCHED();
-  error INVALID_BALLOT_REDEMPTION_RATE();
+  error INVALID_BASE_CURRENCY();
   error INVALID_REDEMPTION_RATE();
   error INVALID_RESERVED_RATE();
   error MIGRATION_NOT_ALLOWED();
@@ -117,7 +113,7 @@ contract JBController is JBOperatable, ERC165, IJBController, IJBMigratable {
     external
     view
     override
-    returns (JBFundingCycle memory fundingCycle, JBFundingCycleMetadata memory metadata)
+    returns (JBFundingCycle memory fundingCycle, JBFundingCycleMetadata3_2 memory metadata)
   {
     fundingCycle = fundingCycleStore.get(_projectId, _configuration);
     metadata = fundingCycle.expandMetadata();
@@ -134,7 +130,7 @@ contract JBController is JBOperatable, ERC165, IJBController, IJBMigratable {
     override
     returns (
       JBFundingCycle memory fundingCycle,
-      JBFundingCycleMetadata memory metadata,
+      JBFundingCycleMetadata3_2 memory metadata,
       JBBallotState ballotState
     )
   {
@@ -150,7 +146,7 @@ contract JBController is JBOperatable, ERC165, IJBController, IJBMigratable {
     external
     view
     override
-    returns (JBFundingCycle memory fundingCycle, JBFundingCycleMetadata memory metadata)
+    returns (JBFundingCycle memory fundingCycle, JBFundingCycleMetadata3_2 memory metadata)
   {
     fundingCycle = fundingCycleStore.currentOf(_projectId);
     metadata = fundingCycle.expandMetadata();
@@ -164,7 +160,7 @@ contract JBController is JBOperatable, ERC165, IJBController, IJBMigratable {
     external
     view
     override
-    returns (JBFundingCycle memory fundingCycle, JBFundingCycleMetadata memory metadata)
+    returns (JBFundingCycle memory fundingCycle, JBFundingCycleMetadata3_2 memory metadata)
   {
     fundingCycle = fundingCycleStore.queuedOf(_projectId);
     metadata = fundingCycle.expandMetadata();
@@ -667,14 +663,13 @@ contract JBController is JBOperatable, ERC165, IJBController, IJBMigratable {
         revert INVALID_REDEMPTION_RATE();
 
       // Make sure the provided ballot redemption rate is valid.
-      if (_configuration.metadata.ballotRedemptionRate > JBConstants.MAX_REDEMPTION_RATE)
-        revert INVALID_BALLOT_REDEMPTION_RATE();
+      if (_configuration.metadata.baseCurrency > type(uint24).max) revert INVALID_BASE_CURRENCY();
 
       // Configure the funding cycle's properties.
       JBFundingCycle memory _fundingCycle = fundingCycleStore.configureFor(
         _projectId,
         _configuration.data,
-        JBFundingCycleMetadataResolver.packFundingCycleMetadata(_configuration.metadata),
+        JBFundingCycleMetadataResolver3_2.packFundingCycleMetadata(_configuration.metadata),
         _configuration.mustStartAtOrAfter
       );
 
