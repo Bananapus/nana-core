@@ -171,7 +171,7 @@ contract JBSwapPaymentTerminal is JBPayoutRedemptionPaymentTerminal3_1_2 {
     super.pay(
       _projectId,
       _amount,
-      token,
+      address(0),
       _beneficiary,
       _minReturnedTokens,
       _preferClaimedTokens,
