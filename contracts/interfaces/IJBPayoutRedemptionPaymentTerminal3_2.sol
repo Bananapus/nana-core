@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {JBFee3_2} from './../structs/JBFee3_2.sol';
+import {JBFee} from './../structs/JBFee.sol';
 import {IJBAllowanceTerminal3_1} from './IJBAllowanceTerminal3_1.sol';
 import {IJBDirectory} from './IJBDirectory.sol';
 import {IJBFeeHoldingTerminal} from './IJBFeeHoldingTerminal.sol';
 import {IJBPayDelegate3_1_1} from './IJBPayDelegate3_1_1.sol';
 import {IJBPaymentTerminal} from './IJBPaymentTerminal.sol';
 import {IJBPayoutTerminal3_1} from './IJBPayoutTerminal3_1.sol';
-import {IJBPrices3_2} from './IJBPrices3_2.sol';
+import {IJBPrices} from './IJBPrices.sol';
 import {IJBProjects} from './IJBProjects.sol';
 import {IJBRedemptionDelegate3_1_1} from './IJBRedemptionDelegate3_1_1.sol';
 import {IJBRedemptionTerminal} from './IJBRedemptionTerminal.sol';
@@ -70,6 +70,7 @@ interface IJBPayoutRedemptionPaymentTerminal3_2 is
     uint256 indexed projectId,
     uint256 indexed amount,
     uint256 indexed fee,
+    uint256 feeDiscount,
     address beneficiary,
     address caller
   );
@@ -128,7 +129,7 @@ interface IJBPayoutRedemptionPaymentTerminal3_2 is
 
   event SetFee(uint256 fee, address caller);
 
-  // event SetFeeGauge(address indexed feeGauge, address caller);
+  event SetFeeGauge(address indexed feeGauge, address caller);
 
   event SetFeelessAddress(address indexed addrs, bool indexed flag, address caller);
 
@@ -169,15 +170,17 @@ interface IJBPayoutRedemptionPaymentTerminal3_2 is
 
   function directory() external view returns (IJBDirectory);
 
-  function prices() external view returns (IJBPrices3_2);
+  function prices() external view returns (IJBPrices);
 
   function store() external view returns (address);
 
   function payoutSplitsGroup() external view returns (uint256);
 
-  function heldFeesOf(uint256 projectId) external view returns (JBFee3_2[] memory);
+  function heldFeesOf(uint256 projectId) external view returns (JBFee[] memory);
 
   function fee() external view returns (uint256);
+
+  function feeGauge() external view returns (address);
 
   function isFeelessAddress(address account) external view returns (bool);
 
@@ -186,6 +189,8 @@ interface IJBPayoutRedemptionPaymentTerminal3_2 is
   function processFees(uint256 projectId) external;
 
   function setFee(uint256 fee) external;
+
+  function setFeeGauge(address feeGauge) external;
 
   function setFeelessAddress(address account, bool flag) external;
 }

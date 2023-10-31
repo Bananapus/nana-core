@@ -7,7 +7,7 @@ import {IJBDirectory} from './interfaces/IJBDirectory.sol';
 import {IJBOperatorStore} from './interfaces/IJBOperatorStore.sol';
 import {IJBProjects} from './interfaces/IJBProjects.sol';
 import {IJBSplitsStore} from './interfaces/IJBSplitsStore.sol';
-import {IJBPrices3_2} from './interfaces/IJBPrices3_2.sol';
+import {IJBPrices} from './interfaces/IJBPrices.sol';
 import {JBCurrencies} from './libraries/JBCurrencies.sol';
 import {JBSplitsGroups} from './libraries/JBSplitsGroups.sol';
 import {JBTokens} from './libraries/JBTokens.sol';
@@ -40,7 +40,7 @@ contract JBETHPaymentTerminal is JBPayoutRedemptionPaymentTerminal3_2 {
     IJBProjects _projects,
     IJBDirectory _directory,
     IJBSplitsStore _splitsStore,
-    IJBPrices3_2 _prices,
+    IJBPrices _prices,
     address _store,
     address _owner
   )

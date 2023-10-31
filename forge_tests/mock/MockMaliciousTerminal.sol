@@ -30,7 +30,7 @@ contract MockMaliciousTerminal is JBERC20PaymentTerminal {
     IJBProjects _projects,
     IJBDirectory _directory,
     IJBSplitsStore _splitsStore,
-    IJBPrices3_2 _prices,
+    IJBPrices _prices,
     IJBSingleTokenPaymentTerminalStore3_2 _store,
     address _owner
   )
@@ -59,7 +59,7 @@ contract MockMaliciousTerminal is JBERC20PaymentTerminal {
     bool _preferClaimedTokens,
     string calldata _memo,
     bytes calldata _metadata
-  ) public payable override returns (uint256) {
+  ) external payable override returns (uint256) {
       _projectId;
       _amount;
       _token;

@@ -7,7 +7,7 @@ import {JBRedemptionDelegateAllocation3_1_1} from './../structs/JBRedemptionDele
 import {JBTokenAmount} from './../structs/JBTokenAmount.sol';
 import {IJBDirectory} from './IJBDirectory.sol';
 import {IJBFundingCycleStore} from './IJBFundingCycleStore.sol';
-import {IJBPrices3_2} from './IJBPrices3_2.sol';
+import {IJBPrices} from './IJBPrices.sol';
 import {IJBSingleTokenPaymentTerminal} from './IJBSingleTokenPaymentTerminal.sol';
 
 interface IJBSingleTokenPaymentTerminalStore3_2 {
@@ -15,7 +15,7 @@ interface IJBSingleTokenPaymentTerminalStore3_2 {
 
   function directory() external view returns (IJBDirectory);
 
-  function prices() external view returns (IJBPrices3_2);
+  function prices() external view returns (IJBPrices);
 
   function balanceOf(
     IJBSingleTokenPaymentTerminal terminal,

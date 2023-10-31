@@ -10,8 +10,7 @@ import {IJBDirectory} from './interfaces/IJBDirectory.sol';
 import {IJBFundingCycleDataSource3_1_1} from './interfaces/IJBFundingCycleDataSource3_1_1.sol';
 import {IJBFundingCycleStore} from './interfaces/IJBFundingCycleStore.sol';
 import {IJBPaymentTerminal} from './interfaces/IJBPaymentTerminal.sol';
-import {IJBPrices3_2} from './interfaces/IJBPrices3_2.sol';
-import {IJBPrices3_2} from './interfaces/IJBPrices3_2.sol';
+import {IJBPrices} from './interfaces/IJBPrices.sol';
 import {IJBSingleTokenPaymentTerminal} from './interfaces/IJBSingleTokenPaymentTerminal.sol';
 import {IJBSingleTokenPaymentTerminalStore3_2} from './interfaces/IJBSingleTokenPaymentTerminalStore3_2.sol';
 import {JBConstants} from './libraries/JBConstants.sol';
@@ -68,7 +67,7 @@ contract JBSingleTokenPaymentTerminalStore3_2 is
   IJBFundingCycleStore public immutable override fundingCycleStore;
 
   /// @notice The contract that exposes price feeds.
-  IJBPrices3_2 public immutable override prices;
+  IJBPrices public immutable override prices;
 
   //*********************************************************************//
   // --------------------- public stored properties -------------------- //
@@ -214,7 +213,7 @@ contract JBSingleTokenPaymentTerminalStore3_2 is
   constructor(
     IJBDirectory _directory,
     IJBFundingCycleStore _fundingCycleStore,
-    IJBPrices3_2 _prices
+    IJBPrices _prices
   ) {
     directory = _directory;
     fundingCycleStore = _fundingCycleStore;
@@ -339,7 +338,7 @@ contract JBSingleTokenPaymentTerminalStore3_2 is
     // The weight is always a fixed point mumber with 18 decimals. To ensure this, the ratio should use the same number of decimals as the `_amount`.
     uint256 _weightRatio = _amount.currency == fundingCycle.baseCurrency()
       ? 10**_decimals
-      : prices.priceFor(_projectId, _amount.currency, fundingCycle.baseCurrency(), _decimals);
+      : prices.priceFor(_amount.currency, fundingCycle.baseCurrency(), _decimals);
 
     // Find the number of tokens to mint, as a fixed point number with as many decimals as `weight` has.
     tokenCount = PRBMath.mulDiv(_amount.value, _weight, _weightRatio);
@@ -542,7 +541,7 @@ contract JBSingleTokenPaymentTerminalStore3_2 is
       : PRBMath.mulDiv(
         _amount,
         10**_MAX_FIXED_POINT_FIDELITY, // Use _MAX_FIXED_POINT_FIDELITY to keep as much of the `_amount.value`'s fidelity as possible when converting.
-        prices.priceFor(_projectId, _currency, _balanceCurrency, _MAX_FIXED_POINT_FIDELITY)
+        prices.priceFor(_currency, _balanceCurrency, _MAX_FIXED_POINT_FIDELITY)
       );
 
     // The amount being distributed must be available.
@@ -611,7 +610,7 @@ contract JBSingleTokenPaymentTerminalStore3_2 is
       : PRBMath.mulDiv(
         _amount,
         10**_MAX_FIXED_POINT_FIDELITY, // Use _MAX_FIXED_POINT_FIDELITY to keep as much of the `_amount.value`'s fidelity as possible when converting.
-        prices.priceFor(_projectId, _currency, _balanceCurrency, _MAX_FIXED_POINT_FIDELITY)
+        prices.priceFor(_currency, _balanceCurrency, _MAX_FIXED_POINT_FIDELITY)
       );
 
     // The amount being distributed must be available in the overflow.
@@ -771,12 +770,7 @@ contract JBSingleTokenPaymentTerminalStore3_2 is
         : PRBMath.mulDiv(
           _distributionLimitRemaining,
           10**_MAX_FIXED_POINT_FIDELITY, // Use _MAX_FIXED_POINT_FIDELITY to keep as much of the `_amount.value`'s fidelity as possible when converting.
-          prices.priceFor(
-            _projectId,
-            _distributionLimit.currency,
-            _balanceCurrency,
-            _MAX_FIXED_POINT_FIDELITY
-          )
+          prices.priceFor(_distributionLimit.currency, _balanceCurrency, _MAX_FIXED_POINT_FIDELITY)
         );
 
       unchecked {
@@ -821,11 +815,7 @@ contract JBSingleTokenPaymentTerminalStore3_2 is
     // Convert the ETH overflow to the specified currency if needed, maintaining a fixed point number with 18 decimals.
     uint256 _totalOverflow18Decimal = _currency == JBCurrencies.ETH
       ? _ethOverflow
-      : PRBMath.mulDiv(
-        _ethOverflow,
-        10**18,
-        prices.priceFor(_projectId, JBCurrencies.ETH, _currency, 18)
-      );
+      : PRBMath.mulDiv(_ethOverflow, 10**18, prices.priceFor(JBCurrencies.ETH, _currency, 18));
 
     // Adjust the decimals of the fixed point number if needed to match the target decimals.
     return

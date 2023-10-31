@@ -9,7 +9,7 @@ import {IJBDirectory} from './interfaces/IJBDirectory.sol';
 import {IJBOperatorStore} from './interfaces/IJBOperatorStore.sol';
 import {IJBProjects} from './interfaces/IJBProjects.sol';
 import {IJBSplitsStore} from './interfaces/IJBSplitsStore.sol';
-import {IJBPrices3_2} from './interfaces/IJBPrices3_2.sol';
+import {IJBPrices} from './interfaces/IJBPrices.sol';
 
 /// @notice Manages the inflows and outflows of an ERC-20 token.
 contract JBERC20PaymentTerminal is JBPayoutRedemptionPaymentTerminal3_2 {
@@ -45,7 +45,7 @@ contract JBERC20PaymentTerminal is JBPayoutRedemptionPaymentTerminal3_2 {
     IJBProjects _projects,
     IJBDirectory _directory,
     IJBSplitsStore _splitsStore,
-    IJBPrices3_2 _prices,
+    IJBPrices _prices,
     address _store,
     address _owner
   )

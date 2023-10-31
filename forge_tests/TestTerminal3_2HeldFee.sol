@@ -133,8 +133,8 @@ contract TestTerminal312HeldFee_Local is TestBaseWorkflow {
             abi.encodeCall(IJBFeeGauge3_1.currentDiscountFor, (_projectId, JBFeeType.PAYOUT)),
             abi.encode(feeDiscount)
         );
-        /* vm.prank(multisig());
-        _terminal.setFeeGauge(address(feeGauge)); */
+        vm.prank(multisig());
+        _terminal.setFeeGauge(address(feeGauge));
 
         uint256 discountedFee = fee - PRBMath.mulDiv(fee, feeDiscount, jbLibraries().MAX_FEE());
 

@@ -72,6 +72,16 @@ contract TestERC20Terminal_Local is TestBaseWorkflow {
 
         _terminals.push(jbERC20PaymentTerminal());
 
+        vm.startPrank(_projectOwner);
+        MockPriceFeed _priceFeedJbEth = new MockPriceFeed(FAKE_PRICE, 18);
+        vm.label(address(_priceFeedJbEth), "MockPrice Feed MyToken-ETH");
+
+        jbPrices().addFeedFor(
+            uint256(uint24(uint160(address(jbToken())))), // currency
+            jbLibraries().ETH(), // base weight currency
+            _priceFeedJbEth
+        );
+
         _badTerminal = new MockMaliciousTerminal(
             jbToken(),
             1, // JBSplitsGroupe
@@ -83,6 +93,8 @@ contract TestERC20Terminal_Local is TestBaseWorkflow {
             jbPaymentTerminalStore(),
             multisig()
         );
+
+        vm.stopPrank();
     }
 
     function launchProjectSTD() public returns (uint256, uint256){
@@ -153,19 +165,6 @@ contract TestERC20Terminal_Local is TestBaseWorkflow {
             _splitProjectTerminals,
             ""
         );
-
-        vm.startPrank(_projectOwner);
-        MockPriceFeed _priceFeedJbEth = new MockPriceFeed(FAKE_PRICE, 18);
-        vm.label(address(_priceFeedJbEth), "MockPrice Feed MyToken-ETH");
-
-        jbPrices().addFeedFor(
-            projectId,
-            uint256(uint24(uint160(address(jbToken())))), // currency
-            jbLibraries().ETH(), // base weight currency
-            _priceFeedJbEth
-        );
-
-        vm.stopPrank();
 
         return (projectId, allocationProjectId);
     }
@@ -260,19 +259,6 @@ contract TestERC20Terminal_Local is TestBaseWorkflow {
         vm.prank(_projectOwner);
         jbSplitsStore().set(projectId, _currentFundingCycle.configuration, _allocationSplits);
 
-        vm.startPrank(_projectOwner);
-        MockPriceFeed _priceFeedJbEth = new MockPriceFeed(FAKE_PRICE, 18);
-        vm.label(address(_priceFeedJbEth), "MockPrice Feed MyToken-ETH");
-
-        jbPrices().addFeedFor(
-            projectId,
-            uint256(uint24(uint160(address(jbToken())))), // currency
-            jbLibraries().ETH(), // base weight currency
-            _priceFeedJbEth
-        );
-
-        vm.stopPrank();
-
         return (projectId, allocationProjectId);
     }
 
@@ -315,19 +301,6 @@ contract TestERC20Terminal_Local is TestBaseWorkflow {
             _terminals,
             ""
         );
-
-        vm.startPrank(_projectOwner);
-        MockPriceFeed _priceFeedJbEth = new MockPriceFeed(FAKE_PRICE, 18);
-        vm.label(address(_priceFeedJbEth), "MockPrice Feed MyToken-ETH");
-
-        jbPrices().addFeedFor(
-            projectId,
-            uint256(uint24(uint160(address(jbToken())))), // currency
-            jbLibraries().ETH(), // base weight currency
-            _priceFeedJbEth
-        );
-
-        vm.stopPrank();
 
         return projectId;
     }
@@ -373,19 +346,6 @@ contract TestERC20Terminal_Local is TestBaseWorkflow {
             ""
         );
 
-        vm.startPrank(_projectOwner);
-        MockPriceFeed _priceFeedJbEth = new MockPriceFeed(FAKE_PRICE, 18);
-        vm.label(address(_priceFeedJbEth), "MockPrice Feed MyToken-ETH");
-
-        jbPrices().addFeedFor(
-            projectId,
-            uint256(uint24(uint160(address(jbToken())))), // currency
-            jbLibraries().ETH(), // base weight currency
-            _priceFeedJbEth
-        );
-
-        vm.stopPrank();
-
         address caller = msg.sender;
         vm.label(caller, "caller");
         vm.prank(_projectOwner);
@@ -430,7 +390,7 @@ contract TestERC20Terminal_Local is TestBaseWorkflow {
         uint256 distributedAmount = PRBMath.mulDiv(
             6 * 10 ** 18,
             10**18, // Use _MAX_FIXED_POINT_FIDELITY to keep as much of the `_amount.value`'s fidelity as possible when converting.
-            jbPrices().priceFor(1, jbLibraries().ETH(), uint256(uint24(uint160(address(jbToken())))), 18)
+            jbPrices().priceFor(jbLibraries().ETH(), uint256(uint24(uint160(address(jbToken())))), 18)
         );
         vm.prank(_projectOwner);
 
@@ -531,19 +491,6 @@ contract TestERC20Terminal_Local is TestBaseWorkflow {
         vm.prank(_projectOwner);
         jbSplitsStore().set(projectId, _currentFundingCycle.configuration, _allocationSplits);
 
-        vm.startPrank(_projectOwner);
-        MockPriceFeed _priceFeedJbEth = new MockPriceFeed(FAKE_PRICE, 18);
-        vm.label(address(_priceFeedJbEth), "MockPrice Feed MyToken-ETH");
-
-        jbPrices().addFeedFor(
-            projectId,
-            uint256(uint24(uint160(address(jbToken())))), // currency
-            jbLibraries().ETH(), // base weight currency
-            _priceFeedJbEth
-        );
-
-        vm.stopPrank();
-
         // fund user
         vm.prank(_projectOwner);
         jbToken().transfer(_user, 20 * 10 ** 18);
@@ -641,19 +588,6 @@ contract TestERC20Terminal_Local is TestBaseWorkflow {
         vm.prank(_projectOwner);
         jbSplitsStore().set(projectId, _currentFundingCycle.configuration, _allocationSplits);
 
-        vm.startPrank(_projectOwner);
-        MockPriceFeed _priceFeedJbEth = new MockPriceFeed(FAKE_PRICE, 18);
-        vm.label(address(_priceFeedJbEth), "MockPrice Feed MyToken-ETH");
-
-        jbPrices().addFeedFor(
-            projectId,
-            uint256(uint24(uint160(address(jbToken())))), // currency
-            jbLibraries().ETH(), // base weight currency
-            _priceFeedJbEth
-        );
-
-        vm.stopPrank();
-
         // fund user
         vm.prank(_projectOwner);
         jbToken().transfer(_user, 20 * 10 ** 18);
@@ -750,19 +684,6 @@ contract TestERC20Terminal_Local is TestBaseWorkflow {
         vm.prank(_projectOwner);
         jbSplitsStore().set(projectId, _currentFundingCycle.configuration, _allocationSplits);
 
-        vm.startPrank(_projectOwner);
-        MockPriceFeed _priceFeedJbEth = new MockPriceFeed(FAKE_PRICE, 18);
-        vm.label(address(_priceFeedJbEth), "MockPrice Feed MyToken-ETH");
-
-        jbPrices().addFeedFor(
-            projectId,
-            uint256(uint24(uint160(address(jbToken())))), // currency
-            jbLibraries().ETH(), // base weight currency
-            _priceFeedJbEth
-        );
-
-        vm.stopPrank();
-
         // fund user
         vm.prank(_projectOwner);
         jbToken().transfer(_user, 20 * 10 ** 18);
@@ -778,7 +699,7 @@ contract TestERC20Terminal_Local is TestBaseWorkflow {
             uint256 distributedAmount = PRBMath.mulDiv(
             10 * 10 ** 18,
             10**18, // Use _MAX_FIXED_POINT_FIDELITY to keep as much of the `_amount.value`'s fidelity as possible when converting.
-            jbPrices().priceFor(1, jbLibraries().ETH(), uint256(uint24(uint160(address(jbToken())))), 18)
+            jbPrices().priceFor(jbLibraries().ETH(), uint256(uint24(uint160(address(jbToken())))), 18)
         );
 
             uint256 _projectStoreBalanceBeforeDistribution =
@@ -949,14 +870,14 @@ contract TestERC20Terminal_Local is TestBaseWorkflow {
 
     function testFuzzedAllowanceERC20(uint232 ALLOWANCE, uint232 TARGET, uint256 BALANCE) public {
         BALANCE = bound(BALANCE, 1e18, jbToken().totalSupply());
+
+        uint256 balanceInTokens = PRBMath.mulDiv(BALANCE, 10**18, jbPrices().priceFor(1, 13787699, 18));
+        uint256 allowanceInTokens = PRBMath.mulDiv(ALLOWANCE, 10**18, jbPrices().priceFor(1, 13787699, 18));
+        uint256 targetInTokens = PRBMath.mulDiv(TARGET, 10**18, jbPrices().priceFor(1, 13787699, 18));
         
         JBERC20PaymentTerminal terminal = jbERC20PaymentTerminal();
 
         uint256 projectId = launchProjectSTDFuzzed(ALLOWANCE, TARGET, BALANCE);
-
-        uint256 balanceInTokens = PRBMath.mulDiv(BALANCE, 10**18, jbPrices().priceFor(projectId, 1, 13787699, 18));
-        uint256 allowanceInTokens = PRBMath.mulDiv(ALLOWANCE, 10**18, jbPrices().priceFor(projectId, 1, 13787699, 18));
-        uint256 targetInTokens = PRBMath.mulDiv(TARGET, 10**18, jbPrices().priceFor(projectId, 1, 13787699, 18));
 
         address caller = msg.sender;
         vm.label(caller, "caller");

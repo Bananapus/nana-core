@@ -18,7 +18,7 @@ import {JBSingleTokenPaymentTerminalStore3_2} from '@juicebox/JBSingleTokenPayme
 import {JBFundAccessConstraintsStore3_1} from '@juicebox/JBFundAccessConstraintsStore3_1.sol';
 import {JBFundingCycleStore} from '@juicebox/JBFundingCycleStore.sol';
 import {JBOperatorStore} from '@juicebox/JBOperatorStore.sol';
-import {JBPrices3_2} from '@juicebox/JBPrices3_2.sol';
+import {JBPrices} from '@juicebox/JBPrices.sol';
 import {JBProjects} from '@juicebox/JBProjects.sol';
 import {JBSplitsStore} from '@juicebox/JBSplitsStore.sol';
 import {JBToken} from '@juicebox/JBToken.sol';
@@ -28,6 +28,7 @@ import {JBReconfigurationBufferBallot} from '@juicebox/JBReconfigurationBufferBa
 import {JBETHERC20SplitsPayerDeployer} from '@juicebox/JBETHERC20SplitsPayerDeployer.sol';
 import {JBETHERC20SplitsPayer} from '@juicebox/JBETHERC20SplitsPayer.sol';
 
+import {JBPayoutRedemptionPaymentTerminal} from '@juicebox/abstract/JBPayoutRedemptionPaymentTerminal.sol';
 import {JBPayoutRedemptionPaymentTerminal3_2} from '@juicebox/abstract/JBPayoutRedemptionPaymentTerminal3_2.sol';
 import {JBSingleTokenPaymentTerminal} from '@juicebox/abstract/JBSingleTokenPaymentTerminal.sol';
 
@@ -80,7 +81,7 @@ import {IJBPayoutTerminal} from '@juicebox/interfaces/IJBPayoutTerminal.sol';
 import {IJBRedemptionTerminal} from '@juicebox/interfaces/IJBRedemptionTerminal.sol';
 import {IJBSingleTokenPaymentTerminal} from '@juicebox/interfaces/IJBSingleTokenPaymentTerminal.sol';
 import {IJBFundingCycleBallot} from '@juicebox/interfaces/IJBFundingCycleBallot.sol';
-import {IJBPrices3_2} from '@juicebox/interfaces/IJBPrices3_2.sol';
+import {IJBPrices} from '@juicebox/interfaces/IJBPrices.sol';
 import {IJBPriceFeed} from '@juicebox/interfaces/IJBPriceFeed.sol';
 import {IJBSplitsPayer} from '@juicebox/interfaces/IJBSplitsPayer.sol';
 
@@ -113,7 +114,7 @@ contract TestBaseWorkflow is Test {
   // JBProjects
   JBProjects internal _jbProjects;
   // JBPrices
-  JBPrices3_2 internal _jbPrices;
+  JBPrices internal _jbPrices;
   // JBDirectory
   JBDirectory internal _jbDirectory;
   // JBFundingCycleStore
@@ -157,7 +158,7 @@ contract TestBaseWorkflow is Test {
     return _jbProjects;
   }
 
-  function jbPrices() internal view returns (JBPrices3_2) {
+  function jbPrices() internal view returns (JBPrices) {
     return _jbPrices;
   }
 
@@ -238,7 +239,7 @@ contract TestBaseWorkflow is Test {
     vm.label(address(_jbProjects), 'JBProjects');
 
     // JBPrices
-    _jbPrices = new JBPrices3_2(_jbOperatorStore, _jbProjects, _multisig);
+    _jbPrices = new JBPrices(_multisig);
     vm.label(address(_jbPrices), 'JBPrices');
 
     address contractAtNoncePlusOne = addressFrom(address(this), 5);

@@ -170,14 +170,12 @@ contract TestMultipleTerminals_Local is TestBaseWorkflow {
         vm.label(address(_priceFeedJbEth), "MockPrice Feed JB-USD");
 
         jbPrices().addFeedFor(
-            projectId,
             uint256(uint24(uint160(address(jbToken())))), // currency
             jbLibraries().ETH(), // base weight currency
             _priceFeedJbEth
         );
 
         jbPrices().addFeedFor(
-            projectId,
             uint256(uint24(uint160(address(jbToken())))), // currency
             jbLibraries().USD(), // base weight currency
             _priceFeedJbUsd
