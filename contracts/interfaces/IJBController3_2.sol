@@ -10,7 +10,7 @@ import {JBProjectMetadata} from './../structs/JBProjectMetadata.sol';
 import {JBSplit} from './../structs/JBSplit.sol';
 import {IJBController3_0_1} from './IJBController3_0_1.sol';
 import {IJBDirectory} from './IJBDirectory.sol';
-import {IJBFundAccessConstraintsStore} from './IJBFundAccessConstraintsStore.sol';
+import {IJBFundAccessConstraintsStore3_1} from './IJBFundAccessConstraintsStore3_1.sol';
 import {IJBFundingCycleStore} from './IJBFundingCycleStore.sol';
 import {IJBMigratable} from './IJBMigratable.sol';
 import {IJBPaymentTerminal} from './IJBPaymentTerminal.sol';
@@ -80,7 +80,7 @@ interface IJBController3_2 is IERC165 {
 
   function splitsStore() external view returns (IJBSplitsStore);
 
-  function fundAccessConstraintsStore() external view returns (IJBFundAccessConstraintsStore);
+  function fundAccessConstraintsStore() external view returns (IJBFundAccessConstraintsStore3_1);
 
   function directory() external view returns (IJBDirectory);
 

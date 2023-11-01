@@ -4,15 +4,15 @@ pragma solidity ^0.8.16;
 import {IERC20} from '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import {IERC20Metadata} from '@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol';
 import {SafeERC20} from '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
-import {JBPayoutRedemptionPaymentTerminal} from './abstract/JBPayoutRedemptionPaymentTerminal.sol';
-import {IJBOperatorStore} from './interfaces/IJBOperatorStore.sol';
+import {JBPayoutRedemptionPaymentTerminal3_2} from './abstract/JBPayoutRedemptionPaymentTerminal3_2.sol';
 import {IJBDirectory} from './interfaces/IJBDirectory.sol';
-import {IJBSplitsStore} from './interfaces/IJBSplitsStore.sol';
-import {IJBPrices} from './interfaces/IJBPrices.sol';
+import {IJBOperatorStore} from './interfaces/IJBOperatorStore.sol';
 import {IJBProjects} from './interfaces/IJBProjects.sol';
+import {IJBSplitsStore} from './interfaces/IJBSplitsStore.sol';
+import {IJBPrices3_2} from './interfaces/IJBPrices3_2.sol';
 
 /// @notice Manages the inflows and outflows of an ERC-20 token.
-contract JBERC20PaymentTerminal is JBPayoutRedemptionPaymentTerminal {
+contract JBERC20PaymentTerminal is JBPayoutRedemptionPaymentTerminal3_2 {
   using SafeERC20 for IERC20;
 
   //*********************************************************************//
@@ -30,8 +30,6 @@ contract JBERC20PaymentTerminal is JBPayoutRedemptionPaymentTerminal {
   //*********************************************************************//
 
   /// @param _token The token that this terminal manages.
-  /// @param _currency The currency that this terminal's token adheres to for price feeds.
-  /// @param _baseWeightCurrency The currency to base token issuance on.
   /// @param _payoutSplitsGroup The group that denotes payout splits from this terminal in the splits store.
   /// @param _operatorStore A contract storing operator assignments.
   /// @param _projects A contract which mints ERC-721's that represent project ownership and transfers.
@@ -42,22 +40,19 @@ contract JBERC20PaymentTerminal is JBPayoutRedemptionPaymentTerminal {
   /// @param _owner The address that will own this contract.
   constructor(
     IERC20Metadata _token,
-    uint256 _currency,
-    uint256 _baseWeightCurrency,
     uint256 _payoutSplitsGroup,
     IJBOperatorStore _operatorStore,
     IJBProjects _projects,
     IJBDirectory _directory,
     IJBSplitsStore _splitsStore,
-    IJBPrices _prices,
+    IJBPrices3_2 _prices,
     address _store,
     address _owner
   )
-    JBPayoutRedemptionPaymentTerminal(
+    JBPayoutRedemptionPaymentTerminal3_2(
       address(_token),
       _token.decimals(),
-      _currency,
-      _baseWeightCurrency,
+      uint256(uint24(uint160(address(_token)))), // first 24 bits used for currency.
       _payoutSplitsGroup,
       _operatorStore,
       _projects,
@@ -80,7 +75,11 @@ contract JBERC20PaymentTerminal is JBPayoutRedemptionPaymentTerminal {
   /// @param _from The address from which the transfer should originate.
   /// @param _to The address to which the transfer should go.
   /// @param _amount The amount of the transfer, as a fixed point number with the same number of decimals as this terminal.
-  function _transferFrom(address _from, address payable _to, uint256 _amount) internal override {
+  function _transferFrom(
+    address _from,
+    address payable _to,
+    uint256 _amount
+  ) internal override {
     _from == address(this)
       ? IERC20(token).safeTransfer(_to, _amount)
       : IERC20(token).safeTransferFrom(_from, _to, _amount);
@@ -90,6 +89,13 @@ contract JBERC20PaymentTerminal is JBPayoutRedemptionPaymentTerminal {
   /// @param _to The address to which the transfer is going.
   /// @param _amount The amount of the transfer, as a fixed point number with the same number of decimals as this terminal.
   function _beforeTransferTo(address _to, uint256 _amount) internal override {
-    IERC20(token).safeApprove(_to, _amount);
+    IERC20(token).safeIncreaseAllowance(_to, _amount);
+  }
+
+  /// @notice Logic to be triggered if a transfer should be undone
+  /// @param _to The address to which the transfer went.
+  /// @param _amount The amount of the transfer, as a fixed point number with the same number of decimals as this terminal.
+  function _cancelTransferTo(address _to, uint256 _amount) internal override {
+    IERC20(token).safeDecreaseAllowance(_to, _amount);
   }
 }

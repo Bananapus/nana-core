@@ -3,7 +3,7 @@ pragma solidity ^0.8.16;
 
 import /* {*} from */ "../helpers/TestBaseWorkflow.sol";
 
-contract MockMaliciousTerminal is JBERC20PaymentTerminal3_1 {
+contract MockMaliciousTerminal is JBERC20PaymentTerminal3_2, DeployPermit2 {
   error NopeNotGonnaDoIt();
 
   uint256 revertMode;
@@ -14,8 +14,6 @@ contract MockMaliciousTerminal is JBERC20PaymentTerminal3_1 {
 
   /**
     @param _token The token that this terminal manages.
-    @param _currency The currency that this terminal's token adheres to for price feeds.
-    @param _baseWeightCurrency The currency to base token issuance on.
     @param _payoutSplitsGroup The group that denotes payout splits from this terminal in the splits store.
     @param _operatorStore A contract storing operator assignments.
     @param _projects A contract which mints ERC-721's that represent project ownership and transfers.
@@ -27,21 +25,17 @@ contract MockMaliciousTerminal is JBERC20PaymentTerminal3_1 {
   */
   constructor(
     IERC20Metadata _token,
-    uint256 _currency,
-    uint256 _baseWeightCurrency,
     uint256 _payoutSplitsGroup,
     IJBOperatorStore _operatorStore,
     IJBProjects _projects,
     IJBDirectory _directory,
     IJBSplitsStore _splitsStore,
-    IJBPrices _prices,
-    IJBSingleTokenPaymentTerminalStore _store,
+    IJBPrices3_2 _prices,
+    IJBSingleTokenPaymentTerminalStore3_2 _store,
     address _owner
   )
-    JBERC20PaymentTerminal3_1(
+    JBERC20PaymentTerminal3_2(
       _token,
-      _currency,
-      _baseWeightCurrency,
       _payoutSplitsGroup,
       _operatorStore,
       _projects,
@@ -49,7 +43,8 @@ contract MockMaliciousTerminal is JBERC20PaymentTerminal3_1 {
       _splitsStore,
       _prices,
       address(_store),
-      _owner
+      _owner,
+      IPermit2(deployPermit2())
     )
   // solhint-disable-next-line no-empty-blocks
   {
@@ -65,7 +60,7 @@ contract MockMaliciousTerminal is JBERC20PaymentTerminal3_1 {
     bool _preferClaimedTokens,
     string calldata _memo,
     bytes calldata _metadata
-  ) external payable override returns (uint256) {
+  ) public payable override(IJBPaymentTerminal, JBPayoutRedemptionPaymentTerminal3_2) returns (uint256) {
       _projectId;
       _amount;
       _token;
@@ -95,7 +90,7 @@ contract MockMaliciousTerminal is JBERC20PaymentTerminal3_1 {
     address _token,
     string calldata _memo,
     bytes calldata _metadata
-  ) external payable override {
+  ) external payable override(IJBPaymentTerminal, JBPayoutRedemptionPaymentTerminal3_2) {
       _projectId;
       _amount;
       _token;

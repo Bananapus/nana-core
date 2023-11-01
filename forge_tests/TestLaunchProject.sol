@@ -6,9 +6,9 @@ import /* {*} from */ "./helpers/TestBaseWorkflow.sol";
 contract TestLaunchProject_Local is TestBaseWorkflow {
     JBProjectMetadata _projectMetadata;
     JBFundingCycleData _data;
-    JBFundingCycleMetadata _metadata;
+    JBFundingCycleMetadata3_2 _metadata;
     JBGroupedSplits[] _groupedSplits; // Default empty
-    JBFundAccessConstraints[] _fundAccessConstraints; // Default empty
+    JBFundAccessConstraints3_1[] _fundAccessConstraints; // Default empty
     IJBPaymentTerminal[] _terminals; // Default empty
 
     function setUp() public override {
@@ -23,7 +23,7 @@ contract TestLaunchProject_Local is TestBaseWorkflow {
             ballot: IJBFundingCycleBallot(address(0))
         });
 
-        _metadata = JBFundingCycleMetadata({
+        _metadata = JBFundingCycleMetadata3_2({
             global: JBGlobalFundingCycleMetadata({
                 allowSetTerminals: false,
                 allowSetController: false,
@@ -31,7 +31,7 @@ contract TestLaunchProject_Local is TestBaseWorkflow {
             }),
             reservedRate: 5000, //50%
             redemptionRate: 5000, //50%
-            ballotRedemptionRate: 0,
+            baseCurrency: 1,
             pausePay: false,
             pauseDistributions: false,
             pauseRedeem: false,
@@ -50,14 +50,18 @@ contract TestLaunchProject_Local is TestBaseWorkflow {
     }
 
     function testLaunchProject() public {
+        JBFundingCycleConfiguration[] memory _cycleConfig = new JBFundingCycleConfiguration[](1);
+
+        _cycleConfig[0].mustStartAtOrAfter = 0;
+        _cycleConfig[0].data = _data;
+        _cycleConfig[0].metadata = _metadata;
+        _cycleConfig[0].groupedSplits = _groupedSplits;
+        _cycleConfig[0].fundAccessConstraints = _fundAccessConstraints;
+
         uint256 projectId = jbController().launchProjectFor(
             msg.sender,
             _projectMetadata,
-            _data,
-            _metadata,
-            block.timestamp,
-            _groupedSplits,
-            _fundAccessConstraints,
+            _cycleConfig,
             _terminals,
             ""
         );
@@ -78,6 +82,14 @@ contract TestLaunchProject_Local is TestBaseWorkflow {
 
         uint256 projectId;
 
+        JBFundingCycleConfiguration[] memory _cycleConfig = new JBFundingCycleConfiguration[](1);
+
+        _cycleConfig[0].mustStartAtOrAfter = 0;
+        _cycleConfig[0].data = _data;
+        _cycleConfig[0].metadata = _metadata;
+        _cycleConfig[0].groupedSplits = _groupedSplits;
+        _cycleConfig[0].fundAccessConstraints = _fundAccessConstraints;
+
         // expectRevert on the next call if weight overflowing
         if (WEIGHT > type(uint88).max) {
             vm.expectRevert(abi.encodeWithSignature("INVALID_WEIGHT()"));
@@ -85,11 +97,7 @@ contract TestLaunchProject_Local is TestBaseWorkflow {
             projectId = jbController().launchProjectFor(
                 msg.sender,
                 _projectMetadata,
-                _data,
-                _metadata,
-                block.timestamp,
-                _groupedSplits,
-                _fundAccessConstraints,
+                _cycleConfig,
                 _terminals,
                 ""
             );
@@ -97,11 +105,7 @@ contract TestLaunchProject_Local is TestBaseWorkflow {
             projectId = jbController().launchProjectFor(
                 msg.sender,
                 _projectMetadata,
-                _data,
-                _metadata,
-                block.timestamp,
-                _groupedSplits,
-                _fundAccessConstraints,
+                _cycleConfig,
                 _terminals,
                 ""
             );

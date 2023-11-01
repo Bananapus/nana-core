@@ -25,11 +25,7 @@ library JBFundingCycleMetadataResolver3_2 {
     return uint256(uint16(_fundingCycle.metadata >> 32));
   }
 
-  function baseCurrency(JBFundingCycle memory _fundingCycle)
-    internal
-    pure
-    returns (uint256)
-  {
+  function baseCurrency(JBFundingCycle memory _fundingCycle) internal pure returns (uint256) {
     // Currency is a number 0-16777215.
     return uint256(uint24(_fundingCycle.metadata >> 48));
   }
@@ -112,7 +108,7 @@ library JBFundingCycleMetadataResolver3_2 {
 
   /// @notice Pack the funding cycle metadata.
   /// @param _metadata The metadata to validate and pack.
-  /// @return packed The packed uint256 of all metadata params. The first 8 bits specify the version.  
+  /// @return packed The packed uint256 of all metadata params. The first 8 bits specify the version.
   function packFundingCycleMetadata(JBFundingCycleMetadata3_2 memory _metadata)
     internal
     pure
@@ -131,7 +127,7 @@ library JBFundingCycleMetadataResolver3_2 {
     packed |= _metadata.redemptionRate << 32;
     // base currency in bits 48-71 (24 bits).
     // base currency is a number 0-16777215.
-    packed |=  _metadata.baseCurrency << 56;
+    packed |= _metadata.baseCurrency << 48;
     // pause pay in bit 72.
     if (_metadata.pausePay) packed |= 1 << 72;
     // pause tap in bit 73.
@@ -164,7 +160,7 @@ library JBFundingCycleMetadataResolver3_2 {
 
   /// @notice Expand the funding cycle metadata.
   /// @param _fundingCycle The funding cycle having its metadata expanded.
-  /// @return metadata The metadata object.  
+  /// @return metadata The metadata object.
   function expandMetadata(JBFundingCycle memory _fundingCycle)
     internal
     pure

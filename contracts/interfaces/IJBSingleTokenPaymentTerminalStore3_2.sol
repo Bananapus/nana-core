@@ -2,12 +2,12 @@
 pragma solidity ^0.8.0;
 
 import {JBFundingCycle} from './../structs/JBFundingCycle.sol';
-import {JBPayDelegateAllocation3_2} from './../structs/JBPayDelegateAllocation3_2.sol';
-import {JBRedemptionDelegateAllocation3_2} from './../structs/JBRedemptionDelegateAllocation3_2.sol';
+import {JBPayDelegateAllocation3_1_1} from './../structs/JBPayDelegateAllocation3_1_1.sol';
+import {JBRedemptionDelegateAllocation3_1_1} from './../structs/JBRedemptionDelegateAllocation3_1_1.sol';
 import {JBTokenAmount} from './../structs/JBTokenAmount.sol';
 import {IJBDirectory} from './IJBDirectory.sol';
 import {IJBFundingCycleStore} from './IJBFundingCycleStore.sol';
-import {IJBPrices} from './IJBPrices.sol';
+import {IJBPrices3_2} from './IJBPrices3_2.sol';
 import {IJBSingleTokenPaymentTerminal} from './IJBSingleTokenPaymentTerminal.sol';
 
 interface IJBSingleTokenPaymentTerminalStore3_2 {
@@ -15,7 +15,7 @@ interface IJBSingleTokenPaymentTerminalStore3_2 {
 
   function directory() external view returns (IJBDirectory);
 
-  function prices() external view returns (IJBPrices);
+  function prices() external view returns (IJBPrices3_2);
 
   function balanceOf(
     IJBSingleTokenPaymentTerminal terminal,
@@ -25,13 +25,15 @@ interface IJBSingleTokenPaymentTerminalStore3_2 {
   function usedDistributionLimitOf(
     IJBSingleTokenPaymentTerminal terminal,
     uint256 projectId,
-    uint256 fundingCycleNumber
+    uint256 fundingCycleNumber,
+    uint256 currency
   ) external view returns (uint256);
 
   function usedOverflowAllowanceOf(
     IJBSingleTokenPaymentTerminal terminal,
     uint256 projectId,
-    uint256 fundingCycleConfiguration
+    uint256 fundingCycleConfiguration,
+    uint256 currency
   ) external view returns (uint256);
 
   function currentOverflowOf(
@@ -71,7 +73,7 @@ interface IJBSingleTokenPaymentTerminalStore3_2 {
     returns (
       JBFundingCycle memory fundingCycle,
       uint256 tokenCount,
-      JBPayDelegateAllocation3_2[] memory delegateAllocations,
+      JBPayDelegateAllocation3_1_1[] memory delegateAllocations,
       string memory outputMemo
     );
 
@@ -86,7 +88,7 @@ interface IJBSingleTokenPaymentTerminalStore3_2 {
     returns (
       JBFundingCycle memory fundingCycle,
       uint256 reclaimAmount,
-      JBRedemptionDelegateAllocation3_2[] memory delegateAllocations,
+      JBRedemptionDelegateAllocation3_1_1[] memory delegateAllocations,
       string memory outputMemo
     );
 

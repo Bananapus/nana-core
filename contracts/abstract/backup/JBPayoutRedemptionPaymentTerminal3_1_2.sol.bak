@@ -1504,10 +1504,8 @@ abstract contract JBPayoutRedemptionPaymentTerminal3_1_2 is
 
     // Process each fee.
     for (uint256 _i; _i < _heldFeesLength; ) {
-
-      if (leftoverAmount == 0) { 
+      if (leftoverAmount == 0) {
         _heldFeesOf[_projectId].push(_heldFees[_i]);
-
       } else {
         // Notice here we take feeIn the stored .amount
         uint256 _feeAmount = (
@@ -1542,7 +1540,6 @@ abstract contract JBPayoutRedemptionPaymentTerminal3_1_2 is
           }
           leftoverAmount = 0;
         }
-        
       }
 
       unchecked {
