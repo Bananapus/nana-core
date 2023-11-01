@@ -3,18 +3,19 @@ pragma solidity ^0.8.6;
 
 import /* {*} from */ "./helpers/TestBaseWorkflow.sol";
 
-import {JBETHPaymentTerminal3_2} from "../contracts/JBETHPaymentTerminal3_2.sol";
+import {JBETHPaymentTerminal3_1_2} from "../contracts/JBETHPaymentTerminal3_1_2.sol";
 import {IJBFeeGauge3_1, JBFeeType} from "../contracts/interfaces/IJBFeeGauge3_1.sol";
 
 contract TestTerminal312HeldFee_Local is TestBaseWorkflow {
     JBController private _controller;
-    JBETHPaymentTerminal private _terminal;
+    JBETHPaymentTerminal3_1_2 private _terminal;
     JBTokenStore private _tokenStore;
 
     JBProjectMetadata private _projectMetadata;
     JBFundingCycleData private _data;
-    JBFundingCycleMetadata3_2 _metadata;
+    JBFundingCycleMetadata private _metadata;
     JBGroupedSplits[] private _groupedSplits; // Default empty
+    JBFundAccessConstraints[] private _fundAccessConstraints; // Default empty
     IJBPaymentTerminal[] private _terminals; // Default empty
 
     uint256 private _projectId;
@@ -26,13 +27,14 @@ contract TestTerminal312HeldFee_Local is TestBaseWorkflow {
         super.setUp();
 
         _controller = jbController();
-        _terminal = new JBETHPaymentTerminal(
+        _terminal = new JBETHPaymentTerminal3_1_2(
+            _accessJBLib.ETH(),
             _jbOperatorStore,
             _jbProjects,
             _jbDirectory,
             _jbSplitsStore,
             _jbPrices,
-            address(_jbPaymentTerminalStore3_2),
+            address(_jbPaymentTerminalStore3_1),
             _multisig
         );
 
@@ -47,7 +49,7 @@ contract TestTerminal312HeldFee_Local is TestBaseWorkflow {
             ballot: IJBFundingCycleBallot(address(0))
         });
 
-        _metadata = JBFundingCycleMetadata3_2({
+        _metadata = JBFundingCycleMetadata({
             global: JBGlobalFundingCycleMetadata({
                 allowSetTerminals: false,
                 allowSetController: false,
@@ -55,7 +57,7 @@ contract TestTerminal312HeldFee_Local is TestBaseWorkflow {
             }),
             reservedRate: 0,
             redemptionRate: 10000, //100%
-            baseCurrency: 1,
+            ballotRedemptionRate: 0,
             pausePay: false,
             pauseDistributions: false,
             pauseRedeem: false,
@@ -74,42 +76,27 @@ contract TestTerminal312HeldFee_Local is TestBaseWorkflow {
 
         _terminals.push(_terminal);
 
-        JBFundAccessConstraints3_1[] memory _fundAccessConstraints = new JBFundAccessConstraints3_1[](1);
-        JBCurrencyAmount[] memory _distributionLimits = new JBCurrencyAmount[](1);
-        JBCurrencyAmount[] memory _overflowAllowances = new JBCurrencyAmount[](1);
-
-         _distributionLimits[0] = JBCurrencyAmount({
-            value: _targetInWei,
-            currency: jbLibraries().ETH()
-        });  
-
-        _overflowAllowances[0] = JBCurrencyAmount({
-            value: 5 ether,
-            currency: jbLibraries().ETH()
-        });
-
-        _fundAccessConstraints[0] =
-            JBFundAccessConstraints3_1({
+        _fundAccessConstraints.push(
+            JBFundAccessConstraints({
                 terminal: _terminal,
                 token: jbLibraries().ETHToken(),
-                distributionLimits: _distributionLimits,
-                overflowAllowances: _overflowAllowances
-            });
+                distributionLimit: _targetInWei, // 10 ETH target
+                overflowAllowance: 5 ether,
+                distributionLimitCurrency: 1, // Currency = ETH
+                overflowAllowanceCurrency: 1
+            })
+        );
 
         _projectOwner = multisig();
-
-        JBFundingCycleConfiguration[] memory _cycleConfig = new JBFundingCycleConfiguration[](1);
-
-        _cycleConfig[0].mustStartAtOrAfter = 0;
-        _cycleConfig[0].data = _data;
-        _cycleConfig[0].metadata = _metadata;
-        _cycleConfig[0].groupedSplits = _groupedSplits;
-        _cycleConfig[0].fundAccessConstraints = _fundAccessConstraints;
 
         _projectId = _controller.launchProjectFor(
             _projectOwner,
             _projectMetadata,
-            _cycleConfig,
+            _data,
+            _metadata,
+            block.timestamp,
+            _groupedSplits,
+            _fundAccessConstraints,
             _terminals,
             ""
         );
@@ -133,8 +120,8 @@ contract TestTerminal312HeldFee_Local is TestBaseWorkflow {
             abi.encodeCall(IJBFeeGauge3_1.currentDiscountFor, (_projectId, JBFeeType.PAYOUT)),
             abi.encode(feeDiscount)
         );
-        /* vm.prank(multisig());
-        _terminal.setFeeGauge(address(feeGauge)); */
+        vm.prank(multisig());
+        _terminal.setFeeGauge(address(feeGauge));
 
         uint256 discountedFee = fee - PRBMath.mulDiv(fee, feeDiscount, jbLibraries().MAX_FEE());
 
@@ -164,7 +151,7 @@ contract TestTerminal312HeldFee_Local is TestBaseWorkflow {
         assertEq(jbPaymentTerminalStore().balanceOf(_terminal, _projectId), _terminalBalanceInWei);
 
         // -- distribute --
-        IJBPayoutRedemptionPaymentTerminal3_2(address(_terminal)).distributePayoutsOf(
+        IJBPayoutRedemptionPaymentTerminal3_1(address(_terminal)).distributePayoutsOf(
             _projectId,
             payAmountInWei,
             jbLibraries().ETH(),

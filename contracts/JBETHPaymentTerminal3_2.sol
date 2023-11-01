@@ -7,13 +7,13 @@ import {IJBDirectory} from './interfaces/IJBDirectory.sol';
 import {IJBOperatorStore} from './interfaces/IJBOperatorStore.sol';
 import {IJBProjects} from './interfaces/IJBProjects.sol';
 import {IJBSplitsStore} from './interfaces/IJBSplitsStore.sol';
-import {IJBPrices3_2} from './interfaces/IJBPrices3_2.sol';
+import {IJBPrices} from './interfaces/IJBPrices.sol';
 import {JBCurrencies} from './libraries/JBCurrencies.sol';
 import {JBSplitsGroups} from './libraries/JBSplitsGroups.sol';
 import {JBTokens} from './libraries/JBTokens.sol';
 
 /// @notice Manages all inflows and outflows of ETH funds into the protocol ecosystem.
-contract JBETHPaymentTerminal3_2 is JBPayoutRedemptionPaymentTerminal3_2 {
+contract JBETHPaymentTerminal3_1_2 is JBPayoutRedemptionPaymentTerminal3_2 {
   //*********************************************************************//
   // -------------------------- internal views ------------------------- //
   //*********************************************************************//
@@ -40,7 +40,7 @@ contract JBETHPaymentTerminal3_2 is JBPayoutRedemptionPaymentTerminal3_2 {
     IJBProjects _projects,
     IJBDirectory _directory,
     IJBSplitsStore _splitsStore,
-    IJBPrices3_2 _prices,
+    IJBPrices _prices,
     address _store,
     address _owner
   )
@@ -70,11 +70,7 @@ contract JBETHPaymentTerminal3_2 is JBPayoutRedemptionPaymentTerminal3_2 {
   /// @param _from The address from which the transfer should originate.
   /// @param _to The address to which the transfer should go.
   /// @param _amount The amount of the transfer, as a fixed point number with the same number of decimals as this terminal.
-  function _transferFrom(
-    address _from,
-    address payable _to,
-    uint256 _amount
-  ) internal override {
+  function _transferFrom(address _from, address payable _to, uint256 _amount) internal override {
     _from; // Prevents unused var compiler and natspec complaints.
 
     Address.sendValue(_to, _amount);
