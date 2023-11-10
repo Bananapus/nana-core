@@ -133,6 +133,9 @@ contract JBSwapPaymentTerminal is JBPayoutRedemptionPaymentTerminal3_1_2 {
   }
 
   /// @notice Contribute any tokens to a project.
+  ///         The goal is to convert the incoming token into the one we can accept.
+  ///         if the incoming token is the one we accept, do nothing.
+  ///         else, try to swap the incoming token into the one we accept.
   /// @param _projectId The ID of the project being paid.
   /// @param _amount The amount of terminal tokens being received, as a fixed point number with the same amount of decimals as this terminal. If this terminal's token is ETH, this is ignored and msg.value is used in its place.
   /// @param _token The token being paid, that'll be converted to the token the project wants via an AMM swap if they don't already match.
@@ -152,10 +155,6 @@ contract JBSwapPaymentTerminal is JBPayoutRedemptionPaymentTerminal3_1_2 {
     string calldata _memo,
     bytes calldata _metadata
   ) public payable virtual override returns (uint256) {
-    // The goal is to convert the incoming token into the one we can accept.
-    // if the incoming token is the one we accept, do nothing.
-    // else, try to swap the incoming token into the one we accept.
-
     // If the incoming token isn't the one we want, swap.
     if (_token != token) {
       uint256 _quote;
@@ -172,7 +171,7 @@ contract JBSwapPaymentTerminal is JBPayoutRedemptionPaymentTerminal3_1_2 {
       }
 
       // swap. update _amount to match the amount of the desired tokens came in.
-      _amount = _swap(msg.sender, _amount, _token, _fee);
+      _amount = _swap(_amount, _token, _fee);
     }
 
     super.pay(
@@ -250,13 +249,12 @@ contract JBSwapPaymentTerminal is JBPayoutRedemptionPaymentTerminal3_1_2 {
   /// @param _amount The amount of tokens that are being used with which to make the swap.
   /// @param _fee The fee of the pool to use.
   function _swap(
-    uint256 _payer,
     uint256 _amount,
     address _token,
     uint256 _fee
   ) internal returns (uint256 amountReceived) {
     // Get the terminal token, using WETH if the token paid in is ETH.
-    address _tokenWithWETH = _token == JBTokens.ETH ? address(WETH) : _token;
+    (address _tokenWithWETH, address _payer) = _token == JBTokens.ETH ? (address(WETH), address(this)) : (_token, msg.sender);
 
     address _desiredToken = token;
 
