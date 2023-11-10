@@ -15,6 +15,16 @@ import {IJBPrices} from './interfaces/IJBPrices.sol';
 contract JBSwapPaymentTerminal is JBPayoutRedemptionPaymentTerminal3_1_2 {
   using SafeERC20 for IERC20;
 
+  /////////////////////////////////////////////////////////////////////
+  //                    Public stored properties                     //
+  /////////////////////////////////////////////////////////////////////
+
+  /// @notice The default pool to swap _token for _projectToken, for a given projectId
+  /// @dev    This pool is overriden by the frontend, but is used as a fallback if the frontend doesn't provide a pool
+  mapping(uint256 => mapping(address => address)) public defaultPoolOf;
+
+
+
   //*********************************************************************//
   // -------------------------- internal views ------------------------- //
   //*********************************************************************//
@@ -148,24 +158,21 @@ contract JBSwapPaymentTerminal is JBPayoutRedemptionPaymentTerminal3_1_2 {
 
     // If the incoming token isn't the one we want, swap.
     if (_token != token) {
-      address _payer;
-      // Wrap ETH into WETH if relevant.
-      if (_token == JBTokens.ETH) {
-        WETH.deposit{value: _amount}();
-        _payer = address(this);
-      } else {
-        _payer = msg.sender;
-      }
-
-      uint256 _fee;
+      uint256 _quote;
+      address _pool;
 
       // Unpack the quote from the pool, given by the frontend.
       (bool _quoteExists, _metadata) = JBDelegateMetadataLib.getMetadata(123, _metadata);
-      if (_quoteExists) (_fee) = abi.decode(_metadata, (uint256, uint256));
-      else _fee = 3000; // TODO some default
+
+      if (_quoteExists)
+        (_quote, _pool) = abi.decode(_metadata, (uint256, address));
+      else {
+        _pool = defaultPoolOf[_projectId][_token];
+        _quote = getTwap(_token, _pool, _amount);
+      }
 
       // swap. update _amount to match the amount of the desired tokens came in.
-      _amount = _swap(_payer, _amount, _token, _fee);
+      _amount = _swap(msg.sender, _amount, _token, _fee);
     }
 
     super.pay(
@@ -285,7 +292,7 @@ contract JBSwapPaymentTerminal is JBPayoutRedemptionPaymentTerminal3_1_2 {
       )
     );
 
-    // Try swapping.
+    // Try swapping. No price limit as we check in the callback.
     try
       _pool.swap({
         recipient: address(this),
@@ -300,10 +307,10 @@ contract JBSwapPaymentTerminal is JBPayoutRedemptionPaymentTerminal3_1_2 {
       // If the swap succeded, take note of the amount of tokens received. This will return as negative since it is an exact input.
       amountReceived = uint256(-(_projectTokenIs0 ? amount0 : amount1));
 
-      // Convert back to ETH if needed.
-      if (_desiredToken == JBTokens.ETH) WETH.withdraw{value: amountReceived}();
+      // Convert back to ETH if needed (ie if this is an ETH terminal)
+      if (_desiredToken == JBTokens.ETH) WETH.withdraw(amountReceived);
     } catch {
-      // If the swap failed, return.
+      // If the swap failed, return 0.
       return 0;
     }
   }
