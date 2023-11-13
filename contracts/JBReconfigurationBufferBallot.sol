@@ -9,6 +9,14 @@ import {JBFundingCycle} from './structs/JBFundingCycle.sol';
 
 /// @notice Manages approving funding cycle reconfigurations automatically after a buffer period.
 contract JBReconfigurationBufferBallot is ERC165, IJBFundingCycleBallot {
+
+  //*********************************************************************//
+  // ------------------------------ errors ----------------------------- //
+  //*********************************************************************//
+
+  /// @notice The error given when the duration passed to the constructor is invalid.
+  error INVALID_DURATION();
+
   //*********************************************************************//
   // ---------------- public immutable stored properties --------------- //
   //*********************************************************************//
@@ -42,8 +50,8 @@ contract JBReconfigurationBufferBallot is ERC165, IJBFundingCycleBallot {
         (_start - _configured < duration)
           ? JBBallotState.Failed
           : (block.timestamp < _start - duration)
-          ? JBBallotState.ApprovalExpected
-          : JBBallotState.Approved;
+            ? JBBallotState.ApprovalExpected
+            : JBBallotState.Approved;
     }
   }
 
@@ -65,6 +73,9 @@ contract JBReconfigurationBufferBallot is ERC165, IJBFundingCycleBallot {
 
   /// @param _duration The number of seconds to wait until a reconfiguration can be either `Approved` or `Failed`.
   constructor(uint256 _duration) {
+    // Avoid potential underflow in the stateOf function.
+    if(_duration > block.timestamp) revert INVALID_DURATION();
+
     duration = _duration;
   }
 }
