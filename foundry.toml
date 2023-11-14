@@ -1,35 +1,26 @@
 [profile.default]
 solc = '0.8.21'
-evm_version = 'paris'                                         # Required for L2s (Optimism, Arbitrum, etc.)
+evm_version = 'paris'                   # Required for L2s (Optimism, Arbitrum, etc.)
 src = 'contracts'
 test = 'forge_tests'
 out = 'out'
 libs = ['node_modules', 'lib']
-libraries = []
-gas_reports = ['*']
-verbosity = 3
-ignored_error_codes = []
-sender = '0x00a329c0648769a73afac7f9381e08fb43dbea72'
-tx_origin = '0x00a329c0648769a73afac7f9381e08fb43dbea72'
-initial_balance = '0xffffffffffffffffffffffff'
-block_number = 14126430
-gas_limit = 9223372036854775807
-gas_price = 0
-block_base_fee_per_gas = 0
-block_coinbase = '0x0000000000000000000000000000000000000000'
-block_timestamp = 1643802347
-block_difficulty = 0
+match_contract = "_Local"               # Do not run fork tests
 sizes = true
-match_contract = "_Local"                                     # Do not run fork tests
+verbosity = 3                           # display errors
+optimizer_runs = 1000000
+block_number = 14126430
+block_timestamp = 1643802347
 
 [profile.fork] # run via FOUNDRY_PROFILE=fork foundry test
-fs_permissions = [
-    { access = "read", path = "./deployments/mainnet" },
-] # Get the deployment addresses for forking
+fs_permissions = [{ access = "read", path = "./deployments/mainnet" }] # Get the deployment addresses for forking
 match_contract = "_Fork"
 
 [fmt]
-line_length = 100
+line_length = 120
 tab_width = 4
 bracket_spacing = false
 number_underscore = "thousands"
+multiline_func_header = "all"
+quote_style = "double"
+wrap_comments = true

@@ -1,13 +1,13 @@
 {
-  "name": "@jbx-protocol/juice-contracts-v3",
+  "name": "@jbx-protocol/juice-contracts-v4",
   "bugs": {
-    "url": "https://github.com/jbx-protocol/juice-contracts-v3/issues"
+    "url": "https://github.com/jbx-protocol/juice-contracts-v4/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jbx-protocol/juice-contracts-v3"
+    "url": "https://github.com/jbx-protocol/juice-contracts-v4"
   },
-  "version": "5.0.0",
+  "version": "0.0.0",
   "license": "MIT",
   "dependencies": {
     "@chainlink/contracts": "^0.1.6",
@@ -36,12 +36,19 @@
     "solidity-coverage": "^0.8.0-beta.1"
   },
   "scripts": {
-    "chain": "hardhat node",
-    "account": "hardhat account",
-    "test": "mocha './test/**/*.test.js' -r esm --bail --timeout 20000 && FOUNDRY_PROFILE=fork foundry test",
+    "test": "yarn test:local && yarn test:fork && yarn test:unit",
+    "test:unit": "yarn clean && hardhat compile && mocha './test/**/*.test.js' -r esm --bail --timeout 20000 && yarn clean",
+    "test:local": "forge test",
+    "test:fork": "FOUNDRY_PROFILE=CI forge test",
     "coverage": "node --require esm ./node_modules/.bin/hardhat coverage --network hardhat",
-    "clean": "rimraf ./cache && rimraf ./artifacts",
-    "compile": "yarn clean && hardhat compile",
-    "pretty": "prettier --write \"./**/*.{js,jsx,json,sol}\""
+    "coverage:integration": "forge coverage --match-path ./src/*.sol --report lcov --report summary",
+    "build": "forge build",
+    "size": "forge build --sizes",
+    "clean": "rm -rf ./cache && rm -rf ./artifacts",
+    "doc": "forge doc",
+    "tree": "forge tree",
+    "lint": "forge fmt",
+    "deploy:mainnet": "source .env && forge script DeployMainnet --chain-id 1 --rpc-url $RPC_MAINNET --broadcast --verify --etherscan-api-key $ETHERSCAN_API_KEY --ledger --sender $SENDER_MAINNET -vvv",
+    "deploy:goerli": "source .env && forge script DeployGoerli --chain-id 5 --rpc-url $RPC_GOERLI --broadcast --verify --etherscan-api-key $ETHERSCAN_API_KEY --ledger --sender $SENDER_GOERLI -vvv"
   }
 }
