@@ -2,7 +2,6 @@ node_modules
 .env
 *.txt
 !remappings.txt
-yarn-error.log
 
 # Foundry
 out
@@ -18,7 +17,6 @@ deployments/localhost/**
 # Code coverage reports
 coverage/
 coverage.json
-lcov.info
 
 # VSCode
 workspace.code-workspace
