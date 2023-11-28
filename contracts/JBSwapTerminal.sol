@@ -185,6 +185,10 @@ contract JBMultiTerminal is JBOperatable, Ownable, IJBMultiTerminal {
         string calldata _memo,
         bytes calldata _metadata
     ) external payable virtual override returns (uint256) {
+        JBMultiTerminal _terminal = DIRECTORY.primaryTerminalOf(_projectId, _token);
+
+        // Double check the primary terminal accepts the token
+
         // Accept the funds.
         _amount = _acceptFundsFor(_projectId, _token, _amount, _metadata);
 
@@ -212,7 +216,18 @@ contract JBMultiTerminal is JBOperatable, Ownable, IJBMultiTerminal {
         // Swap (will check if we're withing the slippage tolerance in the callback))
         uint256 _receivedFromSwap = _swap(_pool, _amount, _minimumReceivedFromSwap);
 
+        // Unwrap weth if needed
+
         // Pay on primary terminal, with correct beneficiary (sender or benficiary if passed)
+        _terminal.pay{value: _token == JBToken.ETH ? _receivedFromSwap : 0}(
+            _projectId,
+            _token,
+            _receivedFromSwap,
+            _beneficiary,
+            _minReturnedTokens,
+            _memo,
+            _metadata
+        );
 
     }
 
@@ -231,6 +246,8 @@ contract JBMultiTerminal is JBOperatable, Ownable, IJBMultiTerminal {
         string calldata _memo,
         bytes calldata _metadata
     ) external payable virtual override {
+        // Check the terminal accepts the token
+
         // Accept the funds.
         _amount = _acceptFundsFor(_projectId, _token, _amount, _metadata);
 
@@ -238,9 +255,11 @@ contract JBMultiTerminal is JBOperatable, Ownable, IJBMultiTerminal {
 
         // If no quote, check there is a pool assigned and get a twap
 
-        // Try to swap, if fails, 
+        // Try to swap, if fails, revert
 
-        // Ad to balance on primary terminal
+        // Unwrap weth if needed
+
+        // Add to balance on primary terminal
     }
 
     /// @notice 
@@ -267,13 +286,19 @@ contract JBMultiTerminal is JBOperatable, Ownable, IJBMultiTerminal {
         requirePermission(_holder, _projectId, JBOperations.REDEEM_TOKENS)
         returns (uint256 reclaimAmount)
     {
-        // pull project token
+        // Check if the project terminal support the token which will be swapped to _token
+
+        // pull project token from the caller
+
+        // approve the terminal to spend the project token todo: permit2
         
-        // redeem
+        // call redeem on the terminal
 
         // try to swap
 
         // if swap fails, revert 
+
+        // unwrap if needed
 
         //  send to beneficiary
     }
