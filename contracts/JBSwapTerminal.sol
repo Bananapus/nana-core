@@ -58,11 +58,10 @@ import {
 ///          ^                                                                 | 
 ///          |____________project token, NFT, etc______________________________|
 ///
-/// @dev    The swap terminal is a terminal that can be used to swap tokens for other tokens.
-///         Slippage is prevented by using a quote passed by the user (using the JBMetadataResolver
+/// @dev    Slippage is prevented by using a quote passed by the user (using the JBMetadataResolver
 ///         format, along the address of the pool to use) or a twap from the pool's oracle if no quote
 ///         is provided (the pool to use *must* then be defined by the project owner).
-contract JBMultiTerminal is JBOperatable, Ownable, IJBMultiTerminal {
+contract JBMultiTerminal is JBOperatable, Ownable, IJBPaymentTerminal, IJBPermitPaymentTerminal {
     // A library that parses the packed funding cycle metadata into a friendlier format.
     using JBFundingCycleMetadataResolver for JBFundingCycle;
 
@@ -109,6 +108,9 @@ contract JBMultiTerminal is JBOperatable, Ownable, IJBMultiTerminal {
     //*********************************************************************//
     // --------------------- public stored properties -------------------- //
     //*********************************************************************//
+    
+    // project ID -> token received -> pool to use
+    mapping(uint256 => mapping(address => IUniswapV3Pool)) public _poolFor;
 
     //*********************************************************************//
     // ------------------------- external views -------------------------- //
@@ -124,11 +126,7 @@ contract JBMultiTerminal is JBOperatable, Ownable, IJBMultiTerminal {
     /// @return A flag indicating if the provided interface ID is supported.
     function supportsInterface(bytes4 _interfaceId) public view virtual override returns (bool) {
         return _interfaceId == type(IJBPaymentTerminal).interfaceId
-            || _interfaceId == type(IJBRedemptionTerminal).interfaceId
-            || _interfaceId == type(IJBPayoutTerminal).interfaceId
             || _interfaceId == type(IJBPermitPaymentTerminal).interfaceId
-            || _interfaceId == type(IJBMultiTerminal).interfaceId
-            || _interfaceId == type(IJBFeeTerminal).interfaceId
             || _interfaceId == type(IERC165).interfaceId;
     }
 
@@ -185,13 +183,6 @@ contract JBMultiTerminal is JBOperatable, Ownable, IJBMultiTerminal {
         string calldata _memo,
         bytes calldata _metadata
     ) external payable virtual override returns (uint256) {
-        JBMultiTerminal _terminal = DIRECTORY.primaryTerminalOf(_projectId, _token);
-
-        // Double check the primary terminal accepts the token
-
-        // Accept the funds.
-        _amount = _acceptFundsFor(_projectId, _token, _amount, _metadata);
-
         uint256 _minimumReceivedFromSwap;
         IUniswapV3Pool _pool;
 
@@ -201,10 +192,10 @@ contract JBMultiTerminal is JBOperatable, Ownable, IJBMultiTerminal {
         
         // If there is a quote, use it
         if(_exists) {
-            (_minimumReceivedFromSwap, _pool) = abi.decode(_parsedMetadata, (uint256, address));
+            (_minimumReceivedFromSwap, _pool) = abi.decode(_parsedMetadata, (uint256, IUniswapV3Pool));
         // If no quote, check there is a pool assigned and get a twap
         } else {
-            _pool = poolFor(_token);
+            _pool = _poolFor[_projectId][_token];
             
             // If no default pool, revert - TODO: send back to the caller instead (could be either fee or EOA tho)
             if(address(_pool) == address(0)) revert NO_DEFAULT_POOL_DEFINED();
@@ -213,22 +204,42 @@ contract JBMultiTerminal is JBOperatable, Ownable, IJBMultiTerminal {
             _minimumReceivedFromSwap = _getTwapFrom(_pool, _amount);
         }
 
-        // Swap (will check if we're withing the slippage tolerance in the callback))
-        uint256 _receivedFromSwap = _swap(_pool, _amount, _minimumReceivedFromSwap);
+        JBMultiTerminal _terminal = DIRECTORY.primaryTerminalOf(_projectId, _token);
+
+        address _poolToken0 = _pool.token0();
+        address _poolToken1 = _pool.token1();
+
+        address _targetToken = _poolToken0 == _token ? _poolToken1 : _poolToken0;
+
+        if(_poolToken0 == _token) {
+            _targetToken = _poolToken1;
+        } else {
+            if(_poolToken1 != _token) revert TOKEN_NOT_IN_POOL();
+            _targetToken = _poolToken0;
+        }
+
+        // Check the primary terminal accepts the token (save swap gas if not accepted)
+        if(!_terminal.acceptsToken(_targetToken)) revert TOKEN_NOT_ACCEPTED(); // TODO: no revert?
+        
+        // Accept the funds.
+        _amount = _acceptFundsFor(_projectId, _token, _amount, _metadata);
+
+        // Swap (will check if we're within the slippage tolerance in the callback))
+        uint256 _receivedFromSwap = _swap(_token, _pool, _amount, _minimumReceivedFromSwap);
 
         // Unwrap weth if needed
+
 
         // Pay on primary terminal, with correct beneficiary (sender or benficiary if passed)
         _terminal.pay{value: _token == JBToken.ETH ? _receivedFromSwap : 0}(
             _projectId,
-            _token,
+            _targetToken,
             _receivedFromSwap,
             _beneficiary,
             _minReturnedTokens,
             _memo,
             _metadata
         );
-
     }
 
     /// @notice 
@@ -262,45 +273,13 @@ contract JBMultiTerminal is JBOperatable, Ownable, IJBMultiTerminal {
         // Add to balance on primary terminal
     }
 
-    /// @notice 
-    /// @param _holder The account to redeem tokens for.
-    /// @param _projectId The ID of the project to which the tokens being redeemed belong.
-    /// @param _tokenCount The number of project tokens to redeem, as a fixed point number with 18 decimals.
-    /// @param _token The token being reclaimed. This terminal ignores this property since it only manages one token.
-    /// @param _minReturnedTokens The minimum amount of terminal tokens expected in return, as a fixed point number with the same amount of decimals as the terminal.
-    /// @param _beneficiary The address to send the terminal tokens to.
-    /// @param _metadata Bytes to send along to the data source, delegate, and emitted event, if provided.
-    /// @return reclaimAmount The amount of terminal tokens that the project tokens were redeemed for, as a fixed point number with 18 decimals.
-    function redeemTokensOf(
-        address _holder,
-        uint256 _projectId,
-        address _token,
-        uint256 _tokenCount,
-        uint256 _minReturnedTokens,
-        address payable _beneficiary,
-        bytes calldata _metadata
-    )
-        external
-        virtual
-        override
-        requirePermission(_holder, _projectId, JBOperations.REDEEM_TOKENS)
-        returns (uint256 reclaimAmount)
-    {
-        // Check if the project terminal support the token which will be swapped to _token
-
-        // pull project token from the caller
-
-        // approve the terminal to spend the project token todo: permit2
-        
-        // call redeem on the terminal
-
-        // try to swap
-
-        // if swap fails, revert 
-
-        // unwrap if needed
-
-        //  send to beneficiary
+    // add a pool to use for a given token in
+    function addDefaultPool(uint256 _projectId, address _token, IUniswapV3Pool _pool) external requirePermission(
+            projects.ownerOf(_projectId),
+            _projectId,
+            JBSwapTerminalOperations.MODIFY_DEFAULT_POOL
+        ) {
+        _poolFor[_projectId][_token] = _pool;
     }
 
     //*********************************************************************//
