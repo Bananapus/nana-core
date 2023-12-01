@@ -174,20 +174,6 @@ contract JBController3_1 is
         metadata = fundingCycle.expandMetadata();
     }
 
-    /// @notice A flag indicating if the project currently allows terminals to be set.
-    /// @param _projectId The ID of the project the flag is for.
-    /// @return The flag
-    function setTerminalsAllowed(uint256 _projectId) external view returns (bool) {
-        return fundingCycleStore.currentOf(_projectId).expandMetadata().allowSetTerminals;
-    }
-
-    /// @notice A flag indicating if the project currently allows its controller to be set.
-    /// @param _projectId The ID of the project the flag is for.
-    /// @return The flag
-    function setControllerAllowed(uint256 _projectId) external view returns (bool) {
-        return fundingCycleStore.currentOf(_projectId).expandMetadata().allowSetController;
-    }
-
     //*********************************************************************//
     // -------------------------- public views --------------------------- //
     //*********************************************************************//
