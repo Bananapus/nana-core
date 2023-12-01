@@ -59,9 +59,6 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     /// @notice The directory of terminals and controllers for projects.
     IJBDirectory public immutable override DIRECTORY;
 
-    /// @notice The contract storing all funding cycle configurations.
-    IJBFundingCycleStore public immutable override FUNDING_CYCLE_STORE;
-
     /// @notice The contract that exposes price feeds.
     IJBPrices public immutable override PRICES;
 
@@ -226,16 +223,10 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     //*********************************************************************//
 
     /// @param _directory A contract storing directories of terminals and controllers for each project.
-    /// @param _fundingCycleStore A contract storing all funding cycle configurations.
-    /// @param _prices A contract that exposes price feeds.
-    constructor(
-        IJBDirectory _directory,
-        IJBFundingCycleStore _fundingCycleStore,
-        IJBPrices _prices
-    ) {
+    constructor(IJBDirectory _directory) {
         DIRECTORY = _directory;
-        FUNDING_CYCLE_STORE = _fundingCycleStore;
-        PRICES = _prices;
+        FUNDING_CYCLE_STORE = _dreictory.fundingCycleStore();
+        PRICES = _directory.prices();
     }
 
     //*********************************************************************//

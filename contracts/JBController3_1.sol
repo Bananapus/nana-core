@@ -214,7 +214,6 @@ contract JBController3_1 is
     // ---------------------------- constructor -------------------------- //
     //*********************************************************************//
 
-    /// @param _operatorStore A contract storing operator assignments.
     /// @param _projects A contract which mints ERC-721's that represent project ownership and transfers.
     /// @param _directory A contract storing directories of terminals and controllers for each project.
     /// @param _fundingCycleStore A contract storing all funding cycle configurations.
@@ -222,21 +221,16 @@ contract JBController3_1 is
     /// @param _splitsStore A contract that stores splits for each project.
     /// @param _fundAccessConstraintsStore A contract that stores fund access constraints for each project.
     constructor(
-        IJBOperatorStore _operatorStore,
-        IJBProjects _projects,
         IJBDirectory _directory,
-        IJBFundingCycleStore _fundingCycleStore,
-        IJBTokenStore _tokenStore,
-        IJBSplitsStore _splitsStore,
         IJBFundAccessConstraintsStore _fundAccessConstraintsStore,
         address _trustedForwarder
-    ) JBOperatable(_operatorStore) ERC2771Context(_trustedForwarder) {
-        projects = _projects;
+    ) JBOperatable(_directory.operatorStore()) ERC2771Context(_trustedForwarder) {
         directory = _directory;
-        fundingCycleStore = _fundingCycleStore;
-        tokenStore = _tokenStore;
-        splitsStore = _splitsStore;
         fundAccessConstraintsStore = _fundAccessConstraintsStore;
+        projects = _directory.projects();
+        fundingCycleStore = _directory.fundingCycleStore();
+        tokenStore = _directory.tokenStore();
+        splitsStore = _directory.splitsStore();
     }
 
     //*********************************************************************//
@@ -608,12 +602,6 @@ contract JBController3_1 is
         override
         requirePermission(_holder, _projectId, JBOperations.TRANSFER_TOKENS)
     {
-        // Get a reference to the current funding cycle for the project.
-        JBFundingCycle memory _fundingCycle = fundingCycleStore.currentOf(_projectId);
-
-        // Must not be paused.
-        if (_fundingCycle.tokenCreditTransfersPaused()) revert TRANSFERS_PAUSED();
-
         tokenStore.transferFrom(_holder, _projectId, _recipient, _amount);
     }
 

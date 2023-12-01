@@ -96,14 +96,13 @@ contract JBPrices is Ownable, JBOperatable, IJBPrices {
     // ---------------------------- constructor -------------------------- //
     //*********************************************************************//
 
-    /// @param _operatorStore A contract storing operator assignments.
-    /// @param _projects A contract which mints ERC-721's that represent project ownership and transfers.
+    /// @param _directory todo
     /// @param _owner The address that will own the contract.
-    constructor(IJBOperatorStore _operatorStore, IJBProjects _projects, address _owner)
-        JBOperatable(_operatorStore)
+    constructor(IJBDirectory _directory, address _owner)
+        JBOperatable(_directory.operatorStore())
         Ownable(_owner)
     {
-        PROJECTS = _projects;
+        PROJECTS = _directory.projects();
     }
 
     //*********************************************************************//

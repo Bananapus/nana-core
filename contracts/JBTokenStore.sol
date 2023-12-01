@@ -31,6 +31,9 @@ contract JBTokenStore is JBControllerUtility, IJBTokenStore {
     error TOKENS_MUST_HAVE_18_DECIMALS();
     error OVERFLOW_ALERT();
 
+    /// @notice The contract storing all funding cycle configurations.
+    IJBFundingCycleStore public immutable override fundingCycleStore;
+
     //*********************************************************************//
     // --------------------- public stored properties -------------------- //
     //*********************************************************************//
@@ -103,7 +106,9 @@ contract JBTokenStore is JBControllerUtility, IJBTokenStore {
     //*********************************************************************//
 
     /// @param _directory A contract storing directories of terminals and controllers for each project.
-    constructor(IJBDirectory _directory) JBControllerUtility(_directory) {}
+    constructor(IJBDirectory _directory) JBControllerUtility(_directory) {
+        fundingCycleStore = _directory.fundingCycleStore();
+    }
 
     //*********************************************************************//
     // ---------------------- external transactions ---------------------- //
@@ -307,6 +312,11 @@ contract JBTokenStore is JBControllerUtility, IJBTokenStore {
         override
         onlyController(_projectId)
     {
+        // Must not be paused.
+        if (fundingCycleStore.currentOf(_projectId).tokenCreditTransfersPaused()) {
+            revert TRANSFERS_PAUSED();
+        }
+
         // Can't transfer to the zero address.
         if (_recipient == address(0)) revert RECIPIENT_ZERO_ADDRESS();
 

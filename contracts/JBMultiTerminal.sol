@@ -112,9 +112,6 @@ contract JBMultiTerminal is JBOperatable, Ownable, ERC2771Context, IJBMultiTermi
     // ---------------- public immutable stored properties --------------- //
     //*********************************************************************//
 
-    /// @notice Mints ERC-721's that represent project ownership and transfers.
-    IJBProjects public immutable override PROJECTS;
-
     /// @notice The directory of terminals and controllers for PROJECTS.
     IJBDirectory public immutable override DIRECTORY;
 
@@ -225,7 +222,6 @@ contract JBMultiTerminal is JBOperatable, Ownable, ERC2771Context, IJBMultiTermi
     // -------------------------- constructor ---------------------------- //
     //*********************************************************************//
 
-    /// @param _operatorStore A contract storing operator assignments.
     /// @param _projects A contract which mints ERC-721's that represent project ownership and transfers.
     /// @param _directory A contract storing directories of terminals and controllers for each project.
     /// @param _splitsStore A contract that stores splits for each project.
@@ -233,20 +229,17 @@ contract JBMultiTerminal is JBOperatable, Ownable, ERC2771Context, IJBMultiTermi
     /// @param _permit2 A permit2 utility.
     /// @param _owner The address that will own this contract.
     constructor(
-        IJBOperatorStore _operatorStore,
-        IJBProjects _projects,
         IJBDirectory _directory,
-        IJBSplitsStore _splitsStore,
         IJBTerminalStore _store,
         IPermit2 _permit2,
         address _trustedForwarder,
         address _owner
-    ) JBOperatable(_operatorStore) Ownable(_owner) ERC2771Context(_trustedForwarder) {
-        PROJECTS = _projects;
+    ) JBOperatable(_directory.operatorStore()) Ownable(_owner) ERC2771Context(_trustedForwarder) {
         DIRECTORY = _directory;
-        SPLITS = _splitsStore;
         STORE = _store;
         PERMIT2 = _permit2;
+        PROJECTS = _directory.projects();
+        SPLITS = _directory.splitsStore();
     }
 
     //*********************************************************************//
