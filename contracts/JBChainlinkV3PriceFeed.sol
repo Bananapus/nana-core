@@ -29,10 +29,10 @@ contract JBChainlinkV3PriceFeed is IJBPriceFeed {
     // ------------------------- external views -------------------------- //
     //*********************************************************************//
 
-    /// @notice Gets the current price from the feed, normalized to the specified number of decimals.
+    /// @notice Gets the current price (per unit) from the feed, normalized to the specified number of decimals.
     /// @param _decimals The number of decimals the returned fixed point price should include.
     /// @return The current price of the feed, as a fixed point number with the specified number of decimals.
-    function currentPrice(uint256 _decimals) external view override returns (uint256) {
+    function currentUnitPrice(uint256 _decimals) external view override returns (uint256) {
         // Get the latest round information.
         (uint80 roundId, int256 _price,, uint256 updatedAt, uint80 answeredInRound) =
             feed.latestRoundData();

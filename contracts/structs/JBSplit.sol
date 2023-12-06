@@ -1,21 +1,24 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {IJBSplitAllocator} from "./../interfaces/IJBSplitAllocator.sol";
+import {IJBSplitHook} from "./../interfaces/IJBSplitHook.sol";
 
-/// @custom:member preferClaimed A flag that only has effect if a projectId is also specified, and the project has a token contract attached. If so, this flag indicates if the tokens that result from making a payment to the project should be delivered claimed into the beneficiary's wallet, or unclaimed to save gas.
-/// @custom:member preferAddToBalance A flag indicating if a distribution to a project should prefer triggering it's addToBalance function instead of its pay function.
-/// @custom:member percent The percent of the whole group that this split occupies. This number is out of `JBConstants.SPLITS_TOTAL_PERCENT`.
-/// @custom:member projectId The ID of a project. If an allocator is not set but a projectId is set, funds will be sent to the protocol treasury belonging to the project who's ID is specified. Resulting tokens will be routed to the beneficiary with the claimed token preference respected.
-/// @custom:member beneficiary An address. The role the of the beneficary depends on whether or not projectId is specified, and whether or not an allocator is specified. If allocator is set, the beneficiary will be forwarded to the allocator for it to use. If allocator is not set but projectId is set, the beneficiary is the address to which the project's tokens will be sent that result from a payment to it. If neither allocator or projectId are set, the beneficiary is where the funds from the split will be sent.
-/// @custom:member lockedUntil Specifies if the split should be unchangeable until the specified time, with the exception of extending the locked period.
-/// @custom:member allocator If an allocator is specified, funds will be sent to the allocator contract along with all properties of this split.
+/// @notice Splits are used to send a percentage of a total token amount to a specific contract, project, or address. Splits are used to send payouts and reserved tokens.
+/// @dev 1. If a non-zero split hook contract is specified, this split's tokens are sent there along with this split's properties.
+/// @dev 2. Otherwise, if a non-zero project ID is specified, this split's tokens are used to `pay` it through its terminal if possible, or sent to the project's owner if not. If this payment yields tokens, those go to the split's `beneficiary`.
+/// @dev 3. Otherwise, this split's tokens are sent directly to the `beneficiary`.
+/// @dev To summarize, this split's tokens are sent according to the following priority: `split hook` > `projectId` > `beneficiary`.
+/// @custom:member preferAddToBalance If this split were to `pay` a project through its terminal, this flag indicates whether it should prefer using the terminal's `addToBalance` function instead.
+/// @custom:member percent The percent of the total token amount that this split sends. This number is out of `JBConstants.SPLITS_TOTAL_PERCENT`.
+/// @custom:member projectId The ID of a project to `pay`, if applicable. Resulting tokens will be routed to the `beneficiary`.
+/// @custom:member beneficiary Receives this split's tokens if the `hook` and `projectId` are zero. If the `projectId` is specified, the `beneficiary` receives any project tokens minted by this split.
+/// @custom:member lockedUntil The split cannot be changed until this timestamp. The `lockedUntil` timestamp can be increased while a split is locked. If `lockedUntil` is zero, this split can be changed at any time.
+/// @custom:member hook A contract which will receive this split's tokens and properties, and can define custom behavior.
 struct JBSplit {
-    bool preferClaimed;
     bool preferAddToBalance;
     uint256 percent;
     uint256 projectId;
     address payable beneficiary;
     uint256 lockedUntil;
-    IJBSplitAllocator allocator;
+    IJBSplitHook hook;
 }

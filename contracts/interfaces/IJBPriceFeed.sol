@@ -2,5 +2,5 @@
 pragma solidity ^0.8.0;
 
 interface IJBPriceFeed {
-    function currentPrice(uint256 targetDecimals) external view returns (uint256);
+    function currentUnitPrice(uint256 targetDecimals) external view returns (uint256);
 }

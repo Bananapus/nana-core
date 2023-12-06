@@ -1,1 +1,5 @@
 @juicebox=contracts/
+@openzeppelin/=lib/openzeppelin-contracts/
+@permit2/=lib/permit2/src/
+ds-test/=lib/ds-test/src/
+forge-std/=lib/forge-std/src/

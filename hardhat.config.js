@@ -91,22 +91,3 @@ module.exports = {
     apiKey: `${process.env.ETHERSCAN_API_KEY}`,
   },
 };
-
-task('deploy-ballot', 'Deploy a buffer ballot of a given duration')
-  .addParam('duration', 'Set the ballot duration (in seconds)')
-  .setAction(async (taskArgs, hre) => {
-    try {
-      const { deploy } = deployments;
-      const [deployer] = await hre.ethers.getSigners();
-
-      const JBReconfigurationBufferBallot = await deploy('JBReconfigurationBufferBallot', {
-        from: deployer.address,
-        log: true,
-        args: [taskArgs.duration],
-      });
-
-      console.log('Buffer ballot deployed at ' + JBReconfigurationBufferBallot.address);
-    } catch (error) {
-      console.log(error);
-    }
-  });

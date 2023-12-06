@@ -1,7 +1,8 @@
 {
   "solidity.compileUsingRemoteVersion": "v0.8.16+commit.07a7930e",
   "editor.formatOnSave": true,
-  "[javascript]": {
-    "editor.tabSize": 2
-  }
+  "[solidity]": {
+    "editor.defaultFormatter": "JuanBlanco.solidity"
+  },
+  "solidity.formatter": "forge"
 }

@@ -3,194 +3,165 @@ pragma solidity ^0.8.6;
 
 import /* {*} from */ "./helpers/TestBaseWorkflow.sol";
 
-/**
- * This system test file verifies the following flow:
- * launch project → issue token → pay project (claimed tokens) →  burn some of the claimed tokens → redeem rest of tokens
- */
+// Project can issue token, receive payments in exchange for tokens, burn some of the claimed tokens, and allow holders to redeem rest of tokens.
 contract TestPayBurnRedeemFlow_Local is TestBaseWorkflow {
-    JBController3_1 private _controller;
-    JBETHPaymentTerminal3_1_2 private _terminal;
-    JBTokenStore private _tokenStore;
-
-    JBProjectMetadata private _projectMetadata;
-    JBFundingCycleData private _data;
-    JBFundingCycleMetadata private _metadata;
-    JBGroupedSplits[] private _groupedSplits; // Default empty
-    JBFundAccessConstraints[] private _fundAccessConstraints; // Default empty
-    IJBPaymentTerminal[] private _terminals; // Default empty
-
+    IJBController private _controller;
+    IJBMultiTerminal private _terminal;
+    JBTokens private _tokens;
+    JBRulesetData private _data;
+    JBRulesetMetadata _metadata;
     uint256 private _projectId;
     address private _projectOwner;
-    uint256 private _weight = 1000 * 10 ** 18;
-    uint256 private _targetInWei = 10 * 10 ** 18;
+    address private _beneficiary;
 
     function setUp() public override {
         super.setUp();
 
+        _projectOwner = multisig();
+        _beneficiary = beneficiary();
         _controller = jbController();
-        _terminal = jbETHPaymentTerminal();
-        _tokenStore = jbTokenStore();
-
-        _projectMetadata = JBProjectMetadata({content: "myIPFSHash", domain: 1});
-
-        _data = JBFundingCycleData({
-            duration: 14,
-            weight: _weight,
-            discountRate: 450_000_000,
-            ballot: IJBFundingCycleBallot(address(0))
+        _terminal = jbMultiTerminal();
+        _tokens = jbTokens();
+        _data = JBRulesetData({
+            duration: 0,
+            weight: 1000 * 10 ** 18,
+            decayRate: 0,
+            hook: JBDeadline(address(0))
         });
-
-        _metadata = JBFundingCycleMetadata({
-            global: JBGlobalFundingCycleMetadata({
-                allowSetTerminals: false,
-                allowSetController: false,
-                pauseTransfers: false
-            }),
+        _metadata = JBRulesetMetadata({
             reservedRate: 0,
-            redemptionRate: 10_000, //100%
-            ballotRedemptionRate: 10_000,
+            redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
+            baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
-            pauseDistributions: false,
-            pauseRedeem: false,
-            pauseBurn: false,
-            allowMinting: false,
+            pauseCreditTransfers: false,
+            allowOwnerMinting: false,
             allowTerminalMigration: false,
+            allowSetTerminals: false,
             allowControllerMigration: false,
+            allowSetController: false,
             holdFees: false,
-            preferClaimedTokenOverride: false,
-            useTotalOverflowForRedemptions: false,
-            useDataSourceForPay: false,
-            useDataSourceForRedeem: false,
-            dataSource: address(0),
+            useTotalSurplusForRedemptions: false,
+            useDataHookForPay: false,
+            useDataHookForRedeem: false,
+            dataHook: address(0),
             metadata: 0
         });
 
-        _terminals.push(_terminal);
+        IJBTerminal[] memory _terminals = new IJBTerminal[](1);
+        _terminals[0] = (_terminal);
 
-        _fundAccessConstraints.push(
-            JBFundAccessConstraints({
-                terminal: _terminal,
-                token: jbLibraries().ETHToken(),
-                distributionLimit: _targetInWei, // 10 ETH target
-                overflowAllowance: 5 ether,
-                distributionLimitCurrency: 1, // Currency = ETH
-                overflowAllowanceCurrency: 1
-            })
-        );
+        // Package up ruleset configuration.
+        JBRulesetConfig[] memory _rulesetConfig = new JBRulesetConfig[](1);
+        _rulesetConfig[0].mustStartAtOrAfter = 0;
+        _rulesetConfig[0].data = _data;
+        _rulesetConfig[0].metadata = _metadata;
+        _rulesetConfig[0].splitGroups = new JBSplitGroup[](0);
+        _rulesetConfig[0].fundAccessLimitGroups = new JBFundAccessLimitGroup[](0);
 
-        _projectOwner = multisig();
+        // Package up terminal configuration.
+        JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
+        JBAccountingContextConfig[] memory _accountingContexts = new JBAccountingContextConfig[](1);
+        _accountingContexts[0] = JBAccountingContextConfig({
+            token: JBConstants.NATIVE_TOKEN,
+            standard: JBTokenStandards.NATIVE
+        });
+        _terminalConfigurations[0] =
+            JBTerminalConfig({terminal: _terminal, accountingContextConfigs: _accountingContexts});
 
-        JBFundingCycleConfiguration[] memory _cycleConfig = new JBFundingCycleConfiguration[](1);
+        // Dummy project that will receive fees.
+        _controller.launchProjectFor({
+            owner: _projectOwner,
+            projectMetadata: "myIPFSHash",
+            rulesetConfigurations: _rulesetConfig,
+            terminalConfigurations: _terminalConfigurations,
+            memo: ""
+        });
 
-        _cycleConfig[0].mustStartAtOrAfter = 0;
-        _cycleConfig[0].data = _data;
-        _cycleConfig[0].metadata = _metadata;
-        _cycleConfig[0].groupedSplits = _groupedSplits;
-        _cycleConfig[0].fundAccessConstraints = _fundAccessConstraints;
-
-        // Make a dummy project that'll receive fees.
-        _controller.launchProjectFor(_projectOwner, _projectMetadata, _cycleConfig, _terminals, "");
-
-        _projectId = _controller.launchProjectFor(
-            _projectOwner, _projectMetadata, _cycleConfig, _terminals, ""
-        );
+        _projectId = _controller.launchProjectFor({
+            owner: _projectOwner,
+            projectMetadata: "myIPFSHash",
+            rulesetConfigurations: _rulesetConfig,
+            terminalConfigurations: _terminalConfigurations,
+            memo: ""
+        });
     }
 
     function testFuzzPayBurnRedeemFlow(
-        bool payPreferClaimed, //false
-        bool burnPreferClaimed, //false
-        uint96 payAmountInWei, // 1
-        uint256 burnTokenAmount, // 0
-        uint256 redeemTokenAmount // 0
+        uint96 _nativePayAmount,
+        uint256 _burnTokenAmount,
+        uint256 _redeemTokenAmount
     ) external {
-        // issue an ERC-20 token for project
+        // Issue an ERC-20 token for project.
         vm.prank(_projectOwner);
-        _tokenStore.issueFor(_projectId, "TestName", "TestSymbol");
+        _controller.deployERC20For(_projectId, "TestName", "TestSymbol");
 
-        address _userWallet = address(1234);
+        // Make a payment.
+        _terminal.pay{value: _nativePayAmount}({
+            projectId: _projectId,
+            amount: _nativePayAmount,
+            token: JBConstants.NATIVE_TOKEN, // Unused.
+            beneficiary: _beneficiary,
+            minReturnedTokens: 0,
+            memo: "Take my money!",
+            metadata: new bytes(0)
+        });
 
-        // pay terminal
-        _terminal.pay{value: payAmountInWei}(
-            _projectId,
-            payAmountInWei,
-            address(0),
-            _userWallet,
-            /* _minReturnedTokens */
-            0,
-            /* _preferClaimedTokens */
-            payPreferClaimed,
-            /* _memo */
-            "Take my money!",
-            /* _delegateMetadata */
-            new bytes(0)
+        // Make sure the beneficiary has a balance of project tokens.
+        uint256 _beneficiaryTokenBalance = PRBMathUD60x18.mul(_nativePayAmount, _data.weight);
+        assertEq(_tokens.totalBalanceOf(_beneficiary, _projectId), _beneficiaryTokenBalance);
+
+        // Make sure the native token balance in terminal is up to date.
+        uint256 _terminalBalance = _nativePayAmount;
+        assertEq(
+            jbTerminalStore().balanceOf(address(_terminal), _projectId, JBConstants.NATIVE_TOKEN),
+            _terminalBalance
         );
 
-        // verify: beneficiary should have a balance of JBTokens
-        uint256 _userTokenBalance = PRBMathUD60x18.mul(payAmountInWei, _weight);
-        assertEq(_tokenStore.balanceOf(_userWallet, _projectId), _userTokenBalance);
-
-        // verify: ETH balance in terminal should be up to date
-        uint256 _terminalBalanceInWei = payAmountInWei;
-        assertEq(jbPaymentTerminalStore().balanceOf(_terminal, _projectId), _terminalBalanceInWei);
-
-        // burn tokens from beneficiary addr
-        if (burnTokenAmount == 0) {
+        // Burn tokens from beneficiary.
+        if (_burnTokenAmount == 0) {
             vm.expectRevert(abi.encodeWithSignature("NO_BURNABLE_TOKENS()"));
-        } else if (burnTokenAmount > _userTokenBalance) {
+        } else if (_burnTokenAmount > _beneficiaryTokenBalance) {
             vm.expectRevert(abi.encodeWithSignature("INSUFFICIENT_FUNDS()"));
         } else {
-            _userTokenBalance = _userTokenBalance - burnTokenAmount;
+            _beneficiaryTokenBalance = _beneficiaryTokenBalance - _burnTokenAmount;
         }
 
-        vm.prank(_userWallet);
-        _controller.burnTokensOf(
-            _userWallet,
-            _projectId,
-            /* _tokenCount */
-            burnTokenAmount,
-            /* _memo */
-            "I hate tokens!",
-            /* _preferClaimedTokens */
-            burnPreferClaimed
-        );
+        vm.prank(_beneficiary);
+        _controller.burnTokensOf({
+            holder: _beneficiary,
+            projectId: _projectId,
+            tokenCount: _burnTokenAmount,
+            memo: "I hate tokens!"
+        });
 
-        // verify: beneficiary should have a new balance of JBTokens
-        assertEq(_tokenStore.balanceOf(_userWallet, _projectId), _userTokenBalance);
+        // Make sure the beneficiary should has a new balance of project tokens.
+        assertEq(_tokens.totalBalanceOf(_beneficiary, _projectId), _beneficiaryTokenBalance);
 
-        // redeem tokens
-        if (redeemTokenAmount > _userTokenBalance) {
+        // Redeem tokens.
+        if (_redeemTokenAmount > _beneficiaryTokenBalance) {
             vm.expectRevert(abi.encodeWithSignature("INSUFFICIENT_TOKENS()"));
         } else {
-            _userTokenBalance = _userTokenBalance - redeemTokenAmount;
+            _beneficiaryTokenBalance = _beneficiaryTokenBalance - _redeemTokenAmount;
         }
 
-        vm.prank(_userWallet);
-        uint256 _reclaimAmtInWei = _terminal.redeemTokensOf(
-            /* _holder */
-            _userWallet,
-            /* _projectId */
-            _projectId,
-            /* _tokenCount */
-            redeemTokenAmount,
-            /* token (unused) */
-            address(0),
-            /* _minReturnedWei */
-            0,
-            /* _beneficiary */
-            payable(_userWallet),
-            /* _memo */
-            "Refund me now!",
-            /* _delegateMetadata */
-            new bytes(0)
-        );
+        vm.prank(_beneficiary);
+        uint256 _reclaimAmt = _terminal.redeemTokensOf({
+            holder: _beneficiary,
+            projectId: _projectId,
+            token: JBConstants.NATIVE_TOKEN, // Unused.
+            count: _redeemTokenAmount,
+            minReclaimed: 0,
+            beneficiary: payable(_beneficiary),
+            metadata: new bytes(0)
+        });
 
-        // verify: beneficiary should have a new balance of JBTokens
-        assertEq(_tokenStore.balanceOf(_userWallet, _projectId), _userTokenBalance);
+        // Make sure the beneficiary has a new balance of project tokens.
+        assertEq(_tokens.totalBalanceOf(_beneficiary, _projectId), _beneficiaryTokenBalance);
 
-        // verify: ETH balance in terminal should be up to date
+        // Make sure the native token balance in terminal is up to date.
         assertEq(
-            jbPaymentTerminalStore().balanceOf(_terminal, _projectId),
-            _terminalBalanceInWei - _reclaimAmtInWei
+            jbTerminalStore().balanceOf(address(_terminal), _projectId, JBConstants.NATIVE_TOKEN),
+            _terminalBalance - _reclaimAmt
         );
     }
 }
