@@ -12,7 +12,7 @@ contract TestSplits_Local is TestBaseWorkflow {
 
     address private _projectOwner;
     address payable private _splitsGuy;
-    uint256 private _projectId;
+    uint32 private _projectId;
     uint256 _nativePayoutLimit = 4 ether;
 
     function setUp() public override {
@@ -207,7 +207,7 @@ contract TestSplits_Local is TestBaseWorkflow {
         // Set up a payout split recipient.
         _splits[0] = JBSplit({
             preferAddToBalance: false,
-            percent: JBConstants.SPLITS_TOTAL_PERCENT / _multiplier,
+            percent: uint32(JBConstants.SPLITS_TOTAL_PERCENT / _multiplier),
             projectId: 0,
             beneficiary: _splitsGuy,
             lockedUntil: 0,
@@ -217,7 +217,7 @@ contract TestSplits_Local is TestBaseWorkflow {
         // A dummy used to check that splits groups of "0" don't bypass payout limits.
         _splits[1] = JBSplit({
             preferAddToBalance: false,
-            percent: JBConstants.SPLITS_TOTAL_PERCENT / _multiplier,
+            percent: uint32(JBConstants.SPLITS_TOTAL_PERCENT / _multiplier),
             projectId: 0,
             beneficiary: _splitsGuy,
             lockedUntil: 0,

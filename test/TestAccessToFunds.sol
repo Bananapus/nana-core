@@ -28,7 +28,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
     address private _projectOwner;
     address private _beneficiary;
     MockERC20 private _usdcToken;
-    uint256 private _projectId;
+    uint32 private _projectId;
 
     JBRulesetData private _data;
     JBRulesetMetadata private _metadata;
@@ -46,7 +46,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
         _terminal2 = jbMultiTerminal2();
         _data = JBRulesetData({
             duration: 0,
-            weight: 1000 * 10 ** _WEIGHT_DECIMALS,
+            weight: uint88(1000 * 10 ** _WEIGHT_DECIMALS),
             decayRate: 0,
             hook: IJBRulesetApprovalHook(address(0))
         });

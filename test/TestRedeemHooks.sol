@@ -4,7 +4,7 @@ pragma solidity >=0.8.6;
 import /* {*} from */ "./helpers/TestBaseWorkflow.sol";
 
 contract TestRedeemHooks_Local is TestBaseWorkflow {
-    uint256 private constant _WEIGHT = 1000 * 10 ** 18;
+    uint88 private constant _WEIGHT = 1000 * 10 ** 18;
     address private constant _DATA_HOOK = address(bytes20(keccak256("datahook")));
 
     IJBController private _controller;
@@ -13,7 +13,7 @@ contract TestRedeemHooks_Local is TestBaseWorkflow {
     address private _projectOwner;
     address private _beneficiary;
 
-    uint256 _projectId;
+    uint32 _projectId;
 
     function setUp() public override {
         super.setUp();

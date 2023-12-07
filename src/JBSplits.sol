@@ -260,7 +260,7 @@ contract JBSplits is JBControlled, IJBSplits {
             // `preferAddToBalance` in bit 0.
             split.preferAddToBalance = packedSplitPart1 & 1 == 1;
             // `percent` in bits 1-32.
-            split.percent = uint256(uint32(packedSplitPart1 >> 1));
+            split.percent = uint32(packedSplitPart1 >> 1);
             // `projectId` in bits 33-88.
             split.projectId = uint256(uint56(packedSplitPart1 >> 33));
             // `beneficiary` in bits 89-248.

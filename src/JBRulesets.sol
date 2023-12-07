@@ -356,10 +356,10 @@ contract JBRulesets is JBControlled, IJBRulesets {
             uint256 packed = uint160(address(data.hook));
 
             // duration in bits 160-191 bytes.
-            packed |= data.duration << 160;
+            packed |= uint256(data.duration) << 160;
 
             // decayRate in bits 192-223 bytes.
-            packed |= data.decayRate << 192;
+            packed |= uint256(data.decayRate) << 192;
 
             // Set in storage.
             _packedUserPropertiesOf[projectId][rulesetId] = packed;

@@ -10,7 +10,7 @@ contract TestTokenFlow_Local is TestBaseWorkflow {
     JBRulesetData private _data;
     JBRulesetMetadata _metadata;
     IJBTerminal private _terminal;
-    uint256 private _projectId;
+    uint32 private _projectId;
     address private _projectOwner;
     address private _beneficiary;
 
@@ -103,7 +103,7 @@ contract TestTokenFlow_Local is TestBaseWorkflow {
             useReservedRate: true
         });
 
-        uint256 _expectedTokenBalance = _mintAmount * _metadata.reservedRate / JBConstants.MAX_RESERVED_RATE;
+        uint256 _expectedTokenBalance = _mintAmount * uint256(_metadata.reservedRate) / JBConstants.MAX_RESERVED_RATE;
 
         // Make sure the beneficiary has the correct amount of tokens.
         assertEq(_tokens.totalBalanceOf(_beneficiary, _projectId), _expectedTokenBalance);

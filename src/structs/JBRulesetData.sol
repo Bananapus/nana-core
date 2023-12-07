@@ -19,8 +19,8 @@ import {IJBRulesetApprovalHook} from "./../interfaces/IJBRulesetApprovalHook.sol
 /// @custom:member hook An address of a contract that says whether a proposed ruleset should be accepted or rejected. It
 /// can be used to create rules around how a project owner can change ruleset parameters over time.
 struct JBRulesetData {
-    uint256 duration;
-    uint256 weight;
-    uint256 decayRate;
+    uint32 duration;
+    uint88 weight;
+    uint32 decayRate;
     IJBRulesetApprovalHook hook;
 }

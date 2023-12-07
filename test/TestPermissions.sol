@@ -11,8 +11,8 @@ contract TestPermissions_Local is TestBaseWorkflow {
     IJBPermissions private _permissions;
 
     address private _projectOwner;
-    uint256 private _projectZero;
-    uint256 private _projectOne;
+    uint32 private _projectZero;
+    uint32 private _projectOne;
 
     function setUp() public override {
         super.setUp();

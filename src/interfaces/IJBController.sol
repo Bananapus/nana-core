@@ -21,11 +21,11 @@ import {IJBToken} from "./IJBToken.sol";
 import {IJBTokens} from "./IJBTokens.sol";
 
 interface IJBController is IERC165, IJBProjectMetadataRegistry, IJBDirectoryAccessControl {
-    event LaunchProject(uint256 rulesetId, uint256 projectId, string metadata, string memo, address caller);
+    event LaunchProject(uint256 rulesetId, uint32 projectId, string metadata, string memo, address caller);
 
-    event LaunchRulesets(uint256 rulesetId, uint256 projectId, string memo, address caller);
+    event LaunchRulesets(uint256 rulesetId, uint32 projectId, string memo, address caller);
 
-    event QueueRulesets(uint256 rulesetId, uint256 projectId, string memo, address caller);
+    event QueueRulesets(uint256 rulesetId, uint32 projectId, string memo, address caller);
 
     event SendReservedTokensToSplits(
         uint256 indexed rulesetId,
@@ -81,27 +81,27 @@ interface IJBController is IERC165, IJBProjectMetadataRegistry, IJBDirectoryAcce
 
     function pendingReservedTokenBalanceOf(uint256 projectId) external view returns (uint256);
 
-    function totalTokenSupplyWithReservedTokensOf(uint256 projectId) external view returns (uint256);
+    function totalTokenSupplyWithReservedTokensOf(uint32 projectId) external view returns (uint256);
 
     function getRulesetOf(
-        uint256 projectId,
+        uint32 projectId,
         uint256 rulesetId
     )
         external
         view
         returns (JBRuleset memory ruleset, JBRulesetMetadata memory metadata);
 
-    function latestQueuedRulesetOf(uint256 projectId)
+    function latestQueuedRulesetOf(uint32 projectId)
         external
         view
         returns (JBRuleset memory, JBRulesetMetadata memory metadata, JBApprovalStatus);
 
-    function currentRulesetOf(uint256 projectId)
+    function currentRulesetOf(uint32 projectId)
         external
         view
         returns (JBRuleset memory ruleset, JBRulesetMetadata memory metadata);
 
-    function queuedRulesetOf(uint256 projectId)
+    function queuedRulesetOf(uint32 projectId)
         external
         view
         returns (JBRuleset memory ruleset, JBRulesetMetadata memory metadata);
@@ -114,10 +114,10 @@ interface IJBController is IERC165, IJBProjectMetadataRegistry, IJBDirectoryAcce
         string calldata memo
     )
         external
-        returns (uint256 projectId);
+        returns (uint32 projectId);
 
     function launchRulesetsFor(
-        uint256 projectId,
+        uint32 projectId,
         JBRulesetConfig[] calldata rulesetConfigurations,
         JBTerminalConfig[] memory terminalConfigurations,
         string calldata memo
@@ -126,7 +126,7 @@ interface IJBController is IERC165, IJBProjectMetadataRegistry, IJBDirectoryAcce
         returns (uint256 rulesetId);
 
     function queueRulesetsOf(
-        uint256 projectId,
+        uint32 projectId,
         JBRulesetConfig[] calldata rulesetConfigurations,
         string calldata memo
     )
@@ -134,7 +134,7 @@ interface IJBController is IERC165, IJBProjectMetadataRegistry, IJBDirectoryAcce
         returns (uint256 rulesetId);
 
     function mintTokensOf(
-        uint256 projectId,
+        uint32 projectId,
         uint256 tokenCount,
         address beneficiary,
         string calldata memo,
@@ -143,25 +143,25 @@ interface IJBController is IERC165, IJBProjectMetadataRegistry, IJBDirectoryAcce
         external
         returns (uint256 beneficiaryTokenCount);
 
-    function burnTokensOf(address holder, uint256 projectId, uint256 tokenCount, string calldata memo) external;
+    function burnTokensOf(address holder, uint32 projectId, uint256 tokenCount, string calldata memo) external;
 
-    function sendReservedTokensToSplitsOf(uint256 projectId, string memory memo) external returns (uint256);
+    function sendReservedTokensToSplitsOf(uint32 projectId, string memory memo) external returns (uint256);
 
-    function migrateController(uint256 projectId, IJBMigratable to) external;
+    function migrateController(uint32 projectId, IJBMigratable to) external;
 
-    function setSplitGroupsOf(uint256 projectId, uint256 domain, JBSplitGroup[] calldata splitGroup) external;
+    function setSplitGroupsOf(uint32 projectId, uint256 domain, JBSplitGroup[] calldata splitGroup) external;
 
     function deployERC20For(
-        uint256 projectId,
+        uint32 projectId,
         string calldata name,
         string calldata symbol
     )
         external
         returns (IJBToken token);
 
-    function setTokenFor(uint256 _projectId, IJBToken _token) external;
+    function setTokenFor(uint32 _projectId, IJBToken _token) external;
 
-    function claimTokensFor(address holder, uint256 projectId, uint256 amount, address beneficiary) external;
+    function claimTokensFor(address holder, uint32 projectId, uint256 amount, address beneficiary) external;
 
-    function transferCreditsFrom(address holder, uint256 projectId, address recipient, uint256 amount) external;
+    function transferCreditsFrom(address holder, uint32 projectId, address recipient, uint256 amount) external;
 }

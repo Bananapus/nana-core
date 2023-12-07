@@ -985,7 +985,11 @@ contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTer
                 // Set the token count to be the number of tokens minted for the beneficiary instead of the total
                 // amount.
                 beneficiaryTokenCount = IJBController(address(DIRECTORY.controllerOf(projectId))).mintTokensOf(
-                    projectId, tokenCount, beneficiary, "", true
+                    uint32(projectId), // TODO: CHANGE!
+                    tokenCount,
+                    beneficiary,
+                    "",
+                    true
                 );
             }
 
@@ -1100,7 +1104,7 @@ contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTer
             if (tokenCount != 0) {
                 IJBController(address(DIRECTORY.controllerOf(projectId))).burnTokensOf({
                     holder: holder,
-                    projectId: projectId,
+                    projectId: uint32(projectId), // TODO: CHANGE!
                     tokenCount: tokenCount,
                     memo: ""
                 });

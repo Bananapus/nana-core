@@ -174,7 +174,8 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
         bool allowSetController = address(currentController) == address(0)
             || !currentController.supportsInterface(type(IJBDirectoryAccessControl).interfaceId)
             ? true
-            : IJBDirectoryAccessControl(address(currentController)).setControllerAllowed(projectId);
+            : IJBDirectoryAccessControl(address(currentController)).setControllerAllowed(uint32(projectId)); // TODO:
+            // CHANGE!
 
         // Setting controller is allowed if called from the current controller,
         // OR if the project doesn't have a current controller,
@@ -210,7 +211,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
 
         // Get a reference to the flag indicating if the project is allowed to set terminals.
         bool allowSetTerminals = !controller.supportsInterface(type(IJBDirectoryAccessControl).interfaceId)
-            || IJBDirectoryAccessControl(address(controller)).setTerminalsAllowed(projectId);
+            || IJBDirectoryAccessControl(address(controller)).setTerminalsAllowed(uint32(projectId)); // TODO: CHANGE!
 
         // Setting terminals must be allowed if not called from the current controller.
         if (msg.sender != address(controllerOf[projectId]) && !allowSetTerminals) {
@@ -297,7 +298,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
 
         // Get a reference to the flag indicating if the project is allowed to set terminals.
         bool allowSetTerminals = !controller.supportsInterface(type(IJBDirectoryAccessControl).interfaceId)
-            || IJBDirectoryAccessControl(address(controller)).setTerminalsAllowed(projectId);
+            || IJBDirectoryAccessControl(address(controller)).setTerminalsAllowed(uint32(projectId)); // TODO: CHANGE!
 
         // Setting terminals must be allowed if not called from the current controller.
         if (msg.sender != address(controllerOf[projectId]) && !allowSetTerminals) {

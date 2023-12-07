@@ -7,7 +7,7 @@ import {PermitSignature} from "@permit2/test/utils/PermitSignature.sol";
 import {MockPriceFeed} from "./mock/MockPriceFeed.sol";
 
 contract TestPermit2Terminal_Local is TestBaseWorkflow, PermitSignature {
-    uint256 private constant _WEIGHT = 1000 * 10 ** 18;
+    uint88 private constant _WEIGHT = 1000 * 10 ** 18;
 
     IJBController private _controller;
     IJBTerminal private _terminal;

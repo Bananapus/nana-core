@@ -8,8 +8,8 @@ import {MockPriceFeed} from "./mock/MockPriceFeed.sol";
 contract TestRulesetWeightCaching_Local is TestBaseWorkflow {
     uint256 private constant _GAS_LIMIT = 30_000_000;
     uint8 private constant _WEIGHT_DECIMALS = 18; // FIXED
-    uint256 private constant _DURATION = 1;
-    uint256 private constant _DECAY_RATE = 1;
+    uint32 private constant _DURATION = 1;
+    uint32 private constant _DECAY_RATE = 1;
 
     IJBController private _controller;
     IJBRulesets private _rulesets;
@@ -26,7 +26,7 @@ contract TestRulesetWeightCaching_Local is TestBaseWorkflow {
         _controller = jbController();
         _data = JBRulesetData({
             duration: _DURATION,
-            weight: 1000 * 10 ** _WEIGHT_DECIMALS,
+            weight: uint88(1000 * 10 ** _WEIGHT_DECIMALS),
             decayRate: _DECAY_RATE,
             hook: IJBRulesetApprovalHook(address(0))
         });

@@ -97,7 +97,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     /// @param projectId The ID of the project to get the total token supply of.
     /// @return The current total token supply of the project, including pending reserved tokens that have not been sent
     /// to splits yet.
-    function totalTokenSupplyWithReservedTokensOf(uint256 projectId) external view override returns (uint256) {
+    function totalTokenSupplyWithReservedTokensOf(uint32 projectId) external view override returns (uint256) {
         // Add the reserved tokens to the total supply.
         return TOKENS.totalSupplyOf(projectId) + pendingReservedTokenBalanceOf[projectId];
     }
@@ -107,7 +107,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     /// @return ruleset The ruleset as a `JBRuleset` struct.
     /// @return metadata The ruleset's metadata as a `JBRulesetMetadata` struct.
     function getRulesetOf(
-        uint256 projectId,
+        uint32 projectId,
         uint256 rulesetId
     )
         external
@@ -125,7 +125,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     /// @return ruleset The latest queued ruleset as a `JBRuleset` struct.
     /// @return metadata The latest queued ruleset's metadata as a `JBRulesetMetadata` struct.
     /// @return approvalStatus The approval status of the ruleset.
-    function latestQueuedRulesetOf(uint256 projectId)
+    function latestQueuedRulesetOf(uint32 projectId)
         external
         view
         override
@@ -139,7 +139,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     /// @param projectId The ID of the project the ruleset belongs to.
     /// @return ruleset The current ruleset as a `JBRuleset` struct.
     /// @return metadata The current ruleset's metadata as a `JBRulesetMetadata` struct.
-    function currentRulesetOf(uint256 projectId)
+    function currentRulesetOf(uint32 projectId)
         external
         view
         override
@@ -153,7 +153,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     /// @param projectId The ID of the project the ruleset belongs to.
     /// @return ruleset The queued ruleset as a `JBRuleset` struct.
     /// @return metadata The queued ruleset's metadata as a `JBRulesetMetadata` struct.
-    function queuedRulesetOf(uint256 projectId)
+    function queuedRulesetOf(uint32 projectId)
         external
         view
         override
@@ -166,14 +166,14 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     /// @notice A flag indicating if the project currently allows terminals to be set.
     /// @param projectId The ID of the project the flag is for.
     /// @return The flag
-    function setTerminalsAllowed(uint256 projectId) external view returns (bool) {
+    function setTerminalsAllowed(uint32 projectId) external view returns (bool) {
         return RULESETS.currentOf(projectId).expandMetadata().allowSetTerminals;
     }
 
     /// @notice A flag indicating if the project currently allows its controller to be set.
     /// @param projectId The ID of the project the flag is for.
     /// @return The flag
-    function setControllerAllowed(uint256 projectId) external view returns (bool) {
+    function setControllerAllowed(uint32 projectId) external view returns (bool) {
         return RULESETS.currentOf(projectId).expandMetadata().allowSetController;
     }
 
@@ -249,10 +249,10 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         external
         virtual
         override
-        returns (uint256 projectId)
+        returns (uint32 projectId)
     {
         // Mint the project into the wallet of the owner.
-        projectId = PROJECTS.createFor(owner);
+        projectId = uint32(PROJECTS.createFor(owner));
 
         // Set project metadata if one was provided.
         if (bytes(projectMetadata).length > 0) {
@@ -281,7 +281,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     /// @param memo A memo to pass along to the emitted event.
     /// @return rulesetId The ID of the ruleset that was successfully launched.
     function launchRulesetsFor(
-        uint256 projectId,
+        uint32 projectId,
         JBRulesetConfig[] calldata rulesetConfigurations,
         JBTerminalConfig[] calldata terminalConfigurations,
         string memory memo
@@ -324,7 +324,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     /// @param memo A memo to pass along to the emitted event.
     /// @return rulesetId The ID of the last ruleset which was successfully queued.
     function queueRulesetsOf(
-        uint256 projectId,
+        uint32 projectId,
         JBRulesetConfig[] calldata rulesetConfigurations,
         string calldata memo
     )
@@ -359,7 +359,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     /// @param useReservedRate Whether to use the current ruleset's reserved rate in the minting calculations.
     /// @return beneficiaryTokenCount The number of tokens minted for the beneficiary.
     function mintTokensOf(
-        uint256 projectId,
+        uint32 projectId,
         uint256 tokenCount,
         address beneficiary,
         string calldata memo,
@@ -428,7 +428,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     /// @param memo A memo to pass along to the emitted event.
     function burnTokensOf(
         address holder,
-        uint256 projectId,
+        uint32 projectId,
         uint256 tokenCount,
         string calldata memo
     )
@@ -460,7 +460,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     /// @param memo A memo to pass along to the emitted event.
     /// @return The amount of reserved tokens minted and sent.
     function sendReservedTokensToSplitsOf(
-        uint256 projectId,
+        uint32 projectId,
         string calldata memo
     )
         external
@@ -475,7 +475,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     /// @dev This controller should not yet be the project's controller.
     /// @param from The controller being migrated from.
     /// @param projectId The ID of the project that will be migrated to this controller.
-    function receiveMigrationFrom(IERC165 from, uint256 projectId) external virtual override {
+    function receiveMigrationFrom(IERC165 from, uint32 projectId) external virtual override {
         projectId; // Prevents unused var compiler and natspec complaints.
         from; // Prevents unused var compiler and natspec complaints.
 
@@ -493,7 +493,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     /// it.
     /// @param projectId The ID of the project that will be migrated from this controller.
     /// @param to The controller the project is migrating to.
-    function migrateController(uint256 projectId, IJBMigratable to) external virtual override {
+    function migrateController(uint32 projectId, IJBMigratable to) external virtual override {
         // Enforce permissions.
         _requirePermission({
             account: PROJECTS.ownerOf(projectId),
@@ -525,7 +525,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     /// @dev Frontends typically use an IPFS hash for the metadata content.
     /// @param projectId The ID of the project to set the metadata of.
     /// @param metadata The metadata content to set.
-    function setMetadataOf(uint256 projectId, string calldata metadata) external override {
+    function setMetadataOf(uint32 projectId, string calldata metadata) external override {
         // Enforce permissions.
         _requirePermission({
             account: PROJECTS.ownerOf(projectId),
@@ -547,7 +547,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     /// @param domainId The ID of the domain the split groups should be active in (this is often a `rulesetId`).
     /// @param splitGroups An array of split groups to set.
     function setSplitGroupsOf(
-        uint256 projectId,
+        uint32 projectId,
         uint256 domainId,
         JBSplitGroup[] calldata splitGroups
     )
@@ -574,7 +574,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     /// @param symbol The ERC-20's symbol.
     /// @return token The address of the token that was deployed.
     function deployERC20For(
-        uint256 projectId,
+        uint32 projectId,
         string calldata name,
         string calldata symbol
     )
@@ -597,7 +597,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     /// @dev Only a project's owner or an operator with `SET_TOKEN` permission from the owner can set its token.
     /// @param projectId The ID of the project to set the token of.
     /// @param token The new token's address.
-    function setTokenFor(uint256 projectId, IJBToken token) external virtual override {
+    function setTokenFor(uint32 projectId, IJBToken token) external virtual override {
         // Enforce permissions.
         _requirePermission({
             account: PROJECTS.ownerOf(projectId),
@@ -617,7 +617,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     /// @param beneficiary The account into which the claimed tokens will go.
     function claimTokensFor(
         address holder,
-        uint256 projectId,
+        uint32 projectId,
         uint256 amount,
         address beneficiary
     )
@@ -640,7 +640,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     /// @param amount The amount of credits to transfer.
     function transferCreditsFrom(
         address holder,
-        uint256 projectId,
+        uint32 projectId,
         address recipient,
         uint256 amount
     )
@@ -686,13 +686,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     /// @param projectId The ID of the project the reserved tokens belong to.
     /// @param memo A memo to pass along to the emitted event.
     /// @return tokenCount The number of reserved tokens minted/sent.
-    function _sendReservedTokensToSplitsOf(
-        uint256 projectId,
-        string memory memo
-    )
-        private
-        returns (uint256 tokenCount)
-    {
+    function _sendReservedTokensToSplitsOf(uint32 projectId, string memory memo) private returns (uint256 tokenCount) {
         // Get the current ruleset to read the reserved rate from.
         JBRuleset memory ruleset = RULESETS.currentOf(projectId);
 
@@ -729,7 +723,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     /// @param amount The total number of tokens to sent.
     /// @return leftoverAmount If the splits percents dont add up to 100%, the leftover amount is returned.
     function _sendTokensToSplitGroupOf(
-        uint256 projectId,
+        uint32 projectId,
         uint256 domain,
         uint256 groupId,
         uint256 amount
@@ -793,7 +787,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     /// @param rulesetConfigurations Configurations for the rulesets being queued.
     /// @return rulesetId The ID of the last ruleset that was successfully queued.
     function _queueRulesets(
-        uint256 projectId,
+        uint32 projectId,
         JBRulesetConfig[] calldata rulesetConfigurations
     )
         private
@@ -848,7 +842,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     /// @notice Configure terminals for use.
     /// @param projectId The ID of the project configuring the terminals for use.
     /// @param terminalConfigs The terminal configurations to enact.
-    function _configureTerminals(uint256 projectId, JBTerminalConfig[] calldata terminalConfigs) private {
+    function _configureTerminals(uint32 projectId, JBTerminalConfig[] calldata terminalConfigs) private {
         // Keep a reference to the number of terminals being configured.
         uint256 numberOfTerminalConfigs = terminalConfigs.length;
 

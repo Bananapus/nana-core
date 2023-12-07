@@ -11,7 +11,7 @@ contract TestRedeem_Local is TestBaseWorkflow {
     JBTokens private _tokens;
     JBRulesetData private _data;
     JBRulesetMetadata _metadata;
-    uint256 private _projectId;
+    uint32 private _projectId;
     address private _projectOwner;
     address private _beneficiary;
 

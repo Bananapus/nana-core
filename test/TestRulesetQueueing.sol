@@ -14,8 +14,8 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
     JBFundAccessLimitGroup[] private _fundAccessLimitGroup;
     IJBTerminal private _terminal;
 
-    uint256 private _DEADLINE_DURATION = 3 days;
-    uint256 private _RULESET_DURATION = 6;
+    uint32 private _DEADLINE_DURATION = 3 days;
+    uint32 private _RULESET_DURATION = 6;
 
     function setUp() public override {
         super.setUp();
@@ -25,13 +25,13 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
 
         _deadline = new JBDeadline(_DEADLINE_DURATION);
         _data = JBRulesetData({
-            duration: _RULESET_DURATION * 1 days,
+            duration: _RULESET_DURATION * uint32(1 days),
             weight: 1000 * 10 ** 18,
             decayRate: 0,
             hook: _deadline
         });
         _dataQueue = JBRulesetData({
-            duration: _RULESET_DURATION * 1 days,
+            duration: _RULESET_DURATION * uint32(1 days),
             weight: 69 * 10 ** 18,
             decayRate: 0,
             hook: JBDeadline(address(0))
@@ -95,7 +95,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         _rulesetConfig[0].fundAccessLimitGroups = _fundAccessLimitGroup;
 
         // Deploy a project.
-        uint256 projectId = launchProjectForTest();
+        uint32 projectId = uint32(launchProjectForTest());
 
         // Keep a reference to the current ruleset.
         JBRuleset memory _ruleset = jbRulesets().currentOf(projectId);
@@ -134,11 +134,11 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
 
     function testMultipleQueuedOnCycledOver() public {
         // Keep references to two different weights.
-        uint256 _weightFirstQueued = 1234 * 10 ** 18;
-        uint256 _weightSecondQueued = 6969 * 10 ** 18;
+        uint88 _weightFirstQueued = 1234 * 10 ** 18;
+        uint88 _weightSecondQueued = 6969 * 10 ** 18;
 
         // Launch a project.
-        uint256 projectId = launchProjectForTest();
+        uint32 projectId = uint32(launchProjectForTest());
 
         // Keep a reference to the current ruleset.
         JBRuleset memory _ruleset = jbRulesets().currentOf(projectId);
@@ -157,7 +157,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         JBRulesetConfig[] memory _firstQueued = new JBRulesetConfig[](1);
         _firstQueued[0].mustStartAtOrAfter = 0;
         _firstQueued[0].data = JBRulesetData({
-            duration: _RULESET_DURATION * 1 days,
+            duration: uint32(_RULESET_DURATION * 1 days),
             weight: _weightFirstQueued,
             decayRate: 0,
             hook: _deadline
@@ -174,7 +174,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         JBRulesetConfig[] memory _secondQueued = new JBRulesetConfig[](1);
         _secondQueued[0].mustStartAtOrAfter = 0;
         _secondQueued[0].data = JBRulesetData({
-            duration: _RULESET_DURATION * 1 days,
+            duration: uint32(_RULESET_DURATION * 1 days),
             weight: _weightSecondQueued,
             decayRate: 0,
             hook: _deadline
@@ -220,8 +220,12 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         _deadline = new JBDeadline(_deadlineDuration);
 
         // Package the ruleset data.
-        _data =
-            JBRulesetData({duration: _RULESET_DURATION * 1 days, weight: 10_000 ether, decayRate: 0, hook: _deadline});
+        _data = JBRulesetData({
+            duration: uint32(_RULESET_DURATION * 1 days),
+            weight: 10_000 ether,
+            decayRate: 0,
+            hook: _deadline
+        });
         JBRulesetConfig[] memory _rulesetConfig = new JBRulesetConfig[](1);
         _rulesetConfig[0].mustStartAtOrAfter = 0;
         _rulesetConfig[0].data = _data;
@@ -230,7 +234,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         _rulesetConfig[0].fundAccessLimitGroups = _fundAccessLimitGroup;
 
         // Launch a project to test.
-        uint256 projectId = launchProjectForTest();
+        uint32 projectId = uint32(launchProjectForTest());
 
         // Keep a reference to the initial, current, and queued rulesets.
         JBRuleset memory initialRuleset = jbRulesets().currentOf(projectId);
@@ -246,8 +250,8 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
 
             // Package up a new ruleset with a decremented weight.
             _data = JBRulesetData({
-                duration: _RULESET_DURATION * 1 days,
-                weight: initialRuleset.weight - (i + 1), // i+1 -> next ruleset
+                duration: uint32(_RULESET_DURATION * 1 days),
+                weight: uint88(initialRuleset.weight - (i + 1)), // i+1 -> next ruleset
                 decayRate: 0,
                 hook: _deadline
             });
@@ -312,11 +316,11 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         _rulesetConfig[0].fundAccessLimitGroups = _fundAccessLimitGroup;
 
         // Launch the project.
-        uint256 projectId = launchProjectForTest();
+        uint32 projectId = uint32(launchProjectForTest());
 
         // Package another with a bad approval hook.
         JBRulesetData memory _dataNew = JBRulesetData({
-            duration: _RULESET_DURATION * 1 days,
+            duration: uint32(_RULESET_DURATION * 1 days),
             weight: 12_345 * 10 ** 18,
             decayRate: 0,
             hook: IJBRulesetApprovalHook(address(6969)) // Wrong approval hook address.
@@ -336,12 +340,12 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
     }
 
     function testQueueShortDurationProject() public {
-        uint256 _shortDuration = 5 minutes;
+        uint32 _shortDuration = 5 minutes;
 
         // Package a ruleset reconfiguration.
         _data = JBRulesetData({duration: _shortDuration, weight: 10_000 * 10 ** 18, decayRate: 0, hook: _deadline});
         _dataQueue = JBRulesetData({
-            duration: _RULESET_DURATION * 1 days,
+            duration: uint32(_RULESET_DURATION * 1 days),
             weight: 69 * 10 ** 18,
             decayRate: 0,
             hook: IJBRulesetApprovalHook(address(0))
@@ -354,7 +358,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         _rulesetConfig[0].fundAccessLimitGroups = _fundAccessLimitGroup;
 
         // Launch a project to test.
-        uint256 projectId = launchProjectForTest();
+        uint32 projectId = uint32(launchProjectForTest());
 
         // Get a reference to the current ruleset.
         JBRuleset memory _ruleset = jbRulesets().currentOf(projectId);
@@ -410,7 +414,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
             hook: IJBRulesetApprovalHook(address(0))
         });
         _dataQueue = JBRulesetData({
-            duration: _RULESET_DURATION * 1 days,
+            duration: uint32(_RULESET_DURATION * 1 days),
             weight: 69 * 10 ** 18,
             decayRate: 0,
             hook: IJBRulesetApprovalHook(address(0))
@@ -423,7 +427,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         _rulesetConfig[0].fundAccessLimitGroups = _fundAccessLimitGroup;
 
         // Launch a project to test with.
-        uint256 projectId = launchProjectForTest();
+        uint32 projectId = uint32(launchProjectForTest());
 
         // Get a reference to the current ruleset.
         JBRuleset memory _ruleset = jbRulesets().currentOf(projectId);
@@ -458,9 +462,9 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
 
     function testMixedStarts() public {
         // Keep references to our different weights for assertions.
-        uint256 _weightInitial = 1000 * 10 ** 18;
-        uint256 _weightFirstQueued = 1234 * 10 ** 18;
-        uint256 _weightSecondQueued = 6969 * 10 ** 18;
+        uint88 _weightInitial = 1000 * 10 ** 18;
+        uint88 _weightFirstQueued = 1234 * 10 ** 18;
+        uint88 _weightSecondQueued = 6969 * 10 ** 18;
 
         // Keep a reference to the expected ruleset IDs (timestamps).
         uint256 _initialRulesetId = block.timestamp;
@@ -468,15 +472,19 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         // Package up a config.
         JBRulesetConfig[] memory _rulesetConfig = new JBRulesetConfig[](1);
         _rulesetConfig[0].mustStartAtOrAfter = 0;
-        _rulesetConfig[0].data =
-            JBRulesetData({duration: _RULESET_DURATION * 1 days, weight: _weightInitial, decayRate: 0, hook: _deadline}); // 3
+        _rulesetConfig[0].data = JBRulesetData({
+            duration: uint32(_RULESET_DURATION * 1 days),
+            weight: _weightInitial,
+            decayRate: 0,
+            hook: _deadline
+        }); // 3
             // day deadline duration.
         _rulesetConfig[0].metadata = _metadata;
         _rulesetConfig[0].splitGroups = _splitGroup;
         _rulesetConfig[0].fundAccessLimitGroups = _fundAccessLimitGroup;
 
         // Launch the project to test with.
-        uint256 projectId = launchProjectForTest();
+        uint32 projectId = uint32(launchProjectForTest());
 
         // Get the ruleset.
         JBRuleset memory _ruleset = jbRulesets().currentOf(projectId);
@@ -490,7 +498,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         JBRulesetConfig[] memory _firstQueued = new JBRulesetConfig[](1);
         _firstQueued[0].mustStartAtOrAfter = 0;
         _firstQueued[0].data = JBRulesetData({
-            duration: _RULESET_DURATION * 1 days,
+            duration: uint32(_RULESET_DURATION * 1 days),
             weight: _weightFirstQueued,
             decayRate: 0,
             hook: _deadline
@@ -511,9 +519,9 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
 
         // Package up another config.
         JBRulesetConfig[] memory _secondQueued = new JBRulesetConfig[](1);
-        _secondQueued[0].mustStartAtOrAfter = block.timestamp + 9 days;
+        _secondQueued[0].mustStartAtOrAfter = uint40(block.timestamp + 9 days);
         _secondQueued[0].data = JBRulesetData({
-            duration: _RULESET_DURATION * 1 days,
+            duration: uint32(_RULESET_DURATION * 1 days),
             weight: _weightSecondQueued,
             decayRate: 0,
             hook: _deadline
@@ -553,8 +561,8 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
 
     function testSingleBlockOverwriteQueued() public {
         // Keep references to our different weights for assertions.
-        uint256 _weightFirstQueued = 1234 * 10 ** 18;
-        uint256 _weightSecondQueued = 6969 * 10 ** 18;
+        uint88 _weightFirstQueued = 1234 * 10 ** 18;
+        uint88 _weightSecondQueued = 6969 * 10 ** 18;
 
         // Keep a reference to the expected ruleset ID (timestamp) after queuing, starting now, incremented later
         // in-line for readability.
@@ -569,7 +577,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         _rulesetConfig[0].fundAccessLimitGroups = _fundAccessLimitGroup;
 
         // Deploy a project to test.
-        uint256 projectId = launchProjectForTest();
+        uint32 projectId = uint32(launchProjectForTest());
 
         // Keep a reference to the current ruleset.
         JBRuleset memory _ruleset = jbRulesets().currentOf(projectId);
@@ -581,9 +589,9 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
 
         // Package up another config.
         JBRulesetConfig[] memory _firstQueued = new JBRulesetConfig[](1);
-        _firstQueued[0].mustStartAtOrAfter = block.timestamp + 3 days;
+        _firstQueued[0].mustStartAtOrAfter = uint32(block.timestamp + 3 days);
         _firstQueued[0].data = JBRulesetData({
-            duration: _RULESET_DURATION * 1 days,
+            duration: uint32(_RULESET_DURATION * 1 days),
             weight: _weightFirstQueued,
             decayRate: 0,
             hook: _deadline
@@ -606,9 +614,9 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         // Package up another config to overwrite.
         JBRulesetConfig[] memory _secondQueued = new JBRulesetConfig[](1);
 
-        _secondQueued[0].mustStartAtOrAfter = block.timestamp + _DEADLINE_DURATION;
+        _secondQueued[0].mustStartAtOrAfter = uint32(block.timestamp + _DEADLINE_DURATION);
         _secondQueued[0].data = JBRulesetData({
-            duration: _RULESET_DURATION * 1 days,
+            duration: uint32(_RULESET_DURATION * 1 days),
             weight: _weightSecondQueued,
             decayRate: 0,
             hook: _deadline
