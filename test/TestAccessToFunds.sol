@@ -139,8 +139,11 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
         // Hardcode values to use.
         uint256 _nativeCurrencyPayoutLimit = 10 * 10 ** _NATIVE_DECIMALS;
         uint256 _nativeCurrencySurplusAllowance = 5 * 10 ** _NATIVE_DECIMALS;
+        bool _deployTwoProjects = true;
+        bool _feeProjectAcceptsToken = true;
+        bool _noRulesetForFeeProject = false;
 
-        _projectId = deployProject(_nativeCurrencyPayoutLimit, _nativeCurrencySurplusAllowance, true, true, false);
+        _projectId = deployProject(_nativeCurrencyPayoutLimit, _nativeCurrencySurplusAllowance, _deployTwoProjects, _feeProjectAcceptsToken, _noRulesetForFeeProject);
 
         // Get a reference to the amount being paid.
         // The amount being paid is the payout limit plus two times the surplus allowance.
@@ -300,6 +303,10 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
     )
         public
     {
+        bool _deployTwoProjects = true;
+        bool _feeProjectAcceptsToken = true;
+        bool _noRulesetForFeeProject = false;
+
         // Make sure the amount of native tokens to pay is bounded.
         _nativePayAmount = bound(_nativePayAmount, 0, 1_000_000 * 10 ** _NATIVE_DECIMALS);
 
@@ -311,7 +318,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             );
         }
         
-        _projectId = deployProject(_nativeCurrencyPayoutLimit, _nativeCurrencySurplusAllowance, true, true, false);
+        _projectId = deployProject(_nativeCurrencyPayoutLimit, _nativeCurrencySurplusAllowance, _deployTwoProjects, _feeProjectAcceptsToken, _noRulesetForFeeProject);
 
         // Make a payment to the test project to give it a starting balance. Send the tokens to the `_beneficiary`.
         _terminal.pay{value: _nativePayAmount}({
@@ -506,6 +513,10 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
     )
         public
     {
+        bool _deployTwoProjects = true;
+        bool _feeProjectAcceptsToken = true;
+        bool _noRulesetForFeeProject = true;
+
         // Make sure the amount of native tokens to pay is bounded.
         _nativePayAmount = bound(_nativePayAmount, 0, 1_000_000 * 10 ** _NATIVE_DECIMALS);
 
@@ -517,7 +528,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             );
         }
 
-        _projectId = deployProject(_nativeCurrencyPayoutLimit, _nativeCurrencySurplusAllowance, true, true, true);
+        _projectId = deployProject(_nativeCurrencyPayoutLimit, _nativeCurrencySurplusAllowance, _deployTwoProjects, _feeProjectAcceptsToken, _noRulesetForFeeProject);
 
         // Make a payment to the project to give it a starting balance. Send the tokens to the `_beneficiary`.
         _terminal.pay{value: _nativePayAmount}({
@@ -692,6 +703,10 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
     )
         public
     {
+        bool _deployTwoProjects = false;
+        bool _feeProjectAcceptsToken = false;
+        bool _noRulesetForFeeProject = false;
+
         // Make sure the amount of native tokens to pay is bounded.
         _nativePayAmount = bound(_nativePayAmount, 0, 1_000_000 * 10 ** _NATIVE_DECIMALS);
 
@@ -703,7 +718,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             );
         }
 
-        _projectId = deployProject(_nativeCurrencyPayoutLimit, _nativeCurrencySurplusAllowance, false, false, false);
+        _projectId = deployProject(_nativeCurrencyPayoutLimit, _nativeCurrencySurplusAllowance, _deployTwoProjects, _feeProjectAcceptsToken, _noRulesetForFeeProject);
 
         // Make a payment to the project to give it a starting balance. Send the tokens to the `_beneficiary`.
         _terminal.pay{value: _nativePayAmount}({
