@@ -30,6 +30,6 @@ struct JBSplit {
     uint32 percent;
     uint32 projectId;
     address payable beneficiary;
-    uint48 lockedUntil;
+    uint40 lockedUntil;
     IJBSplitHook hook;
 }

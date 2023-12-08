@@ -187,10 +187,10 @@ contract JBSplits is JBControlled, IJBSplits {
                 // `lockedUntil` should fit within a uint48
                 if (splits[i].lockedUntil > type(uint48).max) revert INVALID_LOCKED_UNTIL();
 
-                // Pack `lockedUntil` in bits 0-47.
-                uint256 packedSplitParts2 = uint48(splits[i].lockedUntil);
-                // Pack `hook` in bits 48-207.
-                packedSplitParts2 |= uint256(uint160(address(splits[i].hook))) << 48;
+                // Pack `lockedUntil` in bits 0-39.
+                uint256 packedSplitParts2 = uint40(splits[i].lockedUntil);
+                // Pack `hook` in bits 40-199.
+                packedSplitParts2 |= uint256(uint160(address(splits[i].hook))) << 40;
 
                 // Store the second split part.
                 _packedSplitParts2Of[projectId][domainId][groupId][i] = packedSplitParts2;
@@ -271,10 +271,10 @@ contract JBSplits is JBControlled, IJBSplits {
 
             // If there's anything in it, unpack.
             if (packedSplitPart2 > 0) {
-                // `lockedUntil` in bits 0-47.
-                split.lockedUntil = uint48(packedSplitPart2);
-                // `hook` in bits 48-207.
-                split.hook = IJBSplitHook(address(uint160(packedSplitPart2 >> 48)));
+                // `lockedUntil` in bits 0-39.
+                split.lockedUntil = uint40(packedSplitPart2);
+                // `hook` in bits 40-199.
+                split.hook = IJBSplitHook(address(uint160(packedSplitPart2 >> 40)));
             }
 
             // Add the split to the value being returned.
