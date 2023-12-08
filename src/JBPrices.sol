@@ -22,11 +22,11 @@ contract JBPrices is Ownable, JBPermissioned, IJBPrices {
     error PRICE_FEED_NOT_FOUND();
 
     //*********************************************************************//
-    // ------------------------- public constants ------------------------ //
+    // ------------------------ private constants ------------------------ //
     //*********************************************************************//
 
     /// @notice The ID to store default values in.
-    uint256 public constant override DEFAULT_PROJECT_ID = 0;
+    uint32 private constant _DEFAULT_PROJECT_ID = 0;
 
     //*********************************************************************//
     // ---------------- public immutable stored properties --------------- //
@@ -45,7 +45,7 @@ contract JBPrices is Ownable, JBPermissioned, IJBPrices {
     /// all projects.
     /// @custom:param pricingCurrency The currency the feed's resulting price is in terms of.
     /// @custom:param unitCurrency The currency being priced by the feed.
-    mapping(uint256 projectId => mapping(uint256 pricingCurrency => mapping(uint256 unitCurrency => IJBPriceFeed)))
+    mapping(uint32 projectId => mapping(uint256 pricingCurrency => mapping(uint256 unitCurrency => IJBPriceFeed)))
         public
         override priceFeedFor;
 
@@ -62,7 +62,7 @@ contract JBPrices is Ownable, JBPermissioned, IJBPrices {
     /// @return The `pricingCurrency` price of 1 `unitCurrency`, as a fixed point number with the specified number of
     /// decimals.
     function pricePerUnitOf(
-        uint256 projectId,
+        uint32 projectId,
         uint256 pricingCurrency,
         uint256 unitCurrency,
         uint256 decimals
@@ -91,9 +91,9 @@ contract JBPrices is Ownable, JBPermissioned, IJBPrices {
         }
 
         // Check for a default feed (project ID 0) if not found.
-        if (projectId != DEFAULT_PROJECT_ID) {
+        if (projectId != _DEFAULT_PROJECT_ID) {
             return pricePerUnitOf({
-                projectId: DEFAULT_PROJECT_ID,
+                projectId: _DEFAULT_PROJECT_ID,
                 pricingCurrency: pricingCurrency,
                 unitCurrency: unitCurrency,
                 decimals: decimals
@@ -132,7 +132,7 @@ contract JBPrices is Ownable, JBPermissioned, IJBPrices {
     /// @param unitCurrency The currency being priced by the feed.
     /// @param feed The price feed being added.
     function addPriceFeedFor(
-        uint256 projectId,
+        uint32 projectId,
         uint256 pricingCurrency,
         uint256 unitCurrency,
         IJBPriceFeed feed
@@ -144,7 +144,7 @@ contract JBPrices is Ownable, JBPermissioned, IJBPrices {
         // permissions necessary.
         // Otherwise, only a project's owner or an operator with the `ADD_PRICE_FEED` permission from that owner can add
         // a feed for a project.
-        if (projectId != DEFAULT_PROJECT_ID || msg.sender != owner()) {
+        if (projectId != _DEFAULT_PROJECT_ID || msg.sender != owner()) {
             _requirePermission({
                 account: PROJECTS.ownerOf(projectId),
                 projectId: projectId,
@@ -157,8 +157,8 @@ contract JBPrices is Ownable, JBPermissioned, IJBPrices {
 
         // Make sure there aren't default feeds for the pair or its inverse.
         if (
-            priceFeedFor[DEFAULT_PROJECT_ID][pricingCurrency][unitCurrency] != IJBPriceFeed(address(0))
-                || priceFeedFor[DEFAULT_PROJECT_ID][unitCurrency][pricingCurrency] != IJBPriceFeed(address(0))
+            priceFeedFor[_DEFAULT_PROJECT_ID][pricingCurrency][unitCurrency] != IJBPriceFeed(address(0))
+                || priceFeedFor[_DEFAULT_PROJECT_ID][unitCurrency][pricingCurrency] != IJBPriceFeed(address(0))
         ) {
             revert PRICE_FEED_ALREADY_EXISTS();
         }

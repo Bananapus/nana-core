@@ -10,7 +10,7 @@ interface IJBPayoutTerminal is IJBTerminal {
     event SendPayouts(
         uint256 indexed rulesetId,
         uint256 indexed rulesetCycleNumber,
-        uint256 indexed projectId,
+        uint32 indexed projectId,
         address beneficiary,
         uint256 amount,
         uint256 amountPaidOut,
@@ -20,7 +20,7 @@ interface IJBPayoutTerminal is IJBTerminal {
     );
 
     event SendPayoutToSplit(
-        uint256 indexed projectId,
+        uint32 indexed projectId,
         uint256 indexed domain,
         uint256 indexed group,
         JBSplit split,
@@ -32,7 +32,7 @@ interface IJBPayoutTerminal is IJBTerminal {
     event UseAllowance(
         uint256 indexed rulesetId,
         uint256 indexed rulesetCycleNumber,
-        uint256 indexed projectId,
+        uint32 indexed projectId,
         address beneficiary,
         uint256 amount,
         uint256 amountPaidOut,
@@ -41,10 +41,10 @@ interface IJBPayoutTerminal is IJBTerminal {
         address caller
     );
 
-    event PayoutReverted(uint256 indexed projectId, JBSplit split, uint256 amount, bytes reason, address caller);
+    event PayoutReverted(uint32 indexed projectId, JBSplit split, uint256 amount, bytes reason, address caller);
 
     function sendPayoutsOf(
-        uint256 projectId,
+        uint32 projectId,
         address token,
         uint256 amount,
         uint256 currency,
@@ -54,7 +54,7 @@ interface IJBPayoutTerminal is IJBTerminal {
         returns (uint256 netLeftoverPayoutAmount);
 
     function useAllowanceOf(
-        uint256 projectId,
+        uint32 projectId,
         address token,
         uint256 amount,
         uint256 currency,

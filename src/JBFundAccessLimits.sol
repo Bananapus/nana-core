@@ -36,7 +36,7 @@ contract JBFundAccessLimits is JBControlled, ERC165, IJBFundAccessLimits {
     /// @custom:param terminal The terminal the payouts are being limited in.
     /// @custom:param token The token payouts are being limited for.
     mapping(
-        uint256 projectId
+        uint32 projectId
             => mapping(uint256 rulesetId => mapping(address terminal => mapping(address token => uint256[])))
     ) private _packedPayoutLimitsDataOf;
 
@@ -50,7 +50,7 @@ contract JBFundAccessLimits is JBControlled, ERC165, IJBFundAccessLimits {
     /// @custom:param terminal The terminal the surplus allowance comes from.
     /// @custom:param token The token that the surplus allowance applies to.
     mapping(
-        uint256 projectId
+        uint32 projectId
             => mapping(uint256 rulesetId => mapping(address terminal => mapping(address token => uint256[])))
     ) private _packedSurplusAllowancesDataOf;
 
@@ -69,7 +69,7 @@ contract JBFundAccessLimits is JBControlled, ERC165, IJBFundAccessLimits {
     /// @param token The token the payout limits apply to.
     /// @return payoutLimits The payout limits.
     function payoutLimitsOf(
-        uint256 projectId,
+        uint32 projectId,
         uint256 rulesetId,
         address terminal,
         address token
@@ -114,7 +114,7 @@ contract JBFundAccessLimits is JBControlled, ERC165, IJBFundAccessLimits {
     /// @return payoutLimit The payout limit, as a fixed point number with the same number of decimals as the provided
     /// terminal.
     function payoutLimitOf(
-        uint256 projectId,
+        uint32 projectId,
         uint256 rulesetId,
         address terminal,
         address token,
@@ -157,7 +157,7 @@ contract JBFundAccessLimits is JBControlled, ERC165, IJBFundAccessLimits {
     /// @param token The token the surplus allowances applies to.
     /// @return surplusAllowances The surplus allowances.
     function surplusAllowancesOf(
-        uint256 projectId,
+        uint32 projectId,
         uint256 rulesetId,
         address terminal,
         address token
@@ -203,7 +203,7 @@ contract JBFundAccessLimits is JBControlled, ERC165, IJBFundAccessLimits {
     /// @return surplusAllowance The surplus allowance, as a fixed point number with the same number of decimals as the
     /// provided terminal.
     function surplusAllowanceOf(
-        uint256 projectId,
+        uint32 projectId,
         uint256 rulesetId,
         address terminal,
         address token,
@@ -256,7 +256,7 @@ contract JBFundAccessLimits is JBControlled, ERC165, IJBFundAccessLimits {
     /// @param fundAccessLimitGroup An array containing payout limits and surplus allowances for each payment terminal.
     /// Amounts are fixed point numbers using the same number of decimals as the accompanying terminal.
     function setFundAccessLimitsFor(
-        uint256 projectId,
+        uint32 projectId,
         uint256 rulesetId,
         JBFundAccessLimitGroup[] calldata fundAccessLimitGroup
     )

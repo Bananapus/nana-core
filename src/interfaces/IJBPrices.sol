@@ -10,12 +10,10 @@ interface IJBPrices {
         uint256 indexed projectId, uint256 indexed pricingCurrency, uint256 indexed unitCurrency, IJBPriceFeed feed
     );
 
-    function DEFAULT_PROJECT_ID() external view returns (uint256);
-
     function PROJECTS() external view returns (IJBProjects);
 
     function priceFeedFor(
-        uint256 projectId,
+        uint32 projectId,
         uint256 pricingCurrency,
         uint256 unitCurrency
     )
@@ -24,7 +22,7 @@ interface IJBPrices {
         returns (IJBPriceFeed);
 
     function pricePerUnitOf(
-        uint256 projectId,
+        uint32 projectId,
         uint256 pricingCurrency,
         uint256 unitCurrency,
         uint256 decimals
@@ -34,7 +32,7 @@ interface IJBPrices {
         returns (uint256);
 
     function addPriceFeedFor(
-        uint256 projectId,
+        uint32 projectId,
         uint256 pricingCurrency,
         uint256 unitCurrency,
         IJBPriceFeed priceFeed

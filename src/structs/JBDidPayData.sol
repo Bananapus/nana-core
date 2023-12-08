@@ -17,7 +17,7 @@ import {JBTokenAmount} from "./JBTokenAmount.sol";
 /// @custom:member payerMetadata Extra data specified by the payer, which is sent to the pay hook.
 struct JBDidPayData {
     address payer;
-    uint256 projectId;
+    uint32 projectId;
     uint256 rulesetId;
     JBTokenAmount amount;
     JBTokenAmount forwardedAmount;

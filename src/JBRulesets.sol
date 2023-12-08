@@ -49,7 +49,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
     /// "changeable" cycle.
     /// @custom:param projectId The ID of the project to get the latest ruleset ID of.
     /// @return latestRulesetIdOf The `rulesetId` of the project's latest ruleset.
-    mapping(uint256 projectId => uint256) public override latestRulesetIdOf;
+    mapping(uint32 projectId => uint256) public override latestRulesetIdOf;
 
     //*********************************************************************//
     // --------------------- private stored properties ------------------- //
@@ -58,21 +58,21 @@ contract JBRulesets is JBControlled, IJBRulesets {
     /// @notice The user-defined properties of each ruleset, packed into one storage slot.
     /// @custom:param projectId The ID of the project to get the user-defined properties of.
     /// @custom:param rulesetId The ID of the ruleset to get the user-defined properties of.
-    mapping(uint256 projectId => mapping(uint256 rulesetId => uint256)) private _packedUserPropertiesOf;
+    mapping(uint32 projectId => mapping(uint256 rulesetId => uint256)) private _packedUserPropertiesOf;
 
     /// @notice The mechanism-added properties to manage and schedule each ruleset, packed into one storage slot.
     /// @custom:param projectId The ID of the project to get the intrinsic properties of.
     /// @custom:param rulesetId The ID of the ruleset to get the intrinsic properties of.
-    mapping(uint256 projectId => mapping(uint256 rulesetId => uint256)) private _packedIntrinsicPropertiesOf;
+    mapping(uint32 projectId => mapping(uint256 rulesetId => uint256)) private _packedIntrinsicPropertiesOf;
 
     /// @notice The metadata for each ruleset, packed into one storage slot.
     /// @custom:param projectId The ID of the project to get metadata of.
     /// @custom:param rulesetId The ID of the ruleset to get metadata of.
-    mapping(uint256 projectId => mapping(uint256 rulesetId => uint256)) private _metadataOf;
+    mapping(uint32 projectId => mapping(uint256 rulesetId => uint256)) private _metadataOf;
 
     /// @notice Cached weight values to derive rulesets from.
-    /// @custom:param projectId The ID of the project to which the cache applies.
-    mapping(uint256 projectId => JBRulesetWeightCache) private _weightCacheOf;
+    /// @custom:param rulesetId The ID of the cache's ruleset.
+    mapping(uint256 rulesetId => JBRulesetWeightCache) private _weightCacheOf;
 
     //*********************************************************************//
     // ------------------------- external views -------------------------- //
@@ -83,7 +83,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
     /// @param rulesetId The ID of the ruleset to get the struct of.
     /// @return ruleset The ruleset struct.
     function getRulesetOf(
-        uint256 projectId,
+        uint32 projectId,
         uint256 rulesetId
     )
         external
@@ -100,7 +100,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
     /// @param projectId The ID of the project to get the latest queued ruleset of.
     /// @return ruleset The project's latest queued ruleset's struct.
     /// @return approvalStatus The approval hook's status for the ruleset.
-    function latestQueuedRulesetOf(uint256 projectId)
+    function latestQueuedRulesetOf(uint32 projectId)
         external
         view
         override
@@ -125,7 +125,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
     /// @dev If an upcoming ruleset is not found for the project, returns an empty ruleset with all properties set to 0.
     /// @param projectId The ID of the project to get the upcoming ruleset of.
     /// @return ruleset The struct for the project's upcoming ruleset.
-    function upcomingRulesetOf(uint256 projectId) external view override returns (JBRuleset memory ruleset) {
+    function upcomingRulesetOf(uint32 projectId) external view override returns (JBRuleset memory ruleset) {
         // If the project does not have a latest ruleset, return an empty struct.
         if (latestRulesetIdOf[projectId] == 0) return _getStructFor(0, 0);
 
@@ -189,7 +189,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
     /// @dev If a current ruleset of the project is not found, returns an empty ruleset with all properties set to 0.
     /// @param projectId The ID of the project to get the current ruleset of.
     /// @return ruleset The project's current ruleset.
-    function currentOf(uint256 projectId) external view override returns (JBRuleset memory ruleset) {
+    function currentOf(uint32 projectId) external view override returns (JBRuleset memory ruleset) {
         // If the project does not have a ruleset, return an empty struct.
         if (latestRulesetIdOf[projectId] == 0) return _getStructFor(0, 0);
 
@@ -250,7 +250,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
     /// @notice The current approval status of a given project's latest ruleset.
     /// @param projectId The ID of the project to check the approval status of.
     /// @return The project's current approval status.
-    function currentApprovalStatusForLatestRulesetOf(uint256 projectId)
+    function currentApprovalStatusForLatestRulesetOf(uint32 projectId)
         external
         view
         override
@@ -291,7 +291,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
     /// timestamp.
     /// @return The struct of the new ruleset.
     function queueFor(
-        uint256 projectId,
+        uint32 projectId,
         JBRulesetData calldata data,
         uint256 metadata,
         uint256 mustStartAtOrAfter
@@ -376,7 +376,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
 
     /// @notice Cache the value of the ruleset weight.
     /// @param projectId The ID of the project having its ruleset weight cached.
-    function updateRulesetWeightCache(uint256 projectId) external override {
+    function updateRulesetWeightCache(uint32 projectId) external override {
         // Keep a reference to the struct for the latest queued ruleset.
         // The cached value will be based on this struct.
         JBRuleset memory latestQueuedRuleset = _getStructFor(projectId, latestRulesetIdOf[projectId]);
@@ -420,7 +420,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
     /// @param mustStartAtOrAfter The earliest time the ruleset can start. The ruleset cannot start before this
     /// timestamp.
     function _configureIntrinsicPropertiesFor(
-        uint256 projectId,
+        uint32 projectId,
         uint256 rulesetId,
         uint256 weight,
         uint256 mustStartAtOrAfter
@@ -500,7 +500,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
     /// timestamp.
     /// @param weight The weight to give the newly initialized ruleset.
     function _initializeRulesetFor(
-        uint256 projectId,
+        uint32 projectId,
         JBRuleset memory baseRuleset,
         uint256 rulesetId,
         uint256 mustStartAtOrAfter,
@@ -557,7 +557,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
     /// @param start The start time of this ruleset.
     function _packAndStoreIntrinsicPropertiesOf(
         uint256 rulesetId,
-        uint256 projectId,
+        uint32 projectId,
         uint256 rulesetCycleNumber,
         uint256 weight,
         uint256 basedOnId,
@@ -586,7 +586,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
     /// @dev Assumes the project has a `latestRulesetIdOf` value.
     /// @param projectId The ID of the project to check for an upcoming approvable ruleset.
     /// @return rulesetId The `rulesetId` of the upcoming approvable ruleset if one exists, or 0 if one doesn't exist.
-    function _upcomingApprovableRulesetIdOf(uint256 projectId) private view returns (uint256 rulesetId) {
+    function _upcomingApprovableRulesetIdOf(uint32 projectId) private view returns (uint256 rulesetId) {
         // Get a reference to the ID of the project's latest ruleset.
         rulesetId = latestRulesetIdOf[projectId];
 
@@ -636,7 +636,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
     /// @dev Assumes the project has a latest ruleset.
     /// @param projectId The ID of the project to check for a currently approvable ruleset.
     /// @return The ID of a currently approvable ruleset if one exists, or 0 if one doesn't exist.
-    function _currentlyApprovableRulesetIdOf(uint256 projectId) private view returns (uint256) {
+    function _currentlyApprovableRulesetIdOf(uint32 projectId) private view returns (uint256) {
         // Get a reference to the project's latest ruleset.
         uint256 rulesetId = latestRulesetIdOf[projectId];
 
@@ -815,7 +815,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
     /// @param projectId The ID of the project that the ruleset belongs to.
     /// @param ruleset The ruleset to get an approval flag for.
     /// @return The approval status of the project's ruleset.
-    function _approvalStatusOf(uint256 projectId, JBRuleset memory ruleset) private view returns (JBApprovalStatus) {
+    function _approvalStatusOf(uint32 projectId, JBRuleset memory ruleset) private view returns (JBApprovalStatus) {
         return _approvalStatusOf({
             projectId: projectId,
             rulesetId: ruleset.id,
@@ -831,7 +831,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
     /// @param approvalHookRulesetId The ID of the ruleset with the approval hook that should be checked against.
     /// @return The approval status of the project.
     function _approvalStatusOf(
-        uint256 projectId,
+        uint32 projectId,
         uint256 rulesetId,
         uint256 start,
         uint256 approvalHookRulesetId
@@ -859,7 +859,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
     /// @param projectId The ID of the project the ruleset belongs to.
     /// @param rulesetId The ID of the ruleset to get the full struct for.
     /// @return ruleset A ruleset struct.
-    function _getStructFor(uint256 projectId, uint256 rulesetId) private view returns (JBRuleset memory ruleset) {
+    function _getStructFor(uint32 projectId, uint256 rulesetId) private view returns (JBRuleset memory ruleset) {
         // Return an empty ruleset if the specified `rulesetId` is 0.
         if (rulesetId == 0) return ruleset;
 

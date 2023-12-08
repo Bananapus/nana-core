@@ -17,7 +17,7 @@ contract TestPermit2Terminal_Local is TestBaseWorkflow, PermitSignature {
     MetadataResolverHelper private _helper;
     address private _projectOwner;
 
-    uint256 _projectId;
+    uint32 _projectId;
 
     // Permit2 params.
     bytes32 DOMAIN_SEPARATOR;

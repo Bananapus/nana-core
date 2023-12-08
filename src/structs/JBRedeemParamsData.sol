@@ -22,7 +22,7 @@ import {JBTokenAmount} from "./JBTokenAmount.sol";
 struct JBRedeemParamsData {
     address terminal;
     address holder;
-    uint256 projectId;
+    uint32 projectId;
     uint256 rulesetId;
     uint256 tokenCount;
     uint256 totalSupply;

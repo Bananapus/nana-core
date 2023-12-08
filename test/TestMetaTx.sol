@@ -14,7 +14,7 @@ contract TestMetaTx_Local is TestBaseWorkflow {
     ERC2771ForwarderMock internal _erc2771Forwarder = ERC2771ForwarderMock(address(123_456));
     address private _projectOwner;
 
-    uint256 _projectId;
+    uint32 _projectId;
 
     // Meta Tx guys
     uint256 internal _signerPrivateKey;

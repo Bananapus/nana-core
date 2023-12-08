@@ -12,7 +12,7 @@ interface IJBFundAccessLimits is IERC165 {
     );
 
     function payoutLimitsOf(
-        uint256 projectId,
+        uint32 projectId,
         uint256 rulesetId,
         address terminal,
         address token
@@ -22,7 +22,7 @@ interface IJBFundAccessLimits is IERC165 {
         returns (JBCurrencyAmount[] memory payoutLimits);
 
     function payoutLimitOf(
-        uint256 projectId,
+        uint32 projectId,
         uint256 rulesetId,
         address terminal,
         address token,
@@ -33,7 +33,7 @@ interface IJBFundAccessLimits is IERC165 {
         returns (uint256 payoutLimit);
 
     function surplusAllowancesOf(
-        uint256 projectId,
+        uint32 projectId,
         uint256 rulesetId,
         address terminal,
         address token
@@ -43,7 +43,7 @@ interface IJBFundAccessLimits is IERC165 {
         returns (JBCurrencyAmount[] memory surplusAllowances);
 
     function surplusAllowanceOf(
-        uint256 projectId,
+        uint32 projectId,
         uint256 rulesetId,
         address terminal,
         address token,
@@ -54,7 +54,7 @@ interface IJBFundAccessLimits is IERC165 {
         returns (uint256 surplusAllowance);
 
     function setFundAccessLimitsFor(
-        uint256 projectId,
+        uint32 projectId,
         uint256 rulesetId,
         JBFundAccessLimitGroup[] memory fundAccessConstaints
     )

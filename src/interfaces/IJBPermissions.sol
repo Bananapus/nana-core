@@ -13,12 +13,12 @@ interface IJBPermissions {
         address caller
     );
 
-    function permissionsOf(address operator, address account, uint256 projectId) external view returns (uint256);
+    function permissionsOf(address operator, address account, uint32 projectId) external view returns (uint256);
 
     function hasPermission(
         address operator,
         address account,
-        uint256 projectId,
+        uint32 projectId,
         uint256 permissionId
     )
         external
@@ -28,7 +28,7 @@ interface IJBPermissions {
     function hasPermissions(
         address operator,
         address account,
-        uint256 projectId,
+        uint32 projectId,
         uint256[] calldata permissionIds
     )
         external

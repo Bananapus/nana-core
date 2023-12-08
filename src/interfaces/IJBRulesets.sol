@@ -18,23 +18,23 @@ interface IJBRulesets is IJBControlled {
 
     event RulesetInitialized(uint256 indexed rulesetId, uint256 indexed projectId, uint256 indexed basedOnId);
 
-    function latestRulesetIdOf(uint256 projectId) external view returns (uint256);
+    function latestRulesetIdOf(uint32 projectId) external view returns (uint256);
 
-    function getRulesetOf(uint256 projectId, uint256 rulesetId) external view returns (JBRuleset memory);
+    function getRulesetOf(uint32 projectId, uint256 rulesetId) external view returns (JBRuleset memory);
 
-    function latestQueuedRulesetOf(uint256 projectId)
+    function latestQueuedRulesetOf(uint32 projectId)
         external
         view
         returns (JBRuleset memory ruleset, JBApprovalStatus approvalStatus);
 
-    function upcomingRulesetOf(uint256 projectId) external view returns (JBRuleset memory ruleset);
+    function upcomingRulesetOf(uint32 projectId) external view returns (JBRuleset memory ruleset);
 
-    function currentOf(uint256 projectId) external view returns (JBRuleset memory ruleset);
+    function currentOf(uint32 projectId) external view returns (JBRuleset memory ruleset);
 
-    function currentApprovalStatusForLatestRulesetOf(uint256 projectId) external view returns (JBApprovalStatus);
+    function currentApprovalStatusForLatestRulesetOf(uint32 projectId) external view returns (JBApprovalStatus);
 
     function queueFor(
-        uint256 projectId,
+        uint32 projectId,
         JBRulesetData calldata data,
         uint256 metadata,
         uint256 mustStartAtOrAfter
@@ -42,5 +42,5 @@ interface IJBRulesets is IJBControlled {
         external
         returns (JBRuleset memory ruleset);
 
-    function updateRulesetWeightCache(uint256 projectId) external;
+    function updateRulesetWeightCache(uint32 projectId) external;
 }

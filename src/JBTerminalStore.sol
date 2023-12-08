@@ -72,7 +72,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     /// @custom:param terminal The terminal to get the project's balance within.
     /// @custom:param projectId The ID of the project to get the balance of.
     /// @custom:param token The token to get the balance for.
-    mapping(address terminal => mapping(uint256 projectId => mapping(address token => uint256))) public override
+    mapping(address terminal => mapping(uint32 projectId => mapping(address token => uint256))) public override
         balanceOf;
 
     /// @notice The currency-denominated amount of funds that a project has already paid out from its payout limit
@@ -88,7 +88,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     mapping(
         address terminal
             => mapping(
-                uint256 projectId
+                uint32 projectId
                     => mapping(
                         address token => mapping(uint256 rulesetCycleNumber => mapping(uint256 currency => uint256))
                     )
@@ -108,7 +108,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     mapping(
         address terminal
             => mapping(
-                uint256 projectId
+                uint32 projectId
                     => mapping(address token => mapping(uint256 rulesetId => mapping(uint256 currency => uint256)))
             )
     ) public override usedSurplusAllowanceOf;
@@ -130,7 +130,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     /// @return The current surplus amount the project has in the specified terminal.
     function currentSurplusOf(
         address terminal,
-        uint256 projectId,
+        uint32 projectId,
         JBAccountingContext[] calldata accountingContexts,
         uint256 decimals,
         uint256 currency
@@ -157,7 +157,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     /// @param currency The currency that the total surplus should be in terms of.
     /// @return The current total surplus amount that the project has across all terminals.
     function currentTotalSurplusOf(
-        uint256 projectId,
+        uint32 projectId,
         uint256 decimals,
         uint256 currency
     )
@@ -187,7 +187,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     /// number with the specified number of decimals.
     function currentReclaimableSurplusOf(
         address terminal,
-        uint256 projectId,
+        uint32 projectId,
         JBAccountingContext[] calldata accountingContexts,
         uint256 decimals,
         uint256 currency,
@@ -238,7 +238,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     /// @return The surplus token amount that can be reclaimed, as a fixed point number with the same number of decimals
     /// as the provided `surplus`.
     function currentReclaimableSurplusOf(
-        uint256 projectId,
+        uint32 projectId,
         uint256 tokenCount,
         uint256 totalSupply,
         uint256 surplus
@@ -294,7 +294,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     function recordPaymentFrom(
         address payer,
         JBTokenAmount calldata amount,
-        uint256 projectId,
+        uint32 projectId,
         address beneficiary,
         bytes calldata metadata
     )
@@ -413,7 +413,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     /// @return hookPayloads The data and amounts to send to redeem hooks instead of sending to the beneficiary.
     function recordRedemptionFor(
         address holder,
-        uint256 projectId,
+        uint32 projectId,
         JBAccountingContext calldata accountingContext,
         JBAccountingContext[] calldata balanceAccountingContexts,
         uint256 tokenCount,
@@ -532,7 +532,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     /// @return amountPaidOut The amount of terminal tokens paid out, as a fixed point number with the same amount of
     /// decimals as its relative terminal.
     function recordPayoutFor(
-        uint256 projectId,
+        uint32 projectId,
         JBAccountingContext calldata accountingContext,
         uint256 amount,
         uint256 currency
@@ -606,7 +606,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     /// @return usedAmount The amount of terminal tokens used, as a fixed point number with the same amount of decimals
     /// as its relative terminal.
     function recordUsedAllowanceOf(
-        uint256 projectId,
+        uint32 projectId,
         JBAccountingContext calldata accountingContext,
         uint256 amount,
         uint256 currency
@@ -684,7 +684,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     /// @param token The token being added to the balance.
     /// @param amount The amount of terminal tokens added, as a fixed point number with the same amount of decimals as
     /// its relative terminal.
-    function recordAddedBalanceFor(uint256 projectId, address token, uint256 amount) external override {
+    function recordAddedBalanceFor(uint32 projectId, address token, uint256 amount) external override {
         // Increment the balance.
         balanceOf[msg.sender][projectId][token] = balanceOf[msg.sender][projectId][token] + amount;
     }
@@ -695,7 +695,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     /// @return balance The project's current balance (which is being migrated), as a fixed point number with the same
     /// amount of decimals as its relative terminal.
     function recordTerminalMigration(
-        uint256 projectId,
+        uint32 projectId,
         address token
     )
         external
@@ -778,7 +778,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     /// `targetDecimals` decimals.
     function _surplusFrom(
         address terminal,
-        uint256 projectId,
+        uint32 projectId,
         JBAccountingContext[] memory accountingContexts,
         JBRuleset memory ruleset,
         uint256 targetDecimals,
@@ -821,7 +821,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     /// `targetDecimals` decimals.
     function _tokenSurplusFrom(
         address terminal,
-        uint256 projectId,
+        uint32 projectId,
         JBAccountingContext memory accountingContext,
         JBRuleset memory ruleset,
         uint256 targetDecimals,
@@ -918,7 +918,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     /// @return surplus The total surplus of a project's funds in terms of `currency`, as a fixed point number with the
     /// specified number of decimals.
     function _currentTotalSurplusOf(
-        uint256 projectId,
+        uint32 projectId,
         uint256 decimals,
         uint256 currency
     )

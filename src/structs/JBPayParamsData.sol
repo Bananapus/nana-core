@@ -20,7 +20,7 @@ struct JBPayParamsData {
     address terminal;
     address payer;
     JBTokenAmount amount;
-    uint256 projectId;
+    uint32 projectId;
     uint256 rulesetId;
     address beneficiary;
     uint256 weight;

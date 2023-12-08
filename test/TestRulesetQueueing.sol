@@ -74,7 +74,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         _terminalConfigurations[0] =
             JBTerminalConfig({terminal: _terminal, accountingContextConfigs: _accountingContexts});
 
-        uint256 projectId = _controller.launchProjectFor({
+        uint32 projectId = _controller.launchProjectFor({
             owner: address(multisig()),
             projectMetadata: "myIPFSHash",
             rulesetConfigurations: _rulesetConfig,

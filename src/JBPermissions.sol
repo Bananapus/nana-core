@@ -28,7 +28,7 @@ contract JBPermissions is JBPermissioned, IJBPermissions {
     /// @custom:param account The address of the account being operated on behalf of.
     /// @custom:param projectId The project ID the permissions are scoped to. An ID of 0 grants permissions across all
     /// projects.
-    mapping(address operator => mapping(address account => mapping(uint256 projectId => uint256))) public override
+    mapping(address operator => mapping(address account => mapping(uint32 projectId => uint256))) public override
         permissionsOf;
 
     //*********************************************************************//
@@ -44,7 +44,7 @@ contract JBPermissions is JBPermissioned, IJBPermissions {
     function hasPermission(
         address operator,
         address account,
-        uint256 projectId,
+        uint32 projectId,
         uint256 permissionId
     )
         external
@@ -66,7 +66,7 @@ contract JBPermissions is JBPermissioned, IJBPermissions {
     function hasPermissions(
         address operator,
         address account,
-        uint256 projectId,
+        uint32 projectId,
         uint256[] calldata permissionIds
     )
         external

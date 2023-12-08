@@ -9,11 +9,11 @@ interface IJBProjects is IERC721 {
 
     event SetTokenUriResolver(IJBTokenUriResolver indexed resolver, address caller);
 
-    function count() external view returns (uint256);
+    function count() external view returns (uint32);
 
     function tokenUriResolver() external view returns (IJBTokenUriResolver);
 
-    function createFor(address owner) external returns (uint256 projectId);
+    function createFor(address owner) external returns (uint32 projectId);
 
     function setTokenUriResolver(IJBTokenUriResolver newResolver) external;
 }

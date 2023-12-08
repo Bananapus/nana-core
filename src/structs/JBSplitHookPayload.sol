@@ -13,7 +13,7 @@ struct JBSplitHookPayload {
     address token;
     uint256 amount;
     uint256 decimals;
-    uint256 projectId;
+    uint32 projectId;
     uint256 group;
     JBSplit split;
 }

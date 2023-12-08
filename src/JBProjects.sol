@@ -13,13 +13,18 @@ import {IJBTokenUriResolver} from "./interfaces/IJBTokenUriResolver.sol";
 /// @dev Projects are represented as ERC-721s.
 contract JBProjects is ERC721Votes, Ownable, IJBProjects {
     //*********************************************************************//
+    // --------------------------- custom errors ------------------------- //
+    //*********************************************************************//
+    error NO_MORE_PROJECTS_ALLOWED();
+
+    //*********************************************************************//
     // --------------------- public stored properties -------------------- //
     //*********************************************************************//
 
     /// @notice The number of projects that have been created using this contract.
     /// @dev The count is incremented with each new project created.
     /// @dev The resulting ERC-721 token ID for each project is the newly incremented count value.
-    uint256 public override count = 0;
+    uint32 public override count = 0;
 
     /// @notice The contract resolving each project ID to its ERC721 URI.
     IJBTokenUriResolver public override tokenUriResolver;
@@ -39,7 +44,7 @@ contract JBProjects is ERC721Votes, Ownable, IJBProjects {
         if (resolver == IJBTokenUriResolver(address(0))) return "";
 
         // Return the resolved URI.
-        return resolver.getUri(projectId);
+        return resolver.getUriFor(uint32(projectId));
     }
 
     /// @notice Indicates if this contract adheres to the specified interface.
@@ -69,7 +74,10 @@ contract JBProjects is ERC721Votes, Ownable, IJBProjects {
     /// @dev Anyone can create a project on an owner's behalf.
     /// @param owner The address that will be the owner of the project.
     /// @return projectId The token ID of the newly created project.
-    function createFor(address owner) external override returns (uint256 projectId) {
+    function createFor(address owner) external override returns (uint32 projectId) {
+        // Make sure there is enough space to make more projects with.
+        if (count == type(uint32).max) revert NO_MORE_PROJECTS_ALLOWED();
+
         // Increment the count, which will be used as the ID.
         projectId = ++count;
 

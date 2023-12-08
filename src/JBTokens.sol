@@ -40,7 +40,7 @@ contract JBTokens is JBControlled, IJBTokens {
 
     /// @notice Each project's attached token contract.
     /// @custom:param projectId The ID of the project the token belongs to.
-    mapping(uint256 projectId => IJBToken) public override tokenOf;
+    mapping(uint32 projectId => IJBToken) public override tokenOf;
 
     /// @notice Each token's project.
     /// @custom:param token The address of the token associated with the project.
@@ -48,12 +48,12 @@ contract JBTokens is JBControlled, IJBTokens {
 
     /// @notice The total supply of credits for each project.
     /// @custom:param projectId The ID of the project to which the credits belong.
-    mapping(uint256 projectId => uint256) public override totalCreditSupplyOf;
+    mapping(uint32 projectId => uint256) public override totalCreditSupplyOf;
 
     /// @notice Each holder's credit balance for each project.
     /// @custom:param holder The credit holder.
     /// @custom:param projectId The ID of the project to which the credits belong.
-    mapping(address holder => mapping(uint256 projectId => uint256)) public override creditBalanceOf;
+    mapping(address holder => mapping(uint32 projectId => uint256)) public override creditBalanceOf;
 
     //*********************************************************************//
     // ------------------------- external views -------------------------- //
@@ -63,7 +63,7 @@ contract JBTokens is JBControlled, IJBTokens {
     /// @param holder The holder to get a balance for.
     /// @param projectId The project to get the `_holder`s balance for.
     /// @return balance The combined token and token credit balance of the `_holder
-    function totalBalanceOf(address holder, uint256 projectId) external view override returns (uint256 balance) {
+    function totalBalanceOf(address holder, uint32 projectId) external view override returns (uint256 balance) {
         // Get a reference to the holder's credits for the project.
         balance = creditBalanceOf[holder][projectId];
 
@@ -83,7 +83,7 @@ contract JBTokens is JBControlled, IJBTokens {
     /// @notice The total supply for a specific project, including both tokens and token credits.
     /// @param projectId The ID of the project to get the total supply of.
     /// @return totalSupply The total supply of the project's tokens and token credits.
-    function totalSupplyOf(uint256 projectId) public view override returns (uint256 totalSupply) {
+    function totalSupplyOf(uint32 projectId) public view override returns (uint256 totalSupply) {
         // Get a reference to the total supply of the project's credits
         totalSupply = totalCreditSupplyOf[projectId];
 
@@ -115,7 +115,7 @@ contract JBTokens is JBControlled, IJBTokens {
     /// @param symbol The ERC-20's symbol.
     /// @return token The address of the token that was deployed.
     function deployERC20For(
-        uint256 projectId,
+        uint32 projectId,
         string calldata name,
         string calldata symbol
     )
@@ -149,7 +149,7 @@ contract JBTokens is JBControlled, IJBTokens {
     /// @dev Only a project's controller can set its token.
     /// @param projectId The ID of the project to set the token of.
     /// @param token The new token's address.
-    function setTokenFor(uint256 projectId, IJBToken token) external override onlyControllerOf(projectId) {
+    function setTokenFor(uint32 projectId, IJBToken token) external override onlyControllerOf(projectId) {
         // Can't set to the zero address.
         if (token == IJBToken(address(0))) revert EMPTY_TOKEN();
 
@@ -176,7 +176,7 @@ contract JBTokens is JBControlled, IJBTokens {
     /// @param holder The address receiving the new tokens.
     /// @param projectId The ID of the project to which the tokens belong.
     /// @param amount The amount of tokens to mint.
-    function mintFor(address holder, uint256 projectId, uint256 amount) external override onlyControllerOf(projectId) {
+    function mintFor(address holder, uint32 projectId, uint256 amount) external override onlyControllerOf(projectId) {
         // Get a reference to the project's current token.
         IJBToken token = tokenOf[projectId];
 
@@ -204,15 +204,7 @@ contract JBTokens is JBControlled, IJBTokens {
     /// @param holder The address that owns the tokens which are being burned.
     /// @param projectId The ID of the project to the burned tokens belong to.
     /// @param amount The amount of tokens to burn.
-    function burnFrom(
-        address holder,
-        uint256 projectId,
-        uint256 amount
-    )
-        external
-        override
-        onlyControllerOf(projectId)
-    {
+    function burnFrom(address holder, uint32 projectId, uint256 amount) external override onlyControllerOf(projectId) {
         // Get a reference to the project's current token.
         IJBToken token = tokenOf[projectId];
 
@@ -262,7 +254,7 @@ contract JBTokens is JBControlled, IJBTokens {
     /// @param beneficiary The account into which the claimed tokens will go.
     function claimTokensFor(
         address holder,
-        uint256 projectId,
+        uint32 projectId,
         uint256 amount,
         address beneficiary
     )
@@ -304,7 +296,7 @@ contract JBTokens is JBControlled, IJBTokens {
     /// @param amount The amount of credits to transfer.
     function transferCreditsFrom(
         address holder,
-        uint256 projectId,
+        uint32 projectId,
         address recipient,
         uint256 amount
     )

@@ -10,7 +10,7 @@ interface IJBRedeemTerminal is IJBTerminal {
     event RedeemTokens(
         uint256 indexed rulesetId,
         uint256 indexed rulesetCycleNumber,
-        uint256 indexed projectId,
+        uint32 indexed projectId,
         address holder,
         address beneficiary,
         uint256 tokenCount,
@@ -25,7 +25,7 @@ interface IJBRedeemTerminal is IJBTerminal {
 
     function redeemTokensOf(
         address holder,
-        uint256 projectId,
+        uint32 projectId,
         address token,
         uint256 count,
         uint256 minReclaimed,

@@ -20,21 +20,21 @@ interface IJBDirectory {
 
     function PROJECTS() external view returns (IJBProjects);
 
-    function controllerOf(uint256 projectId) external view returns (IERC165);
+    function controllerOf(uint32 projectId) external view returns (IERC165);
 
     function isAllowedToSetFirstController(address account) external view returns (bool);
 
-    function terminalsOf(uint256 projectId) external view returns (IJBTerminal[] memory);
+    function terminalsOf(uint32 projectId) external view returns (IJBTerminal[] memory);
 
-    function isTerminalOf(uint256 projectId, IJBTerminal terminal) external view returns (bool);
+    function isTerminalOf(uint32 projectId, IJBTerminal terminal) external view returns (bool);
 
-    function primaryTerminalOf(uint256 projectId, address token) external view returns (IJBTerminal);
+    function primaryTerminalOf(uint32 projectId, address token) external view returns (IJBTerminal);
 
-    function setControllerOf(uint256 projectId, IERC165 controller) external;
+    function setControllerOf(uint32 projectId, IERC165 controller) external;
 
-    function setTerminalsOf(uint256 projectId, IJBTerminal[] calldata terminals) external;
+    function setTerminalsOf(uint32 projectId, IJBTerminal[] calldata terminals) external;
 
-    function setPrimaryTerminalOf(uint256 projectId, address token, IJBTerminal terminal) external;
+    function setPrimaryTerminalOf(uint32 projectId, address token, IJBTerminal terminal) external;
 
     function setIsAllowedToSetFirstController(address account, bool flag) external;
 }

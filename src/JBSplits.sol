@@ -32,7 +32,7 @@ contract JBSplits is JBControlled, IJBSplits {
     /// @custom:param projectId The ID of the project the domain applies to.
     /// @custom:param domainId The ID of the domain that the group is specified within.
     /// @custom:param groupId The ID of the group to count this splits of.
-    mapping(uint256 projectId => mapping(uint256 domainId => mapping(uint256 groupId => uint256))) private _splitCountOf;
+    mapping(uint32 projectId => mapping(uint256 domainId => mapping(uint256 groupId => uint256))) private _splitCountOf;
 
     /// @notice Packed split data given the split's project, domain, and group IDs, as well as the split's index within
     /// that group.
@@ -45,7 +45,7 @@ contract JBSplits is JBControlled, IJBSplits {
     /// @custom:return The split's `preferAddToBalance`, `percent`, `projectId`, and `beneficiary` packed into one
     /// `uint256`.
     mapping(
-        uint256 projectId => mapping(uint256 domainId => mapping(uint256 groupId => mapping(uint256 index => uint256)))
+        uint32 projectId => mapping(uint256 domainId => mapping(uint256 groupId => mapping(uint256 index => uint256)))
     ) private _packedSplitParts1Of;
 
     /// @notice More packed split data given the split's project, domain, and group IDs, as well as the split's index
@@ -58,7 +58,7 @@ contract JBSplits is JBControlled, IJBSplits {
     /// @custom:param index The split's index within the group (in the order that the split were set).
     /// @custom:return The split's `lockedUntil` and `hook` packed into one `uint256`.
     mapping(
-        uint256 projectId => mapping(uint256 domainId => mapping(uint256 groupId => mapping(uint256 index => uint256)))
+        uint32 projectId => mapping(uint256 domainId => mapping(uint256 groupId => mapping(uint256 index => uint256)))
     ) private _packedSplitParts2Of;
 
     //*********************************************************************//
@@ -72,7 +72,7 @@ contract JBSplits is JBControlled, IJBSplits {
     /// @param groupId The identifying group of the splits.
     /// @return An array of all splits for the project.
     function splitsOf(
-        uint256 projectId,
+        uint32 projectId,
         uint256 domainId,
         uint256 groupId
     )
@@ -102,7 +102,7 @@ contract JBSplits is JBControlled, IJBSplits {
     /// @param domainId The ID of the domain the split groups should be active in.
     /// @param splitGroups An array of split groups to set.
     function setSplitGroupsOf(
-        uint256 projectId,
+        uint32 projectId,
         uint256 domainId,
         JBSplitGroup[] calldata splitGroups
     )
@@ -134,7 +134,7 @@ contract JBSplits is JBControlled, IJBSplits {
     /// @param domainId The ID of the domain the splits should be considered active within.
     /// @param groupId The ID of the group to set the splits within.
     /// @param splits An array of splits to set.
-    function _setSplitsOf(uint256 projectId, uint256 domainId, uint256 groupId, JBSplit[] memory splits) private {
+    function _setSplitsOf(uint32 projectId, uint256 domainId, uint256 groupId, JBSplit[] memory splits) private {
         // Get a reference to the current split structs within the project, domain, and group.
         JBSplit[] memory currentSplits = _getStructsFor(projectId, domainId, groupId);
 
@@ -174,10 +174,10 @@ contract JBSplits is JBControlled, IJBSplits {
             if (splits[i].preferAddToBalance) packedSplitParts1 = 1;
             // Pack `percent` in bits 1-32.
             packedSplitParts1 |= splits[i].percent << 1;
-            // Pack `projectId` in bits 33-88.
+            // Pack `projectId` in bits 33-64.
             packedSplitParts1 |= splits[i].projectId << 33;
-            // Pack `beneficiary` in bits 89-248.
-            packedSplitParts1 |= uint256(uint160(address(splits[i].beneficiary))) << 89;
+            // Pack `beneficiary` in bits 65-224.
+            packedSplitParts1 |= uint256(uint160(address(splits[i].beneficiary))) << 65;
 
             // Store the first split part.
             _packedSplitParts1Of[projectId][domainId][groupId][i] = packedSplitParts1;
@@ -235,7 +235,7 @@ contract JBSplits is JBControlled, IJBSplits {
     /// @param groupId The ID of the group to get the splits structs of.
     /// @return splits The split structs, as an array of `JBSplit`s.
     function _getStructsFor(
-        uint256 projectId,
+        uint32 projectId,
         uint256 domainId,
         uint256 groupId
     )
@@ -261,10 +261,10 @@ contract JBSplits is JBControlled, IJBSplits {
             split.preferAddToBalance = packedSplitPart1 & 1 == 1;
             // `percent` in bits 1-32.
             split.percent = uint32(packedSplitPart1 >> 1);
-            // `projectId` in bits 33-88.
-            split.projectId = uint256(uint56(packedSplitPart1 >> 33));
-            // `beneficiary` in bits 89-248.
-            split.beneficiary = payable(address(uint160(packedSplitPart1 >> 89)));
+            // `projectId` in bits 33-64.
+            split.projectId = uint32(packedSplitPart1 >> 33);
+            // `beneficiary` in bits 65-224.
+            split.beneficiary = payable(address(uint160(packedSplitPart1 >> 65)));
 
             // Get a reference to the second part of the split's packed data.
             uint256 packedSplitPart2 = _packedSplitParts2Of[projectId][domainId][groupId][i];

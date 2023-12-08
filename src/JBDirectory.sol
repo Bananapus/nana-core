@@ -41,7 +41,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
 
     /// @notice The controller, which dictates how terminals interact with tokens and rulesets, for a given project ID.
     /// @custom:param projectId The ID of the project to get the controller of.
-    mapping(uint256 projectId => IERC165) public override controllerOf;
+    mapping(uint32 projectId => IERC165) public override controllerOf;
 
     /// @notice Addresses allowed to set a project's first controller on their behalf. These addresses/contracts have
     /// been vetted and verified by this contract's owner.
@@ -54,12 +54,12 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
 
     /// @notice For each project ID, the terminals that are currently managing its funds.
     /// @custom:param projectId The ID of the project to get terminals of.
-    mapping(uint256 projectId => IJBTerminal[]) private _terminalsOf;
+    mapping(uint32 projectId => IJBTerminal[]) private _terminalsOf;
 
     /// @notice The project's primary terminal for a given token.
     /// @custom:param projectId The ID of the project to get the primary terminal of.
     /// @custom:param token The token to get the project's primary terminal for.
-    mapping(uint256 projectId => mapping(address token => IJBTerminal)) private _primaryTerminalOf;
+    mapping(uint32 projectId => mapping(address token => IJBTerminal)) private _primaryTerminalOf;
 
     //*********************************************************************//
     // ------------------------- external views -------------------------- //
@@ -68,7 +68,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
     /// @notice For  given project ID, the terminals which are currently managing that project's funds.
     /// @param projectId The ID of the project to get the terminals of.
     /// @return An array of terminal addresses.
-    function terminalsOf(uint256 projectId) external view override returns (IJBTerminal[] memory) {
+    function terminalsOf(uint32 projectId) external view override returns (IJBTerminal[] memory) {
         return _terminalsOf[projectId];
     }
 
@@ -77,7 +77,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
     /// @param projectId The ID of the project to get the primary terminal of.
     /// @param token The token the terminal accepts.
     /// @return The address of the primary terminal for the specified project and token.
-    function primaryTerminalOf(uint256 projectId, address token) external view override returns (IJBTerminal) {
+    function primaryTerminalOf(uint32 projectId, address token) external view override returns (IJBTerminal) {
         // Keep a reference to the primary terminal for the provided project ID and token.
         IJBTerminal primaryTerminal = _primaryTerminalOf[projectId][token];
 
@@ -112,7 +112,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
     /// @param projectId The ID of the project to check for the terminal.
     /// @param terminal The address of the terminal to check for.
     /// @return A flag indicating whether or not the specified terminal is a terminal of the specified project.
-    function isTerminalOf(uint256 projectId, IJBTerminal terminal) public view override returns (bool) {
+    function isTerminalOf(uint32 projectId, IJBTerminal terminal) public view override returns (bool) {
         // Keep a reference to the number of terminals the project has.
         uint256 numberOfTerminals = _terminalsOf[projectId].length;
 
@@ -156,7 +156,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
     /// @dev - OR an allowedlisted address is setting a controller for a project that doesn't already have a controller.
     /// @param projectId The ID of the project to set the controller of.
     /// @param controller The address of the new controller to set for the project.
-    function setControllerOf(uint256 projectId, IERC165 controller) external override {
+    function setControllerOf(uint32 projectId, IERC165 controller) external override {
         // Enforce permissions.
         _requirePermissionAllowingOverride({
             account: PROJECTS.ownerOf(projectId),
@@ -197,7 +197,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
     /// @dev Unless the caller is the project's controller, the project's ruleset must allow setting terminals.
     /// @param projectId The ID of the project to set terminals for.
     /// @param terminals An array of terminal addresses to set for the project.
-    function setTerminalsOf(uint256 projectId, IJBTerminal[] calldata terminals) external override {
+    function setTerminalsOf(uint32 projectId, IJBTerminal[] calldata terminals) external override {
         // Enforce permissions.
         _requirePermissionAllowingOverride({
             account: PROJECTS.ownerOf(projectId),
@@ -243,7 +243,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
     /// @param projectId The ID of the project a primary token is being set for.
     /// @param token The token to set the primary terminal for.
     /// @param terminal The terminal to make the primary terminal for the project and token.
-    function setPrimaryTerminalOf(uint256 projectId, address token, IJBTerminal terminal) external override {
+    function setPrimaryTerminalOf(uint32 projectId, address token, IJBTerminal terminal) external override {
         // Enforce permissions.
         _requirePermission({
             account: PROJECTS.ownerOf(projectId),
@@ -289,7 +289,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
     /// @dev Unless the caller is the project's controller, the project's ruleset must allow setting terminals.
     /// @param projectId The ID of the project to add the terminal to.
     /// @param terminal The terminal to add.
-    function _addTerminalIfNeeded(uint256 projectId, IJBTerminal terminal) private {
+    function _addTerminalIfNeeded(uint32 projectId, IJBTerminal terminal) private {
         // Ensure that the terminal has not already been added.
         if (isTerminalOf(projectId, terminal)) return;
 

@@ -37,33 +37,33 @@ interface IJBTokens is IJBControlled {
         address indexed holder, uint256 indexed projectId, address indexed recipient, uint256 amount, address caller
     );
 
-    function tokenOf(uint256 projectId) external view returns (IJBToken);
+    function tokenOf(uint32 projectId) external view returns (IJBToken);
 
     function projectIdOf(IJBToken token) external view returns (uint256);
 
-    function creditBalanceOf(address holder, uint256 projectId) external view returns (uint256);
+    function creditBalanceOf(address holder, uint32 projectId) external view returns (uint256);
 
-    function totalCreditSupplyOf(uint256 projectId) external view returns (uint256);
+    function totalCreditSupplyOf(uint32 projectId) external view returns (uint256);
 
-    function totalSupplyOf(uint256 projectId) external view returns (uint256);
+    function totalSupplyOf(uint32 projectId) external view returns (uint256);
 
-    function totalBalanceOf(address holder, uint256 projectId) external view returns (uint256 result);
+    function totalBalanceOf(address holder, uint32 projectId) external view returns (uint256 result);
 
     function deployERC20For(
-        uint256 projectId,
+        uint32 projectId,
         string calldata name,
         string calldata symbol
     )
         external
         returns (IJBToken token);
 
-    function setTokenFor(uint256 projectId, IJBToken token) external;
+    function setTokenFor(uint32 projectId, IJBToken token) external;
 
-    function burnFrom(address holder, uint256 projectId, uint256 amount) external;
+    function burnFrom(address holder, uint32 projectId, uint256 amount) external;
 
-    function mintFor(address holder, uint256 projectId, uint256 amount) external;
+    function mintFor(address holder, uint32 projectId, uint256 amount) external;
 
-    function claimTokensFor(address holder, uint256 projectId, uint256 amount, address beneficiary) external;
+    function claimTokensFor(address holder, uint32 projectId, uint256 amount, address beneficiary) external;
 
-    function transferCreditsFrom(address holder, uint256 projectId, address recipient, uint256 amount) external;
+    function transferCreditsFrom(address holder, uint32 projectId, address recipient, uint256 amount) external;
 }

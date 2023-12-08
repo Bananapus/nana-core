@@ -14,7 +14,7 @@ import {MockPriceFeed} from "./mock/MockPriceFeed.sol";
 /// Each of these only incurs protocol fees if the `_FEE_PROJECT_ID` (project with ID #1) accepts the token being
 /// accessed.
 contract TestAccessToFunds_Local is TestBaseWorkflow {
-    uint256 private constant _FEE_PROJECT_ID = 1;
+    uint32 private constant _FEE_PROJECT_ID = 1;
     uint8 private constant _WEIGHT_DECIMALS = 18; // FIXED
     uint8 private constant _NATIVE_DECIMALS = 18; // FIXED
     uint8 private constant _PRICE_FEED_DECIMALS = 10;

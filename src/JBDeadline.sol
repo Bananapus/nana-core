@@ -36,7 +36,7 @@ contract JBDeadline is ERC165, IJBRulesetApprovalHook {
     /// @param start The start timestamp of the ruleset to check the status of.
     /// @return The status of the approval hook.
     function approvalStatusOf(
-        uint256 projectId,
+        uint32 projectId,
         uint256 rulesetId,
         uint256 start
     )

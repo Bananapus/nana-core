@@ -30,7 +30,7 @@ interface IJBController is IERC165, IJBProjectMetadataRegistry, IJBDirectoryAcce
     event SendReservedTokensToSplits(
         uint256 indexed rulesetId,
         uint256 indexed rulesetCycleNumber,
-        uint256 indexed projectId,
+        uint32 indexed projectId,
         address beneficiary,
         uint256 tokenCount,
         uint256 beneficiaryTokenCount,
@@ -39,7 +39,7 @@ interface IJBController is IERC165, IJBProjectMetadataRegistry, IJBDirectoryAcce
     );
 
     event SendReservedTokensToSplit(
-        uint256 indexed projectId,
+        uint32 indexed projectId,
         uint256 indexed domain,
         uint256 indexed group,
         JBSplit split,
@@ -49,7 +49,7 @@ interface IJBController is IERC165, IJBProjectMetadataRegistry, IJBDirectoryAcce
 
     event MintTokens(
         address indexed beneficiary,
-        uint256 indexed projectId,
+        uint32 indexed projectId,
         uint256 tokenCount,
         uint256 beneficiaryTokenCount,
         string memo,
@@ -57,15 +57,13 @@ interface IJBController is IERC165, IJBProjectMetadataRegistry, IJBDirectoryAcce
         address caller
     );
 
-    event BurnTokens(
-        address indexed holder, uint256 indexed projectId, uint256 tokenCount, string memo, address caller
-    );
+    event BurnTokens(address indexed holder, uint32 indexed projectId, uint256 tokenCount, string memo, address caller);
 
-    event MigrateController(uint256 indexed projectId, IJBMigratable to, address caller);
+    event MigrateController(uint32 indexed projectId, IJBMigratable to, address caller);
 
-    event PrepMigration(uint256 indexed projectId, address from, address caller);
+    event PrepMigration(uint32 indexed projectId, address from, address caller);
 
-    event SetMetadata(uint256 indexed projectId, string metadata, address caller);
+    event SetMetadata(uint32 indexed projectId, string metadata, address caller);
 
     function PROJECTS() external view returns (IJBProjects);
 
@@ -79,7 +77,7 @@ interface IJBController is IERC165, IJBProjectMetadataRegistry, IJBDirectoryAcce
 
     function FUND_ACCESS_LIMITS() external view returns (IJBFundAccessLimits);
 
-    function pendingReservedTokenBalanceOf(uint256 projectId) external view returns (uint256);
+    function pendingReservedTokenBalanceOf(uint32 projectId) external view returns (uint256);
 
     function totalTokenSupplyWithReservedTokensOf(uint32 projectId) external view returns (uint256);
 

@@ -7,7 +7,7 @@ import {JBFee} from "../../structs/JBFee.sol";
 /// @notice A terminal that can process and hold fees.
 interface IJBFeeTerminal is IJBTerminal {
     event HoldFee(
-        uint256 indexed projectId,
+        uint32 indexed projectId,
         address indexed token,
         uint256 indexed amount,
         uint256 fee,
@@ -16,7 +16,7 @@ interface IJBFeeTerminal is IJBTerminal {
     );
 
     event ProcessFee(
-        uint256 indexed projectId,
+        uint32 indexed projectId,
         address indexed token,
         uint256 indexed amount,
         bool wasHeld,
@@ -25,7 +25,7 @@ interface IJBFeeTerminal is IJBTerminal {
     );
 
     event UnlockHeldFees(
-        uint256 indexed projectId,
+        uint32 indexed projectId,
         address indexed token,
         uint256 indexed amount,
         uint256 unlockedFees,
@@ -35,7 +35,7 @@ interface IJBFeeTerminal is IJBTerminal {
     event SetFeelessAddress(address indexed account, bool indexed isFeeless, address caller);
 
     event FeeReverted(
-        uint256 indexed projectId,
+        uint32 indexed projectId,
         address indexed token,
         uint256 indexed feeProjectId,
         uint256 amount,
@@ -45,11 +45,11 @@ interface IJBFeeTerminal is IJBTerminal {
 
     function FEE() external view returns (uint256);
 
-    function heldFeesOf(uint256 projectId, address token) external view returns (JBFee[] memory);
+    function heldFeesOf(uint32 projectId, address token) external view returns (JBFee[] memory);
 
     function isFeelessAddress(address account) external view returns (bool);
 
-    function processHeldFees(uint256 projectId, address token) external;
+    function processHeldFees(uint32 projectId, address token) external;
 
     function setFeelessAddress(address account, bool flag) external;
 }

@@ -92,7 +92,7 @@ contract TestLaunchProject_Local is TestBaseWorkflow {
         _terminalConfigurations[0] =
             JBTerminalConfig({terminal: _terminal, accountingContextConfigs: _accountingContexts});
 
-        uint256 projectId = _controller.launchProjectFor({
+        uint32 projectId = _controller.launchProjectFor({
             owner: _projectOwner,
             projectMetadata: "myIPFSHash",
             rulesetConfigurations: _rulesetConfig,
@@ -123,7 +123,7 @@ contract TestLaunchProject_Local is TestBaseWorkflow {
 
     function testLaunchProjectFuzzWeight(uint88 _weight) public {
         _weight = uint88(bound(_weight, 0, type(uint88).max));
-        uint256 _projectId;
+        uint32 _projectId;
 
         _data = JBRulesetData({
             duration: 14,

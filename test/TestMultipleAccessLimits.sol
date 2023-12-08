@@ -54,7 +54,7 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
 
     function launchProjectsForTestBelow()
         public
-        returns (uint256, JBCurrencyAmount[] memory, JBAccountingContextConfig[] memory)
+        returns (uint32, JBCurrencyAmount[] memory, JBAccountingContextConfig[] memory)
     {
         uint256 _nativePayoutLimit = 1 ether;
         uint256 _nativePricePerUsd = 0.0005 * 10 ** 18; // 1/2000
@@ -103,7 +103,7 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
             memo: ""
         });
 
-        uint256 _projectId = _controller.launchProjectFor({
+        uint32 _projectId = _controller.launchProjectFor({
             owner: _projectOwner,
             projectMetadata: "myIPFSHash",
             rulesetConfigurations: _rulesetConfig,
@@ -132,7 +132,7 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
         uint256 _nativePayoutLimit = 1 ether;
         // Will exceed the project's balance in the terminal.
 
-        (uint256 _projectId, JBCurrencyAmount[] memory _payoutLimits,) = launchProjectsForTestBelow();
+        (uint32 _projectId, JBCurrencyAmount[] memory _payoutLimits,) = launchProjectsForTestBelow();
 
         __terminal.pay{value: _nativePayAmount}({
             projectId: _projectId,
@@ -426,7 +426,7 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
             memo: ""
         });
 
-        uint256 _projectId = _controller.launchProjectFor({
+        uint32 _projectId = _controller.launchProjectFor({
             owner: _projectOwner,
             projectMetadata: "myIPFSHash",
             rulesetConfigurations: _rulesetConfig,
@@ -519,7 +519,7 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
         _terminalConfigurations[0] =
             JBTerminalConfig({terminal: __terminal, accountingContextConfigs: _accountingContexts});
 
-        uint256 _projectId = _controller.launchProjectFor({
+        uint32 _projectId = _controller.launchProjectFor({
             owner: _projectOwner,
             projectMetadata: "myIPFSHash",
             rulesetConfigurations: _rulesetConfig,

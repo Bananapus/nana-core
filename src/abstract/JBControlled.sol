@@ -17,7 +17,7 @@ abstract contract JBControlled is IJBControlled {
 
     /// @notice Only allows the controller of the specified project to proceed.
     /// @param projectId The ID of the project.
-    modifier onlyControllerOf(uint256 projectId) {
+    modifier onlyControllerOf(uint32 projectId) {
         if (address(DIRECTORY.controllerOf(projectId)) != msg.sender) {
             revert CONTROLLER_UNAUTHORIZED();
         }

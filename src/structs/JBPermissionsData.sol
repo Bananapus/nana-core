@@ -8,6 +8,6 @@ pragma solidity ^0.8.0;
 /// @custom:member permissionIds The IDs of the permissions being given. See the `JBPermissionIds` library.
 struct JBPermissionsData {
     address operator;
-    uint256 projectId;
+    uint32 projectId;
     uint256[] permissionIds;
 }
