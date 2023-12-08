@@ -272,7 +272,7 @@ contract JBSplits is JBControlled, IJBSplits {
             // If there's anything in it, unpack.
             if (packedSplitPart2 > 0) {
                 // `lockedUntil` in bits 0-47.
-                split.lockedUntil = uint256(uint48(packedSplitPart2));
+                split.lockedUntil = uint48(packedSplitPart2);
                 // `hook` in bits 48-207.
                 split.hook = IJBSplitHook(address(uint160(packedSplitPart2 >> 48)));
             }

@@ -30,6 +30,6 @@ struct JBSplit {
     uint32 percent;
     uint32 projectId;
     address payable beneficiary;
-    uint256 lockedUntil; // TODO: Make uint40 as its a timestamp, requires change in packing.
+    uint48 lockedUntil; // TODO: Make uint40 as its a timestamp, requires change in packing.
     IJBSplitHook hook;
 }
