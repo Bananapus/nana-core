@@ -272,7 +272,8 @@ contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTer
     /// beneficiary would be less than this amount, the payment is reverted.
     /// @param memo A memo to pass along to the emitted event.
     /// @param metadata Bytes to pass along to the emitted event, as well as the data hook and pay hook if applicable.
-    /// @return The number of tokens minted to the beneficiary, as a fixed point number with 18 decimals.
+    /// @return beneficiaryTokenCount The number of tokens minted to the beneficiary, as a fixed point number with 18
+    /// decimals.
     function pay(
         uint32 projectId,
         address token,
@@ -286,19 +287,21 @@ contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTer
         payable
         virtual
         override
-        returns (uint160)
+        returns (uint160 beneficiaryTokenCount)
     {
         // Pay the project.
-        return _pay({
+        beneficiaryTokenCount = _pay({
+            projectId: projectId,
             token: token,
             amount: _acceptFundsFor(projectId, token, amount, metadata),
             payer: _msgSender(),
-            projectId: projectId,
             beneficiary: beneficiary,
-            minReturnedTokens: minReturnedTokens,
             memo: memo,
             metadata: metadata
         });
+
+        // The token count for the beneficiary must be greater than or equal to the specified minimum.
+        if (beneficiaryTokenCount < minReturnedTokens) revert UNDER_MIN_RETURNED_TOKENS();
     }
 
     /// @notice Adds funds to a project's balance without minting tokens.
@@ -661,7 +664,6 @@ contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTer
                 amount: amount,
                 payer: address(this),
                 beneficiary: beneficiary,
-                minReturnedTokens: 0,
                 memo: "",
                 metadata: metadata
             });
@@ -797,7 +799,6 @@ contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTer
                         amount: netPayoutAmount,
                         payer: address(this),
                         beneficiary: beneficiary,
-                        minReturnedTokens: 0,
                         memo: "",
                         metadata: metadata
                     });
@@ -934,28 +935,24 @@ contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTer
     }
 
     /// @notice Pay a project with tokens.
+    /// @param projectId The ID of the project being paid.
     /// @param token The address of the token which the project is being paid with.
     /// @param amount The amount of terminal tokens being received, as a fixed point number with the same number of
     /// decimals as this terminal. If this terminal's token is the native token, `amount` is ignored and `msg.value` is
     /// used in its place.
     /// @param payer The address making the payment.
-    /// @param projectId The ID of the project being paid.
     /// @param beneficiary The address to mint tokens to, and pass along to the ruleset's data hook and pay hook if
     /// applicable.
-    /// @param minReturnedTokens The minimum number of project tokens expected in return, as a fixed point number with
-    /// the same amount of decimals as this terminal. If the amount of tokens minted for the beneficiary would be less
-    /// than this amount, the payment is reverted.
     /// @param memo A memo to pass along to the emitted event.
     /// @param metadata Bytes to send along to the emitted event, as well as the data hook and pay hook if applicable.
     /// @return beneficiaryTokenCount The number of tokens minted and sent to the beneficiary, as a fixed point number
     /// with 18 decimals.
     function _pay(
+        uint32 projectId,
         address token,
         uint160 amount,
         address payer,
-        uint32 projectId,
         address beneficiary,
-        uint160 minReturnedTokens,
         string memory memo,
         bytes memory metadata
     )
@@ -966,16 +963,21 @@ contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTer
         // Keep a reference to the ruleset the payment is being made during.
         JBRuleset memory ruleset;
 
-        // Scoped section prevents stack too deep. `hookPayloads` and `tokenCount` only used within scope.
+        // Scoped section prevents stack too deep. `hookPayloads`, `tokenCount`, and `tokenAmount` only used within
+        // scope.
         {
             JBPayHookPayload[] memory hookPayloads;
             uint160 tokenCount;
+            JBTokenAmount memory tokenAmount;
 
-            // Get a reference to the token's accounting context.
-            JBAccountingContext memory context = _accountingContextForTokenOf[projectId][token];
+            // Scoped section prevents stack too deep. `context` only used within scope.
+            {
+                // Get a reference to the token's accounting context.
+                JBAccountingContext memory context = _accountingContextForTokenOf[projectId][token];
 
-            // Bundle the amount info into a JBTokenAmount struct.
-            JBTokenAmount memory tokenAmount = JBTokenAmount(token, amount, context.decimals, context.currency);
+                // Bundle the amount info into a JBTokenAmount struct.
+                tokenAmount = JBTokenAmount(token, amount, context.decimals, context.currency);
+            }
 
             // Record the payment.
             (ruleset, tokenCount, hookPayloads) = STORE.recordPaymentFrom({
@@ -994,9 +996,6 @@ contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTer
                     projectId, tokenCount, beneficiary, "", true
                 );
             }
-
-            // The token count for the beneficiary must be greater than or equal to the specified minimum.
-            if (beneficiaryTokenCount < minReturnedTokens) revert UNDER_MIN_RETURNED_TOKENS();
 
             // If hook payloads were specified by the data hook, fulfill them.
             if (hookPayloads.length != 0) {
