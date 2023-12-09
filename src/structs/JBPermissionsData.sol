@@ -9,5 +9,5 @@ pragma solidity ^0.8.0;
 struct JBPermissionsData {
     address operator;
     uint32 projectId;
-    uint256[] permissionIds;
+    uint8[] permissionIds;
 }

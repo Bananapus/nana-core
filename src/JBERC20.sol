@@ -56,7 +56,7 @@ contract JBERC20 is ERC20Votes, ERC20Permit, Ownable, IJBToken {
     /// @dev Only the owner of this contract cant mint more of it.
     /// @param account The account to mint the tokens for.
     /// @param amount The amount of tokens to mint, as a fixed point number with 18 decimals.
-    function mint(address account, uint256 amount) external override onlyOwner {
+    function mint(address account, uint160 amount) external override onlyOwner {
         return _mint(account, amount);
     }
 
@@ -64,7 +64,7 @@ contract JBERC20 is ERC20Votes, ERC20Permit, Ownable, IJBToken {
     /// @dev Only the owner of this contract cant burn some of its supply.
     /// @param account The account to burn tokens from.
     /// @param amount The amount of tokens to burn, as a fixed point number with 18 decimals.
-    function burn(address account, uint256 amount) external override onlyOwner {
+    function burn(address account, uint160 amount) external override onlyOwner {
         return _burn(account, amount);
     }
 

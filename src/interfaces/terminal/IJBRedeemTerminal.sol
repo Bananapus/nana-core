@@ -13,25 +13,25 @@ interface IJBRedeemTerminal is IJBTerminal {
         uint32 indexed projectId,
         address holder,
         address beneficiary,
-        uint256 tokenCount,
-        uint256 reclaimedAmount,
+        uint160 tokenCount,
+        uint160 reclaimedAmount,
         bytes metadata,
         address caller
     );
 
     event HookDidRedeem(
-        IJBRedeemHook indexed hook, JBDidRedeemData data, uint256 payloadAmount, uint256 fee, address caller
+        IJBRedeemHook indexed hook, JBDidRedeemData data, uint160 payloadAmount, uint160 fee, address caller
     );
 
     function redeemTokensOf(
         address holder,
         uint32 projectId,
         address token,
-        uint256 count,
-        uint256 minReclaimed,
+        uint160 count,
+        uint160 minReclaimed,
         address payable beneficiary,
         bytes calldata metadata
     )
         external
-        returns (uint256 reclaimAmount);
+        returns (uint160 reclaimAmount);
 }

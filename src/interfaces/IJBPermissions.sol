@@ -7,8 +7,8 @@ interface IJBPermissions {
     event OperatorPermissionsSet(
         address indexed operator,
         address indexed account,
-        uint256 indexed projectId,
-        uint256[] permissionIds,
+        uint32 indexed projectId,
+        uint8[] permissionIds,
         uint256 packed,
         address caller
     );
@@ -19,7 +19,7 @@ interface IJBPermissions {
         address operator,
         address account,
         uint32 projectId,
-        uint256 permissionId
+        uint8 permissionId
     )
         external
         view
@@ -29,7 +29,7 @@ interface IJBPermissions {
         address operator,
         address account,
         uint32 projectId,
-        uint256[] calldata permissionIds
+        uint8[] calldata permissionIds
     )
         external
         view

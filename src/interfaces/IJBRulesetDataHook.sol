@@ -19,7 +19,7 @@ interface IJBRulesetDataHook is IERC165 {
     function payParams(JBPayParamsData calldata data)
         external
         view
-        returns (uint256 weight, JBPayHookPayload[] memory hookPayloads);
+        returns (uint136 weight, JBPayHookPayload[] memory hookPayloads);
 
     /// @notice The data provided to the terminal's `redeemTokensOf(...)` transaction.
     /// @param data The data passed to this data hook by the `redeemTokensOf(...)` function as a `JBRedeemParamsData`
@@ -29,5 +29,5 @@ interface IJBRulesetDataHook is IERC165 {
     function redeemParams(JBRedeemParamsData calldata data)
         external
         view
-        returns (uint256 reclaimAmount, JBRedeemHookPayload[] memory hookPayloads);
+        returns (uint160 reclaimAmount, JBRedeemHookPayload[] memory hookPayloads);
 }

@@ -45,7 +45,7 @@ contract JBPermissions is JBPermissioned, IJBPermissions {
         address operator,
         address account,
         uint32 projectId,
-        uint256 permissionId
+        uint8 permissionId
     )
         external
         view
@@ -67,7 +67,7 @@ contract JBPermissions is JBPermissioned, IJBPermissions {
         address operator,
         address account,
         uint32 projectId,
-        uint256[] calldata permissionIds
+        uint8[] calldata permissionIds
     )
         external
         view
@@ -75,10 +75,14 @@ contract JBPermissions is JBPermissioned, IJBPermissions {
         returns (bool)
     {
         // Keep a reference to the number of permissions being iterated on.
-        uint256 numberOfPermissions = permissionIds.length;
+        uint8 numberOfPermissions = uint8(permissionIds.length);
 
-        for (uint256 i; i < numberOfPermissions; ++i) {
-            uint256 permissionId = permissionIds[i];
+        // Keep a reference to the permission being iterated on.
+        uint256 permissionId;
+
+        for (uint8 i; i < numberOfPermissions; ++i) {
+            // Set the permission being iterated on.
+            permissionId = permissionIds[i];
 
             if (permissionId > 255) revert PERMISSION_ID_OUT_OF_BOUNDS();
 
@@ -130,17 +134,21 @@ contract JBPermissions is JBPermissioned, IJBPermissions {
     /// @notice Converts an array of permission IDs to a packed `uint256`.
     /// @param permissionIds The IDs of the permissions to pack.
     /// @return packed The packed value.
-    function _packedPermissions(uint256[] calldata permissionIds) private pure returns (uint256 packed) {
+    function _packedPermissions(uint8[] calldata permissionIds) private pure returns (uint256 packed) {
         // Keep a reference to the number of IDs being iterated on.
-        uint256 numberOfIds = permissionIds.length;
+        uint8 numberOfIds = uint8(permissionIds.length);
+
+        // Keep a reference to the ID being iterated on.
+        uint256 permissionId;
 
         for (uint256 i; i < numberOfIds; ++i) {
-            uint256 id = permissionIds[i];
+            // Set the ID being iterated on.
+            permissionId = permissionIds[i];
 
-            if (id > 255) revert PERMISSION_ID_OUT_OF_BOUNDS();
+            if (permissionId > 255) revert PERMISSION_ID_OUT_OF_BOUNDS();
 
             // Turn on the bit at the ID.
-            packed |= 1 << id;
+            packed |= 1 << permissionId;
         }
     }
 }

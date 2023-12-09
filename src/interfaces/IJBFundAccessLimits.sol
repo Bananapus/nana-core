@@ -8,12 +8,12 @@ import {IJBPayoutTerminal} from "./terminal/IJBPayoutTerminal.sol";
 
 interface IJBFundAccessLimits is IERC165 {
     event SetFundAccessLimits(
-        uint256 indexed rulesetId, uint256 indexed projectId, JBFundAccessLimitGroup limits, address caller
+        uint40 indexed rulesetId, uint32 indexed projectId, JBFundAccessLimitGroup limits, address caller
     );
 
     function payoutLimitsOf(
         uint32 projectId,
-        uint256 rulesetId,
+        uint40 rulesetId,
         address terminal,
         address token
     )
@@ -23,18 +23,18 @@ interface IJBFundAccessLimits is IERC165 {
 
     function payoutLimitOf(
         uint32 projectId,
-        uint256 rulesetId,
+        uint40 rulesetId,
         address terminal,
         address token,
-        uint256 currency
+        uint32 currency
     )
         external
         view
-        returns (uint256 payoutLimit);
+        returns (uint160 payoutLimit);
 
     function surplusAllowancesOf(
         uint32 projectId,
-        uint256 rulesetId,
+        uint40 rulesetId,
         address terminal,
         address token
     )
@@ -44,18 +44,18 @@ interface IJBFundAccessLimits is IERC165 {
 
     function surplusAllowanceOf(
         uint32 projectId,
-        uint256 rulesetId,
+        uint40 rulesetId,
         address terminal,
         address token,
-        uint256 currency
+        uint32 currency
     )
         external
         view
-        returns (uint256 surplusAllowance);
+        returns (uint160 surplusAllowance);
 
     function setFundAccessLimitsFor(
         uint32 projectId,
-        uint256 rulesetId,
+        uint40 rulesetId,
         JBFundAccessLimitGroup[] memory fundAccessConstaints
     )
         external;

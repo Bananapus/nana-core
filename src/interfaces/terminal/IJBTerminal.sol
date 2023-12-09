@@ -28,14 +28,14 @@ interface IJBTerminal is IERC165 {
         uint32 indexed projectId,
         address payer,
         address beneficiary,
-        uint256 amount,
-        uint256 beneficiaryTokenCount,
+        uint160 amount,
+        uint160 beneficiaryTokenCount,
         string memo,
         bytes metadata,
         address caller
     );
 
-    event HookDidPay(IJBPayHook indexed hook, JBDidPayData data, uint256 payloadAmount, address caller);
+    event HookDidPay(IJBPayHook indexed hook, JBDidPayData data, uint160 payloadAmount, address caller);
 
     function accountingContextForTokenOf(
         uint32 projectId,
@@ -47,9 +47,9 @@ interface IJBTerminal is IERC165 {
 
     function accountingContextsOf(uint32 projectId) external view returns (JBAccountingContext[] memory);
 
-    function currentSurplusOf(uint32 projectId, uint256 decimals, uint256 currency) external view returns (uint256);
+    function currentSurplusOf(uint32 projectId, uint8 decimals, uint32 currency) external view returns (uint160);
 
-    function migrateBalanceOf(uint32 projectId, address token, IJBTerminal to) external returns (uint256 balance);
+    function migrateBalanceOf(uint32 projectId, address token, IJBTerminal to) external returns (uint160 balance);
 
     function addAccountingContextsFor(
         uint32 projectId,
@@ -60,20 +60,20 @@ interface IJBTerminal is IERC165 {
     function pay(
         uint32 projectId,
         address token,
-        uint256 amount,
+        uint160 amount,
         address beneficiary,
-        uint256 minReturnedTokens,
+        uint160 minReturnedTokens,
         string calldata memo,
         bytes calldata metadata
     )
         external
         payable
-        returns (uint256 beneficiaryTokenCount);
+        returns (uint160 beneficiaryTokenCount);
 
     function addToBalanceOf(
         uint32 projectId,
         address token,
-        uint256 amount,
+        uint160 amount,
         bool shouldUnlockHeldFees,
         string calldata memo,
         bytes calldata metadata

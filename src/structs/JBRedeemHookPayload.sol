@@ -10,6 +10,6 @@ import {IJBRedeemHook} from "../interfaces/IJBRedeemHook.sol";
 /// @custom:member metadata Metadata to pass the hook.
 struct JBRedeemHookPayload {
     IJBRedeemHook hook;
-    uint256 amount;
+    uint160 amount;
     bytes metadata;
 }

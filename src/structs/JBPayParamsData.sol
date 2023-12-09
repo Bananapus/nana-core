@@ -21,9 +21,9 @@ struct JBPayParamsData {
     address payer;
     JBTokenAmount amount;
     uint32 projectId;
-    uint256 rulesetId;
+    uint40 rulesetId;
     address beneficiary;
-    uint256 weight;
-    uint256 reservedRate;
+    uint136 weight;
+    uint16 reservedRate;
     bytes metadata;
 }

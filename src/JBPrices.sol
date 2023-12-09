@@ -45,7 +45,7 @@ contract JBPrices is Ownable, JBPermissioned, IJBPrices {
     /// all projects.
     /// @custom:param pricingCurrency The currency the feed's resulting price is in terms of.
     /// @custom:param unitCurrency The currency being priced by the feed.
-    mapping(uint32 projectId => mapping(uint256 pricingCurrency => mapping(uint256 unitCurrency => IJBPriceFeed)))
+    mapping(uint32 projectId => mapping(uint32 pricingCurrency => mapping(uint32 unitCurrency => IJBPriceFeed)))
         public
         override priceFeedFor;
 
@@ -63,18 +63,18 @@ contract JBPrices is Ownable, JBPermissioned, IJBPrices {
     /// decimals.
     function pricePerUnitOf(
         uint32 projectId,
-        uint256 pricingCurrency,
-        uint256 unitCurrency,
-        uint256 decimals
+        uint32 pricingCurrency,
+        uint32 unitCurrency,
+        uint8 decimals
     )
         public
         view
         override
-        returns (uint256)
+        returns (uint160)
     {
         // If the `pricingCurrency` is the `unitCurrency`, return 1 since they have the same price. Include the
         // desired number of decimals.
-        if (pricingCurrency == unitCurrency) return 10 ** decimals;
+        if (pricingCurrency == unitCurrency) return uint160(10 ** decimals);
 
         // Get a reference to the price feed.
         IJBPriceFeed feed = priceFeedFor[projectId][pricingCurrency][unitCurrency];
@@ -87,7 +87,7 @@ contract JBPrices is Ownable, JBPermissioned, IJBPrices {
 
         // If it exists, return the inverse of its price.
         if (feed != IJBPriceFeed(address(0))) {
-            return mulDiv(10 ** decimals, 10 ** decimals, feed.currentUnitPrice(decimals));
+            return uint160(mulDiv(10 ** decimals, 10 ** decimals, feed.currentUnitPrice(decimals)));
         }
 
         // Check for a default feed (project ID 0) if not found.
@@ -133,8 +133,8 @@ contract JBPrices is Ownable, JBPermissioned, IJBPrices {
     /// @param feed The price feed being added.
     function addPriceFeedFor(
         uint32 projectId,
-        uint256 pricingCurrency,
-        uint256 unitCurrency,
+        uint32 pricingCurrency,
+        uint32 unitCurrency,
         IJBPriceFeed feed
     )
         external

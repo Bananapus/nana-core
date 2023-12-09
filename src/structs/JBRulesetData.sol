@@ -20,7 +20,7 @@ import {IJBRulesetApprovalHook} from "./../interfaces/IJBRulesetApprovalHook.sol
 /// can be used to create rules around how a project owner can change ruleset parameters over time.
 struct JBRulesetData {
     uint32 duration;
-    uint88 weight;
+    uint136 weight;
     uint32 decayRate;
     IJBRulesetApprovalHook hook;
 }

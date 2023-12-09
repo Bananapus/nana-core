@@ -6,6 +6,6 @@ import {JBSplit} from "./JBSplit.sol";
 /// @custom:member groupId An identifier for the group.
 /// @custom:member splits The splits in the group.
 struct JBSplitGroup {
-    uint256 groupId;
+    uint160 groupId;
     JBSplit[] splits;
 }

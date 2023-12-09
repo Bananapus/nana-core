@@ -18,11 +18,11 @@ import {JBTokenAmount} from "./JBTokenAmount.sol";
 struct JBDidRedeemData {
     address holder;
     uint32 projectId;
-    uint256 rulesetId;
-    uint256 projectTokenCount;
+    uint40 rulesetId;
+    uint160 projectTokenCount;
     JBTokenAmount reclaimedAmount;
     JBTokenAmount forwardedAmount;
-    uint256 redemptionRate;
+    uint16 redemptionRate;
     address payable beneficiary;
     bytes hookMetadata;
     bytes redeemerMetadata;

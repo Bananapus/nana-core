@@ -16,7 +16,7 @@ import {JBFundAccessLimitGroup} from "./JBFundAccessLimitGroup.sol";
 /// number of decimals as the corresponding terminal. The `_payoutLimit` and `_surplusAllowance` parameters must fit in
 /// a `uint232`.
 struct JBRulesetConfig {
-    uint256 mustStartAtOrAfter;
+    uint40 mustStartAtOrAfter;
     JBRulesetData data;
     JBRulesetMetadata metadata;
     JBSplitGroup[] splitGroups;

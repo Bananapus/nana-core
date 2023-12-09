@@ -8,7 +8,7 @@ interface IJBToken {
 
     function balanceOf(address account) external view returns (uint256);
 
-    function mint(address account, uint256 amount) external;
+    function mint(address account, uint160 amount) external;
 
-    function burn(address account, uint256 amount) external;
+    function burn(address account, uint160 amount) external;
 }

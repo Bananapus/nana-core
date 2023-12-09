@@ -13,10 +13,10 @@ library JBFees {
     /// @param feePercent The fee percent, out of `JBConstants.MAX_FEE`.
     /// @return The amount of tokens to pay as a fee, as a fixed point number with the same number of decimals as the
     /// provided `amount`.
-    function feeAmountIn(uint256 amount, uint256 feePercent) internal pure returns (uint256) {
+    function feeAmountIn(uint160 amount, uint16 feePercent) internal pure returns (uint160) {
         // The amount of tokens from the `amount` to pay as a fee. If reverse, the fee taken from a payout of
         // `amount`.
-        return amount - mulDiv(amount, JBConstants.MAX_FEE, feePercent + JBConstants.MAX_FEE);
+        return amount - uint160(mulDiv(amount, JBConstants.MAX_FEE, feePercent + JBConstants.MAX_FEE));
     }
 
     /// @notice Returns the fee that would have been paid based on an `amount` which has already had the fee subtracted
@@ -26,9 +26,9 @@ library JBFees {
     /// this terminal.
     /// @param feePercent The fee percent, out of `JBConstants.MAX_FEE`.
     /// @return The amount of the fee, as a fixed point number with the same amount of decimals as this terminal.
-    function feeAmountFrom(uint256 amount, uint256 feePercent) internal pure returns (uint256) {
+    function feeAmountFrom(uint160 amount, uint16 feePercent) internal pure returns (uint160) {
         // The amount of tokens from the `amount` to pay as a fee. If reverse, the fee taken from a payout of
         // `amount`.
-        return mulDiv(amount, feePercent, JBConstants.MAX_FEE);
+        return uint160(mulDiv(amount, feePercent, JBConstants.MAX_FEE));
     }
 }

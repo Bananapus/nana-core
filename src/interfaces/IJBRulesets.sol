@@ -8,19 +8,19 @@ import {IJBControlled} from "./IJBControlled.sol";
 
 interface IJBRulesets is IJBControlled {
     event RulesetQueued(
-        uint256 indexed rulesetId,
-        uint256 indexed projectId,
+        uint40 indexed rulesetId,
+        uint32 indexed projectId,
         JBRulesetData data,
         uint256 metadata,
-        uint256 mustStartAtOrAfter,
+        uint40 mustStartAtOrAfter,
         address caller
     );
 
-    event RulesetInitialized(uint256 indexed rulesetId, uint256 indexed projectId, uint256 indexed basedOnId);
+    event RulesetInitialized(uint40 indexed rulesetId, uint32 indexed projectId, uint40 indexed basedOnId);
 
-    function latestRulesetIdOf(uint32 projectId) external view returns (uint256);
+    function latestRulesetIdOf(uint32 projectId) external view returns (uint40);
 
-    function getRulesetOf(uint32 projectId, uint256 rulesetId) external view returns (JBRuleset memory);
+    function getRulesetOf(uint32 projectId, uint40 rulesetId) external view returns (JBRuleset memory);
 
     function latestQueuedRulesetOf(uint32 projectId)
         external
@@ -37,7 +37,7 @@ interface IJBRulesets is IJBControlled {
         uint32 projectId,
         JBRulesetData calldata data,
         uint256 metadata,
-        uint256 mustStartAtOrAfter
+        uint40 mustStartAtOrAfter
     )
         external
         returns (JBRuleset memory ruleset);

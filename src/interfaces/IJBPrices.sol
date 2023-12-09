@@ -7,15 +7,15 @@ import {IJBDirectory} from "./IJBDirectory.sol";
 
 interface IJBPrices {
     event AddPriceFeed(
-        uint256 indexed projectId, uint256 indexed pricingCurrency, uint256 indexed unitCurrency, IJBPriceFeed feed
+        uint32 indexed projectId, uint32 indexed pricingCurrency, uint32 indexed unitCurrency, IJBPriceFeed feed
     );
 
     function PROJECTS() external view returns (IJBProjects);
 
     function priceFeedFor(
         uint32 projectId,
-        uint256 pricingCurrency,
-        uint256 unitCurrency
+        uint32 pricingCurrency,
+        uint32 unitCurrency
     )
         external
         view
@@ -23,18 +23,18 @@ interface IJBPrices {
 
     function pricePerUnitOf(
         uint32 projectId,
-        uint256 pricingCurrency,
-        uint256 unitCurrency,
-        uint256 decimals
+        uint32 pricingCurrency,
+        uint32 unitCurrency,
+        uint8 decimals
     )
         external
         view
-        returns (uint256);
+        returns (uint160);
 
     function addPriceFeedFor(
         uint32 projectId,
-        uint256 pricingCurrency,
-        uint256 unitCurrency,
+        uint32 pricingCurrency,
+        uint32 unitCurrency,
         IJBPriceFeed priceFeed
     )
         external;

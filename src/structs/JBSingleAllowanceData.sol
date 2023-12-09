@@ -8,9 +8,9 @@ pragma solidity ^0.8.0;
 /// @custom:member signature The signature over the permit data. Supports EOA signatures, compact signatures defined by
 /// EIP-2098, and contract signatures defined by EIP-1271.
 struct JBSingleAllowanceData {
-    uint256 sigDeadline;
+    uint40 sigDeadline;
     uint160 amount;
-    uint48 expiration;
+    uint40 expiration;
     uint48 nonce;
     bytes signature;
 }

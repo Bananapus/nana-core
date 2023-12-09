@@ -23,7 +23,7 @@ contract JBDeadline is ERC165, IJBRulesetApprovalHook {
 
     /// @notice The minimum difference between the time a ruleset is queued and the time it starts, as a number of
     /// seconds. If the difference is greater than this number, the ruleset is `Approved`.
-    uint256 public immutable override DURATION;
+    uint40 public immutable override DURATION;
 
     //*********************************************************************//
     // -------------------------- public views --------------------------- //
@@ -37,8 +37,8 @@ contract JBDeadline is ERC165, IJBRulesetApprovalHook {
     /// @return The status of the approval hook.
     function approvalStatusOf(
         uint32 projectId,
-        uint256 rulesetId,
-        uint256 start
+        uint40 rulesetId,
+        uint40 start
     )
         public
         view
@@ -74,7 +74,7 @@ contract JBDeadline is ERC165, IJBRulesetApprovalHook {
 
     /// @param duration The minimum number of seconds between the time a ruleset is queued and that ruleset's `start`
     /// for it to be `Approved`.
-    constructor(uint256 duration) {
+    constructor(uint40 duration) {
         // Ensure we don't underflow in `approvalStatusOf(...)`.
         if (duration > block.timestamp) revert DURATION_TOO_LONG();
 

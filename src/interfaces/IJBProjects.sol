@@ -5,7 +5,7 @@ import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import {IJBTokenUriResolver} from "./IJBTokenUriResolver.sol";
 
 interface IJBProjects is IERC721 {
-    event Create(uint256 indexed projectId, address indexed owner, address caller);
+    event Create(uint32 indexed projectId, address indexed owner, address caller);
 
     event SetTokenUriResolver(IJBTokenUriResolver indexed resolver, address caller);
 

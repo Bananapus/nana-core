@@ -23,12 +23,12 @@ struct JBRedeemParamsData {
     address terminal;
     address holder;
     uint32 projectId;
-    uint256 rulesetId;
-    uint256 tokenCount;
-    uint256 totalSupply;
-    uint256 surplus;
+    uint40 rulesetId;
+    uint160 tokenCount;
+    uint160 totalSupply;
+    uint160 surplus;
     JBTokenAmount reclaimAmount;
     bool useTotalSurplus;
-    uint256 redemptionRate;
+    uint16 redemptionRate;
     bytes metadata;
 }

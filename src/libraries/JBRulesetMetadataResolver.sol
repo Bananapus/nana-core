@@ -68,8 +68,8 @@ library JBRulesetMetadataResolver {
         return address(uint160(ruleset.metadata >> 79));
     }
 
-    function metadata(JBRuleset memory ruleset) internal pure returns (uint256) {
-        return uint256(uint16(ruleset.metadata >> 239));
+    function metadata(JBRuleset memory ruleset) internal pure returns (uint16) {
+        return uint16(ruleset.metadata >> 239);
     }
 
     /// @notice Pack the funding cycle metadata.

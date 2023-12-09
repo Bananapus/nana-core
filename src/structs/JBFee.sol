@@ -5,6 +5,6 @@ pragma solidity ^0.8.0;
 /// decimals as the terminal in which this struct was created.
 /// @custom:member beneficiary The address that will receive the tokens that are minted as a result of the fee payment.
 struct JBFee {
-    uint256 amount;
+    uint160 amount;
     address beneficiary;
 }

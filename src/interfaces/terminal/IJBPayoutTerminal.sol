@@ -12,20 +12,20 @@ interface IJBPayoutTerminal is IJBTerminal {
         uint256 indexed rulesetCycleNumber,
         uint32 indexed projectId,
         address beneficiary,
-        uint256 amount,
-        uint256 amountPaidOut,
-        uint256 fee,
-        uint256 beneficiaryDistributionAmount,
+        uint160 amount,
+        uint160 amountPaidOut,
+        uint160 fee,
+        uint160 beneficiaryDistributionAmount,
         address caller
     );
 
     event SendPayoutToSplit(
         uint32 indexed projectId,
-        uint256 indexed domain,
-        uint256 indexed group,
+        uint56 indexed domain,
+        uint160 indexed group,
         JBSplit split,
-        uint256 amount,
-        uint256 netAmount,
+        uint160 amount,
+        uint160 netAmount,
         address caller
     );
 
@@ -34,34 +34,34 @@ interface IJBPayoutTerminal is IJBTerminal {
         uint256 indexed rulesetCycleNumber,
         uint32 indexed projectId,
         address beneficiary,
-        uint256 amount,
-        uint256 amountPaidOut,
-        uint256 netAmountPaidOut,
+        uint160 amount,
+        uint160 amountPaidOut,
+        uint160 netAmountPaidOut,
         string memo,
         address caller
     );
 
-    event PayoutReverted(uint32 indexed projectId, JBSplit split, uint256 amount, bytes reason, address caller);
+    event PayoutReverted(uint32 indexed projectId, JBSplit split, uint160 amount, bytes reason, address caller);
 
     function sendPayoutsOf(
         uint32 projectId,
         address token,
-        uint256 amount,
-        uint256 currency,
-        uint256 minReturnedTokens
+        uint160 amount,
+        uint32 currency,
+        uint160 minReturnedTokens
     )
         external
-        returns (uint256 netLeftoverPayoutAmount);
+        returns (uint160 netLeftoverPayoutAmount);
 
     function useAllowanceOf(
         uint32 projectId,
         address token,
-        uint256 amount,
-        uint256 currency,
-        uint256 minReturnedTokens,
+        uint160 amount,
+        uint32 currency,
+        uint160 minReturnedTokens,
         address payable beneficiary,
         string calldata memo
     )
         external
-        returns (uint256 netAmountPaidOut);
+        returns (uint160 netAmountPaidOut);
 }

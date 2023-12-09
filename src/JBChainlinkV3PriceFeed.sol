@@ -8,7 +8,7 @@ import {JBFixedPointNumber} from "./libraries/JBFixedPointNumber.sol";
 /// @notice A generalized price feed for the Chainlink AggregatorV3Interface.
 contract JBChainlinkV3PriceFeed is IJBPriceFeed {
     // A library that provides utility for fixed point numbers.
-    using JBFixedPointNumber for uint256;
+    using JBFixedPointNumber for uint160;
 
     //*********************************************************************//
     // --------------------------- custom errors ------------------------- //
@@ -16,6 +16,7 @@ contract JBChainlinkV3PriceFeed is IJBPriceFeed {
     error STALE_PRICE();
     error INCOMPLETE_ROUND();
     error NEGATIVE_PRICE();
+    error UNEXPECTED_PRICE();
 
     //*********************************************************************//
     // ---------------- public stored immutable properties --------------- //
@@ -31,7 +32,7 @@ contract JBChainlinkV3PriceFeed is IJBPriceFeed {
     /// @notice Gets the current price (per unit) from the feed, normalized to the specified number of decimals.
     /// @param decimals The number of decimals the returned fixed point price should include.
     /// @return The current price of the feed, as a fixed point number with the specified number of decimals.
-    function currentUnitPrice(uint256 decimals) external view override returns (uint256) {
+    function currentUnitPrice(uint8 decimals) external view override returns (uint160) {
         // Get the latest round information.
         (uint80 roundId, int256 price,, uint256 updatedAt, uint80 answeredInRound) = FEED.latestRoundData();
 
@@ -44,11 +45,14 @@ contract JBChainlinkV3PriceFeed is IJBPriceFeed {
         // Make sure the price is positive.
         if (price < 0) revert NEGATIVE_PRICE();
 
+        // Make sure the price fits in a uint160.
+        if (uint256(price) > type(uint160).max) revert UNEXPECTED_PRICE();
+
         // Get a reference to the number of decimals the feed uses.
-        uint256 feedDecimals = FEED.decimals();
+        uint8 feedDecimals = FEED.decimals();
 
         // Return the price, adjusted to the target decimals.
-        return uint256(price).adjustDecimals({decimals: feedDecimals, targetDecimals: decimals});
+        return uint160(uint256(price)).adjustDecimals({decimals: feedDecimals, targetDecimals: decimals});
     }
 
     //*********************************************************************//

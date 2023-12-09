@@ -10,6 +10,6 @@ import {IJBPayHook} from "../interfaces/IJBPayHook.sol";
 /// @custom:member metadata Metadata to pass the hook.
 struct JBPayHookPayload {
     IJBPayHook hook;
-    uint256 amount;
+    uint160 amount;
     bytes metadata;
 }

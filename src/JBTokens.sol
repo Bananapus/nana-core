@@ -44,16 +44,16 @@ contract JBTokens is JBControlled, IJBTokens {
 
     /// @notice Each token's project.
     /// @custom:param token The address of the token associated with the project.
-    mapping(IJBToken token => uint256) public override projectIdOf;
+    mapping(IJBToken token => uint32) public override projectIdOf;
 
     /// @notice The total supply of credits for each project.
     /// @custom:param projectId The ID of the project to which the credits belong.
-    mapping(uint32 projectId => uint256) public override totalCreditSupplyOf;
+    mapping(uint32 projectId => uint160) public override totalCreditSupplyOf;
 
     /// @notice Each holder's credit balance for each project.
     /// @custom:param holder The credit holder.
     /// @custom:param projectId The ID of the project to which the credits belong.
-    mapping(address holder => mapping(uint32 projectId => uint256)) public override creditBalanceOf;
+    mapping(address holder => mapping(uint32 projectId => uint160)) public override creditBalanceOf;
 
     //*********************************************************************//
     // ------------------------- external views -------------------------- //
@@ -63,7 +63,7 @@ contract JBTokens is JBControlled, IJBTokens {
     /// @param holder The holder to get a balance for.
     /// @param projectId The project to get the `_holder`s balance for.
     /// @return balance The combined token and token credit balance of the `_holder
-    function totalBalanceOf(address holder, uint32 projectId) external view override returns (uint256 balance) {
+    function totalBalanceOf(address holder, uint32 projectId) external view override returns (uint160 balance) {
         // Get a reference to the holder's credits for the project.
         balance = creditBalanceOf[holder][projectId];
 
@@ -72,7 +72,7 @@ contract JBTokens is JBControlled, IJBTokens {
 
         // If the project has a current token, add the holder's balance to the total.
         if (token != IJBToken(address(0))) {
-            balance = balance + token.balanceOf(holder);
+            balance = balance + uint160(token.balanceOf(holder));
         }
     }
 
@@ -83,7 +83,7 @@ contract JBTokens is JBControlled, IJBTokens {
     /// @notice The total supply for a specific project, including both tokens and token credits.
     /// @param projectId The ID of the project to get the total supply of.
     /// @return totalSupply The total supply of the project's tokens and token credits.
-    function totalSupplyOf(uint32 projectId) public view override returns (uint256 totalSupply) {
+    function totalSupplyOf(uint32 projectId) public view override returns (uint160 totalSupply) {
         // Get a reference to the total supply of the project's credits
         totalSupply = totalCreditSupplyOf[projectId];
 
@@ -92,7 +92,7 @@ contract JBTokens is JBControlled, IJBTokens {
 
         // If the project has a current token, add its total supply to the total.
         if (token != IJBToken(address(0))) {
-            totalSupply = totalSupply + token.totalSupply();
+            totalSupply = totalSupply + uint160(token.totalSupply());
         }
     }
 
@@ -176,7 +176,7 @@ contract JBTokens is JBControlled, IJBTokens {
     /// @param holder The address receiving the new tokens.
     /// @param projectId The ID of the project to which the tokens belong.
     /// @param amount The amount of tokens to mint.
-    function mintFor(address holder, uint32 projectId, uint256 amount) external override onlyControllerOf(projectId) {
+    function mintFor(address holder, uint32 projectId, uint160 amount) external override onlyControllerOf(projectId) {
         // Get a reference to the project's current token.
         IJBToken token = tokenOf[projectId];
 
@@ -192,8 +192,8 @@ contract JBTokens is JBControlled, IJBTokens {
             totalCreditSupplyOf[projectId] = totalCreditSupplyOf[projectId] + amount;
         }
 
-        // The total supply can't exceed the maximum value storable in a uint208.
-        if (totalSupplyOf(projectId) > type(uint208).max) revert OVERFLOW_ALERT();
+        // The total supply can't exceed the maximum value storable in a uint160.
+        if (totalSupplyOf(projectId) > type(uint160).max) revert OVERFLOW_ALERT();
 
         emit Mint(holder, projectId, amount, shouldClaimTokens, msg.sender);
     }
@@ -204,21 +204,21 @@ contract JBTokens is JBControlled, IJBTokens {
     /// @param holder The address that owns the tokens which are being burned.
     /// @param projectId The ID of the project to the burned tokens belong to.
     /// @param amount The amount of tokens to burn.
-    function burnFrom(address holder, uint32 projectId, uint256 amount) external override onlyControllerOf(projectId) {
+    function burnFrom(address holder, uint32 projectId, uint160 amount) external override onlyControllerOf(projectId) {
         // Get a reference to the project's current token.
         IJBToken token = tokenOf[projectId];
 
         // Get a reference to the amount of credits the holder has.
-        uint256 creditBalance = creditBalanceOf[holder][projectId];
+        uint160 creditBalance = creditBalanceOf[holder][projectId];
 
         // Get a reference to the amount of the project's current token the holder has in their wallet.
-        uint256 tokenBalance = token == IJBToken(address(0)) ? 0 : token.balanceOf(holder);
+        uint160 tokenBalance = token == IJBToken(address(0)) ? 0 : uint160(token.balanceOf(holder));
 
         // There must be enough tokens to burn across the holder's combined token and credit balance.
         if (amount > tokenBalance + creditBalance) revert INSUFFICIENT_FUNDS();
 
         // The amount of tokens to burn.
-        uint256 tokensToBurn;
+        uint160 tokensToBurn;
 
         // Get a reference to how many tokens should be burned
         if (tokenBalance != 0) {
@@ -229,7 +229,7 @@ contract JBTokens is JBControlled, IJBTokens {
         }
 
         // The amount of credits to burn.
-        uint256 creditsToBurn;
+        uint160 creditsToBurn;
         unchecked {
             creditsToBurn = amount - tokensToBurn;
         }
@@ -255,7 +255,7 @@ contract JBTokens is JBControlled, IJBTokens {
     function claimTokensFor(
         address holder,
         uint32 projectId,
-        uint256 amount,
+        uint160 amount,
         address beneficiary
     )
         external
@@ -269,7 +269,7 @@ contract JBTokens is JBControlled, IJBTokens {
         if (token == IJBToken(address(0))) revert TOKEN_NOT_FOUND();
 
         // Get a reference to the amount of credits the holder has.
-        uint256 creditBalance = creditBalanceOf[holder][projectId];
+        uint160 creditBalance = creditBalanceOf[holder][projectId];
 
         // There must be enough credits to claim.
         if (creditBalance < amount) revert INSUFFICIENT_CREDITS();
@@ -298,7 +298,7 @@ contract JBTokens is JBControlled, IJBTokens {
         address holder,
         uint32 projectId,
         address recipient,
-        uint256 amount
+        uint160 amount
     )
         external
         override
@@ -308,7 +308,7 @@ contract JBTokens is JBControlled, IJBTokens {
         if (recipient == address(0)) revert RECIPIENT_ZERO_ADDRESS();
 
         // Get a reference to the holder's unclaimed project token balance.
-        uint256 creditBalance = creditBalanceOf[holder][projectId];
+        uint160 creditBalance = creditBalanceOf[holder][projectId];
 
         // The holder must have enough unclaimed tokens to transfer.
         if (amount > creditBalance) revert INSUFFICIENT_CREDITS();

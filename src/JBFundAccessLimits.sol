@@ -27,9 +27,9 @@ contract JBFundAccessLimits is JBControlled, ERC165, IJBFundAccessLimits {
     //*********************************************************************//
 
     /// @notice A list of packed payout limits for a given project, ruleset, terminal, and token.
-    /// @dev bits 0-223: The maximum amount (in a specific currency) of the terminal's `token`s that the project can pay
+    /// @dev bits 0-159: The maximum amount (in a specific currency) of the terminal's `token`s that the project can pay
     /// out during the applicable ruleset.
-    /// @dev bits 224-255: The currency that the payout limit is denominated in. If this currency is different from the
+    /// @dev bits 160-191: The currency that the payout limit is denominated in. If this currency is different from the
     /// terminal's `token`, the payout limit will vary depending on their exchange rate.
     /// @custom:param projectId The ID of the project to get the packed payout limit data of.
     /// @custom:param rulesetId The ID of the ruleset that the packed payout limit data applies to.
@@ -37,13 +37,13 @@ contract JBFundAccessLimits is JBControlled, ERC165, IJBFundAccessLimits {
     /// @custom:param token The token payouts are being limited for.
     mapping(
         uint32 projectId
-            => mapping(uint256 rulesetId => mapping(address terminal => mapping(address token => uint256[])))
+            => mapping(uint40 rulesetId => mapping(address terminal => mapping(address token => uint192[])))
     ) private _packedPayoutLimitsDataOf;
 
     /// @notice A list of packed surplus allowances for a given project, ruleset, terminal, and token.
-    /// @dev bits 0-223: The maximum amount (in a specific currency) of the terminal's `token`s that the project can
+    /// @dev bits 0-159: The maximum amount (in a specific currency) of the terminal's `token`s that the project can
     /// access from its surplus during the applicable ruleset.
-    /// @dev bits 224-255: The currency that the surplus allowance is denominated in. If this currency is different from
+    /// @dev bits 160-191: The currency that the surplus allowance is denominated in. If this currency is different from
     /// the terminal's `token`, the surplus allowance will vary depending on their exchange rate.
     /// @custom:param projectId The ID of the project to get the packed surplus allowance data of.
     /// @custom:param rulesetId The ID of the ruleset that the packed surplus allowance data applies to.
@@ -51,7 +51,7 @@ contract JBFundAccessLimits is JBControlled, ERC165, IJBFundAccessLimits {
     /// @custom:param token The token that the surplus allowance applies to.
     mapping(
         uint32 projectId
-            => mapping(uint256 rulesetId => mapping(address terminal => mapping(address token => uint256[])))
+            => mapping(uint40 rulesetId => mapping(address terminal => mapping(address token => uint192[])))
     ) private _packedSurplusAllowancesDataOf;
 
     //*********************************************************************//
@@ -70,7 +70,7 @@ contract JBFundAccessLimits is JBControlled, ERC165, IJBFundAccessLimits {
     /// @return payoutLimits The payout limits.
     function payoutLimitsOf(
         uint32 projectId,
-        uint256 rulesetId,
+        uint40 rulesetId,
         address terminal,
         address token
     )
@@ -80,26 +80,26 @@ contract JBFundAccessLimits is JBControlled, ERC165, IJBFundAccessLimits {
         returns (JBCurrencyAmount[] memory payoutLimits)
     {
         // Get a reference to the packed data.
-        uint256[] memory packedPayoutLimitsData = _packedPayoutLimitsDataOf[projectId][rulesetId][terminal][token];
+        uint192[] memory packedPayoutLimitsData = _packedPayoutLimitsDataOf[projectId][rulesetId][terminal][token];
 
         // Get a reference to the number of payout limits.
-        uint256 numberOfData = packedPayoutLimitsData.length;
+        uint8 numberOfData = uint8(packedPayoutLimitsData.length);
 
         // Initialize the return value.
         payoutLimits = new JBCurrencyAmount[](numberOfData);
 
         // Keep a reference to the data that'll be iterated.
-        uint256 packedPayoutLimitData;
+        uint192 packedPayoutLimitData;
 
         // Iterate through the stored packed values and format the returned value.
-        for (uint256 i; i < numberOfData; ++i) {
+        for (uint8 i; i < numberOfData; ++i) {
             // Set the data being iterated on.
             packedPayoutLimitData = packedPayoutLimitsData[i];
 
-            // The limit amount is in bits 0-231. The currency is in bits 224-255.
+            // The limit amount is in bits 0-159. The currency is in bits 160-191.
             payoutLimits[i] = JBCurrencyAmount({
-                currency: packedPayoutLimitData >> 224,
-                amount: uint256(uint224(packedPayoutLimitData))
+                currency: uint32(packedPayoutLimitData >> 160),
+                amount: uint160(packedPayoutLimitData)
             });
         }
     }
@@ -115,33 +115,33 @@ contract JBFundAccessLimits is JBControlled, ERC165, IJBFundAccessLimits {
     /// terminal.
     function payoutLimitOf(
         uint32 projectId,
-        uint256 rulesetId,
+        uint40 rulesetId,
         address terminal,
         address token,
-        uint256 currency
+        uint32 currency
     )
         external
         view
         override
-        returns (uint256 payoutLimit)
+        returns (uint160 payoutLimit)
     {
         // Get a reference to the packed data.
-        uint256[] memory data = _packedPayoutLimitsDataOf[projectId][rulesetId][terminal][token];
+        uint192[] memory packedPayoutLimitsData = _packedPayoutLimitsDataOf[projectId][rulesetId][terminal][token];
 
         // Get a reference to the number of payout limits.
-        uint256 numberOfData = data.length;
+        uint8 numberOfData = uint8(packedPayoutLimitsData.length);
 
         // Keep a reference to the data that'll be iterated.
-        uint256 packedPayoutLimitData;
+        uint192 packedPayoutLimitData;
 
         // Iterate through the stored packed values and return the value of the matching currency.
-        for (uint256 i; i < numberOfData; ++i) {
+        for (uint8 i; i < numberOfData; ++i) {
             // Set the data being iterated on.
-            packedPayoutLimitData = data[i];
+            packedPayoutLimitData = packedPayoutLimitsData[i];
 
             // If the currencies match, return the value.
-            if (currency == packedPayoutLimitData >> 224) {
-                return uint256(uint224(packedPayoutLimitData));
+            if (currency == packedPayoutLimitData >> 160) {
+                return uint160(packedPayoutLimitData);
             }
         }
     }
@@ -158,7 +158,7 @@ contract JBFundAccessLimits is JBControlled, ERC165, IJBFundAccessLimits {
     /// @return surplusAllowances The surplus allowances.
     function surplusAllowancesOf(
         uint32 projectId,
-        uint256 rulesetId,
+        uint40 rulesetId,
         address terminal,
         address token
     )
@@ -168,27 +168,27 @@ contract JBFundAccessLimits is JBControlled, ERC165, IJBFundAccessLimits {
         returns (JBCurrencyAmount[] memory surplusAllowances)
     {
         // Get a reference to the packed data.
-        uint256[] memory packedSurplusAllowancesData =
+        uint192[] memory packedSurplusAllowancesData =
             _packedSurplusAllowancesDataOf[projectId][rulesetId][terminal][token];
 
         // Get a reference to the number of surplus allowances.
-        uint256 numberOfData = packedSurplusAllowancesData.length;
+        uint8 numberOfData = uint8(packedSurplusAllowancesData.length);
 
         // Initialize the return value.
         surplusAllowances = new JBCurrencyAmount[](numberOfData);
 
         // Keep a reference to the data that'll be iterated.
-        uint256 packedSurplusAllowanceData;
+        uint192 packedSurplusAllowanceData;
 
         // Iterate through the stored packed values and format the returned value.
-        for (uint256 i; i < numberOfData; ++i) {
+        for (uint8 i; i < numberOfData; ++i) {
             // Set the data being iterated on.
             packedSurplusAllowanceData = packedSurplusAllowancesData[i];
 
-            // The limit is in bits 0-223. The currency is in bits 224-255.
+            // The limit is in bits 0-159. The currency is in bits 160-191.
             surplusAllowances[i] = JBCurrencyAmount({
-                currency: packedSurplusAllowanceData >> 224,
-                amount: uint256(uint224(packedSurplusAllowanceData))
+                currency: uint32(packedSurplusAllowanceData >> 160),
+                amount: uint160(packedSurplusAllowanceData)
             });
         }
     }
@@ -204,33 +204,34 @@ contract JBFundAccessLimits is JBControlled, ERC165, IJBFundAccessLimits {
     /// provided terminal.
     function surplusAllowanceOf(
         uint32 projectId,
-        uint256 rulesetId,
+        uint40 rulesetId,
         address terminal,
         address token,
-        uint256 currency
+        uint32 currency
     )
         external
         view
         override
-        returns (uint256 surplusAllowance)
+        returns (uint160 surplusAllowance)
     {
         // Get a reference to the packed data.
-        uint256[] memory data = _packedSurplusAllowancesDataOf[projectId][rulesetId][terminal][token];
+        uint192[] memory packedSurplusAllowancesData =
+            _packedSurplusAllowancesDataOf[projectId][rulesetId][terminal][token];
 
         // Get a reference to the number of surplus allowances.
-        uint256 numberOfData = data.length;
+        uint8 numberOfData = uint8(packedSurplusAllowancesData.length);
 
         // Keep a reference to the data that'll be iterated.
-        uint256 packedSurplusAllowanceData;
+        uint192 packedSurplusAllowanceData;
 
         // Iterate through the stored packed values and format the returned value.
-        for (uint256 i; i < numberOfData; ++i) {
+        for (uint8 i; i < numberOfData; ++i) {
             // Set the data being iterated on.
-            packedSurplusAllowanceData = data[i];
+            packedSurplusAllowanceData = packedSurplusAllowancesData[i];
 
             // If the currencies match, return the value.
-            if (currency == packedSurplusAllowanceData >> 224) {
-                return uint256(uint224(packedSurplusAllowanceData));
+            if (currency == packedSurplusAllowanceData >> 160) {
+                return uint160(packedSurplusAllowanceData);
             }
         }
     }
@@ -257,7 +258,7 @@ contract JBFundAccessLimits is JBControlled, ERC165, IJBFundAccessLimits {
     /// Amounts are fixed point numbers using the same number of decimals as the accompanying terminal.
     function setFundAccessLimitsFor(
         uint32 projectId,
-        uint256 rulesetId,
+        uint40 rulesetId,
         JBFundAccessLimitGroup[] calldata fundAccessLimitGroup
     )
         external
@@ -265,29 +266,29 @@ contract JBFundAccessLimits is JBControlled, ERC165, IJBFundAccessLimits {
         onlyControllerOf(projectId)
     {
         // Save the number of limits.
-        uint256 numberOfFundAccessLimitGroups = fundAccessLimitGroup.length;
+        uint8 numberOfFundAccessLimitGroups = uint8(fundAccessLimitGroup.length);
 
         // Keep a reference to the fund access constraint being iterated on.
         JBFundAccessLimitGroup calldata limits;
 
         // Set payout limits if there are any.
-        for (uint256 i; i < numberOfFundAccessLimitGroups; ++i) {
+        for (uint8 i; i < numberOfFundAccessLimitGroups; ++i) {
             // Set the limits being iterated on.
             limits = fundAccessLimitGroup[i];
 
             // Keep a reference to the number of payout limits.
-            uint256 numberOfPayoutLimits = limits.payoutLimits.length;
+            uint8 numberOfPayoutLimits = uint8(limits.payoutLimits.length);
 
             // Keep a reference to the payout limit being iterated on.
             JBCurrencyAmount calldata payoutLimit;
 
             // Iterate through each payout limit to validate and store them.
-            for (uint256 j; j < numberOfPayoutLimits; ++j) {
+            for (uint8 j; j < numberOfPayoutLimits; ++j) {
                 // Set the payout limit being iterated on.
                 payoutLimit = limits.payoutLimits[j];
 
-                // If payout limit amount is larger than 224 bits, revert.
-                if (payoutLimit.amount > type(uint224).max) {
+                // If payout limit amount is larger than 160 bits, revert.
+                if (payoutLimit.amount > type(uint160).max) {
                     revert INVALID_PAYOUT_LIMIT();
                 }
 
@@ -304,23 +305,23 @@ contract JBFundAccessLimits is JBControlled, ERC165, IJBFundAccessLimits {
                 // Set the payout limit if there is one.
                 if (payoutLimit.amount > 0) {
                     _packedPayoutLimitsDataOf[projectId][rulesetId][fundAccessLimitGroup[i].terminal][fundAccessLimitGroup[i]
-                        .token].push(payoutLimit.amount | (payoutLimit.currency << 224));
+                        .token].push(payoutLimit.amount | (payoutLimit.currency << 160));
                 }
             }
 
             // Keep a reference to the number of surplus allowances.
-            uint256 numberOfSurplusAllowances = limits.surplusAllowances.length;
+            uint8 numberOfSurplusAllowances = uint8(limits.surplusAllowances.length);
 
             // Keep a reference to the surplus allowances being iterated on.
             JBCurrencyAmount calldata surplusAllowance;
 
             // Iterate through each surplus allowance to validate and store them.
-            for (uint256 j; j < numberOfSurplusAllowances; ++j) {
+            for (uint8 j; j < numberOfSurplusAllowances; ++j) {
                 // Set the payout limit being iterated on.
                 surplusAllowance = limits.surplusAllowances[j];
 
-                // If surplus allowance is larger than 224 bits, revert.
-                if (surplusAllowance.amount > type(uint224).max) {
+                // If surplus allowance is larger than 160 bits, revert.
+                if (surplusAllowance.amount > type(uint160).max) {
                     revert INVALID_SURPLUS_ALLOWANCE();
                 }
 
@@ -337,7 +338,7 @@ contract JBFundAccessLimits is JBControlled, ERC165, IJBFundAccessLimits {
                 // Set the surplus allowance if there is one.
                 if (surplusAllowance.amount > 0) {
                     _packedSurplusAllowancesDataOf[projectId][rulesetId][fundAccessLimitGroup[i].terminal][fundAccessLimitGroup[i]
-                        .token].push(surplusAllowance.amount | (surplusAllowance.currency << 224));
+                        .token].push(surplusAllowance.amount | (surplusAllowance.currency << 160));
                 }
             }
 

@@ -7,7 +7,7 @@ pragma solidity ^0.8.0;
 /// @custom:member currency The expected currency of the value.
 struct JBTokenAmount {
     address token;
-    uint256 value;
-    uint256 decimals;
-    uint256 currency;
+    uint160 value;
+    uint8 decimals;
+    uint32 currency;
 }

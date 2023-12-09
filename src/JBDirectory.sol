@@ -87,10 +87,10 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
         }
 
         // Keep a reference to the number of terminals the project has.
-        uint256 numberOfTerminals = _terminalsOf[projectId].length;
+        uint8 numberOfTerminals = uint8(_terminalsOf[projectId].length);
 
         // Return the first terminal which accepts the specified token.
-        for (uint256 i; i < numberOfTerminals; ++i) {
+        for (uint8 i; i < numberOfTerminals; ++i) {
             // Keep a reference to the terminal being iterated on.
             IJBTerminal terminal = _terminalsOf[projectId][i];
 
@@ -114,10 +114,10 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
     /// @return A flag indicating whether or not the specified terminal is a terminal of the specified project.
     function isTerminalOf(uint32 projectId, IJBTerminal terminal) public view override returns (bool) {
         // Keep a reference to the number of terminals the project has.
-        uint256 numberOfTerminals = _terminalsOf[projectId].length;
+        uint8 numberOfTerminals = uint8(_terminalsOf[projectId].length);
 
         // Loop through and return true if the terminal is contained.
-        for (uint256 i; i < numberOfTerminals; ++i) {
+        for (uint8 i; i < numberOfTerminals; ++i) {
             // If the terminal being iterated on matches the provided terminal, return true.
             if (_terminalsOf[projectId][i] == terminal) return true;
         }
@@ -174,8 +174,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
         bool allowSetController = address(currentController) == address(0)
             || !currentController.supportsInterface(type(IJBDirectoryAccessControl).interfaceId)
             ? true
-            : IJBDirectoryAccessControl(address(currentController)).setControllerAllowed(uint32(projectId)); // TODO:
-            // CHANGE!
+            : IJBDirectoryAccessControl(address(currentController)).setControllerAllowed(projectId);
 
         // Setting controller is allowed if called from the current controller,
         // OR if the project doesn't have a current controller,
@@ -211,7 +210,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
 
         // Get a reference to the flag indicating if the project is allowed to set terminals.
         bool allowSetTerminals = !controller.supportsInterface(type(IJBDirectoryAccessControl).interfaceId)
-            || IJBDirectoryAccessControl(address(controller)).setTerminalsAllowed(uint32(projectId)); // TODO: CHANGE!
+            || IJBDirectoryAccessControl(address(controller)).setTerminalsAllowed(projectId);
 
         // Setting terminals must be allowed if not called from the current controller.
         if (msg.sender != address(controllerOf[projectId]) && !allowSetTerminals) {
@@ -222,12 +221,12 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
         _terminalsOf[projectId] = terminals;
 
         // Keep a reference to the number of terminals being iterated upon.
-        uint256 numberOfTerminals = terminals.length;
+        uint8 numberOfTerminals = uint8(terminals.length);
 
         // Make sure duplicates were not added.
         if (numberOfTerminals > 1) {
-            for (uint256 i; i < numberOfTerminals; ++i) {
-                for (uint256 j = i + 1; j < numberOfTerminals; ++j) {
+            for (uint8 i; i < numberOfTerminals; ++i) {
+                for (uint8 j = i + 1; j < numberOfTerminals; ++j) {
                     if (terminals[i] == terminals[j]) revert DUPLICATE_TERMINALS();
                 }
             }
@@ -298,7 +297,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
 
         // Get a reference to the flag indicating if the project is allowed to set terminals.
         bool allowSetTerminals = !controller.supportsInterface(type(IJBDirectoryAccessControl).interfaceId)
-            || IJBDirectoryAccessControl(address(controller)).setTerminalsAllowed(uint32(projectId)); // TODO: CHANGE!
+            || IJBDirectoryAccessControl(address(controller)).setTerminalsAllowed(projectId);
 
         // Setting terminals must be allowed if not called from the current controller.
         if (msg.sender != address(controllerOf[projectId]) && !allowSetTerminals) {

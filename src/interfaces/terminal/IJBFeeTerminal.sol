@@ -43,7 +43,7 @@ interface IJBFeeTerminal is IJBTerminal {
         address caller
     );
 
-    function FEE() external view returns (uint256);
+    function FEE() external view returns (uint16);
 
     function heldFeesOf(uint32 projectId, address token) external view returns (JBFee[] memory);
 

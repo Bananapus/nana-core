@@ -21,19 +21,19 @@ import {IJBToken} from "./IJBToken.sol";
 import {IJBTokens} from "./IJBTokens.sol";
 
 interface IJBController is IERC165, IJBProjectMetadataRegistry, IJBDirectoryAccessControl {
-    event LaunchProject(uint256 rulesetId, uint32 projectId, string metadata, string memo, address caller);
+    event LaunchProject(uint40 rulesetId, uint32 projectId, string metadata, string memo, address caller);
 
-    event LaunchRulesets(uint256 rulesetId, uint32 projectId, string memo, address caller);
+    event LaunchRulesets(uint40 rulesetId, uint32 projectId, string memo, address caller);
 
-    event QueueRulesets(uint256 rulesetId, uint32 projectId, string memo, address caller);
+    event QueueRulesets(uint40 rulesetId, uint32 projectId, string memo, address caller);
 
     event SendReservedTokensToSplits(
         uint256 indexed rulesetId,
         uint256 indexed rulesetCycleNumber,
         uint32 indexed projectId,
         address beneficiary,
-        uint256 tokenCount,
-        uint256 beneficiaryTokenCount,
+        uint160 tokenCount,
+        uint160 beneficiaryTokenCount,
         string memo,
         address caller
     );
@@ -41,9 +41,9 @@ interface IJBController is IERC165, IJBProjectMetadataRegistry, IJBDirectoryAcce
     event SendReservedTokensToSplit(
         uint32 indexed projectId,
         uint256 indexed domain,
-        uint256 indexed group,
+        uint160 indexed group,
         JBSplit split,
-        uint256 tokenCount,
+        uint160 tokenCount,
         address caller
     );
 
@@ -57,7 +57,7 @@ interface IJBController is IERC165, IJBProjectMetadataRegistry, IJBDirectoryAcce
         address caller
     );
 
-    event BurnTokens(address indexed holder, uint32 indexed projectId, uint256 tokenCount, string memo, address caller);
+    event BurnTokens(address indexed holder, uint32 indexed projectId, uint160 tokenCount, string memo, address caller);
 
     event MigrateController(uint32 indexed projectId, IJBMigratable to, address caller);
 
@@ -77,13 +77,13 @@ interface IJBController is IERC165, IJBProjectMetadataRegistry, IJBDirectoryAcce
 
     function FUND_ACCESS_LIMITS() external view returns (IJBFundAccessLimits);
 
-    function pendingReservedTokenBalanceOf(uint32 projectId) external view returns (uint256);
+    function pendingReservedTokenBalanceOf(uint32 projectId) external view returns (uint160);
 
-    function totalTokenSupplyWithReservedTokensOf(uint32 projectId) external view returns (uint256);
+    function totalTokenSupplyWithReservedTokensOf(uint32 projectId) external view returns (uint160);
 
     function getRulesetOf(
         uint32 projectId,
-        uint256 rulesetId
+        uint40 rulesetId
     )
         external
         view
@@ -121,7 +121,7 @@ interface IJBController is IERC165, IJBProjectMetadataRegistry, IJBDirectoryAcce
         string calldata memo
     )
         external
-        returns (uint256 rulesetId);
+        returns (uint40 rulesetId);
 
     function queueRulesetsOf(
         uint32 projectId,
@@ -129,25 +129,25 @@ interface IJBController is IERC165, IJBProjectMetadataRegistry, IJBDirectoryAcce
         string calldata memo
     )
         external
-        returns (uint256 rulesetId);
+        returns (uint40 rulesetId);
 
     function mintTokensOf(
         uint32 projectId,
-        uint256 tokenCount,
+        uint160 tokenCount,
         address beneficiary,
         string calldata memo,
         bool useReservedRate
     )
         external
-        returns (uint256 beneficiaryTokenCount);
+        returns (uint160 beneficiaryTokenCount);
 
-    function burnTokensOf(address holder, uint32 projectId, uint256 tokenCount, string calldata memo) external;
+    function burnTokensOf(address holder, uint32 projectId, uint160 tokenCount, string calldata memo) external;
 
-    function sendReservedTokensToSplitsOf(uint32 projectId, string memory memo) external returns (uint256);
+    function sendReservedTokensToSplitsOf(uint32 projectId, string memory memo) external returns (uint160);
 
     function migrateController(uint32 projectId, IJBMigratable to) external;
 
-    function setSplitGroupsOf(uint32 projectId, uint256 domain, JBSplitGroup[] calldata splitGroup) external;
+    function setSplitGroupsOf(uint32 projectId, uint40 domain, JBSplitGroup[] calldata splitGroup) external;
 
     function deployERC20For(
         uint32 projectId,
@@ -159,7 +159,7 @@ interface IJBController is IERC165, IJBProjectMetadataRegistry, IJBDirectoryAcce
 
     function setTokenFor(uint32 _projectId, IJBToken _token) external;
 
-    function claimTokensFor(address holder, uint32 projectId, uint256 amount, address beneficiary) external;
+    function claimTokensFor(address holder, uint32 projectId, uint160 amount, address beneficiary) external;
 
-    function transferCreditsFrom(address holder, uint32 projectId, address recipient, uint256 amount) external;
+    function transferCreditsFrom(address holder, uint32 projectId, address recipient, uint160 amount) external;
 }
