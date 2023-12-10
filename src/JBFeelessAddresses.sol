@@ -17,7 +17,7 @@ contract JBFeelessAddresses is Ownable, ERC165, IJBFeelessAddresses {
     /// @dev Feeless addresses can use the surplus allowance without incurring a fee.
     /// @dev Feeless addresses can be the beneficary of redemptions without incurring a fee.
     /// @custom:param addr The address that may or may not be feeless.
-    mapping(address addr => bool) public override isFeelessAddress;
+    mapping(address addr => bool) public override isFeeless;
 
     //*********************************************************************//
     // -------------------------- public views --------------------------- //
@@ -47,7 +47,7 @@ contract JBFeelessAddresses is Ownable, ERC165, IJBFeelessAddresses {
     /// @param flag A flag indicating whether the `address` should be made feeless or not feeless.
     function setFeelessAddress(address addr, bool flag) external virtual override onlyOwner {
         // Set the flag value.
-        isFeelessAddress[addr] = flag;
+        isFeeless[addr] = flag;
 
         emit SetFeelessAddress(addr, flag, _msgSender());
     }

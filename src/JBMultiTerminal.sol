@@ -688,7 +688,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         if (split.hook != IJBSplitHook(address(0))) {
             // This payout is eligible for a fee since the funds are leaving this contract and the split hook isn't a
             // feeless address.
-            if (!FEELESS_ADDRESSES.isFeelessAddress(address(split.hook))) {
+            if (!FEELESS_ADDRESSES.isFeeless(address(split.hook))) {
                 netPayoutAmount -= JBFees.feeAmountIn(amount, FEE);
             }
 
@@ -726,7 +726,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
             // This payout is eligible for a fee if the funds are leaving this contract and the receiving terminal isn't
             // a feelss address.
-            if (terminal != this && !FEELESS_ADDRESSES.isFeelessAddress(address(terminal))) {
+            if (terminal != this && !FEELESS_ADDRESSES.isFeeless(address(terminal))) {
                 netPayoutAmount -= JBFees.feeAmountIn(amount, FEE);
             }
 
@@ -804,7 +804,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
             // This payout is eligible for a fee since the funds are leaving this contract and the recipient isn't a
             // feeless address.
-            if (!FEELESS_ADDRESSES.isFeelessAddress(recipient)) {
+            if (!FEELESS_ADDRESSES.isFeeless(recipient)) {
                 netPayoutAmount -= JBFees.feeAmountIn(amount, FEE);
             }
 
@@ -1069,8 +1069,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
             // Determine if a fee should be taken. Fees are not exercised if the redemption rate is at its max (100%),
             // if the beneficiary is feeless, or if the fee beneficiary doesn't accept the given token.
-            bool takesFee = !FEELESS_ADDRESSES.isFeelessAddress(beneficiary)
-                && ruleset.redemptionRate() != JBConstants.MAX_REDEMPTION_RATE;
+            bool takesFee =
+                !FEELESS_ADDRESSES.isFeeless(beneficiary) && ruleset.redemptionRate() != JBConstants.MAX_REDEMPTION_RATE;
 
             // The amount being reclaimed must be at least as much as was expected.
             if (reclaimAmount < minReturnedTokens) revert INADEQUATE_RECLAIM_AMOUNT();
@@ -1271,7 +1271,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // The net amount is the final amount withdrawn after the fee has been taken.
         netAmountPaidOut = amountPaidOut
             - (
-                FEELESS_ADDRESSES.isFeelessAddress(_msgSender())
+                FEELESS_ADDRESSES.isFeeless(_msgSender())
                     ? 0
                     : _takeFeeFrom({
                         projectId: projectId,
