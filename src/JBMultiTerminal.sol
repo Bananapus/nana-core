@@ -1575,7 +1575,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                 JBFee({
                     amount: amount,
                     beneficiary: beneficiary,
-                    unlockTimestamp: block.timestamp + _FEE_BENEFICIARY_PROJECT_ID
+                    unlockTimestamp: block.timestamp + _FEE_HOLDING_SECONDS
                 })
             );
 
