@@ -38,6 +38,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     error INADEQUATE_CONTROLLER_ALLOWANCE();
     error INADEQUATE_TERMINAL_STORE_BALANCE();
     error INSUFFICIENT_TOKENS();
+    error OVERFLOW_ALERT();
     error INVALID_RULESET();
     error TERMINAL_MIGRATION_NOT_ALLOWED();
 
@@ -371,6 +372,11 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
 
         // Add the correct balance difference to the token balance of the project.
         if (balanceDiff != 0) {
+            // Make sure the amount is within the limit of uint160.
+            if (balanceOf[msg.sender][projectId][amount.token] + balanceDiff > type(uint160).max) {
+                revert OVERFLOW_ALERT();
+            }
+
             balanceOf[msg.sender][projectId][amount.token] =
                 balanceOf[msg.sender][projectId][amount.token] + balanceDiff;
         }
@@ -579,6 +585,11 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
                 })
             );
 
+        // Make sure the amount is within the limit of uint160.
+        if (amountPaidOut > type(uint160).max) {
+            revert OVERFLOW_ALERT();
+        }
+
         // The amount being paid out must be available.
         if (amountPaidOut > balanceOf[msg.sender][projectId][accountingContext.token]) {
             revert INADEQUATE_TERMINAL_STORE_BALANCE();
@@ -685,6 +696,11 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     /// @param amount The amount of terminal tokens added, as a fixed point number with the same amount of decimals as
     /// its relative terminal.
     function recordAddedBalanceFor(uint256 projectId, address token, uint256 amount) external override {
+        // Make sure the amount is within the limit of uint160.
+        if (balanceOf[msg.sender][projectId][token] + amount > type(uint160).max) {
+            revert OVERFLOW_ALERT();
+        }
+
         // Increment the balance.
         balanceOf[msg.sender][projectId][token] = balanceOf[msg.sender][projectId][token] + amount;
     }

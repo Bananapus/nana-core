@@ -13,6 +13,12 @@ import {IJBTokenUriResolver} from "./interfaces/IJBTokenUriResolver.sol";
 /// @dev Projects are represented as ERC-721s.
 contract JBProjects is ERC721Votes, Ownable, IJBProjects {
     //*********************************************************************//
+    // --------------------------- custom errors ------------------------- //
+    //*********************************************************************//
+
+    error NO_MORE_PROJECTS_ALLOWED();
+
+    //*********************************************************************//
     // --------------------- public stored properties -------------------- //
     //*********************************************************************//
 
@@ -70,6 +76,9 @@ contract JBProjects is ERC721Votes, Ownable, IJBProjects {
     /// @param owner The address that will be the owner of the project.
     /// @return projectId The token ID of the newly created project.
     function createFor(address owner) external override returns (uint256 projectId) {
+        // Make sure there is enough space to make more projects with.
+        if (count == type(uint32).max) revert NO_MORE_PROJECTS_ALLOWED();
+
         // Increment the count, which will be used as the ID.
         projectId = ++count;
 

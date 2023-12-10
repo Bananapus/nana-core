@@ -74,7 +74,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
     // Tests that basic payout limit and surplus allowance limits work as intended.
     function testNativeAllowance() public {
         // Hardcode values to use.
-        uint256 _nativeCurrencyPayoutLimit = 10 * 10 ** _NATIVE_DECIMALS;
+        uint160 _nativeCurrencyPayoutLimit = uint160(10 * 10 ** _NATIVE_DECIMALS);
         uint256 _nativeCurrencySurplusAllowance = 5 * 10 ** _NATIVE_DECIMALS;
 
         // Package up the limits for the given terminal.
@@ -139,12 +139,12 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
 
         // Get a reference to the amount being paid.
         // The amount being paid is the payout limit plus two times the surplus allowance.
-        uint256 _nativePayAmount = _nativeCurrencyPayoutLimit + (2 * _nativeCurrencySurplusAllowance);
+        uint160 _nativePayAmount = _nativeCurrencyPayoutLimit + uint160(2 * _nativeCurrencySurplusAllowance);
 
         // Pay the project such that the `_beneficiary` receives project tokens.
         _terminal.pay{value: _nativePayAmount}({
             projectId: uint32(_projectId),
-            amount: uint160(_nativePayAmount),
+            amount: _nativePayAmount,
             token: JBConstants.NATIVE_TOKEN,
             beneficiary: _beneficiary,
             minReturnedTokens: 0,
@@ -290,7 +290,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
 
     function testFuzzNativeAllowance(
         uint224 _nativeCurrencySurplusAllowance,
-        uint224 _nativeCurrencyPayoutLimit,
+        uint160 _nativeCurrencyPayoutLimit,
         uint160 _nativePayAmount
     )
         public
@@ -551,14 +551,14 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
 
     function testFuzzNativeAllowanceWithRevertingFeeProject(
         uint224 _nativeCurrencySurplusAllowance,
-        uint224 _nativeCurrencyPayoutLimit,
-        uint256 _nativePayAmount,
+        uint160 _nativeCurrencyPayoutLimit,
+        uint160 _nativePayAmount,
         bool _feeProjectAcceptsToken
     )
         public
     {
         // Make sure the amount of native tokens to pay is bounded.
-        _nativePayAmount = bound(_nativePayAmount, 0, 1_000_000 * 10 ** _NATIVE_DECIMALS);
+        _nativePayAmount = uint160(bound(_nativePayAmount, 0, 1_000_000 * 10 ** _NATIVE_DECIMALS));
 
         // Make sure the values don't overflow the registry.
         unchecked {
@@ -799,13 +799,13 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
 
     function testFuzzNativeTokenAllowanceForTheFeeProject(
         uint224 _nativeCurrencySurplusAllowance,
-        uint224 _nativeCurrencyPayoutLimit,
-        uint256 _nativePayAmount
+        uint160 _nativeCurrencyPayoutLimit,
+        uint160 _nativePayAmount
     )
         public
     {
         // Make sure the amount of native tokens to pay is bounded.
-        _nativePayAmount = bound(_nativePayAmount, 0, 1_000_000 * 10 ** _NATIVE_DECIMALS);
+        _nativePayAmount = uint160(bound(_nativePayAmount, 0, 1_000_000 * 10 ** _NATIVE_DECIMALS));
 
         // Make sure the values don't overflow the registry.
         unchecked {
@@ -870,7 +870,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
         // Make a payment to the project to give it a starting balance. Send the tokens to the `_beneficiary`.
         _terminal.pay{value: _nativePayAmount}({
             projectId: uint32(_projectId),
-            amount: uint160(_nativePayAmount),
+            amount: _nativePayAmount,
             token: JBConstants.NATIVE_TOKEN,
             beneficiary: _beneficiary,
             minReturnedTokens: 0,
@@ -1043,10 +1043,10 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
 
     function testFuzzMultiCurrencyAllowance(
         uint224 _nativeCurrencySurplusAllowance,
-        uint224 _nativeCurrencyPayoutLimit,
+        uint160 _nativeCurrencyPayoutLimit,
         uint160 _nativePayAmount,
         uint224 _usdCurrencySurplusAllowance,
-        uint224 _usdCurrencyPayoutLimit,
+        uint160 _usdCurrencyPayoutLimit,
         uint160 _usdcPayAmount
     )
         public
@@ -1633,18 +1633,14 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
     // Project 1 accepts USDC and native token fees into `_terminal`.
     function testFuzzMultiTerminalAllowance(
         uint224 _nativeCurrencySurplusAllowance,
-        uint224 _nativeCurrencyPayoutLimit,
+        uint160 _nativeCurrencyPayoutLimit,
         uint160 _nativePayAmount,
         uint224 _usdCurrencySurplusAllowance,
-        uint224 _usdCurrencyPayoutLimit,
+        uint160 _usdCurrencyPayoutLimit,
         uint160 _usdcPayAmount
     )
         public
     {
-        _usdCurrencyPayoutLimit = uint224(
-            bound(_usdCurrencyPayoutLimit, 0, type(uint224).max / 10 ** (_NATIVE_DECIMALS - _usdcToken.decimals()))
-        );
-
         // Make sure the values don't overflow the registry.
         unchecked {
             vm.assume(
