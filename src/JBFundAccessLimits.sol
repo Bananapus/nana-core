@@ -215,10 +215,11 @@ contract JBFundAccessLimits is JBControlled, ERC165, IJBFundAccessLimits {
         returns (uint256 surplusAllowance)
     {
         // Get a reference to the packed data.
-        uint256[] memory data = _packedSurplusAllowancesDataOf[projectId][rulesetId][terminal][token];
+        uint256[] memory packedSurplusAllowancesData =
+            _packedSurplusAllowancesDataOf[projectId][rulesetId][terminal][token];
 
         // Get a reference to the number of surplus allowances.
-        uint256 numberOfData = data.length;
+        uint256 numberOfData = packedSurplusAllowancesData.length;
 
         // Keep a reference to the data that'll be iterated.
         uint256 packedSurplusAllowanceData;
@@ -226,7 +227,7 @@ contract JBFundAccessLimits is JBControlled, ERC165, IJBFundAccessLimits {
         // Iterate through the stored packed values and format the returned value.
         for (uint256 i; i < numberOfData; ++i) {
             // Set the data being iterated on.
-            packedSurplusAllowanceData = data[i];
+            packedSurplusAllowanceData = packedSurplusAllowancesData[i];
 
             // If the currencies match, return the value.
             if (currency == packedSurplusAllowanceData >> 224) {

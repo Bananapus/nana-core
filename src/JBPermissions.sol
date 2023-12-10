@@ -77,8 +77,12 @@ contract JBPermissions is JBPermissioned, IJBPermissions {
         // Keep a reference to the number of permissions being iterated on.
         uint256 numberOfPermissions = permissionIds.length;
 
+        // Keep a reference to the permission being iterated on.
+        uint256 permissionId;
+
         for (uint256 i; i < numberOfPermissions; ++i) {
-            uint256 permissionId = permissionIds[i];
+            // Set the permission being iterated on.
+            permissionId = permissionIds[i];
 
             if (permissionId > 255) revert PERMISSION_ID_OUT_OF_BOUNDS();
 
@@ -134,13 +138,17 @@ contract JBPermissions is JBPermissioned, IJBPermissions {
         // Keep a reference to the number of IDs being iterated on.
         uint256 numberOfIds = permissionIds.length;
 
-        for (uint256 i; i < numberOfIds; ++i) {
-            uint256 id = permissionIds[i];
+        // Keep a reference to the permission being iterated on.
+        uint256 permissionId;
 
-            if (id > 255) revert PERMISSION_ID_OUT_OF_BOUNDS();
+        for (uint256 i; i < numberOfIds; ++i) {
+            // Set the permission being iterated on.
+            permissionId = permissionIds[i];
+
+            if (permissionId > 255) revert PERMISSION_ID_OUT_OF_BOUNDS();
 
             // Turn on the bit at the ID.
-            packed |= 1 << id;
+            packed |= 1 << permissionId;
         }
     }
 }
