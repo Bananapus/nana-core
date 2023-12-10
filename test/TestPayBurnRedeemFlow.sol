@@ -93,7 +93,7 @@ contract TestPayBurnRedeemFlow_Local is TestBaseWorkflow {
 
         // Make a payment.
         _terminal.pay{value: _nativePayAmount}({
-            projectId: _projectId,
+            projectId: uint32(_projectId),
             amount: _nativePayAmount,
             token: JBConstants.NATIVE_TOKEN, // Unused.
             beneficiary: _beneficiary,

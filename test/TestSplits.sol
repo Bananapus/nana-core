@@ -149,8 +149,8 @@ contract TestSplits_Local is TestBaseWorkflow {
         vm.prank(_payee);
 
         _terminal.pay{value: _nativePayAmount}({
-            projectId: _projectId,
-            amount: _nativePayAmount,
+            projectId: uint32(_projectId),
+            amount: uint160(_nativePayAmount),
             token: JBConstants.NATIVE_TOKEN,
             beneficiary: _payee,
             minReturnedTokens: 0,

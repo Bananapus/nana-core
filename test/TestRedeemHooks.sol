@@ -102,8 +102,8 @@ contract TestRedeemHooks_Local is TestBaseWorkflow {
 
         vm.deal(address(this), _nativePayAmount);
         uint256 _beneficiaryTokensReceived = _terminal.pay{value: _nativePayAmount}({
-            projectId: _projectId,
-            amount: _nativePayAmount,
+            projectId: uint32(_projectId),
+            amount: uint160(_nativePayAmount),
             token: JBConstants.NATIVE_TOKEN,
             beneficiary: address(this),
             minReturnedTokens: 0,

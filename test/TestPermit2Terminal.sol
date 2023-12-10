@@ -111,16 +111,15 @@ contract TestPermit2Terminal_Local is TestBaseWorkflow, PermitSignature {
         vm.stopPrank();
     }
 
-    function testFuzzPayPermit2(uint256 _coins, uint256 _expiration, uint256 _deadline) public {
+    function testFuzzPayPermit2(uint160 _coins, uint256 _expiration, uint256 _deadline) public {
         // Setup: set fuzz boundaries.
-        _coins = bound(_coins, 0, type(uint160).max);
         _expiration = bound(_expiration, block.timestamp + 1, type(uint48).max - 1);
         _deadline = bound(_deadline, block.timestamp + 1, type(uint256).max - 1);
 
         // Setup: prepare permit details for signing.
         IAllowanceTransfer.PermitDetails memory details = IAllowanceTransfer.PermitDetails({
             token: address(_usdc),
-            amount: uint160(_coins),
+            amount: _coins,
             expiration: uint48(_expiration),
             nonce: 0
         });
@@ -133,7 +132,7 @@ contract TestPermit2Terminal_Local is TestBaseWorkflow, PermitSignature {
 
         JBSingleAllowanceData memory permitData = JBSingleAllowanceData({
             sigDeadline: _deadline,
-            amount: uint160(_coins),
+            amount: _coins,
             expiration: uint48(_expiration),
             nonce: uint48(0),
             signature: sig
@@ -155,7 +154,7 @@ contract TestPermit2Terminal_Local is TestBaseWorkflow, PermitSignature {
 
         vm.prank(from);
         uint256 _minted = _terminal.pay({
-            projectId: _projectId,
+            projectId: uint32(_projectId),
             amount: _coins,
             token: address(_usdc),
             beneficiary: from,
@@ -173,9 +172,8 @@ contract TestPermit2Terminal_Local is TestBaseWorkflow, PermitSignature {
         assertEq(_tokens.totalBalanceOf(from, _projectId), _minted);
     }
 
-    function testFuzzAddToBalancePermit2(uint256 _coins, uint256 _expiration, uint256 _deadline) public {
+    function testFuzzAddToBalancePermit2(uint160 _coins, uint256 _expiration, uint256 _deadline) public {
         // Setup: set fuzz boundaries.
-        _coins = bound(_coins, 0, type(uint160).max);
         _expiration = bound(_expiration, block.timestamp + 1, type(uint48).max - 1);
         _deadline = bound(_deadline, block.timestamp + 1, type(uint256).max - 1);
 
@@ -217,7 +215,7 @@ contract TestPermit2Terminal_Local is TestBaseWorkflow, PermitSignature {
 
         // Test: add to balance using permit2 data, which should transfer tokens.
         vm.prank(from);
-        _terminal.addToBalanceOf(_projectId, address(_usdc), _coins, false, "testing permit2", _packedData);
+        _terminal.addToBalanceOf(uint32(_projectId), address(_usdc), _coins, false, "testing permit2", _packedData);
 
         // Check: that tokens were transferred.
         assertEq(_usdc.balanceOf(address(_terminal)), _coins);

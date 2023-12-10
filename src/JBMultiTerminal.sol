@@ -273,11 +273,11 @@ contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTer
     /// @param metadata Bytes to pass along to the emitted event, as well as the data hook and pay hook if applicable.
     /// @return The number of tokens minted to the beneficiary, as a fixed point number with 18 decimals.
     function pay(
-        uint256 projectId,
+        uint32 projectId,
         address token,
-        uint256 amount,
+        uint160 amount,
         address beneficiary,
-        uint256 minReturnedTokens,
+        uint160 minReturnedTokens,
         string calldata memo,
         bytes calldata metadata
     )
@@ -310,9 +310,9 @@ contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTer
     /// @param memo A memo to pass along to the emitted event.
     /// @param metadata Extra data to pass along to the emitted event.
     function addToBalanceOf(
-        uint256 projectId,
+        uint32 projectId,
         address token,
-        uint256 amount,
+        uint160 amount,
         bool shouldUnlockHeldFees,
         string calldata memo,
         bytes calldata metadata
@@ -489,9 +489,9 @@ contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTer
 
             // Withdraw the balance to transfer to the new terminal;
             to.addToBalanceOf{value: payValue}({
-                projectId: projectId,
+                projectId: uint32(projectId),
                 token: token,
-                amount: balance,
+                amount: uint160(balance),
                 shouldUnlockHeldFees: false,
                 memo: "",
                 metadata: bytes("")
@@ -670,9 +670,9 @@ contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTer
             // Send the fee.
             // If this terminal's token is ETH, send it in msg.value.
             feeTerminal.pay{value: payValue}({
-                projectId: _FEE_BENEFICIARY_PROJECT_ID,
+                projectId: uint32(_FEE_BENEFICIARY_PROJECT_ID),
                 token: token,
-                amount: amount,
+                amount: uint160(amount),
                 beneficiary: beneficiary,
                 minReturnedTokens: 0,
                 memo: "",
@@ -776,9 +776,9 @@ contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTer
                     // Add to balance.
                     // If this terminal's token is the native token, send it in `msg.value`.
                     terminal.addToBalanceOf{value: payValue}({
-                        projectId: split.projectId,
+                        projectId: uint32(split.projectId),
                         token: token,
-                        amount: netPayoutAmount,
+                        amount: uint160(netPayoutAmount),
                         shouldUnlockHeldFees: false,
                         memo: "",
                         metadata: metadata
@@ -807,9 +807,9 @@ contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTer
                     // Make the payment.
                     // If this terminal's token is the native token, send it in `msg.value`.
                     terminal.pay{value: payValue}({
-                        projectId: split.projectId,
+                        projectId: uint32(split.projectId),
                         token: token,
-                        amount: netPayoutAmount,
+                        amount: uint160(netPayoutAmount),
                         beneficiary: beneficiary,
                         minReturnedTokens: 0,
                         memo: "",

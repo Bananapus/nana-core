@@ -128,14 +128,14 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
     }
 
     function testAccessConstraintsDelineation() external {
-        uint256 _nativePayAmount = 1.5 ether;
+        uint160 _nativePayAmount = 1.5 ether;
         uint256 _nativePayoutLimit = 1 ether;
         // Will exceed the project's balance in the terminal.
 
         (uint256 _projectId, JBCurrencyAmount[] memory _payoutLimits,) = launchProjectsForTestBelow();
 
         __terminal.pay{value: _nativePayAmount}({
-            projectId: _projectId,
+            projectId: uint32(_projectId),
             amount: _nativePayAmount,
             token: JBConstants.NATIVE_TOKEN,
             beneficiary: _beneficiary,
@@ -201,7 +201,7 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
         vm.prank(_beneficiary);
 
         __terminal.pay{value: _nativePayAmount}({
-            projectId: _projectId,
+            projectId: uint32(_projectId),
             amount: _nativePayAmount,
             token: JBConstants.NATIVE_TOKEN, // Unused.
             beneficiary: _beneficiary,
@@ -379,7 +379,7 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
     }
 
     function testFailMultipleDistroLimitCurrenciesOverLimit() external {
-        uint256 _nativePayAmount = 1.5 ether;
+        uint160 _nativePayAmount = 1.5 ether;
         uint256 _nativePayoutLimit = 1 ether;
         uint256 _nativePricePerUsd = 0.0005 * 10 ** 18; // 1/2000
         // Will exceed the project's balance in the terminal.
@@ -435,7 +435,7 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
         });
 
         __terminal.pay{value: _nativePayAmount}({
-            projectId: _projectId,
+            projectId: uint32(_projectId),
             amount: _nativePayAmount,
             token: JBConstants.NATIVE_TOKEN, // Unused.
             beneficiary: _beneficiary,
@@ -487,7 +487,7 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
     }
 
     function testMultipleDistroLimitCurrencies() external {
-        uint256 _nativePayAmount = 3 ether;
+        uint160 _nativePayAmount = 3 ether;
         vm.deal(_beneficiary, _nativePayAmount);
         vm.prank(_beneficiary);
 
@@ -528,7 +528,7 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
         });
 
         __terminal.pay{value: _nativePayAmount}({
-            projectId: _projectId,
+            projectId: uint32(_projectId),
             amount: _nativePayAmount,
             token: JBConstants.NATIVE_TOKEN, // Unused.
             beneficiary: _beneficiary,

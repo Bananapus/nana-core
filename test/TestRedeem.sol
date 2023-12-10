@@ -90,7 +90,7 @@ contract TestRedeem_Local is TestBaseWorkflow {
 
         // Pay the project.
         _terminal.pay{value: _nativePayAmount}({
-            projectId: _projectId,
+            projectId: uint32(_projectId),
             amount: _nativePayAmount,
             token: JBConstants.NATIVE_TOKEN,
             beneficiary: _beneficiary,

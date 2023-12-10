@@ -58,11 +58,11 @@ interface IJBTerminal is IERC165 {
         external;
 
     function pay(
-        uint256 projectId,
+        uint32 projectId,
         address token,
-        uint256 amount,
+        uint160 amount,
         address beneficiary,
-        uint256 minReturnedTokens,
+        uint160 minReturnedTokens,
         string calldata memo,
         bytes calldata metadata
     )
@@ -71,9 +71,9 @@ interface IJBTerminal is IERC165 {
         returns (uint256 beneficiaryTokenCount);
 
     function addToBalanceOf(
-        uint256 projectId,
+        uint32 projectId,
         address token,
-        uint256 amount,
+        uint160 amount,
         bool shouldUnlockHeldFees,
         string calldata memo,
         bytes calldata metadata

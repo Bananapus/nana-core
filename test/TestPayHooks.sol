@@ -74,11 +74,11 @@ contract TestPayHooks_Local is TestBaseWorkflow {
         });
     }
 
-    function testPayHooks(uint256 _numberOfPayloads, uint256 _nativePayAmount) public {
+    function testPayHooks(uint256 _numberOfPayloads, uint160 _nativePayAmount) public {
         // Bound the number of allocations to a reasonable amount.
         _numberOfPayloads = bound(_numberOfPayloads, 1, 20);
         // Make sure the amount of tokens generated fits in a register, and that each payload can get some.
-        _nativePayAmount = bound(_nativePayAmount, _numberOfPayloads, type(uint256).max / _DATA_HOOK_WEIGHT);
+        _nativePayAmount = uint160(bound(_nativePayAmount, _numberOfPayloads, type(uint256).max / _DATA_HOOK_WEIGHT));
 
         // epa * weight / epad < max*epad/weight
 
@@ -162,7 +162,7 @@ contract TestPayHooks_Local is TestBaseWorkflow {
 
         // Pay the project such that the `_beneficiary` receives project tokens.
         _terminal.pay{value: _nativePayAmount}({
-            projectId: _projectId,
+            projectId: uint32(_projectId),
             amount: _nativePayAmount,
             token: JBConstants.NATIVE_TOKEN,
             beneficiary: _beneficiary,

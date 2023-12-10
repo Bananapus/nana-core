@@ -143,8 +143,8 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
 
         // Pay the project such that the `_beneficiary` receives project tokens.
         _terminal.pay{value: _nativePayAmount}({
-            projectId: _projectId,
-            amount: _nativePayAmount,
+            projectId: uint32(_projectId),
+            amount: uint160(_nativePayAmount),
             token: JBConstants.NATIVE_TOKEN,
             beneficiary: _beneficiary,
             minReturnedTokens: 0,
@@ -291,13 +291,10 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
     function testFuzzNativeAllowance(
         uint224 _nativeCurrencySurplusAllowance,
         uint224 _nativeCurrencyPayoutLimit,
-        uint256 _nativePayAmount
+        uint160 _nativePayAmount
     )
         public
     {
-        // Make sure the amount of native tokens to pay is bounded.
-        _nativePayAmount = bound(_nativePayAmount, 0, 1_000_000 * 10 ** _NATIVE_DECIMALS);
-
         // Make sure the values don't overflow the registry.
         unchecked {
             vm.assume(
@@ -367,8 +364,9 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
         }
 
         // Make a payment to the test project to give it a starting balance. Send the tokens to the `_beneficiary`.
+        vm.deal(address(this), _nativePayAmount);
         _terminal.pay{value: _nativePayAmount}({
-            projectId: _projectId,
+            projectId: uint32(_projectId),
             amount: _nativePayAmount,
             token: JBConstants.NATIVE_TOKEN,
             beneficiary: _beneficiary,
@@ -635,8 +633,8 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
 
         // Make a payment to the project to give it a starting balance. Send the tokens to the `_beneficiary`.
         _terminal.pay{value: _nativePayAmount}({
-            projectId: _projectId,
-            amount: _nativePayAmount,
+            projectId: uint32(_projectId),
+            amount: uint160(_nativePayAmount),
             token: JBConstants.NATIVE_TOKEN,
             beneficiary: _beneficiary,
             minReturnedTokens: 0,
@@ -871,8 +869,8 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
 
         // Make a payment to the project to give it a starting balance. Send the tokens to the `_beneficiary`.
         _terminal.pay{value: _nativePayAmount}({
-            projectId: _projectId,
-            amount: _nativePayAmount,
+            projectId: uint32(_projectId),
+            amount: uint160(_nativePayAmount),
             token: JBConstants.NATIVE_TOKEN,
             beneficiary: _beneficiary,
             minReturnedTokens: 0,
@@ -1046,17 +1044,13 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
     function testFuzzMultiCurrencyAllowance(
         uint224 _nativeCurrencySurplusAllowance,
         uint224 _nativeCurrencyPayoutLimit,
-        uint256 _nativePayAmount,
+        uint160 _nativePayAmount,
         uint224 _usdCurrencySurplusAllowance,
         uint224 _usdCurrencyPayoutLimit,
-        uint256 _usdcPayAmount
+        uint160 _usdcPayAmount
     )
         public
     {
-        // Make sure the amount of native tokens to pay is bounded.
-        _nativePayAmount = bound(_nativePayAmount, 0, 1_000_000 * 10 ** _NATIVE_DECIMALS);
-        _usdcPayAmount = bound(_usdcPayAmount, 0, 1_000_000 * 10 ** _usdcToken.decimals());
-
         // Make sure the values don't overflow the registry.
         unchecked {
             // vm.assume(_nativeCurrencySurplusAllowance + _cumulativePayoutLimit  >= _nativeCurrencySurplusAllowance &&
@@ -1157,8 +1151,9 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
         }
 
         // Make a payment to the project to give it a starting balance. Send the tokens to the `_beneficiary`.
+        vm.deal(address(this), _nativePayAmount);
         _terminal.pay{value: _nativePayAmount}({
-            projectId: _projectId,
+            projectId: uint32(_projectId),
             amount: _nativePayAmount,
             token: JBConstants.NATIVE_TOKEN,
             beneficiary: _beneficiary,
@@ -1179,7 +1174,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
 
         // Make a payment to the project to give it a starting balance. Send the tokens to the `_beneficiary`.
         _terminal.pay({
-            projectId: _projectId,
+            projectId: uint32(_projectId),
             amount: _usdcPayAmount,
             token: address(_usdcToken),
             beneficiary: _beneficiary,
@@ -1639,16 +1634,13 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
     function testFuzzMultiTerminalAllowance(
         uint224 _nativeCurrencySurplusAllowance,
         uint224 _nativeCurrencyPayoutLimit,
-        uint256 _nativePayAmount,
+        uint160 _nativePayAmount,
         uint224 _usdCurrencySurplusAllowance,
         uint224 _usdCurrencyPayoutLimit,
-        uint256 _usdcPayAmount
+        uint160 _usdcPayAmount
     )
         public
     {
-        // Make sure the amount of native tokens to pay is bounded.
-        _nativePayAmount = bound(_nativePayAmount, 0, 1_000_000 * 10 ** _NATIVE_DECIMALS);
-        _usdcPayAmount = bound(_usdcPayAmount, 0, 1_000_000 * 10 ** _usdcToken.decimals());
         _usdCurrencyPayoutLimit = uint224(
             bound(_usdCurrencyPayoutLimit, 0, type(uint224).max / 10 ** (_NATIVE_DECIMALS - _usdcToken.decimals()))
         );
@@ -1769,8 +1761,9 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
         }
 
         // Make a payment to the project to give it a starting balance. Send the tokens to the `_beneficiary`.
+        vm.deal(address(this), _nativePayAmount);
         _terminal.pay{value: _nativePayAmount}({
-            projectId: _projectId,
+            projectId: uint32(_projectId),
             amount: _nativePayAmount,
             token: JBConstants.NATIVE_TOKEN,
             beneficiary: _beneficiary,
@@ -1791,7 +1784,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
 
         // Make a payment to the project to give it a starting balance. Send the tokens to the `_beneficiary`.
         _terminal2.pay({
-            projectId: _projectId,
+            projectId: uint32(_projectId),
             amount: _usdcPayAmount,
             token: address(_usdcToken),
             beneficiary: _beneficiary,

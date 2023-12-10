@@ -134,7 +134,7 @@ contract TestTokenFlow_Local is TestBaseWorkflow {
         // Pay the project such that the `_beneficiary` receives 1000 project token credits.
         vm.deal(_beneficiary, 1 ether);
         _terminal.pay{value: 1 ether}({
-            projectId: _projectId,
+            projectId: uint32(_projectId),
             amount: 1 ether,
             token: JBConstants.NATIVE_TOKEN,
             beneficiary: _beneficiary,
