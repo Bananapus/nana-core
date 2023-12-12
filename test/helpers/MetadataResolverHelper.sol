@@ -46,7 +46,7 @@ contract MetadataResolverHelper {
      * @return _found          Whether the {id:data} was found
      * @return _targetData The data for the ID (can be empty)
      */
-    function getData(
+    function getDataFor(
         bytes4 _id,
         bytes calldata _metadata
     )
@@ -54,7 +54,7 @@ contract MetadataResolverHelper {
         pure
         returns (bool _found, bytes memory _targetData)
     {
-        return JBMetadataResolver.getData(_id, _metadata);
+        return JBMetadataResolver.getDataFor(_id, _metadata);
     }
 
     /**

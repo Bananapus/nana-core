@@ -64,7 +64,8 @@ contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTer
     error INADEQUATE_RECLAIM_AMOUNT();
     error UNDER_MIN_RETURNED_TOKENS();
     error NO_MSG_VALUE_ALLOWED();
-    error PERMIT_ALLOWANCE_NOT_ENOUGH(uint256 transactionAmount, uint256 permitAllowance);
+    error OVERFLOW_ALERT();
+    error PERMIT_ALLOWANCE_NOT_ENOUGH();
     error TERMINAL_TOKENS_INCOMPATIBLE();
     error TOKEN_NOT_ACCEPTED();
 
@@ -858,7 +859,7 @@ contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTer
         bytes4 dataId = bytes4(uint32(uint160(address(this))));
 
         // Unpack the allowance to use, if any, given by the frontend.
-        (bool exists, bytes memory parsedMetadata) = JBMetadataResolver.getData(dataId, metadata);
+        (bool exists, bytes memory parsedMetadata) = JBMetadataResolver.getDataFor(dataId, metadata);
 
         // Check if the metadata contains permit data.
         if (exists) {
@@ -868,7 +869,7 @@ contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTer
             // Make sure the permit allowance is enough for this payment. If not we revert early.
             // `type(uint160).max` is seen as unilimted allowance.
             if (allowance.amount < amount && allowance.amount != type(uint160).max) {
-                revert PERMIT_ALLOWANCE_NOT_ENOUGH(amount, allowance.amount);
+                revert PERMIT_ALLOWANCE_NOT_ENOUGH();
             }
 
             // Set the allowance to `spend` tokens for the user.
@@ -1721,6 +1722,9 @@ contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTer
         if (IERC20(token).allowance(address(from), address(this)) >= amount) {
             return IERC20(token).safeTransferFrom(from, to, amount);
         }
+
+        // Make sure the amount being paid is less than the permit2 allowance.
+        if (amount > type(uint160).max) revert OVERFLOW_ALERT();
 
         // Otherwise we attempt to use the PERMIT2 method.
         PERMIT2.transferFrom(from, to, uint160(amount), token);
