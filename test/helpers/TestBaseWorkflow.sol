@@ -11,6 +11,7 @@ import {ERC165, IERC165} from "@openzeppelin/contracts/utils/introspection/ERC16
 import {JBController} from "@juicebox/JBController.sol";
 import {JBDirectory} from "@juicebox/JBDirectory.sol";
 import {JBTerminalStore} from "@juicebox/JBTerminalStore.sol";
+import {JBFeelessAddresses} from "@juicebox/JBFeelessAddresses.sol";
 import {JBFundAccessLimits} from "@juicebox/JBFundAccessLimits.sol";
 import {JBRulesets} from "@juicebox/JBRulesets.sol";
 import {JBPermissions} from "@juicebox/JBPermissions.sol";
@@ -106,6 +107,7 @@ contract TestBaseWorkflow is Test, DeployPermit2 {
     JBTokens private _jbTokens;
     JBSplits private _jbSplits;
     JBController private _jbController;
+    JBFeelessAddresses private _jbFeelessAddresses;
     JBFundAccessLimits private _jbFundAccessLimits;
     JBTerminalStore private _jbTerminalStore;
     JBMultiTerminal private _jbMultiTerminal;
@@ -160,6 +162,10 @@ contract TestBaseWorkflow is Test, DeployPermit2 {
         return _jbController;
     }
 
+    function jbFeelessAddresses() internal view returns (JBFeelessAddresses) {
+        return _jbFeelessAddresses;
+    }
+
     function jbAccessConstraintStore() internal view returns (JBFundAccessLimits) {
         return _jbFundAccessLimits;
     }
@@ -194,6 +200,7 @@ contract TestBaseWorkflow is Test, DeployPermit2 {
         _jbRulesets = new JBRulesets(_jbDirectory);
         _jbSplits = new JBSplits(_jbDirectory);
         _jbFundAccessLimits = new JBFundAccessLimits(_jbDirectory);
+        _jbFeelessAddresses = new JBFeelessAddresses(_multisig);
 
         _usdcToken = new MockERC20("USDC", "USDC");
 
@@ -224,19 +231,20 @@ contract TestBaseWorkflow is Test, DeployPermit2 {
             _jbDirectory,
             _jbSplits,
             _jbTerminalStore,
+            _jbFeelessAddresses,
             IPermit2(_permit2),
-            _trustedForwarder,
-            _multisig
+            _trustedForwarder
         );
+
         _jbMultiTerminal2 = new JBMultiTerminal(
             _jbPermissions,
             _jbProjects,
             _jbDirectory,
             _jbSplits,
             _jbTerminalStore,
+            _jbFeelessAddresses,
             IPermit2(_permit2),
-            _trustedForwarder,
-            _multisig
+            _trustedForwarder
         );
 
         vm.label(_multisig, "projectOwner");
@@ -248,6 +256,7 @@ contract TestBaseWorkflow is Test, DeployPermit2 {
         vm.label(address(_usdcToken), "ERC20");
         vm.label(address(_jbPermissions), "JBPermissions");
         vm.label(address(_jbTokens), "JBTokens");
+        vm.label(address(_jbFeelessAddresses), "JBFeelessAddresses");
         vm.label(address(_jbFundAccessLimits), "JBFundAccessLimits");
         vm.label(address(_jbSplits), "JBSplits");
         vm.label(address(_jbController), "JBController");

@@ -11,6 +11,7 @@ import "../src/JBRulesets.sol";
 import "../src/JBDirectory.sol";
 import "../src/JBTokens.sol";
 import "../src/JBSplits.sol";
+import "../src/JBFeelessAddresses.sol";
 import "../src/JBFundAccessLimits.sol";
 import "../src/JBController.sol";
 import "../src/JBTerminalStore.sol";
@@ -26,6 +27,7 @@ contract Deploy is Script {
     JBRulesets _rulesets;
     JBTokens _tokens;
     JBSplits _splits;
+    JBFeelessAddresses _feelessAddresses;
     JBFundAccessLimits _fundAccessLimits;
     JBController _controller;
     JBTerminalStore _terminalStore;
@@ -41,6 +43,7 @@ contract Deploy is Script {
         _permissions = new JBPermissions();
         _projects = new JBProjects(_manager);
         _prices = new JBPrices(_permissions, _projects, _manager);
+        _feelessAddresses = new JBFeelessAddresses(_manager);
         _directory = new JBDirectory(_permissions, _projects, msg.sender);
         _splits = new JBSplits(_directory);
         _fundAccessLimits = new JBFundAccessLimits(_directory);
@@ -53,7 +56,7 @@ contract Deploy is Script {
         _directory.setIsAllowedToSetFirstController(address(_controller), true);
         _directory.transferOwnership(_manager);
         _multiTerminal = new JBMultiTerminal(
-            _permissions, _projects, _directory, _splits, _terminalStore, _PERMIT2, _trustedForwarder, _manager
+            _permissions, _projects, _directory, _splits, _terminalStore, _feelessAddresses, _PERMIT2, _trustedForwarder
         );
     }
 

@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {IJBTerminal} from "./IJBTerminal.sol";
+import {IJBFeelessAddresses} from "./../IJBFeelessAddresses.sol";
 import {JBFee} from "../../structs/JBFee.sol";
 
 /// @notice A terminal that can process and hold fees.
@@ -24,15 +25,14 @@ interface IJBFeeTerminal is IJBTerminal {
         address caller
     );
 
-    event UnlockHeldFees(
+    event ReturnHeldFees(
         uint256 indexed projectId,
         address indexed token,
         uint256 indexed amount,
-        uint256 unlockedFees,
+        uint256 returnedFees,
         uint256 leftoverAmount,
         address caller
     );
-    event SetFeelessAddress(address indexed account, bool indexed isFeeless, address caller);
 
     event FeeReverted(
         uint256 indexed projectId,
@@ -45,11 +45,9 @@ interface IJBFeeTerminal is IJBTerminal {
 
     function FEE() external view returns (uint256);
 
+    function FEELESS_ADDRESSES() external view returns (IJBFeelessAddresses);
+
     function heldFeesOf(uint256 projectId, address token) external view returns (JBFee[] memory);
 
-    function isFeelessAddress(address account) external view returns (bool);
-
     function processHeldFeesOf(uint256 projectId, address token) external;
-
-    function setFeelessAddress(address account, bool flag) external;
 }
