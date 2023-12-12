@@ -1722,7 +1722,7 @@ contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTer
             return IERC20(token).safeTransferFrom(from, to, amount);
         }
 
-        // Make sure the amount being paid is less than the permit2 allowance.
+        // Make sure the amount being paid is less than the maximum permit2 allowance.
         if (amount > type(uint160).max) revert OVERFLOW_ALERT();
 
         // Otherwise we attempt to use the PERMIT2 method.
