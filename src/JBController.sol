@@ -799,11 +799,11 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         private
         returns (uint256 rulesetId)
     {
-        // Keep a reference to the ruleset config being iterated on.
-        JBRulesetConfig memory rulesetConfig;
-
         // Keep a reference to the number of ruleset configurations being queued.
         uint256 numberOfConfigurations = rulesetConfigurations.length;
+
+        // Keep a reference to the ruleset config being iterated on.
+        JBRulesetConfig memory rulesetConfig;
 
         for (uint256 i; i < numberOfConfigurations; ++i) {
             // Get a reference to the ruleset config being iterated on.

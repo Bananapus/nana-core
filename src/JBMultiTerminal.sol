@@ -75,7 +75,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @notice The fee percent (out of `JBConstants.MAX_FEE`).
     /// @dev Fees are charged on payouts to addresses, when the surplus allowance is used, and on redemptions where the
     /// redemption rate is less than 100%.
-    uint256 public constant override FEE = 25_000_000; // 2.5%
+    uint256 public constant override FEE = 25; // 2.5%
 
     //*********************************************************************//
     // ------------------------ private constants ------------------------ //
@@ -267,7 +267,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// beneficiary would be less than this amount, the payment is reverted.
     /// @param memo A memo to pass along to the emitted event.
     /// @param metadata Bytes to pass along to the emitted event, as well as the data hook and pay hook if applicable.
-    /// @return The number of tokens minted to the beneficiary, as a fixed point number with 18 decimals.
+    /// @return beneficiaryTokenCount The number of tokens minted to the beneficiary, as a fixed point number with 18
+    /// decimals.
     function pay(
         uint256 projectId,
         address token,
@@ -281,19 +282,21 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         payable
         virtual
         override
-        returns (uint256)
+        returns (uint256 beneficiaryTokenCount)
     {
         // Pay the project.
-        return _pay({
+        beneficiaryTokenCount = _pay({
+            projectId: projectId,
             token: token,
             amount: _acceptFundsFor(projectId, token, amount, metadata),
             payer: _msgSender(),
-            projectId: projectId,
             beneficiary: beneficiary,
-            minReturnedTokens: minReturnedTokens,
             memo: memo,
             metadata: metadata
         });
+
+        // The token count for the beneficiary must be greater than or equal to the specified minimum.
+        if (beneficiaryTokenCount < minReturnedTokens) revert UNDER_MIN_RETURNED_TOKENS();
     }
 
     /// @notice Adds funds to a project's balance without minting tokens.
@@ -472,6 +475,9 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             revert TERMINAL_TOKENS_INCOMPATIBLE();
         }
 
+        // Process any held fees.
+        _processHeldFeesOf(projectId, token);
+
         // Record the migration in the store.
         balance = STORE.recordTerminalMigration(projectId, token);
 
@@ -499,50 +505,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
     /// @notice Process any fees that are being held for the project.
     /// @param projectId The ID of the project to process held fees for.
-    function processHeldFees(uint256 projectId, address token) external virtual override {
-        // Get a reference to the project's held fees.
-        JBFee[] memory heldFees = _heldFeesOf[projectId][token];
-
-        // Delete the held fees.
-        delete _heldFeesOf[projectId][token];
-
-        // Keep a reference to the amount.
-        uint256 amount;
-
-        // Keep a reference to the number of held fees.
-        uint256 numberOfHeldFees = heldFees.length;
-
-        // Keep a reference to the fee being iterated on.
-        JBFee memory heldFee;
-
-        // Keep a reference to the terminal that'll receive the fees.
-        IJBTerminal feeTerminal = DIRECTORY.primaryTerminalOf(_FEE_BENEFICIARY_PROJECT_ID, token);
-
-        // Process each fee.
-        for (uint256 i; i < numberOfHeldFees; ++i) {
-            // Keep a reference to the held fee being iterated on.
-            heldFee = heldFees[i];
-
-            // Can't process fees that aren't yet unlocked.
-            if (heldFee.unlockTimestamp < block.timestamp) {
-                // Add the fee back to storage.
-                _heldFeesOf[projectId][token].push(heldFee);
-                continue;
-            }
-
-            // Get the fee amount.
-            amount = JBFees.feeAmountIn(heldFee.amount, FEE);
-
-            // Process the fee.
-            _processFee({
-                projectId: projectId,
-                token: token,
-                amount: heldFee.amount,
-                beneficiary: heldFee.beneficiary,
-                feeTerminal: feeTerminal,
-                wasHeld: true
-            });
-        }
+    function processHeldFeesOf(uint256 projectId, address token) external virtual override {
+        _processHeldFeesOf(projectId, token);
     }
 
     /// @notice Adds accounting contexts for a project to this terminal so the project can begin accepting the tokens in
@@ -639,7 +603,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                 amount: amount,
                 payer: address(this),
                 beneficiary: beneficiary,
-                minReturnedTokens: 0,
                 memo: "",
                 metadata: metadata
             });
@@ -775,7 +738,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                         amount: netPayoutAmount,
                         payer: address(this),
                         beneficiary: beneficiary,
-                        minReturnedTokens: 0,
                         memo: "",
                         metadata: metadata
                     });
@@ -875,7 +837,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             (JBSingleAllowanceData memory allowance) = abi.decode(parsedMetadata, (JBSingleAllowanceData));
 
             // Make sure the permit allowance is enough for this payment. If not we revert early.
-            if (allowance.amount < amount) {
+            // `type(uint160).max` is seen as unilimted allowance.
+            if (allowance.amount < amount && allowance.amount != type(uint160).max) {
                 revert PERMIT_ALLOWANCE_NOT_ENOUGH(amount, allowance.amount);
             }
 
@@ -907,28 +870,24 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     }
 
     /// @notice Pay a project with tokens.
+    /// @param projectId The ID of the project being paid.
     /// @param token The address of the token which the project is being paid with.
     /// @param amount The amount of terminal tokens being received, as a fixed point number with the same number of
     /// decimals as this terminal. If this terminal's token is the native token, `amount` is ignored and `msg.value` is
     /// used in its place.
     /// @param payer The address making the payment.
-    /// @param projectId The ID of the project being paid.
     /// @param beneficiary The address to mint tokens to, and pass along to the ruleset's data hook and pay hook if
     /// applicable.
-    /// @param minReturnedTokens The minimum number of project tokens expected in return, as a fixed point number with
-    /// the same amount of decimals as this terminal. If the amount of tokens minted for the beneficiary would be less
-    /// than this amount, the payment is reverted.
     /// @param memo A memo to pass along to the emitted event.
     /// @param metadata Bytes to send along to the emitted event, as well as the data hook and pay hook if applicable.
     /// @return beneficiaryTokenCount The number of tokens minted and sent to the beneficiary, as a fixed point number
     /// with 18 decimals.
     function _pay(
+        uint256 projectId,
         address token,
         uint256 amount,
         address payer,
-        uint256 projectId,
         address beneficiary,
-        uint256 minReturnedTokens,
         string memory memo,
         bytes memory metadata
     )
@@ -939,16 +898,21 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // Keep a reference to the ruleset the payment is being made during.
         JBRuleset memory ruleset;
 
-        // Scoped section prevents stack too deep. `hookPayloads` and `tokenCount` only used within scope.
+        // Scoped section prevents stack too deep. `hookPayloads`, `tokenCount`, and `tokenAmount` only used within
+        // scope.
         {
             JBPayHookPayload[] memory hookPayloads;
             uint256 tokenCount;
+            JBTokenAmount memory tokenAmount;
 
-            // Get a reference to the token's accounting context.
-            JBAccountingContext memory context = _accountingContextForTokenOf[projectId][token];
+            // Scoped section prevents stack too deep. `context` only used within scope.
+            {
+                // Get a reference to the token's accounting context.
+                JBAccountingContext memory context = _accountingContextForTokenOf[projectId][token];
 
-            // Bundle the amount info into a JBTokenAmount struct.
-            JBTokenAmount memory tokenAmount = JBTokenAmount(token, amount, context.decimals, context.currency);
+                // Bundle the amount info into a JBTokenAmount struct.
+                tokenAmount = JBTokenAmount(token, amount, context.decimals, context.currency);
+            }
 
             // Record the payment.
             (ruleset, tokenCount, hookPayloads) = STORE.recordPaymentFrom({
@@ -967,9 +931,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                     projectId, tokenCount, beneficiary, "", true
                 );
             }
-
-            // The token count for the beneficiary must be greater than or equal to the specified minimum.
-            if (beneficiaryTokenCount < minReturnedTokens) revert UNDER_MIN_RETURNED_TOKENS();
 
             // If hook payloads were specified by the data hook, fulfill them.
             if (hookPayloads.length != 0) {
@@ -1592,6 +1553,55 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                 beneficiary: beneficiary,
                 feeTerminal: feeTerminal,
                 wasHeld: false
+            });
+        }
+    }
+
+    /// @notice Process any fees that are being held for the project.
+    /// @param projectId The ID of the project to process held fees for.
+    /// @param token The token to process held fees for.
+    function _processHeldFeesOf(uint256 projectId, address token) private {
+        // Get a reference to the project's held fees.
+        JBFee[] memory heldFees = _heldFeesOf[projectId][token];
+
+        // Delete the held fees.
+        delete _heldFeesOf[projectId][token];
+
+        // Keep a reference to the amount.
+        uint256 amount;
+
+        // Keep a reference to the number of held fees.
+        uint256 numberOfHeldFees = heldFees.length;
+
+        // Keep a reference to the fee being iterated on.
+        JBFee memory heldFee;
+
+        // Keep a reference to the terminal that'll receive the fees.
+        IJBTerminal feeTerminal = DIRECTORY.primaryTerminalOf(_FEE_BENEFICIARY_PROJECT_ID, token);
+
+        // Process each fee.
+        for (uint256 i; i < numberOfHeldFees; ++i) {
+            // Keep a reference to the held fee being iterated on.
+            heldFee = heldFees[i];
+
+            // Can't process fees that aren't yet unlocked.
+            if (heldFee.unlockTimestamp < block.timestamp) {
+                // Add the fee back to storage.
+                _heldFeesOf[projectId][token].push(heldFee);
+                continue;
+            }
+
+            // Get the fee amount.
+            amount = JBFees.feeAmountIn(heldFee.amount, FEE);
+
+            // Process the fee.
+            _processFee({
+                projectId: projectId,
+                token: token,
+                amount: heldFee.amount,
+                beneficiary: heldFee.beneficiary,
+                feeTerminal: feeTerminal,
+                wasHeld: true
             });
         }
     }
