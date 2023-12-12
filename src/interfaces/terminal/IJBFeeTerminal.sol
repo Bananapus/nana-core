@@ -49,7 +49,7 @@ interface IJBFeeTerminal is IJBTerminal {
 
     function isFeelessAddress(address account) external view returns (bool);
 
-    function processHeldFees(uint256 projectId, address token) external;
+    function processHeldFeesOf(uint256 projectId, address token) external;
 
     function setFeelessAddress(address account, bool flag) external;
 }

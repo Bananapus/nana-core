@@ -476,6 +476,9 @@ contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTer
             revert TERMINAL_TOKENS_INCOMPATIBLE();
         }
 
+        // Process any held fees.
+        _processHeldFeesOf(projectId, token);
+
         // Record the migration in the store.
         balance = STORE.recordTerminalMigration(projectId, token);
 
@@ -505,7 +508,8 @@ contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTer
     /// @dev Only a project's owner, an operator with the `PROCESS_FEES` permission from that owner, or this terminal's
     /// owner can process held fees.
     /// @param projectId The ID of the project to process held fees for.
-    function processHeldFees(uint256 projectId, address token) external virtual override {
+    /// @param token The token to process held fees for.
+    function processHeldFeesOf(uint256 projectId, address token) external virtual override {
         // Enforce permissions.
         _requirePermissionAllowingOverride({
             account: PROJECTS.ownerOf(projectId),
@@ -514,42 +518,7 @@ contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTer
             alsoGrantAccessIf: _msgSender() == owner()
         });
 
-        // Get a reference to the project's held fees.
-        JBFee[] memory heldFees = _heldFeesOf[projectId][token];
-
-        // Delete the held fees.
-        delete _heldFeesOf[projectId][token];
-
-        // Keep a reference to the amount.
-        uint256 amount;
-
-        // Keep a reference to the number of held fees.
-        uint256 numberOfHeldFees = heldFees.length;
-
-        // Keep a reference to the fee being iterated on.
-        JBFee memory heldFee;
-
-        // Keep a reference to the terminal that'll receive the fees.
-        IJBTerminal feeTerminal = DIRECTORY.primaryTerminalOf(_FEE_BENEFICIARY_PROJECT_ID, token);
-
-        // Process each fee.
-        for (uint256 i; i < numberOfHeldFees; ++i) {
-            // Keep a reference to the held fee being iterated on.
-            heldFee = heldFees[i];
-
-            // Get the fee amount.
-            amount = JBFees.feeAmountIn(heldFee.amount, FEE);
-
-            // Process the fee.
-            _processFee({
-                projectId: projectId,
-                token: token,
-                amount: heldFee.amount,
-                beneficiary: heldFee.beneficiary,
-                feeTerminal: feeTerminal,
-                wasHeld: true
-            });
-        }
+        _processHeldFeesOf(projectId, token);
     }
 
     /// @notice Sets an address as feeless or not feeless for this terminal.
@@ -1608,6 +1577,48 @@ contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTer
                 beneficiary: beneficiary,
                 feeTerminal: feeTerminal,
                 wasHeld: false
+            });
+        }
+    }
+
+    /// @notice Process any fees that are being held for the project.
+    /// @param projectId The ID of the project to process held fees for.
+    /// @param token The token to process held fees for.
+    function _processHeldFeesOf(uint256 projectId, address token) private {
+        // Get a reference to the project's held fees.
+        JBFee[] memory heldFees = _heldFeesOf[projectId][token];
+
+        // Delete the held fees.
+        delete _heldFeesOf[projectId][token];
+
+        // Keep a reference to the amount.
+        uint256 amount;
+
+        // Keep a reference to the number of held fees.
+        uint256 numberOfHeldFees = heldFees.length;
+
+        // Keep a reference to the fee being iterated on.
+        JBFee memory heldFee;
+
+        // Keep a reference to the terminal that'll receive the fees.
+        IJBTerminal feeTerminal = DIRECTORY.primaryTerminalOf(_FEE_BENEFICIARY_PROJECT_ID, token);
+
+        // Process each fee.
+        for (uint256 i; i < numberOfHeldFees; ++i) {
+            // Keep a reference to the held fee being iterated on.
+            heldFee = heldFees[i];
+
+            // Get the fee amount.
+            amount = JBFees.feeAmountIn(heldFee.amount, FEE);
+
+            // Process the fee.
+            _processFee({
+                projectId: projectId,
+                token: token,
+                amount: heldFee.amount,
+                beneficiary: heldFee.beneficiary,
+                feeTerminal: feeTerminal,
+                wasHeld: true
             });
         }
     }
