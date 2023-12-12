@@ -867,8 +867,7 @@ contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTer
             (JBSingleAllowanceData memory allowance) = abi.decode(parsedMetadata, (JBSingleAllowanceData));
 
             // Make sure the permit allowance is enough for this payment. If not we revert early.
-            // `type(uint160).max` is seen as unilimted allowance.
-            if (allowance.amount < amount && allowance.amount != type(uint160).max) {
+            if (allowance.amount < amount) {
                 revert PERMIT_ALLOWANCE_NOT_ENOUGH();
             }
 
