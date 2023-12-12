@@ -1567,9 +1567,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // Delete the held fees.
         delete _heldFeesOf[projectId][token];
 
-        // Keep a reference to the amount.
-        uint256 amount;
-
         // Keep a reference to the number of held fees.
         uint256 numberOfHeldFees = heldFees.length;
 
@@ -1590,9 +1587,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                 _heldFeesOf[projectId][token].push(heldFee);
                 continue;
             }
-
-            // Get the fee amount.
-            amount = JBFees.feeAmountIn(heldFee.amount, FEE);
 
             // Process the fee.
             _processFee({
