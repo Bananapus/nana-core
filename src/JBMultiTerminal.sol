@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.23;
 
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {Address} from "@openzeppelin/contracts/utils/Address.sol";
 import {Context} from "@openzeppelin/contracts/utils/Context.sol";
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
@@ -15,6 +14,7 @@ import {IPermit2} from "@permit2/src/interfaces/IPermit2.sol";
 import {IAllowanceTransfer} from "@permit2/src/interfaces/IPermit2.sol";
 import {IJBController} from "./interfaces/IJBController.sol";
 import {IJBDirectory} from "./interfaces/IJBDirectory.sol";
+import {IJBFeelessAddresses} from "./interfaces/IJBFeelessAddresses.sol";
 import {IJBSplits} from "./interfaces/IJBSplits.sol";
 import {IJBPermissioned} from "./interfaces/IJBPermissioned.sol";
 import {IJBPermissions} from "./interfaces/IJBPermissions.sol";
@@ -48,7 +48,7 @@ import {IJBPayoutTerminal} from "./interfaces/terminal/IJBPayoutTerminal.sol";
 import {IJBPermitTerminal} from "./interfaces/terminal/IJBPermitTerminal.sol";
 
 /// @notice Generic terminal managing inflows and outflows of funds into the protocol ecosystem.
-contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTerminal {
+contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     // A library that parses the packed ruleset metadata into a friendlier format.
     using JBRulesetMetadataResolver for JBRuleset;
 
@@ -86,6 +86,9 @@ contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTer
     /// deployment process.
     uint256 private constant _FEE_BENEFICIARY_PROJECT_ID = 1;
 
+    /// @notice 28 days, the number of seconds a fee can be held for.
+    uint256 private constant _FEE_HOLDING_SECONDS = 2_419_200;
+
     //*********************************************************************//
     // ---------------- public immutable stored properties --------------- //
     //*********************************************************************//
@@ -102,19 +105,11 @@ contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTer
     /// @notice The contract that stores and manages the terminal's data.
     IJBTerminalStore public immutable override STORE;
 
+    /// @notice The contract that stores addresses that shouldn't incur fees when being paid towards or from.
+    IJBFeelessAddresses public immutable override FEELESS_ADDRESSES;
+
     /// @notice The permit2 utility.
     IPermit2 public immutable override PERMIT2;
-
-    //*********************************************************************//
-    // --------------------- public stored properties -------------------- //
-    //*********************************************************************//
-
-    /// @notice Feeless addresses for this terminal.
-    /// @dev Feeless addresses can receive payouts without incurring a fee.
-    /// @dev Feeless addresses can use the surplus allowance without incurring a fee.
-    /// @dev Feeless addresses can be the beneficary of redemptions without incurring a fee.
-    /// @custom:param addr The address that may or may not be feeless.
-    mapping(address addr => bool) public override isFeelessAddress;
 
     //*********************************************************************//
     // --------------------- private stored properties ------------------- //
@@ -232,26 +227,27 @@ contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTer
     /// @param directory A contract storing directories of terminals and controllers for each project.
     /// @param splits A contract that stores splits for each project.
     /// @param store A contract that stores the terminal's data.
+    /// @param feelessAddresses A contract that stores addresses that shouldn't incur fees when being paid towards or
+    /// from.
     /// @param permit2 A permit2 utility.
-    /// @param owner The address that will own this contract.
     constructor(
         IJBPermissions permissions,
         IJBProjects projects,
         IJBDirectory directory,
         IJBSplits splits,
         IJBTerminalStore store,
+        IJBFeelessAddresses feelessAddresses,
         IPermit2 permit2,
-        address trustedForwarder,
-        address owner
+        address trustedForwarder
     )
         JBPermissioned(permissions)
-        Ownable(owner)
         ERC2771Context(trustedForwarder)
     {
         PROJECTS = projects;
         DIRECTORY = directory;
         SPLITS = splits;
         STORE = store;
+        FEELESS_ADDRESSES = feelessAddresses;
         PERMIT2 = permit2;
     }
 
@@ -310,14 +306,14 @@ contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTer
     /// @param amount The amount of tokens to add to the balance, as a fixed point number with the same number of
     /// decimals as this terminal. If this is a native token terminal, this is ignored and `msg.value` is used instead.
     /// @param token The token being added to the balance.
-    /// @param shouldUnlockHeldFees A flag indicating if held fees should be refunded based on the amount being added.
+    /// @param shouldReturnHeldFees A flag indicating if held fees should be returned based on the amount being added.
     /// @param memo A memo to pass along to the emitted event.
     /// @param metadata Extra data to pass along to the emitted event.
     function addToBalanceOf(
         uint256 projectId,
         address token,
         uint256 amount,
-        bool shouldUnlockHeldFees,
+        bool shouldReturnHeldFees,
         string calldata memo,
         bytes calldata metadata
     )
@@ -331,7 +327,7 @@ contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTer
             projectId: projectId,
             token: token,
             amount: _acceptFundsFor(projectId, token, amount, metadata),
-            shouldUnlockHeldFees: shouldUnlockHeldFees,
+            shouldReturnHeldFees: shouldReturnHeldFees,
             memo: memo,
             metadata: metadata
         });
@@ -499,7 +495,7 @@ contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTer
                 projectId: projectId,
                 token: token,
                 amount: balance,
-                shouldUnlockHeldFees: false,
+                shouldReturnHeldFees: false,
                 memo: "",
                 metadata: bytes("")
             });
@@ -509,34 +505,9 @@ contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTer
     }
 
     /// @notice Process any fees that are being held for the project.
-    /// @dev Only a project's owner, an operator with the `PROCESS_FEES` permission from that owner, or this terminal's
-    /// owner can process held fees.
     /// @param projectId The ID of the project to process held fees for.
-    /// @param token The token to process held fees for.
     function processHeldFeesOf(uint256 projectId, address token) external virtual override {
-        // Enforce permissions.
-        _requirePermissionAllowingOverride({
-            account: PROJECTS.ownerOf(projectId),
-            projectId: projectId,
-            permissionId: JBPermissionIds.PROCESS_FEES,
-            alsoGrantAccessIf: _msgSender() == owner()
-        });
-
         _processHeldFeesOf(projectId, token);
-    }
-
-    /// @notice Sets an address as feeless or not feeless for this terminal.
-    /// @dev Only the owner of this contract can set addresses as feeless or not feeless.
-    /// @dev Feeless addresses can receive payouts without incurring a fee.
-    /// @dev Feeless addresses can use the surplus allowance without incurring a fee.
-    /// @dev Feeless addresses can be the beneficary of redemptions without incurring a fee.
-    /// @param addr The address to make feeless or not feeless.
-    /// @param flag A flag indicating whether the `address` should be made feeless or not feeless.
-    function setFeelessAddress(address addr, bool flag) external virtual override onlyOwner {
-        // Set the flag value.
-        isFeelessAddress[addr] = flag;
-
-        emit SetFeelessAddress(addr, flag, _msgSender());
     }
 
     /// @notice Adds accounting contexts for a project to this terminal so the project can begin accepting the tokens in
@@ -681,7 +652,7 @@ contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTer
         if (split.hook != IJBSplitHook(address(0))) {
             // This payout is eligible for a fee since the funds are leaving this contract and the split hook isn't a
             // feeless address.
-            if (!isFeelessAddress[address(split.hook)]) {
+            if (!FEELESS_ADDRESSES.isFeeless(address(split.hook))) {
                 netPayoutAmount -= JBFees.feeAmountIn(amount, FEE);
             }
 
@@ -719,7 +690,7 @@ contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTer
 
             // This payout is eligible for a fee if the funds are leaving this contract and the receiving terminal isn't
             // a feelss address.
-            if (terminal != this && !isFeelessAddress[address(terminal)]) {
+            if (terminal != this && !FEELESS_ADDRESSES.isFeeless(address(terminal))) {
                 netPayoutAmount -= JBFees.feeAmountIn(amount, FEE);
             }
 
@@ -737,7 +708,7 @@ contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTer
                         projectId: split.projectId,
                         token: token,
                         amount: netPayoutAmount,
-                        shouldUnlockHeldFees: false,
+                        shouldReturnHeldFees: false,
                         memo: "",
                         metadata: metadata
                     });
@@ -751,7 +722,7 @@ contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTer
                         projectId: split.projectId,
                         token: token,
                         amount: netPayoutAmount,
-                        shouldUnlockHeldFees: false,
+                        shouldReturnHeldFees: false,
                         memo: "",
                         metadata: metadata
                     });
@@ -796,7 +767,7 @@ contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTer
 
             // This payout is eligible for a fee since the funds are leaving this contract and the recipient isn't a
             // feeless address.
-            if (!isFeelessAddress[recipient]) {
+            if (!FEELESS_ADDRESSES.isFeeless(recipient)) {
                 netPayoutAmount -= JBFees.feeAmountIn(amount, FEE);
             }
 
@@ -988,27 +959,27 @@ contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTer
     /// @param token The address of the token being added to the project's balance.
     /// @param amount The amount of tokens to add as a fixed point number with the same number of decimals as this
     /// terminal. If this is a native token terminal, this is ignored and `msg.value` is used instead.
-    /// @param shouldUnlockHeldFees A flag indicating if held fees should be unlocked based on the amount being added.
+    /// @param shouldReturnHeldFees A flag indicating if held fees should be returned based on the amount being added.
     /// @param memo A memo to pass along to the emitted event.
     /// @param metadata Extra data to pass along to the emitted event.
     function _addToBalanceOf(
         uint256 projectId,
         address token,
         uint256 amount,
-        bool shouldUnlockHeldFees,
+        bool shouldReturnHeldFees,
         string memory memo,
         bytes memory metadata
     )
         private
     {
-        // Unlock held fees if desired. This mechanism means projects don't pay fees multiple times when funds go out of
+        // Return held fees if desired. This mechanism means projects don't pay fees multiple times when funds go out of
         // and back into the protocol.
-        uint256 unlockedFees = shouldUnlockHeldFees ? _unlockHeldFees(projectId, token, amount) : 0;
+        uint256 returnedFees = shouldReturnHeldFees ? _returnHeldFees(projectId, token, amount) : 0;
 
-        // Record the added funds with any refunded fees.
-        STORE.recordAddedBalanceFor({projectId: projectId, token: token, amount: amount + unlockedFees});
+        // Record the added funds with any returned fees.
+        STORE.recordAddedBalanceFor({projectId: projectId, token: token, amount: amount + returnedFees});
 
-        emit AddToBalance(projectId, amount, unlockedFees, memo, metadata, _msgSender());
+        emit AddToBalance(projectId, amount, returnedFees, memo, metadata, _msgSender());
     }
 
     /// @notice Holders can redeem their tokens to claim some of a project's surplus, or to trigger rules determined by
@@ -1060,7 +1031,7 @@ contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTer
             // Determine if a fee should be taken. Fees are not exercised if the redemption rate is at its max (100%),
             // if the beneficiary is feeless, or if the fee beneficiary doesn't accept the given token.
             bool takesFee =
-                !isFeelessAddress[beneficiary] && ruleset.redemptionRate() != JBConstants.MAX_REDEMPTION_RATE;
+                !FEELESS_ADDRESSES.isFeeless(beneficiary) && ruleset.redemptionRate() != JBConstants.MAX_REDEMPTION_RATE;
 
             // The amount being reclaimed must be at least as much as was expected.
             if (reclaimAmount < minReturnedTokens) revert INADEQUATE_RECLAIM_AMOUNT();
@@ -1261,7 +1232,7 @@ contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTer
         // The net amount is the final amount withdrawn after the fee has been taken.
         netAmountPaidOut = amountPaidOut
             - (
-                isFeelessAddress[_msgSender()]
+                FEELESS_ADDRESSES.isFeeless(_msgSender())
                     ? 0
                     : _takeFeeFrom({
                         projectId: projectId,
@@ -1561,7 +1532,13 @@ contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTer
 
         if (shouldHoldFees) {
             // Store the held fee.
-            _heldFeesOf[projectId][token].push(JBFee(amount, beneficiary));
+            _heldFeesOf[projectId][token].push(
+                JBFee({
+                    amount: amount,
+                    beneficiary: beneficiary,
+                    unlockTimestamp: block.timestamp + _FEE_HOLDING_SECONDS
+                })
+            );
 
             emit HoldFee(projectId, token, amount, FEE, beneficiary, _msgSender());
         } else {
@@ -1590,9 +1567,6 @@ contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTer
         // Delete the held fees.
         delete _heldFeesOf[projectId][token];
 
-        // Keep a reference to the amount.
-        uint256 amount;
-
         // Keep a reference to the number of held fees.
         uint256 numberOfHeldFees = heldFees.length;
 
@@ -1607,8 +1581,12 @@ contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTer
             // Keep a reference to the held fee being iterated on.
             heldFee = heldFees[i];
 
-            // Get the fee amount.
-            amount = JBFees.feeAmountIn(heldFee.amount, FEE);
+            // Can't process fees that aren't yet unlocked.
+            if (heldFee.unlockTimestamp < block.timestamp) {
+                // Add the fee back to storage.
+                _heldFeesOf[projectId][token].push(heldFee);
+                continue;
+            }
 
             // Process the fee.
             _processFee({
@@ -1648,14 +1626,14 @@ contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTer
         }
     }
 
-    /// @notice Unlock held fees based on the specified amount.
-    /// @param projectId The project held fees are being unlocked for.
+    /// @notice Returns held fees to the project who paid them based on the specified amount.
+    /// @param projectId The project held fees are being returned to.
     /// @param token The token that the held fees are in.
     /// @param amount The amount to base the calculation on, as a fixed point number with the same number of decimals
     /// as this terminal.
-    /// @return unlockedFees The amount of held fees that were unlocked, as a fixed point number with the same number of
+    /// @return returnedFees The amount of held fees that were returned, as a fixed point number with the same number of
     /// decimals as this terminal
-    function _unlockHeldFees(uint256 projectId, address token, uint256 amount) private returns (uint256 unlockedFees) {
+    function _returnHeldFees(uint256 projectId, address token, uint256 amount) private returns (uint256 returnedFees) {
         // Get a reference to the project's held fees.
         JBFee[] memory heldFees = _heldFeesOf[projectId][token];
 
@@ -1685,7 +1663,7 @@ contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTer
                 if (leftoverAmount >= heldFee.amount - feeAmount) {
                     unchecked {
                         leftoverAmount = leftoverAmount - (heldFee.amount - feeAmount);
-                        unlockedFees += feeAmount;
+                        returnedFees += feeAmount;
                     }
                 } else {
                     // And here we overwrite with `feeAmountFrom` the `leftoverAmount`
@@ -1693,16 +1671,20 @@ contract JBMultiTerminal is JBPermissioned, Ownable, ERC2771Context, IJBMultiTer
 
                     unchecked {
                         _heldFeesOf[projectId][token].push(
-                            JBFee(heldFee.amount - (leftoverAmount + feeAmount), heldFee.beneficiary)
+                            JBFee({
+                                amount: heldFee.amount - (leftoverAmount + feeAmount),
+                                beneficiary: heldFee.beneficiary,
+                                unlockTimestamp: heldFee.unlockTimestamp
+                            })
                         );
-                        unlockedFees += feeAmount;
+                        returnedFees += feeAmount;
                     }
                     leftoverAmount = 0;
                 }
             }
         }
 
-        emit UnlockHeldFees(projectId, token, amount, unlockedFees, leftoverAmount, _msgSender());
+        emit ReturnHeldFees(projectId, token, amount, returnedFees, leftoverAmount, _msgSender());
     }
 
     /// @notice Transfers tokens.

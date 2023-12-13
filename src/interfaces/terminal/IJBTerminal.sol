@@ -74,7 +74,7 @@ interface IJBTerminal is IERC165 {
         uint256 projectId,
         address token,
         uint256 amount,
-        bool shouldUnlockHeldFees,
+        bool shouldReturnHeldFees,
         string calldata memo,
         bytes calldata metadata
     )
