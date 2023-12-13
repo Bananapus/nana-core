@@ -14,6 +14,7 @@ contract TestPermit2Terminal_Local is TestBaseWorkflow, PermitSignature {
     IJBPrices private _prices;
     IJBTokens private _tokens;
     IERC20 private _usdc;
+    IPermit2 private _permit2;
     MetadataResolverHelper private _helper;
     address private _projectOwner;
 
@@ -37,6 +38,7 @@ contract TestPermit2Terminal_Local is TestBaseWorkflow, PermitSignature {
         _tokens = jbTokens();
         _helper = metadataHelper();
         _usdc = usdcToken();
+        _permit2 = permit2();
 
         fromPrivateKey = 0x12341234;
         from = vm.addr(fromPrivateKey);
@@ -229,5 +231,50 @@ contract TestPermit2Terminal_Local is TestBaseWorkflow, PermitSignature {
 
         // Check: that tokens were transferred.
         if (_coins < uint256(type(uint160).max) + 1) assertEq(_usdc.balanceOf(address(_terminal)), _coins);
+    }
+
+    function testPayAmountGtMaxPermit() public {
+        // Setup: refs
+        uint160 _permitAmount = type(uint160).max;
+        uint256 _payAmount = type(uint256).max;
+        uint256 _sigDeadline = block.timestamp + 1;
+        uint48 _expiration = type(uint48).max;
+        uint48 _nonce = 0;
+
+        // Setup: prepare permit details for signing.
+        IAllowanceTransfer.PermitDetails memory details = IAllowanceTransfer.PermitDetails({
+            token: address(_usdc),
+            amount: _permitAmount,
+            expiration: _expiration,
+            nonce: 0
+        });
+
+        IAllowanceTransfer.PermitSingle memory permit =
+            IAllowanceTransfer.PermitSingle({details: details, spender: address(_terminal), sigDeadline: _sigDeadline});
+
+        // Setup: sign permit details.
+        bytes memory sig = getPermitSignature(permit, fromPrivateKey, DOMAIN_SEPARATOR);
+
+        JBSingleAllowanceData memory permitData = JBSingleAllowanceData({
+            sigDeadline: _sigDeadline,
+            amount: _permitAmount,
+            expiration: _expiration,
+            nonce: _nonce,
+            signature: sig
+        });
+
+        vm.expectRevert(abi.encodeWithSignature("OVERFLOW_ALERT()"));
+
+        vm.prank(from);
+        _terminal.pay({
+            projectId: _projectId,
+            amount: _payAmount,
+            token: address(_usdc),
+            beneficiary: from,
+            minReturnedTokens: 0,
+            memo: "Take my permitted money!",
+            metadata: ""
+        });
+
     }
 }
