@@ -113,7 +113,7 @@ contract TestPermit2Terminal_Local is TestBaseWorkflow, PermitSignature {
 
     function testFuzzPayPermit2(uint256 _coins, uint256 _expiration, uint256 _deadline) public {
         // Setup: set fuzz boundaries.
-        _coins = bound(_coins, 0, type(uint160).max);
+        _coins = bound(_coins, 0, uint256(type(uint160).max) + 1);
         _expiration = bound(_expiration, block.timestamp + 1, type(uint48).max - 1);
         _deadline = bound(_deadline, block.timestamp + 1, type(uint256).max - 1);
 
@@ -152,6 +152,10 @@ contract TestPermit2Terminal_Local is TestBaseWorkflow, PermitSignature {
         deal(address(_usdc), from, _coins);
         vm.prank(from);
         IERC20(address(_usdc)).approve(address(permit2()), _coins);
+
+        if (_coins == uint256(type(uint160).max) + 1) {
+            vm.expectRevert(abi.encodeWithSignature("PERMIT_ALLOWANCE_NOT_ENOUGH()"));
+        }
 
         vm.prank(from);
         uint256 _minted = _terminal.pay({
@@ -164,18 +168,18 @@ contract TestPermit2Terminal_Local is TestBaseWorkflow, PermitSignature {
             metadata: _packedData
         });
 
-        emit log_uint(_minted);
-
+        if (_coins < uint256(type(uint160).max) + 1) {
         // Check: that tokens were transfered.
         assertEq(_usdc.balanceOf(address(_terminal)), _coins);
 
         // Check: that payer receives project token/balance.
         assertEq(_tokens.totalBalanceOf(from, _projectId), _minted);
+        }
     }
 
     function testFuzzAddToBalancePermit2(uint256 _coins, uint256 _expiration, uint256 _deadline) public {
         // Setup: set fuzz boundaries.
-        _coins = bound(_coins, 0, type(uint160).max);
+        _coins = bound(_coins, 0, uint256(type(uint160).max) + 1);
         _expiration = bound(_expiration, block.timestamp + 1, type(uint48).max - 1);
         _deadline = bound(_deadline, block.timestamp + 1, type(uint256).max - 1);
 
@@ -215,11 +219,15 @@ contract TestPermit2Terminal_Local is TestBaseWorkflow, PermitSignature {
         vm.prank(from);
         IERC20(address(_usdc)).approve(address(permit2()), _coins);
 
+        if (_coins == uint256(type(uint160).max) + 1) {
+            vm.expectRevert(abi.encodeWithSignature("PERMIT_ALLOWANCE_NOT_ENOUGH()"));
+        }
+
         // Test: add to balance using permit2 data, which should transfer tokens.
         vm.prank(from);
         _terminal.addToBalanceOf(_projectId, address(_usdc), _coins, false, "testing permit2", _packedData);
 
         // Check: that tokens were transferred.
-        assertEq(_usdc.balanceOf(address(_terminal)), _coins);
+        if (_coins < uint256(type(uint160).max) + 1) assertEq(_usdc.balanceOf(address(_terminal)), _coins);
     }
 }
