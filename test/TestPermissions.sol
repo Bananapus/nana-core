@@ -105,7 +105,7 @@ contract TestPermissions_Local is TestBaseWorkflow {
 
             // Set em.
             vm.prank(_projectOwner);
-            _permissions.setPermissionsForOperator(_projectOwner, permData[0]);
+            _permissions.setPermissionsFor(_projectOwner, permData[0]);
         }
     }
 
@@ -123,7 +123,7 @@ contract TestPermissions_Local is TestBaseWorkflow {
 
             // Set em.
             vm.prank(_projectOwner);
-            _permissions.setPermissionsForOperator(_projectOwner, permData[0]);
+            _permissions.setPermissionsFor(_projectOwner, permData[0]);
 
             // Verify.
             bool _check = _permissions.hasPermission(address(0), _projectOwner, _projectOne, permIds[i]);

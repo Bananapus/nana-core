@@ -1,4 +1,4 @@
-@juicebox=src/
+@contracts=src/
 @openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/
 @chainlink/contracts/=lib/chainlink/contracts/
 @paulrberg/contracts/math/=lib/prb-math/src/
