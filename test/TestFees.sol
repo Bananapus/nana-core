@@ -107,11 +107,11 @@ contract TestFees_Local is TestBaseWorkflow {
 
         // Package up ruleset configuration.
         JBRulesetConfig[] memory _feeProjectRuleset = new JBRulesetConfig[](1);
-        _rulesetConfig[0].mustStartAtOrAfter = 0;
-        _rulesetConfig[0].data = _data;
-        _rulesetConfig[0].metadata = _feeProjectMetadata;
-        _rulesetConfig[0].splitGroups = new JBSplitGroup[](0);
-        _rulesetConfig[0].fundAccessLimitGroups = _fundAccessLimitGroup;
+        _feeProjectRuleset[0].mustStartAtOrAfter = 0;
+        _feeProjectRuleset[0].data = _data;
+        _feeProjectRuleset[0].metadata = _feeProjectMetadata;
+        _feeProjectRuleset[0].splitGroups = new JBSplitGroup[](0);
+        _feeProjectRuleset[0].fundAccessLimitGroups = _fundAccessLimitGroup;
 
         JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](2);
 
@@ -167,12 +167,12 @@ contract TestFees_Local is TestBaseWorkflow {
         uint256 _feeAmount =
             _nativeDistLimit - _nativeDistLimit * JBConstants.MAX_FEE / (_terminal.FEE() + JBConstants.MAX_FEE);
 
-        uint256 _afterFee = _nativeDistLimit - _feeAmount;    
+        uint256 _afterFee = _nativeDistLimit - _feeAmount;
 
         assertEq(_projectOwner.balance, _afterFee);
 
         // Setup: addToBalance to reset our held fees
-        _terminal.addToBalanceOf(_projectId, JBConstants.NATIVE_TOKEN, _nativeDistLimit, true, "forge test", "");
+        _terminal.addToBalanceOf{value: _nativeDistLimit - _feeAmount}(_projectId, JBConstants.NATIVE_TOKEN, _nativeDistLimit - _feeAmount, true, "forge test", "");
         
         // Send: Migration to terminal2
         _terminal.migrateBalanceOf(_projectId, JBConstants.NATIVE_TOKEN, _terminal2);
