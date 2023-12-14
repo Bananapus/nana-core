@@ -118,7 +118,7 @@ contract TestSplits_Local is TestBaseWorkflow {
 
         // Package up terminal configuration.
         JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
-          address[] memory _tokensToAccept = new address[](1);
+        address[] memory _tokensToAccept = new address[](1);
         _tokensToAccept[0] = JBConstants.NATIVE_TOKEN;
         _terminalConfigurations[0] = JBTerminalConfig({terminal: _terminal, tokensToAccept: _tokensToAccept});
 
@@ -248,7 +248,7 @@ contract TestSplits_Local is TestBaseWorkflow {
 
         // Package up terminal configuration.
         JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
-          address[] memory _tokensToAccept = new address[](1);
+        address[] memory _tokensToAccept = new address[](1);
         _tokensToAccept[0] = JBConstants.NATIVE_TOKEN;
         _terminalConfigurations[0] = JBTerminalConfig({terminal: _terminal, tokensToAccept: _tokensToAccept});
 
