@@ -5,8 +5,8 @@ import {IJBTerminal} from "./../interfaces/terminal/IJBTerminal.sol";
 import {JBAccountingContextConfig} from "./JBAccountingContextConfig.sol";
 
 /// @custom:member terminal The terminal to configure.
-/// @custom:member accountingContextConfigs The token accounting contexts to configure the terminal with.
+/// @custom:member acceptedTokens The tokens to accept from the terminal.
 struct JBTerminalConfig {
     IJBTerminal terminal;
-    JBAccountingContextConfig[] accountingContextConfigs;
+    address[] tokensToAccept;
 }

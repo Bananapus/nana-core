@@ -867,8 +867,8 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
             // Set the terminal configuration being iterated on.
             terminalConfig = terminalConfigs[i];
 
-            // Set the accounting contexts.
-            terminalConfig.terminal.addAccountingContextsFor(projectId, terminalConfig.accountingContextConfigs);
+            // Set the accounting contexts for the given tokens.
+            terminalConfig.terminal.addAccountingContextsFor(projectId, terminalConfig.tokensToAccept);
 
             // Add the terminal.
             terminals[i] = terminalConfig.terminal;

@@ -515,14 +515,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @dev Only a project's owner, an operator with the `SET_ACCOUNTING_CONTEXT` permission from that owner, or a
     /// project's controller can add accounting contexts for the project.
     /// @param projectId The ID of the project having to add accounting contexts for.
-    /// @param accountingContextConfigs The accounting contexts to add.
-    function addAccountingContextsFor(
-        uint256 projectId,
-        JBAccountingContextConfig[] calldata accountingContextConfigs
-    )
-        external
-        override
-    {
+    /// @param tokens The tokens to add accounting contexts for.
+    function addAccountingContextsFor(uint256 projectId, address[] calldata tokens) external override {
         // Enforce permissions.
         _requirePermissionAllowingOverride({
             account: PROJECTS.ownerOf(projectId),
@@ -531,35 +525,32 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             alsoGrantAccessIf: _msgSender() == address(DIRECTORY.controllerOf(projectId))
         });
 
-        // Keep a reference to the number of accounting context configurations.
-        uint256 numberOfAccountingContextsConfigs = accountingContextConfigs.length;
+        // Keep a reference to the number of accounting contexts to add.
+        uint256 numberOfAccountingContexts = tokens.length;
 
-        // Keep a reference to the accounting context being iterated on.
-        JBAccountingContextConfig calldata accountingContextConfig;
+        // Keep a reference to the token being iterated on.
+        address token;
 
-        // Add each accounting context.
-        for (uint256 i; i < numberOfAccountingContextsConfigs; ++i) {
+        // Start accepting each token.
+        for (uint256 i; i < numberOfAccountingContexts; ++i) {
             // Set the accounting context being iterated on.
-            accountingContextConfig = accountingContextConfigs[i];
+            token = tokens[i];
 
             // Get a storage reference to the currency accounting context for the token.
-            JBAccountingContext storage accountingContext =
-                _accountingContextForTokenOf[projectId][accountingContextConfig.token];
+            JBAccountingContext storage accountingContext = _accountingContextForTokenOf[projectId][token];
 
             // Make sure the token accounting context isn't already set.
             if (accountingContext.token != address(0)) revert ACCOUNTING_CONTEXT_ALREADY_SET();
 
             // Define the context from the config.
-            accountingContext.token = accountingContextConfig.token;
-            accountingContext.decimals = accountingContextConfig.token == JBConstants.NATIVE_TOKEN
-                ? 18
-                : IERC20Metadata(accountingContextConfig.token).decimals();
-            accountingContext.currency = uint32(uint160(accountingContextConfig.token));
+            accountingContext.token = token;
+            accountingContext.decimals = token == JBConstants.NATIVE_TOKEN ? 18 : IERC20Metadata(token).decimals();
+            accountingContext.currency = uint32(uint160(token));
 
             // Add the token to the list of accepted tokens of the project.
             _accountingContextsOf[projectId].push(accountingContext);
 
-            emit SetAccountingContext(projectId, accountingContextConfig.token, accountingContext, _msgSender());
+            emit SetAccountingContext(projectId, token, accountingContext, _msgSender());
         }
     }
 
@@ -584,7 +575,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         require(msg.sender == address(this));
 
         if (address(feeTerminal) == address(0)) {
-            revert("404_2");
+            revert("404:FEE_TERMINAL");
         }
 
         // Trigger any inherited pre-transfer logic if funds will be transferred.
@@ -667,7 +658,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
             // Make sure that the address supports the split hook interface.
             if (ERC165Checker.supportsInterface(address(split.hook), type(IJBSplitHook).interfaceId)) {
-                revert("400_1");
+                revert("400:SPLIT_HOOK");
             }
 
             // Trigger any inherited pre-transfer logic.
@@ -685,7 +676,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             IJBTerminal terminal = DIRECTORY.primaryTerminalOf(split.projectId, token);
 
             // The project must have a terminal to send funds to.
-            if (terminal == IJBTerminal(address(0))) revert("404_1");
+            if (terminal == IJBTerminal(address(0))) revert("404:PAYOUT_TERMINAL");
 
             // This payout is eligible for a fee if the funds are leaving this contract and the receiving terminal isn't
             // a feelss address.

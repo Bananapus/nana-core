@@ -75,11 +75,10 @@ contract TestPermit2Terminal_Local is TestBaseWorkflow, PermitSignature {
         _rulesetConfig[0].fundAccessLimitGroups = new JBFundAccessLimitGroup[](0);
 
         JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
-        JBAccountingContextConfig[] memory _accountingContexts = new JBAccountingContextConfig[](2);
-        _accountingContexts[0] = JBAccountingContextConfig({token: JBConstants.NATIVE_TOKEN});
-        _accountingContexts[1] = JBAccountingContextConfig({token: address(_usdc)});
-        _terminalConfigurations[0] =
-            JBTerminalConfig({terminal: _terminal, accountingContextConfigs: _accountingContexts});
+        address[] memory _tokensToAccept = new address[](2);
+        _tokensToAccept[0] = JBConstants.NATIVE_TOKEN;
+        _tokensToAccept[1] = address(_usdc);
+        _terminalConfigurations[0] = JBTerminalConfig({terminal: _terminal, tokensToAccept: _tokensToAccept});
 
         // Create a first project to collect fees.
         _controller.launchProjectFor({

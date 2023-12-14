@@ -51,11 +51,7 @@ interface IJBTerminal is IERC165 {
 
     function migrateBalanceOf(uint256 projectId, address token, IJBTerminal to) external returns (uint256 balance);
 
-    function addAccountingContextsFor(
-        uint256 projectId,
-        JBAccountingContextConfig[] calldata accountingContexts
-    )
-        external;
+    function addAccountingContextsFor(uint256 projectId, address[] calldata tokens) external;
 
     function pay(
         uint256 projectId,
