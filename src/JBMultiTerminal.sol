@@ -26,7 +26,6 @@ import {JBFees} from "./libraries/JBFees.sol";
 import {JBRulesetMetadataResolver} from "./libraries/JBRulesetMetadataResolver.sol";
 import {JBMetadataResolver} from "./libraries/JBMetadataResolver.sol";
 import {JBPermissionIds} from "./libraries/JBPermissionIds.sol";
-import {JBTokenStandards} from "./libraries/JBTokenStandards.sol";
 import {JBDidRedeemData} from "./structs/JBDidRedeemData.sol";
 import {JBDidPayData} from "./structs/JBDidPayData.sol";
 import {JBFee} from "./structs/JBFee.sol";
@@ -552,11 +551,10 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
             // Define the context from the config.
             accountingContext.token = accountingContextConfig.token;
-            accountingContext.decimals = accountingContextConfig.standard == JBTokenStandards.NATIVE
+            accountingContext.decimals = accountingContextConfig.token == JBConstants.NATIVE_TOKEN
                 ? 18
                 : IERC20Metadata(accountingContextConfig.token).decimals();
             accountingContext.currency = uint32(uint160(accountingContextConfig.token));
-            accountingContext.standard = accountingContextConfig.standard;
 
             // Add the token to the list of accepted tokens of the project.
             _accountingContextsOf[projectId].push(accountingContext);
@@ -1703,7 +1701,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @param amount The number of tokens being transferred, as a fixed point number with the same number of decimals
     /// as this terminal.
     function _transferFrom(address from, address payable to, address token, uint256 amount) private {
-        // If the token is the native token, assume the native token standard.
+        // If the token is the native token, transfer natively.
         if (token == JBConstants.NATIVE_TOKEN) return Address.sendValue(to, amount);
 
         if (from == address(this)) return IERC20(token).safeTransfer(to, amount);
@@ -1726,7 +1724,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @param amount The number of tokens being transferred, as a fixed point number with the same number of decimals
     /// as this terminal.
     function _beforeTransferTo(address to, address token, uint256 amount) private {
-        // If the token is the native token, assume the native token standard.
+        // If the token is the native token, no allowance needed.
         if (token == JBConstants.NATIVE_TOKEN) return;
         IERC20(token).safeIncreaseAllowance(to, amount);
     }

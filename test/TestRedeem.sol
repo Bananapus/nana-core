@@ -57,8 +57,7 @@ contract TestRedeem_Local is TestBaseWorkflow {
 
         JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
         JBAccountingContextConfig[] memory _accountingContextConfigs = new JBAccountingContextConfig[](1);
-        _accountingContextConfigs[0] =
-            JBAccountingContextConfig({token: JBConstants.NATIVE_TOKEN, standard: JBTokenStandards.NATIVE});
+        _accountingContextConfigs[0] = JBAccountingContextConfig({token: JBConstants.NATIVE_TOKEN});
         _terminalConfigurations[0] =
             JBTerminalConfig({terminal: _terminal, accountingContextConfigs: _accountingContextConfigs});
 

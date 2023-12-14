@@ -113,8 +113,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
 
             JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
             JBAccountingContextConfig[] memory _accountingContextConfigs = new JBAccountingContextConfig[](1);
-            _accountingContextConfigs[0] =
-                JBAccountingContextConfig({token: JBConstants.NATIVE_TOKEN, standard: JBTokenStandards.NATIVE});
+            _accountingContextConfigs[0] = JBAccountingContextConfig({token: JBConstants.NATIVE_TOKEN});
             _terminalConfigurations[0] =
                 JBTerminalConfig({terminal: _terminal, accountingContextConfigs: _accountingContextConfigs});
 
@@ -342,8 +341,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
 
             JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
             JBAccountingContextConfig[] memory _accountingContextConfigs = new JBAccountingContextConfig[](1);
-            _accountingContextConfigs[0] =
-                JBAccountingContextConfig({token: JBConstants.NATIVE_TOKEN, standard: JBTokenStandards.NATIVE});
+            _accountingContextConfigs[0] = JBAccountingContextConfig({token: JBConstants.NATIVE_TOKEN});
             _terminalConfigurations[0] =
                 JBTerminalConfig({terminal: _terminal, accountingContextConfigs: _accountingContextConfigs});
 
@@ -598,8 +596,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
         {
             JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
             JBAccountingContextConfig[] memory _accountingContextConfigs = new JBAccountingContextConfig[](1);
-            _accountingContextConfigs[0] =
-                JBAccountingContextConfig({token: JBConstants.NATIVE_TOKEN, standard: JBTokenStandards.NATIVE});
+            _accountingContextConfigs[0] = JBAccountingContextConfig({token: JBConstants.NATIVE_TOKEN});
 
             _terminalConfigurations[0] =
                 JBTerminalConfig({terminal: _terminal, accountingContextConfigs: _accountingContextConfigs});
@@ -853,8 +850,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
 
             JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
             JBAccountingContextConfig[] memory _accountingContextConfigs = new JBAccountingContextConfig[](1);
-            _accountingContextConfigs[0] =
-                JBAccountingContextConfig({token: JBConstants.NATIVE_TOKEN, standard: JBTokenStandards.NATIVE});
+            _accountingContextConfigs[0] = JBAccountingContextConfig({token: JBConstants.NATIVE_TOKEN});
 
             _terminalConfigurations[0] =
                 JBTerminalConfig({terminal: _terminal, accountingContextConfigs: _accountingContextConfigs});
@@ -1113,10 +1109,8 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
 
             JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
             JBAccountingContextConfig[] memory _accountingContextConfigs = new JBAccountingContextConfig[](2);
-            _accountingContextConfigs[0] =
-                JBAccountingContextConfig({token: JBConstants.NATIVE_TOKEN, standard: JBTokenStandards.NATIVE});
-            _accountingContextConfigs[1] =
-                JBAccountingContextConfig({token: address(_usdcToken), standard: JBTokenStandards.ERC20});
+            _accountingContextConfigs[0] = JBAccountingContextConfig({token: JBConstants.NATIVE_TOKEN});
+            _accountingContextConfigs[1] = JBAccountingContextConfig({token: address(_usdcToken)});
 
             _terminalConfigurations[0] =
                 JBTerminalConfig({terminal: _terminal, accountingContextConfigs: _accountingContextConfigs});
@@ -1716,14 +1710,10 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             JBAccountingContextConfig[] memory _accountingContextConfigs1 = new JBAccountingContextConfig[](2);
             JBAccountingContextConfig[] memory _accountingContextConfigs2 = new JBAccountingContextConfig[](1);
             JBAccountingContextConfig[] memory _accountingContextConfigs3 = new JBAccountingContextConfig[](1);
-            _accountingContextConfigs1[0] =
-                JBAccountingContextConfig({token: JBConstants.NATIVE_TOKEN, standard: JBTokenStandards.NATIVE});
-            _accountingContextConfigs1[1] =
-                JBAccountingContextConfig({token: address(_usdcToken), standard: JBTokenStandards.ERC20});
-            _accountingContextConfigs2[0] =
-                JBAccountingContextConfig({token: JBConstants.NATIVE_TOKEN, standard: JBTokenStandards.NATIVE});
-            _accountingContextConfigs3[0] =
-                JBAccountingContextConfig({token: address(_usdcToken), standard: JBTokenStandards.ERC20});
+            _accountingContextConfigs1[0] = JBAccountingContextConfig({token: JBConstants.NATIVE_TOKEN});
+            _accountingContextConfigs1[1] = JBAccountingContextConfig({token: address(_usdcToken)});
+            _accountingContextConfigs2[0] = JBAccountingContextConfig({token: JBConstants.NATIVE_TOKEN});
+            _accountingContextConfigs3[0] = JBAccountingContextConfig({token: address(_usdcToken)});
 
             // Fee takes USDC and native token in same terminal.
             _terminalConfigurations1[0] =

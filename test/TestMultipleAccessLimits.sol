@@ -87,10 +87,8 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
 
         JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
         JBAccountingContextConfig[] memory _accountingContexts = new JBAccountingContextConfig[](2);
-        _accountingContexts[0] =
-            JBAccountingContextConfig({token: JBConstants.NATIVE_TOKEN, standard: JBTokenStandards.NATIVE});
-        _accountingContexts[1] =
-            JBAccountingContextConfig({token: address(usdcToken()), standard: JBTokenStandards.ERC20});
+        _accountingContexts[0] = JBAccountingContextConfig({token: JBConstants.NATIVE_TOKEN});
+        _accountingContexts[1] = JBAccountingContextConfig({token: address(usdcToken())});
         _terminalConfigurations[0] =
             JBTerminalConfig({terminal: __terminal, accountingContextConfigs: _accountingContexts});
 
@@ -255,10 +253,8 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
 
         JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
         JBAccountingContextConfig[] memory _accountingContexts = new JBAccountingContextConfig[](2);
-        _accountingContexts[0] =
-            JBAccountingContextConfig({token: JBConstants.NATIVE_TOKEN, standard: JBTokenStandards.NATIVE});
-        _accountingContexts[1] =
-            JBAccountingContextConfig({token: address(usdcToken()), standard: JBTokenStandards.ERC20});
+        _accountingContexts[0] = JBAccountingContextConfig({token: JBConstants.NATIVE_TOKEN});
+        _accountingContexts[1] = JBAccountingContextConfig({token: address(usdcToken())});
         _terminalConfigurations[0] =
             JBTerminalConfig({terminal: __terminal, accountingContextConfigs: _accountingContexts});
 
@@ -305,10 +301,8 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
 
         JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
         JBAccountingContextConfig[] memory _accountingContexts = new JBAccountingContextConfig[](2);
-        _accountingContexts[0] =
-            JBAccountingContextConfig({token: JBConstants.NATIVE_TOKEN, standard: JBTokenStandards.NATIVE});
-        _accountingContexts[1] =
-            JBAccountingContextConfig({token: address(usdcToken()), standard: JBTokenStandards.ERC20});
+        _accountingContexts[0] = JBAccountingContextConfig({token: JBConstants.NATIVE_TOKEN});
+        _accountingContexts[1] = JBAccountingContextConfig({token: address(usdcToken())});
         _terminalConfigurations[0] =
             JBTerminalConfig({terminal: __terminal, accountingContextConfigs: _accountingContexts});
 
@@ -362,10 +356,8 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
 
         JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
         JBAccountingContextConfig[] memory _accountingContexts = new JBAccountingContextConfig[](2);
-        _accountingContexts[0] =
-            JBAccountingContextConfig({token: JBConstants.NATIVE_TOKEN, standard: JBTokenStandards.NATIVE});
-        _accountingContexts[1] =
-            JBAccountingContextConfig({token: address(usdcToken()), standard: JBTokenStandards.ERC20});
+        _accountingContexts[0] = JBAccountingContextConfig({token: JBConstants.NATIVE_TOKEN});
+        _accountingContexts[1] = JBAccountingContextConfig({token: address(usdcToken())});
         _terminalConfigurations[0] =
             JBTerminalConfig({terminal: __terminal, accountingContextConfigs: _accountingContexts});
 
@@ -410,10 +402,8 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
 
         JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
         JBAccountingContextConfig[] memory _accountingContexts = new JBAccountingContextConfig[](2);
-        _accountingContexts[0] =
-            JBAccountingContextConfig({token: JBConstants.NATIVE_TOKEN, standard: JBTokenStandards.NATIVE});
-        _accountingContexts[1] =
-            JBAccountingContextConfig({token: address(usdcToken()), standard: JBTokenStandards.ERC20});
+        _accountingContexts[0] = JBAccountingContextConfig({token: JBConstants.NATIVE_TOKEN});
+        _accountingContexts[1] = JBAccountingContextConfig({token: address(usdcToken())});
         _terminalConfigurations[0] =
             JBTerminalConfig({terminal: __terminal, accountingContextConfigs: _accountingContexts});
 
@@ -512,10 +502,8 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
 
         JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
         JBAccountingContextConfig[] memory _accountingContexts = new JBAccountingContextConfig[](2);
-        _accountingContexts[0] =
-            JBAccountingContextConfig({token: JBConstants.NATIVE_TOKEN, standard: JBTokenStandards.NATIVE});
-        _accountingContexts[1] =
-            JBAccountingContextConfig({token: address(usdcToken()), standard: JBTokenStandards.ERC20});
+        _accountingContexts[0] = JBAccountingContextConfig({token: JBConstants.NATIVE_TOKEN});
+        _accountingContexts[1] = JBAccountingContextConfig({token: address(usdcToken())});
         _terminalConfigurations[0] =
             JBTerminalConfig({terminal: __terminal, accountingContextConfigs: _accountingContexts});
 

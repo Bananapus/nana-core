@@ -76,9 +76,8 @@ contract TestPermit2Terminal_Local is TestBaseWorkflow, PermitSignature {
 
         JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
         JBAccountingContextConfig[] memory _accountingContexts = new JBAccountingContextConfig[](2);
-        _accountingContexts[0] =
-            JBAccountingContextConfig({token: JBConstants.NATIVE_TOKEN, standard: JBTokenStandards.NATIVE});
-        _accountingContexts[1] = JBAccountingContextConfig({token: address(_usdc), standard: JBTokenStandards.ERC20});
+        _accountingContexts[0] = JBAccountingContextConfig({token: JBConstants.NATIVE_TOKEN});
+        _accountingContexts[1] = JBAccountingContextConfig({token: address(_usdc)});
         _terminalConfigurations[0] =
             JBTerminalConfig({terminal: _terminal, accountingContextConfigs: _accountingContexts});
 
@@ -171,11 +170,11 @@ contract TestPermit2Terminal_Local is TestBaseWorkflow, PermitSignature {
         });
 
         if (_coins < uint256(type(uint160).max) + 1) {
-        // Check: that tokens were transfered.
-        assertEq(_usdc.balanceOf(address(_terminal)), _coins);
+            // Check: that tokens were transfered.
+            assertEq(_usdc.balanceOf(address(_terminal)), _coins);
 
-        // Check: that payer receives project token/balance.
-        assertEq(_tokens.totalBalanceOf(from, _projectId), _minted);
+            // Check: that payer receives project token/balance.
+            assertEq(_tokens.totalBalanceOf(from, _projectId), _minted);
         }
     }
 
@@ -275,6 +274,5 @@ contract TestPermit2Terminal_Local is TestBaseWorkflow, PermitSignature {
             memo: "Take my permitted money!",
             metadata: ""
         });
-
     }
 }
