@@ -177,7 +177,7 @@ contract TestFees_Local is TestBaseWorkflow {
         // Send: Migration to terminal2
         _terminal.migrateBalanceOf(_projectId, JBConstants.NATIVE_TOKEN, _terminal2);
 
-        // Check: Fee amount shouldnt remain in terminal 1 since it was repaid... fails
+        // Check: Fee amount shouldnt remain in terminal 1 since it was repaid
         assertEq(address(_terminal).balance, 0);
 
         vm.stopPrank();
