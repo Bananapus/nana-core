@@ -362,7 +362,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         external
         virtual
         override
-        returns (uint256 reclaimAmount)
+        returns (uint256)
     {
         // Enforce permissions.
         _requirePermission({account: holder, projectId: projectId, permissionId: JBPermissionIds.REDEEM_TOKENS});
@@ -400,7 +400,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         external
         virtual
         override
-        returns (uint256 netLeftoverPayoutAmount)
+        returns (uint256)
     {
         return _sendPayoutsOf(projectId, token, amount, currency, minReturnedTokens);
     }
@@ -434,7 +434,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         external
         virtual
         override
-        returns (uint256 netAmountPaidOut)
+        returns (uint256)
     {
         // Enforce permissions.
         _requirePermission({
@@ -477,7 +477,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         }
 
         // Process any held fees.
-        _processHeldFeesOf(projectId, token);
+        _processHeldFeesOf({projectId: projectId, token: token, forced: true});
 
         // Record the migration in the store.
         balance = STORE.recordTerminalMigration(projectId, token);
@@ -506,8 +506,9 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
     /// @notice Process any fees that are being held for the project.
     /// @param projectId The ID of the project to process held fees for.
+    /// @param token The token to process held fees for.
     function processHeldFeesOf(uint256 projectId, address token) external virtual override {
-        _processHeldFeesOf(projectId, token);
+        _processHeldFeesOf({projectId: projectId, token: token, forced: false});
     }
 
     /// @notice Adds accounting contexts for a project to this terminal so the project can begin accepting the tokens in
@@ -831,11 +832,9 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // If the terminal is rerouting the tokens within its own functions, there's nothing to transfer.
         if (_msgSender() == address(this)) return amount;
 
-        // The data ID is the first 160 bits of this contract's address.
-        bytes4 dataId = bytes4(uint32(uint160(address(this))));
-
         // Unpack the allowance to use, if any, given by the frontend.
-        (bool exists, bytes memory parsedMetadata) = JBMetadataResolver.getDataFor(dataId, metadata);
+        (bool exists, bytes memory parsedMetadata) =
+            JBMetadataResolver.getDataFor(bytes4(uint32(uint160(address(this)))), metadata);
 
         // Check if the metadata contains permit data.
         if (exists) {
@@ -1569,7 +1568,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @notice Process any fees that are being held for the project.
     /// @param projectId The ID of the project to process held fees for.
     /// @param token The token to process held fees for.
-    function _processHeldFeesOf(uint256 projectId, address token) private {
+    /// @param forced If locked held fees should be force processed.
+    function _processHeldFeesOf(uint256 projectId, address token, bool forced) private {
         // Get a reference to the project's held fees.
         JBFee[] memory heldFees = _heldFeesOf[projectId][token];
 
@@ -1591,7 +1591,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             heldFee = heldFees[i];
 
             // Can't process fees that aren't yet unlocked.
-            if (heldFee.unlockTimestamp < block.timestamp) {
+            if (!forced && heldFee.unlockTimestamp < block.timestamp) {
                 // Add the fee back to storage.
                 _heldFeesOf[projectId][token].push(heldFee);
                 continue;
