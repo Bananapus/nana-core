@@ -676,6 +676,11 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         return ERC2771Context._msgData();
     }
 
+    /// @dev ERC-2771 specifies the context as being a single address (20 bytes).
+    function _contextSuffixLength() internal view virtual override(ERC2771Context, Context) returns (uint256) {
+        return super._contextSuffixLength();
+    }
+
     //*********************************************************************//
     // ---------------------- private transactions ----------------------- //
     //*********************************************************************//

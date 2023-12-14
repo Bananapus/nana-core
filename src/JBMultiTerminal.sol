@@ -585,7 +585,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         require(msg.sender == address(this));
 
         if (address(feeTerminal) == address(0)) {
-            revert("404:FEE_TERMINAL");
+            revert("404_2");
         }
 
         // Trigger any inherited pre-transfer logic if funds will be transferred.
@@ -668,7 +668,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
             // Make sure that the address supports the split hook interface.
             if (ERC165Checker.supportsInterface(address(split.hook), type(IJBSplitHook).interfaceId)) {
-                revert("400:SPLIT_HOOK");
+                revert("400_1");
             }
 
             // Trigger any inherited pre-transfer logic.
@@ -686,7 +686,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             IJBTerminal terminal = DIRECTORY.primaryTerminalOf(split.projectId, token);
 
             // The project must have a terminal to send funds to.
-            if (terminal == IJBTerminal(address(0))) revert("404:PAYOUT_TERMINAL");
+            if (terminal == IJBTerminal(address(0))) revert("404_1");
 
             // This payout is eligible for a fee if the funds are leaving this contract and the receiving terminal isn't
             // a feelss address.
@@ -791,6 +791,11 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @return calldata the `msg.data` of this call
     function _msgData() internal view override(ERC2771Context, Context) returns (bytes calldata) {
         return ERC2771Context._msgData();
+    }
+
+    /// @dev ERC-2771 specifies the context as being a single address (20 bytes).
+    function _contextSuffixLength() internal view virtual override(ERC2771Context, Context) returns (uint256) {
+        return super._contextSuffixLength();
     }
 
     //*********************************************************************//
@@ -927,9 +932,13 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             if (tokenCount != 0) {
                 // Set the token count to be the number of tokens minted for the beneficiary instead of the total
                 // amount.
-                beneficiaryTokenCount = IJBController(address(DIRECTORY.controllerOf(projectId))).mintTokensOf(
-                    projectId, tokenCount, beneficiary, "", true
-                );
+                beneficiaryTokenCount = IJBController(address(DIRECTORY.controllerOf(projectId))).mintTokensOf({
+                    projectId: projectId,
+                    tokenCount: tokenCount,
+                    beneficiary: beneficiary,
+                    memo: "",
+                    useReservedRate: true
+                });
             }
 
             // If hook payloads were specified by the data hook, fulfill them.
@@ -1028,11 +1037,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                 metadata: metadata
             });
 
-            // Determine if a fee should be taken. Fees are not exercised if the redemption rate is at its max (100%),
-            // if the beneficiary is feeless, or if the fee beneficiary doesn't accept the given token.
-            bool takesFee =
-                !FEELESS_ADDRESSES.isFeeless(beneficiary) && ruleset.redemptionRate() != JBConstants.MAX_REDEMPTION_RATE;
-
             // The amount being reclaimed must be at least as much as was expected.
             if (reclaimAmount < minReturnedTokens) revert INADEQUATE_RECLAIM_AMOUNT();
 
@@ -1045,6 +1049,11 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                     memo: ""
                 });
             }
+
+            // Determine if a fee should be taken. Fees are not exercised if the redemption rate is at its max (100%),
+            // if the beneficiary is feeless, or if the fee beneficiary doesn't accept the given token.
+            bool takesFee =
+                !FEELESS_ADDRESSES.isFeeless(beneficiary) && ruleset.redemptionRate() != JBConstants.MAX_REDEMPTION_RATE;
 
             // Keep a reference to the amount being reclaimed which fees should be exercised on.
             uint256 amountEligibleForFees;
