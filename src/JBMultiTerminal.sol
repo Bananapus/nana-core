@@ -1264,7 +1264,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @notice Sends payouts to the payout splits group specified in a project's ruleset.
     /// @param projectId The ID of the project to send the payouts of.
     /// @param token The address of the token being paid out.
-    /// @param domain The domain of the split group being paid.
+    /// @param rulesetId The ID of the ruleset of the split group being paid.
     /// @param amount The total amount being paid out, as a fixed point number with the same number of decimals as this
     /// terminal.
     /// @return amount The leftover amount (zero if the splits add up to 100%).
@@ -1272,7 +1272,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     function _sendPayoutsToSplitGroupOf(
         uint256 projectId,
         address token,
-        uint256 domain,
+        uint256 rulesetId,
         uint256 amount
     )
         private
@@ -1282,7 +1282,10 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         uint256 leftoverPercentage = JBConstants.SPLITS_TOTAL_PERCENT;
 
         // Get a reference to the project's payout splits.
-        JBSplit[] memory splits = SPLITS.splitsOf(projectId, domain, uint256(uint160(token)));
+        JBSplit[] memory splits = SPLITS.splitsOf(projectId, rulesetId, uint256(uint160(token)));
+
+        // Use the default splits if there aren't any for the ruleset.
+        if (splits.length == 0) splits = SPLITS.splitsOf(projectId, 0, uint256(uint160(token)));
 
         // Keep a reference to the number of splits being iterated on.
         uint256 numberOfSplits = splits.length;
@@ -1319,7 +1322,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             }
 
             emit SendPayoutToSplit(
-                projectId, domain, uint256(uint160(token)), split, payoutAmount, netPayoutAmount, _msgSender()
+                projectId, rulesetId, uint256(uint160(token)), split, payoutAmount, netPayoutAmount, _msgSender()
             );
         }
 

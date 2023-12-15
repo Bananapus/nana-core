@@ -9,10 +9,10 @@ import {IJBControlled} from "./IJBControlled.sol";
 
 interface IJBSplits is IJBControlled {
     event SetSplit(
-        uint256 indexed projectId, uint256 indexed domainId, uint256 indexed group, JBSplit split, address caller
+        uint256 indexed projectId, uint256 indexed rulesetId, uint256 indexed group, JBSplit split, address caller
     );
 
-    function splitsOf(uint256 projectId, uint256 domainId, uint256 group) external view returns (JBSplit[] memory);
+    function splitsOf(uint256 projectId, uint256 rulesetId, uint256 group) external view returns (JBSplit[] memory);
 
-    function setSplitGroupsOf(uint256 projectId, uint256 domainId, JBSplitGroup[] memory splitGroups) external;
+    function setSplitGroupsOf(uint256 projectId, uint256 rulesetId, JBSplitGroup[] memory groups) external;
 }
