@@ -92,7 +92,7 @@ contract JBFundAccessLimits is JBControlled, ERC165, IJBFundAccessLimits {
         uint256 packedPayoutLimitData;
 
         // Iterate through the stored packed values and format the returned value.
-        for (uint256 i; i < numberOfData; ++i) {
+        for (uint256 i; i < numberOfData; i++) {
             // Set the data being iterated on.
             packedPayoutLimitData = packedPayoutLimitsData[i];
 
@@ -135,7 +135,7 @@ contract JBFundAccessLimits is JBControlled, ERC165, IJBFundAccessLimits {
         uint256 packedPayoutLimitData;
 
         // Iterate through the stored packed values and return the value of the matching currency.
-        for (uint256 i; i < numberOfData; ++i) {
+        for (uint256 i; i < numberOfData; i++) {
             // Set the data being iterated on.
             packedPayoutLimitData = data[i];
 
@@ -181,7 +181,7 @@ contract JBFundAccessLimits is JBControlled, ERC165, IJBFundAccessLimits {
         uint256 packedSurplusAllowanceData;
 
         // Iterate through the stored packed values and format the returned value.
-        for (uint256 i; i < numberOfData; ++i) {
+        for (uint256 i; i < numberOfData; i++) {
             // Set the data being iterated on.
             packedSurplusAllowanceData = packedSurplusAllowancesData[i];
 
@@ -225,7 +225,7 @@ contract JBFundAccessLimits is JBControlled, ERC165, IJBFundAccessLimits {
         uint256 packedSurplusAllowanceData;
 
         // Iterate through the stored packed values and format the returned value.
-        for (uint256 i; i < numberOfData; ++i) {
+        for (uint256 i; i < numberOfData; i++) {
             // Set the data being iterated on.
             packedSurplusAllowanceData = packedSurplusAllowancesData[i];
 
@@ -272,7 +272,7 @@ contract JBFundAccessLimits is JBControlled, ERC165, IJBFundAccessLimits {
         JBFundAccessLimitGroup calldata limits;
 
         // Set payout limits if there are any.
-        for (uint256 i; i < numberOfFundAccessLimitGroups; ++i) {
+        for (uint256 i; i < numberOfFundAccessLimitGroups; i++) {
             // Set the limits being iterated on.
             limits = fundAccessLimitGroup[i];
 

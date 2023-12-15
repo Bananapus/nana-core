@@ -90,7 +90,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
         uint256 numberOfTerminals = _terminalsOf[projectId].length;
 
         // Return the first terminal which accepts the specified token.
-        for (uint256 i; i < numberOfTerminals; ++i) {
+        for (uint256 i; i < numberOfTerminals; i++) {
             // Keep a reference to the terminal being iterated on.
             IJBTerminal terminal = _terminalsOf[projectId][i];
 
@@ -117,7 +117,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
         uint256 numberOfTerminals = _terminalsOf[projectId].length;
 
         // Loop through and return true if the terminal is contained.
-        for (uint256 i; i < numberOfTerminals; ++i) {
+        for (uint256 i; i < numberOfTerminals; i++) {
             // If the terminal being iterated on matches the provided terminal, return true.
             if (_terminalsOf[projectId][i] == terminal) return true;
         }
@@ -225,7 +225,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
 
         // Make sure duplicates were not added.
         if (numberOfTerminals > 1) {
-            for (uint256 i; i < numberOfTerminals; ++i) {
+            for (uint256 i; i < numberOfTerminals; i++) {
                 for (uint256 j = i + 1; j < numberOfTerminals; ++j) {
                     if (terminals[i] == terminals[j]) revert DUPLICATE_TERMINALS();
                 }

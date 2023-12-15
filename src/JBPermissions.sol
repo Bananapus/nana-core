@@ -80,7 +80,7 @@ contract JBPermissions is JBPermissioned, IJBPermissions {
         // Keep a reference to the permission being iterated on.
         uint256 permissionId;
 
-        for (uint256 i; i < numberOfPermissions; ++i) {
+        for (uint256 i; i < numberOfPermissions; i++) {
             // Set the permission being iterated on.
             permissionId = permissionIds[i];
 
@@ -141,7 +141,7 @@ contract JBPermissions is JBPermissioned, IJBPermissions {
         // Keep a reference to the permission being iterated on.
         uint256 permissionId;
 
-        for (uint256 i; i < numberOfIds; ++i) {
+        for (uint256 i; i < numberOfIds; i++) {
             // Set the permission being iterated on.
             permissionId = permissionIds[i];
 

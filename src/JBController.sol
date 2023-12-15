@@ -757,7 +757,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         uint256 numberOfSplits = splits.length;
 
         //Transfer between all splits.
-        for (uint256 i; i < numberOfSplits; ++i) {
+        for (uint256 i; i < numberOfSplits; i++) {
             // Get a reference to the split being iterated on.
             JBSplit memory split = splits[i];
 
@@ -815,7 +815,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         // Keep a reference to the ruleset config being iterated on.
         JBRulesetConfig memory rulesetConfig;
 
-        for (uint256 i; i < numberOfConfigurations; ++i) {
+        for (uint256 i; i < numberOfConfigurations; i++) {
             // Get a reference to the ruleset config being iterated on.
             rulesetConfig = rulesetConfigurations[i];
 
@@ -868,7 +868,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         // Keep a reference to the terminal configuration being iterated on.
         JBTerminalConfig memory terminalConfig;
 
-        for (uint256 i; i < numberOfTerminalConfigs; ++i) {
+        for (uint256 i; i < numberOfTerminalConfigs; i++) {
             // Set the terminal configuration being iterated on.
             terminalConfig = terminalConfigs[i];
 

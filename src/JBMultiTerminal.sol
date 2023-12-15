@@ -532,7 +532,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         address token;
 
         // Start accepting each token.
-        for (uint256 i; i < numberOfAccountingContexts; ++i) {
+        for (uint256 i; i < numberOfAccountingContexts; i++) {
             // Set the accounting context being iterated on.
             token = tokens[i];
 
@@ -1294,7 +1294,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         JBSplit memory split;
 
         // Transfer between all splits.
-        for (uint256 i; i < numberOfSplits; ++i) {
+        for (uint256 i; i < numberOfSplits; i++) {
             // Get a reference to the split being iterated on.
             split = splits[i];
 
@@ -1400,7 +1400,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         JBPayHookPayload memory payload;
 
         // Fulfill each payload.
-        for (uint256 i; i < numberOfPayloads; ++i) {
+        for (uint256 i; i < numberOfPayloads; i++) {
             // Set the payload being iterated on.
             payload = payloads[i];
 
@@ -1475,7 +1475,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // Keep a reference to the payload being iterated on.
         JBRedeemHookPayload memory payload;
 
-        for (uint256 i; i < numberOfPayloads; ++i) {
+        for (uint256 i; i < numberOfPayloads; i++) {
             // Set the payload being iterated on.
             payload = payloads[i];
 
@@ -1580,7 +1580,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         IJBTerminal feeTerminal = DIRECTORY.primaryTerminalOf(_FEE_BENEFICIARY_PROJECT_ID, token);
 
         // Process each fee.
-        for (uint256 i; i < numberOfHeldFees; ++i) {
+        for (uint256 i; i < numberOfHeldFees; i++) {
             // Keep a reference to the held fee being iterated on.
             heldFee = heldFees[i];
 
@@ -1653,7 +1653,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         JBFee memory heldFee;
 
         // Process each fee.
-        for (uint256 i; i < numberOfHeldFees; ++i) {
+        for (uint256 i; i < numberOfHeldFees; i++) {
             // Save the fee being iterated on.
             heldFee = heldFees[i];
 
