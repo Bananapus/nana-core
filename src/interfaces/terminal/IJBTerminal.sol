@@ -6,7 +6,7 @@ import {JBAccountingContextConfig} from "../../structs/JBAccountingContextConfig
 import {JBDidPayData} from "../../structs/JBDidPayData.sol";
 
 import {IJBPayHook} from "../../interfaces/IJBPayHook.sol";
-import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
+import {IERC165} from "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol";
 
 /// @notice A terminal that accepts payments and can be migrated.
 interface IJBTerminal is IERC165 {
@@ -51,11 +51,7 @@ interface IJBTerminal is IERC165 {
 
     function migrateBalanceOf(uint256 projectId, address token, IJBTerminal to) external returns (uint256 balance);
 
-    function addAccountingContextsFor(
-        uint256 projectId,
-        JBAccountingContextConfig[] calldata accountingContexts
-    )
-        external;
+    function addAccountingContextsFor(uint256 projectId, address[] calldata tokens) external;
 
     function pay(
         uint256 projectId,

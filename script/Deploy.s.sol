@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.23;
 
-import "forge-std/Script.sol";
+import "lib/forge-std/src/Script.sol";
 
-import {IPermit2} from "@permit2/src/interfaces/IPermit2.sol";
+import {IPermit2} from "lib/permit2/src/interfaces/IPermit2.sol";
 import "../src/JBPermissions.sol";
 import "../src/JBProjects.sol";
 import "../src/JBPrices.sol";

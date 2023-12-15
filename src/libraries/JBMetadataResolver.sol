@@ -52,7 +52,14 @@ library JBMetadataResolver {
      * @return found          Whether the {id:data} was found
      * @return targetData The data for the ID (can be empty)
      */
-    function getData(bytes4 id, bytes calldata metadata) internal pure returns (bool found, bytes memory targetData) {
+    function getDataFor(
+        bytes4 id,
+        bytes calldata metadata
+    )
+        internal
+        pure
+        returns (bool found, bytes memory targetData)
+    {
         // Either no data or empty one with only one selector (32+4+1)
         if (metadata.length <= MIN_METADATA_LENGTH) return (false, "");
 

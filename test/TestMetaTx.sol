@@ -2,7 +2,7 @@
 pragma solidity >=0.8.6;
 
 import /* {*} from */ "./helpers/TestBaseWorkflow.sol";
-import {ERC2771Forwarder} from "@openzeppelin/contracts/metatx/ERC2771Forwarder.sol";
+import {ERC2771Forwarder} from "lib/openzeppelin-contracts/contracts/metatx/ERC2771Forwarder.sol";
 import {ERC2771ForwarderMock, ForwardRequest} from "./mock/ERC2771ForwarderMock.sol";
 
 contract TestMetaTx_Local is TestBaseWorkflow {
@@ -109,11 +109,9 @@ contract TestMetaTx_Local is TestBaseWorkflow {
         _rulesetConfig[0].fundAccessLimitGroups = new JBFundAccessLimitGroup[](0);
 
         JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
-        JBAccountingContextConfig[] memory _accountingContexts = new JBAccountingContextConfig[](2);
-        _accountingContexts[0] =
-            JBAccountingContextConfig({token: JBConstants.NATIVE_TOKEN, standard: JBTokenStandards.NATIVE});
-        _terminalConfigurations[0] =
-            JBTerminalConfig({terminal: _terminal, accountingContextConfigs: _accountingContexts});
+        address[] memory _tokensToAccept = new address[](1);
+        _tokensToAccept[0] = JBConstants.NATIVE_TOKEN;
+        _terminalConfigurations[0] = JBTerminalConfig({terminal: _terminal, tokensToAccept: _tokensToAccept});
 
         // First project for fee collection
         _controller.launchProjectFor({

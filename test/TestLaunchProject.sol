@@ -86,11 +86,9 @@ contract TestLaunchProject_Local is TestBaseWorkflow {
 
         // Package up terminal configuration.
         JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
-        JBAccountingContextConfig[] memory _accountingContexts = new JBAccountingContextConfig[](1);
-        _accountingContexts[0] =
-            JBAccountingContextConfig({token: JBConstants.NATIVE_TOKEN, standard: JBTokenStandards.NATIVE});
-        _terminalConfigurations[0] =
-            JBTerminalConfig({terminal: _terminal, accountingContextConfigs: _accountingContexts});
+        address[] memory _tokensToAccept = new address[](1);
+        _tokensToAccept[0] = JBConstants.NATIVE_TOKEN;
+        _terminalConfigurations[0] = JBTerminalConfig({terminal: _terminal, tokensToAccept: _tokensToAccept});
 
         uint256 projectId = _controller.launchProjectFor({
             owner: _projectOwner,
@@ -142,11 +140,9 @@ contract TestLaunchProject_Local is TestBaseWorkflow {
 
         // Package up terminal configuration.
         JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
-        JBAccountingContextConfig[] memory _accountingContexts = new JBAccountingContextConfig[](1);
-        _accountingContexts[0] =
-            JBAccountingContextConfig({token: JBConstants.NATIVE_TOKEN, standard: JBTokenStandards.NATIVE});
-        _terminalConfigurations[0] =
-            JBTerminalConfig({terminal: _terminal, accountingContextConfigs: _accountingContexts});
+        address[] memory _tokensToAccept = new address[](1);
+        _tokensToAccept[0] = JBConstants.NATIVE_TOKEN;
+        _terminalConfigurations[0] = JBTerminalConfig({terminal: _terminal, tokensToAccept: _tokensToAccept});
 
         _projectId = _controller.launchProjectFor({
             owner: _projectOwner,
@@ -197,11 +193,9 @@ contract TestLaunchProject_Local is TestBaseWorkflow {
 
         // Package up terminal configuration.
         JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
-        JBAccountingContextConfig[] memory _accountingContexts = new JBAccountingContextConfig[](1);
-        _accountingContexts[0] =
-            JBAccountingContextConfig({token: JBConstants.NATIVE_TOKEN, standard: JBTokenStandards.NATIVE});
-        _terminalConfigurations[0] =
-            JBTerminalConfig({terminal: _terminal, accountingContextConfigs: _accountingContexts});
+        address[] memory _tokensToAccept = new address[](1);
+        _tokensToAccept[0] = JBConstants.NATIVE_TOKEN;
+        _terminalConfigurations[0] = JBTerminalConfig({terminal: _terminal, tokensToAccept: _tokensToAccept});
 
         if (_weight > type(uint88).max) {
             // `expectRevert` on the next call if weight overflowing.

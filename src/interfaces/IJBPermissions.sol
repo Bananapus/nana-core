@@ -35,5 +35,5 @@ interface IJBPermissions {
         view
         returns (bool);
 
-    function setPermissionsForOperator(address account, JBPermissionsData calldata operatorData) external;
+    function setPermissionsFor(address account, JBPermissionsData calldata operatorData) external;
 }

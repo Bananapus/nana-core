@@ -53,11 +53,9 @@ contract TestPermissions_Local is TestBaseWorkflow {
 
         // Package up terminal configuration.
         JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
-        JBAccountingContextConfig[] memory _accountingContexts = new JBAccountingContextConfig[](1);
-        _accountingContexts[0] =
-            JBAccountingContextConfig({token: JBConstants.NATIVE_TOKEN, standard: JBTokenStandards.NATIVE});
-        _terminalConfigurations[0] =
-            JBTerminalConfig({terminal: _terminal, accountingContextConfigs: _accountingContexts});
+        address[] memory _tokensToAccept = new address[](1);
+        _tokensToAccept[0] = JBConstants.NATIVE_TOKEN;
+        _terminalConfigurations[0] = JBTerminalConfig({terminal: _terminal, tokensToAccept: _tokensToAccept});
 
         _projectZero = _controller.launchProjectFor({
             owner: makeAddr("zeroOwner"),
@@ -105,7 +103,7 @@ contract TestPermissions_Local is TestBaseWorkflow {
 
             // Set em.
             vm.prank(_projectOwner);
-            _permissions.setPermissionsForOperator(_projectOwner, permData[0]);
+            _permissions.setPermissionsFor(_projectOwner, permData[0]);
         }
     }
 
@@ -123,7 +121,7 @@ contract TestPermissions_Local is TestBaseWorkflow {
 
             // Set em.
             vm.prank(_projectOwner);
-            _permissions.setPermissionsForOperator(_projectOwner, permData[0]);
+            _permissions.setPermissionsFor(_projectOwner, permData[0]);
 
             // Verify.
             bool _check = _permissions.hasPermission(address(0), _projectOwner, _projectOne, permIds[i]);

@@ -107,7 +107,7 @@ contract JBPermissions is JBPermissioned, IJBPermissions {
     /// @dev Only an address can give permissions to or revoke permissions from its operators.
     /// @param account The account setting its operators' permissions.
     /// @param permissionsData The data which specifies the permissions the operator is being given.
-    function setPermissionsForOperator(address account, JBPermissionsData calldata permissionsData) external override {
+    function setPermissionsFor(address account, JBPermissionsData calldata permissionsData) external override {
         // Enforce permissions.
         _requirePermission({account: account, projectId: permissionsData.projectId, permissionId: JBPermissionIds.ROOT});
 

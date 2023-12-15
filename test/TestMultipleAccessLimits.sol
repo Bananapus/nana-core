@@ -52,10 +52,7 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
         });
     }
 
-    function launchProjectsForTestBelow()
-        public
-        returns (uint256, JBCurrencyAmount[] memory, JBAccountingContextConfig[] memory)
-    {
+    function launchProjectsForTestBelow() public returns (uint256, JBCurrencyAmount[] memory) {
         uint256 _nativePayoutLimit = 1 ether;
         uint256 _nativePricePerUsd = 0.0005 * 10 ** 18; // 1/2000
         // Will exceed the project's balance in the terminal.
@@ -86,13 +83,10 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
         _rulesetConfig[0].fundAccessLimitGroups = _fundAccessLimitGroup;
 
         JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
-        JBAccountingContextConfig[] memory _accountingContexts = new JBAccountingContextConfig[](2);
-        _accountingContexts[0] =
-            JBAccountingContextConfig({token: JBConstants.NATIVE_TOKEN, standard: JBTokenStandards.NATIVE});
-        _accountingContexts[1] =
-            JBAccountingContextConfig({token: address(usdcToken()), standard: JBTokenStandards.ERC20});
-        _terminalConfigurations[0] =
-            JBTerminalConfig({terminal: __terminal, accountingContextConfigs: _accountingContexts});
+        address[] memory _tokensToAccept = new address[](2);
+        _tokensToAccept[0] = JBConstants.NATIVE_TOKEN;
+        _tokensToAccept[1] = address(usdcToken());
+        _terminalConfigurations[0] = JBTerminalConfig({terminal: __terminal, tokensToAccept: _tokensToAccept});
 
         // Dummy.
         _controller.launchProjectFor({
@@ -124,7 +118,7 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
 
         vm.stopPrank();
 
-        return (_projectId, _payoutLimits, _accountingContexts);
+        return (_projectId, _payoutLimits);
     }
 
     function testAccessConstraintsDelineation() external {
@@ -132,7 +126,7 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
         uint256 _nativePayoutLimit = 1 ether;
         // Will exceed the project's balance in the terminal.
 
-        (uint256 _projectId, JBCurrencyAmount[] memory _payoutLimits,) = launchProjectsForTestBelow();
+        (uint256 _projectId, JBCurrencyAmount[] memory _payoutLimits) = launchProjectsForTestBelow();
 
         __terminal.pay{value: _nativePayAmount}({
             projectId: _projectId,
@@ -254,13 +248,10 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
         _projectOwner = multisig();
 
         JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
-        JBAccountingContextConfig[] memory _accountingContexts = new JBAccountingContextConfig[](2);
-        _accountingContexts[0] =
-            JBAccountingContextConfig({token: JBConstants.NATIVE_TOKEN, standard: JBTokenStandards.NATIVE});
-        _accountingContexts[1] =
-            JBAccountingContextConfig({token: address(usdcToken()), standard: JBTokenStandards.ERC20});
-        _terminalConfigurations[0] =
-            JBTerminalConfig({terminal: __terminal, accountingContextConfigs: _accountingContexts});
+        address[] memory _tokensToAccept = new address[](2);
+        _tokensToAccept[0] = JBConstants.NATIVE_TOKEN;
+        _tokensToAccept[1] = address(usdcToken());
+        _terminalConfigurations[0] = JBTerminalConfig({terminal: __terminal, tokensToAccept: _tokensToAccept});
 
         vm.prank(_projectOwner);
 
@@ -304,13 +295,10 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
         _projectOwner = multisig();
 
         JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
-        JBAccountingContextConfig[] memory _accountingContexts = new JBAccountingContextConfig[](2);
-        _accountingContexts[0] =
-            JBAccountingContextConfig({token: JBConstants.NATIVE_TOKEN, standard: JBTokenStandards.NATIVE});
-        _accountingContexts[1] =
-            JBAccountingContextConfig({token: address(usdcToken()), standard: JBTokenStandards.ERC20});
-        _terminalConfigurations[0] =
-            JBTerminalConfig({terminal: __terminal, accountingContextConfigs: _accountingContexts});
+        address[] memory _tokensToAccept = new address[](2);
+        _tokensToAccept[0] = JBConstants.NATIVE_TOKEN;
+        _tokensToAccept[1] = address(usdcToken());
+        _terminalConfigurations[0] = JBTerminalConfig({terminal: __terminal, tokensToAccept: _tokensToAccept});
 
         vm.prank(_projectOwner);
 
@@ -361,13 +349,10 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
         _rulesetConfig[0].fundAccessLimitGroups = _fundAccessLimitGroup;
 
         JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
-        JBAccountingContextConfig[] memory _accountingContexts = new JBAccountingContextConfig[](2);
-        _accountingContexts[0] =
-            JBAccountingContextConfig({token: JBConstants.NATIVE_TOKEN, standard: JBTokenStandards.NATIVE});
-        _accountingContexts[1] =
-            JBAccountingContextConfig({token: address(usdcToken()), standard: JBTokenStandards.ERC20});
-        _terminalConfigurations[0] =
-            JBTerminalConfig({terminal: __terminal, accountingContextConfigs: _accountingContexts});
+        address[] memory _tokensToAccept = new address[](2);
+        _tokensToAccept[0] = JBConstants.NATIVE_TOKEN;
+        _tokensToAccept[1] = address(usdcToken());
+        _terminalConfigurations[0] = JBTerminalConfig({terminal: __terminal, tokensToAccept: _tokensToAccept});
 
         _controller.launchProjectFor({
             owner: _projectOwner,
@@ -409,13 +394,10 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
         _rulesetConfig[0].fundAccessLimitGroups = _fundAccessLimitGroup;
 
         JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
-        JBAccountingContextConfig[] memory _accountingContexts = new JBAccountingContextConfig[](2);
-        _accountingContexts[0] =
-            JBAccountingContextConfig({token: JBConstants.NATIVE_TOKEN, standard: JBTokenStandards.NATIVE});
-        _accountingContexts[1] =
-            JBAccountingContextConfig({token: address(usdcToken()), standard: JBTokenStandards.ERC20});
-        _terminalConfigurations[0] =
-            JBTerminalConfig({terminal: __terminal, accountingContextConfigs: _accountingContexts});
+        address[] memory _tokensToAccept = new address[](2);
+        _tokensToAccept[0] = JBConstants.NATIVE_TOKEN;
+        _tokensToAccept[1] = address(usdcToken());
+        _terminalConfigurations[0] = JBTerminalConfig({terminal: __terminal, tokensToAccept: _tokensToAccept});
 
         // Dummy.
         _controller.launchProjectFor({
@@ -511,13 +493,10 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
         _rulesetConfig[0].fundAccessLimitGroups = _fundAccessLimitGroup;
 
         JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
-        JBAccountingContextConfig[] memory _accountingContexts = new JBAccountingContextConfig[](2);
-        _accountingContexts[0] =
-            JBAccountingContextConfig({token: JBConstants.NATIVE_TOKEN, standard: JBTokenStandards.NATIVE});
-        _accountingContexts[1] =
-            JBAccountingContextConfig({token: address(usdcToken()), standard: JBTokenStandards.ERC20});
-        _terminalConfigurations[0] =
-            JBTerminalConfig({terminal: __terminal, accountingContextConfigs: _accountingContexts});
+        address[] memory _tokensToAccept = new address[](2);
+        _tokensToAccept[0] = JBConstants.NATIVE_TOKEN;
+        _tokensToAccept[1] = address(usdcToken());
+        _terminalConfigurations[0] = JBTerminalConfig({terminal: __terminal, tokensToAccept: _tokensToAccept});
 
         uint256 _projectId = _controller.launchProjectFor({
             owner: _projectOwner,

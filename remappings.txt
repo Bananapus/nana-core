@@ -1,8 +1,1 @@
-@juicebox=src/
-@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/
-@chainlink/contracts/=lib/chainlink/contracts/
-@paulrberg/contracts/math/=lib/prb-math/src/
-@permit2/=lib/permit2/
-ds-test/=lib/ds-test/src/
-forge-std/=lib/forge-std/src/
 openzeppelin-contracts/contracts/=lib/permit2/lib/openzeppelin-contracts/contracts/

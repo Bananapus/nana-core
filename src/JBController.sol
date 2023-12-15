@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.23;
 
-import {Context} from "@openzeppelin/contracts/utils/Context.sol";
-import {ERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
-import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
-import {ERC2771Context} from "@openzeppelin/contracts/metatx/ERC2771Context.sol";
-import {mulDiv} from "@paulrberg/contracts/math/Common.sol";
+import {Context} from "lib/openzeppelin-contracts/contracts/utils/Context.sol";
+import {ERC165} from "lib/openzeppelin-contracts/contracts/utils/introspection/ERC165.sol";
+import {IERC165} from "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol";
+import {ERC2771Context} from "lib/openzeppelin-contracts/contracts/metatx/ERC2771Context.sol";
+import {mulDiv} from "lib/prb-math/src/Common.sol";
 import {JBPermissioned} from "./abstract/JBPermissioned.sol";
 import {JBApprovalStatus} from "./enums/JBApprovalStatus.sol";
 import {IJBController} from "./interfaces/IJBController.sol";
@@ -676,6 +676,11 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         return ERC2771Context._msgData();
     }
 
+    /// @dev ERC-2771 specifies the context as being a single address (20 bytes).
+    function _contextSuffixLength() internal view virtual override(ERC2771Context, Context) returns (uint256) {
+        return super._contextSuffixLength();
+    }
+
     //*********************************************************************//
     // ---------------------- private transactions ----------------------- //
     //*********************************************************************//
@@ -862,8 +867,8 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
             // Set the terminal configuration being iterated on.
             terminalConfig = terminalConfigs[i];
 
-            // Set the accounting contexts.
-            terminalConfig.terminal.addAccountingContextsFor(projectId, terminalConfig.accountingContextConfigs);
+            // Set the accounting contexts for the given tokens.
+            terminalConfig.terminal.addAccountingContextsFor(projectId, terminalConfig.tokensToAccept);
 
             // Add the terminal.
             terminals[i] = terminalConfig.terminal;
