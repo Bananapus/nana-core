@@ -1582,7 +1582,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             heldFee = heldFees[i];
 
             // Can't process fees that aren't yet unlocked.
-            if (!forced && heldFee.unlockTimestamp < block.timestamp) {
+            if (!forced && heldFee.unlockTimestamp > block.timestamp) {
                 // Add the fee back to storage.
                 _heldFeesOf[projectId][token].push(heldFee);
                 continue;
