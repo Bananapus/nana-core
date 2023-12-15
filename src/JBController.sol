@@ -544,13 +544,13 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     /// through the project's controller.
     /// @dev The new split groups must include any currently set splits that are locked.
     /// @param projectId The ID of the project split groups are being set for.
-    /// @param rulesetId The ID of the ruleset the split groups should be active in (this is often a `rulesetId`). Send
-    /// 0 to set the default split that'll be active if no ruleset has specific splits set. The default's default is the
-    /// project's owner.
+    /// @param rulesetId The ID of the ruleset the split groups should be active in. Use a `rulesetId` of 0 to set the
+    /// default split groups which are active when a project's ruleset has no splits set. If no default splits have been
+    /// set, all splits are sent to the project's owner.
     /// @param splitGroups An array of split groups to set.
     function setSplitGroupsOf(
         uint256 projectId,
-        uint256 ruleset,
+        uint256 rulesetId,
         JBSplitGroup[] calldata splitGroups
     )
         external
@@ -565,7 +565,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         });
 
         // Set splits for the group.
-        SPLITS.setSplitGroupsOf(projectId, ruleset, splitGroups);
+        SPLITS.setSplitGroupsOf(projectId, rulesetId, splitGroups);
     }
 
     /// @notice Deploys an ERC-20 token for a project. It will be used when claiming tokens (with credits).
