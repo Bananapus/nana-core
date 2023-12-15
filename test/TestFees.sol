@@ -77,17 +77,13 @@ contract TestFees_Local is TestBaseWorkflow {
         {
             // Specify a payout limit.
             JBCurrencyAmount[] memory _payoutLimits = new JBCurrencyAmount[](1);
-            _payoutLimits[0] = JBCurrencyAmount({
-                amount: _nativeDistLimit,
-                currency: uint32(uint160(JBConstants.NATIVE_TOKEN))
-            });
+            _payoutLimits[0] =
+                JBCurrencyAmount({amount: _nativeDistLimit, currency: uint32(uint160(JBConstants.NATIVE_TOKEN))});
 
             // Specify a surplus allowance.
             JBCurrencyAmount[] memory _surplusAllowances = new JBCurrencyAmount[](1);
-            _surplusAllowances[0] = JBCurrencyAmount({
-                amount: _nativeDistLimit,
-                currency: uint32(uint160(JBConstants.NATIVE_TOKEN))
-            });
+            _surplusAllowances[0] =
+                JBCurrencyAmount({amount: _nativeDistLimit, currency: uint32(uint160(JBConstants.NATIVE_TOKEN))});
 
             _fundAccessLimitGroup[0] = JBFundAccessLimitGroup({
                 terminal: address(_terminal),
@@ -172,8 +168,10 @@ contract TestFees_Local is TestBaseWorkflow {
         assertEq(_projectOwner.balance, _afterFee);
 
         // Setup: addToBalance to reset our held fees
-        _terminal.addToBalanceOf{value: _nativeDistLimit - _feeAmount}(_projectId, JBConstants.NATIVE_TOKEN, _nativeDistLimit - _feeAmount, true, "forge test", "");
-        
+        _terminal.addToBalanceOf{value: _nativeDistLimit - _feeAmount}(
+            _projectId, JBConstants.NATIVE_TOKEN, _nativeDistLimit - _feeAmount, true, "forge test", ""
+        );
+
         // Send: Migration to terminal2
         _terminal.migrateBalanceOf(_projectId, JBConstants.NATIVE_TOKEN, _terminal2);
 
