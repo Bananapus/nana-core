@@ -3,7 +3,7 @@ pragma solidity 0.8.23;
 
 import /* {*} from */ "../helpers/TestBaseWorkflow.sol";
 
-import {ERC165, IERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
+import {ERC165, IERC165} from "lib/openzeppelin-contracts/contracts/utils/introspection/ERC165.sol";
 
 contract MockMaliciousSplitHook is ERC165, IJBSplitHook {
     error NopeNotGonnaDoIt();

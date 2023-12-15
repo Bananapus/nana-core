@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {Context} from "@openzeppelin/contracts/utils/Context.sol";
+import {Context} from "lib/openzeppelin-contracts/contracts/utils/Context.sol";
 import {IJBPermissioned} from "./../interfaces/IJBPermissioned.sol";
 import {IJBPermissions} from "./../interfaces/IJBPermissions.sol";
 
