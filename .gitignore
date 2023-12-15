@@ -17,9 +17,11 @@ deployments/localhost/**
 # Code coverage reports
 coverage/
 coverage.json
+lcov.info
 
 # VSCode
 workspace.code-workspace
 .vscode/
 
 backup/
+.secret
