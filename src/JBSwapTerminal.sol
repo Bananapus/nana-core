@@ -183,19 +183,6 @@ contract JBMultiTerminal is JBOperatable, Ownable, IJBPaymentTerminal, IJBPermit
         string calldata _memo,
         bytes calldata _metadata
     ) external payable virtual override returns (uint256) {
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-        JBMultiTerminal _terminal = DIRECTORY.primaryTerminalOf(_projectId, _token);
-
-        // Double check the primary terminal accepts the token
-
-        // Accept the funds.
-        _amount = _acceptFundsFor(_projectId, _token, _amount, _metadata);
-
->>>>>>> 2842301 (chore: wip)
-=======
->>>>>>> ce298d7 (chore: wip)
         uint256 _minimumReceivedFromSwap;
         IUniswapV3Pool _pool;
 
@@ -239,12 +226,6 @@ contract JBMultiTerminal is JBOperatable, Ownable, IJBPaymentTerminal, IJBPermit
 
         // Swap (will check if we're within the slippage tolerance in the callback))
         uint256 _receivedFromSwap = _swap(_token, _pool, _amount, _minimumReceivedFromSwap);
-<<<<<<< HEAD
-
-        // Unwrap weth if needed
-
-=======
->>>>>>> ce298d7 (chore: wip)
 
         // Unwrap weth if needed
 
@@ -252,28 +233,13 @@ contract JBMultiTerminal is JBOperatable, Ownable, IJBPaymentTerminal, IJBPermit
         // Pay on primary terminal, with correct beneficiary (sender or benficiary if passed)
         _terminal.pay{value: _token == JBToken.ETH ? _receivedFromSwap : 0}(
             _projectId,
-<<<<<<< HEAD
-<<<<<<< HEAD
             _targetToken,
-=======
-            _token,
->>>>>>> 2842301 (chore: wip)
-=======
-            _targetToken,
->>>>>>> ce298d7 (chore: wip)
             _receivedFromSwap,
             _beneficiary,
             _minReturnedTokens,
             _memo,
             _metadata
         );
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-
->>>>>>> 2842301 (chore: wip)
-=======
->>>>>>> ce298d7 (chore: wip)
     }
 
     /// @notice 
@@ -307,10 +273,6 @@ contract JBMultiTerminal is JBOperatable, Ownable, IJBPaymentTerminal, IJBPermit
         // Add to balance on primary terminal
     }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> ce298d7 (chore: wip)
     // add a pool to use for a given token in
     function addDefaultPool(uint256 _projectId, address _token, IUniswapV3Pool _pool) external requirePermission(
             projects.ownerOf(_projectId),
@@ -318,50 +280,6 @@ contract JBMultiTerminal is JBOperatable, Ownable, IJBPaymentTerminal, IJBPermit
             JBSwapTerminalOperations.MODIFY_DEFAULT_POOL
         ) {
         _poolFor[_projectId][_token] = _pool;
-<<<<<<< HEAD
-=======
-    /// @notice 
-    /// @param _holder The account to redeem tokens for.
-    /// @param _projectId The ID of the project to which the tokens being redeemed belong.
-    /// @param _tokenCount The number of project tokens to redeem, as a fixed point number with 18 decimals.
-    /// @param _token The token being reclaimed. This terminal ignores this property since it only manages one token.
-    /// @param _minReturnedTokens The minimum amount of terminal tokens expected in return, as a fixed point number with the same amount of decimals as the terminal.
-    /// @param _beneficiary The address to send the terminal tokens to.
-    /// @param _metadata Bytes to send along to the data source, delegate, and emitted event, if provided.
-    /// @return reclaimAmount The amount of terminal tokens that the project tokens were redeemed for, as a fixed point number with 18 decimals.
-    function redeemTokensOf(
-        address _holder,
-        uint256 _projectId,
-        address _token,
-        uint256 _tokenCount,
-        uint256 _minReturnedTokens,
-        address payable _beneficiary,
-        bytes calldata _metadata
-    )
-        external
-        virtual
-        override
-        requirePermission(_holder, _projectId, JBOperations.REDEEM_TOKENS)
-        returns (uint256 reclaimAmount)
-    {
-        // Check if the project terminal support the token which will be swapped to _token
-
-        // pull project token from the caller
-
-        // approve the terminal to spend the project token todo: permit2
-        
-        // call redeem on the terminal
-
-        // try to swap
-
-        // if swap fails, revert 
-
-        // unwrap if needed
-
-        //  send to beneficiary
->>>>>>> 2842301 (chore: wip)
-=======
->>>>>>> ce298d7 (chore: wip)
     }
 
     //*********************************************************************//
