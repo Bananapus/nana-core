@@ -13,7 +13,6 @@ import {JBSplit} from "./structs/JBSplit.sol";
 import {JBControlled} from "./abstract/JBControlled.sol";
 
 /// @notice Stores and manages splits for each project.
-/// @dev The domain ID is the ruleset ID that a split *should* be considered active within. This is not always the case.
 contract JBSplits is JBControlled, IJBSplits {
     //*********************************************************************//
     // --------------------------- custom errors ------------------------- //
@@ -28,52 +27,54 @@ contract JBSplits is JBControlled, IJBSplits {
     // --------------------- private stored properties ------------------- //
     //*********************************************************************//
 
-    /// @notice The number of splits currently stored in a group given a project ID, domain ID, and group ID.
-    /// @custom:param projectId The ID of the project the domain applies to.
-    /// @custom:param domainId The ID of the domain that the group is specified within.
+    /// @notice The number of splits currently stored in a group given a project ID, ruleset ID, and group ID.
+    /// @custom:param projectId The ID of the project the split applies to.
+    /// @custom:param rulesetId The ID of the ruleset that the group is specified within.
     /// @custom:param groupId The ID of the group to count this splits of.
-    mapping(uint256 projectId => mapping(uint256 domainId => mapping(uint256 groupId => uint256))) private _splitCountOf;
+    mapping(uint256 projectId => mapping(uint256 rulesetId => mapping(uint256 groupId => uint256))) private
+        _splitCountOf;
 
-    /// @notice Packed split data given the split's project, domain, and group IDs, as well as the split's index within
+    /// @notice Packed split data given the split's project, ruleset, and group IDs, as well as the split's index within
     /// that group.
     /// @dev `preferAddToBalance` in bit 0, `percent` in bits 1-32, `projectId` in bits 33-88, and `beneficiary` in bits
     /// 89-248
-    /// @custom:param projectId The ID of the project that the domain applies to.
-    /// @custom:param domainId The ID of the domain that the group is in.
+    /// @custom:param projectId The ID of the project that the split applies to.
+    /// @custom:param rulesetId The ID of the ruleset that the group is in.
     /// @custom:param groupId The ID of the group the split is in.
     /// @custom:param index The split's index within the group (in the order that the split were set).
     /// @custom:return The split's `preferAddToBalance`, `percent`, `projectId`, and `beneficiary` packed into one
     /// `uint256`.
     mapping(
-        uint256 projectId => mapping(uint256 domainId => mapping(uint256 groupId => mapping(uint256 index => uint256)))
+        uint256 projectId => mapping(uint256 rulesetId => mapping(uint256 groupId => mapping(uint256 index => uint256)))
     ) private _packedSplitParts1Of;
 
-    /// @notice More packed split data given the split's project, domain, and group IDs, as well as the split's index
+    /// @notice More packed split data given the split's project, ruleset, and group IDs, as well as the split's index
     /// within that group.
     /// @dev `lockedUntil` in bits 0-47, `hook` address in bits 48-207.
     /// @dev This packed data is often 0.
-    /// @custom:param projectId The ID of the project that the domain applies to.
-    /// @custom:param domainId The ID of the domain that the group is in.
+    /// @custom:param projectId The ID of the project that the ruleset applies to.
+    /// @custom:param rulesetId The ID of the ruleset that the group is in.
     /// @custom:param groupId The ID of the group the split is in.
     /// @custom:param index The split's index within the group (in the order that the split were set).
     /// @custom:return The split's `lockedUntil` and `hook` packed into one `uint256`.
     mapping(
-        uint256 projectId => mapping(uint256 domainId => mapping(uint256 groupId => mapping(uint256 index => uint256)))
+        uint256 projectId => mapping(uint256 rulesetId => mapping(uint256 groupId => mapping(uint256 index => uint256)))
     ) private _packedSplitParts2Of;
 
     //*********************************************************************//
     // ------------------------- external views -------------------------- //
     //*********************************************************************//
 
-    /// @notice Get the split structs for the specified project ID, within the specified domain, for the specified
-    /// group.
+    /// @notice Get the split structs for the specified project ID, within the specified ruleset, for the specified
+    /// group. The splits stored at ruleset 0 are used by default during a ruleset if the splits for the specific
+    /// ruleset aren't set.
     /// @param projectId The ID of the project to get splits for.
-    /// @param domainId An identifier within which the returned splits should be considered active.
+    /// @param rulesetId An identifier within which the returned splits should be considered active.
     /// @param groupId The identifying group of the splits.
     /// @return An array of all splits for the project.
     function splitsOf(
         uint256 projectId,
-        uint256 domainId,
+        uint256 rulesetId,
         uint256 groupId
     )
         external
@@ -81,7 +82,7 @@ contract JBSplits is JBControlled, IJBSplits {
         override
         returns (JBSplit[] memory)
     {
-        return _getStructsFor(projectId, domainId, groupId);
+        return _getStructsFor(projectId, rulesetId, groupId);
     }
 
     //*********************************************************************//
@@ -99,11 +100,13 @@ contract JBSplits is JBControlled, IJBSplits {
     /// @dev Only a project's controller can set its splits.
     /// @dev The new split groups must include any currently set splits that are locked.
     /// @param projectId The ID of the project to set the split groups of.
-    /// @param domainId The ID of the domain the split groups should be active in.
+    /// @param rulesetId The ID of the ruleset the split groups should be active in. Send
+    /// 0 to set the default split that'll be active if no ruleset has specific splits set. The default's default is the
+    /// project's owner.
     /// @param splitGroups An array of split groups to set.
     function setSplitGroupsOf(
         uint256 projectId,
-        uint256 domainId,
+        uint256 rulesetId,
         JBSplitGroup[] calldata splitGroups
     )
         external
@@ -119,7 +122,7 @@ contract JBSplits is JBControlled, IJBSplits {
             JBSplitGroup memory splitGroup = splitGroups[i];
 
             // Set the splits for the group.
-            _setSplitsOf(projectId, domainId, splitGroup.groupId, splitGroup.splits);
+            _setSplitsOf(projectId, rulesetId, splitGroup.groupId, splitGroup.splits);
         }
     }
 
@@ -127,16 +130,16 @@ contract JBSplits is JBControlled, IJBSplits {
     // --------------------- private helper functions -------------------- //
     //*********************************************************************//
 
-    /// @notice Sets the splits for a group given a project, domain, and group ID.
+    /// @notice Sets the splits for a group given a project, ruleset, and group ID.
     /// @dev The new splits must include any currently set splits that are locked.
     /// @dev The sum of the split `percent`s within one group must be less than 100%.
     /// @param projectId The ID of the project splits are being set for.
-    /// @param domainId The ID of the domain the splits should be considered active within.
+    /// @param rulesetId The ID of the ruleset the splits should be considered active within.
     /// @param groupId The ID of the group to set the splits within.
     /// @param splits An array of splits to set.
-    function _setSplitsOf(uint256 projectId, uint256 domainId, uint256 groupId, JBSplit[] memory splits) private {
-        // Get a reference to the current split structs within the project, domain, and group.
-        JBSplit[] memory currentSplits = _getStructsFor(projectId, domainId, groupId);
+    function _setSplitsOf(uint256 projectId, uint256 rulesetId, uint256 groupId, JBSplit[] memory splits) private {
+        // Get a reference to the current split structs within the project, ruleset, and group.
+        JBSplit[] memory currentSplits = _getStructsFor(projectId, rulesetId, groupId);
 
         // Keep a reference to the current number of splits within the group.
         uint256 numberOfCurrentSplits = currentSplits.length;
@@ -180,7 +183,7 @@ contract JBSplits is JBControlled, IJBSplits {
             packedSplitParts1 |= uint256(uint160(address(splits[i].beneficiary))) << 89;
 
             // Store the first split part.
-            _packedSplitParts1Of[projectId][domainId][groupId][i] = packedSplitParts1;
+            _packedSplitParts1Of[projectId][rulesetId][groupId][i] = packedSplitParts1;
 
             // If there's data to store in the second packed split part, pack and store.
             if (splits[i].lockedUntil > 0 || splits[i].hook != IJBSplitHook(address(0))) {
@@ -193,17 +196,17 @@ contract JBSplits is JBControlled, IJBSplits {
                 packedSplitParts2 |= uint256(uint160(address(splits[i].hook))) << 48;
 
                 // Store the second split part.
-                _packedSplitParts2Of[projectId][domainId][groupId][i] = packedSplitParts2;
-            } else if (_packedSplitParts2Of[projectId][domainId][groupId][i] > 0) {
+                _packedSplitParts2Of[projectId][rulesetId][groupId][i] = packedSplitParts2;
+            } else if (_packedSplitParts2Of[projectId][rulesetId][groupId][i] > 0) {
                 // If there's a value stored in the indexed position, delete it.
-                delete _packedSplitParts2Of[projectId][domainId][groupId][i];
+                delete _packedSplitParts2Of[projectId][rulesetId][groupId][i];
             }
 
-            emit SetSplit(projectId, domainId, groupId, splits[i], msg.sender);
+            emit SetSplit(projectId, rulesetId, groupId, splits[i], msg.sender);
         }
 
-        // Store the number of splits for the project, domain, and group.
-        _splitCountOf[projectId][domainId][groupId] = numberOfSplits;
+        // Store the number of splits for the project, ruleset, and group.
+        _splitCountOf[projectId][rulesetId][groupId] = numberOfSplits;
     }
 
     /// @notice Determine if the provided splits array includes the locked split.
@@ -228,15 +231,15 @@ contract JBSplits is JBControlled, IJBSplits {
         return false;
     }
 
-    /// @notice Unpack an array of `JBSplit` structs for all of the splits in a group, given project, domain, and group
+    /// @notice Unpack an array of `JBSplit` structs for all of the splits in a group, given project, ruleset, and group
     /// IDs.
     /// @param projectId The ID of the project the splits belong to.
-    /// @param domainId The ID of the domain the group of splits should be considered active within.
+    /// @param rulesetId The ID of the ruleset the group of splits should be considered active within.
     /// @param groupId The ID of the group to get the splits structs of.
     /// @return splits The split structs, as an array of `JBSplit`s.
     function _getStructsFor(
         uint256 projectId,
-        uint256 domainId,
+        uint256 rulesetId,
         uint256 groupId
     )
         private
@@ -244,7 +247,7 @@ contract JBSplits is JBControlled, IJBSplits {
         returns (JBSplit[] memory)
     {
         // Get a reference to the number of splits that need to be added to the returned array.
-        uint256 splitCount = _splitCountOf[projectId][domainId][groupId];
+        uint256 splitCount = _splitCountOf[projectId][rulesetId][groupId];
 
         // Initialize an array to be returned that has the appropriate length.
         JBSplit[] memory splits = new JBSplit[](splitCount);
@@ -252,7 +255,7 @@ contract JBSplits is JBControlled, IJBSplits {
         // Loop through each split and unpack the values into structs.
         for (uint256 i; i < splitCount; ++i) {
             // Get a reference to the first part of the split's packed data.
-            uint256 packedSplitPart1 = _packedSplitParts1Of[projectId][domainId][groupId][i];
+            uint256 packedSplitPart1 = _packedSplitParts1Of[projectId][rulesetId][groupId][i];
 
             // Populate the split struct.
             JBSplit memory split;
@@ -267,7 +270,7 @@ contract JBSplits is JBControlled, IJBSplits {
             split.beneficiary = payable(address(uint160(packedSplitPart1 >> 89)));
 
             // Get a reference to the second part of the split's packed data.
-            uint256 packedSplitPart2 = _packedSplitParts2Of[projectId][domainId][groupId][i];
+            uint256 packedSplitPart2 = _packedSplitParts2Of[projectId][rulesetId][groupId][i];
 
             // If there's anything in it, unpack.
             if (packedSplitPart2 > 0) {

@@ -40,7 +40,7 @@ interface IJBController is IERC165, IJBProjectMetadataRegistry, IJBDirectoryAcce
 
     event SendReservedTokensToSplit(
         uint256 indexed projectId,
-        uint256 indexed domain,
+        uint256 indexed rulesetId,
         uint256 indexed group,
         JBSplit split,
         uint256 tokenCount,
@@ -149,7 +149,7 @@ interface IJBController is IERC165, IJBProjectMetadataRegistry, IJBDirectoryAcce
 
     function migrateController(uint256 projectId, IJBMigratable to) external;
 
-    function setSplitGroupsOf(uint256 projectId, uint256 domain, JBSplitGroup[] calldata splitGroup) external;
+    function setSplitGroupsOf(uint256 projectId, uint256 rulesetId, JBSplitGroup[] calldata splitGroup) external;
 
     function deployERC20For(
         uint256 projectId,

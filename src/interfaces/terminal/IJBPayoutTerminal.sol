@@ -21,7 +21,7 @@ interface IJBPayoutTerminal is IJBTerminal {
 
     event SendPayoutToSplit(
         uint256 indexed projectId,
-        uint256 indexed domain,
+        uint256 indexed rulesetId,
         uint256 indexed group,
         JBSplit split,
         uint256 amount,

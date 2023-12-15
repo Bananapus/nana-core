@@ -85,7 +85,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     /// @custom:param projectId The ID of the project to get the pending reserved token balance of.
     mapping(uint256 projectId => uint256) public override pendingReservedTokenBalanceOf;
 
-    /// @notice The metadata for each project, which can be used across several domains.
+    /// @notice The metadata for each project.
     /// @custom:param projectId The ID of the project to which the metadata belongs.
     mapping(uint256 projectId => string) public override metadataOf;
 
@@ -533,7 +533,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
             permissionId: JBPermissionIds.SET_PROJECT_METADATA
         });
 
-        // Set the project's new metadata content within the specified domain.
+        // Set the project's new metadata content.
         metadataOf[projectId] = metadata;
 
         emit SetMetadata(projectId, metadata, _msgSender());
@@ -544,11 +544,13 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     /// through the project's controller.
     /// @dev The new split groups must include any currently set splits that are locked.
     /// @param projectId The ID of the project split groups are being set for.
-    /// @param domainId The ID of the domain the split groups should be active in (this is often a `rulesetId`).
+    /// @param rulesetId The ID of the ruleset the split groups should be active in. Use a `rulesetId` of 0 to set the
+    /// default split groups which are active when a project's ruleset has no splits set. If no default splits have been
+    /// set, all splits are sent to the project's owner.
     /// @param splitGroups An array of split groups to set.
     function setSplitGroupsOf(
         uint256 projectId,
-        uint256 domainId,
+        uint256 rulesetId,
         JBSplitGroup[] calldata splitGroups
     )
         external
@@ -563,7 +565,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         });
 
         // Set splits for the group.
-        SPLITS.setSplitGroupsOf(projectId, domainId, splitGroups);
+        SPLITS.setSplitGroupsOf(projectId, rulesetId, splitGroups);
     }
 
     /// @notice Deploys an ERC-20 token for a project. It will be used when claiming tokens (with credits).
@@ -729,13 +731,13 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     /// @notice Send `_amount` project tokens to the specified group of splits.
     /// @dev This is used to send reserved tokens to the reserved token splits.
     /// @param projectId The ID of the project that the split group belongs to.
-    /// @param domain The domain of the split group to send tokens to.
+    /// @param rulesetId The ID of the ruleset of the group to send tokens to.
     /// @param groupId The group of the splits to send the tokens between.
     /// @param amount The total number of tokens to sent.
     /// @return leftoverAmount If the splits percents dont add up to 100%, the leftover amount is returned.
     function _sendTokensToSplitGroupOf(
         uint256 projectId,
-        uint256 domain,
+        uint256 rulesetId,
         uint256 groupId,
         uint256 amount
     )
@@ -746,7 +748,10 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         leftoverAmount = amount;
 
         // Get a reference to the specified split group.
-        JBSplit[] memory splits = SPLITS.splitsOf(projectId, domain, groupId);
+        JBSplit[] memory splits = SPLITS.splitsOf(projectId, rulesetId, groupId);
+
+        // Use the default splits if there aren't any for the ruleset.
+        if (splits.length == 0) splits = SPLITS.splitsOf(projectId, 0, groupId);
 
         // Keep a reference to the number of splits being iterated on.
         uint256 numberOfSplits = splits.length;
@@ -789,7 +794,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
                 leftoverAmount = leftoverAmount - tokenCount;
             }
 
-            emit SendReservedTokensToSplit(projectId, domain, groupId, split, tokenCount, _msgSender());
+            emit SendReservedTokensToSplit(projectId, rulesetId, groupId, split, tokenCount, _msgSender());
         }
     }
 
