@@ -3,7 +3,7 @@ pragma solidity 0.8.23;
 
 import /* {*} from */ "../helpers/TestBaseWorkflow.sol";
 
-import {ERC20, IERC20} from "lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol";
+import {ERC20, IERC20} from "openzeppelin-contracts/contracts/token/ERC20/ERC20.sol";
 
 contract MockERC20 is ERC20 {
     function decimals() public view virtual override returns (uint8) {

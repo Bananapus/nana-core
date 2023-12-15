@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.23;
 
-import {Ownable} from "lib/openzeppelin-contracts/contracts/access/Ownable.sol";
-import {ERC20Votes, ERC20} from "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/ERC20Votes.sol";
-import {ERC20Permit, Nonces} from "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/ERC20Permit.sol";
+import {Ownable} from "openzeppelin-contracts/contracts/access/Ownable.sol";
+import {ERC20Votes, ERC20} from "openzeppelin-contracts/contracts/token/ERC20/extensions/ERC20Votes.sol";
+import {ERC20Permit, Nonces} from "openzeppelin-contracts/contracts/token/ERC20/extensions/ERC20Permit.sol";
 import {IJBToken} from "./interfaces/IJBToken.sol";
 
 /// @notice An ERC-20 token that can be used by a project in the `JBTokens`.

@@ -3,19 +3,19 @@ pragma solidity 0.8.23;
 
 import "lib/forge-std/src/Script.sol";
 
-import {IPermit2} from "lib/permit2/src/interfaces/IPermit2.sol";
-import "../src/JBPermissions.sol";
-import "../src/JBProjects.sol";
-import "../src/JBPrices.sol";
-import "../src/JBRulesets.sol";
-import "../src/JBDirectory.sol";
-import "../src/JBTokens.sol";
-import "../src/JBSplits.sol";
-import "../src/JBFeelessAddresses.sol";
-import "../src/JBFundAccessLimits.sol";
-import "../src/JBController.sol";
-import "../src/JBTerminalStore.sol";
-import "../src/JBMultiTerminal.sol";
+import {IPermit2} from "permit2/src/interfaces/IPermit2.sol";
+import {JBPermissions} from "../src/JBPermissions.sol";
+import {JBProjects} from "../src/JBProjects.sol";
+import {JBPrices} from "../src/JBPrices.sol";
+import {JBRulesets} from "../src/JBRulesets.sol";
+import {JBDirectory} from "../src/JBDirectory.sol";
+import {JBTokens} from "../src/JBTokens.sol";
+import {JBSplits} from "../src/JBSplits.sol";
+import {JBFeelessAddresses} from "../src/JBFeelessAddresses.sol";
+import {JBFundAccessLimits} from "../src/JBFundAccessLimits.sol";
+import {JBController} from "../src/JBController.sol";
+import {JBTerminalStore}"../src/JBTerminalStore.sol";
+import {JBMultiTerminal} from "../src/JBMultiTerminal.sol";
 
 contract Deploy is Script {
     IPermit2 internal constant _PERMIT2 = IPermit2(0x000000000022D473030F116dDEE9F6B43aC78BA3);

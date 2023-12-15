@@ -2,8 +2,8 @@
 pragma solidity >=0.8.6;
 
 import /* {*} from */ "./helpers/TestBaseWorkflow.sol";
-import {IERC20} from "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
-import {PermitSignature} from "lib/permit2/test/utils/PermitSignature.sol";
+import {IERC20} from "openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
+import {PermitSignature} from "permit2/test/utils/PermitSignature.sol";
 import {MockPriceFeed} from "./mock/MockPriceFeed.sol";
 
 contract TestPermit2Terminal_Local is TestBaseWorkflow, PermitSignature {
