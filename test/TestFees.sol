@@ -165,19 +165,22 @@ contract TestFees_Local is TestBaseWorkflow {
 
         uint256 _afterFee = _nativeDistLimit - _feeAmount;
 
+        // Check: Owner balance is accurate (dist - fee) and fee is in the terminal (held but not processed)
         assertEq(_projectOwner.balance, _afterFee);
-
-        // Setup: addToBalance to reset our held fees
-        _terminal.addToBalanceOf{value: _nativeDistLimit - _feeAmount}(
-            _projectId, JBConstants.NATIVE_TOKEN, _nativeDistLimit - _feeAmount, true, "forge test", ""
-        );
+        assertEq(address(_terminal).balance, _nativeDistLimit + _feeAmount);
 
         // Send: Migration to terminal2
         _terminal.migrateBalanceOf(_projectId, JBConstants.NATIVE_TOKEN, _terminal2);
 
-        // Check: Fee amount shouldnt remain in terminal 1 since it was repaid
-        assertEq(address(_terminal).balance, 0);
+        // Check: Held Fee is processed and feeAmount remains in terminal 
+        assertEq(address(_terminal).balance, _feeAmount);
 
         vm.stopPrank();
     }
+
+    // Keeping this around cause I lack object permanence
+    /* // Setup: addToBalance to reset our held fees
+        _terminal.addToBalanceOf{value: _nativeDistLimit - _feeAmount}(
+            _projectId, JBConstants.NATIVE_TOKEN, _nativeDistLimit - _feeAmount, true, "forge test", ""
+        ); */
 }
