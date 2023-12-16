@@ -85,16 +85,6 @@ contract DeployEthereumMainnet is Deploy {
     }
 }
 
-contract DeployEthereumGoerli is Deploy {
-    function _trustedForwarder() internal virtual override returns (address) {
-        return 0xB2b5841DBeF766d4b521221732F9B618fCf34A87;
-    }
-
-    function _manager() internal virtual override returns (address) {
-        return 0x823b92d6a4b2AED4b15675c7917c9f922ea8ADAD;
-    }
-}
-
 contract DeployEthereumSepolia is Deploy {
     function _trustedForwarder() internal virtual override returns (address) {
         return 0xB2b5841DBeF766d4b521221732F9B618fCf34A87;
@@ -117,7 +107,7 @@ contract DeployOptimismMainnet is Deploy {
     }
 }
 
-contract DeployOptimismTestnet is Deploy {
+contract DeployOptimismSepolia is Deploy {
     function _trustedForwarder() internal virtual override returns (address) {
         return 0xB2b5841DBeF766d4b521221732F9B618fCf34A87;
     }
