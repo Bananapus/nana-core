@@ -7,6 +7,7 @@ verbosity = 3                           # display errors
 optimizer_runs = 300
 block_number = 14126430
 block_timestamp = 1643802347
+runs = 4096
 
 [profile.fork] # run via FOUNDRY_PROFILE=fork foundry test
 fs_permissions = [{ access = "read", path = "./deployments/mainnet" }] # Get the deployment addresses for forking

@@ -226,7 +226,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
         // Make sure duplicates were not added.
         if (numberOfTerminals > 1) {
             for (uint256 i; i < numberOfTerminals; i++) {
-                for (uint256 j = i + 1; j < numberOfTerminals; ++j) {
+                for (uint256 j = i + 1; j < numberOfTerminals; j++) {
                     if (terminals[i] == terminals[j]) revert DUPLICATE_TERMINALS();
                 }
             }

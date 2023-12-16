@@ -283,7 +283,7 @@ contract JBFundAccessLimits is JBControlled, ERC165, IJBFundAccessLimits {
             JBCurrencyAmount calldata payoutLimit;
 
             // Iterate through each payout limit to validate and store them.
-            for (uint256 j; j < numberOfPayoutLimits; ++j) {
+            for (uint256 j; j < numberOfPayoutLimits; j++) {
                 // Set the payout limit being iterated on.
                 payoutLimit = limits.payoutLimits[j];
 
@@ -316,7 +316,7 @@ contract JBFundAccessLimits is JBControlled, ERC165, IJBFundAccessLimits {
             JBCurrencyAmount calldata surplusAllowance;
 
             // Iterate through each surplus allowance to validate and store them.
-            for (uint256 j; j < numberOfSurplusAllowances; ++j) {
+            for (uint256 j; j < numberOfSurplusAllowances; j++) {
                 // Set the payout limit being iterated on.
                 surplusAllowance = limits.surplusAllowances[j];
 
