@@ -364,7 +364,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         returns (uint256)
     {
         // Enforce permissions.
-        _requirePermission({account: holder, projectId: projectId, permissionId: JBPermissionIds.REDEEM_TOKENS});
+        _requirePermissionBy({account: holder, projectId: projectId, permissionId: JBPermissionIds.REDEEM_TOKENS});
 
         return _redeemTokensOf(holder, projectId, token, tokenCount, minReturnedTokens, beneficiary, metadata);
     }
@@ -436,7 +436,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         returns (uint256)
     {
         // Enforce permissions.
-        _requirePermission({
+        _requirePermissionBy({
             account: PROJECTS.ownerOf(projectId),
             projectId: projectId,
             permissionId: JBPermissionIds.USE_ALLOWANCE
@@ -464,7 +464,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         returns (uint256 balance)
     {
         // Enforce permissions.
-        _requirePermission({
+        _requirePermissionBy({
             account: PROJECTS.ownerOf(projectId),
             projectId: projectId,
             permissionId: JBPermissionIds.MIGRATE_TERMINAL
@@ -518,7 +518,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @param tokens The tokens to add accounting contexts for.
     function addAccountingContextsFor(uint256 projectId, address[] calldata tokens) external override {
         // Enforce permissions.
-        _requirePermissionAllowingOverride({
+        _requirePermissionAllowingOverrideBy({
             account: PROJECTS.ownerOf(projectId),
             projectId: projectId,
             permissionId: JBPermissionIds.SET_ACCOUNTING_CONTEXT,
@@ -532,7 +532,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         address token;
 
         // Start accepting each token.
-        for (uint256 i; i < numberOfAccountingContexts; ++i) {
+        for (uint256 i; i < numberOfAccountingContexts; i++) {
             // Set the accounting context being iterated on.
             token = tokens[i];
 
@@ -575,7 +575,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         require(msg.sender == address(this));
 
         if (address(feeTerminal) == address(0)) {
-            revert("404:FEE_TERMINAL");
+            revert("404_1");
         }
 
         // Trigger any inherited pre-transfer logic if funds will be transferred.
@@ -658,7 +658,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
             // Make sure that the address supports the split hook interface.
             if (ERC165Checker.supportsInterface(address(split.hook), type(IJBSplitHook).interfaceId)) {
-                revert("400:SPLIT_HOOK");
+                revert("400_1");
             }
 
             // Trigger any inherited pre-transfer logic.
@@ -676,7 +676,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             IJBTerminal terminal = DIRECTORY.primaryTerminalOf(split.projectId, token);
 
             // The project must have a terminal to send funds to.
-            if (terminal == IJBTerminal(address(0))) revert("404:PAYOUT_TERMINAL");
+            if (terminal == IJBTerminal(address(0))) revert("404_2");
 
             // This payout is eligible for a fee if the funds are leaving this contract and the receiving terminal isn't
             // a feelss address.
@@ -1284,9 +1284,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // Get a reference to the project's payout splits.
         JBSplit[] memory splits = SPLITS.splitsOf(projectId, rulesetId, uint256(uint160(token)));
 
-        // Use the default splits if there aren't any for the ruleset.
-        if (splits.length == 0) splits = SPLITS.splitsOf(projectId, 0, uint256(uint160(token)));
-
         // Keep a reference to the number of splits being iterated on.
         uint256 numberOfSplits = splits.length;
 
@@ -1294,7 +1291,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         JBSplit memory split;
 
         // Transfer between all splits.
-        for (uint256 i; i < numberOfSplits; ++i) {
+        for (uint256 i; i < numberOfSplits; i++) {
             // Get a reference to the split being iterated on.
             split = splits[i];
 
@@ -1400,7 +1397,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         JBPayHookPayload memory payload;
 
         // Fulfill each payload.
-        for (uint256 i; i < numberOfPayloads; ++i) {
+        for (uint256 i; i < numberOfPayloads; i++) {
             // Set the payload being iterated on.
             payload = payloads[i];
 
@@ -1475,7 +1472,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // Keep a reference to the payload being iterated on.
         JBRedeemHookPayload memory payload;
 
-        for (uint256 i; i < numberOfPayloads; ++i) {
+        for (uint256 i; i < numberOfPayloads; i++) {
             // Set the payload being iterated on.
             payload = payloads[i];
 
@@ -1580,7 +1577,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         IJBTerminal feeTerminal = DIRECTORY.primaryTerminalOf(_FEE_BENEFICIARY_PROJECT_ID, token);
 
         // Process each fee.
-        for (uint256 i; i < numberOfHeldFees; ++i) {
+        for (uint256 i; i < numberOfHeldFees; i++) {
             // Keep a reference to the held fee being iterated on.
             heldFee = heldFees[i];
 
@@ -1653,7 +1650,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         JBFee memory heldFee;
 
         // Process each fee.
-        for (uint256 i; i < numberOfHeldFees; ++i) {
+        for (uint256 i; i < numberOfHeldFees; i++) {
             // Save the fee being iterated on.
             heldFee = heldFees[i];
 

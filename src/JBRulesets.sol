@@ -783,7 +783,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
             }
         }
 
-        for (uint256 i; i < decayMultiple; ++i) {
+        for (uint256 i; i < decayMultiple; i++) {
             // The number of times to apply the decay rate.
             // Base the new weight on the specified ruleset's weight.
             weight = mulDiv(weight, JBConstants.MAX_DECAY_RATE - baseRuleset.decayRate, JBConstants.MAX_DECAY_RATE);

@@ -292,7 +292,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         returns (uint256 rulesetId)
     {
         // Enforce permissions.
-        _requirePermission({
+        _requirePermissionBy({
             account: PROJECTS.ownerOf(projectId),
             projectId: projectId,
             permissionId: JBPermissionIds.QUEUE_RULESETS
@@ -334,7 +334,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         returns (uint256 rulesetId)
     {
         // Enforce permissions.
-        _requirePermission({
+        _requirePermissionBy({
             account: PROJECTS.ownerOf(projectId),
             projectId: projectId,
             permissionId: JBPermissionIds.QUEUE_RULESETS
@@ -384,7 +384,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
 
             // Minting limited to: project owner, operators with the `MINT_TOKENS` permission from the owner, the
             // project's terminals, or the project's current ruleset data hook
-            _requirePermissionAllowingOverride({
+            _requirePermissionAllowingOverrideBy({
                 account: PROJECTS.ownerOf(projectId),
                 projectId: projectId,
                 permissionId: JBPermissionIds.MINT_TOKENS,
@@ -437,7 +437,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         override
     {
         // Enforce permissions.
-        _requirePermissionAllowingOverride({
+        _requirePermissionAllowingOverrideBy({
             account: holder,
             projectId: projectId,
             permissionId: JBPermissionIds.BURN_TOKENS,
@@ -495,7 +495,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     /// @param to The controller the project is migrating to.
     function migrateController(uint256 projectId, IJBMigratable to) external virtual override {
         // Enforce permissions.
-        _requirePermission({
+        _requirePermissionBy({
             account: PROJECTS.ownerOf(projectId),
             projectId: projectId,
             permissionId: JBPermissionIds.MIGRATE_CONTROLLER
@@ -527,7 +527,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     /// @param metadata The metadata content to set.
     function setMetadataOf(uint256 projectId, string calldata metadata) external override {
         // Enforce permissions.
-        _requirePermission({
+        _requirePermissionBy({
             account: PROJECTS.ownerOf(projectId),
             projectId: projectId,
             permissionId: JBPermissionIds.SET_PROJECT_METADATA
@@ -558,7 +558,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         override
     {
         // Enforce permissions.
-        _requirePermission({
+        _requirePermissionBy({
             account: PROJECTS.ownerOf(projectId),
             projectId: projectId,
             permissionId: JBPermissionIds.SET_SPLITS
@@ -586,7 +586,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         returns (IJBToken token)
     {
         // Enforce permissions.
-        _requirePermission({
+        _requirePermissionBy({
             account: PROJECTS.ownerOf(projectId),
             projectId: projectId,
             permissionId: JBPermissionIds.ISSUE_TOKEN
@@ -601,7 +601,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     /// @param token The new token's address.
     function setTokenFor(uint256 projectId, IJBToken token) external virtual override {
         // Enforce permissions.
-        _requirePermission({
+        _requirePermissionBy({
             account: PROJECTS.ownerOf(projectId),
             projectId: projectId,
             permissionId: JBPermissionIds.SET_TOKEN
@@ -628,7 +628,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         override
     {
         // Enforce permissions.
-        _requirePermission({account: holder, projectId: projectId, permissionId: JBPermissionIds.CLAIM_TOKENS});
+        _requirePermissionBy({account: holder, projectId: projectId, permissionId: JBPermissionIds.CLAIM_TOKENS});
 
         TOKENS.claimTokensFor(holder, projectId, amount, beneficiary);
     }
@@ -651,7 +651,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         override
     {
         // Enforce permissions.
-        _requirePermission({account: holder, projectId: projectId, permissionId: JBPermissionIds.TRANSFER_TOKENS});
+        _requirePermissionBy({account: holder, projectId: projectId, permissionId: JBPermissionIds.TRANSFER_TOKENS});
 
         // Get a reference to the current ruleset for the project.
         JBRuleset memory ruleset = RULESETS.currentOf(projectId);
@@ -750,14 +750,11 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         // Get a reference to the specified split group.
         JBSplit[] memory splits = SPLITS.splitsOf(projectId, rulesetId, groupId);
 
-        // Use the default splits if there aren't any for the ruleset.
-        if (splits.length == 0) splits = SPLITS.splitsOf(projectId, 0, groupId);
-
         // Keep a reference to the number of splits being iterated on.
         uint256 numberOfSplits = splits.length;
 
         //Transfer between all splits.
-        for (uint256 i; i < numberOfSplits; ++i) {
+        for (uint256 i; i < numberOfSplits; i++) {
             // Get a reference to the split being iterated on.
             JBSplit memory split = splits[i];
 
@@ -815,7 +812,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         // Keep a reference to the ruleset config being iterated on.
         JBRulesetConfig memory rulesetConfig;
 
-        for (uint256 i; i < numberOfConfigurations; ++i) {
+        for (uint256 i; i < numberOfConfigurations; i++) {
             // Get a reference to the ruleset config being iterated on.
             rulesetConfig = rulesetConfigurations[i];
 
@@ -868,7 +865,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         // Keep a reference to the terminal configuration being iterated on.
         JBTerminalConfig memory terminalConfig;
 
-        for (uint256 i; i < numberOfTerminalConfigs; ++i) {
+        for (uint256 i; i < numberOfTerminalConfigs; i++) {
             // Set the terminal configuration being iterated on.
             terminalConfig = terminalConfigs[i];
 

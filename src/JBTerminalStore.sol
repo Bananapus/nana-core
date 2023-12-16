@@ -348,7 +348,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
             // Validate all payload amounts. This needs to be done before returning the hook payloads to ensure valid
             // payload amounts.
             if (numberOfHookPayloads != 0) {
-                for (uint256 i; i < numberOfHookPayloads; ++i) {
+                for (uint256 i; i < numberOfHookPayloads; i++) {
                     // Get a reference to the payload amount.
                     uint256 payloadAmount = hookPayloads[i].amount;
 
@@ -497,7 +497,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
 
         if (hookPayloads.length != 0) {
             // Validate all payload amounts.
-            for (uint256 i; i < hookPayloads.length; ++i) {
+            for (uint256 i; i < hookPayloads.length; i++) {
                 // Get a reference to the payload amount.
                 uint256 payloadAmount = hookPayloads[i].amount;
 
@@ -792,7 +792,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
         uint256 numberOfTokenAccountingContexts = accountingContexts.length;
 
         // Add payout limits from each token.
-        for (uint256 i; i < numberOfTokenAccountingContexts; ++i) {
+        for (uint256 i; i < numberOfTokenAccountingContexts; i++) {
             uint256 tokenSurplus = _tokenSurplusFrom({
                 terminal: terminal,
                 projectId: projectId,
@@ -874,7 +874,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
         uint256 numberOfPayoutLimits = payoutLimits.length;
 
         // Loop through each payout limit to determine the cumulative normalized payout limit remaining.
-        for (uint256 i; i < numberOfPayoutLimits; ++i) {
+        for (uint256 i; i < numberOfPayoutLimits; i++) {
             payoutLimit = payoutLimits[i];
 
             // Set the payout limit value to the amount still available to pay out during the ruleset.
@@ -933,7 +933,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
         uint256 numberOfTerminals = terminals.length;
 
         // Add the current surplus for each terminal.
-        for (uint256 i; i < numberOfTerminals; ++i) {
+        for (uint256 i; i < numberOfTerminals; i++) {
             surplus += terminals[i].currentSurplusOf(projectId, decimals, currency);
         }
     }
