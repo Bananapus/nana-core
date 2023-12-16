@@ -575,7 +575,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         require(msg.sender == address(this));
 
         if (address(feeTerminal) == address(0)) {
-            revert("404:FEE_TERMINAL");
+            revert("404_1");
         }
 
         // Trigger any inherited pre-transfer logic if funds will be transferred.
@@ -658,7 +658,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
             // Make sure that the address supports the split hook interface.
             if (ERC165Checker.supportsInterface(address(split.hook), type(IJBSplitHook).interfaceId)) {
-                revert("400:SPLIT_HOOK");
+                revert("400_1");
             }
 
             // Trigger any inherited pre-transfer logic.
@@ -676,7 +676,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             IJBTerminal terminal = DIRECTORY.primaryTerminalOf(split.projectId, token);
 
             // The project must have a terminal to send funds to.
-            if (terminal == IJBTerminal(address(0))) revert("404:PAYOUT_TERMINAL");
+            if (terminal == IJBTerminal(address(0))) revert("404_2");
 
             // This payout is eligible for a fee if the funds are leaving this contract and the receiving terminal isn't
             // a feelss address.
@@ -1283,9 +1283,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
         // Get a reference to the project's payout splits.
         JBSplit[] memory splits = SPLITS.splitsOf(projectId, rulesetId, uint256(uint160(token)));
-
-        // Use the default splits if there aren't any for the ruleset.
-        if (splits.length == 0) splits = SPLITS.splitsOf(projectId, 0, uint256(uint160(token)));
 
         // Keep a reference to the number of splits being iterated on.
         uint256 numberOfSplits = splits.length;

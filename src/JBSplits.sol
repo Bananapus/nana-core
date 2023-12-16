@@ -24,6 +24,13 @@ contract JBSplits is JBControlled, IJBSplits {
     error PREVIOUS_LOCKED_SPLITS_NOT_INCLUDED();
 
     //*********************************************************************//
+    // ------------------------- public constants ------------------------ //
+    //*********************************************************************//
+
+    /// @notice the ID of the ruleset that will be checked if nothing was found in the provided rulesetId.
+    uint256 public override FALLBACK_RULESET_ID = 0;
+
+    //*********************************************************************//
     // --------------------- private stored properties ------------------- //
     //*********************************************************************//
 
@@ -68,10 +75,11 @@ contract JBSplits is JBControlled, IJBSplits {
     /// @notice Get the split structs for the specified project ID, within the specified ruleset, for the specified
     /// group. The splits stored at ruleset 0 are used by default during a ruleset if the splits for the specific
     /// ruleset aren't set.
+    /// @dev If splits aren't found at the given `rulesetId`, they'll be sought in the FALLBACK_RULESET_ID of 0.
     /// @param projectId The ID of the project to get splits for.
     /// @param rulesetId An identifier within which the returned splits should be considered active.
     /// @param groupId The identifying group of the splits.
-    /// @return An array of all splits for the project.
+    /// @return splits An array of all splits for the project.
     function splitsOf(
         uint256 projectId,
         uint256 rulesetId,
@@ -80,9 +88,14 @@ contract JBSplits is JBControlled, IJBSplits {
         external
         view
         override
-        returns (JBSplit[] memory)
+        returns (JBSplit[] memory splits)
     {
-        return _getStructsFor(projectId, rulesetId, groupId);
+        splits = _getStructsFor(projectId, rulesetId, groupId);
+
+        // Use the default splits if there aren't any for the ruleset.
+        if (splits.length == 0) {
+            splits = _getStructsFor({projectId: projectId, rulesetId: FALLBACK_RULESET_ID, groupId: groupId});
+        }
     }
 
     //*********************************************************************//

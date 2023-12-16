@@ -750,9 +750,6 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         // Get a reference to the specified split group.
         JBSplit[] memory splits = SPLITS.splitsOf(projectId, rulesetId, groupId);
 
-        // Use the default splits if there aren't any for the ruleset.
-        if (splits.length == 0) splits = SPLITS.splitsOf(projectId, 0, groupId);
-
         // Keep a reference to the number of splits being iterated on.
         uint256 numberOfSplits = splits.length;
 
