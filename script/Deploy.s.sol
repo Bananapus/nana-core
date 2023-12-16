@@ -24,7 +24,7 @@ abstract contract Deploy is Script {
 
     function _manager() internal virtual returns (address);
 
-    function _run() internal {
+    function run() public {
         vm.startBroadcast();
         _deployJBProtocol(_manager(), _trustedForwarder());
         vm.stopBroadcast();
