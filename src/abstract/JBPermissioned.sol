@@ -53,7 +53,7 @@ abstract contract JBPermissioned is Context, IJBPermissioned {
     /// @param permissionId The required permission ID. The operator must have this permission within the specified
     /// project ID.
     /// @param alsoGrantAccessIf An override condition which will allow access regardless of permissions.
-    function _requirePermissionAllowingOverride(
+    function _requirePermissionAllowingOverrideBy(
         address account,
         uint256 projectId,
         uint256 permissionId,

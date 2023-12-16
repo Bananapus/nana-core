@@ -384,7 +384,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
 
             // Minting limited to: project owner, operators with the `MINT_TOKENS` permission from the owner, the
             // project's terminals, or the project's current ruleset data hook
-            _requirePermissionAllowingOverride({
+            _requirePermissionAllowingOverrideBy({
                 account: PROJECTS.ownerOf(projectId),
                 projectId: projectId,
                 permissionId: JBPermissionIds.MINT_TOKENS,
@@ -437,7 +437,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         override
     {
         // Enforce permissions.
-        _requirePermissionAllowingOverride({
+        _requirePermissionAllowingOverrideBy({
             account: holder,
             projectId: projectId,
             permissionId: JBPermissionIds.BURN_TOKENS,

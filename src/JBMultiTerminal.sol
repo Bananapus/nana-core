@@ -518,7 +518,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @param tokens The tokens to add accounting contexts for.
     function addAccountingContextsFor(uint256 projectId, address[] calldata tokens) external override {
         // Enforce permissions.
-        _requirePermissionAllowingOverride({
+        _requirePermissionAllowingOverrideBy({
             account: PROJECTS.ownerOf(projectId),
             projectId: projectId,
             permissionId: JBPermissionIds.SET_ACCOUNTING_CONTEXT,
