@@ -364,7 +364,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         returns (uint256)
     {
         // Enforce permissions.
-        _requirePermission({account: holder, projectId: projectId, permissionId: JBPermissionIds.REDEEM_TOKENS});
+        _requirePermissionBy({account: holder, projectId: projectId, permissionId: JBPermissionIds.REDEEM_TOKENS});
 
         return _redeemTokensOf(holder, projectId, token, tokenCount, minReturnedTokens, beneficiary, metadata);
     }
@@ -436,7 +436,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         returns (uint256)
     {
         // Enforce permissions.
-        _requirePermission({
+        _requirePermissionBy({
             account: PROJECTS.ownerOf(projectId),
             projectId: projectId,
             permissionId: JBPermissionIds.USE_ALLOWANCE
@@ -464,7 +464,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         returns (uint256 balance)
     {
         // Enforce permissions.
-        _requirePermission({
+        _requirePermissionBy({
             account: PROJECTS.ownerOf(projectId),
             projectId: projectId,
             permissionId: JBPermissionIds.MIGRATE_TERMINAL

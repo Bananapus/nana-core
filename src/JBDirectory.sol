@@ -244,7 +244,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
     /// @param terminal The terminal to make the primary terminal for the project and token.
     function setPrimaryTerminalOf(uint256 projectId, address token, IJBTerminal terminal) external override {
         // Enforce permissions.
-        _requirePermission({
+        _requirePermissionBy({
             account: PROJECTS.ownerOf(projectId),
             projectId: projectId,
             permissionId: JBPermissionIds.SET_PRIMARY_TERMINAL

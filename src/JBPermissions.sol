@@ -109,7 +109,11 @@ contract JBPermissions is JBPermissioned, IJBPermissions {
     /// @param permissionsData The data which specifies the permissions the operator is being given.
     function setPermissionsFor(address account, JBPermissionsData calldata permissionsData) external override {
         // Enforce permissions.
-        _requirePermission({account: account, projectId: permissionsData.projectId, permissionId: JBPermissionIds.ROOT});
+        _requirePermissionBy({
+            account: account,
+            projectId: permissionsData.projectId,
+            permissionId: JBPermissionIds.ROOT
+        });
 
         // Pack the permission IDs into a uint256.
         uint256 packed = _packedPermissions(permissionsData.permissionIds);
