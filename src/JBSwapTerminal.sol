@@ -9,9 +9,10 @@ import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol
 
 import {IPermit2} from "permit2/src/interfaces/IPermit2.sol";
 import {IAllowanceTransfer} from "permit2/src/interfaces/IPermit2.sol";
+
+import {IUniswapV3Pool} from "lib/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
+
 import {IJBDirectory} from "./interfaces/IJBDirectory.sol";
-
-
 import {IJBPermissions} from "./interfaces/IJBPermissions.sol";
 import {IJBProjects} from "./interfaces/IJBProjects.sol";
 import {IJBTerminalStore} from "./interfaces/IJBTerminalStore.sol";
@@ -23,10 +24,12 @@ import {JBRuleset} from "./structs/JBRuleset.sol";
 import {JBSingleAllowanceData} from "./structs/JBSingleAllowanceData.sol";
 import {JBSplit} from "./structs/JBSplit.sol";
 import {JBPermissioned} from "./abstract/JBPermissioned.sol";
+import {JBPermissionIds} from "./libraries/JBPermissionIds.sol";
 
 import {
     IJBTerminal,
-    IJBPermitTerminal
+    IJBPermitTerminal,
+    IJBMultiTerminal
 } from "./interfaces/terminal/IJBMultiTerminal.sol";
 
 /// @notice Terminal providing an intermediate layer when receiving a payment in a token without
@@ -40,7 +43,7 @@ import {
 /// @dev    Slippage is prevented by using a quote passed by the user (using the JBMetadataResolver
 ///         format, along the address of the pool to use) or a twap from the pool's oracle if no quote
 ///         is provided (the pool to use *must* then be defined by the project owner).
-contract JBMultiTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTerminal {
+contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTerminal {
     // A library that adds default safety checks to ERC20 functionality.
     using SafeERC20 for IERC20;
 
@@ -48,7 +51,11 @@ contract JBMultiTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermi
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
 
+    error PERMIT_ALLOWANCE_NOT_ENOUGH();
     error NO_DEFAULT_POOL_DEFINED();
+    error NO_MSG_VALUE_ALLOWED();
+    error TOKEN_NOT_ACCEPTED();
+    error TOKEN_NOT_IN_POOL();
 
     //*********************************************************************//
     // --------------------- internal stored constants ------------------- //
@@ -95,11 +102,11 @@ contract JBMultiTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermi
 
     /// @notice Indicates if this contract adheres to the specified interface.
     /// @dev See {IERC165-supportsInterface}.
-    /// @param _interfaceId The ID of the interface to check for adherance to.
+    ///  _interfaceId The ID of the interface to check for adherance to.
     /// @return A flag indicating if the provided interface ID is supported.
     function supportsInterface(bytes4 _interfaceId) public view virtual override returns (bool) {
-        return _interfaceId == type(IJBPaymentTerminal).interfaceId
-            || _interfaceId == type(IJBPermitPaymentTerminal).interfaceId
+        return _interfaceId == type(IJBTerminal).interfaceId
+            || _interfaceId == type(IJBPermitTerminal).interfaceId
             || _interfaceId == type(IERC165).interfaceId;
     }
 
@@ -111,26 +118,22 @@ contract JBMultiTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermi
     // -------------------------- constructor ---------------------------- //
     //*********************************************************************//
 
-    /// @param _operatorStore A contract storing operator assignments.
-    /// @param _projects A contract which mints ERC-721's that represent project ownership and transfers.
-    /// @param _directory A contract storing directories of terminals and controllers for each project.
-    /// @param _splitsStore A contract that stores splits for each project.
-    /// @param _store A contract that stores the terminal's data.
-    /// @param _permit2 A permit2 utility.
-    /// @param _owner The address that will own this contract.
+    ///  A contract storing operator assignments.
+    ///  _projects A contract which mints ERC-721's that represent project ownership and transfers.
+    ///  _directory A contract storing directories of terminals and controllers for each project.
+    ///  _splitsStore A contract that stores splits for each project.
+    ///  _store A contract that stores the terminal's data.
+    ///  _permit2 A permit2 utility.
+    ///  _owner The address that will own this contract.
     constructor(
-        IJBOperatorStore _operatorStore,
         IJBProjects _projects,
+        IJBPermissions _permissions,
         IJBDirectory _directory,
-        IJBSplits _splitsStore,
-        IJBTerminalStore _store,
         IPermit2 _permit2,
         address _owner
-    ) JBOperatable(_operatorStore) Ownable(_owner) {
+    ) JBPermissioned(_permissions) Ownable(_owner) {
         PROJECTS = _projects;
         DIRECTORY = _directory;
-        SPLITS = _splitsStore;
-        STORE = _store;
         PERMIT2 = _permit2;
     }
 
@@ -139,13 +142,13 @@ contract JBMultiTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermi
     //*********************************************************************//
 
     /// @notice 
-    /// @param _projectId The ID of the project being paid.
-    /// @param _amount The amount of terminal tokens being received, as a fixed point number with the same amount of decimals as this terminal. If this terminal's token is ETH, this is ignored and msg.value is used in its place.
-    /// @param _token The token being paid. This terminal ignores this property since it only manages one token.
-    /// @param _beneficiary The address to mint tokens for and pass along to the funding cycle's data source and delegate.
-    /// @param _minReturnedTokens The minimum number of project tokens expected in return, as a fixed point number with the same amount of decimals as this terminal.
-    /// @param _memo A memo to pass along to the emitted event.
-    /// @param _metadata Bytes to send along to the data source, delegate, and emitted event, if provided.
+    ///  _projectId The ID of the project being paid.
+    ///  _amount The amount of terminal tokens being received, as a fixed point number with the same amount of decimals as this terminal. If this terminal's token is ETH, this is ignored and msg.value is used in its place.
+    ///  _token The token being paid. This terminal ignores this property since it only manages one token.
+    ///  _beneficiary The address to mint tokens for and pass along to the funding cycle's data source and delegate.
+    ///  _minReturnedTokens The minimum number of project tokens expected in return, as a fixed point number with the same amount of decimals as this terminal.
+    ///  _memo A memo to pass along to the emitted event.
+    ///  _metadata Bytes to send along to the data source, delegate, and emitted event, if provided.
     /// @return The number of tokens minted for the beneficiary, as a fixed point number with 18 decimals.
     function pay(
         uint256 _projectId,
@@ -160,12 +163,12 @@ contract JBMultiTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermi
         IUniswapV3Pool _pool;
 
         // Check for a quote passed by the user
-        (bool _exists, bytes memory _parsedMetadata) =
-            JBMetadataResolver.getMetadata(bytes4('SWAP'), _metadata);
+        (bool _exists, bytes memory _parsedData) =
+            JBMetadataResolver.getDataFor(bytes4('SWAP'), _metadata);
         
         // If there is a quote, use it
         if(_exists) {
-            (_minimumReceivedFromSwap, _pool) = abi.decode(_parsedMetadata, (uint256, IUniswapV3Pool));
+            (_minimumReceivedFromSwap, _pool) = abi.decode(_parsedData, (uint256, IUniswapV3Pool));
         // If no quote, check there is a pool assigned and get a twap
         } else {
             _pool = _poolFor[_projectId][_token];
@@ -177,7 +180,7 @@ contract JBMultiTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermi
             _minimumReceivedFromSwap = _getTwapFrom(_pool, _amount);
         }
 
-        JBMultiTerminal _terminal = DIRECTORY.primaryTerminalOf(_projectId, _token);
+        IJBMultiTerminal _terminal = DIRECTORY.primaryTerminalOf(_projectId, _token);
 
         address _poolToken0 = _pool.token0();
         address _poolToken1 = _pool.token1();
@@ -204,7 +207,7 @@ contract JBMultiTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermi
 
 
         // Pay on primary terminal, with correct beneficiary (sender or benficiary if passed)
-        _terminal.pay{value: _token == JBToken.ETH ? _receivedFromSwap : 0}(
+        _terminal.pay{value: _token == JBTokenStandards.NATIVE ? _receivedFromSwap : 0}(
             _projectId,
             _targetToken,
             _receivedFromSwap,
@@ -216,12 +219,12 @@ contract JBMultiTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermi
     }
 
     /// @notice 
-    /// @param _projectId The ID of the project to which the funds received belong.
-    /// @param _amount The amount of tokens to add, as a fixed point number with the same number of decimals as this terminal. If this is an ETH terminal, this is ignored and msg.value is used instead.
-    /// @param _token The token being paid. This terminal ignores this property since it only manages one currency.
-    /// @param _shouldRefundHeldFees A flag indicating if held fees should be refunded based on the amount being added.
-    /// @param _memo A memo to pass along to the emitted event.
-    /// @param _metadata Extra data to pass along to the emitted event.
+    ///  _projectId The ID of the project to which the funds received belong.
+    ///  _amount The amount of tokens to add, as a fixed point number with the same number of decimals as this terminal. If this is an ETH terminal, this is ignored and msg.value is used instead.
+    ///  _token The token being paid. This terminal ignores this property since it only manages one currency.
+    ///  _shouldRefundHeldFees A flag indicating if held fees should be refunded based on the amount being added.
+    ///  _memo A memo to pass along to the emitted event.
+    ///  _metadata Extra data to pass along to the emitted event.
     function addToBalanceOf(
         uint256 _projectId,
         address _token,
@@ -247,22 +250,23 @@ contract JBMultiTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermi
     }
 
     // add a pool to use for a given token in
-    function addDefaultPool(uint256 _projectId, address _token, IUniswapV3Pool _pool) external requirePermission(
-            projects.ownerOf(_projectId),
+    function addDefaultPool(uint256 _projectId, address _token, IUniswapV3Pool _pool) external {
+        _requirePermission(
+            PROJECTS.ownerOf(_projectId),
             _projectId,
-            JBSwapTerminalOperations.MODIFY_DEFAULT_POOL
-        ) {
+            JBPermissionIds.MODIFY_DEFAULT_POOL
+        );
         _poolFor[_projectId][_token] = _pool;
     }
 
     //*********************************************************************//
     // ---------------------- internal transactions ---------------------- //
     //*********************************************************************//
-        /// @notice Accepts an incoming token.
-    /// @param _projectId The ID of the project for which the transfer is being accepted.
-    /// @param _token The token being accepted.
-    /// @param _amount The amount of tokens being accepted.
-    /// @param _metadata The metadata in which permit2 context is provided.
+    /// @notice Accepts an incoming token.
+    ///  _projectId The ID of the project for which the transfer is being accepted.
+    ///  _token The token being accepted.
+    ///  _amount The amount of tokens being accepted.
+    ///  _metadata The metadata in which permit2 context is provided.
     /// @return amount The amount of tokens that have been accepted.
     function _acceptFundsFor(
         uint256 _projectId,
@@ -271,12 +275,12 @@ contract JBMultiTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermi
         bytes calldata _metadata
     ) internal returns (uint256) {
         // Make sure the project has set an accounting context for the token being paid.
-        if (_accountingContextForTokenOf[_projectId][_token].token == address(0)) {
-            revert TOKEN_NOT_ACCEPTED();
-        }
+        // if (_accountingContextForTokenOf[_projectId][_token].token == address(0)) {
+        //     revert TOKEN_NOT_ACCEPTED();
+        // }
 
         // If the terminal's token is ETH, override `_amount` with msg.value.
-        if (_token == JBTokens.ETH) return msg.value;
+        if (_token == JBTokenStandards.NATIVE) return msg.value;
 
         // Amount must be greater than 0.
         if (msg.value != 0) revert NO_MSG_VALUE_ALLOWED();
@@ -304,21 +308,21 @@ contract JBMultiTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermi
         }
 
         // Get a reference to the balance before receiving tokens.
-        uint256 _balanceBefore = _balance(_token);
+        uint256 _balanceBefore = IERC20(_token).balanceOf(address(this));
 
         // Transfer tokens to this terminal from the msg sender.
         _transferFor(msg.sender, payable(address(this)), _token, _amount);
 
         // The amount should reflect the change in balance.
-        return _balance(_token) - _balanceBefore;
+        return IERC20(_token).balanceOf(address(this)) - _balanceBefore;
     }
 
     /// @notice Reverts an expected payout.
-    /// @param _projectId The ID of the project having paying out.
-    /// @param _token The address of the token having its transfer reverted.
-    /// @param _expectedDestination The address the payout was expected to go to.
-    /// @param _allowanceAmount The amount that the destination has been allowed to use.
-    /// @param _depositAmount The amount of the payout as debited from the project's balance.
+    ///  _projectId The ID of the project having paying out.
+    ///  _token The address of the token having its transfer reverted.
+    ///  _expectedDestination The address the payout was expected to go to.
+    ///  _allowanceAmount The amount that the destination has been allowed to use.
+    ///  _depositAmount The amount of the payout as debited from the project's balance.
     function _revertTransferFrom(
         uint256 _projectId,
         address _token,
@@ -327,7 +331,7 @@ contract JBMultiTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermi
         uint256 _depositAmount
     ) internal {
         // Cancel allowance if needed.
-        if (_allowanceAmount != 0 && _token != JBTokens.ETH) {
+        if (_allowanceAmount != 0 && _token != JBTokenStandards.NATIVE) {
             IERC20(_token).safeDecreaseAllowance(_expectedDestination, _allowanceAmount);
         }
 
@@ -335,17 +339,30 @@ contract JBMultiTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermi
         STORE.recordAddedBalanceFor(_projectId, _token, _depositAmount);
     }
 
+    function _getTwapFrom(IUniswapV3Pool _pool, uint256 _amount) internal view returns (uint256) {
+        return 0;
+    }
+
+    function _swap(
+        address _token,
+        IUniswapV3Pool _pool,
+        uint256 _amount,
+        uint256 _minimumReceivedFromSwap
+    ) internal returns (uint256) {
+        return 0;
+    }
+
     /// @notice Transfers tokens.
-    /// @param _from The address from which the transfer should originate.
-    /// @param _to The address to which the transfer should go.
-    /// @param _token The token being transfered.
-    /// @param _amount The amount of the transfer, as a fixed point number with the same number of decimals as this terminal.
+    ///  _from The address from which the transfer should originate.
+    ///  _to The address to which the transfer should go.
+    ///  _token The token being transfered.
+    ///  _amount The amount of the transfer, as a fixed point number with the same number of decimals as this terminal.
     function _transferFor(address _from, address payable _to, address _token, uint256 _amount)
         internal
         virtual
     {
         // If the token is ETH, assume the native token standard.
-        if (_token == JBTokens.ETH) return Address.sendValue(_to, _amount);
+        if (_token == JBTokenStandards.NATIVE) return Address.sendValue(_to, _amount);
 
         if (_from == address(this)) {
             return IERC20(_token).safeTransfer(_to, _amount);
@@ -361,18 +378,18 @@ contract JBMultiTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermi
     }
 
     /// @notice Logic to be triggered before transferring tokens from this terminal.
-    /// @param _to The address to which the transfer is going.
-    /// @param _token The token being transfered.
-    /// @param _amount The amount of the transfer, as a fixed point number with the same number of decimals as this terminal.
+    ///  _to The address to which the transfer is going.
+    ///  _token The token being transfered.
+    ///  _amount The amount of the transfer, as a fixed point number with the same number of decimals as this terminal.
     function _beforeTransferFor(address _to, address _token, uint256 _amount) internal virtual {
         // If the token is ETH, assume the native token standard.
-        if (_token == JBTokens.ETH) return;
+        if (_token == JBTokenStandards.NATIVE) return;
         IERC20(_token).safeIncreaseAllowance(_to, _amount);
     }
 
     /// @notice Sets the permit2 allowance for a token.
-    /// @param _allowance the allowance to get using permit2
-    /// @param _token The token being allowed.
+    ///  _allowance the allowance to get using permit2
+    ///  _token The token being allowed.
     function _permitAllowance(JBSingleAllowanceData memory _allowance, address _token) internal {
         PERMIT2.permit(
             msg.sender,
