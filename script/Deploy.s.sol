@@ -19,6 +19,7 @@ abstract contract Deploy is Script {
 }
 
 // Ethereum
+
 contract DeployEthereumMainnet is Deploy {
     function _trustedForwarder() internal virtual override returns (address) {
         return 0xB2b5841DBeF766d4b521221732F9B618fCf34A87;
