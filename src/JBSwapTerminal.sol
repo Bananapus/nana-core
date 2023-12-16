@@ -5,49 +5,28 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {Address} from "@openzeppelin/contracts/utils/Address.sol";
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {IERC20Metadata} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import {ERC165Checker} from "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
-import {PRBMath} from "@paulrberg/contracts/math/PRBMath.sol";
-import {IPermit2} from "@permit2/src/src/interfaces/IPermit2.sol";
-import {IAllowanceTransfer} from "@permit2/src/src/interfaces/IPermit2.sol";
-import {IJBController3_1} from "./interfaces/IJBController3_1.sol";
+
+import {IPermit2} from "permit2/src/interfaces/IPermit2.sol";
+import {IAllowanceTransfer} from "permit2/src/interfaces/IPermit2.sol";
 import {IJBDirectory} from "./interfaces/IJBDirectory.sol";
-import {IJBSplitsStore} from "./interfaces/IJBSplitsStore.sol";
-import {IJBOperatable} from "./interfaces/IJBOperatable.sol";
-import {IJBOperatorStore} from "./interfaces/IJBOperatorStore.sol";
-import {IJBPaymentTerminal} from "./interfaces/terminal/IJBPaymentTerminal.sol";
+
+
+import {IJBPermissions} from "./interfaces/IJBPermissions.sol";
 import {IJBProjects} from "./interfaces/IJBProjects.sol";
 import {IJBTerminalStore} from "./interfaces/IJBTerminalStore.sol";
-import {IJBSplitAllocator} from "./interfaces/IJBSplitAllocator.sol";
-import {JBConstants} from "./libraries/JBConstants.sol";
-import {JBFees} from "./libraries/JBFees.sol";
-import {JBFundingCycleMetadataResolver} from "./libraries/JBFundingCycleMetadataResolver.sol";
+import {JBRulesetMetadataResolver} from "./libraries/JBRulesetMetadataResolver.sol";
 import {JBMetadataResolver} from "./libraries/JBMetadataResolver.sol";
-import {JBOperations} from "./libraries/JBOperations.sol";
-import {JBTokens} from "./libraries/JBTokens.sol";
 import {JBTokenStandards} from "./libraries/JBTokenStandards.sol";
-import {JBDidRedeemData3_1_1} from "./structs/JBDidRedeemData3_1_1.sol";
-import {JBDidPayData3_1_1} from "./structs/JBDidPayData3_1_1.sol";
 import {JBFee} from "./structs/JBFee.sol";
-import {JBFundingCycle} from "./structs/JBFundingCycle.sol";
-import {JBPayDelegateAllocation3_1_1} from "./structs/JBPayDelegateAllocation3_1_1.sol";
-import {JBRedemptionDelegateAllocation3_1_1} from
-    "./structs/JBRedemptionDelegateAllocation3_1_1.sol";
+import {JBRuleset} from "./structs/JBRuleset.sol";
 import {JBSingleAllowanceData} from "./structs/JBSingleAllowanceData.sol";
 import {JBSplit} from "./structs/JBSplit.sol";
-import {JBSplitAllocationData} from "./structs/JBSplitAllocationData.sol";
-import {JBAccountingContext} from "./structs/JBAccountingContext.sol";
-import {JBAccountingContextConfig} from "./structs/JBAccountingContextConfig.sol";
-import {JBTokenAmount} from "./structs/JBTokenAmount.sol";
-import {JBOperatable} from "./abstract/JBOperatable.sol";
+import {JBPermissioned} from "./abstract/JBPermissioned.sol";
+
 import {
-    IJBMultiTerminal,
-    IJBFeeTerminal,
-    IJBPaymentTerminal,
-    IJBRedemptionTerminal,
-    IJBPayoutTerminal,
-    IJBPermitPaymentTerminal
+    IJBTerminal,
+    IJBPermitTerminal
 } from "./interfaces/terminal/IJBMultiTerminal.sol";
 
 /// @notice Terminal providing an intermediate layer when receiving a payment in a token without
@@ -61,10 +40,7 @@ import {
 /// @dev    Slippage is prevented by using a quote passed by the user (using the JBMetadataResolver
 ///         format, along the address of the pool to use) or a twap from the pool's oracle if no quote
 ///         is provided (the pool to use *must* then be defined by the project owner).
-contract JBMultiTerminal is JBOperatable, Ownable, IJBPaymentTerminal, IJBPermitPaymentTerminal {
-    // A library that parses the packed funding cycle metadata into a friendlier format.
-    using JBFundingCycleMetadataResolver for JBFundingCycle;
-
+contract JBMultiTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTerminal {
     // A library that adds default safety checks to ERC20 functionality.
     using SafeERC20 for IERC20;
 
@@ -95,9 +71,6 @@ contract JBMultiTerminal is JBOperatable, Ownable, IJBPaymentTerminal, IJBPermit
 
     /// @notice The directory of terminals and controllers for PROJECTS.
     IJBDirectory public immutable override DIRECTORY;
-
-    /// @notice The contract that stores splits for each project.
-    IJBSplitsStore public immutable override SPLITS;
 
     /// @notice The contract that stores and manages the terminal's data.
     IJBTerminalStore public immutable override STORE;
@@ -149,7 +122,7 @@ contract JBMultiTerminal is JBOperatable, Ownable, IJBPaymentTerminal, IJBPermit
         IJBOperatorStore _operatorStore,
         IJBProjects _projects,
         IJBDirectory _directory,
-        IJBSplitsStore _splitsStore,
+        IJBSplits _splitsStore,
         IJBTerminalStore _store,
         IPermit2 _permit2,
         address _owner
