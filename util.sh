@@ -38,7 +38,7 @@ case "$1" in
   "coverage:integration") forge coverage --match-path "./src/*.sol" --report lcov --report summary ;;
   "deploy:ethereum-mainnet") source .env && forge script DeployEthereumMainnet --chain-id 1 --rpc-url $RPC_ETHEREUM_MAINNET --broadcast --verify --etherscan-api-key $ETHERSCAN_API_KEY --ledger --sender $SENDER_ETHEREUM_MAINNET -vvv ;;
   "deploy:ethereum-goerli") source .env && forge script DeployEthereumGoerli --chain-id 5 --rpc-url $RPC_ETHEREUM_GOERLI --broadcast --verify --etherscan-api-key $ETHERSCAN_API_KEY --ledger --sender $SENDER_ETHEREUM_GOERLI -vvv ;;
-  "deploy:ethereum-sepolia") source .env && forge script DeployEthereumSepolia --chain-id 5 --rpc-url $RPC_ETHEREUM_SEPOLIA --broadcast --verify --etherscan-api-key $ETHERSCAN_API_KEY --ledger --sender $SENDER_ETHEREUM_SEPOLIA -vvv ;;
+  "deploy:ethereum-sepolia") source .env && forge script DeployEthereumSepolia --chain-id 5 --rpc-url $RPC_ETHEREUM_SEPOLIA --broadcast --verify --etherscan-api-key $ETHERSCAN_API_KEY --interactives 1 --sender $SENDER_ETHEREUM_SEPOLIA -vvv ;;
   "deploy:optimism-mainnet") source .env && forge script DeployOptimismMainnet --chain-id 1 --rpc-url $RPC_OPTIMISM_MAINNET --broadcast --verify --etherscan-api-key $ETHERSCAN_API_KEY --ledger --sender $SENDER_OPTIMISM_MAINNET -vvv ;;
   "deploy:optimism-testnet") source .env && forge script DeployOptimismTestnet --chain-id 1 --rpc-url $RPC_OPTIMISM_TESTNET --broadcast --verify --etherscan-api-key $ETHERSCAN_API_KEY --ledger --sender $SENDER_OPTIMISM_TESTNET -vvv ;;
   "deploy:polygon-mainnet") source .env && forge script DeployPolygonMainnet --chain-id 1 --rpc-url $RPC_POLYGON_MAINNET --broadcast --verify --etherscan-api-key $ETHERSCAN_API_KEY --ledger --sender $SENDER_POLYGON_MAINNET -vvv ;;
