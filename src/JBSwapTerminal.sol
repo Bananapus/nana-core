@@ -25,6 +25,8 @@ import {JBSingleAllowanceData} from "./structs/JBSingleAllowanceData.sol";
 import {JBSplit} from "./structs/JBSplit.sol";
 import {JBPermissioned} from "./abstract/JBPermissioned.sol";
 import {JBPermissionIds} from "./libraries/JBPermissionIds.sol";
+import {JBAccountingContext} from "./structs/JBAccountingContext.sol";
+import {JBConstants} from "./libraries/JBConstants.sol";
 
 import {
     IJBTerminal,
@@ -65,6 +67,10 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
     // --------------------- internal stored properties ------------------ //
     //*********************************************************************//
 
+    mapping(uint256 projectId => mapping(address token => JBAccountingContext context)) internal _accountingContextForTokenOf;
+    mapping(uint256 projectId => JBAccountingContext[]) internal _accountingContextsOf;
+
+
     //*********************************************************************//
     // ------------------------- public constants ------------------------ //
     //*********************************************************************//
@@ -74,16 +80,16 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
     //*********************************************************************//
 
     /// @notice Mints ERC-721's that represent project ownership and transfers.
-    IJBProjects public immutable override PROJECTS;
+    IJBProjects public immutable PROJECTS;
 
     /// @notice The directory of terminals and controllers for PROJECTS.
-    IJBDirectory public immutable override DIRECTORY;
+    IJBDirectory public immutable DIRECTORY;
 
     /// @notice The contract that stores and manages the terminal's data.
-    IJBTerminalStore public immutable override STORE;
+    IJBTerminalStore public immutable STORE;
 
     /// @notice The permit2 utility.
-    IPermit2 public immutable override PERMIT2;
+    IPermit2 public immutable PERMIT2;
 
     //*********************************************************************//
     // --------------------- public stored properties -------------------- //
@@ -92,9 +98,21 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
     // project ID -> token received -> pool to use
     mapping(uint256 => mapping(address => IUniswapV3Pool)) public _poolFor;
 
+
     //*********************************************************************//
     // ------------------------- external views -------------------------- //
     //*********************************************************************//
+
+    function accountingContextForTokenOf(uint256 _projectId, address _token) external view override returns (JBAccountingContext memory) {
+
+        return _accountingContextForTokenOf[_projectId][_token];
+    }
+
+    function accountingContextsOf(uint256 _projectId) external view override returns (JBAccountingContext[] memory) {
+        return _accountingContextsOf[_projectId];
+    }
+function currentSurplusOf(uint256 projectId, uint256 decimals, uint256 currency) external view returns (uint256) {}
+
 
     //*********************************************************************//
     // -------------------------- public views --------------------------- //
@@ -180,8 +198,6 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
             _minimumReceivedFromSwap = _getTwapFrom(_pool, _amount);
         }
 
-        IJBMultiTerminal _terminal = DIRECTORY.primaryTerminalOf(_projectId, _token);
-
         address _poolToken0 = _pool.token0();
         address _poolToken1 = _pool.token1();
 
@@ -194,8 +210,10 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
             _targetToken = _poolToken0;
         }
 
+        IJBTerminal _terminal = DIRECTORY.primaryTerminalOf(_projectId, _token);
         // Check the primary terminal accepts the token (save swap gas if not accepted)
-        if(!_terminal.acceptsToken(_targetToken)) revert TOKEN_NOT_ACCEPTED(); // TODO: no revert?
+
+        if(address(_terminal) == address(0)) revert TOKEN_NOT_ACCEPTED(); // TODO: no revert?
         
         // Accept the funds.
         _amount = _acceptFundsFor(_projectId, _token, _amount, _metadata);
@@ -207,7 +225,7 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
 
 
         // Pay on primary terminal, with correct beneficiary (sender or benficiary if passed)
-        _terminal.pay{value: _token == JBTokenStandards.NATIVE ? _receivedFromSwap : 0}(
+        _terminal.pay{value: _token == JBConstants.NATIVE_TOKEN ? _receivedFromSwap : 0}(
             _projectId,
             _targetToken,
             _receivedFromSwap,
@@ -259,6 +277,10 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
         _poolFor[_projectId][_token] = _pool;
     }
 
+    function addAccountingContextsFor(uint256 projectId, address[] calldata tokens) external {}
+
+    function migrateBalanceOf(uint256 projectId, address token, IJBTerminal to) external returns (uint256 balance) {}
+
     //*********************************************************************//
     // ---------------------- internal transactions ---------------------- //
     //*********************************************************************//
@@ -280,7 +302,7 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
         // }
 
         // If the terminal's token is ETH, override `_amount` with msg.value.
-        if (_token == JBTokenStandards.NATIVE) return msg.value;
+        if (_token == JBConstants.NATIVE_TOKEN) return msg.value;
 
         // Amount must be greater than 0.
         if (msg.value != 0) revert NO_MSG_VALUE_ALLOWED();
@@ -290,7 +312,7 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
 
         // Unpack the allowance to use, if any, given by the frontend.
         (bool _exists, bytes memory _parsedMetadata) =
-            JBMetadataResolver.getMetadata(bytes4(uint32(uint160(address(this)))), _metadata);
+            JBMetadataResolver.getDataFor(bytes4(uint32(uint160(address(this)))), _metadata);
 
         // Check if the metadata contained permit data.
         if (_exists) {
@@ -300,7 +322,7 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
 
             // Make sure the permit allowance is enough for this payment. If not we revert early.
             if (_allowance.amount < _amount) {
-                revert PERMIT_ALLOWANCE_NOT_ENOUGH(_amount, _allowance.amount);
+                revert PERMIT_ALLOWANCE_NOT_ENOUGH();
             }
 
             // Set the allowance to `spend` tokens for the user.
@@ -331,7 +353,7 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
         uint256 _depositAmount
     ) internal {
         // Cancel allowance if needed.
-        if (_allowanceAmount != 0 && _token != JBTokenStandards.NATIVE) {
+        if (_allowanceAmount != 0 && _token != JBConstants.NATIVE_TOKEN) {
             IERC20(_token).safeDecreaseAllowance(_expectedDestination, _allowanceAmount);
         }
 
@@ -362,7 +384,7 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
         virtual
     {
         // If the token is ETH, assume the native token standard.
-        if (_token == JBTokenStandards.NATIVE) return Address.sendValue(_to, _amount);
+        if (_token == JBConstants.NATIVE_TOKEN) return Address.sendValue(_to, _amount);
 
         if (_from == address(this)) {
             return IERC20(_token).safeTransfer(_to, _amount);
@@ -383,7 +405,7 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
     ///  _amount The amount of the transfer, as a fixed point number with the same number of decimals as this terminal.
     function _beforeTransferFor(address _to, address _token, uint256 _amount) internal virtual {
         // If the token is ETH, assume the native token standard.
-        if (_token == JBTokenStandards.NATIVE) return;
+        if (_token == JBConstants.NATIVE_TOKEN) return;
         IERC20(_token).safeIncreaseAllowance(_to, _amount);
     }
 
