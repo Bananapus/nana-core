@@ -373,34 +373,30 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         // There should be tokens to mint.
         if (tokenCount == 0) revert ZERO_TOKENS_TO_MINT();
 
-        // Define variables that will be needed outside scoped section below.
         // Keep a reference to the reserved rate to use
         uint256 reservedRate;
 
-        // Scoped section prevents stack too deep. `ruleset` only used within scope.
-        {
-            // Get a reference to the project's current ruleset.
-            JBRuleset memory ruleset = RULESETS.currentOf(projectId);
+        // Get a reference to the project's current ruleset.
+        JBRuleset memory ruleset = RULESETS.currentOf(projectId);
 
-            // Minting limited to: project owner, operators with the `MINT_TOKENS` permission from the owner, the
-            // project's terminals, or the project's current ruleset data hook
-            _requirePermissionAllowingOverrideFrom({
-                account: PROJECTS.ownerOf(projectId),
-                projectId: projectId,
-                permissionId: JBPermissionIds.MINT_TOKENS,
-                alsoGrantAccessIf: DIRECTORY.isTerminalOf(projectId, IJBTerminal(_msgSender()))
-                    || _msgSender() == address(ruleset.dataHook())
-            });
+        // Minting limited to: project owner, operators with the `MINT_TOKENS` permission from the owner, the
+        // project's terminals, or the project's current ruleset data hook
+        _requirePermissionAllowingOverrideFrom({
+            account: PROJECTS.ownerOf(projectId),
+            projectId: projectId,
+            permissionId: JBPermissionIds.MINT_TOKENS,
+            alsoGrantAccessIf: DIRECTORY.isTerminalOf(projectId, IJBTerminal(_msgSender()))
+                || _msgSender() == address(ruleset.dataHook())
+        });
 
-            // If the message sender is not a terminal or a data hook, the current ruleset must allow minting.
-            if (
-                !ruleset.allowOwnerMinting() && !DIRECTORY.isTerminalOf(projectId, IJBTerminal(_msgSender()))
-                    && _msgSender() != address(ruleset.dataHook())
-            ) revert MINT_NOT_ALLOWED_AND_NOT_TERMINAL_HOOK();
+        // If the message sender is not a terminal or a data hook, the current ruleset must allow minting.
+        if (
+            !ruleset.allowOwnerMinting() && !DIRECTORY.isTerminalOf(projectId, IJBTerminal(_msgSender()))
+                && _msgSender() != address(ruleset.dataHook())
+        ) revert MINT_NOT_ALLOWED_AND_NOT_TERMINAL_HOOK();
 
-            // Determine the reserved rate to use.
-            reservedRate = useReservedRate ? ruleset.reservedRate() : 0;
-        }
+        // Determine the reserved rate to use.
+        reservedRate = useReservedRate ? ruleset.reservedRate() : 0;
 
         if (reservedRate != JBConstants.MAX_RESERVED_RATE) {
             // The unreserved number of tokens that will be minted to the beneficiary.
