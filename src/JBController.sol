@@ -779,7 +779,14 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
 
                     // Process.
                     split.hook.process(
-                        JBSplitHookContext(address(token), tokenCount, token.decimals(), projectId, groupId, split)
+                        JBSplitHookContext({
+                            token: address(token),
+                            amount: tokenCount,
+                            decimals: token.decimals(),
+                            projectId: projectId,
+                            groupId: groupId,
+                            split: split
+                        })
                     );
                 }
 

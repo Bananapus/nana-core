@@ -662,7 +662,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                 amount: netPayoutAmount,
                 decimals: _accountingContextForTokenOf[projectId][token].decimals,
                 projectId: projectId,
-                group: uint256(uint160(token)),
+                groupId: uint256(uint160(token)),
                 split: split
             });
 
