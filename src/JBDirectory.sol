@@ -158,7 +158,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
     /// @param controller The address of the new controller to set for the project.
     function setControllerOf(uint256 projectId, IERC165 controller) external override {
         // Enforce permissions.
-        _requirePermissionAllowingOverrideBy({
+        _requirePermissionAllowingOverrideFrom({
             account: PROJECTS.ownerOf(projectId),
             projectId: projectId,
             permissionId: JBPermissionIds.SET_CONTROLLER,
@@ -198,7 +198,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
     /// @param terminals An array of terminal addresses to set for the project.
     function setTerminalsOf(uint256 projectId, IJBTerminal[] calldata terminals) external override {
         // Enforce permissions.
-        _requirePermissionAllowingOverrideBy({
+        _requirePermissionAllowingOverrideFrom({
             account: PROJECTS.ownerOf(projectId),
             projectId: projectId,
             permissionId: JBPermissionIds.SET_TERMINALS,
@@ -244,7 +244,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
     /// @param terminal The terminal to make the primary terminal for the project and token.
     function setPrimaryTerminalOf(uint256 projectId, address token, IJBTerminal terminal) external override {
         // Enforce permissions.
-        _requirePermissionBy({
+        _requirePermissionFrom({
             account: PROJECTS.ownerOf(projectId),
             projectId: projectId,
             permissionId: JBPermissionIds.SET_PRIMARY_TERMINAL
