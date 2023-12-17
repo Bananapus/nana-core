@@ -113,7 +113,7 @@ contract TestPayHooks_Local is TestBaseWorkflow {
             _payloads[i] = JBPayHookPayload(IJBPayHook(_hookAddress), _payHookAmounts[i], _hookMetadata);
 
             // Keep a reference to the data that'll be received by the hook.
-            JBDidPayData memory _didPayData = JBDidPayData({
+            JBDidPayContext memory _didPayContext = JBDidPayContext({
                 payer: _payer,
                 projectId: _projectId,
                 rulesetId: _ruleset.id,
@@ -137,16 +137,16 @@ contract TestPayHooks_Local is TestBaseWorkflow {
             });
 
             // Mock the hook.
-            vm.mockCall(_hookAddress, abi.encodeWithSelector(IJBPayHook.didPay.selector), abi.encode(_didPayData));
+            vm.mockCall(_hookAddress, abi.encodeWithSelector(IJBPayHook.didPay.selector), abi.encode(_didPayContext));
 
             // Assert that the hook gets called with the expected value.
             vm.expectCall(
-                _hookAddress, _payHookAmounts[i], abi.encodeWithSelector(IJBPayHook.didPay.selector, _didPayData)
+                _hookAddress, _payHookAmounts[i], abi.encodeWithSelector(IJBPayHook.didPay.selector, _didPayContext)
             );
 
             // Expect an event to be emitted for every hook.
             vm.expectEmit(true, true, true, true);
-            emit HookDidPay(IJBPayHook(_hookAddress), _didPayData, _payHookAmounts[i], _payer);
+            emit HookDidPay(IJBPayHook(_hookAddress), _didPayContext, _payHookAmounts[i], _payer);
         }
 
         vm.mockCall(
@@ -170,5 +170,5 @@ contract TestPayHooks_Local is TestBaseWorkflow {
         });
     }
 
-    event HookDidPay(IJBPayHook indexed hook, JBDidPayData data, uint256 hookdAmount, address caller);
+    event HookDidPay(IJBPayHook indexed hook, JBDidPayContext data, uint256 hookdAmount, address caller);
 }

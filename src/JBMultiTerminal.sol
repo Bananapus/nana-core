@@ -26,8 +26,8 @@ import {JBFees} from "./libraries/JBFees.sol";
 import {JBRulesetMetadataResolver} from "./libraries/JBRulesetMetadataResolver.sol";
 import {JBMetadataResolver} from "./libraries/JBMetadataResolver.sol";
 import {JBPermissionIds} from "./libraries/JBPermissionIds.sol";
-import {JBDidRedeemData} from "./structs/JBDidRedeemData.sol";
-import {JBDidPayData} from "./structs/JBDidPayData.sol";
+import {JBDidRedeemContext} from "./structs/JBDidRedeemContext.sol";
+import {JBDidPayContext} from "./structs/JBDidPayContext.sol";
 import {JBFee} from "./structs/JBFee.sol";
 import {JBRuleset} from "./structs/JBRuleset.sol";
 import {JBPayHookPayload} from "./structs/JBPayHookPayload.sol";
@@ -1370,7 +1370,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         private
     {
         // The accounting context.
-        JBDidPayData memory data = JBDidPayData({
+        JBDidPayContext memory context = JBDidPayContext({
             payer: payer,
             projectId: projectId,
             rulesetId: ruleset.id,
@@ -1395,7 +1395,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             payload = payloads[i];
 
             // Pass the correct token `forwardedAmount` to the hook.
-            data.forwardedAmount = JBTokenAmount({
+            context.forwardedAmount = JBTokenAmount({
                 value: payload.amount,
                 token: tokenAmount.token,
                 decimals: tokenAmount.decimals,
@@ -1403,7 +1403,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             });
 
             // Pass the correct metadata from the data hook.
-            data.hookMetadata = payload.metadata;
+            context.hookMetadata = payload.metadata;
 
             // Trigger any inherited pre-transfer logic.
             _beforeTransferTo({to: address(payload.hook), token: tokenAmount.token, amount: payload.amount});
@@ -1412,9 +1412,9 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             uint256 payValue = tokenAmount.token == JBConstants.NATIVE_TOKEN ? payload.amount : 0;
 
             // Fulfill the payload.
-            payload.hook.didPay{value: payValue}(data);
+            payload.hook.didPay{value: payValue}(context);
 
-            emit HookDidPay(payload.hook, data, payload.amount, _msgSender());
+            emit HookDidPay(payload.hook, context, payload.amount, _msgSender());
         }
     }
 
@@ -1446,7 +1446,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         returns (uint256 amountEligibleForFees)
     {
         // Keep a reference to the data that'll get send to redeem hooks.
-        JBDidRedeemData memory data = JBDidRedeemData({
+        JBDidRedeemContext memory context = JBDidRedeemContext({
             holder: holder,
             projectId: projectId,
             rulesetId: ruleset.id,
@@ -1482,7 +1482,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             }
 
             // Pass the correct token `forwardedAmount` to the hook.
-            data.forwardedAmount = JBTokenAmount({
+            context.forwardedAmount = JBTokenAmount({
                 value: payload.amount,
                 token: beneficiaryReclaimAmount.token,
                 decimals: beneficiaryReclaimAmount.decimals,
@@ -1490,15 +1490,15 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             });
 
             // Pass the correct metadata from the data hook.
-            data.hookMetadata = payload.metadata;
+            context.hookMetadata = payload.metadata;
 
             // Keep a reference to the amount that'll be paid as a `msg.value`.
             uint256 payValue = beneficiaryReclaimAmount.token == JBConstants.NATIVE_TOKEN ? payload.amount : 0;
 
             // Fulfill the payload.
-            payload.hook.didRedeem{value: payValue}(data);
+            payload.hook.didRedeem{value: payValue}(context);
 
-            emit HookDidRedeem(payload.hook, data, payload.amount, payloadAmountFee, _msgSender());
+            emit HookDidRedeem(payload.hook, context, payload.amount, payloadAmountFee, _msgSender());
         }
     }
 

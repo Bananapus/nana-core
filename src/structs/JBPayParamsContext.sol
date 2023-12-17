@@ -16,7 +16,7 @@ import {JBTokenAmount} from "./JBTokenAmount.sol";
 /// @custom:member weight The weight of the ruleset during which the payment is being made.
 /// @custom:member reservedRate The reserved rate of the ruleset during which the payment is being made.
 /// @custom:member metadata Extra data specified by the payer.
-struct JBPayParamsData {
+struct JBPayParamsContext {
     address terminal;
     address payer;
     JBTokenAmount amount;

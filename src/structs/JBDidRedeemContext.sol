@@ -15,7 +15,7 @@ import {JBTokenAmount} from "./JBTokenAmount.sol";
 /// @custom:member beneficiary The address the reclaimed amount will be sent to.
 /// @custom:member hookMetadata Extra data specified by the data hook, which is sent to the redeem hook.
 /// @custom:member redeemerMetadata Extra data specified by the redeemer, which is sent to the redeem hook.
-struct JBDidRedeemData {
+struct JBDidRedeemContext {
     address holder;
     uint256 projectId;
     uint256 rulesetId;

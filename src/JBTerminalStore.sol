@@ -17,8 +17,8 @@ import {JBCurrencyAmount} from "./structs/JBCurrencyAmount.sol";
 import {JBRulesetMetadataResolver} from "./libraries/JBRulesetMetadataResolver.sol";
 import {JBRuleset} from "./structs/JBRuleset.sol";
 import {JBPayHookPayload} from "./structs/JBPayHookPayload.sol";
-import {JBPayParamsData} from "./structs/JBPayParamsData.sol";
-import {JBRedeemParamsData} from "./structs/JBRedeemParamsData.sol";
+import {JBPayParamsContext} from "./structs/JBPayParamsContext.sol";
+import {JBRedeemParamsContext} from "./structs/JBRedeemParamsContext.sol";
 import {JBRedeemHookPayload} from "./structs/JBRedeemHookPayload.sol";
 import {JBAccountingContext} from "./structs/JBAccountingContext.sol";
 import {JBTokenAmount} from "./structs/JBTokenAmount.sol";
@@ -318,7 +318,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
         // If the ruleset has a data hook enabled for payments, use it to derive a weight and memo.
         if (ruleset.useDataHookForPay() && ruleset.dataHook() != address(0)) {
             // Create the params that'll be sent to the data hook.
-            JBPayParamsData memory data = JBPayParamsData({
+            JBPayParamsContext memory context = JBPayParamsContext({
                 terminal: msg.sender,
                 payer: payer,
                 amount: amount,
@@ -330,7 +330,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
                 metadata: metadata
             });
 
-            (weight, hookPayloads) = IJBRulesetDataHook(ruleset.dataHook()).payParams(data);
+            (weight, hookPayloads) = IJBRulesetDataHook(ruleset.dataHook()).payParams(context);
         }
         // Otherwise use the ruleset's weight
         else {
@@ -473,7 +473,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
         // If the ruleset has a data hook which is enabled for redemptions, use it to derive a claim amount and memo.
         if (ruleset.useDataHookForRedeem() && ruleset.dataHook() != address(0)) {
             // Create the params that'll be sent to the data hook.
-            JBRedeemParamsData memory data = JBRedeemParamsData({
+            JBRedeemParamsContext memory context = JBRedeemParamsContext({
                 terminal: msg.sender,
                 holder: holder,
                 projectId: projectId,
@@ -486,7 +486,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
                 redemptionRate: ruleset.redemptionRate(),
                 metadata: metadata
             });
-            (reclaimAmount, hookPayloads) = IJBRulesetDataHook(ruleset.dataHook()).redeemParams(data);
+            (reclaimAmount, hookPayloads) = IJBRulesetDataHook(ruleset.dataHook()).redeemParams(context);
         }
 
         // Keep a reference to the amount that should be subtracted from the project's balance.
