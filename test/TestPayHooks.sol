@@ -73,9 +73,9 @@ contract TestPayHooks_Local is TestBaseWorkflow {
     }
 
     function testPayHooks(uint256 _numberOfSpecifications, uint256 _nativePayAmount) public {
-        // Bound the number of allocations to a reasonable amount.
+        // Bound the number of specifications to a reasonable amount.
         _numberOfSpecifications = bound(_numberOfSpecifications, 1, 20);
-        // Make sure the amount of tokens generated fits in a register, and that each payload can get some.
+        // Make sure the amount of tokens generated fits in a register, and that each specification can get some.
         _nativePayAmount = bound(_nativePayAmount, _numberOfSpecifications, type(uint256).max / _DATA_HOOK_WEIGHT);
 
         // epa * weight / epad < max*epad/weight
@@ -83,7 +83,7 @@ contract TestPayHooks_Local is TestBaseWorkflow {
         // Keep a reference to the specifications.
         JBPayHookSpecification[] memory _specifications = new JBPayHookSpecification[](_numberOfSpecifications);
 
-        // Keep a reference to the the payload amounts.
+        // Keep a reference to the amounts in the specifications.
         uint256[] memory _payHookAmounts = new uint256[](_numberOfSpecifications);
 
         // Keep a reference to the amount that'll be paid and sent to pay hooks.
@@ -101,7 +101,7 @@ contract TestPayHooks_Local is TestBaseWorkflow {
         // Keep a reference to the current ruleset.
         (JBRuleset memory _ruleset,) = _controller.currentRulesetOf(_projectId);
 
-        // Iterate through each payload.
+        // Iterate through each specification.
         for (uint256 i = 0; i < _numberOfSpecifications; i++) {
             // Make up an address for the hook.
             address _hookAddress = address(bytes20(keccak256(abi.encodePacked("PayHook", i))));
@@ -109,7 +109,7 @@ contract TestPayHooks_Local is TestBaseWorkflow {
             // Send along some metadata to the pay hook.
             bytes memory _hookMetadata = bytes("Some data hook metadata");
 
-            // Package up the hook payload struct.
+            // Package up the specification struct.
             _specifications[i] = JBPayHookSpecification(IJBPayHook(_hookAddress), _payHookAmounts[i], _hookMetadata);
 
             // Keep a reference to the data that'll be received by the hook.
@@ -170,5 +170,5 @@ contract TestPayHooks_Local is TestBaseWorkflow {
         });
     }
 
-    event HookDidPay(IJBPayHook indexed hook, JBDidPayContext data, uint256 hookdAmount, address caller);
+    event HookDidPay(IJBPayHook indexed hook, JBDidPayContext context, uint256 specificationAmount, address caller);
 }

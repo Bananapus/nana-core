@@ -20,7 +20,7 @@ interface IJBRedeemTerminal is IJBTerminal {
     );
 
     event HookDidRedeem(
-        IJBRedeemHook indexed hook, JBDidRedeemContext data, uint256 payloadAmount, uint256 fee, address caller
+        IJBRedeemHook indexed hook, JBDidRedeemContext context, uint256 specificationAmount, uint256 fee, address caller
     );
 
     function redeemTokensOf(

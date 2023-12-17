@@ -9,6 +9,6 @@ import {JBDidPayContext} from "./../structs/JBDidPayContext.sol";
 interface IJBPayHook is IERC165 {
     /// @notice This function is called by the terminal's `pay(...)` function after the execution of its logic.
     /// @dev Critical business logic should be protected by appropriate access control.
-    /// @param context the context passed by the terminal, as a `JBDidPayContext` struct.
+    /// @param context The context passed in by the terminal, as a `JBDidPayContext` struct.
     function didPay(JBDidPayContext calldata context) external payable;
 }

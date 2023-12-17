@@ -34,7 +34,7 @@ interface IJBTerminal is IERC165 {
         address caller
     );
 
-    event HookDidPay(IJBPayHook indexed hook, JBDidPayContext data, uint256 payloadAmount, address caller);
+    event HookDidPay(IJBPayHook indexed hook, JBDidPayContext context, uint256 specificationAmount, address caller);
 
     function accountingContextForTokenOf(
         uint256 projectId,

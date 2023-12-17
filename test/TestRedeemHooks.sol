@@ -123,12 +123,13 @@ contract TestRedeemHooks_Local is TestBaseWorkflow {
             _nativeTerminalBalance
         );
 
-        // Reference payloads.
-        JBRedeemHookSpecification[] memory _payloads = new JBRedeemHookSpecification[](1);
+        // Reference redeem hook specifications.
+        JBRedeemHookSpecification[] memory _specifications = new JBRedeemHookSpecification[](1);
 
-        _payloads[0] = JBRedeemHookSpecification({hook: IJBRedeemHook(_redeemHook), amount: _halfPaid, metadata: ""});
+        _specifications[0] =
+            JBRedeemHookSpecification({hook: IJBRedeemHook(_redeemHook), amount: _halfPaid, metadata: ""});
 
-        // Redeem Data.
+        // Redeem context.
         JBDidRedeemContext memory _redeemContext = JBDidRedeemContext({
             holder: address(this),
             projectId: _projectId,
@@ -161,7 +162,7 @@ contract TestRedeemHooks_Local is TestBaseWorkflow {
         vm.mockCall(
             _DATA_HOOK,
             abi.encodeWithSelector(IJBRulesetDataHook.redeemParamsOf.selector),
-            abi.encode(_halfPaid, _payloads)
+            abi.encode(_halfPaid, _specifications)
         );
 
         _terminal.redeemTokensOf({
