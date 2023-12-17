@@ -33,7 +33,7 @@ import {JBRulesetMetadata} from "./structs/JBRulesetMetadata.sol";
 import {JBTerminalConfig} from "./structs/JBTerminalConfig.sol";
 import {JBSplit} from "./structs/JBSplit.sol";
 import {JBSplitGroup} from "./structs/JBSplitGroup.sol";
-import {JBSplitHookPayload} from "./structs/JBSplitHookPayload.sol";
+import {JBSplitHookContext} from "./structs/JBSplitHookContext.sol";
 
 /// @notice Stitches together rulesets and project tokens, making sure all activity is accounted for and correct.
 contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, IJBMigratable {
@@ -779,7 +779,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
 
                     // Process.
                     split.hook.process(
-                        JBSplitHookPayload(address(token), tokenCount, token.decimals(), projectId, groupId, split)
+                        JBSplitHookContext(address(token), tokenCount, token.decimals(), projectId, groupId, split)
                     );
                 }
 

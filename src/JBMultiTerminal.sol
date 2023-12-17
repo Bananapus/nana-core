@@ -30,11 +30,11 @@ import {JBDidRedeemContext} from "./structs/JBDidRedeemContext.sol";
 import {JBDidPayContext} from "./structs/JBDidPayContext.sol";
 import {JBFee} from "./structs/JBFee.sol";
 import {JBRuleset} from "./structs/JBRuleset.sol";
-import {JBPayHookPayload} from "./structs/JBPayHookPayload.sol";
-import {JBRedeemHookPayload} from "./structs/JBRedeemHookPayload.sol";
-import {JBSingleAllowanceData} from "./structs/JBSingleAllowanceData.sol";
+import {JBPayHookSpecification} from "./structs/JBPayHookSpecification.sol";
+import {JBRedeemHookSpecification} from "./structs/JBRedeemHookSpecification.sol";
+import {JBSingleAllowanceContext} from "./structs/JBSingleAllowanceContext.sol";
 import {JBSplit} from "./structs/JBSplit.sol";
-import {JBSplitHookPayload} from "./structs/JBSplitHookPayload.sol";
+import {JBSplitHookContext} from "./structs/JBSplitHookContext.sol";
 import {JBAccountingContext} from "./structs/JBAccountingContext.sol";
 import {JBAccountingContextConfig} from "./structs/JBAccountingContextConfig.sol";
 import {JBTokenAmount} from "./structs/JBTokenAmount.sol";
@@ -657,7 +657,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             }
 
             // Create the payload to send to the split hook.
-            JBSplitHookPayload memory payload = JBSplitHookPayload({
+            JBSplitHookContext memory payload = JBSplitHookContext({
                 token: token,
                 amount: netPayoutAmount,
                 decimals: _accountingContextForTokenOf[projectId][token].decimals,
@@ -840,7 +840,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // Check if the metadata contains permit data.
         if (exists) {
             // Keep a reference to the allowance context parsed from the metadata.
-            (JBSingleAllowanceData memory allowance) = abi.decode(parsedMetadata, (JBSingleAllowanceData));
+            (JBSingleAllowanceContext memory allowance) = abi.decode(parsedMetadata, (JBSingleAllowanceContext));
 
             // Make sure the permit allowance is enough for this payment. If not we revert early.
             if (allowance.amount < amount) {
@@ -903,7 +903,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         JBRuleset memory ruleset;
 
         // Keep a reference to the hook payloads.
-        JBPayHookPayload[] memory hookPayloads;
+        JBPayHookSpecification[] memory hookPayloadSpecifications;
 
         // Keep a reference to the token count that'll be minted as a result of the payment.
         uint256 tokenCount;
@@ -921,7 +921,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         }
 
         // Record the payment.
-        (ruleset, tokenCount, hookPayloads) = STORE.recordPaymentFrom({
+        (ruleset, tokenCount, hookPayloadSpecifications) = STORE.recordPaymentFrom({
             payer: payer,
             amount: tokenAmount,
             projectId: projectId,
@@ -943,9 +943,16 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         }
 
         // If hook payloads were specified by the data hook, fulfill them.
-        if (hookPayloads.length != 0) {
+        if (hookPayloadSpecifications.length != 0) {
             _fulfillPayHookPayloadsFor(
-                projectId, hookPayloads, tokenAmount, payer, ruleset, beneficiary, beneficiaryTokenCount, metadata
+                projectId,
+                hookPayloadSpecifications,
+                tokenAmount,
+                payer,
+                ruleset,
+                beneficiary,
+                beneficiaryTokenCount,
+                metadata
             );
         }
 
@@ -1018,11 +1025,11 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // Keep a reference to the ruleset the redemption is being made during.
         JBRuleset memory ruleset;
 
-        // Keep a reference to the hook payloads.
-        JBRedeemHookPayload[] memory hookPayloads;
+        // Keep a reference to the hook specifications.
+        JBRedeemHookSpecification[] memory hookSpecifications;
 
         // Record the redemption.
-        (ruleset, reclaimAmount, hookPayloads) = STORE.recordRedemptionFor({
+        (ruleset, reclaimAmount, hookSpecifications) = STORE.recordRedemptionFor({
             holder: holder,
             projectId: projectId,
             accountingContext: _accountingContextForTokenOf[projectId][tokenToReclaim],
@@ -1049,20 +1056,20 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // Keep a reference to the amount being reclaimed which fees should be exercised on.
         uint256 amountEligibleForFees;
 
-        // If hook payloads were specified by the data hook, fulfill them.
-        if (hookPayloads.length != 0) {
+        // If hook specifications were specified by the data hook, fulfill them.
+        if (hookSpecifications.length != 0) {
             // Get a reference to the token's accounting context.
             JBAccountingContext memory context = _accountingContextForTokenOf[projectId][tokenToReclaim];
 
             // Fulfill the redeem hooks.
-            amountEligibleForFees += _fulfillRedemptionHookPayloadsFor({
+            amountEligibleForFees += _fulfillRedemptionHookSpecificationsFor({
                 projectId: projectId,
                 holder: holder,
                 redeemCount: redeemCount,
                 ruleset: ruleset,
                 beneficiary: beneficiary,
                 beneficiaryReclaimAmount: JBTokenAmount(tokenToReclaim, reclaimAmount, context.decimals, context.currency),
-                payloads: hookPayloads,
+                specifications: hookSpecifications,
                 takesFee: takesFee,
                 metadata: metadata
             });
@@ -1350,7 +1357,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
     /// @notice Fulfills a list of pay hook payloads.
     /// @param projectId The ID of the project being paid and forwarding payloads to pay hooks.
-    /// @param payloads The payloads being fulfilled.
+    /// @param specifications The specifications of the pay hooks being fulfilled.
     /// @param tokenAmount The amount of tokens that the project was paid.
     /// @param payer The address that sent the payment.
     /// @param ruleset The ruleset the payment is being accepted during.
@@ -1359,7 +1366,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @param metadata Bytes to send along to the emitted event, as well as the data hook and pay hook if applicable.
     function _fulfillPayHookPayloadsFor(
         uint256 projectId,
-        JBPayHookPayload[] memory payloads,
+        JBPayHookSpecification[] memory specifications,
         JBTokenAmount memory tokenAmount,
         address payer,
         JBRuleset memory ruleset,
@@ -1384,37 +1391,37 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         });
 
         // Keep a reference to the number of payloads to iterate through.
-        uint256 numberOfPayloads = payloads.length;
+        uint256 numberOfSpecifications = specifications.length;
 
         // Keep a reference to the payload being iterated on.
-        JBPayHookPayload memory payload;
+        JBPayHookSpecification memory specification;
 
         // Fulfill each payload.
-        for (uint256 i; i < numberOfPayloads; i++) {
+        for (uint256 i; i < numberOfSpecifications; i++) {
             // Set the payload being iterated on.
-            payload = payloads[i];
+            specification = specifications[i];
 
             // Pass the correct token `forwardedAmount` to the hook.
             context.forwardedAmount = JBTokenAmount({
-                value: payload.amount,
+                value: specification.amount,
                 token: tokenAmount.token,
                 decimals: tokenAmount.decimals,
                 currency: tokenAmount.currency
             });
 
             // Pass the correct metadata from the data hook.
-            context.hookMetadata = payload.metadata;
+            context.hookMetadata = specification.metadata;
 
             // Trigger any inherited pre-transfer logic.
-            _beforeTransferTo({to: address(payload.hook), token: tokenAmount.token, amount: payload.amount});
+            _beforeTransferTo({to: address(specification.hook), token: tokenAmount.token, amount: specification.amount});
 
             // Keep a reference to the amount that'll be paid as a `msg.value`.
-            uint256 payValue = tokenAmount.token == JBConstants.NATIVE_TOKEN ? payload.amount : 0;
+            uint256 payValue = tokenAmount.token == JBConstants.NATIVE_TOKEN ? specification.amount : 0;
 
             // Fulfill the payload.
-            payload.hook.didPay{value: payValue}(context);
+            specification.hook.didPay{value: payValue}(context);
 
-            emit HookDidPay(payload.hook, context, payload.amount, _msgSender());
+            emit HookDidPay(specification.hook, context, specification.amount, _msgSender());
         }
     }
 
@@ -1427,11 +1434,11 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// applicable.
     /// @param ruleset The ruleset the redemption is being made during as a `JBRuleset` struct.
     /// @param beneficiary The address receiving any terminal tokens that are reclaimed by this redemption.
-    /// @param payloads The payloads being fulfilled.
+    /// @param specifications The hook specifications being fulfilled.
     /// @param takesFee A flag indicating if a fee should be taken from the amount sent to hooks.
     /// @return amountEligibleForFees The amount of funds which were allocated to redeem hooks and are eligible for
     /// fees.
-    function _fulfillRedemptionHookPayloadsFor(
+    function _fulfillRedemptionHookSpecificationsFor(
         uint256 projectId,
         JBTokenAmount memory beneficiaryReclaimAmount,
         address holder,
@@ -1439,7 +1446,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         bytes memory metadata,
         JBRuleset memory ruleset,
         address payable beneficiary,
-        JBRedeemHookPayload[] memory payloads,
+        JBRedeemHookSpecification[] memory specifications,
         bool takesFee
     )
         private
@@ -1459,46 +1466,50 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             redeemerMetadata: metadata
         });
 
-        // Keep a reference to the number of payloads being iterated through.
-        uint256 numberOfPayloads = payloads.length;
+        // Keep a reference to the number of specifications being iterated through.
+        uint256 numberOfSpecifications = specifications.length;
 
         // Keep a reference to the payload being iterated on.
-        JBRedeemHookPayload memory payload;
+        JBRedeemHookSpecification memory specification;
 
-        for (uint256 i; i < numberOfPayloads; i++) {
-            // Set the payload being iterated on.
-            payload = payloads[i];
+        for (uint256 i; i < numberOfSpecifications; i++) {
+            // Set the specification being iterated on.
+            specification = specifications[i];
 
             // Trigger any inherited pre-transfer logic.
-            _beforeTransferTo({to: address(payload.hook), token: beneficiaryReclaimAmount.token, amount: payload.amount});
+            _beforeTransferTo({
+                to: address(specification.hook),
+                token: beneficiaryReclaimAmount.token,
+                amount: specification.amount
+            });
 
-            // Get the fee for the payload amount.
-            uint256 payloadAmountFee = takesFee ? JBFees.feeAmountIn(payload.amount, FEE) : 0;
+            // Get the fee for the specied amount.
+            uint256 specificationAmountFee = takesFee ? JBFees.feeAmountIn(specification.amount, FEE) : 0;
 
-            // Add the payload's amount to the amount eligible for having a fee taken.
-            if (payloadAmountFee != 0) {
-                amountEligibleForFees += payload.amount;
-                payload.amount -= payloadAmountFee;
+            // Add the specification's amount to the amount eligible for having a fee taken.
+            if (specificationAmountFee != 0) {
+                amountEligibleForFees += specification.amount;
+                specification.amount -= specificationAmountFee;
             }
 
             // Pass the correct token `forwardedAmount` to the hook.
             context.forwardedAmount = JBTokenAmount({
-                value: payload.amount,
+                value: specification.amount,
                 token: beneficiaryReclaimAmount.token,
                 decimals: beneficiaryReclaimAmount.decimals,
                 currency: beneficiaryReclaimAmount.currency
             });
 
             // Pass the correct metadata from the data hook.
-            context.hookMetadata = payload.metadata;
+            context.hookMetadata = specification.metadata;
 
             // Keep a reference to the amount that'll be paid as a `msg.value`.
-            uint256 payValue = beneficiaryReclaimAmount.token == JBConstants.NATIVE_TOKEN ? payload.amount : 0;
+            uint256 payValue = beneficiaryReclaimAmount.token == JBConstants.NATIVE_TOKEN ? specification.amount : 0;
 
-            // Fulfill the payload.
-            payload.hook.didRedeem{value: payValue}(context);
+            // Fulfill the specification.
+            specification.hook.didRedeem{value: payValue}(context);
 
-            emit HookDidRedeem(payload.hook, context, payload.amount, payloadAmountFee, _msgSender());
+            emit HookDidRedeem(specification.hook, context, specification.amount, specificationAmountFee, _msgSender());
         }
     }
 

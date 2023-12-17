@@ -124,9 +124,9 @@ contract TestRedeemHooks_Local is TestBaseWorkflow {
         );
 
         // Reference payloads.
-        JBRedeemHookPayload[] memory _payloads = new JBRedeemHookPayload[](1);
+        JBRedeemHookSpecification[] memory _payloads = new JBRedeemHookSpecification[](1);
 
-        _payloads[0] = JBRedeemHookPayload({hook: IJBRedeemHook(_redeemHook), amount: _halfPaid, metadata: ""});
+        _payloads[0] = JBRedeemHookSpecification({hook: IJBRedeemHook(_redeemHook), amount: _halfPaid, metadata: ""});
 
         // Redeem Data.
         JBDidRedeemContext memory _redeemContext = JBDidRedeemContext({

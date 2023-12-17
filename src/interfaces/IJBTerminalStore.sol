@@ -2,8 +2,8 @@
 pragma solidity ^0.8.0;
 
 import {JBRuleset} from "./../structs/JBRuleset.sol";
-import {JBPayHookPayload} from "./../structs/JBPayHookPayload.sol";
-import {JBRedeemHookPayload} from "./../structs/JBRedeemHookPayload.sol";
+import {JBPayHookSpecification} from "./../structs/JBPayHookSpecification.sol";
+import {JBRedeemHookSpecification} from "./../structs/JBRedeemHookSpecification.sol";
 import {JBAccountingContext} from "./../structs/JBAccountingContext.sol";
 import {JBTokenAmount} from "./../structs/JBTokenAmount.sol";
 import {IJBDirectory} from "./IJBDirectory.sol";
@@ -92,7 +92,7 @@ interface IJBTerminalStore {
         bytes calldata metadata
     )
         external
-        returns (JBRuleset memory ruleset, uint256 tokenCount, JBPayHookPayload[] memory hookPayloads);
+        returns (JBRuleset memory ruleset, uint256 tokenCount, JBPayHookSpecification[] memory hookSpecifications);
 
     function recordRedemptionFor(
         address holder,
@@ -103,7 +103,7 @@ interface IJBTerminalStore {
         bytes calldata metadata
     )
         external
-        returns (JBRuleset memory ruleset, uint256 reclaimAmount, JBRedeemHookPayload[] memory hookPayloads);
+        returns (JBRuleset memory ruleset, uint256 reclaimAmount, JBRedeemHookSpecification[] memory hookSpecifications);
 
     function recordPayoutFor(
         uint256 projectId,
