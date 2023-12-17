@@ -113,7 +113,7 @@ contract TestPayHooks_Local is TestBaseWorkflow {
             _specifications[i] = JBPayHookSpecification(IJBPayHook(_hookAddress), _payHookAmounts[i], _hookMetadata);
 
             // Keep a reference to the data that'll be received by the hook.
-            JBDidPayContext memory _didPayContext = JBDidPayContext({
+            JBAfterPayContext memory _afterPayContext = JBAfterPayContext({
                 payer: _payer,
                 projectId: _projectId,
                 rulesetId: _ruleset.id,
@@ -137,21 +137,23 @@ contract TestPayHooks_Local is TestBaseWorkflow {
             });
 
             // Mock the hook.
-            vm.mockCall(_hookAddress, abi.encodeWithSelector(IJBPayHook.didPay.selector), abi.encode(_didPayContext));
+            vm.mockCall(
+                _hookAddress, abi.encodeWithSelector(IJBPayHook.afterPay.selector), abi.encode(_afterPayContext)
+            );
 
             // Assert that the hook gets called with the expected value.
             vm.expectCall(
-                _hookAddress, _payHookAmounts[i], abi.encodeWithSelector(IJBPayHook.didPay.selector, _didPayContext)
+                _hookAddress, _payHookAmounts[i], abi.encodeWithSelector(IJBPayHook.afterPay.selector, _afterPayContext)
             );
 
             // Expect an event to be emitted for every hook.
             vm.expectEmit(true, true, true, true);
-            emit HookDidPay(IJBPayHook(_hookAddress), _didPayContext, _payHookAmounts[i], _payer);
+            emit HookAfterPay(IJBPayHook(_hookAddress), _afterPayContext, _payHookAmounts[i], _payer);
         }
 
         vm.mockCall(
             _DATA_HOOK,
-            abi.encodeWithSelector(IJBRulesetDataHook.payParamsOf.selector),
+            abi.encodeWithSelector(IJBRulesetDataHook.beforePay.selector),
             abi.encode(_DATA_HOOK_WEIGHT, _specifications)
         );
 
@@ -170,5 +172,5 @@ contract TestPayHooks_Local is TestBaseWorkflow {
         });
     }
 
-    event HookDidPay(IJBPayHook indexed hook, JBDidPayContext context, uint256 specificationAmount, address caller);
+    event HookAfterPay(IJBPayHook indexed hook, JBAfterPayContext context, uint256 specificationAmount, address caller);
 }

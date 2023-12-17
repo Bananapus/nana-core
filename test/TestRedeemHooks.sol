@@ -130,7 +130,7 @@ contract TestRedeemHooks_Local is TestBaseWorkflow {
             JBRedeemHookSpecification({hook: IJBRedeemHook(_redeemHook), amount: _halfPaid, metadata: ""});
 
         // Redeem context.
-        JBDidRedeemContext memory _redeemContext = JBDidRedeemContext({
+        JBAfterRedeemContext memory _redeemContext = JBAfterRedeemContext({
             holder: address(this),
             projectId: _projectId,
             rulesetId: _ruleset.id,
@@ -154,14 +154,16 @@ contract TestRedeemHooks_Local is TestBaseWorkflow {
         });
 
         // Mock the hook.
-        vm.mockCall(_redeemHook, abi.encodeWithSelector(IJBRedeemHook.didRedeem.selector), abi.encode(_redeemContext));
+        vm.mockCall(_redeemHook, abi.encodeWithSelector(IJBRedeemHook.afterRedeem.selector), abi.encode(_redeemContext));
 
         // Assert that the hook gets called with the expected value.
-        vm.expectCall(_redeemHook, _halfPaid, abi.encodeWithSelector(IJBRedeemHook.didRedeem.selector, _redeemContext));
+        vm.expectCall(
+            _redeemHook, _halfPaid, abi.encodeWithSelector(IJBRedeemHook.afterRedeem.selector, _redeemContext)
+        );
 
         vm.mockCall(
             _DATA_HOOK,
-            abi.encodeWithSelector(IJBRulesetDataHook.redeemParamsOf.selector),
+            abi.encodeWithSelector(IJBRulesetDataHook.beforeRedeem.selector),
             abi.encode(_halfPaid, _specifications)
         );
 

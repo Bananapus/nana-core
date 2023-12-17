@@ -26,8 +26,8 @@ import {JBFees} from "./libraries/JBFees.sol";
 import {JBRulesetMetadataResolver} from "./libraries/JBRulesetMetadataResolver.sol";
 import {JBMetadataResolver} from "./libraries/JBMetadataResolver.sol";
 import {JBPermissionIds} from "./libraries/JBPermissionIds.sol";
-import {JBDidRedeemContext} from "./structs/JBDidRedeemContext.sol";
-import {JBDidPayContext} from "./structs/JBDidPayContext.sol";
+import {JBAfterRedeemContext} from "./structs/JBAfterRedeemContext.sol";
+import {JBAfterPayContext} from "./structs/JBAfterPayContext.sol";
 import {JBFee} from "./structs/JBFee.sol";
 import {JBRuleset} from "./structs/JBRuleset.sol";
 import {JBPayHookSpecification} from "./structs/JBPayHookSpecification.sol";
@@ -1369,7 +1369,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         private
     {
         // Keep a reference to payment context for the pay hooks.
-        JBDidPayContext memory context = JBDidPayContext({
+        JBAfterPayContext memory context = JBAfterPayContext({
             payer: payer,
             projectId: projectId,
             rulesetId: ruleset.id,
@@ -1411,9 +1411,9 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             uint256 payValue = tokenAmount.token == JBConstants.NATIVE_TOKEN ? specification.amount : 0;
 
             // Fulfill the specification.
-            specification.hook.didPay{value: payValue}(context);
+            specification.hook.afterPay{value: payValue}(context);
 
-            emit HookDidPay(specification.hook, context, specification.amount, _msgSender());
+            emit HookAfterPay(specification.hook, context, specification.amount, _msgSender());
         }
     }
 
@@ -1444,7 +1444,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         returns (uint256 amountEligibleForFees)
     {
         // Keep a reference to redemption context for the redeem hooks.
-        JBDidRedeemContext memory context = JBDidRedeemContext({
+        JBAfterRedeemContext memory context = JBAfterRedeemContext({
             holder: holder,
             projectId: projectId,
             rulesetId: ruleset.id,
@@ -1498,9 +1498,11 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             uint256 payValue = beneficiaryReclaimAmount.token == JBConstants.NATIVE_TOKEN ? specification.amount : 0;
 
             // Fulfill the specification.
-            specification.hook.didRedeem{value: payValue}(context);
+            specification.hook.afterRedeem{value: payValue}(context);
 
-            emit HookDidRedeem(specification.hook, context, specification.amount, specificationAmountFee, _msgSender());
+            emit HookAfterRedeem(
+                specification.hook, context, specification.amount, specificationAmountFee, _msgSender()
+            );
         }
     }
 
