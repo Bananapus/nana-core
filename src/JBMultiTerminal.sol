@@ -899,7 +899,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         private
         returns (uint256 beneficiaryTokenCount)
     {
-        // Define variables that will be needed outside the scoped section below.
         // Keep a reference to the ruleset the payment is being made during.
         JBRuleset memory ruleset;
 

@@ -472,24 +472,21 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
 
         // If the ruleset has a data hook which is enabled for redemptions, use it to derive a claim amount and memo.
         if (ruleset.useDataHookForRedeem() && ruleset.dataHook() != address(0)) {
-            // Yet another scoped section prevents stack too deep. `data`  only used within scope.
-            {
-                // Create the params that'll be sent to the data hook.
-                JBRedeemParamsData memory data = JBRedeemParamsData({
-                    terminal: msg.sender,
-                    holder: holder,
-                    projectId: projectId,
-                    rulesetId: ruleset.id,
-                    redeemCount: redeemCount,
-                    totalSupply: totalSupply,
-                    surplus: currentSurplus,
-                    reclaimAmount: reclaimedTokenAmount,
-                    useTotalSurplus: ruleset.useTotalSurplusForRedemptions(),
-                    redemptionRate: ruleset.redemptionRate(),
-                    metadata: metadata
-                });
-                (reclaimAmount, hookPayloads) = IJBRulesetDataHook(ruleset.dataHook()).redeemParams(data);
-            }
+            // Create the params that'll be sent to the data hook.
+            JBRedeemParamsData memory data = JBRedeemParamsData({
+                terminal: msg.sender,
+                holder: holder,
+                projectId: projectId,
+                rulesetId: ruleset.id,
+                redeemCount: redeemCount,
+                totalSupply: totalSupply,
+                surplus: currentSurplus,
+                reclaimAmount: reclaimedTokenAmount,
+                useTotalSurplus: ruleset.useTotalSurplusForRedemptions(),
+                redemptionRate: ruleset.redemptionRate(),
+                metadata: metadata
+            });
+            (reclaimAmount, hookPayloads) = IJBRulesetDataHook(ruleset.dataHook()).redeemParams(data);
         }
 
         // Keep a reference to the amount that should be subtracted from the project's balance.
