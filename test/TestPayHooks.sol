@@ -28,9 +28,6 @@ contract TestPayHooks_Local is TestBaseWorkflow {
         _payer = address(1_234_567);
         _terminal = jbMultiTerminal();
 
-        JBRulesetData memory _data =
-            JBRulesetData({duration: 0, weight: _WEIGHT, decayRate: 0, hook: IJBRulesetApprovalHook(address(0))});
-
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedRate: 0,
             redemptionRate: 0,
@@ -53,7 +50,10 @@ contract TestPayHooks_Local is TestBaseWorkflow {
         // Package up ruleset configuration.
         JBRulesetConfig[] memory _rulesetConfig = new JBRulesetConfig[](1);
         _rulesetConfig[0].mustStartAtOrAfter = 0;
-        _rulesetConfig[0].data = _data;
+        _rulesetConfig[0].duration = 0;
+        _rulesetConfig[0].weight = _WEIGHT;
+        _rulesetConfig[0].decayRate = 0;
+        _rulesetConfig[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfig[0].metadata = _metadata;
         _rulesetConfig[0].splitGroups = new JBSplitGroup[](0);
         _rulesetConfig[0].fundAccessLimitGroups = new JBFundAccessLimitGroup[](0);

@@ -22,7 +22,8 @@ import {IJBRulesetApprovalHook} from "./../interfaces/IJBRulesetApprovalHook.sol
 /// a percentage out of `JBConstants.MAX_DECAY_RATE`. If it's 0, the next ruleset will have the same `weight` by
 /// default. If it's 90%, the next ruleset's `weight` will be 10% smaller. If a ruleset explicitly sets a new `weight`,
 /// the `decayRate` doesn't apply.
-/// @custom:member hook An address of a contract that says whether a queued ruleset should be approved or rejected. If a
+/// @custom:member approvalHook An address of a contract that says whether a queued ruleset should be approved or
+/// rejected. If a
 /// ruleset is rejected, it won't go into effect. An approval hook can be used to create rules which dictate how a
 /// project owner can change their ruleset over time.
 /// @custom:member metadata Extra data associated with a ruleset which can be used by other contracts.
@@ -34,6 +35,6 @@ struct JBRuleset {
     uint256 duration;
     uint256 weight;
     uint256 decayRate;
-    IJBRulesetApprovalHook hook;
+    IJBRulesetApprovalHook approvalHook;
     uint256 metadata;
 }

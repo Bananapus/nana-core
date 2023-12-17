@@ -9,7 +9,7 @@ contract TestPayBurnRedeemFlow_Local is TestBaseWorkflow {
     IJBController private _controller;
     IJBMultiTerminal private _terminal;
     JBTokens private _tokens;
-    JBRulesetData private _data;
+    uint256 private _weight;
     JBRulesetMetadata _metadata;
     uint256 private _projectId;
     address private _projectOwner;
@@ -23,7 +23,7 @@ contract TestPayBurnRedeemFlow_Local is TestBaseWorkflow {
         _controller = jbController();
         _terminal = jbMultiTerminal();
         _tokens = jbTokens();
-        _data = JBRulesetData({duration: 0, weight: 1000 * 10 ** 18, decayRate: 0, hook: JBDeadline(address(0))});
+        _weight = 1000 * 10 ** 18;
         _metadata = JBRulesetMetadata({
             reservedRate: 0,
             redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
@@ -49,7 +49,10 @@ contract TestPayBurnRedeemFlow_Local is TestBaseWorkflow {
         // Package up ruleset configuration.
         JBRulesetConfig[] memory _rulesetConfig = new JBRulesetConfig[](1);
         _rulesetConfig[0].mustStartAtOrAfter = 0;
-        _rulesetConfig[0].data = _data;
+        _rulesetConfig[0].duration = 0;
+        _rulesetConfig[0].weight = _weight;
+        _rulesetConfig[0].decayRate = 0;
+        _rulesetConfig[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfig[0].metadata = _metadata;
         _rulesetConfig[0].splitGroups = new JBSplitGroup[](0);
         _rulesetConfig[0].fundAccessLimitGroups = new JBFundAccessLimitGroup[](0);
@@ -102,7 +105,7 @@ contract TestPayBurnRedeemFlow_Local is TestBaseWorkflow {
 
         // Make sure the beneficiary has a balance of project tokens.
         uint256 _beneficiaryTokenBalance =
-            UD60x18unwrap(UD60x18mul(UD60x18wrap(_nativePayAmount), UD60x18wrap(_data.weight)));
+            UD60x18unwrap(UD60x18mul(UD60x18wrap(_nativePayAmount), UD60x18wrap(_weight)));
         assertEq(_tokens.totalBalanceOf(_beneficiary, _projectId), _beneficiaryTokenBalance);
 
         // Make sure the native token balance in terminal is up to date.

@@ -31,7 +31,6 @@ import {JBFee} from "src/structs/JBFee.sol";
 import {JBFees} from "src/libraries/JBFees.sol";
 import {JBFundAccessLimitGroup} from "src/structs/JBFundAccessLimitGroup.sol";
 import {JBRuleset} from "src/structs/JBRuleset.sol";
-import {JBRulesetData} from "src/structs/JBRulesetData.sol";
 import {JBRulesetMetadata} from "src/structs/JBRulesetMetadata.sol";
 import {JBRulesetConfig} from "src/structs/JBRulesetConfig.sol";
 import {JBSplitGroup} from "src/structs/JBSplitGroup.sol";

@@ -6,7 +6,6 @@ import /* {*} from */ "./helpers/TestBaseWorkflow.sol";
 // Projects can be launched.
 contract TestFees_Local is TestBaseWorkflow {
     IJBController private _controller;
-    JBRulesetData private _data;
     JBRulesetMetadata private _metadata;
     JBRulesetMetadata private _feeProjectMetadata;
     IJBMultiTerminal private _terminal;
@@ -31,8 +30,6 @@ contract TestFees_Local is TestBaseWorkflow {
         _rulesets = jbRulesets();
         _nativePayAmount = 2 ether;
         _nativeDistLimit = 1 ether;
-
-        _data = JBRulesetData({duration: 0, weight: 0, decayRate: 0, hook: IJBRulesetApprovalHook(address(0))});
 
         _metadata = JBRulesetMetadata({
             reservedRate: 0,
@@ -96,7 +93,10 @@ contract TestFees_Local is TestBaseWorkflow {
         // Package up ruleset configuration.
         JBRulesetConfig[] memory _rulesetConfig = new JBRulesetConfig[](1);
         _rulesetConfig[0].mustStartAtOrAfter = 0;
-        _rulesetConfig[0].data = _data;
+        _rulesetConfig[0].duration = 0;
+        _rulesetConfig[0].weight = 0;
+        _rulesetConfig[0].decayRate = 0;
+        _rulesetConfig[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfig[0].metadata = _metadata;
         _rulesetConfig[0].splitGroups = new JBSplitGroup[](0);
         _rulesetConfig[0].fundAccessLimitGroups = _fundAccessLimitGroup;
@@ -104,7 +104,10 @@ contract TestFees_Local is TestBaseWorkflow {
         // Package up ruleset configuration.
         JBRulesetConfig[] memory _feeProjectRuleset = new JBRulesetConfig[](1);
         _feeProjectRuleset[0].mustStartAtOrAfter = 0;
-        _feeProjectRuleset[0].data = _data;
+        _feeProjectRuleset[0].duration = 0;
+        _feeProjectRuleset[0].weight = 0;
+        _feeProjectRuleset[0].decayRate = 0;
+        _feeProjectRuleset[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _feeProjectRuleset[0].metadata = _feeProjectMetadata;
         _feeProjectRuleset[0].splitGroups = new JBSplitGroup[](0);
         _feeProjectRuleset[0].fundAccessLimitGroups = _fundAccessLimitGroup;

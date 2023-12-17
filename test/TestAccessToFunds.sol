@@ -30,7 +30,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
     MockERC20 private _usdcToken;
     uint256 private _projectId;
 
-    JBRulesetData private _data;
+    uint256 private _weight;
     JBRulesetMetadata private _metadata;
 
     function setUp() public override {
@@ -44,12 +44,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
         _prices = jbPrices();
         _terminal = jbMultiTerminal();
         _terminal2 = jbMultiTerminal2();
-        _data = JBRulesetData({
-            duration: 0,
-            weight: 1000 * 10 ** _WEIGHT_DECIMALS,
-            decayRate: 0,
-            hook: IJBRulesetApprovalHook(address(0))
-        });
+        _weight = 1000 * 10 ** _WEIGHT_DECIMALS;
 
         _metadata = JBRulesetMetadata({
             reservedRate: JBConstants.MAX_RESERVED_RATE / 2, //50%
@@ -106,7 +101,10 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             // Package up the ruleset configuration.
             JBRulesetConfig[] memory _rulesetConfigurations = new JBRulesetConfig[](1);
             _rulesetConfigurations[0].mustStartAtOrAfter = 0;
-            _rulesetConfigurations[0].data = _data;
+            _rulesetConfigurations[0].duration = 0;
+            _rulesetConfigurations[0].weight = _weight;
+            _rulesetConfigurations[0].decayRate = 0;
+            _rulesetConfigurations[0].approvalHook = IJBRulesetApprovalHook(address(0));
             _rulesetConfigurations[0].metadata = _metadata;
             _rulesetConfigurations[0].splitGroups = new JBSplitGroup[](0);
             _rulesetConfigurations[0].fundAccessLimitGroups = _fundAccessLimitGroup;
@@ -151,7 +149,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
         });
 
         // Make sure the beneficiary got the expected number of tokens.
-        uint256 _beneficiaryTokenBalance = mulDiv(_nativePayAmount, _data.weight, 10 ** _NATIVE_DECIMALS)
+        uint256 _beneficiaryTokenBalance = mulDiv(_nativePayAmount, _weight, 10 ** _NATIVE_DECIMALS)
             * _metadata.reservedRate / JBConstants.MAX_RESERVED_RATE;
         assertEq(_tokens.totalBalanceOf(_beneficiary, _projectId), _beneficiaryTokenBalance);
 
@@ -191,7 +189,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
         // Make sure the project owner got the expected number of tokens.
         assertEq(
             _tokens.totalBalanceOf(_projectOwner, _FEE_PROJECT_ID),
-            mulDiv(_nativeCurrencySurplusAllowance - _beneficiaryNativeBalance, _data.weight, 10 ** _NATIVE_DECIMALS)
+            mulDiv(_nativeCurrencySurplusAllowance - _beneficiaryNativeBalance, _weight, 10 ** _NATIVE_DECIMALS)
                 * _metadata.reservedRate / JBConstants.MAX_RESERVED_RATE
         );
 
@@ -225,7 +223,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             mulDiv(
                 (_nativeCurrencySurplusAllowance - _beneficiaryNativeBalance)
                     + (_nativeCurrencyPayoutLimit - _projectOwnerNativeBalance),
-                _data.weight,
+                _weight,
                 10 ** _NATIVE_DECIMALS
             ) * _metadata.reservedRate / JBConstants.MAX_RESERVED_RATE
         );
@@ -250,13 +248,13 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             mulDiv(
                 _nativePayAmount - _nativeCurrencySurplusAllowance - _nativeCurrencyPayoutLimit,
                 _beneficiaryTokenBalance,
-                mulDiv(_nativePayAmount, _data.weight, 10 ** _NATIVE_DECIMALS)
+                mulDiv(_nativePayAmount, _weight, 10 ** _NATIVE_DECIMALS)
             ),
             _metadata.redemptionRate
                 + mulDiv(
                     _beneficiaryTokenBalance,
                     JBConstants.MAX_REDEMPTION_RATE - _metadata.redemptionRate,
-                    mulDiv(_nativePayAmount, _data.weight, 10 ** _NATIVE_DECIMALS)
+                    mulDiv(_nativePayAmount, _weight, 10 ** _NATIVE_DECIMALS)
                 ),
             JBConstants.MAX_REDEMPTION_RATE
         );
@@ -281,8 +279,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
         // Make sure the project owner got the expected number of the fee project's tokens by paying the fee.
         assertEq(
             _tokens.totalBalanceOf(_beneficiary, _FEE_PROJECT_ID),
-            mulDiv(_feeAmount, _data.weight, 10 ** _NATIVE_DECIMALS) * _metadata.reservedRate
-                / JBConstants.MAX_RESERVED_RATE
+            mulDiv(_feeAmount, _weight, 10 ** _NATIVE_DECIMALS) * _metadata.reservedRate / JBConstants.MAX_RESERVED_RATE
         );
     }
 
@@ -333,7 +330,10 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             // Package up the ruleset configuration.
             JBRulesetConfig[] memory _rulesetConfigurations = new JBRulesetConfig[](1);
             _rulesetConfigurations[0].mustStartAtOrAfter = 0;
-            _rulesetConfigurations[0].data = _data;
+            _rulesetConfigurations[0].duration = 0;
+            _rulesetConfigurations[0].weight = _weight;
+            _rulesetConfigurations[0].decayRate = 0;
+            _rulesetConfigurations[0].approvalHook = IJBRulesetApprovalHook(address(0));
             _rulesetConfigurations[0].metadata = _metadata;
             _rulesetConfigurations[0].splitGroups = new JBSplitGroup[](0);
             _rulesetConfigurations[0].fundAccessLimitGroups = _fundAccessLimitGroup;
@@ -374,7 +374,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
         });
 
         // Make sure the beneficiary got the expected number of tokens.
-        uint256 _beneficiaryTokenBalance = mulDiv(_nativePayAmount, _data.weight, 10 ** _NATIVE_DECIMALS)
+        uint256 _beneficiaryTokenBalance = mulDiv(_nativePayAmount, _weight, 10 ** _NATIVE_DECIMALS)
             * _metadata.reservedRate / JBConstants.MAX_RESERVED_RATE;
         assertEq(_tokens.totalBalanceOf(_beneficiary, _projectId), _beneficiaryTokenBalance);
 
@@ -427,9 +427,8 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             // Make sure the beneficiary got the expected number of tokens.
             assertEq(
                 _tokens.totalBalanceOf(_projectOwner, _FEE_PROJECT_ID),
-                mulDiv(
-                    _nativeCurrencySurplusAllowance - _beneficiaryNativeBalance, _data.weight, 10 ** _NATIVE_DECIMALS
-                ) * _metadata.reservedRate / JBConstants.MAX_RESERVED_RATE
+                mulDiv(_nativeCurrencySurplusAllowance - _beneficiaryNativeBalance, _weight, 10 ** _NATIVE_DECIMALS)
+                    * _metadata.reservedRate / JBConstants.MAX_RESERVED_RATE
             );
         } else {
             // Set the native token surplus allowance to 0 if it wasn't used.
@@ -483,7 +482,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                 mulDiv(
                     (_nativeCurrencySurplusAllowance - _beneficiaryNativeBalance)
                         + (_nativeCurrencyPayoutLimit - _projectOwnerNativeBalance),
-                    _data.weight,
+                    _weight,
                     10 ** _NATIVE_DECIMALS
                 ) * _metadata.reservedRate / JBConstants.MAX_RESERVED_RATE
             );
@@ -511,13 +510,13 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                 mulDiv(
                     _nativePayAmount - _nativeCurrencySurplusAllowance - _nativeCurrencyPayoutLimit,
                     _beneficiaryTokenBalance,
-                    mulDiv(_nativePayAmount, _data.weight, 10 ** _NATIVE_DECIMALS)
+                    mulDiv(_nativePayAmount, _weight, 10 ** _NATIVE_DECIMALS)
                 ),
                 _metadata.redemptionRate
                     + mulDiv(
                         _beneficiaryTokenBalance,
                         JBConstants.MAX_REDEMPTION_RATE - _metadata.redemptionRate,
-                        mulDiv(_nativePayAmount, _data.weight, 10 ** _NATIVE_DECIMALS)
+                        mulDiv(_nativePayAmount, _weight, 10 ** _NATIVE_DECIMALS)
                     ),
                 JBConstants.MAX_REDEMPTION_RATE
             );
@@ -541,7 +540,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             // Make sure the project owner got the expected number of tokens from the fee.
             assertEq(
                 _tokens.totalBalanceOf(_beneficiary, _FEE_PROJECT_ID),
-                mulDiv(_feeAmount, _data.weight, 10 ** _NATIVE_DECIMALS) * _metadata.reservedRate
+                mulDiv(_feeAmount, _weight, 10 ** _NATIVE_DECIMALS) * _metadata.reservedRate
                     / JBConstants.MAX_RESERVED_RATE
             );
         }
@@ -611,7 +610,10 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             // Package up the ruleset configuration.
             JBRulesetConfig[] memory _rulesetConfigurations = new JBRulesetConfig[](1);
             _rulesetConfigurations[0].mustStartAtOrAfter = 0;
-            _rulesetConfigurations[0].data = _data;
+            _rulesetConfigurations[0].duration = 0;
+            _rulesetConfigurations[0].weight = _weight;
+            _rulesetConfigurations[0].decayRate = 0;
+            _rulesetConfigurations[0].approvalHook = IJBRulesetApprovalHook(address(0));
             _rulesetConfigurations[0].metadata = _metadata;
             _rulesetConfigurations[0].splitGroups = new JBSplitGroup[](0);
             _rulesetConfigurations[0].fundAccessLimitGroups = _fundAccessLimitGroup;
@@ -638,7 +640,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
         });
 
         // Make sure the beneficiary got the expected number of tokens.
-        uint256 _beneficiaryTokenBalance = mulDiv(_nativePayAmount, _data.weight, 10 ** _NATIVE_DECIMALS)
+        uint256 _beneficiaryTokenBalance = mulDiv(_nativePayAmount, _weight, 10 ** _NATIVE_DECIMALS)
             * _metadata.reservedRate / JBConstants.MAX_RESERVED_RATE;
         assertEq(_tokens.totalBalanceOf(_beneficiary, _projectId), _beneficiaryTokenBalance);
 
@@ -757,13 +759,13 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                 mulDiv(
                     _nativePayAmount - _beneficiaryNativeBalance - _projectOwnerNativeBalance,
                     _beneficiaryTokenBalance,
-                    mulDiv(_nativePayAmount, _data.weight, 10 ** _NATIVE_DECIMALS)
+                    mulDiv(_nativePayAmount, _weight, 10 ** _NATIVE_DECIMALS)
                 ),
                 _metadata.redemptionRate
                     + mulDiv(
                         _beneficiaryTokenBalance,
                         JBConstants.MAX_REDEMPTION_RATE - _metadata.redemptionRate,
-                        mulDiv(_nativePayAmount, _data.weight, 10 ** _NATIVE_DECIMALS)
+                        mulDiv(_nativePayAmount, _weight, 10 ** _NATIVE_DECIMALS)
                     ),
                 JBConstants.MAX_REDEMPTION_RATE
             );
@@ -839,7 +841,10 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             // Package up the ruleset configuration.
             JBRulesetConfig[] memory _rulesetConfigurations = new JBRulesetConfig[](1);
             _rulesetConfigurations[0].mustStartAtOrAfter = 0;
-            _rulesetConfigurations[0].data = _data;
+            _rulesetConfigurations[0].duration = 0;
+            _rulesetConfigurations[0].weight = _weight;
+            _rulesetConfigurations[0].decayRate = 0;
+            _rulesetConfigurations[0].approvalHook = IJBRulesetApprovalHook(address(0));
             _rulesetConfigurations[0].metadata = _metadata;
             _rulesetConfigurations[0].splitGroups = new JBSplitGroup[](0);
             _rulesetConfigurations[0].fundAccessLimitGroups = _fundAccessLimitGroup;
@@ -871,7 +876,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
         });
 
         // Make sure the beneficiary got the expected number of tokens.
-        uint256 _beneficiaryTokenBalance = mulDiv(_nativePayAmount, _data.weight, 10 ** _NATIVE_DECIMALS)
+        uint256 _beneficiaryTokenBalance = mulDiv(_nativePayAmount, _weight, 10 ** _NATIVE_DECIMALS)
             * _metadata.reservedRate / JBConstants.MAX_RESERVED_RATE;
         assertEq(_tokens.totalBalanceOf(_beneficiary, _projectId), _beneficiaryTokenBalance);
 
@@ -918,9 +923,8 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             // Make sure the beneficiary got the expected number of tokens.
             assertEq(
                 _tokens.totalBalanceOf(_projectOwner, _FEE_PROJECT_ID),
-                mulDiv(
-                    _nativeCurrencySurplusAllowance - _beneficiaryNativeBalance, _data.weight, 10 ** _NATIVE_DECIMALS
-                ) * _metadata.reservedRate / JBConstants.MAX_RESERVED_RATE
+                mulDiv(_nativeCurrencySurplusAllowance - _beneficiaryNativeBalance, _weight, 10 ** _NATIVE_DECIMALS)
+                    * _metadata.reservedRate / JBConstants.MAX_RESERVED_RATE
             );
         } else {
             // Set the native token surplus allowance to 0 if it wasn't used.
@@ -967,7 +971,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                 mulDiv(
                     (_nativeCurrencySurplusAllowance - _beneficiaryNativeBalance)
                         + (_nativeCurrencyPayoutLimit - _projectOwnerNativeBalance),
-                    _data.weight,
+                    _weight,
                     10 ** _NATIVE_DECIMALS
                 ) * _metadata.reservedRate / JBConstants.MAX_RESERVED_RATE
             );
@@ -996,13 +1000,13 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                 mulDiv(
                     _nativePayAmount - _beneficiaryNativeBalance - _projectOwnerNativeBalance,
                     _beneficiaryTokenBalance,
-                    mulDiv(_totalPaid, _data.weight, 10 ** _NATIVE_DECIMALS)
+                    mulDiv(_totalPaid, _weight, 10 ** _NATIVE_DECIMALS)
                 ),
                 _metadata.redemptionRate
                     + mulDiv(
                         _beneficiaryTokenBalance,
                         JBConstants.MAX_REDEMPTION_RATE - _metadata.redemptionRate,
-                        mulDiv(_totalPaid, _data.weight, 10 ** _NATIVE_DECIMALS)
+                        mulDiv(_totalPaid, _weight, 10 ** _NATIVE_DECIMALS)
                     ),
                 JBConstants.MAX_REDEMPTION_RATE
             );
@@ -1013,7 +1017,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             // Make sure the beneficiary received tokens from the fee just paid.
             assertEq(
                 _tokens.totalBalanceOf(_beneficiary, _projectId),
-                mulDiv(_feeAmount, _data.weight, 10 ** _NATIVE_DECIMALS) * _metadata.reservedRate
+                mulDiv(_feeAmount, _weight, 10 ** _NATIVE_DECIMALS) * _metadata.reservedRate
                     / JBConstants.MAX_RESERVED_RATE
             );
 
@@ -1096,7 +1100,10 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             // Package up the ruleset configuration.
             JBRulesetConfig[] memory _rulesetConfigurations = new JBRulesetConfig[](1);
             _rulesetConfigurations[0].mustStartAtOrAfter = 0;
-            _rulesetConfigurations[0].data = _data;
+            _rulesetConfigurations[0].duration = 0;
+            _rulesetConfigurations[0].weight = _weight;
+            _rulesetConfigurations[0].decayRate = 0;
+            _rulesetConfigurations[0].approvalHook = IJBRulesetApprovalHook(address(0));
             _rulesetConfigurations[0].metadata = _metadata;
             _rulesetConfigurations[0].splitGroups = new JBSplitGroup[](0);
             _rulesetConfigurations[0].fundAccessLimitGroups = _fundAccessLimitGroup;
@@ -1154,8 +1161,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
         });
 
         // Make sure the beneficiary got the expected number of tokens from the native token payment.
-        uint256 _beneficiaryTokenBalance =
-            _unreservedPortion(mulDiv(_nativePayAmount, _data.weight, 10 ** _NATIVE_DECIMALS));
+        uint256 _beneficiaryTokenBalance = _unreservedPortion(mulDiv(_nativePayAmount, _weight, 10 ** _NATIVE_DECIMALS));
         assertEq(_tokens.totalBalanceOf(_beneficiary, _projectId), _beneficiaryTokenBalance);
         // Mint USDC to this contract.
         _usdcToken.mint(address(this), _usdcPayAmount);
@@ -1186,7 +1192,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             // Convert the USD amount to a native token amount, by way of the current weight used for issuance.
             uint256 _usdWeightedPayAmountConvertedToNative = mulDiv(
                 _usdcPayAmount,
-                _data.weight,
+                _weight,
                 mulDiv(_USD_PRICE_PER_NATIVE, 10 ** _usdcToken.decimals(), 10 ** _PRICE_FEED_DECIMALS)
             );
 
@@ -1245,11 +1251,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             assertEq(
                 _tokens.totalBalanceOf(_projectOwner, _FEE_PROJECT_ID),
                 _unreservedPortion(
-                    mulDiv(
-                        _nativeCurrencySurplusAllowance - _beneficiaryNativeBalance,
-                        _data.weight,
-                        10 ** _NATIVE_DECIMALS
-                    )
+                    mulDiv(_nativeCurrencySurplusAllowance - _beneficiaryNativeBalance, _weight, 10 ** _NATIVE_DECIMALS)
                 )
             );
         } else {
@@ -1311,7 +1313,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                     mulDiv(
                         _nativeCurrencySurplusAllowance + _toNative(_usdCurrencySurplusAllowance)
                             - _beneficiaryNativeBalance,
-                        _data.weight,
+                        _weight,
                         10 ** _NATIVE_DECIMALS
                     )
                 )
@@ -1369,7 +1371,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                 // Make sure the project owner got the expected number of tokens.
                 // assertEq(_tokens.totalBalanceOf(_projectOwner, _FEE_PROJECT_ID),
                 // _unreservedPortion(mulDiv(_nativeCurrencySurplusAllowance + _toNative(_usdCurrencySurplusAllowance) -
-                // _beneficiaryNativeBalance + _nativeCurrencyPayoutLimit - _projectOwnerNativeBalance, _data.weight, 10
+                // _beneficiaryNativeBalance + _nativeCurrencyPayoutLimit - _projectOwnerNativeBalance, _weight, 10
                 // ** _NATIVE_DECIMALS)));
             }
 
@@ -1692,7 +1694,10 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             // Package up the ruleset configuration.
             JBRulesetConfig[] memory _rulesetConfigurations = new JBRulesetConfig[](1);
             _rulesetConfigurations[0].mustStartAtOrAfter = 0;
-            _rulesetConfigurations[0].data = _data;
+            _rulesetConfigurations[0].duration = 0;
+            _rulesetConfigurations[0].weight = _weight;
+            _rulesetConfigurations[0].decayRate = 0;
+            _rulesetConfigurations[0].approvalHook = IJBRulesetApprovalHook(address(0));
             _rulesetConfigurations[0].metadata = _metadata;
             _rulesetConfigurations[0].splitGroups = new JBSplitGroup[](0);
             _rulesetConfigurations[0].fundAccessLimitGroups = _fundAccessLimitGroup;
@@ -1759,8 +1764,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
         });
 
         // Make sure the beneficiary got the expected number of tokens from the native token payment.
-        uint256 _beneficiaryTokenBalance =
-            _unreservedPortion(mulDiv(_nativePayAmount, _data.weight, 10 ** _NATIVE_DECIMALS));
+        uint256 _beneficiaryTokenBalance = _unreservedPortion(mulDiv(_nativePayAmount, _weight, 10 ** _NATIVE_DECIMALS));
         assertEq(_tokens.totalBalanceOf(_beneficiary, _projectId), _beneficiaryTokenBalance);
         // Mint USDC to this contract.
         _usdcToken.mint(address(this), _usdcPayAmount);
@@ -1791,7 +1795,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             // Convert the USD amount to a native token amount, by way of the current weight used for issuance.
             uint256 _usdWeightedPayAmountConvertedToNative = mulDiv(
                 _usdcPayAmount,
-                _data.weight,
+                _weight,
                 mulDiv(_USD_PRICE_PER_NATIVE, 10 ** _usdcToken.decimals(), 10 ** _PRICE_FEED_DECIMALS)
             );
 
@@ -1844,11 +1848,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             assertEq(
                 _tokens.totalBalanceOf(_projectOwner, _FEE_PROJECT_ID),
                 _unreservedPortion(
-                    mulDiv(
-                        _nativeCurrencySurplusAllowance - _beneficiaryNativeBalance,
-                        _data.weight,
-                        10 ** _NATIVE_DECIMALS
-                    )
+                    mulDiv(_nativeCurrencySurplusAllowance - _beneficiaryNativeBalance, _weight, 10 ** _NATIVE_DECIMALS)
                 )
             );
         } else {
@@ -1911,7 +1911,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                             - _toNative(
                                 mulDiv(_beneficiaryUsdcBalance, 10 ** _NATIVE_DECIMALS, 10 ** _usdcToken.decimals())
                             ),
-                        _data.weight,
+                        _weight,
                         10 ** _NATIVE_DECIMALS
                     )
                 )
@@ -1968,7 +1968,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                 // Make sure the project owner got the expected number of tokens.
                 // assertEq(_tokens.totalBalanceOf(_projectOwner, _FEE_PROJECT_ID),
                 // _unreservedPortion(mulDiv(_nativeCurrencySurplusAllowance + _toNative(_usdCurrencySurplusAllowance) -
-                // _beneficiaryNativeBalance + _nativeCurrencyPayoutLimit - _projectOwnerNativeBalance, _data.weight, 10
+                // _beneficiaryNativeBalance + _nativeCurrencyPayoutLimit - _projectOwnerNativeBalance, _weight, 10
                 // ** _NATIVE_DECIMALS)));
             }
 

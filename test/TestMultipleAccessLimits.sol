@@ -10,7 +10,7 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
     IJBMultiTerminal private __terminal;
     IJBPrices private _prices;
     JBTokens private _tokens;
-    JBRulesetData private _data;
+    uint256 private _weight;
     JBRulesetMetadata _metadata;
     JBSplitGroup[] private _splitGroups;
     address private _projectOwner;
@@ -26,12 +26,7 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
         _prices = jbPrices();
         __terminal = jbMultiTerminal();
         _tokens = jbTokens();
-        _data = JBRulesetData({
-            duration: 0,
-            weight: 1000 * 10 ** 18,
-            decayRate: 0,
-            hook: IJBRulesetApprovalHook(address(0))
-        });
+        _weight = 1000 * 10 ** 18;
         _metadata = JBRulesetMetadata({
             reservedRate: 0,
             redemptionRate: 0,
@@ -77,7 +72,10 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
         // Package up ruleset config.
         JBRulesetConfig[] memory _rulesetConfig = new JBRulesetConfig[](1);
         _rulesetConfig[0].mustStartAtOrAfter = 0;
-        _rulesetConfig[0].data = _data;
+        _rulesetConfig[0].duration = 0;
+        _rulesetConfig[0].weight = _weight;
+        _rulesetConfig[0].decayRate = 0;
+        _rulesetConfig[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfig[0].metadata = _metadata;
         _rulesetConfig[0].splitGroups = _splitGroups;
         _rulesetConfig[0].fundAccessLimitGroups = _fundAccessLimitGroup;
@@ -143,7 +141,7 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
         // Make sure the beneficiary has a balance of project tokens.
         assertEq(
             _tokens.totalBalanceOf(_beneficiary, _projectId),
-            UD60x18unwrap(UD60x18mul(UD60x18wrap(_nativePayAmount), UD60x18wrap(_data.weight)))
+            UD60x18unwrap(UD60x18mul(UD60x18wrap(_nativePayAmount), UD60x18wrap(_weight)))
         );
 
         // First payout meets our native token limit.
@@ -240,7 +238,10 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
         JBRulesetConfig[] memory _rulesetConfig = new JBRulesetConfig[](1);
 
         _rulesetConfig[0].mustStartAtOrAfter = 0;
-        _rulesetConfig[0].data = _data;
+        _rulesetConfig[0].duration = 0;
+        _rulesetConfig[0].weight = _weight;
+        _rulesetConfig[0].decayRate = 0;
+        _rulesetConfig[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfig[0].metadata = _metadata;
         _rulesetConfig[0].splitGroups = _splitGroups;
         _rulesetConfig[0].fundAccessLimitGroups = _fundAccessLimitGroup;
@@ -287,7 +288,10 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
         JBRulesetConfig[] memory _rulesetConfig = new JBRulesetConfig[](1);
 
         _rulesetConfig[0].mustStartAtOrAfter = 0;
-        _rulesetConfig[0].data = _data;
+        _rulesetConfig[0].duration = 0;
+        _rulesetConfig[0].weight = _weight;
+        _rulesetConfig[0].decayRate = 0;
+        _rulesetConfig[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfig[0].metadata = _metadata;
         _rulesetConfig[0].splitGroups = _splitGroups;
         _rulesetConfig[0].fundAccessLimitGroups = _fundAccessLimitGroup;
@@ -343,7 +347,10 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
         });
         JBRulesetConfig[] memory _rulesetConfig = new JBRulesetConfig[](1);
         _rulesetConfig[0].mustStartAtOrAfter = 0;
-        _rulesetConfig[0].data = _data;
+        _rulesetConfig[0].duration = 0;
+        _rulesetConfig[0].weight = _weight;
+        _rulesetConfig[0].decayRate = 0;
+        _rulesetConfig[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfig[0].metadata = _metadata;
         _rulesetConfig[0].splitGroups = _splitGroups;
         _rulesetConfig[0].fundAccessLimitGroups = _fundAccessLimitGroup;
@@ -388,7 +395,10 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
         // Package up ruleset config.
         JBRulesetConfig[] memory _rulesetConfig = new JBRulesetConfig[](1);
         _rulesetConfig[0].mustStartAtOrAfter = 0;
-        _rulesetConfig[0].data = _data;
+        _rulesetConfig[0].duration = 0;
+        _rulesetConfig[0].weight = _weight;
+        _rulesetConfig[0].decayRate = 0;
+        _rulesetConfig[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfig[0].metadata = _metadata;
         _rulesetConfig[0].splitGroups = _splitGroups;
         _rulesetConfig[0].fundAccessLimitGroups = _fundAccessLimitGroup;
@@ -427,7 +437,7 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
         });
 
         // Make sure beneficiary has a balance of project tokens.
-        uint256 _userTokenBalance = UD60x18unwrap(UD60x18mul(UD60x18wrap(_nativePayAmount), UD60x18wrap(_data.weight)));
+        uint256 _userTokenBalance = UD60x18unwrap(UD60x18mul(UD60x18wrap(_nativePayAmount), UD60x18wrap(_weight)));
         assertEq(_tokens.totalBalanceOf(_beneficiary, _projectId), _userTokenBalance);
         uint256 initTerminalBalance = address(__terminal).balance;
 
@@ -487,7 +497,10 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
         JBRulesetConfig[] memory _rulesetConfig = new JBRulesetConfig[](1);
 
         _rulesetConfig[0].mustStartAtOrAfter = 0;
-        _rulesetConfig[0].data = _data;
+        _rulesetConfig[0].duration = 0;
+        _rulesetConfig[0].weight = _weight;
+        _rulesetConfig[0].decayRate = 0;
+        _rulesetConfig[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfig[0].metadata = _metadata;
         _rulesetConfig[0].splitGroups = _splitGroups;
         _rulesetConfig[0].fundAccessLimitGroups = _fundAccessLimitGroup;
@@ -529,7 +542,7 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
         });
 
         // Make sure the beneficiary has a balance of project tokens.
-        uint256 _userTokenBalance = UD60x18unwrap(UD60x18mul(UD60x18wrap(_nativePayAmount), UD60x18wrap(_data.weight)));
+        uint256 _userTokenBalance = UD60x18unwrap(UD60x18mul(UD60x18wrap(_nativePayAmount), UD60x18wrap(_weight)));
         assertEq(_tokens.totalBalanceOf(_beneficiary, _projectId), _userTokenBalance);
 
         uint256 initTerminalBalance = address(__terminal).balance;

@@ -6,7 +6,6 @@ import /* {*} from */ "./helpers/TestBaseWorkflow.sol";
 // Projects can be launched.
 contract TestLaunchProject_Local is TestBaseWorkflow {
     IJBController private _controller;
-    JBRulesetData private _data;
     JBRulesetMetadata private _metadata;
     IJBTerminal private _terminal;
     IJBRulesets private _rulesets;
@@ -20,8 +19,6 @@ contract TestLaunchProject_Local is TestBaseWorkflow {
         _terminal = jbMultiTerminal();
         _controller = jbController();
         _rulesets = jbRulesets();
-
-        _data = JBRulesetData({duration: 0, weight: 0, decayRate: 0, hook: IJBRulesetApprovalHook(address(0))});
 
         _metadata = JBRulesetMetadata({
             reservedRate: 0,
@@ -55,7 +52,7 @@ contract TestLaunchProject_Local is TestBaseWorkflow {
                     queued.duration,
                     queued.weight,
                     queued.decayRate,
-                    queued.hook,
+                    queued.approvalHook,
                     queued.metadata
                 )
             )
@@ -68,7 +65,7 @@ contract TestLaunchProject_Local is TestBaseWorkflow {
                         stored.duration,
                         stored.weight,
                         stored.decayRate,
-                        stored.hook,
+                        stored.approvalHook,
                         stored.metadata
                     )
                 )
@@ -79,7 +76,10 @@ contract TestLaunchProject_Local is TestBaseWorkflow {
         // Package up ruleset configuration.
         JBRulesetConfig[] memory _rulesetConfig = new JBRulesetConfig[](1);
         _rulesetConfig[0].mustStartAtOrAfter = 0;
-        _rulesetConfig[0].data = _data;
+        _rulesetConfig[0].duration = 0;
+        _rulesetConfig[0].weight = 0;
+        _rulesetConfig[0].decayRate = 0;
+        _rulesetConfig[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfig[0].metadata = _metadata;
         _rulesetConfig[0].splitGroups = new JBSplitGroup[](0);
         _rulesetConfig[0].fundAccessLimitGroups = new JBFundAccessLimitGroup[](0);
@@ -107,10 +107,10 @@ contract TestLaunchProject_Local is TestBaseWorkflow {
             id: block.timestamp,
             basedOnId: 0,
             start: block.timestamp,
-            duration: _data.duration,
-            weight: _data.weight,
-            decayRate: _data.decayRate,
-            hook: _data.hook,
+            duration: 0,
+            weight: 0,
+            decayRate: 0,
+            approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: ruleset.metadata
         });
 
@@ -123,17 +123,13 @@ contract TestLaunchProject_Local is TestBaseWorkflow {
         _weight = bound(_weight, 0, type(uint88).max);
         uint256 _projectId;
 
-        _data = JBRulesetData({
-            duration: 14,
-            weight: _weight,
-            decayRate: 450_000_000,
-            hook: IJBRulesetApprovalHook(address(0))
-        });
-
         // Package up ruleset configuration.
         JBRulesetConfig[] memory _rulesetConfig = new JBRulesetConfig[](1);
         _rulesetConfig[0].mustStartAtOrAfter = 0;
-        _rulesetConfig[0].data = _data;
+        _rulesetConfig[0].duration = 14;
+        _rulesetConfig[0].weight = _weight;
+        _rulesetConfig[0].decayRate = 450_000_000;
+        _rulesetConfig[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfig[0].metadata = _metadata;
         _rulesetConfig[0].splitGroups = new JBSplitGroup[](0);
         _rulesetConfig[0].fundAccessLimitGroups = new JBFundAccessLimitGroup[](0);
@@ -160,10 +156,10 @@ contract TestLaunchProject_Local is TestBaseWorkflow {
             id: block.timestamp,
             basedOnId: 0,
             start: block.timestamp,
-            duration: _data.duration,
+            duration: _rulesetConfig[0].duration,
             weight: _weight,
-            decayRate: _data.decayRate,
-            hook: _data.hook,
+            decayRate: _rulesetConfig[0].decayRate,
+            approvalHook: _rulesetConfig[0].approvalHook,
             metadata: ruleset.metadata
         });
 
@@ -176,17 +172,13 @@ contract TestLaunchProject_Local is TestBaseWorkflow {
         _weight = bound(_weight, type(uint88).max, type(uint256).max);
         uint256 _projectId;
 
-        _data = JBRulesetData({
-            duration: 14,
-            weight: _weight,
-            decayRate: 450_000_000,
-            hook: IJBRulesetApprovalHook(address(0))
-        });
-
         // Package up ruleset configuration.
         JBRulesetConfig[] memory _rulesetConfig = new JBRulesetConfig[](1);
         _rulesetConfig[0].mustStartAtOrAfter = 0;
-        _rulesetConfig[0].data = _data;
+        _rulesetConfig[0].duration = 14;
+        _rulesetConfig[0].weight = _weight;
+        _rulesetConfig[0].decayRate = 450_000_000;
+        _rulesetConfig[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfig[0].metadata = _metadata;
         _rulesetConfig[0].splitGroups = new JBSplitGroup[](0);
         _rulesetConfig[0].fundAccessLimitGroups = new JBFundAccessLimitGroup[](0);
@@ -226,10 +218,10 @@ contract TestLaunchProject_Local is TestBaseWorkflow {
                 id: block.timestamp,
                 basedOnId: 0,
                 start: block.timestamp,
-                duration: _data.duration,
+                duration: _rulesetConfig[0].duration,
                 weight: _weight,
-                decayRate: _data.decayRate,
-                hook: _data.hook,
+                decayRate: _rulesetConfig[0].decayRate,
+                approvalHook: _rulesetConfig[0].approvalHook,
                 metadata: ruleset.metadata
             });
 

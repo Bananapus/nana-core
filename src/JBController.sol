@@ -830,7 +830,10 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
             // Use the configuration to queue the ruleset.
             JBRuleset memory ruleset = RULESETS.queueFor({
                 projectId: projectId,
-                data: rulesetConfig.data,
+                duration: rulesetConfig.duration,
+                weight: rulesetConfig.weight,
+                decayRate: rulesetConfig.decayRate,
+                approvalHook: rulesetConfig.approvalHook,
                 metadata: JBRulesetMetadataResolver.packRulesetMetadata(rulesetConfig.metadata),
                 mustStartAtOrAfter: rulesetConfig.mustStartAtOrAfter
             });

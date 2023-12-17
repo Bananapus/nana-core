@@ -9,7 +9,6 @@ import {IJBDirectory} from "./interfaces/IJBDirectory.sol";
 import {IJBRulesetApprovalHook} from "./interfaces/IJBRulesetApprovalHook.sol";
 import {IJBRulesets} from "./interfaces/IJBRulesets.sol";
 import {JBRuleset} from "./structs/JBRuleset.sol";
-import {JBRulesetData} from "./structs/JBRulesetData.sol";
 import {JBRulesetWeightCache} from "./structs/JBRulesetWeightCache.sol";
 
 /// @notice Manages rulesets and queuing.
@@ -285,14 +284,36 @@ contract JBRulesets is JBControlled, IJBRulesets {
     /// @notice Queues the upcoming approvable ruleset for the specified project.
     /// @dev Only a project's current controller can queue its rulesets.
     /// @param projectId The ID of the project the ruleset is being queued for.
-    /// @param data The ruleset's user-defined data.
+    /// @param duration The number of seconds the ruleset lasts for, after which a new ruleset will start. A
+    /// duration of 0 means that the ruleset will stay active until the project owner explicitly issues a
+    /// reconfiguration,
+    /// at which point a new ruleset will immediately start with the updated properties. If the duration is greater than
+    /// 0,
+    /// a project owner cannot make changes to a ruleset's parameters while it is active – any proposed changes will
+    /// apply
+    /// to the subsequent ruleset. If no changes are proposed, a ruleset rolls over to another one with the same
+    /// properties
+    /// but new `start` timestamp and a decayed `weight`.
+    /// @param weight A fixed point number with 18 decimals that contracts can use to base arbitrary calculations
+    /// on. For example, payment terminals can use this to determine how many tokens should be minted when a payment is
+    /// received.
+    /// @param decayRate A percent by how much the `weight` of the subsequent ruleset should be reduced, if the
+    /// project owner hasn't queued the subsequent ruleset with an explicit `weight`. If it's 0, each ruleset will have
+    /// equal weight. If the number is 90%, the next ruleset will have a 10% smaller weight. This weight is out of
+    /// `JBConstants.MAX_DECAY_RATE`.
+    /// @param approvalHook An address of a contract that says whether a proposed ruleset should be accepted or
+    /// rejected. It
+    /// can be used to create rules around how a project owner can change ruleset parameters over time.
     /// @param metadata Arbitrary extra data to associate with this ruleset. This metadata is not used by `JBRulesets`.
     /// @param mustStartAtOrAfter The earliest time the ruleset can start. The ruleset cannot start before this
     /// timestamp.
     /// @return The struct of the new ruleset.
     function queueFor(
         uint256 projectId,
-        JBRulesetData calldata data,
+        uint256 duration,
+        uint256 weight,
+        uint256 decayRate,
+        IJBRulesetApprovalHook approvalHook,
         uint256 metadata,
         uint256 mustStartAtOrAfter
     )
@@ -302,15 +323,15 @@ contract JBRulesets is JBControlled, IJBRulesets {
         returns (JBRuleset memory)
     {
         // Duration must fit in a uint32.
-        if (data.duration > type(uint32).max) revert INVALID_RULESET_DURATION();
+        if (duration > type(uint32).max) revert INVALID_RULESET_DURATION();
 
         // Decay rate must be less than or equal to 100%.
-        if (data.decayRate > JBConstants.MAX_DECAY_RATE) {
+        if (decayRate > JBConstants.MAX_DECAY_RATE) {
             revert INVALID_DECAY_RATE();
         }
 
         // Weight must fit into a uint88.
-        if (data.weight > type(uint88).max) revert INVALID_WEIGHT();
+        if (weight > type(uint88).max) revert INVALID_WEIGHT();
 
         // If the start date is in the past, set it to be the current timestamp.
         if (mustStartAtOrAfter < block.timestamp) {
@@ -319,19 +340,17 @@ contract JBRulesets is JBControlled, IJBRulesets {
 
         // Make sure the min start date fits in a uint56, and that the start date of the following ruleset will also fit
         // within the max.
-        if (mustStartAtOrAfter + data.duration > type(uint56).max) {
+        if (mustStartAtOrAfter + duration > type(uint56).max) {
             revert INVALID_RULESET_END_TIME();
         }
 
         // Approval hook should be a valid contract, supporting the correct interface
-        if (data.hook != IJBRulesetApprovalHook(address(0))) {
-            address approvalHook = address(data.hook);
-
+        if (approvalHook != IJBRulesetApprovalHook(address(0))) {
             // Revert if there isn't a contract at the address
-            if (approvalHook.code.length == 0) revert INVALID_RULESET_APPROVAL_HOOK();
+            if (address(approvalHook).code.length == 0) revert INVALID_RULESET_APPROVAL_HOOK();
 
             // Make sure the approval hook supports the expected interface.
-            try data.hook.supportsInterface(type(IJBRulesetApprovalHook).interfaceId) returns (bool doesSupport) {
+            try approvalHook.supportsInterface(type(IJBRulesetApprovalHook).interfaceId) returns (bool doesSupport) {
                 if (!doesSupport) revert INVALID_RULESET_APPROVAL_HOOK(); // Contract exists at the address but with the
                     // wrong interface
             } catch {
@@ -346,20 +365,20 @@ contract JBRulesets is JBControlled, IJBRulesets {
         uint256 rulesetId = latestId >= block.timestamp ? latestId + 1 : block.timestamp;
 
         // Set up the ruleset by configuring intrinsic properties.
-        _configureIntrinsicPropertiesFor(projectId, rulesetId, data.weight, mustStartAtOrAfter);
+        _configureIntrinsicPropertiesFor(projectId, rulesetId, weight, mustStartAtOrAfter);
 
         // Efficiently stores the ruleset's user-defined properties.
         // If all user config properties are zero, no need to store anything as the default value will have the same
         // outcome.
-        if (data.hook != IJBRulesetApprovalHook(address(0)) || data.duration > 0 || data.decayRate > 0) {
+        if (approvalHook != IJBRulesetApprovalHook(address(0)) || duration > 0 || decayRate > 0) {
             // approval hook in bits 0-159 bytes.
-            uint256 packed = uint160(address(data.hook));
+            uint256 packed = uint160(address(approvalHook));
 
             // duration in bits 160-191 bytes.
-            packed |= data.duration << 160;
+            packed |= duration << 160;
 
             // decayRate in bits 192-223 bytes.
-            packed |= data.decayRate << 192;
+            packed |= decayRate << 192;
 
             // Set in storage.
             _packedUserPropertiesOf[projectId][rulesetId] = packed;
@@ -368,7 +387,9 @@ contract JBRulesets is JBControlled, IJBRulesets {
         // Set the metadata if needed.
         if (metadata > 0) _metadataOf[projectId][rulesetId] = metadata;
 
-        emit RulesetQueued(rulesetId, projectId, data, metadata, mustStartAtOrAfter, msg.sender);
+        emit RulesetQueued(
+            rulesetId, projectId, duration, weight, decayRate, approvalHook, metadata, mustStartAtOrAfter, msg.sender
+        );
 
         // Return the struct for the new ruleset's ID.
         return _getStructFor(projectId, rulesetId);
@@ -477,8 +498,9 @@ contract JBRulesets is JBControlled, IJBRulesets {
 
         // The time when the duration of the base ruleset's approval hook has finished.
         // If the provided ruleset has no approval hook, return the current timestamp.
-        uint256 timestampAfterApprovalHook =
-            baseRuleset.hook == IJBRulesetApprovalHook(address(0)) ? 0 : rulesetId + baseRuleset.hook.DURATION();
+        uint256 timestampAfterApprovalHook = baseRuleset.approvalHook == IJBRulesetApprovalHook(address(0))
+            ? 0
+            : rulesetId + baseRuleset.approvalHook.DURATION();
 
         _initializeRulesetFor({
             projectId: projectId,
@@ -698,7 +720,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
             duration: baseRuleset.duration,
             weight: _deriveWeightFrom(baseRuleset, start),
             decayRate: baseRuleset.decayRate,
-            hook: baseRuleset.hook,
+            approvalHook: baseRuleset.approvalHook,
             metadata: baseRuleset.metadata
         });
     }
@@ -847,12 +869,12 @@ contract JBRulesets is JBControlled, IJBRulesets {
         JBRuleset memory approvalHookRuleset = _getStructFor(projectId, approvalHookRulesetId);
 
         // If there is no approval hook, it's considered empty.
-        if (approvalHookRuleset.hook == IJBRulesetApprovalHook(address(0))) {
+        if (approvalHookRuleset.approvalHook == IJBRulesetApprovalHook(address(0))) {
             return JBApprovalStatus.Empty;
         }
 
         // Return the approval hook's approval status.
-        return approvalHookRuleset.hook.approvalStatusOf(projectId, rulesetId, start);
+        return approvalHookRuleset.approvalHook.approvalStatusOf(projectId, rulesetId, start);
     }
 
     /// @notice Unpack a ruleset's packed stored values into an easy-to-work-with ruleset struct.
@@ -879,7 +901,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
         uint256 packedUserProperties = _packedUserPropertiesOf[projectId][rulesetId];
 
         // approval hook in bits 0-159 bits.
-        ruleset.hook = IJBRulesetApprovalHook(address(uint160(packedUserProperties)));
+        ruleset.approvalHook = IJBRulesetApprovalHook(address(uint160(packedUserProperties)));
         // `duration` in bits 160-191 bits.
         ruleset.duration = uint256(uint32(packedUserProperties >> 160));
         // decay rate in bits 192-223 bits.
