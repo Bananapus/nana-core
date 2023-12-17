@@ -133,7 +133,7 @@ contract TestRedeemHooks_Local is TestBaseWorkflow {
             holder: address(this),
             projectId: _projectId,
             rulesetId: _ruleset.id,
-            projectTokenCount: _beneficiaryTokenBalance / 2,
+            redeemCount: _beneficiaryTokenBalance / 2,
             reclaimedAmount: JBTokenAmount(
                 JBConstants.NATIVE_TOKEN,
                 _halfPaid,
@@ -167,9 +167,9 @@ contract TestRedeemHooks_Local is TestBaseWorkflow {
         _terminal.redeemTokensOf({
             holder: address(this),
             projectId: _projectId,
-            count: _beneficiaryTokenBalance / 2,
-            token: JBConstants.NATIVE_TOKEN,
-            minReclaimed: 0,
+            tokenToReclaim: JBConstants.NATIVE_TOKEN,
+            redeemCount: _beneficiaryTokenBalance / 2,
+            minTokensReclaimed: 0,
             beneficiary: payable(address(this)),
             metadata: new bytes(0)
         });

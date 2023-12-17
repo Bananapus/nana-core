@@ -401,11 +401,11 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     /// burned.
     /// @param holder The account that is redeeming tokens.
     /// @param projectId The ID of the project being redeemed from.
+    /// @param redeemCount The number of project tokens to redeem, as a fixed point number with 18 decimals.
     /// @param accountingContext The accounting context of the token being reclaimed by the redemption.
     /// @param balanceAccountingContexts The accounting contexts whose balances should contribute to the surplus being
     /// reclaimed
     /// from.
-    /// @param tokenCount The number of project tokens to redeem, as a fixed point number with 18 decimals.
     /// @param metadata Bytes to send to the data hook, if the project's current ruleset specifies one.
     /// @return ruleset The ruleset during the redemption was made during, as a `JBRuleset` struct.
     /// @return reclaimAmount The amount of tokens reclaimed from the terminal, as a fixed point number with 18
@@ -414,9 +414,9 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     function recordRedemptionFor(
         address holder,
         uint256 projectId,
+        uint256 redeemCount,
         JBAccountingContext calldata accountingContext,
         JBAccountingContext[] calldata balanceAccountingContexts,
-        uint256 tokenCount,
         bytes memory metadata
     )
         external
@@ -450,13 +450,13 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
             IJBController(address(DIRECTORY.controllerOf(projectId))).totalTokenSupplyWithReservedTokensOf(projectId);
 
         // Can't redeem more tokens that are in the supply.
-        if (tokenCount > totalSupply) revert INSUFFICIENT_TOKENS();
+        if (redeemCount > totalSupply) revert INSUFFICIENT_TOKENS();
 
         if (currentSurplus != 0) {
             // Calculate reclaim amount using the current surplus amount.
             reclaimAmount = _reclaimableSurplusDuring({
                 ruleset: ruleset,
-                tokenCount: tokenCount,
+                tokenCount: redeemCount,
                 totalSupply: totalSupply,
                 surplus: currentSurplus
             });
@@ -480,7 +480,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
                     holder: holder,
                     projectId: projectId,
                     rulesetId: ruleset.id,
-                    tokenCount: tokenCount,
+                    redeemCount: redeemCount,
                     totalSupply: totalSupply,
                     surplus: currentSurplus,
                     reclaimAmount: reclaimedTokenAmount,
