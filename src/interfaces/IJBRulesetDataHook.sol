@@ -13,20 +13,21 @@ import {JBRedeemHookSpecification} from "./../structs/JBRedeemHookSpecification.
 /// upon payments and redemptions.
 interface IJBRulesetDataHook is IERC165 {
     /// @notice The data provided to the terminal's `pay(...)` transaction.
-    /// @param data The data passed to this data hook by the `pay(...)` function as a `JBPayParamsContext` struct.
+    /// @param context The context passed to this data hook by the `pay(...)` function as a `JBPayParamsContext` struct.
     /// @return weight The new `weight` to use, overriding the ruleset's `weight`.
     /// @return hookSpecifications The amount and data to send to pay hooks instead of adding to the terminal's balance.
-    function payParams(JBPayParamsContext calldata data)
+    function payParams(JBPayParamsContext calldata context)
         external
         view
         returns (uint256 weight, JBPayHookSpecification[] memory hookSpecifications);
 
     /// @notice The data provided to the terminal's `redeemTokensOf(...)` transaction.
-    /// @param data The data passed to this data hook by the `redeemTokensOf(...)` function as a `JBRedeemParamsContext`
+    /// @param context The context passed to this data hook by the `redeemTokensOf(...)` function as a
+    /// `JBRedeemParamsContext`
     /// struct.
     /// @return reclaimAmount The amount to claim, overriding the terminal logic.
     /// @return hookSpecifications The amount and data to send to redeem hooks instead of returning to the beneficiary.
-    function redeemParams(JBRedeemParamsContext calldata data)
+    function redeemParams(JBRedeemParamsContext calldata context)
         external
         view
         returns (uint256 reclaimAmount, JBRedeemHookSpecification[] memory hookSpecifications);

@@ -10,6 +10,6 @@ interface IJBRedeemHook is IERC165 {
     /// @notice This function is called by the terminal's `redeemTokensOf(...)` function after the execution of its
     /// logic.
     /// @dev Critical business logic should be protected by appropriate access control.
-    /// @param data The data passed by the terminal, as a `JBDidRedeemContext` struct.
-    function didRedeem(JBDidRedeemContext calldata data) external payable;
+    /// @param context The context passed by the terminal, as a `JBDidRedeemContext` struct.
+    function didRedeem(JBDidRedeemContext calldata context) external payable;
 }
