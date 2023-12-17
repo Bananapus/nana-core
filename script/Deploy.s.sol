@@ -16,17 +16,44 @@ import {JBController} from "../src/JBController.sol";
 import {JBTerminalStore} from "../src/JBTerminalStore.sol";
 import {JBMultiTerminal} from "../src/JBMultiTerminal.sol";
 
-abstract contract Deploy is Script {
+contract Deploy is Script {
     /// @notice The universal PERMIT2 address.
     IPermit2 private constant _PERMIT2 = IPermit2(0x000000000022D473030F116dDEE9F6B43aC78BA3);
 
-    function _trustedForwarder() internal virtual returns (address);
-
-    function _manager() internal virtual returns (address);
-
     function run() public {
+        uint256 chainId = block.chainid;
+        address trustedForwarder;
+        address manager;
+        // Ethereun Mainnet
+        if (chainId == 1) {
+            trustedForwarder = 0xB2b5841DBeF766d4b521221732F9B618fCf34A87;
+            manager = 0x823b92d6a4b2AED4b15675c7917c9f922ea8ADAD;
+            // Ethereum Sepolia
+        } else if (chainId == 11_155_111) {
+            trustedForwarder = 0xB2b5841DBeF766d4b521221732F9B618fCf34A87;
+            manager = 0x823b92d6a4b2AED4b15675c7917c9f922ea8ADAD;
+            // Optimism Mainnet
+        } else if (chainId == 420) {
+            trustedForwarder = 0xB2b5841DBeF766d4b521221732F9B618fCf34A87;
+            manager = 0x823b92d6a4b2AED4b15675c7917c9f922ea8ADAD;
+            // Optimism Sepolia
+        } else if (chainId == 11_155_420) {
+            trustedForwarder = 0xB2b5841DBeF766d4b521221732F9B618fCf34A87;
+            manager = 0x823b92d6a4b2AED4b15675c7917c9f922ea8ADAD;
+            // Polygon Mainnet
+        } else if (chainId == 137) {
+            trustedForwarder = 0xB2b5841DBeF766d4b521221732F9B618fCf34A87;
+            manager = 0x823b92d6a4b2AED4b15675c7917c9f922ea8ADAD;
+            // Polygon Mumbai
+        } else if (chainId == 80_001) {
+            trustedForwarder = 0xB2b5841DBeF766d4b521221732F9B618fCf34A87;
+            manager = 0x823b92d6a4b2AED4b15675c7917c9f922ea8ADAD;
+        } else {
+            revert("Invalid RPC / no juice contracts deployed on this network");
+        }
+
         vm.startBroadcast();
-        _deployJBProtocol(_manager(), _trustedForwarder());
+        _deployJBProtocol(manager, trustedForwarder);
         vm.stopBroadcast();
     }
 
@@ -70,71 +97,5 @@ abstract contract Deploy is Script {
             permit2: _PERMIT2,
             trustedForwarder: trustedForwarder
         });
-    }
-}
-
-// Ethereum
-
-contract DeployEthereumMainnet is Deploy {
-    function _trustedForwarder() internal virtual override returns (address) {
-        return 0xB2b5841DBeF766d4b521221732F9B618fCf34A87;
-    }
-
-    function _manager() internal virtual override returns (address) {
-        return 0x823b92d6a4b2AED4b15675c7917c9f922ea8ADAD;
-    }
-}
-
-contract DeployEthereumSepolia is Deploy {
-    function _trustedForwarder() internal virtual override returns (address) {
-        return 0xB2b5841DBeF766d4b521221732F9B618fCf34A87;
-    }
-
-    function _manager() internal virtual override returns (address) {
-        return 0x823b92d6a4b2AED4b15675c7917c9f922ea8ADAD;
-    }
-}
-
-// Optimism
-
-contract DeployOptimismMainnet is Deploy {
-    function _trustedForwarder() internal virtual override returns (address) {
-        return 0xB2b5841DBeF766d4b521221732F9B618fCf34A87;
-    }
-
-    function _manager() internal virtual override returns (address) {
-        return 0x823b92d6a4b2AED4b15675c7917c9f922ea8ADAD;
-    }
-}
-
-contract DeployOptimismSepolia is Deploy {
-    function _trustedForwarder() internal virtual override returns (address) {
-        return 0xB2b5841DBeF766d4b521221732F9B618fCf34A87;
-    }
-
-    function _manager() internal virtual override returns (address) {
-        return 0x823b92d6a4b2AED4b15675c7917c9f922ea8ADAD;
-    }
-}
-
-// Polygon
-
-contract DeployPolygonMainnet is Deploy {
-    function _trustedForwarder() internal virtual override returns (address) {
-        return 0xB2b5841DBeF766d4b521221732F9B618fCf34A87;
-    }
-
-    function _manager() internal virtual override returns (address) {
-        return 0x823b92d6a4b2AED4b15675c7917c9f922ea8ADAD;
-    }
-}
-
-contract DeployPolygonMumbai is Deploy {
-    function _trustedForwarder() internal virtual override returns (address) {
-        return 0xB2b5841DBeF766d4b521221732F9B618fCf34A87;
-    }
-
-    function _manager() internal virtual override returns (address) {
-        return 0x823b92d6a4b2AED4b15675c7917c9f922ea8ADAD;
     }
 }
