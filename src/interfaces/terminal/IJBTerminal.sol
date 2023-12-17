@@ -2,7 +2,6 @@
 pragma solidity ^0.8.0;
 
 import {JBAccountingContext} from "../../structs/JBAccountingContext.sol";
-import {JBAccountingContextConfig} from "../../structs/JBAccountingContextConfig.sol";
 import {JBDidPayContext} from "../../structs/JBDidPayContext.sol";
 
 import {IJBPayHook} from "../../interfaces/IJBPayHook.sol";

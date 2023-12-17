@@ -36,7 +36,6 @@ import {JBSingleAllowanceContext} from "./structs/JBSingleAllowanceContext.sol";
 import {JBSplit} from "./structs/JBSplit.sol";
 import {JBSplitHookContext} from "./structs/JBSplitHookContext.sol";
 import {JBAccountingContext} from "./structs/JBAccountingContext.sol";
-import {JBAccountingContextConfig} from "./structs/JBAccountingContextConfig.sol";
 import {JBTokenAmount} from "./structs/JBTokenAmount.sol";
 import {JBPermissioned} from "./abstract/JBPermissioned.sol";
 import {IJBMultiTerminal} from "./interfaces/terminal/IJBMultiTerminal.sol";

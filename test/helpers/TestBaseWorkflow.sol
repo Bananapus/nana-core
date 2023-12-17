@@ -24,7 +24,6 @@ import {JBDeadline} from "src/JBDeadline.sol";
 import {JBApprovalStatus} from "src/enums/JBApprovalStatus.sol";
 import {JBMultiTerminal} from "src/JBMultiTerminal.sol";
 import {JBCurrencyAmount} from "src/structs/JBCurrencyAmount.sol";
-import {JBAccountingContextConfig} from "src/structs/JBAccountingContextConfig.sol";
 import {JBDidPayContext} from "src/structs/JBDidPayContext.sol";
 import {JBDidRedeemContext} from "src/structs/JBDidRedeemContext.sol";
 import {JBFee} from "src/structs/JBFee.sol";
