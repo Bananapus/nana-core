@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {IERC165} from "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol";
-import {JBDidRedeemData} from "./../structs/JBDidRedeemData.sol";
+import {IERC165} from "../../lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol";
+import {JBDidRedeemData} from "../structs/JBDidRedeemData.sol";
 
 /// @title Redemption hook
 /// @notice Hook called after a terminal's `redeemTokensOf(...)` logic completes (if passed by the ruleset's data hook)

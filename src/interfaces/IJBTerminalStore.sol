@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {JBRuleset} from "./../structs/JBRuleset.sol";
-import {JBPayHookPayload} from "./../structs/JBPayHookPayload.sol";
-import {JBRedeemHookPayload} from "./../structs/JBRedeemHookPayload.sol";
-import {JBAccountingContext} from "./../structs/JBAccountingContext.sol";
-import {JBTokenAmount} from "./../structs/JBTokenAmount.sol";
+import {JBRuleset} from "../structs/JBRuleset.sol";
+import {JBPayHookPayload} from "../structs/JBPayHookPayload.sol";
+import {JBRedeemHookPayload} from "../structs/JBRedeemHookPayload.sol";
+import {JBAccountingContext} from "../structs/JBAccountingContext.sol";
+import {JBTokenAmount} from "../structs/JBTokenAmount.sol";
 import {IJBDirectory} from "./IJBDirectory.sol";
 import {IJBRulesets} from "./IJBRulesets.sol";
 import {IJBPrices} from "./IJBPrices.sol";

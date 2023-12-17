@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {JBPermissionsData} from "./../structs/JBPermissionsData.sol";
+import {JBPermissionsData} from "../structs/JBPermissionsData.sol";
 
 interface IJBPermissions {
     event OperatorPermissionsSet(

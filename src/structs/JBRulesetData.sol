@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {IJBRulesetApprovalHook} from "./../interfaces/IJBRulesetApprovalHook.sol";
+import {IJBRulesetApprovalHook} from "../interfaces/IJBRulesetApprovalHook.sol";
 
 /// @custom:member duration The number of seconds the ruleset lasts for, after which a new ruleset will start. A
 /// duration of 0 means that the ruleset will stay active until the project owner explicitly issues a reconfiguration,

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.23;
 
-import {mulDiv} from "lib/prb-math/src/Common.sol";
+import {mulDiv} from "../lib/prb-math/src/Common.sol";
 import {JBControlled} from "./abstract/JBControlled.sol";
 import {JBApprovalStatus} from "./enums/JBApprovalStatus.sol";
 import {JBConstants} from "./libraries/JBConstants.sol";

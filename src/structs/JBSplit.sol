@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {IJBSplitHook} from "./../interfaces/IJBSplitHook.sol";
+import {IJBSplitHook} from "../interfaces/IJBSplitHook.sol";
 
 /// @notice Splits are used to send a percentage of a total token amount to a specific contract, project, or address.
 /// Splits are used to send payouts and reserved tokens.

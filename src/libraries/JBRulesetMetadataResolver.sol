@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
-import {JBRuleset} from "./../structs/JBRuleset.sol";
-import {JBRulesetMetadata} from "./../structs/JBRulesetMetadata.sol";
+import {JBRuleset} from "../structs/JBRuleset.sol";
+import {JBRulesetMetadata} from "../structs/JBRulesetMetadata.sol";
 import {JBConstants} from "./JBConstants.sol";
 
 library JBRulesetMetadataResolver {

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {IJBTerminal} from "./../interfaces/terminal/IJBTerminal.sol";
+import {IJBTerminal} from "../interfaces/terminal/IJBTerminal.sol";
 import {JBAccountingContextConfig} from "./JBAccountingContextConfig.sol";
 
 /// @custom:member terminal The terminal to configure.

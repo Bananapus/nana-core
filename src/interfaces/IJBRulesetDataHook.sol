@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {IERC165} from "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol";
-import {JBPayHookPayload} from "./../structs/JBPayHookPayload.sol";
-import {JBPayParamsData} from "./../structs/JBPayParamsData.sol";
-import {JBRedeemParamsData} from "./../structs/JBRedeemParamsData.sol";
-import {JBRedeemHookPayload} from "./../structs/JBRedeemHookPayload.sol";
+import {IERC165} from "../../lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol";
+import {JBPayHookPayload} from "../structs/JBPayHookPayload.sol";
+import {JBPayParamsData} from "../structs/JBPayParamsData.sol";
+import {JBRedeemParamsData} from "../structs/JBRedeemParamsData.sol";
+import {JBRedeemHookPayload} from "../structs/JBRedeemHookPayload.sol";
 
 /// @notice An extra layer of logic which can be used to provide pay/redeem transactions with a custom weight, a custom
 /// memo and/or a pay/redeem hook(s).

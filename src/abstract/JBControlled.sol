@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {IJBControlled} from "./../interfaces/IJBControlled.sol";
-import {IJBDirectory} from "./../interfaces/IJBDirectory.sol";
+import {IJBControlled} from "../interfaces/IJBControlled.sol";
+import {IJBDirectory} from "../interfaces/IJBDirectory.sol";
 
 /// @notice Provides a modifier for contracts with functionality that can only be accessed by a project's controller.
 abstract contract JBControlled is IJBControlled {

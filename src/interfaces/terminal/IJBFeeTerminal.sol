@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {IJBTerminal} from "./IJBTerminal.sol";
-import {IJBFeelessAddresses} from "./../IJBFeelessAddresses.sol";
+import {IJBFeelessAddresses} from "../IJBFeelessAddresses.sol";
 import {JBFee} from "../../structs/JBFee.sol";
 
 /// @notice A terminal that can process and hold fees.

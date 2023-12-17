@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
-import {mulDiv} from "lib/prb-math/src/Common.sol";
-import {JBConstants} from "./../libraries/JBConstants.sol";
+import {mulDiv} from "../../lib/prb-math/src/Common.sol";
+import {JBConstants} from "../libraries/JBConstants.sol";
 
 /// @notice Fee calculations.
 library JBFees {

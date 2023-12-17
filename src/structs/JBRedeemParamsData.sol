@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {IJBRedeemTerminal} from "./../interfaces/terminal/IJBRedeemTerminal.sol";
+import {IJBRedeemTerminal} from "../interfaces/terminal/IJBRedeemTerminal.sol";
 import {JBTokenAmount} from "./JBTokenAmount.sol";
 
 /// @notice Data sent from the terminal to the ruleset's data hook upon redemption.

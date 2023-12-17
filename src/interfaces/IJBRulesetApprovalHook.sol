@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {IERC165} from "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol";
-import {JBApprovalStatus} from "./../enums/JBApprovalStatus.sol";
+import {IERC165} from "../../lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol";
+import {JBApprovalStatus} from "../enums/JBApprovalStatus.sol";
 
 interface IJBRulesetApprovalHook is IERC165 {
     function DURATION() external view returns (uint256);

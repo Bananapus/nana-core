@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {IJBRulesetApprovalHook} from "./../interfaces/IJBRulesetApprovalHook.sol";
+import {IJBRulesetApprovalHook} from "../interfaces/IJBRulesetApprovalHook.sol";
 
 /// @dev `JBRuleset` timestamps are unix timestamps (seconds since 00:00 January 1st, 1970 UTC).
 /// @custom:member cycleNumber The ruleset's cycle number. Each ruleset's `cycleNumber` is the previous ruleset's
