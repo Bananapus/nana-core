@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import {IJBTerminal} from "./IJBTerminal.sol";
 import {IJBRedeemHook} from "../IJBRedeemHook.sol";
-import {JBAfterRedeemContext} from "../../structs/JBAfterRedeemContext.sol";
+import {JBPostRecordRedeemContext} from "../../structs/JBPostRecordRedeemContext.sol";
 
 /// @notice A terminal that can be redeemed from.
 interface IJBRedeemTerminal is IJBTerminal {
@@ -19,9 +19,9 @@ interface IJBRedeemTerminal is IJBTerminal {
         address caller
     );
 
-    event HookAfterRedeem(
+    event HookPostRecordRedeem(
         IJBRedeemHook indexed hook,
-        JBAfterRedeemContext context,
+        JBPostRecordRedeemContext context,
         uint256 specificationAmount,
         uint256 fee,
         address caller

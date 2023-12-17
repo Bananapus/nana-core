@@ -113,7 +113,7 @@ contract TestPayHooks_Local is TestBaseWorkflow {
             _specifications[i] = JBPayHookSpecification(IJBPayHook(_hookAddress), _payHookAmounts[i], _hookMetadata);
 
             // Keep a reference to the data that'll be received by the hook.
-            JBAfterPayContext memory _afterPayContext = JBAfterPayContext({
+            JBPostRecordPayContext memory _postRecordPayContext = JBPostRecordPayContext({
                 payer: _payer,
                 projectId: _projectId,
                 rulesetId: _ruleset.id,
@@ -138,22 +138,26 @@ contract TestPayHooks_Local is TestBaseWorkflow {
 
             // Mock the hook.
             vm.mockCall(
-                _hookAddress, abi.encodeWithSelector(IJBPayHook.afterPay.selector), abi.encode(_afterPayContext)
+                _hookAddress,
+                abi.encodeWithSelector(IJBPayHook.postRecordPay.selector),
+                abi.encode(_postRecordPayContext)
             );
 
             // Assert that the hook gets called with the expected value.
             vm.expectCall(
-                _hookAddress, _payHookAmounts[i], abi.encodeWithSelector(IJBPayHook.afterPay.selector, _afterPayContext)
+                _hookAddress,
+                _payHookAmounts[i],
+                abi.encodeWithSelector(IJBPayHook.postRecordPay.selector, _postRecordPayContext)
             );
 
             // Expect an event to be emitted for every hook.
             vm.expectEmit(true, true, true, true);
-            emit HookAfterPay(IJBPayHook(_hookAddress), _afterPayContext, _payHookAmounts[i], _payer);
+            emit HookPostRecordPay(IJBPayHook(_hookAddress), _postRecordPayContext, _payHookAmounts[i], _payer);
         }
 
         vm.mockCall(
             _DATA_HOOK,
-            abi.encodeWithSelector(IJBRulesetDataHook.beforePay.selector),
+            abi.encodeWithSelector(IJBRulesetDataHook.preRecordPay.selector),
             abi.encode(_DATA_HOOK_WEIGHT, _specifications)
         );
 
@@ -172,5 +176,7 @@ contract TestPayHooks_Local is TestBaseWorkflow {
         });
     }
 
-    event HookAfterPay(IJBPayHook indexed hook, JBAfterPayContext context, uint256 specificationAmount, address caller);
+    event HookPostRecordPay(
+        IJBPayHook indexed hook, JBPostRecordPayContext context, uint256 specificationAmount, address caller
+    );
 }

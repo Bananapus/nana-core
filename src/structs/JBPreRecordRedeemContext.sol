@@ -19,7 +19,7 @@ import {JBTokenAmount} from "./JBTokenAmount.sol";
 /// @custom:member useTotalSurplus If surplus across all of a project's terminals is being used when making redemptions.
 /// @custom:member redemptionRate The redemption rate of the ruleset the redemption is being made during.
 /// @custom:member metadata Extra data provided by the redeemer.
-struct JBBeforeRedeemContext {
+struct JBPreRecordRedeemContext {
     address terminal;
     address holder;
     uint256 projectId;
