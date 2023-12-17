@@ -16,7 +16,7 @@ interface IJBRulesetDataHook is IERC165 {
     /// @param context The context passed to this data hook by the `pay(...)` function as a `JBPayParamsContext` struct.
     /// @return weight The new `weight` to use, overriding the ruleset's `weight`.
     /// @return hookSpecifications The amount and data to send to pay hooks instead of adding to the terminal's balance.
-    function payParams(JBPayParamsContext calldata context)
+    function payParamsIn(JBPayParamsContext calldata context)
         external
         view
         returns (uint256 weight, JBPayHookSpecification[] memory hookSpecifications);
@@ -27,7 +27,7 @@ interface IJBRulesetDataHook is IERC165 {
     /// struct.
     /// @return reclaimAmount The amount to claim, overriding the terminal logic.
     /// @return hookSpecifications The amount and data to send to redeem hooks instead of returning to the beneficiary.
-    function redeemParams(JBRedeemParamsContext calldata context)
+    function redeemParamsIn(JBRedeemParamsContext calldata context)
         external
         view
         returns (uint256 reclaimAmount, JBRedeemHookSpecification[] memory hookSpecifications);

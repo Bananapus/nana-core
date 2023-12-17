@@ -160,7 +160,7 @@ contract TestRedeemHooks_Local is TestBaseWorkflow {
 
         vm.mockCall(
             _DATA_HOOK,
-            abi.encodeWithSelector(IJBRulesetDataHook.redeemParams.selector),
+            abi.encodeWithSelector(IJBRulesetDataHook.redeemParamsIn.selector),
             abi.encode(_halfPaid, _payloads)
         );
 

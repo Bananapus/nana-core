@@ -151,7 +151,7 @@ contract TestPayHooks_Local is TestBaseWorkflow {
 
         vm.mockCall(
             _DATA_HOOK,
-            abi.encodeWithSelector(IJBRulesetDataHook.payParams.selector),
+            abi.encodeWithSelector(IJBRulesetDataHook.payParamsIn.selector),
             abi.encode(_DATA_HOOK_WEIGHT, _specifications)
         );
 

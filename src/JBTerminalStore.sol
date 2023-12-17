@@ -330,7 +330,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
                 metadata: metadata
             });
 
-            (weight, hookSpecifications) = IJBRulesetDataHook(ruleset.dataHook()).payParams(context);
+            (weight, hookSpecifications) = IJBRulesetDataHook(ruleset.dataHook()).payParamsIn(context);
         }
         // Otherwise use the ruleset's weight
         else {
@@ -486,7 +486,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
                 redemptionRate: ruleset.redemptionRate(),
                 metadata: metadata
             });
-            (reclaimAmount, hookSpecifications) = IJBRulesetDataHook(ruleset.dataHook()).redeemParams(context);
+            (reclaimAmount, hookSpecifications) = IJBRulesetDataHook(ruleset.dataHook()).redeemParamsIn(context);
         }
 
         // Keep a reference to the amount that should be subtracted from the project's balance.
