@@ -154,7 +154,7 @@ contract TestFees_Local is TestBaseWorkflow {
             amount: _nativeDistLimit,
             currency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             token: JBConstants.NATIVE_TOKEN,
-            minReturnedTokens: 0,
+            minTokensPaidOut: 0,
             beneficiary: payable(_projectOwner),
             memo: "MEMO"
         });
@@ -197,7 +197,7 @@ contract TestFees_Local is TestBaseWorkflow {
             amount: _nativeDistLimit,
             currency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             token: JBConstants.NATIVE_TOKEN,
-            minReturnedTokens: 0,
+            minTokensPaidOut: 0,
             beneficiary: payable(_projectOwner),
             memo: "MEMO"
         });
@@ -246,7 +246,7 @@ contract TestFees_Local is TestBaseWorkflow {
             amount: _nativeDistLimit,
             currency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             token: JBConstants.NATIVE_TOKEN,
-            minReturnedTokens: 0,
+            minTokensPaidOut: 0,
             beneficiary: payable(_projectOwner),
             memo: "MEMO"
         });
@@ -291,7 +291,7 @@ contract TestFees_Local is TestBaseWorkflow {
             amount: _nativeDistLimit,
             currency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             token: JBConstants.NATIVE_TOKEN,
-            minReturnedTokens: 0,
+            minTokensPaidOut: 0,
             beneficiary: payable(_projectOwner),
             memo: "MEMO"
         });

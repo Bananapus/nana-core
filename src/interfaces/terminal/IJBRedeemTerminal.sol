@@ -26,9 +26,9 @@ interface IJBRedeemTerminal is IJBTerminal {
     function redeemTokensOf(
         address holder,
         uint256 projectId,
-        address token,
-        uint256 count,
-        uint256 minReclaimed,
+        address tokenToReclaim,
+        uint256 redeemCount,
+        uint256 minTokensReclaimed,
         address payable beneficiary,
         bytes calldata metadata
     )

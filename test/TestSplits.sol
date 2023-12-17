@@ -162,7 +162,7 @@ contract TestSplits_Local is TestBaseWorkflow {
             amount: _nativePayoutLimit,
             currency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             token: JBConstants.NATIVE_TOKEN, // Unused.
-            minReturnedTokens: 0
+            minTokensPaidOut: 0
         });
 
         // Calculate the amount returned after fees are processed.
@@ -181,7 +181,7 @@ contract TestSplits_Local is TestBaseWorkflow {
             amount: _nativePayoutLimit,
             currency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             token: JBConstants.NATIVE_TOKEN, // Unused.
-            minReturnedTokens: 0
+            minTokensPaidOut: 0
         });
 
         vm.prank(_projectOwner);

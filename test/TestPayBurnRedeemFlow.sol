@@ -142,9 +142,9 @@ contract TestPayBurnRedeemFlow_Local is TestBaseWorkflow {
         uint256 _reclaimAmt = _terminal.redeemTokensOf({
             holder: _beneficiary,
             projectId: _projectId,
-            token: JBConstants.NATIVE_TOKEN, // Unused.
-            count: _redeemTokenAmount,
-            minReclaimed: 0,
+            tokenToReclaim: JBConstants.NATIVE_TOKEN, // Unused.
+            redeemCount: _redeemTokenAmount,
+            minTokensReclaimed: 0,
             beneficiary: payable(_beneficiary),
             metadata: new bytes(0)
         });

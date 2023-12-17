@@ -167,7 +167,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             amount: _nativeCurrencySurplusAllowance,
             currency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             token: JBConstants.NATIVE_TOKEN,
-            minReturnedTokens: 0,
+            minTokensPaidOut: 0,
             beneficiary: payable(_beneficiary),
             memo: "MEMO"
         });
@@ -201,7 +201,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             amount: _nativeCurrencyPayoutLimit,
             currency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             token: JBConstants.NATIVE_TOKEN,
-            minReturnedTokens: 0
+            minTokensPaidOut: 0
         });
 
         // Make sure the project owner received the funds which were paid out.
@@ -235,9 +235,9 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
         _terminal.redeemTokensOf({
             holder: _beneficiary,
             projectId: _projectId,
-            token: JBConstants.NATIVE_TOKEN,
-            count: _beneficiaryTokenBalance,
-            minReclaimed: 0,
+            tokenToReclaim: JBConstants.NATIVE_TOKEN,
+            redeemCount: _beneficiaryTokenBalance,
+            minTokensReclaimed: 0,
             beneficiary: payable(_beneficiary),
             metadata: new bytes(0)
         });
@@ -398,7 +398,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             amount: _nativeCurrencySurplusAllowance,
             currency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             token: JBConstants.NATIVE_TOKEN,
-            minReturnedTokens: 0,
+            minTokensPaidOut: 0,
             beneficiary: payable(_beneficiary),
             memo: "MEMO"
         });
@@ -451,7 +451,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             amount: _nativeCurrencyPayoutLimit,
             currency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             token: JBConstants.NATIVE_TOKEN,
-            minReturnedTokens: 0
+            minTokensPaidOut: 0
         });
 
         uint256 _projectOwnerNativeBalance;
@@ -494,9 +494,9 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
         _terminal.redeemTokensOf({
             holder: _beneficiary,
             projectId: _projectId,
-            count: _beneficiaryTokenBalance,
-            token: JBConstants.NATIVE_TOKEN,
-            minReclaimed: 0,
+            tokenToReclaim: JBConstants.NATIVE_TOKEN,
+            redeemCount: _beneficiaryTokenBalance,
+            minTokensReclaimed: 0,
             beneficiary: payable(_beneficiary),
             metadata: new bytes(0)
         });
@@ -662,7 +662,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             amount: _nativeCurrencySurplusAllowance,
             currency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             token: JBConstants.NATIVE_TOKEN,
-            minReturnedTokens: 0,
+            minTokensPaidOut: 0,
             beneficiary: payable(_beneficiary),
             memo: "MEMO"
         });
@@ -708,7 +708,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             amount: _nativeCurrencyPayoutLimit,
             currency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             token: JBConstants.NATIVE_TOKEN,
-            minReturnedTokens: 0
+            minTokensPaidOut: 0
         });
 
         uint256 _projectOwnerNativeBalance;
@@ -740,9 +740,9 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
         _terminal.redeemTokensOf({
             holder: _beneficiary,
             projectId: _projectId,
-            count: _beneficiaryTokenBalance,
-            token: JBConstants.NATIVE_TOKEN,
-            minReclaimed: 0,
+            tokenToReclaim: JBConstants.NATIVE_TOKEN,
+            redeemCount: _beneficiaryTokenBalance,
+            minTokensReclaimed: 0,
             beneficiary: payable(_beneficiary),
             metadata: new bytes(0)
         });
@@ -895,7 +895,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             amount: _nativeCurrencySurplusAllowance,
             currency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             token: JBConstants.NATIVE_TOKEN,
-            minReturnedTokens: 0,
+            minTokensPaidOut: 0,
             beneficiary: payable(_beneficiary),
             memo: "MEMO"
         });
@@ -942,7 +942,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             amount: _nativeCurrencyPayoutLimit,
             currency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             token: JBConstants.NATIVE_TOKEN,
-            minReturnedTokens: 0
+            minTokensPaidOut: 0
         });
 
         uint256 _projectOwnerNativeBalance;
@@ -978,9 +978,9 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
         _terminal.redeemTokensOf({
             holder: _beneficiary,
             projectId: _projectId,
-            count: _beneficiaryTokenBalance,
-            token: JBConstants.NATIVE_TOKEN,
-            minReclaimed: 0,
+            tokenToReclaim: JBConstants.NATIVE_TOKEN,
+            redeemCount: _beneficiaryTokenBalance,
+            minTokensReclaimed: 0,
             beneficiary: payable(_beneficiary),
             metadata: new bytes(0)
         });
@@ -1212,7 +1212,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             amount: _nativeCurrencySurplusAllowance,
             currency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             token: JBConstants.NATIVE_TOKEN,
-            minReturnedTokens: 0,
+            minTokensPaidOut: 0,
             beneficiary: payable(_beneficiary),
             memo: "MEMO"
         });
@@ -1277,7 +1277,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             amount: _usdCurrencySurplusAllowance,
             currency: uint32(uint160(address(_usdcToken))),
             token: JBConstants.NATIVE_TOKEN,
-            minReturnedTokens: 0,
+            minTokensPaidOut: 0,
             beneficiary: payable(_beneficiary),
             memo: "MEMO"
         });
@@ -1338,7 +1338,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                 amount: _nativeCurrencyPayoutLimit,
                 currency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
                 token: JBConstants.NATIVE_TOKEN,
-                minReturnedTokens: 0
+                minTokensPaidOut: 0
             });
 
             uint256 _projectOwnerNativeBalance;
@@ -1395,7 +1395,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                 amount: _usdCurrencyPayoutLimit,
                 currency: uint32(uint160(address(_usdcToken))),
                 token: JBConstants.NATIVE_TOKEN,
-                minReturnedTokens: 0
+                minTokensPaidOut: 0
             });
 
             // Check the received payout if one is expected.
@@ -1516,9 +1516,9 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                 _terminal.redeemTokensOf({
                     holder: _beneficiary,
                     projectId: _projectId,
-                    count: _tokenCountToRedeemForNative,
-                    token: JBConstants.NATIVE_TOKEN,
-                    minReclaimed: 0,
+                    tokenToReclaim: JBConstants.NATIVE_TOKEN,
+                    redeemCount: _tokenCountToRedeemForNative,
+                    minTokensReclaimed: 0,
                     beneficiary: payable(_beneficiary),
                     metadata: new bytes(0)
                 });
@@ -1527,9 +1527,9 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                 _terminal.redeemTokensOf({
                     holder: _beneficiary,
                     projectId: _projectId,
-                    count: _beneficiaryTokenBalance - _tokenCountToRedeemForNative,
-                    token: address(_usdcToken),
-                    minReclaimed: 0,
+                    tokenToReclaim: address(_usdcToken),
+                    redeemCount: _beneficiaryTokenBalance - _tokenCountToRedeemForNative,
+                    minTokensReclaimed: 0,
                     beneficiary: payable(_beneficiary),
                     metadata: new bytes(0)
                 });
@@ -1592,9 +1592,9 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                 _terminal.redeemTokensOf({
                     holder: _beneficiary,
                     projectId: _projectId,
-                    count: _beneficiaryTokenBalance,
-                    token: JBConstants.NATIVE_TOKEN,
-                    minReclaimed: 0,
+                    tokenToReclaim: JBConstants.NATIVE_TOKEN,
+                    redeemCount: _beneficiaryTokenBalance,
+                    minTokensReclaimed: 0,
                     beneficiary: payable(_beneficiary),
                     metadata: new bytes(0)
                 });
@@ -1604,9 +1604,9 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             _terminal.redeemTokensOf({
                 holder: _beneficiary,
                 projectId: _projectId,
-                count: _beneficiaryTokenBalance,
-                token: address(_usdcToken),
-                minReclaimed: 0,
+                tokenToReclaim: address(_usdcToken),
+                redeemCount: _beneficiaryTokenBalance,
+                minTokensReclaimed: 0,
                 beneficiary: payable(_beneficiary),
                 metadata: new bytes(0)
             });
@@ -1814,7 +1814,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             amount: _nativeCurrencySurplusAllowance,
             currency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             token: JBConstants.NATIVE_TOKEN,
-            minReturnedTokens: 0,
+            minTokensPaidOut: 0,
             beneficiary: payable(_beneficiary),
             memo: "MEMO"
         });
@@ -1872,7 +1872,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             amount: _usdCurrencySurplusAllowance,
             currency: uint32(uint160(address(_usdcToken))),
             token: address(_usdcToken),
-            minReturnedTokens: 0,
+            minTokensPaidOut: 0,
             beneficiary: payable(_beneficiary),
             memo: "MEMO"
         });
@@ -1938,7 +1938,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                 amount: _nativeCurrencyPayoutLimit,
                 currency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
                 token: JBConstants.NATIVE_TOKEN,
-                minReturnedTokens: 0
+                minTokensPaidOut: 0
             });
 
             uint256 _projectOwnerNativeBalance;
@@ -1987,7 +1987,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                 amount: _usdCurrencyPayoutLimit,
                 currency: uint32(uint160(address(_usdcToken))),
                 token: address(_usdcToken),
-                minReturnedTokens: 0
+                minTokensPaidOut: 0
             });
 
             uint256 _projectOwnerUsdcBalance;
@@ -2103,9 +2103,9 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                     _terminal.redeemTokensOf({
                         holder: _beneficiary,
                         projectId: _projectId,
-                        count: _tokenCountToRedeemForNative,
-                        token: JBConstants.NATIVE_TOKEN,
-                        minReclaimed: 0,
+                        tokenToReclaim: JBConstants.NATIVE_TOKEN,
+                        redeemCount: _tokenCountToRedeemForNative,
+                        minTokensReclaimed: 0,
                         beneficiary: payable(_beneficiary),
                         metadata: new bytes(0)
                     });
@@ -2115,9 +2115,9 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                     _terminal2.redeemTokensOf({
                         holder: _beneficiary,
                         projectId: _projectId,
-                        count: _beneficiaryTokenBalance - _tokenCountToRedeemForNative,
-                        token: address(_usdcToken),
-                        minReclaimed: 0,
+                        tokenToReclaim: address(_usdcToken),
+                        redeemCount: _beneficiaryTokenBalance - _tokenCountToRedeemForNative,
+                        minTokensReclaimed: 0,
                         beneficiary: payable(_beneficiary),
                         metadata: new bytes(0)
                     });
@@ -2184,9 +2184,9 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                 _terminal.redeemTokensOf({
                     holder: _beneficiary,
                     projectId: _projectId,
-                    count: _beneficiaryTokenBalance,
-                    token: JBConstants.NATIVE_TOKEN,
-                    minReclaimed: 0,
+                    tokenToReclaim: JBConstants.NATIVE_TOKEN,
+                    redeemCount: _beneficiaryTokenBalance,
+                    minTokensReclaimed: 0,
                     beneficiary: payable(_beneficiary),
                     metadata: new bytes(0)
                 });
@@ -2196,9 +2196,9 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             _terminal2.redeemTokensOf({
                 holder: _beneficiary,
                 projectId: _projectId,
-                count: _beneficiaryTokenBalance,
-                token: address(_usdcToken),
-                minReclaimed: 0,
+                tokenToReclaim: address(_usdcToken),
+                redeemCount: _beneficiaryTokenBalance,
+                minTokensReclaimed: 0,
                 beneficiary: payable(_beneficiary),
                 metadata: new bytes(0)
             });

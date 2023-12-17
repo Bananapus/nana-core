@@ -97,9 +97,9 @@ interface IJBTerminalStore {
     function recordRedemptionFor(
         address holder,
         uint256 projectId,
+        uint256 redeemCount,
         JBAccountingContext calldata accountingContext,
         JBAccountingContext[] calldata balanceAccountingContexts,
-        uint256 tokenCount,
         bytes calldata metadata
     )
         external
