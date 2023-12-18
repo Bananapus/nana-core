@@ -5,10 +5,10 @@ import /* {*} from */ "./helpers/TestBaseWorkflow.sol";
 
 contract TestSplits_Local is TestBaseWorkflow {
     IJBController private _controller;
-    JBRulesetData private _data;
     JBRulesetMetadata private _metadata;
     IJBMultiTerminal private _terminal;
     IJBTokens private _tokens;
+    uint256 private _weight;
 
     address private _projectOwner;
     address payable private _splitsGuy;
@@ -23,13 +23,7 @@ contract TestSplits_Local is TestBaseWorkflow {
         _controller = jbController();
         _tokens = jbTokens();
         _splitsGuy = payable(makeAddr("guy"));
-
-        _data = JBRulesetData({
-            duration: 3 days,
-            weight: 1000 * 10 ** 18,
-            decayRate: 0,
-            hook: IJBRulesetApprovalHook(address(0))
-        });
+        _weight = 1000 * 10 ** 18;
 
         _metadata = JBRulesetMetadata({
             reservedRate: JBConstants.MAX_RESERVED_RATE / 2,
@@ -111,7 +105,10 @@ contract TestSplits_Local is TestBaseWorkflow {
         // Package up ruleset configuration.
         JBRulesetConfig[] memory _rulesetConfig = new JBRulesetConfig[](1);
         _rulesetConfig[0].mustStartAtOrAfter = 0;
-        _rulesetConfig[0].data = _data;
+        _rulesetConfig[0].duration = 0;
+        _rulesetConfig[0].weight = _weight;
+        _rulesetConfig[0].decayRate = 0;
+        _rulesetConfig[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfig[0].metadata = _metadata;
         _rulesetConfig[0].splitGroups = _splitsGroup;
         _rulesetConfig[0].fundAccessLimitGroups = _fundAccessLimitGroup;
@@ -189,7 +186,7 @@ contract TestSplits_Local is TestBaseWorkflow {
 
         // 10 native tokens paid -> 1000 per Eth, 10000 total, 50% reserve rate, 5000 tokens sent.
         uint256 _reserveRateDistributionAmount =
-            mulDiv(_nativePayAmount, _data.weight, 10 ** 18) * _metadata.reservedRate / JBConstants.MAX_RESERVED_RATE;
+            mulDiv(_nativePayAmount, _weight, 10 ** 18) * _metadata.reservedRate / JBConstants.MAX_RESERVED_RATE;
 
         assertEq(_tokens.totalBalanceOf(_splitsGuy, _projectId), _reserveRateDistributionAmount);
     }
@@ -241,7 +238,10 @@ contract TestSplits_Local is TestBaseWorkflow {
         // Package up ruleset configuration.
         JBRulesetConfig[] memory _rulesetConfig = new JBRulesetConfig[](1);
         _rulesetConfig[0].mustStartAtOrAfter = 0;
-        _rulesetConfig[0].data = _data;
+        _rulesetConfig[0].duration = 0;
+        _rulesetConfig[0].weight = _weight;
+        _rulesetConfig[0].decayRate = 0;
+        _rulesetConfig[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfig[0].metadata = _metadata;
         _rulesetConfig[0].splitGroups = _splitsGroup;
         _rulesetConfig[0].fundAccessLimitGroups = _fundAccessLimitGroup;

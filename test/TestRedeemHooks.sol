@@ -26,9 +26,6 @@ contract TestRedeemHooks_Local is TestBaseWorkflow {
         _terminal = jbMultiTerminal();
         _tokens = jbTokens();
 
-        JBRulesetData memory _data =
-            JBRulesetData({duration: 0, weight: _WEIGHT, decayRate: 0, hook: IJBRulesetApprovalHook(address(0))});
-
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedRate: 0,
             redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
@@ -51,7 +48,10 @@ contract TestRedeemHooks_Local is TestBaseWorkflow {
         // Package up ruleset configuration.
         JBRulesetConfig[] memory _rulesetConfig = new JBRulesetConfig[](1);
         _rulesetConfig[0].mustStartAtOrAfter = 0;
-        _rulesetConfig[0].data = _data;
+        _rulesetConfig[0].duration = 0;
+        _rulesetConfig[0].weight = _WEIGHT;
+        _rulesetConfig[0].decayRate = 0;
+        _rulesetConfig[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfig[0].metadata = _metadata;
         _rulesetConfig[0].splitGroups = new JBSplitGroup[](0);
         _rulesetConfig[0].fundAccessLimitGroups = new JBFundAccessLimitGroup[](0);
@@ -123,13 +123,14 @@ contract TestRedeemHooks_Local is TestBaseWorkflow {
             _nativeTerminalBalance
         );
 
-        // Reference payloads.
-        JBRedeemHookPayload[] memory _payloads = new JBRedeemHookPayload[](1);
+        // Reference redeem hook specifications.
+        JBRedeemHookSpecification[] memory _specifications = new JBRedeemHookSpecification[](1);
 
-        _payloads[0] = JBRedeemHookPayload({hook: IJBRedeemHook(_redeemHook), amount: _halfPaid, metadata: ""});
+        _specifications[0] =
+            JBRedeemHookSpecification({hook: IJBRedeemHook(_redeemHook), amount: _halfPaid, metadata: ""});
 
-        // Redeem Data.
-        JBDidRedeemData memory _redeemData = JBDidRedeemData({
+        // Redeem context.
+        JBAfterRedeemRecordedContext memory _redeemContext = JBAfterRedeemRecordedContext({
             holder: address(this),
             projectId: _projectId,
             rulesetId: _ruleset.id,
@@ -153,15 +154,23 @@ contract TestRedeemHooks_Local is TestBaseWorkflow {
         });
 
         // Mock the hook.
-        vm.mockCall(_redeemHook, abi.encodeWithSelector(IJBRedeemHook.didRedeem.selector), abi.encode(_redeemData));
+        vm.mockCall(
+            _redeemHook,
+            abi.encodeWithSelector(IJBRedeemHook.afterRedeemRecordedWith.selector),
+            abi.encode(_redeemContext)
+        );
 
         // Assert that the hook gets called with the expected value.
-        vm.expectCall(_redeemHook, _halfPaid, abi.encodeWithSelector(IJBRedeemHook.didRedeem.selector, _redeemData));
+        vm.expectCall(
+            _redeemHook,
+            _halfPaid,
+            abi.encodeWithSelector(IJBRedeemHook.afterRedeemRecordedWith.selector, _redeemContext)
+        );
 
         vm.mockCall(
             _DATA_HOOK,
-            abi.encodeWithSelector(IJBRulesetDataHook.redeemParams.selector),
-            abi.encode(_halfPaid, _payloads)
+            abi.encodeWithSelector(IJBRulesetDataHook.beforeRedeemRecordedWith.selector),
+            abi.encode(_halfPaid, _specifications)
         );
 
         _terminal.redeemTokensOf({

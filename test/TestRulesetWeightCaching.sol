@@ -15,7 +15,6 @@ contract TestRulesetWeightCaching_Local is TestBaseWorkflow {
     IJBRulesets private _rulesets;
     address private _projectOwner;
 
-    JBRulesetData private _data;
     JBRulesetMetadata private _metadata;
 
     function setUp() public override {
@@ -24,12 +23,6 @@ contract TestRulesetWeightCaching_Local is TestBaseWorkflow {
         _projectOwner = multisig();
         _rulesets = jbRulesets();
         _controller = jbController();
-        _data = JBRulesetData({
-            duration: _DURATION,
-            weight: 1000 * 10 ** _WEIGHT_DECIMALS,
-            decayRate: _DECAY_RATE,
-            hook: IJBRulesetApprovalHook(address(0))
-        });
 
         _metadata = JBRulesetMetadata({
             reservedRate: 0,
@@ -66,7 +59,10 @@ contract TestRulesetWeightCaching_Local is TestBaseWorkflow {
 
         // {
         //     _rulesetConfigurations[0].mustStartAtOrAfter = 0;
-        //     _rulesetConfigurations[0].data = _data;
+        //     _rulesetConfigurations[0].duration = _DURATION;
+        //     _rulesetConfigurations[0].weight = 1000 * 10 ** _WEIGHT_DECIMALS;
+        //     _rulesetConfigurations[0].decayRate = _DECAY_RATE;
+        //     _rulesetConfigurations[0].approvalHook = IJBRulesetApprovalHook(address(0));
         //     _rulesetConfigurations[0].metadata = _metadata;
         //     _rulesetConfigurations[0].splitGroups = new JBSplitGroup[](0);
         //     _rulesetConfigurations[0].fundAccessLimitGroups = new JBFundAccessLimitGroup[](0);

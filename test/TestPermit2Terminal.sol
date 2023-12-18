@@ -44,9 +44,6 @@ contract TestPermit2Terminal_Local is TestBaseWorkflow, PermitSignature {
         from = vm.addr(fromPrivateKey);
         DOMAIN_SEPARATOR = permit2().DOMAIN_SEPARATOR();
 
-        JBRulesetData memory _data =
-            JBRulesetData({duration: 0, weight: _WEIGHT, decayRate: 0, hook: IJBRulesetApprovalHook(address(0))});
-
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedRate: 0,
             redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
@@ -69,7 +66,10 @@ contract TestPermit2Terminal_Local is TestBaseWorkflow, PermitSignature {
         // Package up ruleset configuration.
         JBRulesetConfig[] memory _rulesetConfig = new JBRulesetConfig[](1);
         _rulesetConfig[0].mustStartAtOrAfter = 0;
-        _rulesetConfig[0].data = _data;
+        _rulesetConfig[0].duration = 0;
+        _rulesetConfig[0].weight = _WEIGHT;
+        _rulesetConfig[0].decayRate = 0;
+        _rulesetConfig[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfig[0].metadata = _metadata;
         _rulesetConfig[0].splitGroups = new JBSplitGroup[](0);
         _rulesetConfig[0].fundAccessLimitGroups = new JBFundAccessLimitGroup[](0);
@@ -131,7 +131,7 @@ contract TestPermit2Terminal_Local is TestBaseWorkflow, PermitSignature {
         // Setup: sign permit details.
         bytes memory sig = getPermitSignature(permit, fromPrivateKey, DOMAIN_SEPARATOR);
 
-        JBSingleAllowanceData memory permitData = JBSingleAllowanceData({
+        JBSingleAllowanceContext memory permitData = JBSingleAllowanceContext({
             sigDeadline: _deadline,
             amount: uint160(_coins),
             expiration: uint48(_expiration),
@@ -197,7 +197,7 @@ contract TestPermit2Terminal_Local is TestBaseWorkflow, PermitSignature {
         // Setup: sign permit details.
         bytes memory sig = getPermitSignature(permit, fromPrivateKey, DOMAIN_SEPARATOR);
 
-        JBSingleAllowanceData memory permitData = JBSingleAllowanceData({
+        JBSingleAllowanceContext memory permitData = JBSingleAllowanceContext({
             sigDeadline: _deadline,
             amount: uint160(_coins),
             expiration: uint48(_expiration),
@@ -253,7 +253,7 @@ contract TestPermit2Terminal_Local is TestBaseWorkflow, PermitSignature {
         // Setup: sign permit details.
         bytes memory sig = getPermitSignature(permit, fromPrivateKey, DOMAIN_SEPARATOR);
 
-        JBSingleAllowanceData({
+        JBSingleAllowanceContext({
             sigDeadline: _sigDeadline,
             amount: _permitAmount,
             expiration: _expiration,

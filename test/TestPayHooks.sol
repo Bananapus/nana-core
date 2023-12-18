@@ -28,9 +28,6 @@ contract TestPayHooks_Local is TestBaseWorkflow {
         _payer = address(1_234_567);
         _terminal = jbMultiTerminal();
 
-        JBRulesetData memory _data =
-            JBRulesetData({duration: 0, weight: _WEIGHT, decayRate: 0, hook: IJBRulesetApprovalHook(address(0))});
-
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedRate: 0,
             redemptionRate: 0,
@@ -53,7 +50,10 @@ contract TestPayHooks_Local is TestBaseWorkflow {
         // Package up ruleset configuration.
         JBRulesetConfig[] memory _rulesetConfig = new JBRulesetConfig[](1);
         _rulesetConfig[0].mustStartAtOrAfter = 0;
-        _rulesetConfig[0].data = _data;
+        _rulesetConfig[0].duration = 0;
+        _rulesetConfig[0].weight = _WEIGHT;
+        _rulesetConfig[0].decayRate = 0;
+        _rulesetConfig[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfig[0].metadata = _metadata;
         _rulesetConfig[0].splitGroups = new JBSplitGroup[](0);
         _rulesetConfig[0].fundAccessLimitGroups = new JBFundAccessLimitGroup[](0);
@@ -72,25 +72,25 @@ contract TestPayHooks_Local is TestBaseWorkflow {
         });
     }
 
-    function testPayHooks(uint256 _numberOfPayloads, uint256 _nativePayAmount) public {
-        // Bound the number of allocations to a reasonable amount.
-        _numberOfPayloads = bound(_numberOfPayloads, 1, 20);
-        // Make sure the amount of tokens generated fits in a register, and that each payload can get some.
-        _nativePayAmount = bound(_nativePayAmount, _numberOfPayloads, type(uint256).max / _DATA_HOOK_WEIGHT);
+    function testPayHooks(uint256 _numberOfSpecifications, uint256 _nativePayAmount) public {
+        // Bound the number of specifications to a reasonable amount.
+        _numberOfSpecifications = bound(_numberOfSpecifications, 1, 20);
+        // Make sure the amount of tokens generated fits in a register, and that each specification can get some.
+        _nativePayAmount = bound(_nativePayAmount, _numberOfSpecifications, type(uint256).max / _DATA_HOOK_WEIGHT);
 
         // epa * weight / epad < max*epad/weight
 
-        // Keep a reference to the payloads.
-        JBPayHookPayload[] memory _payloads = new JBPayHookPayload[](_numberOfPayloads);
+        // Keep a reference to the specifications.
+        JBPayHookSpecification[] memory _specifications = new JBPayHookSpecification[](_numberOfSpecifications);
 
-        // Keep a reference to the the payload amounts.
-        uint256[] memory _payHookAmounts = new uint256[](_numberOfPayloads);
+        // Keep a reference to the amounts in the specifications.
+        uint256[] memory _payHookAmounts = new uint256[](_numberOfSpecifications);
 
         // Keep a reference to the amount that'll be paid and sent to pay hooks.
         uint256 _totalToAllocate = _nativePayAmount;
 
-        // Spread the paid amount through all payloads, in various chunks, omitting the last entry.
-        for (uint256 i; i < _numberOfPayloads - 1; i++) {
+        // Spread the paid amount through all specifications, in various chunks, omitting the last entry.
+        for (uint256 i; i < _numberOfSpecifications - 1; i++) {
             _payHookAmounts[i] = _totalToAllocate / (_payHookAmounts.length * 2);
             _totalToAllocate -= _payHookAmounts[i];
         }
@@ -101,19 +101,19 @@ contract TestPayHooks_Local is TestBaseWorkflow {
         // Keep a reference to the current ruleset.
         (JBRuleset memory _ruleset,) = _controller.currentRulesetOf(_projectId);
 
-        // Iterate through each payload.
-        for (uint256 i = 0; i < _numberOfPayloads; i++) {
+        // Iterate through each specification.
+        for (uint256 i = 0; i < _numberOfSpecifications; i++) {
             // Make up an address for the hook.
             address _hookAddress = address(bytes20(keccak256(abi.encodePacked("PayHook", i))));
 
             // Send along some metadata to the pay hook.
             bytes memory _hookMetadata = bytes("Some data hook metadata");
 
-            // Package up the hook payload struct.
-            _payloads[i] = JBPayHookPayload(IJBPayHook(_hookAddress), _payHookAmounts[i], _hookMetadata);
+            // Package up the specification struct.
+            _specifications[i] = JBPayHookSpecification(IJBPayHook(_hookAddress), _payHookAmounts[i], _hookMetadata);
 
             // Keep a reference to the data that'll be received by the hook.
-            JBDidPayData memory _didPayData = JBDidPayData({
+            JBAfterPayRecordedContext memory _postRecordPayContext = JBAfterPayRecordedContext({
                 payer: _payer,
                 projectId: _projectId,
                 rulesetId: _ruleset.id,
@@ -137,22 +137,28 @@ contract TestPayHooks_Local is TestBaseWorkflow {
             });
 
             // Mock the hook.
-            vm.mockCall(_hookAddress, abi.encodeWithSelector(IJBPayHook.didPay.selector), abi.encode(_didPayData));
+            vm.mockCall(
+                _hookAddress,
+                abi.encodeWithSelector(IJBPayHook.afterPayRecordedWith.selector),
+                abi.encode(_postRecordPayContext)
+            );
 
             // Assert that the hook gets called with the expected value.
             vm.expectCall(
-                _hookAddress, _payHookAmounts[i], abi.encodeWithSelector(IJBPayHook.didPay.selector, _didPayData)
+                _hookAddress,
+                _payHookAmounts[i],
+                abi.encodeWithSelector(IJBPayHook.afterPayRecordedWith.selector, _postRecordPayContext)
             );
 
             // Expect an event to be emitted for every hook.
             vm.expectEmit(true, true, true, true);
-            emit HookDidPay(IJBPayHook(_hookAddress), _didPayData, _payHookAmounts[i], _payer);
+            emit HookPostRecordPay(IJBPayHook(_hookAddress), _postRecordPayContext, _payHookAmounts[i], _payer);
         }
 
         vm.mockCall(
             _DATA_HOOK,
-            abi.encodeWithSelector(IJBRulesetDataHook.payParams.selector),
-            abi.encode(_DATA_HOOK_WEIGHT, _payloads)
+            abi.encodeWithSelector(IJBRulesetDataHook.beforePayRecordedWith.selector),
+            abi.encode(_DATA_HOOK_WEIGHT, _specifications)
         );
 
         vm.deal(_payer, _nativePayAmount);
@@ -170,5 +176,7 @@ contract TestPayHooks_Local is TestBaseWorkflow {
         });
     }
 
-    event HookDidPay(IJBPayHook indexed hook, JBDidPayData data, uint256 hookdAmount, address caller);
+    event HookPostRecordPay(
+        IJBPayHook indexed hook, JBAfterPayRecordedContext context, uint256 specificationAmount, address caller
+    );
 }

@@ -16,10 +16,10 @@ import {JBFixedPointNumber} from "./libraries/JBFixedPointNumber.sol";
 import {JBCurrencyAmount} from "./structs/JBCurrencyAmount.sol";
 import {JBRulesetMetadataResolver} from "./libraries/JBRulesetMetadataResolver.sol";
 import {JBRuleset} from "./structs/JBRuleset.sol";
-import {JBPayHookPayload} from "./structs/JBPayHookPayload.sol";
-import {JBPayParamsData} from "./structs/JBPayParamsData.sol";
-import {JBRedeemParamsData} from "./structs/JBRedeemParamsData.sol";
-import {JBRedeemHookPayload} from "./structs/JBRedeemHookPayload.sol";
+import {JBPayHookSpecification} from "./structs/JBPayHookSpecification.sol";
+import {JBBeforePayRecordedContext} from "./structs/JBBeforePayRecordedContext.sol";
+import {JBBeforeRedeemRecordedContext} from "./structs/JBBeforeRedeemRecordedContext.sol";
+import {JBRedeemHookSpecification} from "./structs/JBRedeemHookSpecification.sol";
 import {JBAccountingContext} from "./structs/JBAccountingContext.sol";
 import {JBTokenAmount} from "./structs/JBTokenAmount.sol";
 
@@ -290,7 +290,8 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     /// @param metadata Bytes to send to the data hook, if the project's current ruleset specifies one.
     /// @return ruleset The ruleset the payment was made during, as a `JBRuleset` struct.
     /// @return tokenCount The number of project tokens that were minted, as a fixed point number with 18 decimals.
-    /// @return hookPayloads The data and amounts to send to pay hooks instead of adding to the local balance.
+    /// @return hookSpecifications A list of pay hooks, including data and amounts to send to them. The terminal should
+    /// fulfill these specifications.
     function recordPaymentFrom(
         address payer,
         JBTokenAmount calldata amount,
@@ -301,7 +302,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
         external
         override
         nonReentrant
-        returns (JBRuleset memory ruleset, uint256 tokenCount, JBPayHookPayload[] memory hookPayloads)
+        returns (JBRuleset memory ruleset, uint256 tokenCount, JBPayHookSpecification[] memory hookSpecifications)
     {
         // Get a reference to the project's current ruleset.
         ruleset = RULESETS.currentOf(projectId);
@@ -317,8 +318,8 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
 
         // If the ruleset has a data hook enabled for payments, use it to derive a weight and memo.
         if (ruleset.useDataHookForPay() && ruleset.dataHook() != address(0)) {
-            // Create the params that'll be sent to the data hook.
-            JBPayParamsData memory data = JBPayParamsData({
+            // Create the pay context that'll be sent to the data hook.
+            JBBeforePayRecordedContext memory context = JBBeforePayRecordedContext({
                 terminal: msg.sender,
                 payer: payer,
                 amount: amount,
@@ -330,7 +331,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
                 metadata: metadata
             });
 
-            (weight, hookPayloads) = IJBRulesetDataHook(ruleset.dataHook()).payParams(data);
+            (weight, hookSpecifications) = IJBRulesetDataHook(ruleset.dataHook()).beforePayRecordedWith(context);
         }
         // Otherwise use the ruleset's weight
         else {
@@ -342,32 +343,31 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
 
         // Scoped section preventing stack too deep.
         {
-            // Keep a reference to the number of hook payloads.
-            uint256 numberOfHookPayloads = hookPayloads.length;
+            // Keep a reference to the number of hook specifications.
+            uint256 numberOfSpecifications = hookSpecifications.length;
 
-            // Validate all payload amounts. This needs to be done before returning the hook payloads to ensure valid
-            // payload amounts.
-            if (numberOfHookPayloads != 0) {
-                for (uint256 i; i < numberOfHookPayloads; i++) {
-                    // Get a reference to the payload amount.
-                    uint256 payloadAmount = hookPayloads[i].amount;
+            // Ensure that the specifications have valid amounts.
+            if (numberOfSpecifications != 0) {
+                for (uint256 i; i < numberOfSpecifications; i++) {
+                    // Get a reference to the specification's amount.
+                    uint256 specifiedAmount = hookSpecifications[i].amount;
 
-                    // Validate if non-zero.
-                    if (payloadAmount != 0) {
+                    // Ensure the amount is non-zero.
+                    if (specifiedAmount != 0) {
                         // Can't send more to hook than was paid.
-                        if (payloadAmount > balanceDiff) {
+                        if (specifiedAmount > balanceDiff) {
                             revert INVALID_AMOUNT_TO_SEND_HOOK();
                         }
 
-                        // Decrement the total amount being added to the balance.
-                        balanceDiff = balanceDiff - payloadAmount;
+                        // Decrement the total amount being added to the local balance.
+                        balanceDiff = balanceDiff - specifiedAmount;
                     }
                 }
             }
         }
 
         // If there's no amount being recorded, there's nothing left to do.
-        if (amount.value == 0) return (ruleset, 0, hookPayloads);
+        if (amount.value == 0) return (ruleset, 0, hookSpecifications);
 
         // Add the correct balance difference to the token balance of the project.
         if (balanceDiff != 0) {
@@ -376,11 +376,11 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
         }
 
         // If there's no weight, the token count must be 0, so there's nothing left to do.
-        if (weight == 0) return (ruleset, 0, hookPayloads);
+        if (weight == 0) return (ruleset, 0, hookSpecifications);
 
         // If the terminal should base its weight on a currency other than the terminal's currency, determine the
-        // factor.
-        // The weight is always a fixed point mumber with 18 decimals. To ensure this, the ratio should use the same
+        // factor. The weight is always a fixed point mumber with 18 decimals. To ensure this, the ratio should use the
+        // same
         // number of decimals as the `amount`.
         uint256 weightRatio = amount.currency == ruleset.baseCurrency()
             ? 10 ** amount.decimals
@@ -403,14 +403,14 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     /// @param projectId The ID of the project being redeemed from.
     /// @param redeemCount The number of project tokens to redeem, as a fixed point number with 18 decimals.
     /// @param accountingContext The accounting context of the token being reclaimed by the redemption.
-    /// @param balanceAccountingContexts The accounting contexts whose balances should contribute to the surplus being
-    /// reclaimed
-    /// from.
+    /// @param balanceAccountingContexts The accounting contexts of the tokens whose balances should contribute to the
+    /// surplus being reclaimed from.
     /// @param metadata Bytes to send to the data hook, if the project's current ruleset specifies one.
     /// @return ruleset The ruleset during the redemption was made during, as a `JBRuleset` struct.
     /// @return reclaimAmount The amount of tokens reclaimed from the terminal, as a fixed point number with 18
     /// decimals.
-    /// @return hookPayloads The data and amounts to send to redeem hooks instead of sending to the beneficiary.
+    /// @return hookSpecifications A list of redeem hooks, including data and amounts to send to them. The terminal
+    /// should fulfill these specifications.
     function recordRedemptionFor(
         address holder,
         uint256 projectId,
@@ -422,7 +422,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
         external
         override
         nonReentrant
-        returns (JBRuleset memory ruleset, uint256 reclaimAmount, JBRedeemHookPayload[] memory hookPayloads)
+        returns (JBRuleset memory ruleset, uint256 reclaimAmount, JBRedeemHookSpecification[] memory hookSpecifications)
     {
         // Get a reference to the project's current ruleset.
         ruleset = RULESETS.currentOf(projectId);
@@ -462,18 +462,18 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
             });
         }
 
-        // Create the struct that describes the amount being reclaimed.
-        JBTokenAmount memory reclaimedTokenAmount = JBTokenAmount({
-            token: accountingContext.token,
-            value: reclaimAmount,
-            decimals: accountingContext.decimals,
-            currency: accountingContext.currency
-        });
-
         // If the ruleset has a data hook which is enabled for redemptions, use it to derive a claim amount and memo.
         if (ruleset.useDataHookForRedeem() && ruleset.dataHook() != address(0)) {
-            // Create the params that'll be sent to the data hook.
-            JBRedeemParamsData memory data = JBRedeemParamsData({
+            // Create the struct that describes the amount being reclaimed.
+            JBTokenAmount memory reclaimedTokenAmount = JBTokenAmount({
+                token: accountingContext.token,
+                value: reclaimAmount,
+                decimals: accountingContext.decimals,
+                currency: accountingContext.currency
+            });
+
+            // Create the redeem context that'll be sent to the data hook.
+            JBBeforeRedeemRecordedContext memory context = JBBeforeRedeemRecordedContext({
                 terminal: msg.sender,
                 holder: holder,
                 projectId: projectId,
@@ -486,22 +486,27 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
                 redemptionRate: ruleset.redemptionRate(),
                 metadata: metadata
             });
-            (reclaimAmount, hookPayloads) = IJBRulesetDataHook(ruleset.dataHook()).redeemParams(data);
+            (reclaimAmount, hookSpecifications) =
+                IJBRulesetDataHook(ruleset.dataHook()).beforeRedeemRecordedWith(context);
         }
 
         // Keep a reference to the amount that should be subtracted from the project's balance.
         uint256 balanceDiff = reclaimAmount;
 
-        if (hookPayloads.length != 0) {
-            // Validate all payload amounts.
-            for (uint256 i; i < hookPayloads.length; i++) {
-                // Get a reference to the payload amount.
-                uint256 payloadAmount = hookPayloads[i].amount;
+        // Keep a reference to the number of redeem hooks specified.
+        uint256 numberOfSpecifications = hookSpecifications.length;
 
-                // Validate if non-zero.
-                if (payloadAmount != 0) {
+        // Ensure that the specifications have valid amounts.
+        if (numberOfSpecifications != 0) {
+            // Loop through each specification.
+            for (uint256 i; i < numberOfSpecifications; i++) {
+                // Get a reference to the specification's amount.
+                uint256 specificationAmount = hookSpecifications[i].amount;
+
+                // Ensure the amount is non-zero.
+                if (specificationAmount != 0) {
                     // Increment the total amount being subtracted from the balance.
-                    balanceDiff = balanceDiff + payloadAmount;
+                    balanceDiff = balanceDiff + specificationAmount;
                 }
             }
         }

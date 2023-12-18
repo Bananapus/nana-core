@@ -10,8 +10,8 @@ contract MockMaliciousSplitHook is ERC165, IJBSplitHook {
 
     uint256 revertMode;
 
-    function process(JBSplitHookPayload calldata _data) external payable override {
-        _data;
+    function process(JBSplitHookContext calldata _context) external payable override {
+        _context;
         if (revertMode == 0) {
             revert();
         } else if (revertMode == 1) {
