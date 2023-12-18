@@ -17,8 +17,8 @@ import {JBCurrencyAmount} from "./structs/JBCurrencyAmount.sol";
 import {JBRulesetMetadataResolver} from "./libraries/JBRulesetMetadataResolver.sol";
 import {JBRuleset} from "./structs/JBRuleset.sol";
 import {JBPayHookSpecification} from "./structs/JBPayHookSpecification.sol";
-import {JBPreRecordPayContext} from "./structs/JBPreRecordPayContext.sol";
-import {JBPreRecordRedeemContext} from "./structs/JBPreRecordRedeemContext.sol";
+import {JBBeforePayRecordedContext} from "./structs/JBBeforePayRecordedContext.sol";
+import {JBBeforeRedeemRecordedContext} from "./structs/JBBeforeRedeemRecordedContext.sol";
 import {JBRedeemHookSpecification} from "./structs/JBRedeemHookSpecification.sol";
 import {JBAccountingContext} from "./structs/JBAccountingContext.sol";
 import {JBTokenAmount} from "./structs/JBTokenAmount.sol";
@@ -319,7 +319,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
         // If the ruleset has a data hook enabled for payments, use it to derive a weight and memo.
         if (ruleset.useDataHookForPay() && ruleset.dataHook() != address(0)) {
             // Create the pay context that'll be sent to the data hook.
-            JBPreRecordPayContext memory context = JBPreRecordPayContext({
+            JBBeforePayRecordedContext memory context = JBBeforePayRecordedContext({
                 terminal: msg.sender,
                 payer: payer,
                 amount: amount,
@@ -331,7 +331,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
                 metadata: metadata
             });
 
-            (weight, hookSpecifications) = IJBRulesetDataHook(ruleset.dataHook()).preRecordPayWith(context);
+            (weight, hookSpecifications) = IJBRulesetDataHook(ruleset.dataHook()).beforePayRecordedWith(context);
         }
         // Otherwise use the ruleset's weight
         else {
@@ -473,7 +473,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
             });
 
             // Create the redeem context that'll be sent to the data hook.
-            JBPreRecordRedeemContext memory context = JBPreRecordRedeemContext({
+            JBBeforeRedeemRecordedContext memory context = JBBeforeRedeemRecordedContext({
                 terminal: msg.sender,
                 holder: holder,
                 projectId: projectId,
@@ -486,7 +486,8 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
                 redemptionRate: ruleset.redemptionRate(),
                 metadata: metadata
             });
-            (reclaimAmount, hookSpecifications) = IJBRulesetDataHook(ruleset.dataHook()).preRecordRedeemWith(context);
+            (reclaimAmount, hookSpecifications) =
+                IJBRulesetDataHook(ruleset.dataHook()).beforeRedeemRecordedWith(context);
         }
 
         // Keep a reference to the amount that should be subtracted from the project's balance.

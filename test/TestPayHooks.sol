@@ -113,7 +113,7 @@ contract TestPayHooks_Local is TestBaseWorkflow {
             _specifications[i] = JBPayHookSpecification(IJBPayHook(_hookAddress), _payHookAmounts[i], _hookMetadata);
 
             // Keep a reference to the data that'll be received by the hook.
-            JBPostRecordPayContext memory _postRecordPayContext = JBPostRecordPayContext({
+            JBAfterPayRecordedContext memory _postRecordPayContext = JBAfterPayRecordedContext({
                 payer: _payer,
                 projectId: _projectId,
                 rulesetId: _ruleset.id,
@@ -139,7 +139,7 @@ contract TestPayHooks_Local is TestBaseWorkflow {
             // Mock the hook.
             vm.mockCall(
                 _hookAddress,
-                abi.encodeWithSelector(IJBPayHook.postRecordPayWith.selector),
+                abi.encodeWithSelector(IJBPayHook.afterPayRecordedWith.selector),
                 abi.encode(_postRecordPayContext)
             );
 
@@ -147,7 +147,7 @@ contract TestPayHooks_Local is TestBaseWorkflow {
             vm.expectCall(
                 _hookAddress,
                 _payHookAmounts[i],
-                abi.encodeWithSelector(IJBPayHook.postRecordPayWith.selector, _postRecordPayContext)
+                abi.encodeWithSelector(IJBPayHook.afterPayRecordedWith.selector, _postRecordPayContext)
             );
 
             // Expect an event to be emitted for every hook.
@@ -157,7 +157,7 @@ contract TestPayHooks_Local is TestBaseWorkflow {
 
         vm.mockCall(
             _DATA_HOOK,
-            abi.encodeWithSelector(IJBRulesetDataHook.preRecordPayWith.selector),
+            abi.encodeWithSelector(IJBRulesetDataHook.beforePayRecordedWith.selector),
             abi.encode(_DATA_HOOK_WEIGHT, _specifications)
         );
 
@@ -177,6 +177,6 @@ contract TestPayHooks_Local is TestBaseWorkflow {
     }
 
     event HookPostRecordPay(
-        IJBPayHook indexed hook, JBPostRecordPayContext context, uint256 specificationAmount, address caller
+        IJBPayHook indexed hook, JBAfterPayRecordedContext context, uint256 specificationAmount, address caller
     );
 }
