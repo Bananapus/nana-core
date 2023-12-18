@@ -16,5 +16,5 @@ interface IJBSplits is IJBControlled {
 
     function splitsOf(uint256 projectId, uint256 rulesetId, uint256 group) external view returns (JBSplit[] memory);
 
-    function setSplitGroupsOf(uint256 projectId, uint256 rulesetId, JBSplitGroup[] memory groups) external;
+    function setSplitGroupsOf(uint256 projectId, uint256 rulesetId, JBSplitGroup[] memory splitGroups) external;
 }
