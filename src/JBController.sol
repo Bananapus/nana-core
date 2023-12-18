@@ -149,11 +149,12 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         metadata = ruleset.expandMetadata();
     }
 
-    /// @notice A project's queued ruleset along with its metadata.
+    /// @notice A project's upcoming ruleset along with its metadata.
+    /// @dev If an upcoming ruleset is not found for the project, returns an empty ruleset with all properties set to 0.
     /// @param projectId The ID of the project the ruleset belongs to.
-    /// @return ruleset The queued ruleset as a `JBRuleset` struct.
-    /// @return metadata The queued ruleset's metadata as a `JBRulesetMetadata` struct.
-    function queuedRulesetOf(uint256 projectId)
+    /// @return ruleset The upcoming ruleset as a `JBRuleset` struct.
+    /// @return metadata The upcoming ruleset's metadata as a `JBRulesetMetadata` struct.
+    function upcomingRulesetOf(uint256 projectId)
         external
         view
         override

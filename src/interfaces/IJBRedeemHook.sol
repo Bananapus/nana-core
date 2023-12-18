@@ -10,5 +10,5 @@ interface IJBRedeemHook is IERC165 {
     /// recorded in the terminal store.
     /// @dev Critical business logic should be protected by appropriate access control.
     /// @param context The context passed in by the terminal, as a `JBPostRecordRedeemContext` struct.
-    function postRecordRedeem(JBPostRecordRedeemContext calldata context) external payable;
+    function postRecordRedeemWith(JBPostRecordRedeemContext calldata context) external payable;
 }

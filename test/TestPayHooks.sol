@@ -139,7 +139,7 @@ contract TestPayHooks_Local is TestBaseWorkflow {
             // Mock the hook.
             vm.mockCall(
                 _hookAddress,
-                abi.encodeWithSelector(IJBPayHook.postRecordPay.selector),
+                abi.encodeWithSelector(IJBPayHook.postRecordPayWith.selector),
                 abi.encode(_postRecordPayContext)
             );
 
@@ -147,7 +147,7 @@ contract TestPayHooks_Local is TestBaseWorkflow {
             vm.expectCall(
                 _hookAddress,
                 _payHookAmounts[i],
-                abi.encodeWithSelector(IJBPayHook.postRecordPay.selector, _postRecordPayContext)
+                abi.encodeWithSelector(IJBPayHook.postRecordPayWith.selector, _postRecordPayContext)
             );
 
             // Expect an event to be emitted for every hook.
@@ -157,7 +157,7 @@ contract TestPayHooks_Local is TestBaseWorkflow {
 
         vm.mockCall(
             _DATA_HOOK,
-            abi.encodeWithSelector(IJBRulesetDataHook.preRecordPay.selector),
+            abi.encodeWithSelector(IJBRulesetDataHook.preRecordPayWith.selector),
             abi.encode(_DATA_HOOK_WEIGHT, _specifications)
         );
 
