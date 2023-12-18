@@ -5,52 +5,29 @@ import {Test} from 'forge-std/Test.sol';
 
 import /* {*} from */ "../../../helpers/TestBaseWorkflow.sol";
 
-// Struggling with smock in general, might just manually setup each..
-import {MockJBDirectory} from '../../../mock/smock/MockJBDirectory.sol';
-import {MockJBPermissions} from '../../../mock/smock/MockJBPermissions.sol';
-import { SmockHelper } from '../../../mock/smock/SmockHelper.sol';
-
 /**
  * @title 
  */
-contract TestJBRulesetsUnits_Local is Test, SmockHelper {
-
-    // 
+contract TestJBRulesetsUnits_Local is Test {
+    // Contracts
     JBRulesets public _rulesets;
+    IJBDirectory internal _directory;
+    IJBPermissions internal _permissions;
+
+    // Necessary params
     JBRulesetMetadata private _metadata;
     uint256 _packedMetadata;
-    address public _directoryAddress;
-    address public _controlledAddress;
-    address public _permissionsAddress;
-    MockJBDirectory public _directory;
-    MockJBPermissions public _permissions;
 
     function setUp() public {
 
-    // deployMock is returning an address even tho docs say it should be assignable to the MockContract contract type.. 
-    _permissionsAddress = deployMock(
-        'JBPermissions',
-        type(JBPermissions).creationCode,
-        abi.encode()
-    );
+    // Mock contracts and label them
+    _directory = IJBDirectory(makeAddr("JBDirectory"));
+    _permissions = IJBPermissions(makeAddr("JBPermissions"));
 
-    IJBPermissions perms = IJBPermissions(makeAddr("perms"));
-    IJBProjects projects = IJBProjects(makeAddr("projects"));
+    // Instantiate the contract being tested
+    _rulesets = new JBRulesets(_directory);
 
-    // deployMock is returning an address even tho docs say it should be assignable to the MockContract contract type.. 
-    _directoryAddress = deployMock(
-        'JBDirectory',
-        type(JBDirectory).creationCode,
-        abi.encode(perms, projects, address(this))
-    );
-
-    // Reassignments because of the issue mentioned above
-    _permissions = MockJBPermissions(_permissionsAddress);
-
-    _directory = MockJBDirectory(_directoryAddress);
-
-    _rulesets = new JBRulesets(IJBDirectory(_directoryAddress));
-
+    // Params for tests
     _metadata = JBRulesetMetadata({
             reservedRate: 0,
             redemptionRate: 0,
@@ -75,16 +52,15 @@ contract TestJBRulesetsUnits_Local is Test, SmockHelper {
     }
 
     function testQueueFor() public {
-
-        // Couldn't get this to work... non-descript "EVM Error"
-        /* _directory.mock_call_controllerOf(1, IERC165(address(this))); */
-
+        // Setup: queueFor will call onlyControllerOf -> Directory to see if caller has proper permissions, mock that.
         vm.mockCall(address(_directory), abi.encodeCall(IJBDirectory.controllerOf, (1)), abi.encode(address(this)));
 
+        // Check: Ensure calls go through
         vm.expectCall(
             address(_directory), abi.encodeCall(IJBDirectory.controllerOf, (1))
         );
 
+        // Send: Call from this contract as it's been mock authorized above.
         _rulesets.queueFor({
             projectId: 1,
             duration: 14,
@@ -94,6 +70,8 @@ contract TestJBRulesetsUnits_Local is Test, SmockHelper {
             metadata: _packedMetadata,
             mustStartAtOrAfter: 0
         });
+
+        // To-do: check ruleset was properly set & event (RulesetQueued) was emitted
     }
 
 }
