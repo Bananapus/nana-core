@@ -655,8 +655,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                 netPayoutAmount -= JBFees.feeAmountIn(amount, FEE);
             }
 
-            // Create the payload to send to the split hook.
-            JBSplitHookContext memory payload = JBSplitHookContext({
+            // Create the context to send to the split hook.
+            JBSplitHookContext memory context = JBSplitHookContext({
                 token: token,
                 amount: netPayoutAmount,
                 decimals: _accountingContextForTokenOf[projectId][token].decimals,
@@ -677,7 +677,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             uint256 payValue = token == JBConstants.NATIVE_TOKEN ? netPayoutAmount : 0;
 
             // If this terminal's token is the native token, send it in `msg.value`.
-            split.hook.process{value: payValue}(payload);
+            split.hook.process{value: payValue}(context);
 
             // Otherwise, if a project is specified, make a payment to it.
         } else if (split.projectId != 0) {
