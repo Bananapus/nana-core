@@ -10,7 +10,10 @@ import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol
 import {IPermit2} from "permit2/src/interfaces/IPermit2.sol";
 import {IAllowanceTransfer} from "permit2/src/interfaces/IPermit2.sol";
 
-import {IUniswapV3Pool} from "lib/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
+import {IUniswapV3Pool} from "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
+import {OracleLibrary} from "@uniswap/v3-periphery/contracts/libraries/OracleLibrary.sol";
+import {TickMath} from "@uniswap/v3-core/contracts/libraries/TickMath.sol";
+import {IUniswapV3SwapCallback} from "@uniswap/v3-core/contracts/interfaces/callback/IUniswapV3SwapCallback.sol";
 
 import {IJBDirectory} from "./interfaces/IJBDirectory.sol";
 import {IJBPermissions} from "./interfaces/IJBPermissions.sol";
@@ -34,6 +37,8 @@ import {
     IJBMultiTerminal
 } from "./interfaces/terminal/IJBMultiTerminal.sol";
 
+import {IWETH9} from "./interfaces/external/IWETH9.sol";
+
 /// @notice Terminal providing an intermediate layer when receiving a payment in a token without
 ///         a native terminal deployed. This terminal will swap the token received for a given token,
 ///         then use the correct terminal to redirect the payment
@@ -45,9 +50,24 @@ import {
 /// @dev    Slippage is prevented by using a quote passed by the user (using the JBMetadataResolver
 ///         format, along the address of the pool to use) or a twap from the pool's oracle if no quote
 ///         is provided (the pool to use *must* then be defined by the project owner).
-contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTerminal {
+/// @custom:benediction DEVS BENEDICAT ET PROTEGAT CONTRACTVS MEAM
+contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTerminal, IUniswapV3SwapCallback {
     // A library that adds default safety checks to ERC20 functionality.
     using SafeERC20 for IERC20;
+
+    //*********************************************************************//
+    // ------------------------------ structs ---------------------------- //
+    //*********************************************************************//
+
+    struct SwapParams {
+        uint256 projectId;
+        IUniswapV3Pool pool;
+        address tokenIn;
+        address tokenOut;
+        uint256 amountIn;
+        uint256 amountOut;
+        uint256 minAmountOut;
+    }
 
     //*********************************************************************//
     // --------------------------- custom errors ------------------------- //
@@ -67,13 +87,13 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
     // --------------------- internal stored properties ------------------ //
     //*********************************************************************//
 
-    mapping(uint256 projectId => mapping(address token => JBAccountingContext context)) internal _accountingContextForTokenOf;
-    mapping(uint256 projectId => JBAccountingContext[]) internal _accountingContextsOf;
-
+    mapping(uint256 => uint256) internal _twapParamsOf;
 
     //*********************************************************************//
     // ------------------------- public constants ------------------------ //
     //*********************************************************************//
+
+    uint256 SLIPPAGE_DENOMINATOR = 10000;
 
     //*********************************************************************//
     // ---------------- public immutable stored properties --------------- //
@@ -91,12 +111,15 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
     /// @notice The permit2 utility.
     IPermit2 public immutable PERMIT2;
 
+    /// @notice The wrapper to the native token ("weth" as a generic term).
+    IWETH9 public immutable WETH;
+
     //*********************************************************************//
     // --------------------- public stored properties -------------------- //
     //*********************************************************************//
     
-    // project ID -> token received -> pool to use
-    mapping(uint256 => mapping(address => IUniswapV3Pool)) public _poolFor;
+    // project ID -> token received -> token to get -> pool to use
+    mapping(uint256 => mapping(address => mapping(address => IUniswapV3Pool))) public _poolFor;
 
 
     //*********************************************************************//
@@ -104,14 +127,11 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
     //*********************************************************************//
 
     function accountingContextForTokenOf(uint256 _projectId, address _token) external view override returns (JBAccountingContext memory) {
-
-        return _accountingContextForTokenOf[_projectId][_token];
     }
 
     function accountingContextsOf(uint256 _projectId) external view override returns (JBAccountingContext[] memory) {
-        return _accountingContextsOf[_projectId];
     }
-function currentSurplusOf(uint256 projectId, uint256 decimals, uint256 currency) external view returns (uint256) {}
+    function currentSurplusOf(uint256 projectId, uint256 decimals, uint256 currency) external view returns (uint256) {}
 
 
     //*********************************************************************//
@@ -148,11 +168,13 @@ function currentSurplusOf(uint256 projectId, uint256 decimals, uint256 currency)
         IJBPermissions _permissions,
         IJBDirectory _directory,
         IPermit2 _permit2,
-        address _owner
+        address _owner,
+        IWETH9 _weth
     ) JBPermissioned(_permissions) Ownable(_owner) {
         PROJECTS = _projects;
         DIRECTORY = _directory;
         PERMIT2 = _permit2;
+        WETH = _weth;
     }
 
     //*********************************************************************//
@@ -177,63 +199,88 @@ function currentSurplusOf(uint256 projectId, uint256 decimals, uint256 currency)
         string calldata _memo,
         bytes calldata _metadata
     ) external payable virtual override returns (uint256) {
-        uint256 _minimumReceivedFromSwap;
-        IUniswapV3Pool _pool;
 
-        // Check for a quote passed by the user
-        (bool _exists, bytes memory _parsedData) =
-            JBMetadataResolver.getDataFor(bytes4('SWAP'), _metadata);
-        
-        // If there is a quote, use it
-        if(_exists) {
-            (_minimumReceivedFromSwap, _pool) = abi.decode(_parsedData, (uint256, IUniswapV3Pool));
-        // If no quote, check there is a pool assigned and get a twap
-        } else {
-            _pool = _poolFor[_projectId][_token];
+        SwapParams memory _swapParams;
+        _swapParams.projectId = _projectId;
+        _swapParams.tokenIn = _token;
+        _swapParams.amountIn = _amount;
+
+        {
+            // Check for a quote passed by the user
+            (bool _exists, bytes memory _parsedData) =
+                JBMetadataResolver.getDataFor(bytes4('SWAP'), _metadata);
             
-            // If no default pool, revert - TODO: send back to the caller instead (could be either fee or EOA tho)
-            if(address(_pool) == address(0)) revert NO_DEFAULT_POOL_DEFINED();
+            // If there is a quote, use it
+            if(_exists) {
+                (_swapParams.minAmountOut, _swapParams.pool, _swapParams.tokenOut) = abi.decode(_parsedData, (uint256, IUniswapV3Pool, address));
+            // If no quote, check there is a default pool assigned and get a twap
+            } else {
+                IUniswapV3Pool _pool = _poolFor[_projectId][_token][address(0)];
 
-            // Get a twap from the pool, includes a default max slippage
-            _minimumReceivedFromSwap = _getTwapFrom(_pool, _amount);
+                _swapParams.pool = _pool;
+                
+                // If no default pool, revert - TODO: send back to the caller instead (could be either fee or EOA tho)
+                if(address(_pool) == address(0)) revert NO_DEFAULT_POOL_DEFINED();
+
+                (address _poolToken0, address _poolToken1) = (_pool.token0(), _pool.token1());
+                _swapParams.tokenOut = _poolToken0 == _token ? _poolToken1 : _poolToken0;
+
+                // Get a twap from the pool, includes a default max slippage
+                _swapParams.minAmountOut = _getTwapFrom(_swapParams);
+            }
         }
-
-        address _poolToken0 = _pool.token0();
-        address _poolToken1 = _pool.token1();
-
-        address _targetToken = _poolToken0 == _token ? _poolToken1 : _poolToken0;
-
-        if(_poolToken0 == _token) {
-            _targetToken = _poolToken1;
-        } else {
-            if(_poolToken1 != _token) revert TOKEN_NOT_IN_POOL();
-            _targetToken = _poolToken0;
-        }
-
         IJBTerminal _terminal = DIRECTORY.primaryTerminalOf(_projectId, _token);
-        // Check the primary terminal accepts the token (save swap gas if not accepted)
 
+        // Check the primary terminal accepts the token (save swap gas if not accepted)
         if(address(_terminal) == address(0)) revert TOKEN_NOT_ACCEPTED(); // TODO: no revert?
         
-        // Accept the funds.
-        _amount = _acceptFundsFor(_projectId, _token, _amount, _metadata);
+        
+        _amount = _acceptFundsFor(_swapParams, _metadata);
 
         // Swap (will check if we're within the slippage tolerance in the callback))
-        uint256 _receivedFromSwap = _swap(_token, _pool, _amount, _minimumReceivedFromSwap);
+        uint256 _receivedFromSwap = _swap(_swapParams);
 
-        // Unwrap weth if needed
-
+        // Unwrap weth if needed - TODO: adapt to native token !!
+        // if(_swapParams.tokenOut == JBConstants.NATIVE_TOKEN) {
+        //     IWETH9(JBConstants.WETH).withdraw(_receivedFromSwap);
+        // }
 
         // Pay on primary terminal, with correct beneficiary (sender or benficiary if passed)
-        _terminal.pay{value: _token == JBConstants.NATIVE_TOKEN ? _receivedFromSwap : 0}(
-            _projectId,
-            _targetToken,
+        _terminal.pay{value: _swapParams.tokenOut == JBConstants.NATIVE_TOKEN ? _receivedFromSwap : 0}(
+            _swapParams.projectId,
+            _swapParams.tokenOut,
             _receivedFromSwap,
             _beneficiary,
             _minReturnedTokens,
             _memo,
             _metadata
         );
+    }
+
+    function uniswapV3SwapCallback(int256 _amount0Delta, int256 _amount1Delta, bytes calldata _data)
+        external
+        override
+    {   
+        // Unpack the data passed in through the swap hook.
+        (uint256 _projectId, address _tokenIn) = abi.decode(_data, (uint256, address));
+
+        // Get the terminal token, using WETH if the token paid in is ETH.
+        address _tokenInWithWeth = _tokenIn == JBConstants.NATIVE_TOKEN ? address(WETH) : _tokenIn;
+
+        // Keep a reference to the amount of tokens that should be sent to fulfill the swap (the positive delta)
+        uint256 _amountToSendToPool = _amount0Delta < 0 ? uint256(_amount1Delta) : uint256(_amount0Delta);
+
+        // Wrap ETH into WETH if relevant (do not rely on ETH delegate balance to support pure WETH terminals)
+        if (_tokenIn == JBConstants.NATIVE_TOKEN) WETH.deposit{value: _amountToSendToPool}();
+
+        // Transfer the token to the pool.
+        // This terminal should NEVER have token in its balance !!
+        IERC20(_tokenInWithWeth).transfer(msg.sender, _amountToSendToPool);
+    }
+
+    /// @notice prevent ETH from being sent directly to the terminal (only allowed when wrapped, during a swap)
+    receive() external payable {
+        if(msg.sender != address(WETH)) revert NO_MSG_VALUE_ALLOWED();
     }
 
     /// @notice 
@@ -254,7 +301,6 @@ function currentSurplusOf(uint256 projectId, uint256 decimals, uint256 currency)
         // Check the terminal accepts the token
 
         // Accept the funds.
-        _amount = _acceptFundsFor(_projectId, _token, _amount, _metadata);
 
         // Check for quote
 
@@ -274,7 +320,7 @@ function currentSurplusOf(uint256 projectId, uint256 decimals, uint256 currency)
             _projectId,
             JBPermissionIds.MODIFY_DEFAULT_POOL
         );
-        _poolFor[_projectId][_token] = _pool;
+        _poolFor[_projectId][_token][address(0)] = _pool;
     }
 
     function addAccountingContextsFor(uint256 projectId, address[] calldata tokens) external {}
@@ -284,6 +330,39 @@ function currentSurplusOf(uint256 projectId, uint256 decimals, uint256 currency)
     //*********************************************************************//
     // ---------------------- internal transactions ---------------------- //
     //*********************************************************************//
+
+    /// @notice Get a quote based on TWAP over a secondsAgo period, taking into account a twapDelta max deviation.
+    ///  _projectId The ID of the project for which the swap is being made.
+    ///  _projectToken The project's token being swapped for.
+    ///  _amountIn The amount being used to swap.
+    ///  _terminalToken The token paid in being used to swap.
+    /// @return amountOut the minimum amount received according to the TWAP.
+    function _getTwapFrom(SwapParams memory _swapParams)
+        internal
+        view
+        returns (uint256 amountOut)
+    {   
+        // Unpack the TWAP params and get a reference to the period and slippage.
+        uint256 _twapParams = _twapParamsOf[_swapParams.projectId];
+        uint32 _quotePeriod = uint32(_twapParams);
+        uint256 _maxDelta = _twapParams >> 128;
+
+        // Keep a reference to the TWAP tick.
+        (int24 arithmeticMeanTick,) = OracleLibrary.consult(address(_swapParams.pool), _quotePeriod);
+
+        // Get a quote based on this TWAP tick.
+        amountOut = OracleLibrary.getQuoteAtTick({
+            tick: arithmeticMeanTick,
+            baseAmount: uint128(_swapParams.amountIn),
+            baseToken: _swapParams.tokenIn,
+            quoteToken: address(_swapParams.tokenOut)
+        });
+
+        // Return the lowest TWAP tolerable.
+        amountOut -= (amountOut * _maxDelta) / SLIPPAGE_DENOMINATOR;
+    }
+
+
     /// @notice Accepts an incoming token.
     ///  _projectId The ID of the project for which the transfer is being accepted.
     ///  _token The token being accepted.
@@ -291,11 +370,11 @@ function currentSurplusOf(uint256 projectId, uint256 decimals, uint256 currency)
     ///  _metadata The metadata in which permit2 context is provided.
     /// @return amount The amount of tokens that have been accepted.
     function _acceptFundsFor(
-        uint256 _projectId,
-        address _token,
-        uint256 _amount,
+        SwapParams memory _swapParams,
         bytes calldata _metadata
     ) internal returns (uint256) {
+        address _token = _swapParams.tokenIn;
+
         // Make sure the project has set an accounting context for the token being paid.
         // if (_accountingContextForTokenOf[_projectId][_token].token == address(0)) {
         //     revert TOKEN_NOT_ACCEPTED();
@@ -306,9 +385,6 @@ function currentSurplusOf(uint256 projectId, uint256 decimals, uint256 currency)
 
         // Amount must be greater than 0.
         if (msg.value != 0) revert NO_MSG_VALUE_ALLOWED();
-
-        // If the terminal is rerouting the tokens within its own functions, there's nothing to transfer.
-        if (msg.sender == address(this)) return _amount;
 
         // Unpack the allowance to use, if any, given by the frontend.
         (bool _exists, bytes memory _parsedMetadata) =
@@ -321,7 +397,7 @@ function currentSurplusOf(uint256 projectId, uint256 decimals, uint256 currency)
                 abi.decode(_parsedMetadata, (JBSingleAllowanceData));
 
             // Make sure the permit allowance is enough for this payment. If not we revert early.
-            if (_allowance.amount < _amount) {
+            if (_allowance.amount < _swapParams.amountIn) {
                 revert PERMIT_ALLOWANCE_NOT_ENOUGH();
             }
 
@@ -333,10 +409,29 @@ function currentSurplusOf(uint256 projectId, uint256 decimals, uint256 currency)
         uint256 _balanceBefore = IERC20(_token).balanceOf(address(this));
 
         // Transfer tokens to this terminal from the msg sender.
-        _transferFor(msg.sender, payable(address(this)), _token, _amount);
+        _transferFor(msg.sender, payable(address(this)), _token, _swapParams.amountIn);
 
         // The amount should reflect the change in balance.
         return IERC20(_token).balanceOf(address(this)) - _balanceBefore;
+    }
+
+  function _swap(
+        SwapParams memory _swapParams
+    ) internal returns (uint256 amountReceived) {
+        // Try swapping.
+        try _swapParams.pool.swap({
+            recipient: address(this),
+            zeroForOne: _swapParams.tokenIn < _swapParams.tokenOut,
+            amountSpecified: int256(_swapParams.amountIn),
+            sqrtPriceLimitX96: _swapParams.tokenIn < _swapParams.tokenOut ? TickMath.MAX_SQRT_RATIO - 1 : TickMath.MIN_SQRT_RATIO + 1,
+            data: abi.encode(_swapParams.projectId, _swapParams.tokenIn)
+        }) returns (int256 amount0, int256 amount1) {
+            // If the swap succeded, take note of the amount of tokens received. This will return as negative since it is an exact input.
+            amountReceived = uint256(-(_swapParams.tokenIn < _swapParams.tokenOut ? amount0 : amount1));
+        } catch {
+            // If the swap failed, return.
+            return 0;
+        }
     }
 
     /// @notice Reverts an expected payout.
