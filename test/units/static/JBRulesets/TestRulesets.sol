@@ -149,4 +149,162 @@ contract TestJBRulesetsUnits_Local is Test {
         assertEq(same, true);
     }
 
+    function testQueueForPastMustStart() public {
+        // Setup: queueFor will call onlyControllerOf modifier -> Directory.controllerOf to see if caller has proper permissions, mock that.
+        vm.mockCall(address(_directory), abi.encodeCall(IJBDirectory.controllerOf, (1)), abi.encode(address(this)));
+
+        // Setup: Ensure calls go through
+        vm.expectCall(
+            address(_directory), abi.encodeCall(IJBDirectory.controllerOf, (1))
+        );
+
+        // Setup: expect ruleset event (RulesetQueued) is emitted
+        vm.expectEmit();
+        emit RulesetQueued(block.timestamp, _projectId, _duration, _weight , _decayRate, _hook, _packedMetadata, block.timestamp, address(this));
+
+        // Send: Call from this contract as it's been mock authorized above.
+        _rulesets.queueFor({
+            projectId: _projectId,
+            duration: _duration,
+            weight: _weight,
+            decayRate: _decayRate,
+            approvalHook: _hook,
+            metadata: _packedMetadata,
+            // Set this in the past
+            mustStartAtOrAfter: block.timestamp - 1
+        });
+
+        // Get a reference to the now configured ruleset.
+        JBRuleset memory configuredRuleset = _rulesets.currentOf(_projectId);
+
+        // Reference queued attributes for sake of comparison.
+        JBRuleset memory queued = JBRuleset({
+            cycleNumber: 1,
+            id: block.timestamp,
+            basedOnId: 0,
+            start: block.timestamp,
+            duration: _duration,
+            weight: _weight,
+            decayRate: _decayRate,
+            approvalHook: _hook,
+            metadata: configuredRuleset.metadata
+        });
+
+        // Check: structs are the same.
+        bool same = equals(queued, configuredRuleset);
+        assertEq(same, true);
+    }
+
+    function testQueueForInvalidDuration() public {
+        uint256 _invalidDuration = uint256(type(uint32).max) + 1;
+
+        // Setup: queueFor will call onlyControllerOf modifier -> Directory.controllerOf to see if caller has proper permissions, mock that.
+        vm.mockCall(address(_directory), abi.encodeCall(IJBDirectory.controllerOf, (1)), abi.encode(address(this)));
+
+        // Setup: Ensure calls go through
+        vm.expectCall(
+            address(_directory), abi.encodeCall(IJBDirectory.controllerOf, (1))
+        );
+
+        vm.expectRevert(abi.encodeWithSignature("INVALID_RULESET_DURATION()"));
+
+        // Send: Call from this contract as it's been mock authorized above.
+        _rulesets.queueFor({
+            projectId: _projectId,
+            duration: _invalidDuration,
+            weight: _weight,
+            decayRate: _decayRate,
+            approvalHook: _hook,
+            metadata: _packedMetadata,
+            mustStartAtOrAfter: _mustStartAt
+        });
+    }
+
+    function testQueueForInvalidDecayRate() public {
+        uint256 _invalidDecayRate = JBConstants.MAX_DECAY_RATE + 1;
+
+        // Setup: queueFor will call onlyControllerOf modifier -> Directory.controllerOf to see if caller has proper permissions, mock that.
+        vm.mockCall(address(_directory), abi.encodeCall(IJBDirectory.controllerOf, (1)), abi.encode(address(this)));
+
+        // Setup: Ensure calls go through
+        vm.expectCall(
+            address(_directory), abi.encodeCall(IJBDirectory.controllerOf, (1))
+        );
+
+        vm.expectRevert(abi.encodeWithSignature("INVALID_DECAY_RATE()"));
+
+        // Send: Call from this contract as it's been mock authorized above.
+        _rulesets.queueFor({
+            projectId: _projectId,
+            duration: _duration,
+            weight: _weight,
+            decayRate: _invalidDecayRate,
+            approvalHook: _hook,
+            metadata: _packedMetadata,
+            mustStartAtOrAfter: _mustStartAt
+        });
+    }
+
+    function testQueueForInvalidWeight() public {
+        uint256 _invalidWeight = uint256(type(uint88).max) + 1;
+
+        // Setup: queueFor will call onlyControllerOf modifier -> Directory.controllerOf to see if caller has proper permissions, mock that.
+        vm.mockCall(address(_directory), abi.encodeCall(IJBDirectory.controllerOf, (1)), abi.encode(address(this)));
+
+        // Setup: Ensure calls go through
+        vm.expectCall(
+            address(_directory), abi.encodeCall(IJBDirectory.controllerOf, (1))
+        );
+
+        vm.expectRevert(abi.encodeWithSignature("INVALID_WEIGHT()"));
+
+        // Send: Call from this contract as it's been mock authorized above.
+        _rulesets.queueFor({
+            projectId: _projectId,
+            duration: _duration,
+            weight: _invalidWeight,
+            decayRate: _decayRate,
+            approvalHook: _hook,
+            metadata: _packedMetadata,
+            mustStartAtOrAfter: _mustStartAt
+        });
+    }
+
+    function testFuzzQueueForInvalidEndTime(uint256 _bigDuration, uint256 _bigStartAt) public {
+        _bigDuration = bound(_bigDuration, 1, type(uint32).max);
+
+        // Setup: queueFor will call onlyControllerOf modifier -> Directory.controllerOf to see if caller has proper permissions, mock that.
+        vm.mockCall(address(_directory), abi.encodeCall(IJBDirectory.controllerOf, (1)), abi.encode(address(this)));
+
+        // Setup: Ensure calls go through
+        vm.expectCall(
+            address(_directory), abi.encodeCall(IJBDirectory.controllerOf, (1))
+        );
+
+        // Use unchecked arithmetic to force a wrap from max to 0 and beyond
+        uint256 _sum;
+        unchecked { _sum = _bigDuration + _bigStartAt;}
+        emit log_uint(_sum);
+
+        // Sum should always be less if overflowed
+        if ( _bigDuration > _sum || _bigStartAt > _sum) {
+            vm.expectRevert(stdError.arithmeticError);
+        }
+
+        if (_bigDuration + _bigStartAt > type(uint56).max) {
+            vm.expectRevert(abi.encodeWithSignature("INVALID_RULESET_END_TIME()"));
+        }
+
+        // Send: Call from this contract as it's been mock authorized above.
+        _rulesets.queueFor({
+            projectId: _projectId,
+            duration: _bigDuration,
+            weight: _weight,
+            decayRate: _decayRate,
+            approvalHook: _hook,
+            metadata: _packedMetadata,
+            mustStartAtOrAfter: _bigStartAt
+        });
+    }
+
 }
