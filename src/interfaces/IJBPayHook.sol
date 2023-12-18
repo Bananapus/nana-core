@@ -10,5 +10,5 @@ interface IJBPayHook is IERC165 {
     /// terminal store.
     /// @dev Critical business logic should be protected by appropriate access control.
     /// @param context The context passed in by the terminal, as a `JBPostRecordPayContext` struct.
-    function postRecordPay(JBPostRecordPayContext calldata context) external payable;
+    function postRecordPayWith(JBPostRecordPayContext calldata context) external payable;
 }

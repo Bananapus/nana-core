@@ -155,17 +155,17 @@ contract TestRedeemHooks_Local is TestBaseWorkflow {
 
         // Mock the hook.
         vm.mockCall(
-            _redeemHook, abi.encodeWithSelector(IJBRedeemHook.postRecordRedeem.selector), abi.encode(_redeemContext)
+            _redeemHook, abi.encodeWithSelector(IJBRedeemHook.postRecordRedeemWith.selector), abi.encode(_redeemContext)
         );
 
         // Assert that the hook gets called with the expected value.
         vm.expectCall(
-            _redeemHook, _halfPaid, abi.encodeWithSelector(IJBRedeemHook.postRecordRedeem.selector, _redeemContext)
+            _redeemHook, _halfPaid, abi.encodeWithSelector(IJBRedeemHook.postRecordRedeemWith.selector, _redeemContext)
         );
 
         vm.mockCall(
             _DATA_HOOK,
-            abi.encodeWithSelector(IJBRulesetDataHook.preRecordRedeem.selector),
+            abi.encodeWithSelector(IJBRulesetDataHook.preRecordRedeemWith.selector),
             abi.encode(_halfPaid, _specifications)
         );
 
