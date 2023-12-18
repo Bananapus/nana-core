@@ -149,7 +149,7 @@ interface IJBController is IERC165, IJBProjectMetadataRegistry, IJBDirectoryAcce
 
     function migrateController(uint256 projectId, IJBMigratable to) external;
 
-    function setSplitGroupsOf(uint256 projectId, uint256 rulesetId, JBSplitGroup[] calldata splitGroup) external;
+    function setSplitGroupsOf(uint256 projectId, uint256 rulesetId, JBSplitGroup[] calldata splitGroups) external;
 
     function deployERC20For(
         uint256 projectId,
