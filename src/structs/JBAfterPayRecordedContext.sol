@@ -15,7 +15,7 @@ import {JBTokenAmount} from "./JBTokenAmount.sol";
 /// @custom:member beneficiary The address which receives any tokens this payment yields.
 /// @custom:member hookMetadata Extra data specified by the data hook, which is sent to the pay hook.
 /// @custom:member payerMetadata Extra data specified by the payer, which is sent to the pay hook.
-struct JBPostRecordPayContext {
+struct JBAfterPayRecordedContext {
     address payer;
     uint256 projectId;
     uint256 rulesetId;
