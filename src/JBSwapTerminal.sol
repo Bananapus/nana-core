@@ -216,7 +216,7 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
 
         {
             // Check for a quote passed by the user
-            (bool _exists, bytes memory _parsedData) = JBMetadataResolver.getDataFor(bytes4("SWAP"), _metadata);
+            (bool _exists, bytes memory _parsedData) = JBMetadataResolver.getDataFor(bytes4(address(this)), _metadata);
 
             // If there is a quote, use it
             if (_exists) {
@@ -228,7 +228,7 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
 
                 _swapParams.pool = _pool;
 
-                // If no default pool, revert - TODO: send back to the caller instead (could be either fee or EOA tho)
+                // If no default pool, revert
                 if (address(_pool) == address(0)) revert NO_DEFAULT_POOL_DEFINED();
 
                 (address _poolToken0, address _poolToken1) = (_pool.token0(), _pool.token1());
@@ -239,7 +239,7 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
             }
         }
 
-        IJBTerminal _terminal = DIRECTORY.primaryTerminalOf(_projectId, _token);
+        IJBTerminal _terminal = DIRECTORY.primaryTerminalOf(_projectId, _swapParams.tokenOut);
 
         // Check the primary terminal accepts the token (save swap gas if not accepted)
         if (address(_terminal) == address(0)) revert TOKEN_NOT_ACCEPTED(); // TODO: no revert?
