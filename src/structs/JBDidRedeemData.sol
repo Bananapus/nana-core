@@ -6,7 +6,7 @@ import {JBTokenAmount} from "./JBTokenAmount.sol";
 /// @custom:member holder The holder of the tokens being redeemed.
 /// @custom:member projectId The ID of the project the redeemed tokens are associated with.
 /// @custom:member rulesetId The ID of the ruleset the redemption is being made during.
-/// @custom:member projectTokenCount The number of project tokens being redeemed.
+/// @custom:member redeemCount The number of project tokens being redeemed.
 /// @custom:member redemptionRate The current ruleset's redemption rate.
 /// @custom:member reclaimedAmount The amount reclaimed from the project's terminal balance. Includes the token being
 /// reclaimed, the value, the number of decimals included, and the currency of the amount.
@@ -19,7 +19,7 @@ struct JBDidRedeemData {
     address holder;
     uint256 projectId;
     uint256 rulesetId;
-    uint256 projectTokenCount;
+    uint256 redeemCount;
     JBTokenAmount reclaimedAmount;
     JBTokenAmount forwardedAmount;
     uint256 redemptionRate;

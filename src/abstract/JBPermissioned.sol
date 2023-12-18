@@ -37,7 +37,7 @@ abstract contract JBPermissioned is Context, IJBPermissioned {
     /// @param projectId The project ID to check the permission under.
     /// @param permissionId The required permission ID. The operator must have this permission within the specified
     /// project ID.
-    function _requirePermission(address account, uint256 projectId, uint256 permissionId) internal view {
+    function _requirePermissionFrom(address account, uint256 projectId, uint256 permissionId) internal view {
         address sender = _msgSender();
         if (
             sender != account && !PERMISSIONS.hasPermission(sender, account, projectId, permissionId)
@@ -53,7 +53,7 @@ abstract contract JBPermissioned is Context, IJBPermissioned {
     /// @param permissionId The required permission ID. The operator must have this permission within the specified
     /// project ID.
     /// @param alsoGrantAccessIf An override condition which will allow access regardless of permissions.
-    function _requirePermissionAllowingOverride(
+    function _requirePermissionAllowingOverrideFrom(
         address account,
         uint256 projectId,
         uint256 permissionId,
@@ -63,6 +63,6 @@ abstract contract JBPermissioned is Context, IJBPermissioned {
         view
     {
         if (alsoGrantAccessIf) return;
-        _requirePermission(account, projectId, permissionId);
+        _requirePermissionFrom(account, projectId, permissionId);
     }
 }

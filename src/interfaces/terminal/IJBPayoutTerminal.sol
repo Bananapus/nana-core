@@ -48,7 +48,7 @@ interface IJBPayoutTerminal is IJBTerminal {
         address token,
         uint256 amount,
         uint256 currency,
-        uint256 minReturnedTokens
+        uint256 minTokensPaidOut
     )
         external
         returns (uint256 netLeftoverPayoutAmount);
@@ -58,7 +58,7 @@ interface IJBPayoutTerminal is IJBTerminal {
         address token,
         uint256 amount,
         uint256 currency,
-        uint256 minReturnedTokens,
+        uint256 minTokensPaidOut,
         address payable beneficiary,
         string calldata memo
     )

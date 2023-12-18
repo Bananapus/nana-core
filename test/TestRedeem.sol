@@ -117,9 +117,9 @@ contract TestRedeem_Local is TestBaseWorkflow {
         uint256 _nativeReclaimAmt = _terminal.redeemTokensOf({
             holder: _beneficiary,
             projectId: _projectId,
-            token: JBConstants.NATIVE_TOKEN,
-            count: _tokenAmountToRedeem,
-            minReclaimed: 0,
+            tokenToReclaim: JBConstants.NATIVE_TOKEN,
+            redeemCount: _tokenAmountToRedeem,
+            minTokensReclaimed: 0,
             beneficiary: payable(_beneficiary),
             metadata: new bytes(0)
         });

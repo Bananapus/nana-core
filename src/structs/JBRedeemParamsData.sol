@@ -9,7 +9,7 @@ import {JBTokenAmount} from "./JBTokenAmount.sol";
 /// @custom:member holder The holder of the tokens being redeemed.
 /// @custom:member projectId The ID of the project whos tokens are being redeemed.
 /// @custom:member rulesetId The ID of the ruleset the redemption is being made during.
-/// @custom:member tokenCount The proposed number of tokens being redeemed, as a fixed point number with 18 decimals.
+/// @custom:member redeemCount The proposed number of tokens being redeemed, as a fixed point number with 18 decimals.
 /// @custom:member totalSupply The total supply of tokens used in the calculation, as a fixed point number with 18
 /// decimals.
 /// @custom:member surplus The surplus amount used in the reclaim amount calculation.
@@ -24,7 +24,7 @@ struct JBRedeemParamsData {
     address holder;
     uint256 projectId;
     uint256 rulesetId;
-    uint256 tokenCount;
+    uint256 redeemCount;
     uint256 totalSupply;
     uint256 surplus;
     JBTokenAmount reclaimAmount;

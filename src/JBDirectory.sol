@@ -90,7 +90,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
         uint256 numberOfTerminals = _terminalsOf[projectId].length;
 
         // Return the first terminal which accepts the specified token.
-        for (uint256 i; i < numberOfTerminals; ++i) {
+        for (uint256 i; i < numberOfTerminals; i++) {
             // Keep a reference to the terminal being iterated on.
             IJBTerminal terminal = _terminalsOf[projectId][i];
 
@@ -117,7 +117,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
         uint256 numberOfTerminals = _terminalsOf[projectId].length;
 
         // Loop through and return true if the terminal is contained.
-        for (uint256 i; i < numberOfTerminals; ++i) {
+        for (uint256 i; i < numberOfTerminals; i++) {
             // If the terminal being iterated on matches the provided terminal, return true.
             if (_terminalsOf[projectId][i] == terminal) return true;
         }
@@ -158,7 +158,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
     /// @param controller The address of the new controller to set for the project.
     function setControllerOf(uint256 projectId, IERC165 controller) external override {
         // Enforce permissions.
-        _requirePermissionAllowingOverride({
+        _requirePermissionAllowingOverrideFrom({
             account: PROJECTS.ownerOf(projectId),
             projectId: projectId,
             permissionId: JBPermissionIds.SET_CONTROLLER,
@@ -198,7 +198,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
     /// @param terminals An array of terminal addresses to set for the project.
     function setTerminalsOf(uint256 projectId, IJBTerminal[] calldata terminals) external override {
         // Enforce permissions.
-        _requirePermissionAllowingOverride({
+        _requirePermissionAllowingOverrideFrom({
             account: PROJECTS.ownerOf(projectId),
             projectId: projectId,
             permissionId: JBPermissionIds.SET_TERMINALS,
@@ -225,8 +225,8 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
 
         // Make sure duplicates were not added.
         if (numberOfTerminals > 1) {
-            for (uint256 i; i < numberOfTerminals; ++i) {
-                for (uint256 j = i + 1; j < numberOfTerminals; ++j) {
+            for (uint256 i; i < numberOfTerminals; i++) {
+                for (uint256 j = i + 1; j < numberOfTerminals; j++) {
                     if (terminals[i] == terminals[j]) revert DUPLICATE_TERMINALS();
                 }
             }
@@ -244,7 +244,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
     /// @param terminal The terminal to make the primary terminal for the project and token.
     function setPrimaryTerminalOf(uint256 projectId, address token, IJBTerminal terminal) external override {
         // Enforce permissions.
-        _requirePermission({
+        _requirePermissionFrom({
             account: PROJECTS.ownerOf(projectId),
             projectId: projectId,
             permissionId: JBPermissionIds.SET_PRIMARY_TERMINAL

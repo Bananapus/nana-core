@@ -296,7 +296,9 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         });
 
         // The token count for the beneficiary must be greater than or equal to the specified minimum.
-        if (beneficiaryTokenCount < minReturnedTokens) revert UNDER_MIN_RETURNED_TOKENS();
+        if (beneficiaryTokenCount < minReturnedTokens) {
+            revert UNDER_MIN_RETURNED_TOKENS();
+        }
     }
 
     /// @notice Adds funds to a project's balance without minting tokens.
@@ -338,9 +340,9 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// tokens.
     /// @param holder The account whose tokens are being redeemed.
     /// @param projectId The ID of the project the project tokens belong to.
-    /// @param tokenCount The number of project tokens to redeem, as a fixed point number with 18 decimals.
-    /// @param token The token being reclaimed.
-    /// @param minReturnedTokens The minimum number of terminal tokens expected in return, as a fixed point number with
+    /// @param tokenToReclaim The token being reclaimed.
+    /// @param redeemCount The number of project tokens to redeem, as a fixed point number with 18 decimals.
+    /// @param minTokensReclaimed The minimum number of terminal tokens expected in return, as a fixed point number with
     /// the same number of decimals as this terminal. If the amount of tokens minted for the beneficiary would be less
     /// than this amount, the redemption is reverted.
     /// @param beneficiary The address to send the reclaimed terminal tokens to, and to pass along to the ruleset's
@@ -352,21 +354,24 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     function redeemTokensOf(
         address holder,
         uint256 projectId,
-        address token,
-        uint256 tokenCount,
-        uint256 minReturnedTokens,
+        address tokenToReclaim,
+        uint256 redeemCount,
+        uint256 minTokensReclaimed,
         address payable beneficiary,
         bytes calldata metadata
     )
         external
         virtual
         override
-        returns (uint256)
+        returns (uint256 reclaimAmount)
     {
         // Enforce permissions.
-        _requirePermission({account: holder, projectId: projectId, permissionId: JBPermissionIds.REDEEM_TOKENS});
+        _requirePermissionFrom({account: holder, projectId: projectId, permissionId: JBPermissionIds.REDEEM_TOKENS});
 
-        return _redeemTokensOf(holder, projectId, token, tokenCount, minReturnedTokens, beneficiary, metadata);
+        reclaimAmount = _redeemTokensOf(holder, projectId, tokenToReclaim, redeemCount, beneficiary, metadata);
+
+        // The amount being reclaimed must be at least as much as was expected.
+        if (reclaimAmount < minTokensReclaimed) revert INADEQUATE_RECLAIM_AMOUNT();
     }
 
     /// @notice Sends payouts to a project's current payout split group, according to its ruleset, up to its current
@@ -384,24 +389,26 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// as this terminal.
     /// @param currency The expected currency of the payouts being sent. Must match the currency of one of the
     /// project's current ruleset's payout limits.
-    /// @param minReturnedTokens The minimum number of terminal tokens that the `amount` should be worth (if expressed
+    /// @param minTokensPaidOut The minimum number of terminal tokens that the `amount` should be worth (if expressed
     /// in terms of this terminal's currency), as a fixed point number with the same number of decimals as this
     /// terminal. If the amount of tokens paid out would be less than this amount, the send is reverted.
-    /// @return netLeftoverPayoutAmount The amount that was sent to the project owner, as a fixed point number with the
-    /// same amount of decimals as this terminal.
+    /// @return amountPaidOut The total amount paid out.
     function sendPayoutsOf(
         uint256 projectId,
         address token,
         uint256 amount,
         uint256 currency,
-        uint256 minReturnedTokens
+        uint256 minTokensPaidOut
     )
         external
         virtual
         override
-        returns (uint256)
+        returns (uint256 amountPaidOut)
     {
-        return _sendPayoutsOf(projectId, token, amount, currency, minReturnedTokens);
+        amountPaidOut = _sendPayoutsOf(projectId, token, amount, currency);
+
+        // The amount being paid out must be at least as much as was expected.
+        if (amountPaidOut < minTokensPaidOut) revert INADEQUATE_PAYOUT_AMOUNT();
     }
 
     /// @notice Allows a project to pay out funds from its surplus up to the current surplus allowance.
@@ -419,7 +426,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// this amount, the transaction is reverted.
     /// @param beneficiary The address to send the surplus funds to.
     /// @param memo A memo to pass along to the emitted event.
-    /// @return netAmountPaidOut The number of tokens that were sent to the beneficiary, as a fixed point number with
+    /// @return amountPaidOut The number of tokens that were sent to the beneficiary, as a fixed point number with
     /// the same amount of decimals as the terminal.
     function useAllowanceOf(
         uint256 projectId,
@@ -433,16 +440,19 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         external
         virtual
         override
-        returns (uint256)
+        returns (uint256 amountPaidOut)
     {
         // Enforce permissions.
-        _requirePermission({
+        _requirePermissionFrom({
             account: PROJECTS.ownerOf(projectId),
             projectId: projectId,
             permissionId: JBPermissionIds.USE_ALLOWANCE
         });
 
-        return _useAllowanceOf(projectId, token, amount, currency, minTokensPaidOut, beneficiary, memo);
+        amountPaidOut = _useAllowanceOf(projectId, token, amount, currency, beneficiary, memo);
+
+        // The amount being withdrawn must be at least as much as was expected.
+        if (amountPaidOut < minTokensPaidOut) revert INADEQUATE_PAYOUT_AMOUNT();
     }
 
     /// @notice Migrate a project's funds and operations to a new terminal that accepts the same token type.
@@ -464,7 +474,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         returns (uint256 balance)
     {
         // Enforce permissions.
-        _requirePermission({
+        _requirePermissionFrom({
             account: PROJECTS.ownerOf(projectId),
             projectId: projectId,
             permissionId: JBPermissionIds.MIGRATE_TERMINAL
@@ -518,7 +528,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @param tokens The tokens to add accounting contexts for.
     function addAccountingContextsFor(uint256 projectId, address[] calldata tokens) external override {
         // Enforce permissions.
-        _requirePermissionAllowingOverride({
+        _requirePermissionAllowingOverrideFrom({
             account: PROJECTS.ownerOf(projectId),
             projectId: projectId,
             permissionId: JBPermissionIds.SET_ACCOUNTING_CONTEXT,
@@ -532,7 +542,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         address token;
 
         // Start accepting each token.
-        for (uint256 i; i < numberOfAccountingContexts; ++i) {
+        for (uint256 i; i < numberOfAccountingContexts; i++) {
             // Set the accounting context being iterated on.
             token = tokens[i];
 
@@ -575,7 +585,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         require(msg.sender == address(this));
 
         if (address(feeTerminal) == address(0)) {
-            revert("404:FEE_TERMINAL");
+            revert("404_1");
         }
 
         // Trigger any inherited pre-transfer logic if funds will be transferred.
@@ -658,7 +668,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
             // Make sure that the address supports the split hook interface.
             if (ERC165Checker.supportsInterface(address(split.hook), type(IJBSplitHook).interfaceId)) {
-                revert("400:SPLIT_HOOK");
+                revert("400_1");
             }
 
             // Trigger any inherited pre-transfer logic.
@@ -676,7 +686,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             IJBTerminal terminal = DIRECTORY.primaryTerminalOf(split.projectId, token);
 
             // The project must have a terminal to send funds to.
-            if (terminal == IJBTerminal(address(0))) revert("404:PAYOUT_TERMINAL");
+            if (terminal == IJBTerminal(address(0))) revert("404_2");
 
             // This payout is eligible for a fee if the funds are leaving this contract and the receiving terminal isn't
             // a feelss address.
@@ -889,54 +899,54 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         private
         returns (uint256 beneficiaryTokenCount)
     {
-        // Define variables that will be needed outside the scoped section below.
         // Keep a reference to the ruleset the payment is being made during.
         JBRuleset memory ruleset;
 
-        // Scoped section prevents stack too deep. `hookPayloads`, `tokenCount`, and `tokenAmount` only used within
-        // scope.
+        // Keep a reference to the hook payloads.
+        JBPayHookPayload[] memory hookPayloads;
+
+        // Keep a reference to the token count that'll be minted as a result of the payment.
+        uint256 tokenCount;
+
+        // Keep a reference to the token amount to forward to the store.
+        JBTokenAmount memory tokenAmount;
+
+        // Scoped section prevents stack too deep. `context` only used within scope.
         {
-            JBPayHookPayload[] memory hookPayloads;
-            uint256 tokenCount;
-            JBTokenAmount memory tokenAmount;
+            // Get a reference to the token's accounting context.
+            JBAccountingContext memory context = _accountingContextForTokenOf[projectId][token];
 
-            // Scoped section prevents stack too deep. `context` only used within scope.
-            {
-                // Get a reference to the token's accounting context.
-                JBAccountingContext memory context = _accountingContextForTokenOf[projectId][token];
+            // Bundle the amount info into a JBTokenAmount struct.
+            tokenAmount = JBTokenAmount(token, amount, context.decimals, context.currency);
+        }
 
-                // Bundle the amount info into a JBTokenAmount struct.
-                tokenAmount = JBTokenAmount(token, amount, context.decimals, context.currency);
-            }
+        // Record the payment.
+        (ruleset, tokenCount, hookPayloads) = STORE.recordPaymentFrom({
+            payer: payer,
+            amount: tokenAmount,
+            projectId: projectId,
+            beneficiary: beneficiary,
+            metadata: metadata
+        });
 
-            // Record the payment.
-            (ruleset, tokenCount, hookPayloads) = STORE.recordPaymentFrom({
-                payer: payer,
-                amount: tokenAmount,
+        // Mint tokens if needed.
+        if (tokenCount != 0) {
+            // Set the token count to be the number of tokens minted for the beneficiary instead of the total
+            // amount.
+            beneficiaryTokenCount = IJBController(address(DIRECTORY.controllerOf(projectId))).mintTokensOf({
                 projectId: projectId,
+                tokenCount: tokenCount,
                 beneficiary: beneficiary,
-                metadata: metadata
+                memo: "",
+                useReservedRate: true
             });
+        }
 
-            // Mint tokens if needed.
-            if (tokenCount != 0) {
-                // Set the token count to be the number of tokens minted for the beneficiary instead of the total
-                // amount.
-                beneficiaryTokenCount = IJBController(address(DIRECTORY.controllerOf(projectId))).mintTokensOf({
-                    projectId: projectId,
-                    tokenCount: tokenCount,
-                    beneficiary: beneficiary,
-                    memo: "",
-                    useReservedRate: true
-                });
-            }
-
-            // If hook payloads were specified by the data hook, fulfill them.
-            if (hookPayloads.length != 0) {
-                _fulfillPayHookPayloadsFor(
-                    projectId, hookPayloads, tokenAmount, payer, ruleset, beneficiary, beneficiaryTokenCount, metadata
-                );
-            }
+        // If hook payloads were specified by the data hook, fulfill them.
+        if (hookPayloads.length != 0) {
+            _fulfillPayHookPayloadsFor(
+                projectId, hookPayloads, tokenAmount, payer, ruleset, beneficiary, beneficiaryTokenCount, metadata
+            );
         }
 
         emit Pay(
@@ -987,11 +997,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// tokens.
     /// @param holder The account redeeming tokens.
     /// @param projectId The ID of the project whose tokens are being redeemed.
-    /// @param token The address of the token which is being reclaimed.
-    /// @param tokenCount The number of project tokens to redeem, as a fixed point number with 18 decimals.
-    /// @param minReturnedTokens The minimum amount of terminal tokens expected in return, as a fixed point number with
-    /// the same amount of decimals as the terminal. If the amount of tokens minted for the beneficiary would be less
-    /// than this amount, the redemption is reverted.
+    /// @param tokenToReclaim The address of the token which is being reclaimed.
+    /// @param redeemCount The number of project tokens to redeem, as a fixed point number with 18 decimals.
     /// @param beneficiary The address to send the reclaimed terminal tokens to.
     /// @param metadata Bytes to send along to the emitted event, as well as the data hook and redeem hook if
     /// applicable.
@@ -1000,98 +1007,91 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     function _redeemTokensOf(
         address holder,
         uint256 projectId,
-        address token,
-        uint256 tokenCount,
-        uint256 minReturnedTokens,
+        address tokenToReclaim,
+        uint256 redeemCount,
         address payable beneficiary,
         bytes memory metadata
     )
         private
         returns (uint256 reclaimAmount)
     {
-        // Define variables that will be needed outside the scoped section below.
         // Keep a reference to the ruleset the redemption is being made during.
         JBRuleset memory ruleset;
 
-        // Scoped section prevents stack too deep.
-        {
-            JBRedeemHookPayload[] memory hookPayloads;
+        // Keep a reference to the hook payloads.
+        JBRedeemHookPayload[] memory hookPayloads;
 
-            // Record the redemption.
-            (ruleset, reclaimAmount, hookPayloads) = STORE.recordRedemptionFor({
+        // Record the redemption.
+        (ruleset, reclaimAmount, hookPayloads) = STORE.recordRedemptionFor({
+            holder: holder,
+            projectId: projectId,
+            accountingContext: _accountingContextForTokenOf[projectId][tokenToReclaim],
+            balanceAccountingContexts: _accountingContextsOf[projectId],
+            redeemCount: redeemCount,
+            metadata: metadata
+        });
+
+        // Burn the project tokens.
+        if (redeemCount != 0) {
+            IJBController(address(DIRECTORY.controllerOf(projectId))).burnTokensOf({
                 holder: holder,
                 projectId: projectId,
-                accountingContext: _accountingContextForTokenOf[projectId][token],
-                balanceAccountingContexts: _accountingContextsOf[projectId],
-                tokenCount: tokenCount,
+                tokenCount: redeemCount,
+                memo: ""
+            });
+        }
+
+        // Determine if a fee should be taken. Fees are not exercised if the redemption rate is at its max (100%),
+        // if the beneficiary is feeless, or if the fee beneficiary doesn't accept the given token.
+        bool takesFee =
+            !FEELESS_ADDRESSES.isFeeless(beneficiary) && ruleset.redemptionRate() != JBConstants.MAX_REDEMPTION_RATE;
+
+        // Keep a reference to the amount being reclaimed which fees should be exercised on.
+        uint256 amountEligibleForFees;
+
+        // If hook payloads were specified by the data hook, fulfill them.
+        if (hookPayloads.length != 0) {
+            // Get a reference to the token's accounting context.
+            JBAccountingContext memory context = _accountingContextForTokenOf[projectId][tokenToReclaim];
+
+            // Fulfill the redeem hooks.
+            amountEligibleForFees += _fulfillRedemptionHookPayloadsFor({
+                projectId: projectId,
+                holder: holder,
+                redeemCount: redeemCount,
+                ruleset: ruleset,
+                beneficiary: beneficiary,
+                beneficiaryReclaimAmount: JBTokenAmount(tokenToReclaim, reclaimAmount, context.decimals, context.currency),
+                payloads: hookPayloads,
+                takesFee: takesFee,
                 metadata: metadata
             });
-
-            // The amount being reclaimed must be at least as much as was expected.
-            if (reclaimAmount < minReturnedTokens) revert INADEQUATE_RECLAIM_AMOUNT();
-
-            // Burn the project tokens.
-            if (tokenCount != 0) {
-                IJBController(address(DIRECTORY.controllerOf(projectId))).burnTokensOf({
-                    holder: holder,
-                    projectId: projectId,
-                    tokenCount: tokenCount,
-                    memo: ""
-                });
-            }
-
-            // Determine if a fee should be taken. Fees are not exercised if the redemption rate is at its max (100%),
-            // if the beneficiary is feeless, or if the fee beneficiary doesn't accept the given token.
-            bool takesFee =
-                !FEELESS_ADDRESSES.isFeeless(beneficiary) && ruleset.redemptionRate() != JBConstants.MAX_REDEMPTION_RATE;
-
-            // Keep a reference to the amount being reclaimed which fees should be exercised on.
-            uint256 amountEligibleForFees;
-
-            // If hook payloads were specified by the data hook, fulfill them.
-            if (hookPayloads.length != 0) {
-                // Get a reference to the token's accounting context.
-                JBAccountingContext memory context = _accountingContextForTokenOf[projectId][token];
-
-                // Fulfill the redeem hooks.
-                amountEligibleForFees += _fulfillRedemptionHookPayloadsFor({
-                    projectId: projectId,
-                    holder: holder,
-                    tokenCount: tokenCount,
-                    ruleset: ruleset,
-                    beneficiary: beneficiary,
-                    beneficiaryTokenAmount: JBTokenAmount(token, reclaimAmount, context.decimals, context.currency),
-                    payloads: hookPayloads,
-                    takesFee: takesFee,
-                    metadata: metadata
-                });
-            }
-
-            // Send the reclaimed funds to the beneficiary.
-            if (reclaimAmount != 0) {
-                if (takesFee) {
-                    amountEligibleForFees += reclaimAmount;
-                    // Subtract the fee for the reclaimed amount.
-                    reclaimAmount -= JBFees.feeAmountIn(reclaimAmount, FEE);
-                }
-
-                // Subtract the fee from the reclaim amount.
-                if (reclaimAmount != 0) {
-                    _transferFrom({from: address(this), to: beneficiary, token: token, amount: reclaimAmount});
-                }
-            }
-
-            // Take the fee from all outbound reclaimings.
-            amountEligibleForFees != 0
-                ? _takeFeeFrom({
-                    projectId: projectId,
-                    token: token,
-                    amount: amountEligibleForFees,
-                    beneficiary: beneficiary,
-                    shouldHoldFees: false
-                })
-                : 0;
         }
+
+        // Send the reclaimed funds to the beneficiary.
+        if (reclaimAmount != 0) {
+            if (takesFee) {
+                amountEligibleForFees += reclaimAmount;
+                // Subtract the fee for the reclaimed amount.
+                reclaimAmount -= JBFees.feeAmountIn(reclaimAmount, FEE);
+            }
+
+            // Subtract the fee from the reclaim amount.
+            if (reclaimAmount != 0) {
+                _transferFrom({from: address(this), to: beneficiary, token: tokenToReclaim, amount: reclaimAmount});
+            }
+        }
+
+        // Take the fee from all outbound reclaimings.
+        amountEligibleForFees != 0
+            ? _takeFeeFrom({
+                projectId: projectId,
+                token: tokenToReclaim,
+                amount: amountEligibleForFees,
+                beneficiary: beneficiary,
+                shouldHoldFees: false
+            })
+            : 0;
 
         emit RedeemTokens(
             ruleset.id,
@@ -1099,7 +1099,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             projectId,
             holder,
             beneficiary,
-            tokenCount,
+            redeemCount,
             reclaimAmount,
             metadata,
             _msgSender()
@@ -1120,31 +1120,26 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// this terminal.
     /// @param currency The expected currency of the amount being paid out. Must match the currency of one of the
     /// project's current ruleset's payout limits.
-    /// @param minReturnedTokens The minimum number of terminal tokens that the `amount` should be worth (if expressed
-    /// in terms of this terminal's currency), as a fixed point number with the same number of decimals as this
-    /// terminal. If the amount of tokens paid out would be less than this amount, the send is reverted.
-    /// @return netLeftoverPayoutAmount The leftover amount that was sent to the project owner, as a fixed point number
-    /// with the same amount of decimals as this terminal.
+    /// @return amountPaidOut The total amount that was paid out.
     function _sendPayoutsOf(
         uint256 projectId,
         address token,
         uint256 amount,
-        uint256 currency,
-        uint256 minReturnedTokens
+        uint256 currency
     )
         private
-        returns (uint256 netLeftoverPayoutAmount)
+        returns (uint256 amountPaidOut)
     {
+        // Keep a reference to the ruleset.
+        JBRuleset memory ruleset;
+
         // Record the payout.
-        (JBRuleset memory ruleset, uint256 amountPaidOut) = STORE.recordPayoutFor({
+        (ruleset, amountPaidOut) = STORE.recordPayoutFor({
             projectId: projectId,
             accountingContext: _accountingContextForTokenOf[projectId][token],
             amount: amount,
             currency: currency
         });
-
-        // The amount being paid out must be at least as much as was expected.
-        if (amountPaidOut < minReturnedTokens) revert INADEQUATE_PAYOUT_AMOUNT();
 
         // Get a reference to the project's owner.
         // The owner will receive tokens minted by paying the platform fee and receive any leftover funds not sent to
@@ -1164,6 +1159,9 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             beneficiary: projectOwner,
             shouldHoldFees: ruleset.holdFees()
         });
+
+        /// The leftover amount that was sent to the project owner.
+        uint256 netLeftoverPayoutAmount;
 
         // Send any leftover funds to the project owner and update the net leftover (which is returned) accordingly.
         if (leftoverPayoutAmount != 0) {
@@ -1197,39 +1195,34 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// point number with the same amount of decimals as this terminal.
     /// @param currency The expected currency of the amount being paid out. Must match the currency of one of the
     /// project's current ruleset's surplus allowances.
-    /// @param minTokensPaidOut The minimum number of terminal tokens that should be used from the surplus allowance
-    /// (including fees), as a fixed point number with 18 decimals. If the amount of surplus used would be less than
-    /// this amount, the transaction is reverted.
     /// @param beneficiary The address to send the funds to.
     /// @param memo A memo to pass along to the emitted event.
-    /// @return netAmountPaidOut The number of tokens that were sent to the beneficiary, as a fixed point number with
-    /// the same amount of decimals as the terminal.
+    /// @return amountPaidOut The amount of tokens paid out.
     function _useAllowanceOf(
         uint256 projectId,
         address token,
         uint256 amount,
         uint256 currency,
-        uint256 minTokensPaidOut,
         address payable beneficiary,
         string memory memo
     )
         private
-        returns (uint256 netAmountPaidOut)
+        returns (uint256 amountPaidOut)
     {
+        // Keep a reference to the ruleset.
+        JBRuleset memory ruleset;
+
         // Record the use of the allowance.
-        (JBRuleset memory ruleset, uint256 amountPaidOut) = STORE.recordUsedAllowanceOf({
+        (ruleset, amountPaidOut) = STORE.recordUsedAllowanceOf({
             projectId: projectId,
             accountingContext: _accountingContextForTokenOf[projectId][token],
             amount: amount,
             currency: currency
         });
 
-        // The amount being withdrawn must be at least as much as was expected.
-        if (amountPaidOut < minTokensPaidOut) revert INADEQUATE_PAYOUT_AMOUNT();
-
         // Take a fee from the `amountPaidOut`, if needed.
         // The net amount is the final amount withdrawn after the fee has been taken.
-        netAmountPaidOut = amountPaidOut
+        uint256 netAmountPaidOut = amountPaidOut
             - (
                 FEELESS_ADDRESSES.isFeeless(_msgSender())
                     ? 0
@@ -1284,9 +1277,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // Get a reference to the project's payout splits.
         JBSplit[] memory splits = SPLITS.splitsOf(projectId, rulesetId, uint256(uint160(token)));
 
-        // Use the default splits if there aren't any for the ruleset.
-        if (splits.length == 0) splits = SPLITS.splitsOf(projectId, 0, uint256(uint160(token)));
-
         // Keep a reference to the number of splits being iterated on.
         uint256 numberOfSplits = splits.length;
 
@@ -1294,7 +1284,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         JBSplit memory split;
 
         // Transfer between all splits.
-        for (uint256 i; i < numberOfSplits; ++i) {
+        for (uint256 i; i < numberOfSplits; i++) {
             // Get a reference to the split being iterated on.
             split = splits[i];
 
@@ -1400,7 +1390,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         JBPayHookPayload memory payload;
 
         // Fulfill each payload.
-        for (uint256 i; i < numberOfPayloads; ++i) {
+        for (uint256 i; i < numberOfPayloads; i++) {
             // Set the payload being iterated on.
             payload = payloads[i];
 
@@ -1430,9 +1420,9 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
     /// @notice Fulfills a list of redeem hook payloads.
     /// @param projectId The ID of the project being redeemed from and forwarding payloads to redeem hooks.
-    /// @param beneficiaryTokenAmount The number of tokens that are being reclaimed from the project.
+    /// @param beneficiaryReclaimAmount The number of tokens that are being reclaimed from the project.
     /// @param holder The address that holds the tokens being redeemed.
-    /// @param tokenCount The number of tokens being redeemed.
+    /// @param redeemCount The number of tokens being redeemed.
     /// @param metadata Bytes to send along to the emitted event, as well as the data hook and redeem hook if
     /// applicable.
     /// @param ruleset The ruleset the redemption is being made during as a `JBRuleset` struct.
@@ -1443,9 +1433,9 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// fees.
     function _fulfillRedemptionHookPayloadsFor(
         uint256 projectId,
-        JBTokenAmount memory beneficiaryTokenAmount,
+        JBTokenAmount memory beneficiaryReclaimAmount,
         address holder,
-        uint256 tokenCount,
+        uint256 redeemCount,
         bytes memory metadata,
         JBRuleset memory ruleset,
         address payable beneficiary,
@@ -1460,9 +1450,9 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             holder: holder,
             projectId: projectId,
             rulesetId: ruleset.id,
-            projectTokenCount: tokenCount,
-            reclaimedAmount: beneficiaryTokenAmount,
-            forwardedAmount: beneficiaryTokenAmount,
+            redeemCount: redeemCount,
+            reclaimedAmount: beneficiaryReclaimAmount,
+            forwardedAmount: beneficiaryReclaimAmount,
             redemptionRate: ruleset.redemptionRate(),
             beneficiary: beneficiary,
             hookMetadata: "",
@@ -1475,12 +1465,12 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // Keep a reference to the payload being iterated on.
         JBRedeemHookPayload memory payload;
 
-        for (uint256 i; i < numberOfPayloads; ++i) {
+        for (uint256 i; i < numberOfPayloads; i++) {
             // Set the payload being iterated on.
             payload = payloads[i];
 
             // Trigger any inherited pre-transfer logic.
-            _beforeTransferTo({to: address(payload.hook), token: beneficiaryTokenAmount.token, amount: payload.amount});
+            _beforeTransferTo({to: address(payload.hook), token: beneficiaryReclaimAmount.token, amount: payload.amount});
 
             // Get the fee for the payload amount.
             uint256 payloadAmountFee = takesFee ? JBFees.feeAmountIn(payload.amount, FEE) : 0;
@@ -1494,16 +1484,16 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             // Pass the correct token `forwardedAmount` to the hook.
             data.forwardedAmount = JBTokenAmount({
                 value: payload.amount,
-                token: beneficiaryTokenAmount.token,
-                decimals: beneficiaryTokenAmount.decimals,
-                currency: beneficiaryTokenAmount.currency
+                token: beneficiaryReclaimAmount.token,
+                decimals: beneficiaryReclaimAmount.decimals,
+                currency: beneficiaryReclaimAmount.currency
             });
 
             // Pass the correct metadata from the data hook.
             data.hookMetadata = payload.metadata;
 
             // Keep a reference to the amount that'll be paid as a `msg.value`.
-            uint256 payValue = beneficiaryTokenAmount.token == JBConstants.NATIVE_TOKEN ? payload.amount : 0;
+            uint256 payValue = beneficiaryReclaimAmount.token == JBConstants.NATIVE_TOKEN ? payload.amount : 0;
 
             // Fulfill the payload.
             payload.hook.didRedeem{value: payValue}(data);
@@ -1580,7 +1570,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         IJBTerminal feeTerminal = DIRECTORY.primaryTerminalOf(_FEE_BENEFICIARY_PROJECT_ID, token);
 
         // Process each fee.
-        for (uint256 i; i < numberOfHeldFees; ++i) {
+        for (uint256 i; i < numberOfHeldFees; i++) {
             // Keep a reference to the held fee being iterated on.
             heldFee = heldFees[i];
 
@@ -1653,7 +1643,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         JBFee memory heldFee;
 
         // Process each fee.
-        for (uint256 i; i < numberOfHeldFees; ++i) {
+        for (uint256 i; i < numberOfHeldFees; i++) {
             // Save the fee being iterated on.
             heldFee = heldFees[i];
 

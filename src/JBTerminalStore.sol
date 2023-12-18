@@ -348,7 +348,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
             // Validate all payload amounts. This needs to be done before returning the hook payloads to ensure valid
             // payload amounts.
             if (numberOfHookPayloads != 0) {
-                for (uint256 i; i < numberOfHookPayloads; ++i) {
+                for (uint256 i; i < numberOfHookPayloads; i++) {
                     // Get a reference to the payload amount.
                     uint256 payloadAmount = hookPayloads[i].amount;
 
@@ -401,11 +401,11 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     /// burned.
     /// @param holder The account that is redeeming tokens.
     /// @param projectId The ID of the project being redeemed from.
+    /// @param redeemCount The number of project tokens to redeem, as a fixed point number with 18 decimals.
     /// @param accountingContext The accounting context of the token being reclaimed by the redemption.
     /// @param balanceAccountingContexts The accounting contexts whose balances should contribute to the surplus being
     /// reclaimed
     /// from.
-    /// @param tokenCount The number of project tokens to redeem, as a fixed point number with 18 decimals.
     /// @param metadata Bytes to send to the data hook, if the project's current ruleset specifies one.
     /// @return ruleset The ruleset during the redemption was made during, as a `JBRuleset` struct.
     /// @return reclaimAmount The amount of tokens reclaimed from the terminal, as a fixed point number with 18
@@ -414,9 +414,9 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     function recordRedemptionFor(
         address holder,
         uint256 projectId,
+        uint256 redeemCount,
         JBAccountingContext calldata accountingContext,
         JBAccountingContext[] calldata balanceAccountingContexts,
-        uint256 tokenCount,
         bytes memory metadata
     )
         external
@@ -450,13 +450,13 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
             IJBController(address(DIRECTORY.controllerOf(projectId))).totalTokenSupplyWithReservedTokensOf(projectId);
 
         // Can't redeem more tokens that are in the supply.
-        if (tokenCount > totalSupply) revert INSUFFICIENT_TOKENS();
+        if (redeemCount > totalSupply) revert INSUFFICIENT_TOKENS();
 
         if (currentSurplus != 0) {
             // Calculate reclaim amount using the current surplus amount.
             reclaimAmount = _reclaimableSurplusDuring({
                 ruleset: ruleset,
-                tokenCount: tokenCount,
+                tokenCount: redeemCount,
                 totalSupply: totalSupply,
                 surplus: currentSurplus
             });
@@ -472,24 +472,21 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
 
         // If the ruleset has a data hook which is enabled for redemptions, use it to derive a claim amount and memo.
         if (ruleset.useDataHookForRedeem() && ruleset.dataHook() != address(0)) {
-            // Yet another scoped section prevents stack too deep. `data`  only used within scope.
-            {
-                // Create the params that'll be sent to the data hook.
-                JBRedeemParamsData memory data = JBRedeemParamsData({
-                    terminal: msg.sender,
-                    holder: holder,
-                    projectId: projectId,
-                    rulesetId: ruleset.id,
-                    tokenCount: tokenCount,
-                    totalSupply: totalSupply,
-                    surplus: currentSurplus,
-                    reclaimAmount: reclaimedTokenAmount,
-                    useTotalSurplus: ruleset.useTotalSurplusForRedemptions(),
-                    redemptionRate: ruleset.redemptionRate(),
-                    metadata: metadata
-                });
-                (reclaimAmount, hookPayloads) = IJBRulesetDataHook(ruleset.dataHook()).redeemParams(data);
-            }
+            // Create the params that'll be sent to the data hook.
+            JBRedeemParamsData memory data = JBRedeemParamsData({
+                terminal: msg.sender,
+                holder: holder,
+                projectId: projectId,
+                rulesetId: ruleset.id,
+                redeemCount: redeemCount,
+                totalSupply: totalSupply,
+                surplus: currentSurplus,
+                reclaimAmount: reclaimedTokenAmount,
+                useTotalSurplus: ruleset.useTotalSurplusForRedemptions(),
+                redemptionRate: ruleset.redemptionRate(),
+                metadata: metadata
+            });
+            (reclaimAmount, hookPayloads) = IJBRulesetDataHook(ruleset.dataHook()).redeemParams(data);
         }
 
         // Keep a reference to the amount that should be subtracted from the project's balance.
@@ -497,7 +494,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
 
         if (hookPayloads.length != 0) {
             // Validate all payload amounts.
-            for (uint256 i; i < hookPayloads.length; ++i) {
+            for (uint256 i; i < hookPayloads.length; i++) {
                 // Get a reference to the payload amount.
                 uint256 payloadAmount = hookPayloads[i].amount;
 
@@ -792,7 +789,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
         uint256 numberOfTokenAccountingContexts = accountingContexts.length;
 
         // Add payout limits from each token.
-        for (uint256 i; i < numberOfTokenAccountingContexts; ++i) {
+        for (uint256 i; i < numberOfTokenAccountingContexts; i++) {
             uint256 tokenSurplus = _tokenSurplusFrom({
                 terminal: terminal,
                 projectId: projectId,
@@ -874,7 +871,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
         uint256 numberOfPayoutLimits = payoutLimits.length;
 
         // Loop through each payout limit to determine the cumulative normalized payout limit remaining.
-        for (uint256 i; i < numberOfPayoutLimits; ++i) {
+        for (uint256 i; i < numberOfPayoutLimits; i++) {
             payoutLimit = payoutLimits[i];
 
             // Set the payout limit value to the amount still available to pay out during the ruleset.
@@ -933,7 +930,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
         uint256 numberOfTerminals = terminals.length;
 
         // Add the current surplus for each terminal.
-        for (uint256 i; i < numberOfTerminals; ++i) {
+        for (uint256 i; i < numberOfTerminals; i++) {
             surplus += terminals[i].currentSurplusOf(projectId, decimals, currency);
         }
     }
