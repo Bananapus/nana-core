@@ -677,7 +677,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             uint256 payValue = token == JBConstants.NATIVE_TOKEN ? netPayoutAmount : 0;
 
             // If this terminal's token is the native token, send it in `msg.value`.
-            split.hook.process{value: payValue}(context);
+            split.hook.processSplitWith{value: payValue}(context);
 
             // Otherwise, if a project is specified, make a payment to it.
         } else if (split.projectId != 0) {
