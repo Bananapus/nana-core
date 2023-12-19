@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {IJBPayoutTerminal} from "./../interfaces/terminal/IJBPayoutTerminal.sol";
 import {JBCurrencyAmount} from "./JBCurrencyAmount.sol";
 
 /// @dev Payout limit example: if the `amount` is 5, the `currency` is 1 (USD), and the terminal's token is ETH, then
