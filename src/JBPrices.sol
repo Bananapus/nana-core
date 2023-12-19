@@ -8,7 +8,6 @@ import {IJBPriceFeed} from "./interfaces/IJBPriceFeed.sol";
 import {IJBProjects} from "./interfaces/IJBProjects.sol";
 import {IJBPermissions} from "./interfaces/IJBPermissions.sol";
 import {IJBPrices} from "./interfaces/IJBPrices.sol";
-import {IJBDirectory} from "./interfaces/IJBDirectory.sol";
 import {JBPermissionIds} from "./libraries/JBPermissionIds.sol";
 
 /// @notice Manages and normalizes price feeds. Price feeds are contracts which return the "pricing currency" cost of 1

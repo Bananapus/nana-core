@@ -1,14 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.23;
 
-import {EIP712} from "lib/openzeppelin-contracts/contracts/utils/cryptography/EIP712.sol";
 import {JBControlled} from "./abstract/JBControlled.sol";
 import {IJBDirectory} from "./interfaces/IJBDirectory.sol";
-import {IJBPermissions} from "./interfaces/IJBPermissions.sol";
-import {IJBProjects} from "./interfaces/IJBProjects.sol";
 import {IJBToken} from "./interfaces/IJBToken.sol";
 import {IJBTokens} from "./interfaces/IJBTokens.sol";
-import {JBPermissionIds} from "./libraries/JBPermissionIds.sol";
 import {JBERC20} from "./JBERC20.sol";
 
 /// @notice Manages minting, burning, and balances of projects' tokens and token credits.
