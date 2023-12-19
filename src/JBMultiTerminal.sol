@@ -830,8 +830,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // If the terminal is rerouting the tokens within its own functions, there's nothing to transfer.
         if (_msgSender() == address(this)) return amount;
 
-        // The metadata ID is the first 160 bits of this contract's address.
-        bytes4 metadataId = bytes4(uint32(uint160(address(this))));
+        // The metadata ID is the first 4 bytes of this contract's address.
+        bytes4 metadataId = bytes4(bytes20(address(this)));
 
         // Unpack the allowance to use, if any, given by the frontend.
         (bool exists, bytes memory parsedMetadata) = JBMetadataResolver.getDataFor(metadataId, metadata);
