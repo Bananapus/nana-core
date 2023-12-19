@@ -143,7 +143,7 @@ contract TestPermit2Terminal_Local is TestBaseWorkflow, PermitSignature {
         bytes4[] memory _ids = new bytes4[](1);
         bytes[] memory _datas = new bytes[](1);
         _datas[0] = abi.encode(permitData);
-        _ids[0] = bytes4(uint32(uint160(address(_terminal))));
+        _ids[0] = bytes4(bytes20(address(_terminal)));
 
         // Setup: use the metadata library to encode.
         bytes memory _packedData = _helper.createMetadata(_ids, _datas);
@@ -209,7 +209,7 @@ contract TestPermit2Terminal_Local is TestBaseWorkflow, PermitSignature {
         bytes4[] memory _ids = new bytes4[](1);
         bytes[] memory _datas = new bytes[](1);
         _datas[0] = abi.encode(permitData);
-        _ids[0] = bytes4(uint32(uint160(address(_terminal))));
+        _ids[0] = bytes4(bytes20((address(_terminal))));
 
         // Setup: use the metadata library to encode.
         bytes memory _packedData = _helper.createMetadata(_ids, _datas);
