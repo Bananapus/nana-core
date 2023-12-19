@@ -212,11 +212,11 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
         SwapParams memory _swapParams;
         _swapParams.projectId = _projectId;
         _swapParams.tokenIn = _token;
-        _swapParams.amountIn = _amount;
+        _swapParams.amountIn = _token == JBConstants.NATIVE_TOKEN ? msg.value : _amount;
 
         {
             // Check for a quote passed by the user
-            (bool _exists, bytes memory _parsedData) = JBMetadataResolver.getDataFor(bytes4(address(this)), _metadata);
+            (bool _exists, bytes memory _parsedData) = JBMetadataResolver.getDataFor(bytes4(bytes20(address(this))), _metadata);
 
             // If there is a quote, use it
             if (_exists) {
@@ -250,9 +250,9 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
         uint256 _receivedFromSwap = _swap(_swapParams);
 
         // Unwrap weth if needed - TODO: adapt to native token !!
-        // if(_swapParams.tokenOut == JBConstants.NATIVE_TOKEN) {
-        //     IWETH9(JBConstants.WETH).withdraw(_receivedFromSwap);
-        // }
+        if(_swapParams.tokenOut == JBConstants.NATIVE_TOKEN) {
+            WETH.withdraw(_receivedFromSwap);
+        }
 
         // Pay on primary terminal, with correct beneficiary (sender or benficiary if passed)
         _terminal.pay{value: _swapParams.tokenOut == JBConstants.NATIVE_TOKEN ? _receivedFromSwap : 0}(
