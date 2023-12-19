@@ -13,5 +13,5 @@ interface IJBSplitHook is IERC165 {
     /// @dev Critical business logic should be protected by appropriate access control. The tokens and/or native tokens
     /// are optimistically transferred to the split hook when this function is called.
     /// @param context The context passed by the terminal/controller to the split hook as a `JBSplitHookContext` struct:
-    function process(JBSplitHookContext calldata context) external payable;
+    function processSplitWith(JBSplitHookContext calldata context) external payable;
 }

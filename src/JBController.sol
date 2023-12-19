@@ -773,13 +773,13 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
                 // Mint the tokens.
                 TOKENS.mintFor(_benenficiary, projectId, tokenCount);
 
-                // If there's a split hook, trigger its `process` function.
+                // If there's a split hook, trigger its `processSplitWith` function.
                 if (split.hook != IJBSplitHook(address(0))) {
                     // Get a reference to the project's token.
                     IJBToken token = TOKENS.tokenOf(projectId);
 
                     // Process.
-                    split.hook.process(
+                    split.hook.processSplitWith(
                         JBSplitHookContext({
                             token: address(token),
                             amount: tokenCount,
