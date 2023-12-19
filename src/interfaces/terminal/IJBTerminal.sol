@@ -2,8 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {JBAccountingContext} from "../../structs/JBAccountingContext.sol";
-import {JBAccountingContextConfig} from "../../structs/JBAccountingContextConfig.sol";
-import {JBDidPayData} from "../../structs/JBDidPayData.sol";
+import {JBAfterPayRecordedContext} from "../../structs/JBAfterPayRecordedContext.sol";
 
 import {IJBPayHook} from "../../interfaces/IJBPayHook.sol";
 import {IERC165} from "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol";
@@ -35,7 +34,9 @@ interface IJBTerminal is IERC165 {
         address caller
     );
 
-    event HookDidPay(IJBPayHook indexed hook, JBDidPayData data, uint256 payloadAmount, address caller);
+    event HookPostRecordPay(
+        IJBPayHook indexed hook, JBAfterPayRecordedContext context, uint256 specificationAmount, address caller
+    );
 
     function accountingContextForTokenOf(
         uint256 projectId,

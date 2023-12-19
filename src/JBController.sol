@@ -33,7 +33,7 @@ import {JBRulesetMetadata} from "./structs/JBRulesetMetadata.sol";
 import {JBTerminalConfig} from "./structs/JBTerminalConfig.sol";
 import {JBSplit} from "./structs/JBSplit.sol";
 import {JBSplitGroup} from "./structs/JBSplitGroup.sol";
-import {JBSplitHookPayload} from "./structs/JBSplitHookPayload.sol";
+import {JBSplitHookContext} from "./structs/JBSplitHookContext.sol";
 
 /// @notice Stitches together rulesets and project tokens, making sure all activity is accounted for and correct.
 contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, IJBMigratable {
@@ -149,11 +149,12 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         metadata = ruleset.expandMetadata();
     }
 
-    /// @notice A project's queued ruleset along with its metadata.
+    /// @notice A project's upcoming ruleset along with its metadata.
+    /// @dev If an upcoming ruleset is not found for the project, returns an empty ruleset with all properties set to 0.
     /// @param projectId The ID of the project the ruleset belongs to.
-    /// @return ruleset The queued ruleset as a `JBRuleset` struct.
-    /// @return metadata The queued ruleset's metadata as a `JBRulesetMetadata` struct.
-    function queuedRulesetOf(uint256 projectId)
+    /// @return ruleset The upcoming ruleset as a `JBRuleset` struct.
+    /// @return metadata The upcoming ruleset's metadata as a `JBRulesetMetadata` struct.
+    function upcomingRulesetOf(uint256 projectId)
         external
         view
         override
@@ -772,14 +773,21 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
                 // Mint the tokens.
                 TOKENS.mintFor(_benenficiary, projectId, tokenCount);
 
-                // If there's a split hook, trigger its `process` function.
+                // If there's a split hook, trigger its `processSplitWith` function.
                 if (split.hook != IJBSplitHook(address(0))) {
                     // Get a reference to the project's token.
                     IJBToken token = TOKENS.tokenOf(projectId);
 
                     // Process.
-                    split.hook.process(
-                        JBSplitHookPayload(address(token), tokenCount, token.decimals(), projectId, groupId, split)
+                    split.hook.processSplitWith(
+                        JBSplitHookContext({
+                            token: address(token),
+                            amount: tokenCount,
+                            decimals: token.decimals(),
+                            projectId: projectId,
+                            groupId: groupId,
+                            split: split
+                        })
                     );
                 }
 
@@ -830,7 +838,10 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
             // Use the configuration to queue the ruleset.
             JBRuleset memory ruleset = RULESETS.queueFor({
                 projectId: projectId,
-                data: rulesetConfig.data,
+                duration: rulesetConfig.duration,
+                weight: rulesetConfig.weight,
+                decayRate: rulesetConfig.decayRate,
+                approvalHook: rulesetConfig.approvalHook,
                 metadata: JBRulesetMetadataResolver.packRulesetMetadata(rulesetConfig.metadata),
                 mustStartAtOrAfter: rulesetConfig.mustStartAtOrAfter
             });

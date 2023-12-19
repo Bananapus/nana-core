@@ -7,7 +7,6 @@ import /* {*} from */ "./helpers/TestBaseWorkflow.sol";
 contract TestTokenFlow_Local is TestBaseWorkflow {
     IJBController private _controller;
     IJBTokens private _tokens;
-    JBRulesetData private _data;
     JBRulesetMetadata _metadata;
     IJBTerminal private _terminal;
     uint256 private _projectId;
@@ -22,12 +21,6 @@ contract TestTokenFlow_Local is TestBaseWorkflow {
         _controller = jbController();
         _tokens = jbTokens();
         _terminal = jbMultiTerminal();
-        _data = JBRulesetData({
-            duration: 0,
-            weight: 1000 * 10 ** 18,
-            decayRate: 0,
-            hook: IJBRulesetApprovalHook(address(0))
-        });
         _metadata = JBRulesetMetadata({
             reservedRate: JBConstants.MAX_RESERVED_RATE / 2,
             redemptionRate: 0,
@@ -50,7 +43,10 @@ contract TestTokenFlow_Local is TestBaseWorkflow {
         // Package up ruleset configuration.
         JBRulesetConfig[] memory _rulesetConfig = new JBRulesetConfig[](1);
         _rulesetConfig[0].mustStartAtOrAfter = 0;
-        _rulesetConfig[0].data = _data;
+        _rulesetConfig[0].duration = 0;
+        _rulesetConfig[0].weight = 1000 * 10 ** 18;
+        _rulesetConfig[0].decayRate = 0;
+        _rulesetConfig[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfig[0].metadata = _metadata;
         _rulesetConfig[0].splitGroups = new JBSplitGroup[](0);
         _rulesetConfig[0].fundAccessLimitGroups = new JBFundAccessLimitGroup[](0);
