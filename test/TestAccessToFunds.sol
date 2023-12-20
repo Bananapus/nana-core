@@ -66,7 +66,9 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
         });
     }
 
+    event K(bytes4 k);
     // Tests that basic payout limit and surplus allowance limits work as intended.
+
     function testNativeAllowance() public {
         // Hardcode values to use.
         uint256 _nativeCurrencyPayoutLimit = 10 * 10 ** _NATIVE_DECIMALS;
