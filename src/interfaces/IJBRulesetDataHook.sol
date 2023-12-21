@@ -12,6 +12,13 @@ import {JBRedeemHookSpecification} from "./../structs/JBRedeemHookSpecification.
 /// @dev If included in the current ruleset, the `IJBRulesetDataHook` is called by `JBPayoutRedemptionPaymentTerminal`s
 /// upon payments and redemptions.
 interface IJBRulesetDataHook is IERC165 {
+    /// @notice A flag indicating if an addresses has permission to mint tokens on a project's behalf.
+    /// @param projectId The ID of the projec to check mint permissions for.
+    /// @param addr The address to check for permission to mint tokens on a project's behalf byway of the data
+    /// source.
+    /// @return flag The flag indicating if the address has permissions to mint on the project's behalf.
+    function givesMintPermissionsFor(uint256 projectId, address addr) external view returns (bool flag);
+
     /// @notice The data calculated before a payment is recorded in the terminal store. This data is provided to the
     /// terminal's `pay(...)` transaction.
     /// @param context The context passed to this data hook by the `pay(...)` function as a `JBBeforePayRecordedContext`
