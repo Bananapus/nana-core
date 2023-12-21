@@ -51,7 +51,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     error INVALID_REDEMPTION_RATE();
     error INVALID_RESERVED_RATE();
     error CONTROLLER_MIGRATION_NOT_ALLOWED();
-    error MINT_NOT_ALLOWED_AND_NOT_TERMINAL_HOOK();
+    error MINT_NOT_ALLOWED_AND_NOT_TERMINAL_OR_HOOK();
     error NO_BURNABLE_TOKENS();
     error CREDIT_TRANSFERS_PAUSED();
     error ZERO_TOKENS_TO_MINT();
@@ -421,7 +421,10 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
             permissionId: JBPermissionIds.MINT_TOKENS,
             alsoGrantAccessIf: DIRECTORY.isTerminalOf(projectId, IJBTerminal(_msgSender()))
                 || _msgSender() == ruleset.dataHook()
-                || IJBRulesetDataHook(ruleset.dataHook()).givesMintPermissionsFor(projectId, _msgSender())
+                || (
+                    ruleset.dataHook() != address(0)
+                        && IJBRulesetDataHook(ruleset.dataHook()).givesMintPermissionsFor(projectId, _msgSender())
+                )
         });
 
         // If the message sender is not a terminal or a data hook, the current ruleset must allow minting if there is
@@ -430,8 +433,11 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
             ruleset.id != 0 && !ruleset.allowOwnerMinting()
                 && !DIRECTORY.isTerminalOf(projectId, IJBTerminal(_msgSender()))
                 && _msgSender() != address(ruleset.dataHook())
-                && !IJBRulesetDataHook(ruleset.dataHook()).givesMintPermissionsFor(projectId, _msgSender())
-        ) revert MINT_NOT_ALLOWED_AND_NOT_TERMINAL_HOOK();
+                && (
+                    ruleset.dataHook() == address(0)
+                        || !IJBRulesetDataHook(ruleset.dataHook()).givesMintPermissionsFor(projectId, _msgSender())
+                )
+        ) revert MINT_NOT_ALLOWED_AND_NOT_TERMINAL_OR_HOOK();
 
         // Determine the reserved rate to use.
         reservedRate = useReservedRate ? ruleset.reservedRate() : 0;
