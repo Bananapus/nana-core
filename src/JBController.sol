@@ -137,10 +137,9 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         metadata = ruleset.expandMetadata();
     }
 
-    /// @notice All queued rulesets for a project, including their metadata. Returns the rulesets' struct along with
-    /// their metadata.
+    /// @notice Get all the currently queued rulesets for a project, including their metadata.
     /// @param projectId The ID of the project to get the queued rulesets of.
-    /// @return queuedRulesets The project's queued rulesets' structs.
+    /// @return queuedRulesets The queued rulesets as an array of `JBRulesetWithMetadata` structs.
     function queuedRulesetsOf(uint256 projectId)
         external
         view
@@ -150,7 +149,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         // Get the queued rulesets.
         JBRuleset[] memory rulesets = RULESETS.queuedRulesetsOf(projectId);
 
-        // Keep a refernce to the number of rulesets.
+        // Keep a reference to the number of rulesets.
         uint256 numberOfRulesets = rulesets.length;
 
         // Initialize the array being returned.
@@ -159,7 +158,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         // Keep a reference to the ruleset being iterated on.
         JBRuleset memory ruleset;
 
-        // Populate the rulesets for each
+        // Populate the array with the rulesets and their metadata.
         for (uint256 i; i < numberOfRulesets; i++) {
             // Set the ruleset being iterated on.
             ruleset = rulesets[i];
