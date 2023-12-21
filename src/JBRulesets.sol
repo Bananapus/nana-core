@@ -120,6 +120,44 @@ contract JBRulesets is JBControlled, IJBRulesets {
         });
     }
 
+    /// @notice All queued rulesets for a project. Returns the rulesets' struct.
+    /// @param projectId The ID of the project to get the queued rulesets of.
+    /// @return queuedRulesets The project's queued rulesets' structs.
+    function queuedRulesetsOf(uint256 projectId) external view override returns (JBRuleset[] memory queuedRulesets) {
+        // Get the latest ruleset ID.
+        uint256 latestId = latestRulesetIdOf[projectId];
+
+        // Keep a reference to the number of rulesets there are.
+        uint256 count = 0;
+
+        // Keep a reference to the ruleset being iterated on.
+        JBRuleset memory ruleset = _getStructFor(projectId, latestId);
+
+        // First, count the number of future rulesets
+        while (ruleset.id != 0 && ruleset.start > block.timestamp) {
+            // Increment the counter.
+            count++;
+
+            // Iterate to the next ruleset.
+            ruleset = _getStructFor(projectId, ruleset.basedOnId);
+        }
+
+        // Keep a reference to the queued rulesets that'll be populated.
+        queuedRulesets = new JBRuleset[](count);
+
+        // Reset the ruleset being iterated on.
+        ruleset = _getStructFor(projectId, latestId);
+
+        // Populate the queuedRulesets array
+        for (uint256 i; i < count; i++) {
+            // Add the ruleset to be returned.
+            queuedRulesets[i] = ruleset;
+
+            // Get the next ruleset to add.
+            ruleset = _getStructFor(projectId, ruleset.basedOnId);
+        }
+    }
+
     /// @notice The ruleset that's up next for a project.
     /// @dev If an upcoming ruleset is not found for the project, returns an empty ruleset with all properties set to 0.
     /// @param projectId The ID of the project to get the upcoming ruleset of.
