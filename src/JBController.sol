@@ -423,7 +423,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
                 || _msgSender() == ruleset.dataHook()
                 || (
                     ruleset.dataHook() != address(0)
-                        && IJBRulesetDataHook(ruleset.dataHook()).givesMintPermissionsFor(projectId, _msgSender())
+                        && IJBRulesetDataHook(ruleset.dataHook()).hasMintPermissionFor(projectId, _msgSender())
                 )
         });
 
@@ -435,7 +435,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
                 && _msgSender() != address(ruleset.dataHook())
                 && (
                     ruleset.dataHook() == address(0)
-                        || !IJBRulesetDataHook(ruleset.dataHook()).givesMintPermissionsFor(projectId, _msgSender())
+                        || !IJBRulesetDataHook(ruleset.dataHook()).hasMintPermissionFor(projectId, _msgSender())
                 )
         ) revert MINT_NOT_ALLOWED_AND_NOT_TERMINAL_OR_HOOK();
 
