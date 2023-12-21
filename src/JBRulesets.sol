@@ -153,8 +153,8 @@ contract JBRulesets is JBControlled, IJBRulesets {
             // Add the ruleset to be returned.
             queuedRulesets[i] = ruleset;
 
-            // Get the next ruleset to add.
-            ruleset = _getStructFor(projectId, ruleset.basedOnId);
+            // Get the next ruleset to add if needed.
+            if (i != 0) ruleset = _getStructFor(projectId, ruleset.basedOnId);
         }
     }
 
