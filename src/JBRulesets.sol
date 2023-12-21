@@ -149,7 +149,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
         ruleset = _getStructFor(projectId, latestId);
 
         // Populate the queuedRulesets array
-        for (uint256 i; i < count; i++) {
+        for (uint256 i = count - 1; i >= 0; i--) {
             // Add the ruleset to be returned.
             queuedRulesets[i] = ruleset;
 
