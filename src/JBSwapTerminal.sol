@@ -74,6 +74,7 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
     error NO_MSG_VALUE_ALLOWED();
     error TOKEN_NOT_ACCEPTED();
     error TOKEN_NOT_IN_POOL();
+    error UNSUPPORTED();
 
     //*********************************************************************//
     // --------------------- internal stored constants ------------------- //
@@ -115,7 +116,10 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
     //*********************************************************************//
 
     // project ID -> token received -> token to get -> pool to use
-    mapping(uint256 => mapping(address => mapping(address => IUniswapV3Pool))) public _poolFor;
+    mapping(uint256 => mapping(address => mapping(address => IUniswapV3Pool))) public poolFor;
+
+    // project ID -> token received -> accounting context
+    mapping(uint256 => mapping(address => JBAccountingContext)) public accountingContextFor;
 
     //*********************************************************************//
     // ------------------------- external views -------------------------- //
@@ -129,7 +133,9 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
         view
         override
         returns (JBAccountingContext memory)
-    {}
+    {   
+        return accountingContextFor[_projectId][_token];
+    }
 
     function accountingContextsOf(uint256 _projectId) external view override returns (JBAccountingContext[] memory) {}
     function currentSurplusOf(uint256 projectId, uint256 decimals, uint256 currency) external view returns (uint256) {}
@@ -224,7 +230,7 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
                     abi.decode(_parsedData, (uint256, IUniswapV3Pool, address));
                 // If no quote, check there is a default pool assigned and get a twap
             } else {
-                IUniswapV3Pool _pool = _poolFor[_projectId][_token][address(0)];
+                IUniswapV3Pool _pool = poolFor[_projectId][_token][address(0)];
 
                 _swapParams.pool = _pool;
 
@@ -317,25 +323,13 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
         virtual
         override
     {
-        // Check the terminal accepts the token
-
-        // Accept the funds.
-
-        // Check for quote
-
-        // If no quote, check there is a pool assigned and get a twap
-
-        // Try to swap, if fails, revert
-
-        // Unwrap weth if needed
-
-        // Add to balance on primary terminal
+        revert UNSUPPORTED();
     }
 
     // add a pool to use for a given token in
     function addDefaultPool(uint256 _projectId, address _token, IUniswapV3Pool _pool) external {
         _requirePermissionFrom(PROJECTS.ownerOf(_projectId), _projectId, JBPermissionIds.MODIFY_DEFAULT_POOL);
-        _poolFor[_projectId][_token][address(0)] = _pool;
+        poolFor[_projectId][_token][address(0)] = _pool;
     }
 
     function addAccountingContextsFor(uint256 projectId, address[] calldata tokens) external {}

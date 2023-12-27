@@ -72,4 +72,46 @@ contract TestSwapTerminal_Fork is TestBaseWorkflow {
         );
 
     }
+
+    function _reconfigure() internal {
+        JBRulesetMetadata private _metadata = JBRulesetMetadata({
+            reservedRate: 0,
+            redemptionRate: 0,
+            baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
+            pausePay: false,
+            pauseCreditTransfers: false,
+            allowOwnerMinting: false,
+            allowTerminalMigration: false,
+            allowSetTerminals: true,
+            allowControllerMigration: false,
+            allowSetController: false,
+            holdFees: false,
+            useTotalSurplusForRedemptions: false,
+            useDataHookForPay: false,
+            useDataHookForRedeem: false,
+            dataHook: address(0),
+            metadata: 0
+        });
+
+        JBRuleset memory _ruleset = jbRulesets().currentOf(_projectId);
+
+        // Package a ruleset configuration.
+        JBRulesetConfig[] memory _rulesetConfig = new JBRulesetConfig[](1);
+        _rulesetConfig[0].mustStartAtOrAfter = 0;
+        _rulesetConfig[0].duration = _ruleset.duration;
+        _rulesetConfig[0].weight = 0;
+        _rulesetConfig[0].decayRate = 0;
+        _rulesetConfig[0].approvalHook = _deadline;
+        _rulesetConfig[0].metadata = _metadata;
+        _rulesetConfig[0].splitGroups = ruleset.splitGroup;
+        _rulesetConfig[0].fundAccessLimitGroups = ruleset.fundAccessLimitGroup;
+
+        vm.prank(multisig());
+        _controller.queueRulesetsOf(_projectId, _rulesetConfig, "");
+
+        vm.warp(block.timestamp + _ruleset.duration);
+
+        // Set a new primary terminal for DAI
+        _directory.setPrimaryTerminalOf(_projectId, DAI, _swapTerminal);
+    }
 }
