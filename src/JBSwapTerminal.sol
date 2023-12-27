@@ -242,9 +242,9 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
         IJBTerminal _terminal = DIRECTORY.primaryTerminalOf(_projectId, _swapParams.tokenOut);
 
         // Check the primary terminal accepts the token (save swap gas if not accepted)
-        if (address(_terminal) == address(0)) revert TOKEN_NOT_ACCEPTED(); // TODO: no revert?
+        if (address(_terminal) == address(0)) revert TOKEN_NOT_ACCEPTED();
 
-        _amount = _acceptFundsFor(_swapParams, _metadata);
+        _swapParams.amountIn = _acceptFundsFor(_swapParams, _metadata);
 
         // Swap (will check if we're within the slippage tolerance in the callback))
         uint256 _receivedFromSwap = _swap(_swapParams);
@@ -287,7 +287,7 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
         if (_tokenIn == JBConstants.NATIVE_TOKEN) WETH.deposit{value: _amountToSendToPool}();
 
         // Transfer the token to the pool.
-        // This terminal should NEVER have token in its balance !!
+        // This terminal should NEVER keep token in its balance !!
         IERC20(_tokenInWithWeth).transfer(msg.sender, _amountToSendToPool);
     }
 
