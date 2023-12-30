@@ -287,7 +287,7 @@ contract TestJBRulesetsUnits_Local is Test {
         emit log_uint(_sum);
 
         // Sum should always be less if overflowed
-        if ( _bigDuration > _sum || _bigStartAt > _sum) {
+            if ( _bigDuration > _sum ) {
             vm.expectRevert(stdError.arithmeticError);
         }
 
