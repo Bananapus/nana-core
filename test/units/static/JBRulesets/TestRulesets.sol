@@ -4,10 +4,9 @@ pragma solidity 0.8.23;
 import /* {*} from */ "../../../helpers/TestBaseWorkflow.sol";
 
 /**
- * @title 
+ * @title
  */
 contract TestJBRulesetsUnits_Local is JBTest {
-
     // Events
     event RulesetQueued(
         uint256 indexed rulesetId,
@@ -37,7 +36,6 @@ contract TestJBRulesetsUnits_Local is JBTest {
     uint256 _decayRate = 450_000_000;
     uint256 _mustStartAt = 0;
     IJBRulesetApprovalHook private _hook = IJBRulesetApprovalHook(address(0));
-
 
     function equals(JBRuleset memory queued, JBRuleset memory stored) internal pure returns (bool) {
         // Just compare the output of hashing all fields packed.
@@ -72,16 +70,15 @@ contract TestJBRulesetsUnits_Local is JBTest {
     }
 
     function setUp() public {
+        // Mock contracts and label them
+        _directory = IJBDirectory(makeAddr("JBDirectory"));
+        _permissions = IJBPermissions(makeAddr("JBPermissions"));
 
-    // Mock contracts and label them
-    _directory = IJBDirectory(makeAddr("JBDirectory"));
-    _permissions = IJBPermissions(makeAddr("JBPermissions"));
+        // Instantiate the contract being tested
+        _rulesets = new JBRulesets(_directory);
 
-    // Instantiate the contract being tested
-    _rulesets = new JBRulesets(_directory);
-
-    // Params for tests
-    _metadata = JBRulesetMetadata({
+        // Params for tests
+        _metadata = JBRulesetMetadata({
             reservedRate: 0,
             redemptionRate: 0,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
@@ -100,12 +97,12 @@ contract TestJBRulesetsUnits_Local is JBTest {
             metadata: 0
         });
 
-    _packedMetadata = JBRulesetMetadataResolver.packRulesetMetadata(_metadata);
-
+        _packedMetadata = JBRulesetMetadataResolver.packRulesetMetadata(_metadata);
     }
 
     function testQueueForHappyPath() public {
-        // Setup: queueFor will call onlyControllerOf modifier -> Directory.controllerOf to see if caller has proper permissions, encode & mock that. 
+        // Setup: queueFor will call onlyControllerOf modifier -> Directory.controllerOf to see if caller has proper
+        // permissions, encode & mock that.
         bytes memory _encodedCall = abi.encodeCall(IJBDirectory.controllerOf, (1));
         bytes memory _willReturn = abi.encode(address(this));
 
@@ -113,7 +110,17 @@ contract TestJBRulesetsUnits_Local is JBTest {
 
         // Setup: expect ruleset event (RulesetQueued) is emitted
         vm.expectEmit();
-        emit RulesetQueued(block.timestamp, _projectId, _duration, _weight , _decayRate, _hook, _packedMetadata, block.timestamp, address(this));
+        emit RulesetQueued(
+            block.timestamp,
+            _projectId,
+            _duration,
+            _weight,
+            _decayRate,
+            _hook,
+            _packedMetadata,
+            block.timestamp,
+            address(this)
+        );
 
         // Send: Call from this contract as it's been mock authorized above.
         _rulesets.queueFor({
@@ -148,7 +155,8 @@ contract TestJBRulesetsUnits_Local is JBTest {
     }
 
     function testQueueForPastMustStart() public {
-        // Setup: queueFor will call onlyControllerOf modifier -> Directory.controllerOf to see if caller has proper permissions, encode & mock that. 
+        // Setup: queueFor will call onlyControllerOf modifier -> Directory.controllerOf to see if caller has proper
+        // permissions, encode & mock that.
         bytes memory _encodedCall = abi.encodeCall(IJBDirectory.controllerOf, (1));
         bytes memory _willReturn = abi.encode(address(this));
 
@@ -156,7 +164,17 @@ contract TestJBRulesetsUnits_Local is JBTest {
 
         // Setup: expect ruleset event (RulesetQueued) is emitted
         vm.expectEmit();
-        emit RulesetQueued(block.timestamp, _projectId, _duration, _weight , _decayRate, _hook, _packedMetadata, block.timestamp, address(this));
+        emit RulesetQueued(
+            block.timestamp,
+            _projectId,
+            _duration,
+            _weight,
+            _decayRate,
+            _hook,
+            _packedMetadata,
+            block.timestamp,
+            address(this)
+        );
 
         // Send: Call from this contract as it's been mock authorized above.
         _rulesets.queueFor({
@@ -194,7 +212,8 @@ contract TestJBRulesetsUnits_Local is JBTest {
     function testQueueForInvalidDuration() public {
         uint256 _invalidDuration = uint256(type(uint32).max) + 1;
 
-        // Setup: queueFor will call onlyControllerOf modifier -> Directory.controllerOf to see if caller has proper permissions, encode & mock that. 
+        // Setup: queueFor will call onlyControllerOf modifier -> Directory.controllerOf to see if caller has proper
+        // permissions, encode & mock that.
         bytes memory _encodedCall = abi.encodeCall(IJBDirectory.controllerOf, (1));
         bytes memory _willReturn = abi.encode(address(this));
 
@@ -217,7 +236,8 @@ contract TestJBRulesetsUnits_Local is JBTest {
     function testQueueForInvalidDecayRate() public {
         uint256 _invalidDecayRate = JBConstants.MAX_DECAY_RATE + 1;
 
-        // Setup: queueFor will call onlyControllerOf modifier -> Directory.controllerOf to see if caller has proper permissions, encode & mock that. 
+        // Setup: queueFor will call onlyControllerOf modifier -> Directory.controllerOf to see if caller has proper
+        // permissions, encode & mock that.
         bytes memory _encodedCall = abi.encodeCall(IJBDirectory.controllerOf, (1));
         bytes memory _willReturn = abi.encode(address(this));
 
@@ -240,7 +260,8 @@ contract TestJBRulesetsUnits_Local is JBTest {
     function testQueueForInvalidWeight() public {
         uint256 _invalidWeight = uint256(type(uint88).max) + 1;
 
-        // Setup: queueFor will call onlyControllerOf modifier -> Directory.controllerOf to see if caller has proper permissions, encode & mock that. 
+        // Setup: queueFor will call onlyControllerOf modifier -> Directory.controllerOf to see if caller has proper
+        // permissions, encode & mock that.
         bytes memory _encodedCall = abi.encodeCall(IJBDirectory.controllerOf, (1));
         bytes memory _willReturn = abi.encode(address(this));
 
@@ -263,7 +284,8 @@ contract TestJBRulesetsUnits_Local is JBTest {
     function testFuzzQueueForInvalidEndTime(uint256 _bigDuration, uint256 _bigStartAt) public {
         _bigDuration = bound(_bigDuration, 1, type(uint32).max);
 
-        // Setup: queueFor will call onlyControllerOf modifier -> Directory.controllerOf to see if caller has proper permissions, encode & mock that. 
+        // Setup: queueFor will call onlyControllerOf modifier -> Directory.controllerOf to see if caller has proper
+        // permissions, encode & mock that.
         bytes memory _encodedCall = abi.encodeCall(IJBDirectory.controllerOf, (1));
         bytes memory _willReturn = abi.encode(address(this));
 
@@ -271,11 +293,13 @@ contract TestJBRulesetsUnits_Local is JBTest {
 
         // Use unchecked arithmetic to force an overflow.
         uint256 _sum;
-        unchecked { _sum = _bigDuration + _bigStartAt;}
+        unchecked {
+            _sum = _bigDuration + _bigStartAt;
+        }
         emit log_uint(_sum);
 
         // Sum should always be less if overflowed
-            if ( _bigDuration > _sum ) {
+        if (_bigDuration > _sum) {
             vm.expectRevert(stdError.arithmeticError);
         }
 
@@ -294,5 +318,4 @@ contract TestJBRulesetsUnits_Local is JBTest {
             mustStartAtOrAfter: _bigStartAt
         });
     }
-
 }
