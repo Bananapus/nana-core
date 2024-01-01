@@ -6,7 +6,7 @@ import /* {*} from */ "../../../helpers/TestBaseWorkflow.sol";
 /**
  * @title 
  */
-contract TestJBRulesetsUnits_Local is Test {
+contract TestJBRulesetsUnits_Local is JBTest {
 
     // Events
     event RulesetQueued(
@@ -105,13 +105,11 @@ contract TestJBRulesetsUnits_Local is Test {
     }
 
     function testQueueForHappyPath() public {
-        // Setup: queueFor will call onlyControllerOf modifier -> Directory.controllerOf to see if caller has proper permissions, mock that.
-        vm.mockCall(address(_directory), abi.encodeCall(IJBDirectory.controllerOf, (1)), abi.encode(address(this)));
+        // Setup: queueFor will call onlyControllerOf modifier -> Directory.controllerOf to see if caller has proper permissions, encode & mock that. 
+        bytes memory _encodedCall = abi.encodeCall(IJBDirectory.controllerOf, (1));
+        bytes memory _willReturn = abi.encode(address(this));
 
-        // Setup: Ensure calls go through
-        vm.expectCall(
-            address(_directory), abi.encodeCall(IJBDirectory.controllerOf, (1))
-        );
+        mockExpect(address(_directory), _encodedCall, _willReturn);
 
         // Setup: expect ruleset event (RulesetQueued) is emitted
         vm.expectEmit();
@@ -150,13 +148,11 @@ contract TestJBRulesetsUnits_Local is Test {
     }
 
     function testQueueForPastMustStart() public {
-        // Setup: queueFor will call onlyControllerOf modifier -> Directory.controllerOf to see if caller has proper permissions, mock that.
-        vm.mockCall(address(_directory), abi.encodeCall(IJBDirectory.controllerOf, (1)), abi.encode(address(this)));
+        // Setup: queueFor will call onlyControllerOf modifier -> Directory.controllerOf to see if caller has proper permissions, encode & mock that. 
+        bytes memory _encodedCall = abi.encodeCall(IJBDirectory.controllerOf, (1));
+        bytes memory _willReturn = abi.encode(address(this));
 
-        // Setup: Ensure calls go through
-        vm.expectCall(
-            address(_directory), abi.encodeCall(IJBDirectory.controllerOf, (1))
-        );
+        mockExpect(address(_directory), _encodedCall, _willReturn);
 
         // Setup: expect ruleset event (RulesetQueued) is emitted
         vm.expectEmit();
@@ -198,13 +194,11 @@ contract TestJBRulesetsUnits_Local is Test {
     function testQueueForInvalidDuration() public {
         uint256 _invalidDuration = uint256(type(uint32).max) + 1;
 
-        // Setup: queueFor will call onlyControllerOf modifier -> Directory.controllerOf to see if caller has proper permissions, mock that.
-        vm.mockCall(address(_directory), abi.encodeCall(IJBDirectory.controllerOf, (1)), abi.encode(address(this)));
+        // Setup: queueFor will call onlyControllerOf modifier -> Directory.controllerOf to see if caller has proper permissions, encode & mock that. 
+        bytes memory _encodedCall = abi.encodeCall(IJBDirectory.controllerOf, (1));
+        bytes memory _willReturn = abi.encode(address(this));
 
-        // Setup: Ensure calls go through
-        vm.expectCall(
-            address(_directory), abi.encodeCall(IJBDirectory.controllerOf, (1))
-        );
+        mockExpect(address(_directory), _encodedCall, _willReturn);
 
         vm.expectRevert(abi.encodeWithSignature("INVALID_RULESET_DURATION()"));
 
@@ -223,13 +217,11 @@ contract TestJBRulesetsUnits_Local is Test {
     function testQueueForInvalidDecayRate() public {
         uint256 _invalidDecayRate = JBConstants.MAX_DECAY_RATE + 1;
 
-        // Setup: queueFor will call onlyControllerOf modifier -> Directory.controllerOf to see if caller has proper permissions, mock that.
-        vm.mockCall(address(_directory), abi.encodeCall(IJBDirectory.controllerOf, (1)), abi.encode(address(this)));
+        // Setup: queueFor will call onlyControllerOf modifier -> Directory.controllerOf to see if caller has proper permissions, encode & mock that. 
+        bytes memory _encodedCall = abi.encodeCall(IJBDirectory.controllerOf, (1));
+        bytes memory _willReturn = abi.encode(address(this));
 
-        // Setup: Ensure calls go through
-        vm.expectCall(
-            address(_directory), abi.encodeCall(IJBDirectory.controllerOf, (1))
-        );
+        mockExpect(address(_directory), _encodedCall, _willReturn);
 
         vm.expectRevert(abi.encodeWithSignature("INVALID_DECAY_RATE()"));
 
@@ -248,13 +240,11 @@ contract TestJBRulesetsUnits_Local is Test {
     function testQueueForInvalidWeight() public {
         uint256 _invalidWeight = uint256(type(uint88).max) + 1;
 
-        // Setup: queueFor will call onlyControllerOf modifier -> Directory.controllerOf to see if caller has proper permissions, mock that.
-        vm.mockCall(address(_directory), abi.encodeCall(IJBDirectory.controllerOf, (1)), abi.encode(address(this)));
+        // Setup: queueFor will call onlyControllerOf modifier -> Directory.controllerOf to see if caller has proper permissions, encode & mock that. 
+        bytes memory _encodedCall = abi.encodeCall(IJBDirectory.controllerOf, (1));
+        bytes memory _willReturn = abi.encode(address(this));
 
-        // Setup: Ensure calls go through
-        vm.expectCall(
-            address(_directory), abi.encodeCall(IJBDirectory.controllerOf, (1))
-        );
+        mockExpect(address(_directory), _encodedCall, _willReturn);
 
         vm.expectRevert(abi.encodeWithSignature("INVALID_WEIGHT()"));
 
@@ -273,15 +263,13 @@ contract TestJBRulesetsUnits_Local is Test {
     function testFuzzQueueForInvalidEndTime(uint256 _bigDuration, uint256 _bigStartAt) public {
         _bigDuration = bound(_bigDuration, 1, type(uint32).max);
 
-        // Setup: queueFor will call onlyControllerOf modifier -> Directory.controllerOf to see if caller has proper permissions, mock that.
-        vm.mockCall(address(_directory), abi.encodeCall(IJBDirectory.controllerOf, (1)), abi.encode(address(this)));
+        // Setup: queueFor will call onlyControllerOf modifier -> Directory.controllerOf to see if caller has proper permissions, encode & mock that. 
+        bytes memory _encodedCall = abi.encodeCall(IJBDirectory.controllerOf, (1));
+        bytes memory _willReturn = abi.encode(address(this));
 
-        // Setup: Ensure calls go through
-        vm.expectCall(
-            address(_directory), abi.encodeCall(IJBDirectory.controllerOf, (1))
-        );
+        mockExpect(address(_directory), _encodedCall, _willReturn);
 
-        // Use unchecked arithmetic to force a wrap from max to 0 and beyond
+        // Use unchecked arithmetic to force an overflow.
         uint256 _sum;
         unchecked { _sum = _bigDuration + _bigStartAt;}
         emit log_uint(_sum);
