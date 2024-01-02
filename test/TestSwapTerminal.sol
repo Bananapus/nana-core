@@ -65,8 +65,8 @@ contract TestSwapTerminal_Fork is TestBaseWorkflow {
         );
     }
     
-    /// @notice Test paying a swap terminal in DAI to contribute to JuiceboxDAO project (in the eth terminal)
-    /// @dev    Quote at the forked block 18819734: 1 ETH = 2,242.42 DAI (DAI-WETH 0.005% Uni V3 pool). Max slippage suggested (uni sdk) 1,13%
+    /// @notice Test paying a swap terminal in XXX to contribute to JuiceboxDAO project (in the eth terminal), using metadata
+    /// @dev    Quote at the forked block: . Max slippage suggested (uni sdk): 
     function testPayDaiSwapEthPayEth(
         uint256 _amountIn
     )
@@ -74,6 +74,8 @@ contract TestSwapTerminal_Fork is TestBaseWorkflow {
     {   
         uint256 _quote;
         uint256 _weight;
+
+        // Craft the metadata including the pool and quote
 
         // Make a payment.
         _swapTerminal.pay{value: _amountIn}({
