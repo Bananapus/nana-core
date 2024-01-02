@@ -4,7 +4,7 @@ pragma solidity ^0.8.16;
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {Address} from "@openzeppelin/contracts/utils/Address.sol";
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {IERC20, IERC20Metadata} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 import {IPermit2} from "permit2/src/interfaces/IPermit2.sol";
@@ -24,7 +24,7 @@ import {JBMetadataResolver} from "./libraries/JBMetadataResolver.sol";
 import {JBTokenStandards} from "./libraries/JBTokenStandards.sol";
 import {JBFee} from "./structs/JBFee.sol";
 import {JBRuleset} from "./structs/JBRuleset.sol";
-import {JBSingleAllowanceData} from "./structs/JBSingleAllowanceData.sol";
+import {JBSingleAllowanceContext} from "./structs/JBSingleAllowanceContext.sol";
 import {JBSplit} from "./structs/JBSplit.sol";
 import {JBPermissioned} from "./abstract/JBPermissioned.sol";
 import {JBPermissionIds} from "./libraries/JBPermissionIds.sol";
@@ -120,6 +120,7 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
 
     // project ID -> token received -> accounting context
     mapping(uint256 => mapping(address => JBAccountingContext)) public accountingContextFor;
+
 
     //*********************************************************************//
     // ------------------------- external views -------------------------- //
@@ -330,6 +331,11 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
     function addDefaultPool(uint256 _projectId, address _token, IUniswapV3Pool _pool) external {
         _requirePermissionFrom(PROJECTS.ownerOf(_projectId), _projectId, JBPermissionIds.MODIFY_DEFAULT_POOL);
         poolFor[_projectId][_token][address(0)] = _pool;
+        accountingContextFor[_projectId][_token] = JBAccountingContext({
+            token: _token,
+            decimals: IERC20Metadata(_token).decimals(),
+            currency: uint32(uint160(_token))
+        });
     }
 
     function addAccountingContextsFor(uint256 projectId, address[] calldata tokens) external {}
@@ -394,7 +400,7 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
         // Check if the metadata contained permit data.
         if (_exists) {
             // Keep a reference to the allowance context parsed from the metadata.
-            (JBSingleAllowanceData memory _allowance) = abi.decode(_parsedMetadata, (JBSingleAllowanceData));
+            (JBSingleAllowanceContext memory _allowance) = abi.decode(_parsedMetadata, (JBSingleAllowanceContext));
 
             // Make sure the permit allowance is enough for this payment. If not we revert early.
             if (_allowance.amount < _swapParams.amountIn) {
@@ -510,7 +516,7 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
     /// @notice Sets the permit2 allowance for a token.
     ///  _allowance the allowance to get using permit2
     ///  _token The token being allowed.
-    function _permitAllowance(JBSingleAllowanceData memory _allowance, address _token) internal {
+    function _permitAllowance(JBSingleAllowanceContext memory _allowance, address _token) internal {
         PERMIT2.permit(
             msg.sender,
             IAllowanceTransfer.PermitSingle({
