@@ -21,7 +21,7 @@ import {IJBProjects} from "./interfaces/IJBProjects.sol";
 import {IJBTerminalStore} from "./interfaces/IJBTerminalStore.sol";
 import {JBRulesetMetadataResolver} from "./libraries/JBRulesetMetadataResolver.sol";
 import {JBMetadataResolver} from "./libraries/JBMetadataResolver.sol";
-import {JBTokenStandards} from "./libraries/JBTokenStandards.sol";
+// import {JBTokenStandards} from "./libraries/JBTokenStandards.sol";
 import {JBFee} from "./structs/JBFee.sol";
 import {JBRuleset} from "./structs/JBRuleset.sol";
 import {JBSingleAllowanceContext} from "./structs/JBSingleAllowanceContext.sol";
