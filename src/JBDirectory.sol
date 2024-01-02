@@ -9,16 +9,11 @@ import {IJBDirectoryAccessControl} from "./interfaces/IJBDirectoryAccessControl.
 import {IJBPermissions} from "./interfaces/IJBPermissions.sol";
 import {IJBTerminal} from "./interfaces/terminal/IJBTerminal.sol";
 import {IJBProjects} from "./interfaces/IJBProjects.sol";
-import {JBRulesetMetadataResolver} from "./libraries/JBRulesetMetadataResolver.sol";
 import {JBPermissionIds} from "./libraries/JBPermissionIds.sol";
-import {JBRuleset} from "./structs/JBRuleset.sol";
 
 /// @notice Tracks which terminal contracts each project is currently accepting funds through, and which controller
 /// contract is managing each project's tokens and rulesets.
 contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
-    // A library that parses the packed ruleset metadata into a friendlier format.
-    using JBRulesetMetadataResolver for JBRuleset;
-
     //*********************************************************************//
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
