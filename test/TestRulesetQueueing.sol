@@ -257,7 +257,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
             JBRuleset[] memory queuedRulesetsOf = jbRulesets().queuedRulesetsOf(projectId);
 
             // Make sure the upcoming ruleset is the ruleset currently under the approval hook.
-            assertEq(queuedRulesetsOf[0].weight, _config[0].weight);
+            assertEq(upcomingRuleset.weight, _config[0].weight);
             assertEq(queuedRulesetsOf[0].weight, _config[0].weight);
 
             // If the full deadline duration included in the ruleset.
