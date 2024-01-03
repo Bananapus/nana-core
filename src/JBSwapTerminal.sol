@@ -219,18 +219,20 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
         _swapParams.projectId = _projectId;
         _swapParams.tokenIn = _token;
         _swapParams.amountIn = _token == JBConstants.NATIVE_TOKEN ? msg.value : _amount;
-
+        
         {
             // Check for a quote passed by the user
             (bool _exists, bytes memory _parsedData) =
                 JBMetadataResolver.getDataFor(bytes4("SWAP"), _metadata);
 
-            // If there is a quote, use it
             if (_exists) {
+                // If there is a quote, use it
                 (_swapParams.minAmountOut, _swapParams.pool, _swapParams.tokenOut) =
                     abi.decode(_parsedData, (uint256, IUniswapV3Pool, address));
-                // If no quote, check there is a default pool assigned and get a twap
+
+
             } else {
+                // If no quote, check there is a default pool assigned and get a twap
                 IUniswapV3Pool _pool = poolFor[_projectId][_token][address(0)];
 
                 _swapParams.pool = _pool;
@@ -241,14 +243,13 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
                 (address _poolToken0, address _poolToken1) = (_pool.token0(), _pool.token1());
                 _swapParams.tokenOut = _poolToken0 == _token ? _poolToken1 : _poolToken0;
 
-                if(_swapParams.tokenOut == address(WETH)) _swapParams.tokenOut = JBConstants.NATIVE_TOKEN;
 
                 // Get a twap from the pool, includes a default max slippage
                 _swapParams.minAmountOut = _getTwapFrom(_swapParams);
             }
         }
 
-        IJBTerminal _terminal = DIRECTORY.primaryTerminalOf(_projectId, _swapParams.tokenOut);
+        IJBTerminal _terminal = DIRECTORY.primaryTerminalOf(_projectId, _swapParams.tokenOut == address(WETH) ? JBConstants.NATIVE_TOKEN : _swapParams.tokenOut);
 
         // Check the primary terminal accepts the token (save swap gas if not accepted)
         if (address(_terminal) == address(0)) revert TOKEN_NOT_ACCEPTED();
@@ -259,14 +260,12 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
         uint256 _receivedFromSwap = _swap(_swapParams);
 
         // Unwrap weth if needed - TODO: adapt to native token !!
-        if (_swapParams.tokenOut == JBConstants.NATIVE_TOKEN) {
-            WETH.withdraw(_receivedFromSwap);
-        }
+        if (_swapParams.tokenOut == JBConstants.NATIVE_TOKEN) WETH.withdraw(_receivedFromSwap);
 
         // Pay on primary terminal, with correct beneficiary (sender or benficiary if passed)
         _terminal.pay{value: _swapParams.tokenOut == JBConstants.NATIVE_TOKEN ? _receivedFromSwap : 0}(
             _swapParams.projectId,
-            _swapParams.tokenOut,
+            _swapParams.tokenOut == address(WETH) ? JBConstants.NATIVE_TOKEN : _swapParams.tokenOut,
             _receivedFromSwap,
             _beneficiary,
             _minReturnedTokens,

@@ -1,91 +1,113 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.6;
 
+import {IUniswapV3Pool} from "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
+
 import /* {*} from */ "./helpers/TestBaseWorkflow.sol";
 
 import {JBSwapTerminal} from "../src/JBSwapTerminal.sol";
 import {IWETH9} from "../src/interfaces/external/IWETH9.sol";
 
+import {MetadataResolverHelper} from "./helpers/MetadataResolverHelper.sol";
+
 /// @notice Swap terminal test on a mainnet fork
 contract TestSwapTerminal_Fork is TestBaseWorkflow {
+    IERC20Metadata constant UNI = IERC20Metadata(0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984);
+    IWETH9 constant WETH = IWETH9(0xfFf9976782d46CC05630D1f6eBAb18b2324d6B14);
+    IUniswapV3Pool constant POOL = IUniswapV3Pool(0x287B0e934ed0439E2a7b1d5F0FC25eA2c24b64f7);
+
     JBSwapTerminal internal _swapTerminal;
     JBMultiTerminal internal _projectTerminal;
     JBTokens internal _tokens;
-
     IJBProjects internal _projects;
     IJBPermissions internal _permissions;
     IJBDirectory internal _directory;
     IPermit2 internal _permit2;
     IJBController internal _controller;
     JBTerminalStore internal _terminalStore;
-    address internal _owner;
-    IWETH9 internal _weth;
 
-    uint256 internal _projectId;
+    address internal _owner;
+    address internal _sender;
+
+    uint256 internal _projectId = 1;
     address internal _projectOwner;
     address internal _terminalOwner;
     address internal _beneficiary;
 
-    address DAI = address(0x6B175474E89094C44Da98b954EedeAC495271d0F);
-    IWETH9 WETH = IWETH9(0xfFf9976782d46CC05630D1f6eBAb18b2324d6B14);
+    MetadataResolverHelper internal _metadataResolver;
 
     function setUp() public override {
-        vm.createSelectFork("https://rpc.ankr.com/eth_sepolia",5009568);
+        vm.createSelectFork("https://rpc.ankr.com/eth_sepolia", 5_009_568);
 
-    // TODO: find a new way to parse broadcast json
+        // TODO: find a new way to parse broadcast json
         // _controller = IJBController(stdJson.readAddress(
         //         vm.readFile("broadcast/Deploy.s.sol/11155420/run-latest.json"), ".address"
         //     ));
 
-        _controller = IJBController(0xAe3a940A8f16f2B7DC8E3CFffDB97714275a7B7E);
+        _controller = IJBController(0x15e9030Dd25b27d7e6763598B87445daf222C115);
 
-        _projects = IJBProjects(0x22CdC4938B9b11df0767ba612C6f1ecc5c323C51);
+        _projects = IJBProjects(0x95df60b57Ee581680F5c243554E16BD4F3A6a192);
 
-        _permissions = IJBPermissions(0x0D8dE90B514B5FE019968db73cF76E2E4957f093);
+        _permissions = IJBPermissions(0x607763b1458419Edb09f56CE795057A2958e2001);
 
-        _directory = IJBDirectory(0x9cf2aBf95f14bE5cDe265A2EF100971d023f9B65);
+        _directory = IJBDirectory(0x862ea57d0C473a5c7c8330d92C7824dbd60269EC);
 
         _permit2 = IPermit2(0x000000000022D473030F116dDEE9F6B43aC78BA3);
 
-        _tokens = JBTokens(0x289989C0bd96A616B06c7AAc99894A54E947a68D);
+        _tokens = JBTokens(0xdb42B6D08755c3f09AdB8C35A19A558bc1b40C9b);
 
-        _terminalStore = JBTerminalStore(0x3F2389068dC5FA6cfE0187D9DA6cA81124250225);
+        _terminalStore = JBTerminalStore(0x6b2c93da6Af4061Eb6dAe4aCFc15632b54c37DE5);
 
-        _projectTerminal = JBMultiTerminal(0x4BF5655C7d36D3Ce3D4D769C274f1b6fCDDdF4e8);
+        _projectTerminal = JBMultiTerminal(0x4319cb152D46Db72857AfE368B19A4483c0Bff0D);
 
         _owner = makeAddr("owner");
+        _sender = makeAddr("sender");
 
-        _swapTerminal = new JBSwapTerminal(
-            _projects,
-            _permissions,
-            _directory,
-            _permit2,
-            _owner,
-            _weth
-        );
+        _projectOwner = _projects.ownerOf(_projectId);
+        vm.label(_projectOwner, "projectOwner");
+
+        _swapTerminal = new JBSwapTerminal(_projects, _permissions, _directory, _permit2, _owner, WETH);
+
+        _metadataResolver = new MetadataResolverHelper();
+
     }
-    
-    /// @notice Test paying a swap terminal in XXX to contribute to JuiceboxDAO project (in the eth terminal), using metadata
-    /// @dev    Quote at the forked block: . Max slippage suggested (uni sdk): 
-    function testPayDaiSwapEthPayEth(
-        uint256 _amountIn
-    )
-        external
-    {   
-        uint256 _quote;
-        uint256 _weight;
 
-        // Craft the metadata including the pool and quote
+    /// @notice Test paying a swap terminal in XXX to contribute to JuiceboxDAO project (in the eth terminal), using
+    /// metadata
+    /// @dev    Quote at the forked block: . Max slippage suggested (uni sdk):
+    function testPayDaiSwapEthPayEth(uint256 _amountIn) external {
+        _amountIn = bound(_amountIn, 1, 10 ether);
+        
+        deal( address(UNI), address(_sender), _amountIn);
+        uint256 _minAmountOut = 1;
+
+        vm.prank(_projectOwner);
+        _swapTerminal.addDefaultPool(_projectId, address(UNI), POOL);
+
+        // Build the metadata using the minimum amount out, the pool address and the token out address
+        bytes[] memory _data = new bytes[](1);
+        _data[0] = abi.encode(_minAmountOut, address(POOL), address(WETH));
+
+        // Pass the delegate id
+        bytes4[] memory _ids = new bytes4[](1);
+        _ids[0] = bytes4("SWAP");
+
+        // Generate the metadata
+        bytes memory _metadata = _metadataResolver.createMetadata(_ids, _data);
+
+        // Approve the transfer
+        vm.startPrank(_sender);
+        UNI.approve(address(_swapTerminal), _amountIn);
 
         // Make a payment.
-        _swapTerminal.pay{value: _amountIn}({
+        _swapTerminal.pay({
             _projectId: _projectId,
             _amount: _amountIn,
-            _token: JBConstants.NATIVE_TOKEN, // Unused.
+            _token: address(UNI),
             _beneficiary: _beneficiary,
             _minReturnedTokens: 0,
             _memo: "Take my money!",
-            _metadata: new bytes(0)
+            _metadata: _metadata
         });
 
         // // Make sure the beneficiary has a balance of project tokens.
@@ -96,9 +118,9 @@ contract TestSwapTerminal_Fork is TestBaseWorkflow {
         // // Make sure the native token balance in terminal is up to date.
         // uint256 _terminalBalance = _amountIn * _quote;
         // assertEq(
-        //     jbTerminalStore().balanceOf(address(_projectTerminal), _projectId, JBConstants.NATIVE_TOKEN), _terminalBalance
+        //     jbTerminalStore().balanceOf(address(_projectTerminal), _projectId, JBConstants.NATIVE_TOKEN),
+        // _terminalBalance
         // );
-
     }
 
     function _reconfigure() internal {
@@ -139,7 +161,7 @@ contract TestSwapTerminal_Fork is TestBaseWorkflow {
 
         vm.warp(block.timestamp + _ruleset.duration);
 
-        // Set a new primary terminal for DAI
-        _directory.setPrimaryTerminalOf(_projectId, DAI, _swapTerminal);
+        // Set a new primary terminal for UNI
+        _directory.setPrimaryTerminalOf(_projectId, address(UNI), _swapTerminal);
     }
 }
