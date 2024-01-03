@@ -121,7 +121,6 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
     // project ID -> token received -> accounting context
     mapping(uint256 => mapping(address => JBAccountingContext)) public accountingContextFor;
 
-
     //*********************************************************************//
     // ------------------------- external views -------------------------- //
     //*********************************************************************//
@@ -134,7 +133,7 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
         view
         override
         returns (JBAccountingContext memory)
-    {   
+    {
         return accountingContextFor[_projectId][_token];
     }
 
@@ -223,7 +222,8 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
 
         {
             // Check for a quote passed by the user
-            (bool _exists, bytes memory _parsedData) = JBMetadataResolver.getDataFor(bytes4(bytes20(address(this))), _metadata);
+            (bool _exists, bytes memory _parsedData) =
+                JBMetadataResolver.getDataFor(bytes4("SWAP"), _metadata);
 
             // If there is a quote, use it
             if (_exists) {
@@ -241,6 +241,8 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
                 (address _poolToken0, address _poolToken1) = (_pool.token0(), _pool.token1());
                 _swapParams.tokenOut = _poolToken0 == _token ? _poolToken1 : _poolToken0;
 
+                if(_swapParams.tokenOut == address(WETH)) _swapParams.tokenOut = JBConstants.NATIVE_TOKEN;
+
                 // Get a twap from the pool, includes a default max slippage
                 _swapParams.minAmountOut = _getTwapFrom(_swapParams);
             }
@@ -257,7 +259,7 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
         uint256 _receivedFromSwap = _swap(_swapParams);
 
         // Unwrap weth if needed - TODO: adapt to native token !!
-        if(_swapParams.tokenOut == JBConstants.NATIVE_TOKEN) {
+        if (_swapParams.tokenOut == JBConstants.NATIVE_TOKEN) {
             WETH.withdraw(_receivedFromSwap);
         }
 
