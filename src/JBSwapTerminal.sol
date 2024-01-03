@@ -429,8 +429,8 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
             zeroForOne: _swapParams.tokenIn < _swapParams.tokenOut,
             amountSpecified: int256(_swapParams.amountIn),
             sqrtPriceLimitX96: _swapParams.tokenIn < _swapParams.tokenOut
-                ? TickMath.MAX_SQRT_RATIO - 1
-                : TickMath.MIN_SQRT_RATIO + 1,
+                ? TickMath.MIN_SQRT_RATIO + 1
+                : TickMath.MAX_SQRT_RATIO - 1,
             data: abi.encode(_swapParams.projectId, _swapParams.tokenIn)
         }) returns (int256 amount0, int256 amount1) {
             // If the swap succeded, take note of the amount of tokens received. This will return as negative since it
