@@ -145,11 +145,21 @@ contract JBRulesets is JBControlled, IJBRulesets {
         // Keep a reference to the array of rulesets that'll be populated.
         queuedRulesets = new JBRuleset[](count);
 
+        // Return empty array if nothing is queued.
+        if (count == 0) {
+            return queuedRulesets;
+        }
+
         // Reset the ruleset being iterated on to the latest ruleset.
         ruleset = _getStructFor(projectId, latestId);
 
+        // Set counter.
+        uint256 i = count;
+
         // Populate the array of queued rulesets.
-        for (uint256 i = count - 1; i >= 0; i--) {
+        while (i > 0) {
+            i--;
+
             // Add the ruleset to the array to be returned.
             queuedRulesets[i] = ruleset;
 
