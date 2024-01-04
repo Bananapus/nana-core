@@ -37,7 +37,7 @@ contract TestSwapTerminal_Fork is TestBaseWorkflow {
     MetadataResolverHelper internal _metadataResolver;
 
     function setUp() public override {
-        vm.createSelectFork("https://rpc.ankr.com/eth_sepolia", 5_009_568);
+        vm.createSelectFork("https://rpc.ankr.com/eth_sepolia", 5022528);
 
         // TODO: find a new way to parse broadcast json
         // _controller = IJBController(stdJson.readAddress(
@@ -74,7 +74,7 @@ contract TestSwapTerminal_Fork is TestBaseWorkflow {
 
     /// @notice Test paying a swap terminal in XXX to contribute to JuiceboxDAO project (in the eth terminal), using
     /// metadata
-    /// @dev    Quote at the forked block: . Max slippage suggested (uni sdk):
+    /// @dev    Quote at the forked block 5022528 : 1 UNI = 1.33649 ETH. Max slippage suggested (uni sdk): 0.5%
     function testPayDaiSwapEthPayEth(uint256 _amountIn) external {
         _amountIn = bound(_amountIn, 1, 10 ether);
         
