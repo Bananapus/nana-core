@@ -72,14 +72,22 @@ contract TestSwapTerminal_Fork is TestBaseWorkflow {
 
     }
 
-    /// @notice Test paying a swap terminal in XXX to contribute to JuiceboxDAO project (in the eth terminal), using
+// TODO: add price feed to vanilla project
+// TODO: use quoter to check if 7% price impact is expected (uni-weth has low liq on Sepolia, so probably is)
+// TODO: weird token0/token1 ordering issue -> double-check the terminal
+// TODO: use sqrtPriceLimit (can be based on min amount or coming from frontend) instead of try-catch (flow from bbd, not used here)
+
+    /// @notice Test paying a swap terminal in UNI to contribute to JuiceboxDAO project (in the eth terminal), using
     /// metadata
-    /// @dev    Quote at the forked block 5022528 : 1 UNI = 1.33649 ETH. Max slippage suggested (uni sdk): 0.5%
-    function testPayDaiSwapEthPayEth(uint256 _amountIn) external {
-        _amountIn = bound(_amountIn, 1, 10 ether);
+    /// @dev    Quote at the forked block 5022528 : 1 UNI = 1.33649 ETH with max slippage suggested (uni sdk): 0.5%
+    function testPayUniSwapEthPayEth() external {
+
+        // NOTE: bullet proofing for coming fuzzed token
+        uint256 _amountIn = 10 * 10**UNI.decimals();
         
         deal( address(UNI), address(_sender), _amountIn);
-        uint256 _minAmountOut = 1;
+
+        uint256 _minAmountOut = 10 * 1.33649 ether * 92 / 100;
 
         vm.prank(_projectOwner);
         _swapTerminal.addDefaultPool(_projectId, address(UNI), POOL);
@@ -105,7 +113,7 @@ contract TestSwapTerminal_Fork is TestBaseWorkflow {
             _amount: _amountIn,
             _token: address(UNI),
             _beneficiary: _beneficiary,
-            _minReturnedTokens: 0,
+            _minReturnedTokens: 1,
             _memo: "Take my money!",
             _metadata: _metadata
         });

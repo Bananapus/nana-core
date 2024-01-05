@@ -75,6 +75,8 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
     error TOKEN_NOT_ACCEPTED();
     error TOKEN_NOT_IN_POOL();
     error UNSUPPORTED();
+    error SWAP_ERROR(bytes);
+    error MAX_SLIPPAGE(uint256, uint256);
 
     //*********************************************************************//
     // --------------------- internal stored constants ------------------- //
@@ -229,8 +231,6 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
                 // If there is a quote, use it
                 (_swapParams.minAmountOut, _swapParams.pool, _swapParams.tokenOut) =
                     abi.decode(_parsedData, (uint256, IUniswapV3Pool, address));
-
-
             } else {
                 // If no quote, check there is a default pool assigned and get a twap
                 IUniswapV3Pool _pool = poolFor[_projectId][_token][address(0)];
@@ -259,11 +259,8 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
         // Swap (will check if we're within the slippage tolerance in the callback))
         uint256 _receivedFromSwap = _swap(_swapParams);
 
-        // Unwrap weth if needed - TODO: adapt to native token !!
-        if (_swapParams.tokenOut == JBConstants.NATIVE_TOKEN) WETH.withdraw(_receivedFromSwap);
-
         // Pay on primary terminal, with correct beneficiary (sender or benficiary if passed)
-        _terminal.pay{value: _swapParams.tokenOut == JBConstants.NATIVE_TOKEN ? _receivedFromSwap : 0}(
+        _terminal.pay{value: _swapParams.tokenOut == address(WETH) ? _receivedFromSwap : 0}(
             _swapParams.projectId,
             _swapParams.tokenOut == address(WETH) ? JBConstants.NATIVE_TOKEN : _swapParams.tokenOut,
             _receivedFromSwap,
@@ -435,11 +432,17 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
         }) returns (int256 amount0, int256 amount1) {
             // If the swap succeded, take note of the amount of tokens received. This will return as negative since it
             // is an exact input.
-            amountReceived = uint256(-(_swapParams.tokenIn < _swapParams.tokenOut ? amount0 : amount1));
-        } catch {
-            // If the swap failed, return.
-            return 0;
+            amountReceived = uint256(-(_swapParams.tokenIn < _swapParams.tokenOut ? amount1 : amount0));
+
+        } catch(bytes memory _reason) {
+            // If the swap failed, revert.
+            revert SWAP_ERROR(_reason);
         }
+
+        if(amountReceived < _swapParams.minAmountOut) revert MAX_SLIPPAGE(amountReceived, _swapParams.minAmountOut);
+
+        // Unwrap weth if needed
+        if (_swapParams.tokenOut == address(WETH)) WETH.withdraw(amountReceived);
     }
 
     /// @notice Reverts an expected payout.
@@ -464,22 +467,6 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
 
         // Add undistributed amount back to project's balance.
         STORE.recordAddedBalanceFor(_projectId, _token, _depositAmount);
-    }
-
-    function _getTwapFrom(IUniswapV3Pool _pool, uint256 _amount) internal view returns (uint256) {
-        return 0;
-    }
-
-    function _swap(
-        address _token,
-        IUniswapV3Pool _pool,
-        uint256 _amount,
-        uint256 _minimumReceivedFromSwap
-    )
-        internal
-        returns (uint256)
-    {
-        return 0;
     }
 
     /// @notice Transfers tokens.
