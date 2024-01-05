@@ -29,7 +29,7 @@ contract TestSwapTerminal_Fork is TestBaseWorkflow {
     address internal _owner;
     address internal _sender;
 
-    uint256 internal _projectId = 1;
+    uint256 internal _projectId = 4;
     address internal _projectOwner;
     address internal _terminalOwner;
     address internal _beneficiary;
