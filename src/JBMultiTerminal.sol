@@ -554,7 +554,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             // Define the context from the config.
             accountingContext.token = token;
             accountingContext.decimals = token == JBConstants.NATIVE_TOKEN ? 18 : IERC20Metadata(token).decimals();
-            accountingContext.currency = uint32(uint160(token));
+            accountingContext.currency = uint32(uint160(token)); // Use the last 4 bytes of the address as the currency.
 
             // Add the token to the list of accepted tokens of the project.
             _accountingContextsOf[projectId].push(accountingContext);

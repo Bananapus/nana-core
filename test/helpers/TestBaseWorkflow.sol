@@ -72,7 +72,6 @@ import {IJBPrices} from "src/interfaces/IJBPrices.sol";
 
 import {JBConstants} from "src/libraries/JBConstants.sol";
 import {JBCurrencyIds} from "src/libraries/JBCurrencyIds.sol";
-import {JBTokenStandards} from "src/libraries/JBTokenStandards.sol";
 import {JBRulesetMetadataResolver} from "src/libraries/JBRulesetMetadataResolver.sol";
 import {JBSplitGroupIds} from "src/libraries/JBSplitGroupIds.sol";
 import {JBPermissionIds} from "src/libraries/JBPermissionIds.sol";
