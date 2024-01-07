@@ -702,6 +702,9 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         // Get a list of queued rulesets
         JBRuleset[] memory queuedRulesetsOf = jbRulesets().queuedRulesetsOf(id);
 
+        // check: two queued
+        assertEq(queuedRulesetsOf.length, 2);
+
         // check: queued with nearest start time
         assertEq(queuedRulesetsOf[0].weight, _weight + 100);
 
