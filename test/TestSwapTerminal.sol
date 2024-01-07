@@ -39,26 +39,38 @@ contract TestSwapTerminal_Fork is TestBaseWorkflow {
     function setUp() public override {
         vm.createSelectFork("https://rpc.ankr.com/eth_sepolia", 5022528);
 
+        vm.label(address(UNI), "UNI");
+        vm.label(address(WETH), "WETH");
+        vm.label(address(POOL), "POOL");
+
         // TODO: find a new way to parse broadcast json
         // _controller = IJBController(stdJson.readAddress(
         //         vm.readFile("broadcast/Deploy.s.sol/11155420/run-latest.json"), ".address"
         //     ));
 
         _controller = IJBController(0x15e9030Dd25b27d7e6763598B87445daf222C115);
+        vm.label(address(_controller), "controller");
 
         _projects = IJBProjects(0x95df60b57Ee581680F5c243554E16BD4F3A6a192);
+        vm.label(address(_projects), "projects");
 
         _permissions = IJBPermissions(0x607763b1458419Edb09f56CE795057A2958e2001);
+        vm.label(address(_permissions), "permissions");
 
         _directory = IJBDirectory(0x862ea57d0C473a5c7c8330d92C7824dbd60269EC);
+        vm.label(address(_directory), "directory");
 
         _permit2 = IPermit2(0x000000000022D473030F116dDEE9F6B43aC78BA3);
+        vm.label(address(_permit2), "permit2");
 
         _tokens = JBTokens(0xdb42B6D08755c3f09AdB8C35A19A558bc1b40C9b);
+        vm.label(address(_tokens), "tokens");
 
         _terminalStore = JBTerminalStore(0x6b2c93da6Af4061Eb6dAe4aCFc15632b54c37DE5);
+        vm.label(address(_terminalStore), "terminalStore");
 
         _projectTerminal = JBMultiTerminal(0x4319cb152D46Db72857AfE368B19A4483c0Bff0D);
+        vm.label(address(_projectTerminal), "projectTerminal");
 
         _owner = makeAddr("owner");
         _sender = makeAddr("sender");
@@ -67,15 +79,11 @@ contract TestSwapTerminal_Fork is TestBaseWorkflow {
         vm.label(_projectOwner, "projectOwner");
 
         _swapTerminal = new JBSwapTerminal(_projects, _permissions, _directory, _permit2, _owner, WETH);
+        vm.label(address(_swapTerminal), "swapTerminal");
 
         _metadataResolver = new MetadataResolverHelper();
-
+        vm.label(address(_metadataResolver), "metadataResolver");
     }
-
-// TODO: add price feed to vanilla project
-// TODO: use quoter to check if 7% price impact is expected (uni-weth has low liq on Sepolia, so probably is)
-// TODO: weird token0/token1 ordering issue -> double-check the terminal
-// TODO: use sqrtPriceLimit (can be based on min amount or coming from frontend) instead of try-catch (flow from bbd, not used here)
 
     /// @notice Test paying a swap terminal in UNI to contribute to JuiceboxDAO project (in the eth terminal), using
     /// metadata
@@ -94,7 +102,7 @@ contract TestSwapTerminal_Fork is TestBaseWorkflow {
 
         // Build the metadata using the minimum amount out, the pool address and the token out address
         bytes[] memory _data = new bytes[](1);
-        _data[0] = abi.encode(_minAmountOut, address(POOL), address(WETH));
+        _data[0] = abi.encode(_minAmountOut, address(POOL), JBConstants.NATIVE_TOKEN);
 
         // Pass the delegate id
         bytes4[] memory _ids = new bytes4[](1);

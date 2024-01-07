@@ -1,3 +1,11 @@
+// SOLVED: +++ weird token0/token1 ordering issue -> double-check the terminal
+// TODO: convert native token to weth address at the begining of the flow, then convert back at the end (only oding it once)
+// TODO: add price feed to vanilla project
+// TODO: use quoter to check if 7% price impact is expected (uni-weth has low liq on Sepolia, so probably is)
+// TODO: use sqrtPriceLimit (can be based on min amount or coming from frontend) instead of try-catch (flow from bbd, not used here)
+// TOdo: if pool out == weth, check if the project terminal accepts weth or eth/native token
+// TODO: sweep any leftover
+
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.16;
 
@@ -249,7 +257,7 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
             }
         }
 
-        IJBTerminal _terminal = DIRECTORY.primaryTerminalOf(_projectId, _swapParams.tokenOut == address(WETH) ? JBConstants.NATIVE_TOKEN : _swapParams.tokenOut);
+        IJBTerminal _terminal = DIRECTORY.primaryTerminalOf(_projectId, _swapParams.tokenOut);
 
         // Check the primary terminal accepts the token (save swap gas if not accepted)
         if (address(_terminal) == address(0)) revert TOKEN_NOT_ACCEPTED();
@@ -260,15 +268,17 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
         uint256 _receivedFromSwap = _swap(_swapParams);
 
         // Pay on primary terminal, with correct beneficiary (sender or benficiary if passed)
-        _terminal.pay{value: _swapParams.tokenOut == address(WETH) ? _receivedFromSwap : 0}(
+        _terminal.pay{value: _swapParams.tokenOut == JBConstants.NATIVE_TOKEN ? _receivedFromSwap : 0}(
             _swapParams.projectId,
-            _swapParams.tokenOut == address(WETH) ? JBConstants.NATIVE_TOKEN : _swapParams.tokenOut,
+            _swapParams.tokenOut,
             _receivedFromSwap,
             _beneficiary,
             _minReturnedTokens,
             _memo,
             _metadata
         );
+
+        return _receivedFromSwap;
     }
 
     function uniswapV3SwapCallback(
@@ -280,7 +290,7 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
         override
     {
         // Unpack the data passed in through the swap hook.
-        (uint256 _projectId, address _tokenIn) = abi.decode(_data, (uint256, address));
+        address _tokenIn = abi.decode(_data, (address));
 
         // Get the terminal token, using WETH if the token paid in is ETH.
         address _tokenInWithWeth = _tokenIn == JBConstants.NATIVE_TOKEN ? address(WETH) : _tokenIn;
@@ -288,7 +298,7 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
         // Keep a reference to the amount of tokens that should be sent to fulfill the swap (the positive delta)
         uint256 _amountToSendToPool = _amount0Delta < 0 ? uint256(_amount1Delta) : uint256(_amount0Delta);
 
-        // Wrap ETH into WETH if relevant (do not rely on ETH delegate balance to support pure WETH terminals)
+        // Wrap ETH into WETH if relevant
         if (_tokenIn == JBConstants.NATIVE_TOKEN) WETH.deposit{value: _amountToSendToPool}();
 
         // Transfer the token to the pool.
@@ -418,21 +428,31 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
         // The amount should reflect the change in balance.
         return IERC20(_token).balanceOf(address(this)) - _balanceBefore;
     }
-
+event Test(address);
+event Test(bool);
     function _swap(SwapParams memory _swapParams) internal returns (uint256 amountReceived) {
+        
+        address _tokenInWithWeth = _swapParams.tokenIn;
+        if (_tokenInWithWeth == JBConstants.NATIVE_TOKEN) _tokenInWithWeth = address(WETH);
+
+        address _tokenOutWithWeth = _swapParams.tokenOut;
+        if(_tokenOutWithWeth == JBConstants.NATIVE_TOKEN) _tokenOutWithWeth = address(WETH);
+
+        bool zeroForOne = _tokenInWithWeth < _tokenOutWithWeth;
+
         // Try swapping.
         try _swapParams.pool.swap({
             recipient: address(this),
-            zeroForOne: _swapParams.tokenIn < _swapParams.tokenOut,
+            zeroForOne: zeroForOne,
             amountSpecified: int256(_swapParams.amountIn),
-            sqrtPriceLimitX96: _swapParams.tokenIn < _swapParams.tokenOut
+            sqrtPriceLimitX96: zeroForOne
                 ? TickMath.MIN_SQRT_RATIO + 1
                 : TickMath.MAX_SQRT_RATIO - 1,
-            data: abi.encode(_swapParams.projectId, _swapParams.tokenIn)
+            data: abi.encode(_swapParams.tokenIn)
         }) returns (int256 amount0, int256 amount1) {
             // If the swap succeded, take note of the amount of tokens received. This will return as negative since it
             // is an exact input.
-            amountReceived = uint256(-(_swapParams.tokenIn < _swapParams.tokenOut ? amount1 : amount0));
+            amountReceived = uint256(-(zeroForOne ? amount1 : amount0));
 
         } catch(bytes memory _reason) {
             // If the swap failed, revert.
@@ -442,7 +462,7 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
         if(amountReceived < _swapParams.minAmountOut) revert MAX_SLIPPAGE(amountReceived, _swapParams.minAmountOut);
 
         // Unwrap weth if needed
-        if (_swapParams.tokenOut == address(WETH)) WETH.withdraw(amountReceived);
+        if (_swapParams.tokenOut == JBConstants.NATIVE_TOKEN) WETH.withdraw(amountReceived);
     }
 
     /// @notice Reverts an expected payout.
