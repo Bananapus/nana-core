@@ -87,8 +87,7 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
         address tokenOut;
         bool outIsNativeToken;
         uint256 amountIn;
-        uint256 amountOut;
-        uint160 priceLimit;
+        uint256 minAmountOut;
     }
 
     //*********************************************************************//
@@ -255,7 +254,7 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
             if (_exists) {
                 address _rawTokenOut;
                 // If there is a quote, use it
-                (_swapParams.priceLimit, _swapParams.pool, _rawTokenOut) =
+                (_swapParams.minAmountOut, _swapParams.pool, _rawTokenOut) =
                     abi.decode(_parsedData, (uint256, IUniswapV3Pool, address));
                 
                 if(_rawTokenOut == JBConstants.NATIVE_TOKEN) {
@@ -278,9 +277,9 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
                 _swapParams.tokenOut = _poolToken0 == _token ? _poolToken1 : _poolToken0;
 
                 // Get a twap from the pool, includes a default max slippage
-                _swapParams.priceLimit = _getTwapFrom(_swapParams);
+                _swapParams.minAmountOut = _getTwapFrom(_swapParams);
             }
-        }
+        } 
 
         IJBTerminal _terminal = DIRECTORY.primaryTerminalOf(_projectId, _swapParams.outIsNativeToken ? JBConstants.NATIVE_TOKEN : _swapParams.tokenOut);
 
@@ -387,7 +386,7 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
     ///  _amountIn The amount being used to swap.
     ///  _terminalToken The token paid in being used to swap.
     /// @return minSqrtPriceX96 the minimum price accepted
-    function _getTwapFrom(SwapParams memory _swapParams, bool _zeroForOne) internal view returns (uint160) {
+    function _getTwapFrom(SwapParams memory _swapParams) internal view returns (uint160) {
         // Unpack the TWAP params and get a reference to the period and slippage.
         uint256 _twapParams = _twapParamsOf[_swapParams.projectId];
         uint32 _quotePeriod = uint32(_twapParams);
@@ -400,7 +399,7 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
         uint160 _sqrtPriceX96 = TickMath.getSqrtRatioAtTick(_arithmeticMeanTick);
 
         // Return the lowest TWAP tolerable.
-        _zeroForOne
+        _swapParams.tokenIn < _swapParams.tokenOut
             ? _sqrtPriceX96 - (_sqrtPriceX96 * _maxDelta) / SLIPPAGE_DENOMINATOR
             : _sqrtPriceX96 + (_sqrtPriceX96 * _maxDelta) / SLIPPAGE_DENOMINATOR;
     }
@@ -458,16 +457,17 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
         address _tokenOut = _swapParams.tokenOut;
         bool zeroForOne = _tokenIn < _tokenOut;
 
-        // Try swapping.
         (int256 amount0, int256 amount1) = _swapParams.pool.swap({
             recipient: address(this),
             zeroForOne: zeroForOne,
             amountSpecified: int256(_swapParams.amountIn),
-            sqrtPriceLimitX96: _swapParams.priceLimit,
+            sqrtPriceLimitX96: zeroForOne ? TickMath.MIN_SQRT_RATIO + 1 : TickMath.MAX_SQRT_RATIO - 1,
             data: abi.encode(_tokenIn, _swapParams.inIsNativeToken)
         });
         
-        amountReceived = uint256(-(zeroForOne ? amount1 : amount0)); 
+        amountReceived = uint256(-(zeroForOne ? amount1 : amount0));
+
+        if(amountReceived < _swapParams.minAmountOut) revert MAX_SLIPPAGE(amountReceived, _swapParams.minAmountOut);
 
         // Unwrap weth if needed
         if (_swapParams.outIsNativeToken) WETH.withdraw(amountReceived); 

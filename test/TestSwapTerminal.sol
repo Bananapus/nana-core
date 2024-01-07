@@ -95,14 +95,8 @@ contract TestSwapTerminal_Fork is TestBaseWorkflow {
         
         deal( address(UNI), address(_sender), _amountIn);
 
+        // 10 uni - 8%
         uint256 _minAmountOut = 10 * 1.33649 ether * 92 / 100;
-
-        (uint160 _currentPrice,,,,,,) = POOL.slot0();
-
-        // We swap uni -> weth
-        bool _zeroToOne = address(UNI) < address(WETH);
-        // price is from token0 to token1 -> if swapping from 0, the price will 
-        uint160 _priceLimit = ;
 
         vm.prank(_projectOwner);
         _swapTerminal.addDefaultPool(_projectId, address(UNI), POOL);
