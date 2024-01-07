@@ -1,5 +1,5 @@
 // SOLVED: +++ weird token0/token1 ordering issue -> double-check the terminal
-// TODO: convert native token to weth address at the begining of the flow, then convert back at the end (only oding it once)
+// SOVLED: convert native token to weth address at the begining of the flow, then convert back at the end (only oding it once)
 // TODO: add price feed to vanilla project
 // TODO: use quoter to check if 7% price impact is expected (uni-weth has low liq on Sepolia, so probably is)
 // TODO: use sqrtPriceLimit (can be based on min amount or coming from frontend) instead of try-catch (flow from bbd, not used here)
@@ -29,7 +29,6 @@ import {IJBProjects} from "./interfaces/IJBProjects.sol";
 import {IJBTerminalStore} from "./interfaces/IJBTerminalStore.sol";
 import {JBRulesetMetadataResolver} from "./libraries/JBRulesetMetadataResolver.sol";
 import {JBMetadataResolver} from "./libraries/JBMetadataResolver.sol";
-// import {JBTokenStandards} from "./libraries/JBTokenStandards.sol";
 import {JBFee} from "./structs/JBFee.sol";
 import {JBRuleset} from "./structs/JBRuleset.sol";
 import {JBSingleAllowanceContext} from "./structs/JBSingleAllowanceContext.sol";
@@ -63,11 +62,27 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
     // ------------------------------ structs ---------------------------- //
     //*********************************************************************//
 
+    // A struct representing the parameters of a swap.
+    /// @dev This struct is only used in memory. The extra cost comes from mstore and related mem expansion, as well as mload.
+    ///      The mem expansion is calculated as follow:
+    ///         memory_size_word = (memory_byte_size + 31) / 32
+    ///         memory_cost = (memory_size_word ** 2) / 512 + (3 * memory_size_word)    
+
+    ///         Given 0 memory reused, ie expansion to pay for every word newly stored:
+    ///             Without packing
+    ///                 msize = 9
+    ///                 mem_cost = 9**2 / 512 + 3 * 9 = 27 units
+    ///             If packing in 6 words
+    ///                 mem_cost = 6**2 / 512 + 3 * 6 = 18 units
+    ///             (6 words by downcasting project id to uint96, then pack it with the pool address, then pack (tokenIn, inIsNativeToken) and (tokenOut, outIsNativeToken))
+    ///             We need to pack once (in pay(..)) and adding a mask/shifting at least 6 times (18 units) -> more expensive than the mem expansion cost
     struct SwapParams {
         uint256 projectId;
         IUniswapV3Pool pool;
         address tokenIn;
+        bool inIsNativeToken;
         address tokenOut;
+        bool outIsNativeToken;
         uint256 amountIn;
         uint256 amountOut;
         uint256 minAmountOut;
@@ -227,18 +242,32 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
     {
         SwapParams memory _swapParams;
         _swapParams.projectId = _projectId;
-        _swapParams.tokenIn = _token;
-        _swapParams.amountIn = _token == JBConstants.NATIVE_TOKEN ? msg.value : _amount;
-        
+
+        if(_token == JBConstants.NATIVE_TOKEN) {
+            _swapParams.tokenIn = address(WETH);
+            _swapParams.inIsNativeToken = true;
+            _swapParams.amountIn = msg.value;
+        } else {
+            _swapParams.tokenIn = _token;
+            _swapParams.amountIn = _amount;
+        }
+
         {
             // Check for a quote passed by the user
             (bool _exists, bytes memory _parsedData) =
                 JBMetadataResolver.getDataFor(bytes4("SWAP"), _metadata);
 
             if (_exists) {
+                address _rawTokenOut;
                 // If there is a quote, use it
-                (_swapParams.minAmountOut, _swapParams.pool, _swapParams.tokenOut) =
+                (_swapParams.minAmountOut, _swapParams.pool, _rawTokenOut) =
                     abi.decode(_parsedData, (uint256, IUniswapV3Pool, address));
+                
+                if(_rawTokenOut == JBConstants.NATIVE_TOKEN) {
+                    _swapParams.tokenOut = address(WETH);
+                    _swapParams.outIsNativeToken = true;
+                } else _swapParams.tokenOut = _rawTokenOut;
+
             } else {
                 // If no quote, check there is a default pool assigned and get a twap
                 IUniswapV3Pool _pool = poolFor[_projectId][_token][address(0)];
@@ -249,15 +278,16 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
                 if (address(_pool) == address(0)) revert NO_DEFAULT_POOL_DEFINED();
 
                 (address _poolToken0, address _poolToken1) = (_pool.token0(), _pool.token1());
-                _swapParams.tokenOut = _poolToken0 == _token ? _poolToken1 : _poolToken0;
 
+                // Uniswap pool aren't using native token, stay false by default
+                _swapParams.tokenOut = _poolToken0 == _token ? _poolToken1 : _poolToken0;
 
                 // Get a twap from the pool, includes a default max slippage
                 _swapParams.minAmountOut = _getTwapFrom(_swapParams);
             }
         }
 
-        IJBTerminal _terminal = DIRECTORY.primaryTerminalOf(_projectId, _swapParams.tokenOut);
+        IJBTerminal _terminal = DIRECTORY.primaryTerminalOf(_projectId, _swapParams.outIsNativeToken ? JBConstants.NATIVE_TOKEN : _swapParams.tokenOut);
 
         // Check the primary terminal accepts the token (save swap gas if not accepted)
         if (address(_terminal) == address(0)) revert TOKEN_NOT_ACCEPTED();
@@ -268,9 +298,9 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
         uint256 _receivedFromSwap = _swap(_swapParams);
 
         // Pay on primary terminal, with correct beneficiary (sender or benficiary if passed)
-        _terminal.pay{value: _swapParams.tokenOut == JBConstants.NATIVE_TOKEN ? _receivedFromSwap : 0}(
+        _terminal.pay{value: _swapParams.outIsNativeToken ? _receivedFromSwap : 0}(
             _swapParams.projectId,
-            _swapParams.tokenOut,
+            _swapParams.outIsNativeToken ? JBConstants.NATIVE_TOKEN : _swapParams.tokenOut,
             _receivedFromSwap,
             _beneficiary,
             _minReturnedTokens,
@@ -290,20 +320,17 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
         override
     {
         // Unpack the data passed in through the swap hook.
-        address _tokenIn = abi.decode(_data, (address));
-
-        // Get the terminal token, using WETH if the token paid in is ETH.
-        address _tokenInWithWeth = _tokenIn == JBConstants.NATIVE_TOKEN ? address(WETH) : _tokenIn;
+        (address _tokenIn, bool _shouldWrap) = abi.decode(_data, (address, bool));
 
         // Keep a reference to the amount of tokens that should be sent to fulfill the swap (the positive delta)
         uint256 _amountToSendToPool = _amount0Delta < 0 ? uint256(_amount1Delta) : uint256(_amount0Delta);
 
         // Wrap ETH into WETH if relevant
-        if (_tokenIn == JBConstants.NATIVE_TOKEN) WETH.deposit{value: _amountToSendToPool}();
+        if (_shouldWrap) WETH.deposit{value: _amountToSendToPool}();
 
         // Transfer the token to the pool.
         // This terminal should NEVER keep token in its balance !!
-        IERC20(_tokenInWithWeth).transfer(msg.sender, _amountToSendToPool);
+        IERC20(_tokenIn).transfer(msg.sender, _amountToSendToPool);
     }
 
     /// @notice prevent ETH from being sent directly to the terminal (only allowed when wrapped, during a swap)
@@ -431,14 +458,10 @@ contract JBSwapTerminal is JBPermissioned, Ownable, IJBTerminal, IJBPermitTermin
 event Test(address);
 event Test(bool);
     function _swap(SwapParams memory _swapParams) internal returns (uint256 amountReceived) {
-        
-        address _tokenInWithWeth = _swapParams.tokenIn;
-        if (_tokenInWithWeth == JBConstants.NATIVE_TOKEN) _tokenInWithWeth = address(WETH);
 
-        address _tokenOutWithWeth = _swapParams.tokenOut;
-        if(_tokenOutWithWeth == JBConstants.NATIVE_TOKEN) _tokenOutWithWeth = address(WETH);
-
-        bool zeroForOne = _tokenInWithWeth < _tokenOutWithWeth;
+        address _tokenIn = _swapParams.tokenIn;
+        address _tokenOut = _swapParams.tokenOut;
+        bool zeroForOne = _tokenIn < _tokenOut;
 
         // Try swapping.
         try _swapParams.pool.swap({
@@ -448,11 +471,11 @@ event Test(bool);
             sqrtPriceLimitX96: zeroForOne
                 ? TickMath.MIN_SQRT_RATIO + 1
                 : TickMath.MAX_SQRT_RATIO - 1,
-            data: abi.encode(_swapParams.tokenIn)
+            data: abi.encode(_tokenIn, _swapParams.inIsNativeToken)
         }) returns (int256 amount0, int256 amount1) {
             // If the swap succeded, take note of the amount of tokens received. This will return as negative since it
             // is an exact input.
-            amountReceived = uint256(-(zeroForOne ? amount1 : amount0));
+            amountReceived = uint256(-(zeroForOne ? amount1 : amount0)); 
 
         } catch(bytes memory _reason) {
             // If the swap failed, revert.
@@ -462,7 +485,7 @@ event Test(bool);
         if(amountReceived < _swapParams.minAmountOut) revert MAX_SLIPPAGE(amountReceived, _swapParams.minAmountOut);
 
         // Unwrap weth if needed
-        if (_swapParams.tokenOut == JBConstants.NATIVE_TOKEN) WETH.withdraw(amountReceived);
+        if (_swapParams.outIsNativeToken) WETH.withdraw(amountReceived); 
     }
 
     /// @notice Reverts an expected payout.
