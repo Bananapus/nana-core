@@ -37,7 +37,7 @@ contract TestSwapTerminal_Fork is TestBaseWorkflow {
     MetadataResolverHelper internal _metadataResolver;
 
     function setUp() public override {
-        vm.createSelectFork("https://rpc.ankr.com/eth_sepolia", 5022528);
+        vm.createSelectFork("https://rpc.ankr.com/eth_sepolia", 5_022_528);
 
         vm.label(address(UNI), "UNI");
         vm.label(address(WETH), "WETH");
@@ -89,11 +89,10 @@ contract TestSwapTerminal_Fork is TestBaseWorkflow {
     /// metadata
     /// @dev    Quote at the forked block 5022528 : 1 UNI = 1.33649 ETH with max slippage suggested (uni sdk): 0.5%
     function testPayUniSwapEthPayEth() external {
-
         // NOTE: bullet proofing for coming fuzzed token
-        uint256 _amountIn = 10 * 10**UNI.decimals();
-        
-        deal( address(UNI), address(_sender), _amountIn);
+        uint256 _amountIn = 10 * 10 ** UNI.decimals();
+
+        deal(address(UNI), address(_sender), _amountIn);
 
         // 10 uni - 8%
         uint256 _minAmountOut = 10 * 1.33649 ether * 92 / 100;
