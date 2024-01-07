@@ -1,6 +1,6 @@
 // SOLVED: +++ weird token0/token1 ordering issue -> double-check the terminal
 // SOVLED: convert native token to weth address at the begining of the flow, then convert back at the end (only oding it once)
-// TODO: use sqrtPriceLimit (can be based on min amount or coming from frontend) instead of try-catch (flow from bbd, not used here)
+// DROPPED: use sqrtPriceLimit (can be based on min amount or coming from frontend) instead of try-catch (flow from bbd, not used here)
 // TODO: get rid of accept token/transfer in callback/non custodial terminal, even atomically (cf @xBA5ED comment)
 // TODO: add price feed to vanilla project
 // TODO: use quoter to check if 7% price impact is expected (uni-weth has low liq on Sepolia, so probably is)
