@@ -29,7 +29,10 @@ contract TestJBRulesetsUnits_Local is JBTest {
 
     // Necessary params
     JBRulesetMetadata private _metadata;
+    JBRulesetMetadata private _metadataWithApprovalHook;
+    IJBRulesetApprovalHook private _mockApprovalHook = IJBRulesetApprovalHook(makeAddr("hook"));
     uint256 _packedMetadata;
+    uint256 _packedWithApprovalHook;
     uint256 _projectId = 1;
     uint256 _duration = 14;
     uint256 _weight = 0;
@@ -97,7 +100,28 @@ contract TestJBRulesetsUnits_Local is JBTest {
             metadata: 0
         });
 
+        // Params for tests
+        _metadataWithApprovalHook = JBRulesetMetadata({
+            reservedRate: 0,
+            redemptionRate: 0,
+            baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
+            pausePay: false,
+            pauseCreditTransfers: false,
+            allowOwnerMinting: false,
+            allowTerminalMigration: false,
+            allowSetTerminals: false,
+            allowControllerMigration: false,
+            allowSetController: false,
+            holdFees: false,
+            useTotalSurplusForRedemptions: false,
+            useDataHookForPay: false,
+            useDataHookForRedeem: false,
+            dataHook: address(_mockApprovalHook),
+            metadata: 0
+        });
+
         _packedMetadata = JBRulesetMetadataResolver.packRulesetMetadata(_metadata);
+        _packedWithApprovalHook = JBRulesetMetadataResolver.packRulesetMetadata(_metadataWithApprovalHook);
     }
 
     function testQueueForHappyPath() public {
@@ -296,7 +320,6 @@ contract TestJBRulesetsUnits_Local is JBTest {
         unchecked {
             _sum = _bigDuration + _bigStartAt;
         }
-        emit log_uint(_sum);
 
         // Sum should always be less if overflowed
         if (_bigDuration > _sum) {
@@ -317,5 +340,88 @@ contract TestJBRulesetsUnits_Local is JBTest {
             metadata: _packedMetadata,
             mustStartAtOrAfter: _bigStartAt
         });
+    }
+
+    function testQueueApprovalHookCodeReqs() public {
+        // Setup: queueFor will call onlyControllerOf modifier -> Directory.controllerOf to see if caller has proper
+        // permissions, encode & mock that.
+        bytes memory _encodedCall = abi.encodeCall(IJBDirectory.controllerOf, (1));
+        bytes memory _willReturn = abi.encode(address(this));
+
+        mockExpect(address(_directory), _encodedCall, _willReturn);
+
+        // will revert since code length is zero
+        vm.expectRevert(abi.encodeWithSignature("INVALID_RULESET_APPROVAL_HOOK()"));
+
+        // Send: Call from this contract as it's been mock authorized above.
+        _rulesets.queueFor({
+            projectId: _projectId,
+            duration: _duration,
+            weight: _weight,
+            decayRate: _decayRate,
+            approvalHook: _mockApprovalHook,
+            metadata: _packedWithApprovalHook,
+            mustStartAtOrAfter: _mustStartAt
+        });
+
+        // try another with any length of code deployed and mock interface support to pass other checks
+        deployCodeTo("MockPriceFeed.sol", abi.encode(1, 18), address(_mockApprovalHook));
+
+        // Setup: queueFor will call onlyControllerOf modifier -> Directory.controllerOf to see if caller has proper
+        // permissions, encode & mock that.
+        bytes memory _encodedCall2 = abi.encodeCall(IJBDirectory.controllerOf, (1));
+        bytes memory _willReturn2 = abi.encode(address(this));
+
+        mockExpect(address(_directory), _encodedCall2, _willReturn2);
+
+        bytes memory _encodedCall3 = abi.encodeCall(IERC165.supportsInterface, (type(IJBRulesetApprovalHook).interfaceId));
+        bytes memory _willReturn3 = abi.encode(true);
+
+        mockExpect(address(_mockApprovalHook), _encodedCall3, _willReturn3);
+
+        // Setup: expect ruleset event (RulesetQueued) is emitted
+        vm.expectEmit();
+        emit RulesetQueued(
+            block.timestamp,
+            _projectId,
+            _duration,
+            _weight,
+            _decayRate,
+            _mockApprovalHook,
+            _packedWithApprovalHook,
+            block.timestamp,
+            address(this)
+        );
+
+        // Send: Call from this contract as it's been mock authorized above.
+        _rulesets.queueFor({
+            projectId: _projectId,
+            duration: _duration,
+            weight: _weight,
+            decayRate: _decayRate,
+            approvalHook: _mockApprovalHook,
+            metadata: _packedWithApprovalHook,
+            mustStartAtOrAfter: _mustStartAt
+        });
+
+        // Get a reference to the now configured ruleset.
+        JBRuleset memory configuredRuleset = _rulesets.currentOf(_projectId);
+
+        // Reference queued attributes for sake of comparison.
+        JBRuleset memory queued = JBRuleset({
+            cycleNumber: 1,
+            id: block.timestamp,
+            basedOnId: 0,
+            start: block.timestamp,
+            duration: _duration,
+            weight: _weight,
+            decayRate: _decayRate,
+            approvalHook: _mockApprovalHook,
+            metadata: configuredRuleset.metadata
+        });
+
+        // Check: structs are the same.
+        bool same = equals(queued, configuredRuleset);
+        assertEq(same, true);
     }
 }
