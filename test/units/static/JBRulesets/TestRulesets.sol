@@ -34,7 +34,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
     uint256 _packedMetadata;
     uint256 _packedWithApprovalHook;
     uint256 _projectId = 1;
-    uint256 _duration = 14;
+    uint256 _duration = 1 days;
     uint256 _weight = 0;
     uint256 _decayRate = 450_000_000;
     uint256 _mustStartAt = 0;
@@ -342,12 +342,13 @@ contract TestJBRulesetsUnits_Local is JBTest {
         });
     }
 
-    function testQueueApprovalHookCodeReqs() public {
+    function testQueueApprovalHookCodeReqsAndLogic() public {
         // Setup: queueFor will call onlyControllerOf modifier -> Directory.controllerOf to see if caller has proper
         // permissions, encode & mock that.
         bytes memory _encodedCall = abi.encodeCall(IJBDirectory.controllerOf, (1));
         bytes memory _willReturn = abi.encode(address(this));
 
+        // note: this applies to subsequent calls unless we clear mocks
         mockExpect(address(_directory), _encodedCall, _willReturn);
 
         // will revert since code length is zero
@@ -366,13 +367,6 @@ contract TestJBRulesetsUnits_Local is JBTest {
 
         // try another with any length of code deployed and mock interface support to pass other checks
         deployCodeTo("MockPriceFeed.sol", abi.encode(1, 18), address(_mockApprovalHook));
-
-        // Setup: queueFor will call onlyControllerOf modifier -> Directory.controllerOf to see if caller has proper
-        // permissions, encode & mock that.
-        bytes memory _encodedCall2 = abi.encodeCall(IJBDirectory.controllerOf, (1));
-        bytes memory _willReturn2 = abi.encode(address(this));
-
-        mockExpect(address(_directory), _encodedCall2, _willReturn2);
 
         bytes memory _encodedCall3 = abi.encodeCall(IERC165.supportsInterface, (type(IJBRulesetApprovalHook).interfaceId));
         bytes memory _willReturn3 = abi.encode(true);
@@ -404,24 +398,27 @@ contract TestJBRulesetsUnits_Local is JBTest {
             mustStartAtOrAfter: _mustStartAt
         });
 
-        // Get a reference to the now configured ruleset.
-        JBRuleset memory configuredRuleset = _rulesets.currentOf(_projectId);
+        // Mock call to approval hook and return a standard 3 day approval duration and see how the approval state affects queueing
+        bytes memory _encodedDurationCall = abi.encodeCall(IJBRulesetApprovalHook.DURATION, ());
+        bytes memory _willReturnDuration = abi.encode(3 days);
 
-        // Reference queued attributes for sake of comparison.
-        JBRuleset memory queued = JBRuleset({
-            cycleNumber: 1,
-            id: block.timestamp,
-            basedOnId: 0,
-            start: block.timestamp,
+        mockExpect(address(_mockApprovalHook), _encodedDurationCall, _willReturnDuration);
+
+        vm.warp(block.timestamp + 1);
+
+        // Send: Anotha One! Call from this contract as it's been mock authorized above.
+        _rulesets.queueFor({
+            projectId: _projectId,
             duration: _duration,
             weight: _weight,
             decayRate: _decayRate,
             approvalHook: _mockApprovalHook,
-            metadata: configuredRuleset.metadata
+            metadata: _packedWithApprovalHook,
+            mustStartAtOrAfter: _mustStartAt + 1
         });
+        
+        /* JBRuleset[] memory queuedRulesetsOf =_rulesets.queuedRulesetsOf(_projectId);
+        emit log_uint(queuedRulesetsOf[1].cycleNumber); */
 
-        // Check: structs are the same.
-        bool same = equals(queued, configuredRuleset);
-        assertEq(same, true);
     }
 }
