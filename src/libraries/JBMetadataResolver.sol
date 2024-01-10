@@ -52,14 +52,7 @@ library JBMetadataResolver {
      * @return found          Whether the {id:data} was found
      * @return targetData The data for the ID (can be empty)
      */
-    function getDataFor(
-        bytes4 id,
-        bytes calldata metadata
-    )
-        internal
-        pure
-        returns (bool found, bytes memory targetData)
-    {
+    function getDataFor(bytes4 id, bytes memory metadata) internal pure returns (bool found, bytes memory targetData) {
         // Either no data or empty one with only one selector (32+4+1)
         if (metadata.length <= MIN_METADATA_LENGTH) return (false, "");
 
@@ -71,7 +64,7 @@ library JBMetadataResolver {
             uint256 currentOffset = uint256(uint8(metadata[i + ID_SIZE]));
 
             // _id found?
-            if (bytes4(metadata[i:i + ID_SIZE]) == id) {
+            if (bytes4(_sliceBytes(metadata, i, i + ID_SIZE)) == id) {
                 // Are we at the end of the lookup table (either at the start of data's or next offset is 0/in the
                 // padding)
                 // If not, only return until from this offset to the begining of the next offset
@@ -79,7 +72,7 @@ library JBMetadataResolver {
                     ? metadata.length
                     : uint256(uint8(metadata[i + NEXT_ID_OFFSET])) * WORD_SIZE;
 
-                return (true, metadata[currentOffset * WORD_SIZE:end]);
+                return (true, _sliceBytes(metadata, currentOffset * WORD_SIZE, end));
             }
             unchecked {
                 i += TOTAL_ID_SIZE;
@@ -97,9 +90,9 @@ library JBMetadataResolver {
      * @return newMetadata    The new metadata with the entry added
      */
     function addToMetadata(
-        bytes calldata originalMetadata,
+        bytes memory originalMetadata,
         bytes4 idToAdd,
-        bytes calldata dataToAdd
+        bytes memory dataToAdd
     )
         internal
         pure
@@ -132,7 +125,7 @@ library JBMetadataResolver {
                 numberOfWordslastData = (originalMetadata.length - lastOffset * WORD_SIZE) / WORD_SIZE;
 
                 // Copy the reserved word and the table and remove the previous padding
-                newMetadata = originalMetadata[0:lastOffsetIndex + 1];
+                newMetadata = _sliceBytes(originalMetadata, 0, lastOffsetIndex + 1);
 
                 // Check if the new entry is still fitting in this word
                 if (i + TOTAL_ID_SIZE >= firstOffset * WORD_SIZE) {
@@ -161,7 +154,9 @@ library JBMetadataResolver {
         }
 
         // Add existing data at the end
-        newMetadata = abi.encodePacked(newMetadata, originalMetadata[firstOffset * WORD_SIZE:originalMetadata.length]);
+        newMetadata = abi.encodePacked(
+            newMetadata, _sliceBytes(originalMetadata, firstOffset * WORD_SIZE, originalMetadata.length)
+        );
 
         // Pad as needed
         paddedLength =
@@ -179,6 +174,26 @@ library JBMetadataResolver {
 
         assembly {
             mstore(newMetadata, paddedLength)
+        }
+    }
+
+    /// @notice Slice bytes from a start index to an end index.
+    /// @param data The data being sliced.
+    /// @param start The start index to slice at.
+    /// @param end The end index to slice at.
+    /// @param slicedBytes The sliced bytes.
+    function _sliceBytes(
+        bytes memory data,
+        uint256 start,
+        uint256 end
+    )
+        public
+        pure
+        returns (bytes memory slicedBytes)
+    {
+        slicedBytes = new bytes(end - start);
+        for (uint256 i = start; i < end; i++) {
+            slicedBytes[i - start] = data[i];
         }
     }
 }
