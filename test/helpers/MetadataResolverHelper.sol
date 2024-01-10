@@ -120,21 +120,21 @@ contract MetadataResolverHelper {
     /**
      * @notice Add a data entry to an existing metadata
      *
+     * @param originalMetadata The original metadata
      * @param idToAdd          The id of the hook to add
      * @param dataToAdd        The metadata of the hook to add
-     * @param originalMetadata The original metadata
      *
      * @return _newMetadata    The new metadata with the hook added
      */
     function addDataToMetadata(
+        bytes calldata originalMetadata,
         bytes4 idToAdd,
-        bytes calldata dataToAdd,
-        bytes calldata originalMetadata
+        bytes calldata dataToAdd
     )
         public
         pure
         returns (bytes memory)
     {
-        return JBMetadataResolver.addToMetadata(idToAdd, dataToAdd, originalMetadata);
+        return JBMetadataResolver.addToMetadata(originalMetadata, idToAdd, dataToAdd);
     }
 }

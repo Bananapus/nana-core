@@ -52,14 +52,7 @@ library JBMetadataResolver {
      * @return found          Whether the {id:data} was found
      * @return targetData The data for the ID (can be empty)
      */
-    function getDataFor(
-        bytes4 id,
-        bytes calldata metadata
-    )
-        internal
-        pure
-        returns (bool found, bytes memory targetData)
-    {
+    function getDataFor(bytes4 id, bytes calldata metadata) public pure returns (bool found, bytes memory targetData) {
         // Either no data or empty one with only one selector (32+4+1)
         if (metadata.length <= MIN_METADATA_LENGTH) return (false, "");
 
@@ -90,18 +83,18 @@ library JBMetadataResolver {
     /**
      * @notice Add an {id: data} entry to an existing metadata. This is an append-only mechanism.
      *
+     * @param originalMetadata The original metadata
      * @param idToAdd          The id to add
      * @param dataToAdd        The data to add
-     * @param originalMetadata The original metadata
      *
      * @return newMetadata    The new metadata with the entry added
      */
     function addToMetadata(
+        bytes calldata originalMetadata,
         bytes4 idToAdd,
-        bytes calldata dataToAdd,
-        bytes calldata originalMetadata
+        bytes calldata dataToAdd
     )
-        internal
+        public
         pure
         returns (bytes memory newMetadata)
     {
