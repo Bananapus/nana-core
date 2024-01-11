@@ -34,10 +34,11 @@ contract TestJBRulesetsUnits_Local is JBTest {
     uint256 _packedMetadata;
     uint256 _packedWithApprovalHook;
     uint256 _projectId = 1;
-    uint256 _duration = 1 days;
+    uint256 _duration = 3 days;
     uint256 _weight = 0;
     uint256 _decayRate = 450_000_000;
     uint256 _mustStartAt = 0;
+    uint256 _hookDuration = 1 days;
     IJBRulesetApprovalHook private _hook = IJBRulesetApprovalHook(address(0));
 
     function equals(JBRuleset memory queued, JBRuleset memory stored) internal pure returns (bool) {
@@ -398,12 +399,13 @@ contract TestJBRulesetsUnits_Local is JBTest {
             mustStartAtOrAfter: _mustStartAt
         });
 
-        // Mock call to approval hook and return a standard 3 day approval duration and see how the approval state affects queueing
+        // Mock call to approval hook duration
         bytes memory _encodedDurationCall = abi.encodeCall(IJBRulesetApprovalHook.DURATION, ());
-        bytes memory _willReturnDuration = abi.encode(3 days);
+        bytes memory _willReturnDuration = abi.encode(_hookDuration);
 
         mockExpect(address(_mockApprovalHook), _encodedDurationCall, _willReturnDuration);
 
+        // avoid overwrite
         vm.warp(block.timestamp + 1);
 
         // Send: Anotha One! Call from this contract as it's been mock authorized above.
@@ -414,11 +416,36 @@ contract TestJBRulesetsUnits_Local is JBTest {
             decayRate: _decayRate,
             approvalHook: _mockApprovalHook,
             metadata: _packedWithApprovalHook,
-            mustStartAtOrAfter: _mustStartAt + 1
+            mustStartAtOrAfter: block.timestamp
+        });
+
+        // avoid overwrite
+        vm.warp(block.timestamp + 2 days);
+
+        JBRuleset[] memory queuedRulesetsOf =_rulesets.queuedRulesetsOf(_projectId);
+        uint256 rulesetId = queuedRulesetsOf[0].id;
+        uint256 previouslyApprovedDurationEnds = block.timestamp + 3 days - 2 days - 1;
+
+        // Mock call to approvalStatusOf and return an approved status
+        bytes memory _encodedApprovalCall = abi.encodeCall(IJBRulesetApprovalHook.approvalStatusOf, (1, rulesetId, previouslyApprovedDurationEnds));
+        bytes memory _willReturnStatus = abi.encode(JBApprovalStatus.Approved);
+
+        mockExpect(address(_mockApprovalHook), _encodedApprovalCall, _willReturnStatus);
+
+        // Send: Anotha One! Call from this contract as it's been mock authorized above.
+        _rulesets.queueFor({
+            projectId: _projectId,
+            duration: _duration,
+            weight: _weight,
+            decayRate: _decayRate,
+            approvalHook: _mockApprovalHook,
+            metadata: _packedWithApprovalHook,
+            mustStartAtOrAfter: block.timestamp
         });
         
-        /* JBRuleset[] memory queuedRulesetsOf =_rulesets.queuedRulesetsOf(_projectId);
-        emit log_uint(queuedRulesetsOf[1].cycleNumber); */
+        JBRuleset[] memory queuedRulesetsOfFinal =_rulesets.queuedRulesetsOf(_projectId);
 
+        // check: 2 rulesets will be enqueued
+        assertEq(queuedRulesetsOfFinal.length, 2);
     }
 }
