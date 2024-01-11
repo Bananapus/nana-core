@@ -19,3 +19,6 @@
 [submodule "lib/v3-periphery"]
 	path = lib/v3-periphery
 	url = https://github.com/uniswap/v3-periphery
+[submodule "lib/uniswap-v3-foundry-quote"]
+	path = lib/uniswap-v3-foundry-quote
+	url = https://github.com/exhausted-pigeon-srl/uniswap-v3-foundry-quote
