@@ -45,6 +45,7 @@ import {JBSplitHookContext} from "src/structs/JBSplitHookContext.sol";
 import {IJBToken} from "src/interfaces/IJBToken.sol";
 import {JBSingleAllowanceContext} from "src/structs/JBSingleAllowanceContext.sol";
 import {IJBController} from "src/interfaces/IJBController.sol";
+import {IJBFundAccessLimits} from "src/interfaces/IJBFundAccessLimits.sol";
 import {IJBMigratable} from "src/interfaces/IJBMigratable.sol";
 import {IJBPermissions} from "src/interfaces/IJBPermissions.sol";
 import {IJBTerminalStore} from "src/interfaces/IJBTerminalStore.sol";

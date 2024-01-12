@@ -1,0 +1,5 @@
+TestGetRulesetOf
+├── when rulesetId is zero
+│   └── it should return empty ruleset and metadata
+└── when rulesetID is non-zero
+    └── it should return populated ruleset and metadata
