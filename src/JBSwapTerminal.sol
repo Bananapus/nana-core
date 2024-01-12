@@ -5,7 +5,7 @@
 // not used here)
 // TODO: get rid of accept token/transfer in callback/non custodial terminal, even atomically (cf @xBA5ED comment)
 // TODO: add price feed to vanilla project
-// TODO: use quoter to check if 7% price impact is expected (uni-weth has low liq on Sepolia, so probably is)
+// SOLVED: use quoter to check if 7% price impact is expected (uni-weth has low liq on Sepolia, so probably is)
 // TOdo: if pool out == weth, check if the project terminal accepts weth or eth/native token
 // TODO: sweep any leftover
 // TODO: natspecs

@@ -2,6 +2,7 @@
 pragma solidity ^0.8.6;
 
 import {IUniswapV3Pool} from "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
+import {UniswapV3ForgeQuoter} from "lib/uniswap-v3-foundry-quote/src/UniswapV3ForgeQuoter.sol";
 
 import /* {*} from */ "./helpers/TestBaseWorkflow.sol";
 
@@ -35,6 +36,7 @@ contract TestSwapTerminal_Fork is TestBaseWorkflow {
     address internal _beneficiary;
 
     MetadataResolverHelper internal _metadataResolver;
+    UniswapV3ForgeQuoter internal _uniswapV3ForgeQuoter;
 
     function setUp() public override {
         vm.createSelectFork("https://rpc.ankr.com/eth_sepolia", 5_022_528);
@@ -83,6 +85,9 @@ contract TestSwapTerminal_Fork is TestBaseWorkflow {
 
         _metadataResolver = new MetadataResolverHelper();
         vm.label(address(_metadataResolver), "metadataResolver");
+
+        _uniswapV3ForgeQuoter = new UniswapV3ForgeQuoter();
+        vm.label(address(_uniswapV3ForgeQuoter), "uniswapV3ForgeQuoter");
     }
 
     /// @notice Test paying a swap terminal in UNI to contribute to JuiceboxDAO project (in the eth terminal), using
@@ -95,7 +100,8 @@ contract TestSwapTerminal_Fork is TestBaseWorkflow {
         deal(address(UNI), address(_sender), _amountIn);
 
         // 10 uni - 8%
-        uint256 _minAmountOut = 10 * 1.33649 ether * 92 / 100;
+        // uint256 _minAmountOut = 10 * 1.33649 ether * 92 / 100;
+        uint256 _minAmountOut = _uniswapV3ForgeQuoter.getAmountOut(POOL, _amountIn, address(UNI));
 
         vm.prank(_projectOwner);
         _swapTerminal.addDefaultPool(_projectId, address(UNI), POOL);
