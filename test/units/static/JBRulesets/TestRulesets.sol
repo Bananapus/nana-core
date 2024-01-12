@@ -444,7 +444,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
         rulesetId = queuedRulesetsOf[1].id;
         previouslyApprovedDurationEnds = block.timestamp + 6 days - 2 days - 2;
 
-        // Mock call to approvalStatusOf and return an approved status
+        // Mock call to approvalStatusOf and return an approvalExpected status
         _encodedApprovalCall = abi.encodeCall(IJBRulesetApprovalHook.approvalStatusOf, (1, rulesetId, previouslyApprovedDurationEnds));
         _willReturnStatus = abi.encode(JBApprovalStatus.ApprovalExpected);
 
@@ -474,7 +474,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
         rulesetId = queuedRulesetsOf[1].id;
         previouslyApprovedDurationEnds = block.timestamp + 6 days - 2 days - 3;
 
-        // Mock call to approvalStatusOf and return an approved status
+        // Mock call to approvalStatusOf and return a failed status
         _encodedApprovalCall = abi.encodeCall(IJBRulesetApprovalHook.approvalStatusOf, (1, rulesetId, previouslyApprovedDurationEnds));
         _willReturnStatus = abi.encode(JBApprovalStatus.Failed);
 
@@ -504,7 +504,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
         rulesetId = queuedRulesetsOf[1].id;
         previouslyApprovedDurationEnds = block.timestamp + 6 days - 2 days - 4;
 
-        // Mock call to approvalStatusOf and return an approved status
+        // Mock call to approvalStatusOf and return an empty status
         _encodedApprovalCall = abi.encodeCall(IJBRulesetApprovalHook.approvalStatusOf, (1, rulesetId, previouslyApprovedDurationEnds));
         _willReturnStatus = abi.encode(JBApprovalStatus.Empty);
 
