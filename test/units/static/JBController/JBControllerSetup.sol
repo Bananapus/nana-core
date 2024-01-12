@@ -26,4 +26,5 @@ contract JBControllerSetup is JBTest {
         _controller = new JBController(
             permissions, projects, directory, rulesets, tokens, splits, fundAccessLimits, trustedForwarder
         );
-    }}
+    }
+}
