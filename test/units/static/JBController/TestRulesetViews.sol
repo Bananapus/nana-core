@@ -1,0 +1,136 @@
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.23;
+
+import /* {*} from */ "../../../helpers/TestBaseWorkflow.sol";
+import {JBControllerSetup} from "./JBControllerSetup.sol";
+
+/**
+ * @title
+ */
+contract TestRulesetViews_Local is JBTest, JBControllerSetup {
+    // A library that parses packed ruleset metadata into a friendlier format.
+    using JBRulesetMetadataResolver for JBRuleset;
+
+    function setUp() public {
+        super.controllerSetup();
+    }
+
+    function genMetadata() public pure returns (uint256) {
+        uint256 packed = 1;
+        packed |= 5000 << 4;
+        packed |= 8000 << 20;
+        packed |= 1 << 36;
+        packed |= 1 << 69;
+        packed |= 1 << 71;
+        packed |= 1 << 72;
+        packed |= 1 << 74;
+        packed |= 1 << 76;
+        packed |= uint256(uint160(address(0x1234567890123456789012345678901234567890))) << 79;
+        packed |= 65_535 << 239;
+
+        return packed;
+    }
+
+    function test_getRulesetOf() external {
+        // it should call rulesets and access storage (we avoid setting and reading here)
+
+        // setup: return data
+        JBRuleset memory data = JBRuleset({
+            cycleNumber: 1,
+            id: block.timestamp,
+            basedOnId: 0,
+            start: block.timestamp,
+            duration: 8000,
+            weight: 5000,
+            decayRate: 0,
+            approvalHook: IJBRulesetApprovalHook(address(0x1234567890123456789012345678901234567890)),
+            metadata: genMetadata()
+        });
+
+        // setup: mock call
+        bytes memory _encodedCall = abi.encodeCall(IJBRulesets.getRulesetOf, (1, block.timestamp));
+        bytes memory _willReturn = abi.encode(data);
+
+        mockExpect(address(rulesets), _encodedCall, _willReturn);
+
+        // send
+        (JBRuleset memory ruleset, JBRulesetMetadata memory metadata) = _controller.getRulesetOf(1, block.timestamp);
+
+        // check: return makes sense
+        assertEq(data.duration, ruleset.duration);
+        assertEq(metadata.reservedRate, data.expandMetadata().reservedRate);
+    }
+
+    function test_latestQueuedRulesetOf() external {
+        // setup: return data
+        JBRuleset memory data = JBRuleset({
+            cycleNumber: 1,
+            id: block.timestamp,
+            basedOnId: 0,
+            start: block.timestamp,
+            duration: 8000,
+            weight: 5000,
+            decayRate: 0,
+            approvalHook: IJBRulesetApprovalHook(address(0x1234567890123456789012345678901234567890)),
+            metadata: genMetadata()
+        });
+
+        // setup: mock call
+        bytes memory _encodedCall = abi.encodeCall(IJBRulesets.latestQueuedRulesetOf, (1));
+        bytes memory _willReturn = abi.encode(data, JBApprovalStatus.Empty);
+
+        mockExpect(address(rulesets), _encodedCall, _willReturn);
+
+        // send
+        (JBRuleset memory ruleset, JBRulesetMetadata memory metadata, JBApprovalStatus approvalStatus) = _controller.latestQueuedRulesetOf(1);
+
+        // check: return makes sense
+        assertEq(data.duration, ruleset.duration);
+        assertEq(metadata.reservedRate, data.expandMetadata().reservedRate);
+        assertEq(abi.encode(approvalStatus), abi.encode(JBApprovalStatus.Empty));
+    }
+
+    function test_queuedRulesetsOf() external {
+        // setup: return data
+        JBRuleset memory data = JBRuleset({
+            cycleNumber: 1,
+            id: block.timestamp,
+            basedOnId: 0,
+            start: block.timestamp,
+            duration: 8000,
+            weight: 100,
+            decayRate: 0,
+            approvalHook: IJBRulesetApprovalHook(address(0x1234567890123456789012345678901234567890)),
+            metadata: genMetadata()
+        });
+
+        // setup: return data
+        JBRuleset memory data2 = JBRuleset({
+            cycleNumber: 1,
+            id: block.timestamp,
+            basedOnId: 0,
+            start: block.timestamp,
+            duration: 8000,
+            weight: 200,
+            decayRate: 0,
+            approvalHook: IJBRulesetApprovalHook(address(0x1234567890123456789012345678901234567890)),
+            metadata: genMetadata()
+        });
+
+        JBRuleset[] memory rulesetsArray = new JBRuleset[](2);
+        rulesetsArray[0] = data;
+        rulesetsArray[1] = data2;
+
+        // setup: mock call
+        bytes memory _encodedCall = abi.encodeCall(IJBRulesets.queuedRulesetsOf, (1));
+        bytes memory _willReturn = abi.encode(rulesetsArray);
+
+        mockExpect(address(rulesets), _encodedCall, _willReturn);
+
+        // send
+        (JBRulesetWithMetadata[] memory queuedRulesets) = _controller.queuedRulesetsOf(1);
+
+        // check: return makes sense
+        assertEq(rulesetsArray[0].weight, queuedRulesets[0].ruleset.weight);
+    }
+}
