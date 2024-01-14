@@ -82,7 +82,8 @@ contract TestRulesetViews_Local is JBTest, JBControllerSetup {
         mockExpect(address(rulesets), _encodedCall, _willReturn);
 
         // send
-        (JBRuleset memory ruleset, JBRulesetMetadata memory metadata, JBApprovalStatus approvalStatus) = _controller.latestQueuedRulesetOf(1);
+        (JBRuleset memory ruleset, JBRulesetMetadata memory metadata, JBApprovalStatus approvalStatus) =
+            _controller.latestQueuedRulesetOf(1);
 
         // check: return makes sense
         assertEq(data.duration, ruleset.duration);
@@ -132,5 +133,87 @@ contract TestRulesetViews_Local is JBTest, JBControllerSetup {
 
         // check: return makes sense
         assertEq(rulesetsArray[0].weight, queuedRulesets[0].ruleset.weight);
+    }
+
+    function test_upcomingRulesetOf() external {
+        // setup: return data
+        JBRuleset memory data = JBRuleset({
+            cycleNumber: 1,
+            id: block.timestamp,
+            basedOnId: 0,
+            start: block.timestamp,
+            duration: 8000,
+            weight: 5000,
+            decayRate: 0,
+            approvalHook: IJBRulesetApprovalHook(address(0x1234567890123456789012345678901234567890)),
+            metadata: genMetadata()
+        });
+
+        // setup: mock call
+        bytes memory _encodedCall = abi.encodeCall(IJBRulesets.upcomingRulesetOf, (1));
+        bytes memory _willReturn = abi.encode(data, JBApprovalStatus.Empty);
+
+        mockExpect(address(rulesets), _encodedCall, _willReturn);
+
+        // send
+        (JBRuleset memory ruleset, JBRulesetMetadata memory metadata) = _controller.upcomingRulesetOf(1);
+
+        // check: return makes sense
+        assertEq(data.duration, ruleset.duration);
+        assertEq(metadata.reservedRate, data.expandMetadata().reservedRate);
+    }
+
+    function test_SetTerminalAllowed() public {
+        // setup: return data
+        JBRuleset memory data = JBRuleset({
+            cycleNumber: 1,
+            id: block.timestamp,
+            basedOnId: 0,
+            start: block.timestamp,
+            duration: 8000,
+            weight: 5000,
+            decayRate: 0,
+            approvalHook: IJBRulesetApprovalHook(address(0x1234567890123456789012345678901234567890)),
+            metadata: genMetadata()
+        });
+
+        // setup: mock call
+        bytes memory _encodedCall = abi.encodeCall(IJBRulesets.currentOf, (1));
+        bytes memory _willReturn = abi.encode(data);
+
+        mockExpect(address(rulesets), _encodedCall, _willReturn);
+
+        // send
+        (bool allowed) = _controller.setTerminalsAllowed(1);
+
+        // check: return makes sense
+        assertEq(allowed, true);
+    }
+
+    function testSetControllerAllowed() public {
+        // setup: return data
+        JBRuleset memory data = JBRuleset({
+            cycleNumber: 1,
+            id: block.timestamp,
+            basedOnId: 0,
+            start: block.timestamp,
+            duration: 8000,
+            weight: 5000,
+            decayRate: 0,
+            approvalHook: IJBRulesetApprovalHook(address(0x1234567890123456789012345678901234567890)),
+            metadata: genMetadata()
+        });
+
+        // setup: mock call
+        bytes memory _encodedCall = abi.encodeCall(IJBRulesets.currentOf, (1));
+        bytes memory _willReturn = abi.encode(data);
+
+        mockExpect(address(rulesets), _encodedCall, _willReturn);
+
+        // send
+        (bool allowed) = _controller.setControllerAllowed(1);
+
+        // check: return makes sense
+        assertEq(allowed, true);
     }
 }
