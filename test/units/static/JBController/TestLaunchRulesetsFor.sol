@@ -5,7 +5,6 @@ import /* {*} from */ "../../../helpers/TestBaseWorkflow.sol";
 import {JBControllerSetup} from "./JBControllerSetup.sol";
 
 contract TestLaunchRulesetsFor_Local is JBTest, JBControllerSetup {
-
     function setUp() public {
         super.controllerSetup();
     }
@@ -22,7 +21,8 @@ contract TestLaunchRulesetsFor_Local is JBTest, JBControllerSetup {
         mockExpect(address(projects), _ownerOfCall, _ownerData);
 
         /* // mock permission call
-        bytes memory _call = abi.encodeCall(IJBPermissions.hasPermission, (address(this), address(this), 1, JBPermissionIds.QUEUE_RULESETS));
+        bytes memory _call = abi.encodeCall(IJBPermissions.hasPermission, (address(this), address(this), 1,
+        JBPermissionIds.QUEUE_RULESETS));
 
         mockExpect(address(permissions), _call, ""); */
         _;
