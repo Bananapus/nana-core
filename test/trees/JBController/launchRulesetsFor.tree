@@ -1,0 +1,8 @@
+TestLaunchRulesetsFor
+├── when caller does not have permission
+│   └── it should revert
+└── when caller has permission
+    ├── given the project already has rulesets
+    │   └── it should revert
+    └── given the project does not yet have rulesets
+        └── it should set the controller, queue the rulesets, configure terminals, and emit LaunchRulesets
