@@ -5,7 +5,6 @@ import /* {*} from */ "../../../helpers/TestBaseWorkflow.sol";
 import {JBControllerSetup} from "./JBControllerSetup.sol";
 
 contract TestLaunchRulesetsFor_Local is JBTest, JBControllerSetup {
-
     modifier whenCallerHasPermission() {
         // mock ownerOf call
         bytes memory _ownerOfCall = abi.encodeCall(IERC721.ownerOf, (1));
@@ -23,11 +22,13 @@ contract TestLaunchRulesetsFor_Local is JBTest, JBControllerSetup {
         mockExpect(address(projects), _ownerOfCall, _ownerData);
 
         // mock permission call
-        bytes memory _call = abi.encodeCall(IJBPermissions.hasPermission, (address(this), address(1), 1, JBPermissionIds.QUEUE_RULESETS));
+        bytes memory _call =
+            abi.encodeCall(IJBPermissions.hasPermission, (address(this), address(1), 1, JBPermissionIds.QUEUE_RULESETS));
         mockExpect(address(permissions), _call, abi.encode(false));
 
         // mock permission call #2 (checks for root priv)
-        bytes memory _call2 = abi.encodeCall(IJBPermissions.hasPermission, (address(this), address(1), 0, JBPermissionIds.QUEUE_RULESETS));
+        bytes memory _call2 =
+            abi.encodeCall(IJBPermissions.hasPermission, (address(this), address(1), 0, JBPermissionIds.QUEUE_RULESETS));
         mockExpect(address(permissions), _call2, abi.encode(false));
         _;
     }
@@ -36,7 +37,7 @@ contract TestLaunchRulesetsFor_Local is JBTest, JBControllerSetup {
         super.controllerSetup();
     }
 
-    function test_RevertWhen_CallerDoesNotHavePermission() whenCallerWithoutPermission external {
+    function test_RevertWhen_CallerDoesNotHavePermission() external whenCallerWithoutPermission {
         // it should revert
         JBTerminalConfig[] memory _terminalConfigs = new JBTerminalConfig[](0);
         JBRulesetConfig[] memory _rulesetConfigs = new JBRulesetConfig[](0);
@@ -74,7 +75,8 @@ contract TestLaunchRulesetsFor_Local is JBTest, JBControllerSetup {
         mockExpect(address(rulesets), _latestRulesetIdOfCall, _returnData);
 
         // mock call to setControllerOf
-        bytes memory _setControllerCall = abi.encodeCall(IJBDirectory.setControllerOf, (1, IERC165(address(_controller))));
+        bytes memory _setControllerCall =
+            abi.encodeCall(IJBDirectory.setControllerOf, (1, IERC165(address(_controller))));
         bytes memory _setReturn = abi.encode();
 
         mockExpect(address(directory), _setControllerCall, _setReturn);
