@@ -47,6 +47,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     //*********************************************************************//
 
     error RULESET_ALREADY_LAUNCHED();
+    error RULESETS_ARRAY_EMPTY();
     error INVALID_BASE_CURRENCY();
     error INVALID_REDEMPTION_RATE();
     error INVALID_RESERVED_RATE();
@@ -325,6 +326,8 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         override
         returns (uint256 rulesetId)
     {
+        if (rulesetConfigurations.length == 0) revert RULESETS_ARRAY_EMPTY();
+
         // Enforce permissions.
         _requirePermissionFrom({
             account: PROJECTS.ownerOf(projectId),
