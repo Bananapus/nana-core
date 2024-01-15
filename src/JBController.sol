@@ -516,9 +516,6 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     /// @param from The controller being migrated from.
     /// @param projectId The ID of the project that will be migrated to this controller.
     function receiveMigrationFrom(IERC165 from, uint256 projectId) external virtual override {
-        projectId; // Prevents unused var compiler and natspec complaints.
-        from; // Prevents unused var compiler and natspec complaints.
-
         // Copy the main metadata if relevant.
         if (
             from.supportsInterface(type(IJBProjectMetadataRegistry).interfaceId)
