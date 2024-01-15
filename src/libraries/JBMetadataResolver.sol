@@ -187,7 +187,7 @@ library JBMetadataResolver {
         uint256 start,
         uint256 end
     )
-        public
+        internal
         pure
         returns (bytes memory slicedBytes)
     {
