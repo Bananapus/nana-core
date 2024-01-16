@@ -75,46 +75,7 @@ contract MetadataResolverHelper {
         pure
         returns (bytes memory metadata)
     {
-        if (_ids.length != _datas.length) revert LENGTH_MISMATCH();
-
-        // Add a first empty 32B for the protocol reserved word
-        metadata = abi.encodePacked(bytes32(0));
-
-        // First offset for the data is after the first reserved word...
-        uint256 _offset = 1;
-
-        // ... and after the id/offset lookup table, rounding up to 32 bytes words if not a multiple
-        _offset += ((_ids.length * JBMetadataResolver.TOTAL_ID_SIZE) - 1) / JBMetadataResolver.WORD_SIZE + 1;
-
-        // For each id, add it to the lookup table with the next free offset, then increment the offset by the data
-        // length (rounded up)
-        for (uint256 _i; _i < _ids.length; ++_i) {
-            metadata = abi.encodePacked(metadata, _ids[_i], bytes1(uint8(_offset)));
-            _offset += _datas[_i].length / JBMetadataResolver.WORD_SIZE;
-
-            // Overflowing a bytes1?
-            if (_offset > 2 ** 8) revert METADATA_TOO_LONG();
-        }
-
-        // Pad the table to a multiple of 32B
-        uint256 _paddedLength = metadata.length % JBMetadataResolver.WORD_SIZE == 0
-            ? metadata.length
-            : (metadata.length / JBMetadataResolver.WORD_SIZE + 1) * JBMetadataResolver.WORD_SIZE;
-        assembly {
-            mstore(metadata, _paddedLength)
-        }
-
-        // Add each metadata to the array, each padded to 32 bytes
-        for (uint256 _i; _i < _datas.length; _i++) {
-            metadata = abi.encodePacked(metadata, _datas[_i]);
-            _paddedLength = metadata.length % JBMetadataResolver.WORD_SIZE == 0
-                ? metadata.length
-                : (metadata.length / JBMetadataResolver.WORD_SIZE + 1) * JBMetadataResolver.WORD_SIZE;
-
-            assembly {
-                mstore(metadata, _paddedLength)
-            }
-        }
+        return JBMetadataResolver.createMetadata(_ids, _datas);
     }
 
     /**

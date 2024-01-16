@@ -25,6 +25,9 @@ pragma solidity ^0.8.17;
  *            +-----------------------+
  */
 library JBMetadataResolver {
+    error LENGTH_MISMATCH();
+    error METADATA_TOO_LONG();
+
     // The various sizes used in bytes.
     uint256 constant ID_SIZE = 4;
     uint256 constant ID_OFFSET_SIZE = 1;
@@ -103,6 +106,16 @@ library JBMetadataResolver {
         pure
         returns (bytes memory newMetadata)
     {
+        if (originalMetadata.length == 0) {
+            bytes4[] memory idArray = new bytes4[](1);
+            idArray[0] = idToAdd;
+
+            bytes[] memory dataArray = new bytes[](1);
+            dataArray[0] = dataToAdd;
+
+            return createMetadata(idArray, dataArray);
+        }
+
         // Get the first data offset - upcast to avoid overflow (same for other offset)...
         uint256 firstOffset = uint8(originalMetadata[RESERVED_SIZE + ID_SIZE]);
 
@@ -182,6 +195,66 @@ library JBMetadataResolver {
         }
     }
 
+    /**
+     * @notice Create the metadata for a list of {id:data}
+     *
+     * @dev    Intended for offchain use (gas heavy)
+     *
+     * @param _ids             The list of ids
+     * @param _datas       The list of corresponding datas
+     *
+     * @return metadata       The resulting metadata
+     */
+    function createMetadata(
+        bytes4[] memory _ids,
+        bytes[] memory _datas
+    )
+        internal
+        pure
+        returns (bytes memory metadata)
+    {
+        if (_ids.length != _datas.length) revert LENGTH_MISMATCH();
+
+        // Add a first empty 32B for the protocol reserved word
+        metadata = abi.encodePacked(bytes32(0));
+
+        // First offset for the data is after the first reserved word...
+        uint256 _offset = 1;
+
+        // ... and after the id/offset lookup table, rounding up to 32 bytes words if not a multiple
+        _offset += ((_ids.length * JBMetadataResolver.TOTAL_ID_SIZE) - 1) / JBMetadataResolver.WORD_SIZE + 1;
+
+        // For each id, add it to the lookup table with the next free offset, then increment the offset by the data
+        // length (rounded up)
+        for (uint256 _i; _i < _ids.length; ++_i) {
+            metadata = abi.encodePacked(metadata, _ids[_i], bytes1(uint8(_offset)));
+            _offset += _datas[_i].length / JBMetadataResolver.WORD_SIZE;
+
+            // Overflowing a bytes1?
+            if (_offset > 2 ** 8) revert METADATA_TOO_LONG();
+        }
+
+        // Pad the table to a multiple of 32B
+        uint256 _paddedLength = metadata.length % JBMetadataResolver.WORD_SIZE == 0
+            ? metadata.length
+            : (metadata.length / JBMetadataResolver.WORD_SIZE + 1) * JBMetadataResolver.WORD_SIZE;
+        assembly {
+            mstore(metadata, _paddedLength)
+        }
+
+        // Add each metadata to the array, each padded to 32 bytes
+        for (uint256 _i; _i < _datas.length; _i++) {
+            metadata = abi.encodePacked(metadata, _datas[_i]);
+            _paddedLength = metadata.length % JBMetadataResolver.WORD_SIZE == 0
+                ? metadata.length
+                : (metadata.length / JBMetadataResolver.WORD_SIZE + 1) * JBMetadataResolver.WORD_SIZE;
+
+            assembly {
+                mstore(metadata, _paddedLength)
+            }
+        }
+    }
+
     /// @notice Slice bytes from a start index to an end index.
     /// @param data The bytes array to slice
     /// @param start The start index to slice at.
@@ -195,7 +268,7 @@ library JBMetadataResolver {
         internal
         pure
         returns (bytes memory slicedBytes)
-    {   
+    {
         assembly {
             let length := sub(end, start)
 
@@ -214,7 +287,7 @@ library JBMetadataResolver {
 
             // store dem data
             for { let i := 0 } lt(i, end) { i := add(i, 0x20) } {
-                mstore(add(sliceBytesStartOfData, i), mload(add(startBytes,i)))
+                mstore(add(sliceBytesStartOfData, i), mload(add(startBytes, i)))
             }
         }
     }

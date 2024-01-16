@@ -268,6 +268,24 @@ contract JBDelegateMetadataLib_Test is Test {
     }
 
     /**
+     * @notice Test adding `bytes32` and `uint` to an empty metadata.
+     */
+    function test_addToMetadata_emptyInitialMetadata() external {
+        bytes memory _metadata;
+
+        bytes memory _modifiedMetadata = parser.addDataToMetadata(
+            _metadata, bytes4(uint32(type(uint32).max)), abi.encode(uint32(69), bytes32(uint256(type(uint256).max)))
+        );
+
+        (bool _found, bytes memory _dataParsed) = parser.getDataFor(bytes4(uint32(type(uint32).max)), _modifiedMetadata);
+        (uint32 _a, bytes32 _b) = abi.decode(_dataParsed, (uint32, bytes32));
+
+        assertTrue(_found);
+        assertEq(_a, uint32(69));
+        assertEq(_b, bytes32(uint256(type(uint256).max)));
+    }
+
+    /**
      * @notice Test behaviour if the ID is not found in the lookup table.
      */
     function test_idNotFound(uint256 _numberOfIds) public {
