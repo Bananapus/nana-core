@@ -27,6 +27,7 @@ pragma solidity ^0.8.17;
 library JBMetadataResolver {
     error LENGTH_MISMATCH();
     error METADATA_TOO_LONG();
+    error METADATA_TOO_SHORT();
 
     // The various sizes used in bytes.
     uint256 constant ID_SIZE = 4;
@@ -105,16 +106,14 @@ library JBMetadataResolver {
         internal
         pure
         returns (bytes memory newMetadata)
-    {
-        if (originalMetadata.length == 0) {
-            bytes4[] memory idArray = new bytes4[](1);
-            idArray[0] = idToAdd;
-
-            bytes[] memory dataArray = new bytes[](1);
-            dataArray[0] = dataToAdd;
-
-            return createMetadata(idArray, dataArray);
+    {   
+        // Empty original metadata and maybe something in the first 32 bytes: create new metadata
+        if (originalMetadata.length <= RESERVED_SIZE) {
+            return abi.encodePacked(bytes32(originalMetadata), bytes32(abi.encodePacked(idToAdd, uint8(2))), dataToAdd);
         }
+
+        // There is something in the table offset, but not a valid entry - avoid overwriting
+        if (originalMetadata.length < RESERVED_SIZE + ID_SIZE + 1) revert METADATA_TOO_SHORT();
 
         // Get the first data offset - upcast to avoid overflow (same for other offset)...
         uint256 firstOffset = uint8(originalMetadata[RESERVED_SIZE + ID_SIZE]);
