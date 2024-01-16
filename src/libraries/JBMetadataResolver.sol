@@ -183,10 +183,10 @@ library JBMetadataResolver {
     }
 
     /// @notice Slice bytes from a start index to an end index.
-    /// @param data The data being sliced.
+    /// @param data The bytes array to slice
     /// @param start The start index to slice at.
     /// @param end The end index to slice at.
-    /// @param slicedBytes The sliced bytes.
+    /// @param slicedBytes The sliced array.
     function _sliceBytes(
         bytes memory data,
         uint256 start,
@@ -195,23 +195,27 @@ library JBMetadataResolver {
         internal
         pure
         returns (bytes memory slicedBytes)
-    {
-        // slicedBytes = new bytes(end - start);
-        // for (uint256 i = start; i < end; i++) {
-        //     slicedBytes[i - start] = data[i];
-        // }
-
-        slicedBytes = new bytes(end-start);
-
+    {   
         assembly {
+            let length := sub(end, start)
+
+            // Allocate memory at the freemem(add 0x20 to include the length)
+            slicedBytes := mload(0x40)
+            mstore(0x40, add(add(slicedBytes, length), 0x20))
+
+            // Store the length (first element)
+            mstore(slicedBytes, length)
+
+            // compute the actual data first offset only once
             let startBytes := add(add(data, 0x20), start)
 
+            // same for the out array
+            let sliceBytesStartOfData := add(slicedBytes, 0x20)
+
+            // store dem data
             for { let i := 0 } lt(i, end) { i := add(i, 0x20) } {
-
-                mstore(add(slicedBytes, add(i, 0x20)), add(startBytes,i))
+                mstore(add(sliceBytesStartOfData, i), mload(add(startBytes,i)))
             }
-
-            //mstore(slicedBytes, sub(end, start))
         }
     }
 }
