@@ -63,8 +63,13 @@ library JBMetadataResolver {
         for (uint256 i = RESERVED_SIZE; metadata[i + ID_SIZE] != bytes1(0) && i < firstOffset * WORD_SIZE;) {
             uint256 currentOffset = uint256(uint8(metadata[i + ID_SIZE]));
 
+            bytes4 parsedId;
+            assembly {
+                parsedId := mload(add(add(metadata, 0x20), i))
+            }
+
             // _id found?
-            if (bytes4(_sliceBytes(metadata, i, i + ID_SIZE)) == id) {
+            if (parsedId == id) {
                 // Are we at the end of the lookup table (either at the start of data's or next offset is 0/in the
                 // padding)
                 // If not, only return until from this offset to the begining of the next offset
@@ -191,9 +196,22 @@ library JBMetadataResolver {
         pure
         returns (bytes memory slicedBytes)
     {
-        slicedBytes = new bytes(end - start);
-        for (uint256 i = start; i < end; i++) {
-            slicedBytes[i - start] = data[i];
+        // slicedBytes = new bytes(end - start);
+        // for (uint256 i = start; i < end; i++) {
+        //     slicedBytes[i - start] = data[i];
+        // }
+
+        slicedBytes = new bytes(end-start);
+
+        assembly {
+            let startBytes := add(add(data, 0x20), start)
+
+            for { let i := 0 } lt(i, end) { i := add(i, 0x20) } {
+
+                mstore(add(slicedBytes, add(i, 0x20)), add(startBytes,i))
+            }
+
+            //mstore(slicedBytes, sub(end, start))
         }
     }
 }
