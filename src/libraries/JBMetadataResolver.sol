@@ -25,6 +25,10 @@ pragma solidity ^0.8.17;
  *            +-----------------------+
  */
 library JBMetadataResolver {
+    error LENGTH_MISMATCH();
+    error METADATA_TOO_LONG();
+    error METADATA_TOO_SHORT();
+
     // The various sizes used in bytes.
     uint256 constant ID_SIZE = 4;
     uint256 constant ID_OFFSET_SIZE = 1;
@@ -63,8 +67,13 @@ library JBMetadataResolver {
         for (uint256 i = RESERVED_SIZE; metadata[i + ID_SIZE] != bytes1(0) && i < firstOffset * WORD_SIZE;) {
             uint256 currentOffset = uint256(uint8(metadata[i + ID_SIZE]));
 
+            bytes4 parsedId;
+            assembly {
+                parsedId := mload(add(add(metadata, 0x20), i))
+            }
+
             // _id found?
-            if (bytes4(_sliceBytes(metadata, i, i + ID_SIZE)) == id) {
+            if (parsedId == id) {
                 // Are we at the end of the lookup table (either at the start of data's or next offset is 0/in the
                 // padding)
                 // If not, only return until from this offset to the begining of the next offset
@@ -98,6 +107,14 @@ library JBMetadataResolver {
         pure
         returns (bytes memory newMetadata)
     {
+        // Empty original metadata and maybe something in the first 32 bytes: create new metadata
+        if (originalMetadata.length <= RESERVED_SIZE) {
+            return abi.encodePacked(bytes32(originalMetadata), bytes32(abi.encodePacked(idToAdd, uint8(2))), dataToAdd);
+        }
+
+        // There is something in the table offset, but not a valid entry - avoid overwriting
+        if (originalMetadata.length < RESERVED_SIZE + ID_SIZE + 1) revert METADATA_TOO_SHORT();
+
         // Get the first data offset - upcast to avoid overflow (same for other offset)...
         uint256 firstOffset = uint8(originalMetadata[RESERVED_SIZE + ID_SIZE]);
 
@@ -177,11 +194,71 @@ library JBMetadataResolver {
         }
     }
 
+    /**
+     * @notice Create the metadata for a list of {id:data}
+     *
+     * @dev    Intended for offchain use (gas heavy)
+     *
+     * @param _ids             The list of ids
+     * @param _datas       The list of corresponding datas
+     *
+     * @return metadata       The resulting metadata
+     */
+    function createMetadata(
+        bytes4[] memory _ids,
+        bytes[] memory _datas
+    )
+        internal
+        pure
+        returns (bytes memory metadata)
+    {
+        if (_ids.length != _datas.length) revert LENGTH_MISMATCH();
+
+        // Add a first empty 32B for the protocol reserved word
+        metadata = abi.encodePacked(bytes32(0));
+
+        // First offset for the data is after the first reserved word...
+        uint256 _offset = 1;
+
+        // ... and after the id/offset lookup table, rounding up to 32 bytes words if not a multiple
+        _offset += ((_ids.length * JBMetadataResolver.TOTAL_ID_SIZE) - 1) / JBMetadataResolver.WORD_SIZE + 1;
+
+        // For each id, add it to the lookup table with the next free offset, then increment the offset by the data
+        // length (rounded up)
+        for (uint256 _i; _i < _ids.length; ++_i) {
+            metadata = abi.encodePacked(metadata, _ids[_i], bytes1(uint8(_offset)));
+            _offset += _datas[_i].length / JBMetadataResolver.WORD_SIZE;
+
+            // Overflowing a bytes1?
+            if (_offset > 2 ** 8) revert METADATA_TOO_LONG();
+        }
+
+        // Pad the table to a multiple of 32B
+        uint256 _paddedLength = metadata.length % JBMetadataResolver.WORD_SIZE == 0
+            ? metadata.length
+            : (metadata.length / JBMetadataResolver.WORD_SIZE + 1) * JBMetadataResolver.WORD_SIZE;
+        assembly {
+            mstore(metadata, _paddedLength)
+        }
+
+        // Add each metadata to the array, each padded to 32 bytes
+        for (uint256 _i; _i < _datas.length; _i++) {
+            metadata = abi.encodePacked(metadata, _datas[_i]);
+            _paddedLength = metadata.length % JBMetadataResolver.WORD_SIZE == 0
+                ? metadata.length
+                : (metadata.length / JBMetadataResolver.WORD_SIZE + 1) * JBMetadataResolver.WORD_SIZE;
+
+            assembly {
+                mstore(metadata, _paddedLength)
+            }
+        }
+    }
+
     /// @notice Slice bytes from a start index to an end index.
-    /// @param data The data being sliced.
+    /// @param data The bytes array to slice
     /// @param start The start index to slice at.
     /// @param end The end index to slice at.
-    /// @param slicedBytes The sliced bytes.
+    /// @param slicedBytes The sliced array.
     function _sliceBytes(
         bytes memory data,
         uint256 start,
@@ -191,9 +268,26 @@ library JBMetadataResolver {
         pure
         returns (bytes memory slicedBytes)
     {
-        slicedBytes = new bytes(end - start);
-        for (uint256 i = start; i < end; i++) {
-            slicedBytes[i - start] = data[i];
+        assembly {
+            let length := sub(end, start)
+
+            // Allocate memory at the freemem(add 0x20 to include the length)
+            slicedBytes := mload(0x40)
+            mstore(0x40, add(add(slicedBytes, length), 0x20))
+
+            // Store the length (first element)
+            mstore(slicedBytes, length)
+
+            // compute the actual data first offset only once
+            let startBytes := add(add(data, 0x20), start)
+
+            // same for the out array
+            let sliceBytesStartOfData := add(slicedBytes, 0x20)
+
+            // store dem data
+            for { let i := 0 } lt(i, end) { i := add(i, 0x20) } {
+                mstore(add(sliceBytesStartOfData, i), mload(add(startBytes, i)))
+            }
         }
     }
 }
