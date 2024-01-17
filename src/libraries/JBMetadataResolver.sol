@@ -106,7 +106,7 @@ library JBMetadataResolver {
         internal
         pure
         returns (bytes memory newMetadata)
-    {   
+    {
         // Empty original metadata and maybe something in the first 32 bytes: create new metadata
         if (originalMetadata.length <= RESERVED_SIZE) {
             return abi.encodePacked(bytes32(originalMetadata), bytes32(abi.encodePacked(idToAdd, uint8(2))), dataToAdd);

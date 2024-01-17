@@ -381,5 +381,4 @@ contract JBDelegateMetadataLib_Test is Test {
         vm.expectRevert(abi.encodeWithSignature("LENGTH_MISMATCH()"));
         parser.createMetadata(_ids, _datas);
     }
-
 }
