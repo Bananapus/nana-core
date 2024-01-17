@@ -1,0 +1,4 @@
+TestReceiveMigrationFrom
+└── when caller supports the correct interface
+    └── given that the caller is also controllerOf projectId
+        └── it should set metadata

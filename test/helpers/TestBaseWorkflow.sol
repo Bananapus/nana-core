@@ -51,6 +51,7 @@ import {IJBMigratable} from "src/interfaces/IJBMigratable.sol";
 import {IJBPermissions} from "src/interfaces/IJBPermissions.sol";
 import {IJBTerminalStore} from "src/interfaces/IJBTerminalStore.sol";
 import {IJBProjects} from "src/interfaces/IJBProjects.sol";
+import {IJBProjectMetadataRegistry} from "src/interfaces/IJBProjectMetadataRegistry.sol";
 import {IJBRulesetApprovalHook} from "src/interfaces/IJBRulesetApprovalHook.sol";
 import {IJBDirectory} from "src/interfaces/IJBDirectory.sol";
 import {IJBRulesets} from "src/interfaces/IJBRulesets.sol";
