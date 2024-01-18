@@ -4,12 +4,16 @@ pragma solidity 0.8.23;
 import /* {*} from */ "../../../helpers/TestBaseWorkflow.sol";
 import {JBControllerSetup} from "./JBControllerSetup.sol";
 
-contract TestReceiveMigrationFrom is JBTest, JBControllerSetup, IJBProjectMetadataRegistry {
+contract TestReceiveMigrationFrom_Local is JBTest, JBControllerSetup, IJBProjectMetadataRegistry {
     // avoid compiler warning
     function setMetadataOf(uint256 projectId, string calldata metadata) external {}
 
     function metadataOf(uint256) public pure returns (string memory) {
         return "Juicay";
+    }
+
+    function setUp() public {
+        super.controllerSetup();
     }
 
     modifier whenCallerSupportsTheCorrectInterface() {
@@ -30,7 +34,16 @@ contract TestReceiveMigrationFrom is JBTest, JBControllerSetup, IJBProjectMetada
         _;
     }
 
-    function test_GivenThatTheCallerIsNotControllerOfProjectId() whenCallerSupportsTheCorrectInterface external {
+    modifier whenCallerIsNotController() {
+        bytes memory _encodedCall =
+        abi.encodeCall(IJBDirectory.controllerOf, (1));
+        bytes memory _willReturn = abi.encode(address(1));
+
+        mockExpect(address(directory), _encodedCall, _willReturn);
+        _;
+    }
+
+    function test_GivenThatTheCallerIsNotControllerOfProjectId() whenCallerSupportsTheCorrectInterface whenCallerIsNotController external {
         // it will not set metadata
         bytes32 beforeSet = keccak256(abi.encodePacked(_controller.metadataOf(1)));
 
