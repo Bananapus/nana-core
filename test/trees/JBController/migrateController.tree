@@ -1,0 +1,12 @@
+TestMigrateController
+├── when caller does not have MIGRATE_CONTROLLER permission
+│   └── it should revert
+└── when caller has MIGRATE_CONTROLLER permission
+    ├── given migration is not allowed by ruleset
+    │   └── it should revert
+    └── given migration is allowed by ruleset
+        ├── given reserved token balance is pending
+        │   └── it should send reserved tokens to splits
+        └── given no reserved token balance is pending
+            ├── it should prepare new controller for migration
+            └── it should emit MigrateController event
