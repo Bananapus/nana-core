@@ -130,7 +130,11 @@ contract TestMigrateController_Local is JBTest, JBControllerSetup {
         _controller.migrateController(1, IJBMigratable(address(this)));
     }
 
-    function test_Revert_Given_MigrationIsNotAllowedByRuleset() external whenCallerHas_MIGRATE_CONTROLLER_Permission migrationIsNotAllowedByRuleset {
+    function test_Revert_Given_MigrationIsNotAllowedByRuleset()
+        external
+        whenCallerHas_MIGRATE_CONTROLLER_Permission
+        migrationIsNotAllowedByRuleset
+    {
         // it should revert
         vm.expectRevert(abi.encodeWithSignature("CONTROLLER_MIGRATION_NOT_ALLOWED()"));
         _controller.migrateController(1, IJBMigratable(address(this)));
