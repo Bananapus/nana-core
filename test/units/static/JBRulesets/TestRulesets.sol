@@ -7,21 +7,6 @@ import /* {*} from */ "../../../helpers/TestBaseWorkflow.sol";
  * @title
  */
 contract TestJBRulesetsUnits_Local is JBTest {
-    // Events
-    event RulesetQueued(
-        uint256 indexed rulesetId,
-        uint256 indexed projectId,
-        uint256 duration,
-        uint256 weight,
-        uint256 decayRate,
-        IJBRulesetApprovalHook hook,
-        uint256 metadata,
-        uint256 mustStartAtOrAfter,
-        address caller
-    );
-
-    event RulesetInitialized(uint256 indexed rulesetId, uint256 indexed projectId, uint256 indexed basedOnId);
-
     // Contracts
     JBRulesets public _rulesets;
     IJBDirectory internal _directory;
@@ -135,7 +120,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
 
         // Setup: expect ruleset event (RulesetQueued) is emitted
         vm.expectEmit();
-        emit RulesetQueued(
+        emit IJBRulesets.RulesetQueued(
             block.timestamp,
             _projectId,
             _duration,
@@ -189,7 +174,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
 
         // Setup: expect ruleset event (RulesetQueued) is emitted
         vm.expectEmit();
-        emit RulesetQueued(
+        emit IJBRulesets.RulesetQueued(
             block.timestamp,
             _projectId,
             _duration,
