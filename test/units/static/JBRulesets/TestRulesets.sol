@@ -3,9 +3,6 @@ pragma solidity 0.8.23;
 
 import /* {*} from */ "../../../helpers/TestBaseWorkflow.sol";
 
-/**
- * @title
- */
 contract TestJBRulesetsUnits_Local is JBTest {
     // Contracts
     JBRulesets public _rulesets;
