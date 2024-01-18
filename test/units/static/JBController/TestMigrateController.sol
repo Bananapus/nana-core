@@ -63,13 +63,78 @@ contract TestMigrateController_Local is JBTest, JBControllerSetup {
         _;
     }
 
-    /* function test_Revert_When_CallerDoesNotHave_MIGRATE_CONTROLLER_Permission() external {
-        // it should revert
+    modifier migrationIsNotAllowedByRuleset() {
+        JBRulesetMetadata memory _metadata = JBRulesetMetadata({
+            reservedRate: JBConstants.MAX_RESERVED_RATE / 2, //50%
+            redemptionRate: JBConstants.MAX_REDEMPTION_RATE / 2, //50%
+            baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
+            pausePay: false,
+            pauseCreditTransfers: false,
+            allowOwnerMinting: false,
+            allowTerminalMigration: false,
+            allowSetTerminals: false,
+            allowControllerMigration: false,
+            allowSetController: false,
+            holdFees: false,
+            useTotalSurplusForRedemptions: true,
+            useDataHookForPay: false,
+            useDataHookForRedeem: false,
+            dataHook: address(0),
+            metadata: 0
+        });
+
+        uint256 _packedMetadata = JBRulesetMetadataResolver.packRulesetMetadata(_metadata);
+
+        // setup: return data
+        JBRuleset memory data = JBRuleset({
+            cycleNumber: 1,
+            id: block.timestamp,
+            basedOnId: 0,
+            start: block.timestamp,
+            duration: 0,
+            weight: 0,
+            decayRate: 0,
+            approvalHook: IJBRulesetApprovalHook(address(0)),
+            metadata: _packedMetadata
+        });
+
+        // mock currentOf call
+        bytes memory _currentOfCall = abi.encodeCall(IJBRulesets.currentOf, (1));
+        bytes memory _returned = abi.encode(data);
+
+        mockExpect(address(rulesets), _currentOfCall, _returned);
+        _;
     }
 
-    function test_Revert_Given_MigrationIsNotAllowedByRuleset() external whenCallerHas_MIGRATE_CONTROLLER_Permission {
+    function test_Revert_When_CallerDoesNotHave_MIGRATE_CONTROLLER_Permission() external {
         // it should revert
-    } */
+        // mock ownerOf call
+        bytes memory _ownerOfCall = abi.encodeCall(IERC721.ownerOf, (1));
+        bytes memory _ownerData = abi.encode(address(1));
+
+        mockExpect(address(projects), _ownerOfCall, _ownerData);
+
+        // mock first permissions call
+        bytes memory _permissionsCall = abi.encodeCall(IJBPermissions.hasPermission, (address(this), address(1), 1, 4));
+        bytes memory _permissionsReturned = abi.encode(false);
+
+        mockExpect(address(permissions), _permissionsCall, _permissionsReturned);
+
+        // mock second permissions call
+        bytes memory _permissionsCall2 = abi.encodeCall(IJBPermissions.hasPermission, (address(this), address(1), 0, 4));
+        bytes memory _permissionsReturned2 = abi.encode(false);
+
+        mockExpect(address(permissions), _permissionsCall2, _permissionsReturned2);
+
+        vm.expectRevert(abi.encodeWithSignature("UNAUTHORIZED()"));
+        _controller.migrateController(1, IJBMigratable(address(this)));
+    }
+
+    function test_Revert_Given_MigrationIsNotAllowedByRuleset() external whenCallerHas_MIGRATE_CONTROLLER_Permission migrationIsNotAllowedByRuleset {
+        // it should revert
+        vm.expectRevert(abi.encodeWithSignature("CONTROLLER_MIGRATION_NOT_ALLOWED()"));
+        _controller.migrateController(1, IJBMigratable(address(this)));
+    }
 
     function test_GivenReservedTokenBalanceIsPending()
         external
@@ -118,12 +183,25 @@ contract TestMigrateController_Local is JBTest, JBControllerSetup {
         _controller.migrateController(1, IJBMigratable(address(this)));
     }
 
-    /* function test_GivenNoReservedTokenBalanceIsPending()
+    function test_GivenNoReservedTokenBalanceIsPending()
         external
         whenCallerHas_MIGRATE_CONTROLLER_Permission
         migrationIsAllowedByRuleset
     {
         // it should prepare new controller for migration
         // it should emit MigrateController event
-    } */
+
+        // receive migration call mock
+        bytes memory _encodedCall =
+            abi.encodeCall(IJBMigratable.receiveMigrationFrom, (IERC165(address(_controller)), 1));
+        bytes memory _willReturn = abi.encode();
+
+        mockExpect(address(this), _encodedCall, _willReturn);
+
+        // event as expected
+        vm.expectEmit();
+        emit IJBController.MigrateController(1, IJBMigratable(address(this)), address(this));
+
+        _controller.migrateController(1, IJBMigratable(address(this)));
+    }
 }
