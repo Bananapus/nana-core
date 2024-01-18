@@ -10,7 +10,7 @@ contract TestMigrateController_Local is JBTest, JBControllerSetup {
     function setUp() public {
         super.controllerSetup();
     }
-    
+
     modifier whenCallerHas_MIGRATE_CONTROLLER_Permission() {
         // mock ownerOf call
         bytes memory _ownerOfCall = abi.encodeCall(IERC721.ownerOf, (1));
@@ -78,22 +78,19 @@ contract TestMigrateController_Local is JBTest, JBControllerSetup {
     {
         // it should send reserved tokens to splits
         // set storage since we can't mock internal calls
-        stdstore
-        .target(address(_controller))
-        .sig("pendingReservedTokenBalanceOf(uint256)")
-        .with_key(uint256(1))
-        .checked_write(uint256(100));
+        stdstore.target(address(_controller)).sig("pendingReservedTokenBalanceOf(uint256)").with_key(uint256(1))
+            .checked_write(uint256(100));
 
         // receive migration call mock
         bytes memory _encodedCall =
-        abi.encodeCall(IJBMigratable.receiveMigrationFrom, (IERC165(address(_controller)), 1));
+            abi.encodeCall(IJBMigratable.receiveMigrationFrom, (IERC165(address(_controller)), 1));
         bytes memory _willReturn = abi.encode();
 
         mockExpect(address(this), _encodedCall, _willReturn);
 
         // mock splitsOf call
         JBSplit[] memory splitsArray = new JBSplit[](1);
-    
+
         splitsArray[0] = JBSplit({
             preferAddToBalance: false,
             percent: JBConstants.SPLITS_TOTAL_PERCENT / 2,
@@ -103,15 +100,13 @@ contract TestMigrateController_Local is JBTest, JBControllerSetup {
             hook: IJBSplitHook(address(0))
         });
 
-        bytes memory _encodedCallSplits =
-        abi.encodeCall(IJBSplits.splitsOf, (1, block.timestamp, 1));
+        bytes memory _encodedCallSplits = abi.encodeCall(IJBSplits.splitsOf, (1, block.timestamp, 1));
         bytes memory _willReturnSplits = abi.encode(splitsArray);
 
         mockExpect(address(splits), _encodedCallSplits, _willReturnSplits);
 
-        // mock mint call 
-        bytes memory _mintCall =
-        abi.encodeCall(IJBTokens.mintFor, (address(this), 1, 50));
+        // mock mint call
+        bytes memory _mintCall = abi.encodeCall(IJBTokens.mintFor, (address(this), 1, 50));
         bytes memory _mintReturn = abi.encode(splitsArray);
 
         mockExpect(address(tokens), _mintCall, _mintReturn);

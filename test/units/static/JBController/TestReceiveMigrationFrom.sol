@@ -18,7 +18,7 @@ contract TestReceiveMigrationFrom_Local is JBTest, JBControllerSetup, IJBProject
 
     modifier whenCallerSupportsTheCorrectInterface() {
         bytes memory _encodedCall =
-        abi.encodeCall(IERC165.supportsInterface, (type(IJBProjectMetadataRegistry).interfaceId));
+            abi.encodeCall(IERC165.supportsInterface, (type(IJBProjectMetadataRegistry).interfaceId));
         bytes memory _willReturn = abi.encode(true);
 
         mockExpect(address(this), _encodedCall, _willReturn);
@@ -26,8 +26,7 @@ contract TestReceiveMigrationFrom_Local is JBTest, JBControllerSetup, IJBProject
     }
 
     modifier whenCallerIsController() {
-        bytes memory _encodedCall =
-        abi.encodeCall(IJBDirectory.controllerOf, (1));
+        bytes memory _encodedCall = abi.encodeCall(IJBDirectory.controllerOf, (1));
         bytes memory _willReturn = abi.encode(address(this));
 
         mockExpect(address(directory), _encodedCall, _willReturn);
@@ -35,15 +34,18 @@ contract TestReceiveMigrationFrom_Local is JBTest, JBControllerSetup, IJBProject
     }
 
     modifier whenCallerIsNotController() {
-        bytes memory _encodedCall =
-        abi.encodeCall(IJBDirectory.controllerOf, (1));
+        bytes memory _encodedCall = abi.encodeCall(IJBDirectory.controllerOf, (1));
         bytes memory _willReturn = abi.encode(address(1));
 
         mockExpect(address(directory), _encodedCall, _willReturn);
         _;
     }
 
-    function test_GivenThatTheCallerIsNotControllerOfProjectId() whenCallerSupportsTheCorrectInterface whenCallerIsNotController external {
+    function test_GivenThatTheCallerIsNotControllerOfProjectId()
+        external
+        whenCallerSupportsTheCorrectInterface
+        whenCallerIsNotController
+    {
         // it will not set metadata
         bytes32 beforeSet = keccak256(abi.encodePacked(_controller.metadataOf(1)));
 
@@ -58,7 +60,11 @@ contract TestReceiveMigrationFrom_Local is JBTest, JBControllerSetup, IJBProject
         assertEq(isJuicy, false);
     }
 
-    function test_GivenThatTheCallerIsAlsoControllerOfProjectId() external whenCallerSupportsTheCorrectInterface whenCallerIsController {
+    function test_GivenThatTheCallerIsAlsoControllerOfProjectId()
+        external
+        whenCallerSupportsTheCorrectInterface
+        whenCallerIsController
+    {
         // it should set metadata
         bytes32 beforeSet = keccak256(abi.encodePacked(_controller.metadataOf(1)));
 
