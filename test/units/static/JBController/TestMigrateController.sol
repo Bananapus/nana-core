@@ -115,13 +115,17 @@ contract TestMigrateController_Local is JBTest, JBControllerSetup {
         mockExpect(address(projects), _ownerOfCall, _ownerData);
 
         // mock first permissions call
-        bytes memory _permissionsCall = abi.encodeCall(IJBPermissions.hasPermission, (address(this), address(1), 1, 4));
+        bytes memory _permissionsCall = abi.encodeCall(
+            IJBPermissions.hasPermission, (address(this), address(1), 1, JBPermissionIds.MIGRATE_CONTROLLER)
+        );
         bytes memory _permissionsReturned = abi.encode(false);
 
         mockExpect(address(permissions), _permissionsCall, _permissionsReturned);
 
         // mock second permissions call
-        bytes memory _permissionsCall2 = abi.encodeCall(IJBPermissions.hasPermission, (address(this), address(1), 0, 4));
+        bytes memory _permissionsCall2 = abi.encodeCall(
+            IJBPermissions.hasPermission, (address(this), address(1), 0, JBPermissionIds.MIGRATE_CONTROLLER)
+        );
         bytes memory _permissionsReturned2 = abi.encode(false);
 
         mockExpect(address(permissions), _permissionsCall2, _permissionsReturned2);
