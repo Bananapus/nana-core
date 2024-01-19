@@ -8,7 +8,7 @@ contract TestSetPrimaryTerminalOf_Local is JBTest, JBDirectorySetup {
     function setUp() public {
         super.directorySetup();
     }
-    
+
     modifier givenThatTheTerminalHasNotBeenAdded() {
         _;
     }
