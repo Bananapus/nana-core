@@ -54,6 +54,7 @@ import {IJBProjects} from "src/interfaces/IJBProjects.sol";
 import {IJBProjectMetadataRegistry} from "src/interfaces/IJBProjectMetadataRegistry.sol";
 import {IJBRulesetApprovalHook} from "src/interfaces/IJBRulesetApprovalHook.sol";
 import {IJBDirectory} from "src/interfaces/IJBDirectory.sol";
+import {IJBDirectoryAccessControl} from "src/interfaces/IJBDirectoryAccessControl.sol";
 import {IJBRulesets} from "src/interfaces/IJBRulesets.sol";
 import {IJBSplits} from "src/interfaces/IJBSplits.sol";
 import {IJBTokens} from "src/interfaces/IJBTokens.sol";
