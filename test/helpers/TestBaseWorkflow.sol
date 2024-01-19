@@ -29,6 +29,7 @@ import {JBAfterRedeemRecordedContext} from "src/structs/JBAfterRedeemRecordedCon
 import {JBFee} from "src/structs/JBFee.sol";
 import {JBFees} from "src/libraries/JBFees.sol";
 import {JBFundAccessLimitGroup} from "src/structs/JBFundAccessLimitGroup.sol";
+import {JBAccountingContext} from "src/structs/JBAccountingContext.sol";
 import {JBRuleset} from "src/structs/JBRuleset.sol";
 import {JBRulesetMetadata} from "src/structs/JBRulesetMetadata.sol";
 import {JBRulesetWithMetadata} from "src/structs/JBRulesetWithMetadata.sol";
