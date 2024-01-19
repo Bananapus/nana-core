@@ -35,11 +35,7 @@ contract TestSetPrimaryTerminalOf_Local is JBTest, JBDirectorySetup {
 
     modifier givenThatThereIsAnAccountingContextForTokenOf() {
         // accounting context
-        JBAccountingContext memory _context = JBAccountingContext({
-            token: _token,
-            decimals: 6,
-            currency: uint32(1)
-        });
+        JBAccountingContext memory _context = JBAccountingContext({token: _token, decimals: 6, currency: uint32(1)});
 
         // mock accountingContext call
         bytes memory _contextCall = abi.encodeCall(IJBTerminal.accountingContextForTokenOf, (1, _token));
