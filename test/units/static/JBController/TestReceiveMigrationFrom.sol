@@ -5,9 +5,10 @@ import /* {*} from */ "../../../helpers/TestBaseWorkflow.sol";
 import {JBControllerSetup} from "./JBControllerSetup.sol";
 
 contract TestReceiveMigrationFrom_Local is JBTest, JBControllerSetup, IJBProjectMetadataRegistry {
-    // avoid compiler warning
+    // avoid compiler warning: satisfy interface
     function setMetadataOf(uint256 projectId, string calldata metadata) external {}
 
+    // avoid compiler warning: satisfy interface
     function metadataOf(uint256) public pure returns (string memory) {
         return "Juicay";
     }
@@ -16,7 +17,7 @@ contract TestReceiveMigrationFrom_Local is JBTest, JBControllerSetup, IJBProject
         super.controllerSetup();
     }
 
-    modifier whenCallerSupportsTheCorrectInterface() {
+    modifier whenCallerSupportsInterface() {
         bytes memory _encodedCall =
             abi.encodeCall(IERC165.supportsInterface, (type(IJBProjectMetadataRegistry).interfaceId));
         bytes memory _willReturn = abi.encode(true);
@@ -41,9 +42,9 @@ contract TestReceiveMigrationFrom_Local is JBTest, JBControllerSetup, IJBProject
         _;
     }
 
-    function test_GivenThatTheCallerIsNotControllerOfProjectId()
+    function test_GivenCallerIsNotControllerOfProjectId()
         external
-        whenCallerSupportsTheCorrectInterface
+        whenCallerSupportsInterface
         whenCallerIsNotController
     {
         // it will not set metadata
@@ -60,9 +61,9 @@ contract TestReceiveMigrationFrom_Local is JBTest, JBControllerSetup, IJBProject
         assertEq(isJuicy, false);
     }
 
-    function test_GivenThatTheCallerIsAlsoControllerOfProjectId()
+    function test_GivenCallerIsAlsoControllerOfProjectId()
         external
-        whenCallerSupportsTheCorrectInterface
+        whenCallerSupportsInterface
         whenCallerIsController
     {
         // it should set metadata

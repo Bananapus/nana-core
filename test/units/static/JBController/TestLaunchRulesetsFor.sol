@@ -5,6 +5,10 @@ import /* {*} from */ "../../../helpers/TestBaseWorkflow.sol";
 import {JBControllerSetup} from "./JBControllerSetup.sol";
 
 contract TestLaunchRulesetsFor_Local is JBTest, JBControllerSetup {
+    function setUp() public {
+        super.controllerSetup();
+    }
+    
     modifier whenCallerHasPermission() {
         // mock ownerOf call
         bytes memory _ownerOfCall = abi.encodeCall(IERC721.ownerOf, (1));
@@ -31,10 +35,6 @@ contract TestLaunchRulesetsFor_Local is JBTest, JBControllerSetup {
             abi.encodeCall(IJBPermissions.hasPermission, (address(this), address(1), 0, JBPermissionIds.QUEUE_RULESETS));
         mockExpect(address(permissions), _call2, abi.encode(false));
         _;
-    }
-
-    function setUp() public {
-        super.controllerSetup();
     }
 
     function genRuleset()

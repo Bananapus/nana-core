@@ -15,7 +15,7 @@ contract TestSetPrimaryTerminalOf_Local is JBTest, JBDirectorySetup {
         super.directorySetup();
     }
 
-    modifier givenThatTheTerminalHasNotBeenAdded() {
+    modifier givenTerminalHasNotBeenAdded() {
         vm.expectEmit();
         emit IJBDirectory.AddTerminal(1, _terminalToAdd, address(this));
         _;
@@ -30,7 +30,7 @@ contract TestSetPrimaryTerminalOf_Local is JBTest, JBDirectorySetup {
         _;
     }
 
-    modifier givenThatThereIsAnAccountingContextForTokenOf() {
+    modifier givenValidAccountingContext() {
         // accounting context
         JBAccountingContext memory _context = JBAccountingContext({token: _token, decimals: 6, currency: uint32(1)});
 
@@ -70,7 +70,7 @@ contract TestSetPrimaryTerminalOf_Local is JBTest, JBDirectorySetup {
         _directory.setPrimaryTerminalOf(1, _token, _terminalToAdd);
     }
 
-    function test_GivenThatThereIsNoAccountingContextForTokenOf() external whenCallerHasPermission {
+    function test_GivenNoValidAccountingContextForTokenOf() external whenCallerHasPermission {
         // it should revert with TOKEN_NOT_ACCEPTED
         // accounting context
         JBAccountingContext memory _context = JBAccountingContext({token: address(0), decimals: 6, currency: uint32(1)});
@@ -85,10 +85,10 @@ contract TestSetPrimaryTerminalOf_Local is JBTest, JBDirectorySetup {
         _directory.setPrimaryTerminalOf(1, _token, _terminalToAdd);
     }
 
-    function testFail_GivenThatTheTerminalHasAlreadyBeenAdded()
+    function testFail_GivenTerminalHasAlreadyBeenAdded()
         external
         whenCallerHasPermission
-        givenThatThereIsAnAccountingContextForTokenOf
+        givenValidAccountingContext
     {
         stdstore.target(address(_directory)).sig("controllerOf(uint256)").with_key(1).depth(0).checked_write(
             _mockController
@@ -117,10 +117,10 @@ contract TestSetPrimaryTerminalOf_Local is JBTest, JBDirectorySetup {
         _directory.setPrimaryTerminalOf(1, _token, _terminals[0]);
     }
 
-    function test_GivenThatTheProjectIsNotAllowedToSetTerminals()
+    function test_GivenProjectIsNotAllowedToSetTerminals()
         external
         whenCallerHasPermission
-        givenThatThereIsAnAccountingContextForTokenOf
+        givenValidAccountingContext
     {
         // it should revert with SET_TERMINALS_NOT_ALLOWED
 
@@ -145,11 +145,11 @@ contract TestSetPrimaryTerminalOf_Local is JBTest, JBDirectorySetup {
         _directory.setPrimaryTerminalOf(1, _token, _terminalToAdd);
     }
 
-    function test_GivenThatTheProjectIsAllowedToSetTerminals()
+    function test_GivenProjectIsAllowedToSetTerminals()
         external
         whenCallerHasPermission
-        givenThatThereIsAnAccountingContextForTokenOf
-        givenThatTheTerminalHasNotBeenAdded
+        givenValidAccountingContext
+        givenTerminalHasNotBeenAdded
     {
         // it should set the terminal and emit AddTerminal
         // it should set the terminal as primary and emit SetPrimaryTerminal

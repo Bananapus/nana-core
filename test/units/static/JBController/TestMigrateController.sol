@@ -11,7 +11,7 @@ contract TestMigrateController_Local is JBTest, JBControllerSetup {
         super.controllerSetup();
     }
 
-    modifier whenCallerHas_MIGRATE_CONTROLLER_Permission() {
+    modifier whenCallerHasPermission() {
         // mock ownerOf call
         bytes memory _ownerOfCall = abi.encodeCall(IERC721.ownerOf, (1));
         bytes memory _ownerData = abi.encode(address(this));
@@ -136,7 +136,7 @@ contract TestMigrateController_Local is JBTest, JBControllerSetup {
 
     function test_Revert_Given_MigrationIsNotAllowedByRuleset()
         external
-        whenCallerHas_MIGRATE_CONTROLLER_Permission
+        whenCallerHasPermission
         migrationIsNotAllowedByRuleset
     {
         // it should revert
@@ -146,7 +146,7 @@ contract TestMigrateController_Local is JBTest, JBControllerSetup {
 
     function test_GivenReservedTokenBalanceIsPending()
         external
-        whenCallerHas_MIGRATE_CONTROLLER_Permission
+        whenCallerHasPermission
         migrationIsAllowedByRuleset
     {
         // it should send reserved tokens to splits
@@ -193,7 +193,7 @@ contract TestMigrateController_Local is JBTest, JBControllerSetup {
 
     function test_GivenNoReservedTokenBalanceIsPending()
         external
-        whenCallerHas_MIGRATE_CONTROLLER_Permission
+        whenCallerHasPermission
         migrationIsAllowedByRuleset
     {
         // it should prepare new controller for migration

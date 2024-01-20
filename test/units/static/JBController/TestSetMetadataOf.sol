@@ -23,7 +23,7 @@ contract TestSetMetadataOf_Local is JBTest, JBControllerSetup {
         _controller.setMetadataOf(1, "Juicay");
     }
 
-    function test_RevertWhen_CallerIsNotOwnerOrHasPermission() external {
+    function test_RevertWhenCallerIsNotOwnerOrHasPermission() external {
         // it should revert
         // mock ownerOf call
         bytes memory _ownerOfCall = abi.encodeCall(IERC721.ownerOf, (1));

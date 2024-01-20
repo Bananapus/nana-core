@@ -11,7 +11,7 @@ contract TestSetControllerOf_Local is JBTest, JBDirectorySetup {
         super.directorySetup();
     }
 
-    modifier givenThatTheProjectExists() {
+    modifier givenProjectExists() {
         bytes memory _countCall = abi.encodeCall(IJBProjects.count, ());
         bytes memory _countReturn = abi.encode(type(uint256).max);
 
@@ -19,7 +19,7 @@ contract TestSetControllerOf_Local is JBTest, JBDirectorySetup {
         _;
     }
 
-    modifier whenCallerIsAllowedToSetFirstControllerOrHasPermission() {
+    modifier whenCallerIsAllowedToSetFirstController() {
         stdstore.target(address(_directory)).sig("isAllowedToSetFirstController(address)").with_key(address(this)).depth(
             0
         ).checked_write(true);
@@ -35,7 +35,7 @@ contract TestSetControllerOf_Local is JBTest, JBDirectorySetup {
         _;
     }
 
-    modifier givenThatControllerIsAlreadySet() {
+    modifier givenControllerIsAlreadySet() {
         address _bumController = makeAddr("bum");
 
         stdstore.target(address(_directory)).sig("controllerOf(uint256)").with_key(1).depth(0).checked_write(
@@ -58,7 +58,7 @@ contract TestSetControllerOf_Local is JBTest, JBDirectorySetup {
         _;
     }
 
-    function test_RevertWhen_CallerDoesNotHaveAnyPermission() external {
+    function test_RevertWhenCallerDoesNotHaveAnyPermission() external {
         // it should revert
         // mock ownerOf call
         bytes memory _ownerOfCall = abi.encodeCall(IERC721.ownerOf, (1));
@@ -84,9 +84,9 @@ contract TestSetControllerOf_Local is JBTest, JBDirectorySetup {
         _directory.setControllerOf(1, IERC165(address(this)));
     }
 
-    function test_RevertGiven_ThatAProjectDoesntExist()
+    function test_RevertGivenThatAProjectDoesntExist()
         external
-        whenCallerIsAllowedToSetFirstControllerOrHasPermission
+        whenCallerIsAllowedToSetFirstController
     {
         // it should revert
 
@@ -100,21 +100,21 @@ contract TestSetControllerOf_Local is JBTest, JBDirectorySetup {
         _directory.setControllerOf(1, IERC165(address(this)));
     }
 
-    function test_RevertGiven_ThatTheCurrentControllerIsNotSetControllerAllowed()
+    function test_RevertGivenCurrentControllerIsNotSetControllerAllowed()
         external
-        whenCallerIsAllowedToSetFirstControllerOrHasPermission
-        givenThatTheProjectExists
-        givenThatControllerIsAlreadySet
+        whenCallerIsAllowedToSetFirstController
+        givenProjectExists
+        givenControllerIsAlreadySet
     {
         // it should revert
         vm.expectRevert(abi.encodeWithSignature("SET_CONTROLLER_NOT_ALLOWED()"));
         _directory.setControllerOf(1, IERC165(address(this)));
     }
 
-    function test_GivenThatTheCurrentControllerIsSetControllerAllowed()
+    function test_GivenCurrentControllerIsSetControllerAllowed()
         external
-        whenCallerIsAllowedToSetFirstControllerOrHasPermission
-        givenThatTheProjectExists
+        whenCallerIsAllowedToSetFirstController
+        givenProjectExists
     {
         // it should set controllerOf and emit SetController
         vm.expectEmit();
