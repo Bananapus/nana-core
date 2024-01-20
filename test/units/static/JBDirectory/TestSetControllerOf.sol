@@ -84,7 +84,7 @@ contract TestSetControllerOf_Local is JBTest, JBDirectorySetup {
         _directory.setControllerOf(1, IERC165(address(this)));
     }
 
-    function test_RevertGivenThatAProjectDoesntExist()
+    function test_RevertGivenAProjectDoesntExist()
         external
         whenCallerIsAllowedToSetFirstController
     {

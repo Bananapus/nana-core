@@ -24,7 +24,7 @@ contract TestSetTerminalsOf_Local is JBTest, JBDirectorySetup {
         _;
     }
 
-    modifier givenThatSetTerminalsAllowed() {
+    modifier givenSetTerminalsAllowed() {
         // it should revert with revert SET_TERMINALS_NOT_ALLOWED()
         stdstore.target(address(_directory)).sig("controllerOf(uint256)").with_key(1).depth(0).checked_write(
             _mockController
@@ -45,7 +45,7 @@ contract TestSetTerminalsOf_Local is JBTest, JBDirectorySetup {
         _;
     }
 
-    function test_GivenThatNotSetTerminalsAllowed() external whenCallerHasPermission {
+    function test_GivenNotSetTerminalsAllowed() external whenCallerHasPermission {
         // it should revert with revert SET_TERMINALS_NOT_ALLOWED()
         stdstore.target(address(_directory)).sig("controllerOf(uint256)").with_key(1).depth(0).checked_write(
             _mockController
@@ -102,10 +102,10 @@ contract TestSetTerminalsOf_Local is JBTest, JBDirectorySetup {
         _directory.setTerminalsOf(1, _terminals);
     }
 
-    function test_GivenThatDuplicateTerminalsWereAdded()
+    function test_GivenDuplicateTerminalsWereAdded()
         external
         whenCallerHasPermission
-        givenThatSetTerminalsAllowed
+        givenSetTerminalsAllowed
     {
         // it should revert with DUPLICATE_TERMINALS()
         // needed for the call
@@ -117,10 +117,10 @@ contract TestSetTerminalsOf_Local is JBTest, JBDirectorySetup {
         _directory.setTerminalsOf(1, _terminals);
     }
 
-    function test_GivenThatDuplicateTerminalsWereNotAdded()
+    function test_GivenDuplicateTerminalsWereNotAdded()
         external
         whenCallerHasPermission
-        givenThatSetTerminalsAllowed
+        givenSetTerminalsAllowed
     {
         // it should set terminals and emit SetTerminals
 

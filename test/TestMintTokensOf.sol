@@ -123,7 +123,7 @@ contract TestMintTokensOf_Local is TestBaseWorkflow {
         assertEq(balance, 1);
     }
 
-    function test_GivenThatADataSourceIsConfigured() external {
+    function test_GivenADataSourceIsConfigured() external {
         // it should be able to mint
         vm.prank(address(_DATA_HOOK));
 
@@ -135,7 +135,7 @@ contract TestMintTokensOf_Local is TestBaseWorkflow {
         assertEq(balance, 1);
     }
 
-    function test_GivenThatADataSourceHasPermissionedAnotherContractToMint() external {
+    function test_GivenADataSourceHasPermissionedAnotherContractToMint() external {
         // it should be able to mint
 
         // setup: mock the datasource mint permission, allowing this contract to mint
