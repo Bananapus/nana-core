@@ -8,6 +8,7 @@ contract TestSetPrimaryTerminalOf_Local is JBTest, JBDirectorySetup {
     using stdStorage for StdStorage;
 
     IJBTerminal _terminalToAdd = IJBTerminal(makeAddr("newTerminal"));
+    address _mockController = makeAddr("controller");
     address _token = makeAddr("newToken");
 
     function setUp() public {
@@ -89,8 +90,6 @@ contract TestSetPrimaryTerminalOf_Local is JBTest, JBDirectorySetup {
         whenCallerHasPermission
         givenThatThereIsAnAccountingContextForTokenOf
     {
-        address _mockController = makeAddr("controller");
-
         stdstore.target(address(_directory)).sig("controllerOf(uint256)").with_key(1).depth(0).checked_write(
             _mockController
         );
@@ -124,7 +123,6 @@ contract TestSetPrimaryTerminalOf_Local is JBTest, JBDirectorySetup {
         givenThatThereIsAnAccountingContextForTokenOf
     {
         // it should revert with SET_TERMINALS_NOT_ALLOWED
-        address _mockController = makeAddr("controller");
 
         stdstore.target(address(_directory)).sig("controllerOf(uint256)").with_key(1).depth(0).checked_write(
             _mockController
@@ -155,7 +153,6 @@ contract TestSetPrimaryTerminalOf_Local is JBTest, JBDirectorySetup {
     {
         // it should set the terminal and emit AddTerminal
         // it should set the terminal as primary and emit SetPrimaryTerminal
-        address _mockController = makeAddr("controller");
 
         stdstore.target(address(_directory)).sig("controllerOf(uint256)").with_key(1).depth(0).checked_write(
             _mockController
