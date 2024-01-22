@@ -8,7 +8,7 @@ contract TestLaunchRulesetsFor_Local is JBTest, JBControllerSetup {
     function setUp() public {
         super.controllerSetup();
     }
-    
+
     modifier whenCallerHasPermission() {
         // mock ownerOf call
         bytes memory _ownerOfCall = abi.encodeCall(IERC721.ownerOf, (1));

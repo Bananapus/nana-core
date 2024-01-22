@@ -85,11 +85,7 @@ contract TestSetPrimaryTerminalOf_Local is JBTest, JBDirectorySetup {
         _directory.setPrimaryTerminalOf(1, _token, _terminalToAdd);
     }
 
-    function testFail_GivenTerminalHasAlreadyBeenAdded()
-        external
-        whenCallerHasPermission
-        givenValidAccountingContext
-    {
+    function testFail_GivenTerminalHasAlreadyBeenAdded() external whenCallerHasPermission givenValidAccountingContext {
         stdstore.target(address(_directory)).sig("controllerOf(uint256)").with_key(1).depth(0).checked_write(
             _mockController
         );

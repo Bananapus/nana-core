@@ -5,6 +5,10 @@ import /* {*} from */ "../../../helpers/TestBaseWorkflow.sol";
 import {JBPermissionsSetup} from "./JBPermissionsSetup.sol";
 
 contract TestSetPermissionsFor_Local is JBPermissionsSetup {
+    function setUp() public {
+        super.permissionsSetup();
+    }
+
     function test_WhenCallerDoesNotHaveROOTPermission() external {
         // it will revert UNAUTHORIZED
     }

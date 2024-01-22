@@ -102,11 +102,7 @@ contract TestSetTerminalsOf_Local is JBTest, JBDirectorySetup {
         _directory.setTerminalsOf(1, _terminals);
     }
 
-    function test_GivenDuplicateTerminalsWereAdded()
-        external
-        whenCallerHasPermission
-        givenSetTerminalsAllowed
-    {
+    function test_GivenDuplicateTerminalsWereAdded() external whenCallerHasPermission givenSetTerminalsAllowed {
         // it should revert with DUPLICATE_TERMINALS()
         // needed for the call
         IJBTerminal[] memory _terminals = new IJBTerminal[](2);
@@ -117,11 +113,7 @@ contract TestSetTerminalsOf_Local is JBTest, JBDirectorySetup {
         _directory.setTerminalsOf(1, _terminals);
     }
 
-    function test_GivenDuplicateTerminalsWereNotAdded()
-        external
-        whenCallerHasPermission
-        givenSetTerminalsAllowed
-    {
+    function test_GivenDuplicateTerminalsWereNotAdded() external whenCallerHasPermission givenSetTerminalsAllowed {
         // it should set terminals and emit SetTerminals
 
         // needed for the call

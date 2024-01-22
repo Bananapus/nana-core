@@ -5,6 +5,10 @@ import /* {*} from */ "../../../helpers/TestBaseWorkflow.sol";
 import {JBPermissionsSetup} from "./JBPermissionsSetup.sol";
 
 contract TestHasPermissions_Local is JBPermissionsSetup {
+    function setUp() public {
+        super.permissionsSetup();
+    }
+
     function test_WhenAnyPermissionIdGt255() external {
         // it will revert with PERMISSION_ID_OUT_OF_BOUNDS
     }

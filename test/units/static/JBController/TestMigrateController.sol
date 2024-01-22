@@ -144,11 +144,7 @@ contract TestMigrateController_Local is JBTest, JBControllerSetup {
         _controller.migrateController(1, IJBMigratable(address(this)));
     }
 
-    function test_GivenReservedTokenBalanceIsPending()
-        external
-        whenCallerHasPermission
-        migrationIsAllowedByRuleset
-    {
+    function test_GivenReservedTokenBalanceIsPending() external whenCallerHasPermission migrationIsAllowedByRuleset {
         // it should send reserved tokens to splits
         // set storage since we can't mock internal calls
         stdstore.target(address(_controller)).sig("pendingReservedTokenBalanceOf(uint256)").with_key(uint256(1))
@@ -191,11 +187,7 @@ contract TestMigrateController_Local is JBTest, JBControllerSetup {
         _controller.migrateController(1, IJBMigratable(address(this)));
     }
 
-    function test_GivenNoReservedTokenBalanceIsPending()
-        external
-        whenCallerHasPermission
-        migrationIsAllowedByRuleset
-    {
+    function test_GivenNoReservedTokenBalanceIsPending() external whenCallerHasPermission migrationIsAllowedByRuleset {
         // it should prepare new controller for migration
         // it should emit MigrateController event
 
