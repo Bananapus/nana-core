@@ -1,0 +1,8 @@
+TestHasPermissions_Local
+├── when any permissionId gt 255
+│   └── it will revert with PERMISSION_ID_OUT_OF_BOUNDS
+└── when all permissionIds lt 255
+    ├── given operator does not have all permissions specified
+    │   └── it will return false
+    └── given operator has all permissions specified
+        └── it will return true
