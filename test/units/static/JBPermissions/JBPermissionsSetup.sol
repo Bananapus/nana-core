@@ -11,7 +11,7 @@ contract JBPermissionsSetup is JBTest {
     // Target Contract
     IJBPermissions public _permissions;
 
-    function directorySetup() public virtual {
+    function permissionsSetup() public virtual {
         // Instantiate the contract being tested
         _permissions = new JBPermissions();
     }
