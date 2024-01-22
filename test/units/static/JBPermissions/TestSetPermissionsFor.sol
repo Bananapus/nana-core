@@ -1,7 +1,10 @@
-// SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.0;
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.23;
 
-contract TestSetPermissionsFor_Local {
+import /* {*} from */ "../../../helpers/TestBaseWorkflow.sol";
+import {JBPermissionsSetup} from "./JBPermissionsSetup.sol";
+
+contract TestSetPermissionsFor_Local is JBPermissionsSetup {
     function test_WhenCallerDoesNotHaveROOTPermission() external {
         // it will revert UNAUTHORIZED
     }
