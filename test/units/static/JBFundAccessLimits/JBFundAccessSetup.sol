@@ -7,14 +7,15 @@ import /* {*} from */ "../../../helpers/TestBaseWorkflow.sol";
 Contract that deploys a target contract with other mock contracts to satisfy the constructor.
 Tests relative to this contract will be dependent on mock calls/emits and stdStorage.
 */
-contract JBFeelessSetup is JBTest {
-    address _owner = makeAddr("owner");
-
+contract JBFundAccessSetup is JBTest {
     // Target Contract
-    IJBFeelessAddresses public _feelessAddresses;
+    IJBFundAccessLimits public _fundAccess;
 
-    function feelessAddressesSetup() public virtual {
+    // Mocks
+    IJBDirectory public directory = IJBDirectory(makeAddr("directory"));
+
+    function fundAccessSetup() public virtual {
         // Instantiate the contract being tested
-        _feelessAddresses = new JBFeelessAddresses(_owner);
+        _fundAccess = new JBFundAccessLimits(directory);
     }
 }

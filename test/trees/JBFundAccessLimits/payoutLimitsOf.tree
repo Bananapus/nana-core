@@ -1,0 +1,8 @@
+TestPayoutLimitsOf_Local
+└── when a project has payout limits
+    ├── given they are configured for a specific token
+    │   └── it will return them
+    ├── given they are configured for a specific terminal
+    │   └── it will return them
+    └── given they are configured for a specific rulesetId
+        └── it will return them

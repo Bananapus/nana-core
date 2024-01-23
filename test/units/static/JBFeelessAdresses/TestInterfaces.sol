@@ -8,7 +8,7 @@ contract TestSupportsInterface_Local is JBFeelessSetup {
     function setUp() public {
         super.feelessAddressesSetup();
     }
-    
+
     function test_WhenItSupportsEitherIJBFeelessAddressesOrIERC165() external {
         // it should return true
     }

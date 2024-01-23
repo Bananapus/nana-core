@@ -69,6 +69,7 @@ import {IJBRedeemTerminal} from "src/interfaces/terminal/IJBRedeemTerminal.sol";
 import {IJBPayoutTerminal} from "src/interfaces/terminal/IJBPayoutTerminal.sol";
 import {IJBPermitTerminal} from "src/interfaces/terminal/IJBPermitTerminal.sol";
 import {IJBFeeTerminal} from "src/interfaces/terminal/IJBFeeTerminal.sol";
+import {IJBFeelessAddresses} from "src/interfaces/IJBFeelessAddresses.sol";
 import {IJBTerminal} from "src/interfaces/terminal/IJBTerminal.sol";
 import {IJBPriceFeed} from "src/interfaces/IJBPriceFeed.sol";
 import {IJBPermissioned} from "src/interfaces/IJBPermissioned.sol";

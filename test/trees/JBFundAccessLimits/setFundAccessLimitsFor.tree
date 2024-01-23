@@ -1,0 +1,18 @@
+TestSetFundAccessLimitsFor_Local
+├── when caller is not controller
+│   └── it will revert
+└── when caller is controller of project
+    ├── given payoutLimit amount is gt uint224
+    │   └── it will revert INVALID_PAYOUT_LIMIT
+    ├── given payoutLimit currency is gt uint32
+    │   └── it will revert INVALID_PAYOUT_LIMIT_CURRENCY
+    ├── given payoutLimit currency is not given in ascending order
+    │   └── it will revert INVALID_PAYOUT_LIMIT_CURRENCY_ORDERING
+    ├── given surplusAllowance amount gt uint224
+    │   └── it will revert INVALID_SURPLUS_ALLOWANCE
+    ├── given surplusAllowance currency gt uint32
+    │   └── it will revert INVALID_PAYOUT_LIMIT_CURRENCY
+    ├── given surplus allowance currencies are not ascending order
+    │   └── it will revert INVALID_SURPLUS_ALLOWANCE_CURRENCY_ORDERING
+    └── given valid config
+        └── it will set packed properties and emit SetFundAccessLimits
