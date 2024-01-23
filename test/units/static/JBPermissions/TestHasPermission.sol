@@ -5,8 +5,6 @@ import /* {*} from */ "../../../helpers/TestBaseWorkflow.sol";
 import {JBPermissionsSetup} from "./JBPermissionsSetup.sol";
 
 contract TestHasPermissions_Local is JBPermissionsSetup {
-    using stdStorage for StdStorage;
-
     address _op = makeAddr("operator");
     address _account = makeAddr("account");
     uint256 _projectId = 1;
