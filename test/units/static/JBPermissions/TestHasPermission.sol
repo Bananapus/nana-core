@@ -46,5 +46,7 @@ contract TestHasPermissions_Local is JBPermissionsSetup {
 
     function test_GivenOperatorDoesntHavePermissionForAccountOfProject() external whenPermissionIdLt255 {
         // it will return false
+        bool has = _permissions.hasPermission(_op, _account, _projectId, 1);
+        assertEq(has, false);
     }
 }
