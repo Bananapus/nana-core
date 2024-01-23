@@ -45,11 +45,7 @@ contract TestSetPermissionsFor_Local is JBPermissionsSetup {
         array[1] = 2;
         array[2] = 3;
 
-        JBPermissionsData memory data = JBPermissionsData({
-        operator: _op,
-        projectId: _projectId,
-        permissionIds: array
-        });
+        JBPermissionsData memory data = JBPermissionsData({operator: _op, projectId: _projectId, permissionIds: array});
 
         // call it
         vm.prank(_account);
