@@ -4,7 +4,7 @@ pragma solidity 0.8.23;
 import /* {*} from */ "../../../helpers/TestBaseWorkflow.sol";
 import {JBDirectorySetup} from "./JBDirectorySetup.sol";
 
-contract TestSetControllerOf_Local is JBTest, JBDirectorySetup {
+contract TestSetControllerOf_Local is JBDirectorySetup {
     using stdStorage for StdStorage;
 
     function setUp() public {

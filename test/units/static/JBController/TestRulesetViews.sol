@@ -7,7 +7,7 @@ import {JBControllerSetup} from "./JBControllerSetup.sol";
 /**
  * @title
  */
-contract TestRulesetViews_Local is JBTest, JBControllerSetup {
+contract TestRulesetViews_Local is JBControllerSetup {
     // A library that parses packed ruleset metadata into a friendlier format.
     using JBRulesetMetadataResolver for JBRuleset;
 

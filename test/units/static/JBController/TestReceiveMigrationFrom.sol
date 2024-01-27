@@ -4,7 +4,7 @@ pragma solidity 0.8.23;
 import /* {*} from */ "../../../helpers/TestBaseWorkflow.sol";
 import {JBControllerSetup} from "./JBControllerSetup.sol";
 
-contract TestReceiveMigrationFrom_Local is JBTest, JBControllerSetup, IJBProjectMetadataRegistry {
+contract TestReceiveMigrationFrom_Local is JBControllerSetup, IJBProjectMetadataRegistry {
     // avoid compiler warning: satisfy interface
     function setMetadataOf(uint256 projectId, string calldata metadata) external {}
 

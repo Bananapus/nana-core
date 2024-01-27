@@ -4,7 +4,7 @@ pragma solidity 0.8.23;
 import /* {*} from */ "../../../helpers/TestBaseWorkflow.sol";
 import {JBDirectorySetup} from "./JBDirectorySetup.sol";
 
-contract TestSetTerminalsOf_Local is JBTest, JBDirectorySetup {
+contract TestSetTerminalsOf_Local is JBDirectorySetup {
     using stdStorage for StdStorage;
 
     IJBTerminal _terminalToAdd = IJBTerminal(makeAddr("newTerminal"));

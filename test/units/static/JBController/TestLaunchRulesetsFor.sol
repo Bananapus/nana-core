@@ -4,7 +4,7 @@ pragma solidity 0.8.23;
 import /* {*} from */ "../../../helpers/TestBaseWorkflow.sol";
 import {JBControllerSetup} from "./JBControllerSetup.sol";
 
-contract TestLaunchRulesetsFor_Local is JBTest, JBControllerSetup {
+contract TestLaunchRulesetsFor_Local is JBControllerSetup {
     function setUp() public {
         super.controllerSetup();
     }
