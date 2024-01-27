@@ -21,6 +21,17 @@ contract TestSetFundAccessLimitsFor_Local is JBFundAccessSetup {
 
     function test_WhenCallerIsNotController() external {
         // it will revert
+
+        bytes memory _controllerCall = abi.encodeCall(IJBDirectory.controllerOf, (1));
+        bytes memory _return = abi.encode(address(makeAddr("notThisContract")));
+
+        mockExpect(address(directory), _controllerCall, _return);
+
+        // Fund Access config
+        JBFundAccessLimitGroup[] memory _fundAccessLimitGroup = new JBFundAccessLimitGroup[](2);
+
+        vm.expectRevert(abi.encodeWithSignature("CONTROLLER_UNAUTHORIZED()"));
+        _fundAccess.setFundAccessLimitsFor(_projectId, _ruleset, _fundAccessLimitGroup);
     }
 
     modifier whenCallerIsControllerOfProject() {
