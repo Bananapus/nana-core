@@ -13,6 +13,9 @@ contract TestSetFeelessAddress_Local is JBFeelessSetup {
 
     function test_WhenCallerIsOwner() external {
         // it should set isFeeless and emit SetFeelessAddress
+        vm.expectEmit();
+        emit IJBFeelessAddresses.SetFeelessAddress(_feeLess, true, address(_owner));
+
         vm.prank(_owner);
         _feelessAddresses.setFeelessAddress(_feeLess, true);
 
