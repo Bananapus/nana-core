@@ -1,0 +1,17 @@
+TestSetSplitGroupsOf_Local
+├── when caller is not controller
+│   └── it will revert with CONTROLLER_UNAUTHORIZED
+└── when caller is controller
+    ├── given previously locked splits are not included
+    │   └── it will revert with PREVIOUS_LOCKED_SPLITS_NOT_INCLUDED
+    └── given previously locked splits are included
+        ├── given any configured split percent is zero
+        │   └── it will revert with INVALID_SPLIT_PERCENT
+        ├── given projectId gt uint56 max
+        │   └── it will revert with INVALID_PROJECT_ID
+        ├── given splits total to over SPLITS_TOTAL_PERCENT
+        │   └── it will revert with INVALID_TOTAL_PERCENT
+        ├── given lockedUntil gt uint48 max
+        │   └── it will revert with INVALID_LOCKED_UNTIL
+        └── given all conditions are satisfied
+            └── it will store splits and emit SetSplit for each configured

@@ -1,0 +1,5 @@
+TestSplitsOf_Local
+├── when there are defined splits
+│   └── it should return the defined splits
+└── when there are no splits defined
+    └── it should return the default splits for FALLBACK_RULESET_ID
