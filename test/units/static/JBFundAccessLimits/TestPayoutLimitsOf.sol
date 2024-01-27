@@ -24,16 +24,11 @@ contract TestPayoutLimitsOf_Local is JBFundAccessSetup {
         {
             // Specify a payout limit.
             JBCurrencyAmount[] memory _payoutLimits = new JBCurrencyAmount[](2);
-            _payoutLimits[0] = JBCurrencyAmount({
-                amount: _payoutLimit,
-                currency: uint32(uint160(JBConstants.NATIVE_TOKEN))
-            });
+            _payoutLimits[0] =
+                JBCurrencyAmount({amount: _payoutLimit, currency: uint32(uint160(JBConstants.NATIVE_TOKEN))});
 
             // Specify a second payout limit.
-            _payoutLimits[1] = JBCurrencyAmount({
-                amount: _payoutLimit2,
-                currency: uint32(uint160(_someToken))
-            });
+            _payoutLimits[1] = JBCurrencyAmount({amount: _payoutLimit2, currency: uint32(uint160(_someToken))});
 
             // Specify a surplus allowance.
             JBCurrencyAmount[] memory _surplusAllowances = new JBCurrencyAmount[](0);
@@ -53,8 +48,7 @@ contract TestPayoutLimitsOf_Local is JBFundAccessSetup {
             });
         }
 
-        bytes memory _controllerCall =
-            abi.encodeCall(IJBDirectory.controllerOf, (1));
+        bytes memory _controllerCall = abi.encodeCall(IJBDirectory.controllerOf, (1));
         bytes memory _return = abi.encode(address(this));
 
         mockExpect(address(directory), _controllerCall, _return);
@@ -67,7 +61,8 @@ contract TestPayoutLimitsOf_Local is JBFundAccessSetup {
     function test_GivenTheyAreConfiguredForASpecificToken() external whenAProjectHasPayoutLimits {
         // it will return them
 
-        JBCurrencyAmount[] memory payoutLimits = _fundAccess.payoutLimitsOf(_projectId, _ruleset, _terminal, JBConstants.NATIVE_TOKEN);
+        JBCurrencyAmount[] memory payoutLimits =
+            _fundAccess.payoutLimitsOf(_projectId, _ruleset, _terminal, JBConstants.NATIVE_TOKEN);
 
         assertEq(payoutLimits[0].currency, uint32(uint160(JBConstants.NATIVE_TOKEN)));
         assertEq(payoutLimits[0].amount, _payoutLimit);
@@ -77,7 +72,8 @@ contract TestPayoutLimitsOf_Local is JBFundAccessSetup {
 
     function test_GivenTheyAreConfiguredForASpecificTerminal() external whenAProjectHasPayoutLimits {
         // it will return them
-        JBCurrencyAmount[] memory payoutLimits = _fundAccess.payoutLimitsOf(_projectId, _ruleset, _terminal2, JBConstants.NATIVE_TOKEN);
+        JBCurrencyAmount[] memory payoutLimits =
+            _fundAccess.payoutLimitsOf(_projectId, _ruleset, _terminal2, JBConstants.NATIVE_TOKEN);
 
         assertEq(payoutLimits[0].currency, uint32(uint160(JBConstants.NATIVE_TOKEN)));
         assertEq(payoutLimits[0].amount, _payoutLimit);
@@ -87,7 +83,8 @@ contract TestPayoutLimitsOf_Local is JBFundAccessSetup {
 
     function test_GivenTheyAreConfiguredForASpecificRulesetId() external whenAProjectHasPayoutLimits {
         // it will return them
-        JBCurrencyAmount[] memory payoutLimits = _fundAccess.payoutLimitsOf(_projectId, _ruleset + 1, _terminal2, JBConstants.NATIVE_TOKEN);
+        JBCurrencyAmount[] memory payoutLimits =
+            _fundAccess.payoutLimitsOf(_projectId, _ruleset + 1, _terminal2, JBConstants.NATIVE_TOKEN);
 
         assertEq(payoutLimits[0].currency, uint32(uint160(JBConstants.NATIVE_TOKEN)));
         assertEq(payoutLimits[0].amount, _payoutLimit);

@@ -20,10 +20,8 @@ contract TestPayoutLimitOf_Local is JBFundAccessSetup {
         {
             // Specify a payout limit.
             JBCurrencyAmount[] memory _payoutLimits = new JBCurrencyAmount[](1);
-            _payoutLimits[0] = JBCurrencyAmount({
-                amount: _payoutLimit,
-                currency: uint32(uint160(JBConstants.NATIVE_TOKEN))
-            });
+            _payoutLimits[0] =
+                JBCurrencyAmount({amount: _payoutLimit, currency: uint32(uint160(JBConstants.NATIVE_TOKEN))});
 
             // Specify a surplus allowance.
             JBCurrencyAmount[] memory _surplusAllowances = new JBCurrencyAmount[](0);
@@ -36,8 +34,7 @@ contract TestPayoutLimitOf_Local is JBFundAccessSetup {
             });
         }
 
-        bytes memory _controllerCall =
-            abi.encodeCall(IJBDirectory.controllerOf, (1));
+        bytes memory _controllerCall = abi.encodeCall(IJBDirectory.controllerOf, (1));
         bytes memory _return = abi.encode(address(this));
 
         mockExpect(address(directory), _controllerCall, _return);
