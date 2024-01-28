@@ -199,7 +199,7 @@ contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
         _splits.setSplitGroupsOf(_projectId, _rulesetId, _splitsGroup);
     }
 
-    function test_GivenAllConditionsAreSatisfied() external whenCallerIsController {
+    function test_HappyPath() external whenCallerIsController {
         // it will store splits and emit SetSplit for each configured
 
         // data for call
