@@ -32,10 +32,7 @@ contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
         });
 
         // outer structure
-        _splitsGroup[0] = JBSplitGroup({
-            groupId: 0,
-            splits: _splitsArray
-        });
+        _splitsGroup[0] = JBSplitGroup({groupId: 0, splits: _splitsArray});
 
         // mock the directory controllerOf call
         bytes memory _controllerCall = abi.encodeCall(IJBDirectory.controllerOf, (1));
@@ -73,10 +70,7 @@ contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
         });
 
         // outer structure
-        _splitsGroup[0] = JBSplitGroup({
-            groupId: 0,
-            splits: _splitsArray
-        });
+        _splitsGroup[0] = JBSplitGroup({groupId: 0, splits: _splitsArray});
 
         _splits.setSplitGroupsOf(_projectId, _rulesetId, _splitsGroup);
 
@@ -91,19 +85,13 @@ contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
         });
 
         // outer structure
-        _splitsGroup[0] = JBSplitGroup({
-            groupId: 0,
-            splits: _splitsArray
-        });
+        _splitsGroup[0] = JBSplitGroup({groupId: 0, splits: _splitsArray});
 
         vm.expectRevert(abi.encodeWithSignature("PREVIOUS_LOCKED_SPLITS_NOT_INCLUDED()"));
         _splits.setSplitGroupsOf(_projectId, _rulesetId, _splitsGroup);
     }
 
-    function test_GivenAnyConfiguredSplitPercentIsZero()
-        external
-        whenCallerIsController
-    {
+    function test_GivenAnyConfiguredSplitPercentIsZero() external whenCallerIsController {
         // it will revert with INVALID_SPLIT_PERCENT
 
         // data for call to set invalid splits
@@ -122,10 +110,7 @@ contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
         });
 
         // outer structure
-        _splitsGroup[0] = JBSplitGroup({
-            groupId: 0,
-            splits: _splitsArray
-        });
+        _splitsGroup[0] = JBSplitGroup({groupId: 0, splits: _splitsArray});
 
         vm.expectRevert(abi.encodeWithSignature("INVALID_SPLIT_PERCENT()"));
         _splits.setSplitGroupsOf(_projectId, _rulesetId, _splitsGroup);
@@ -150,19 +135,13 @@ contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
         });
 
         // outer structure
-        _splitsGroup[0] = JBSplitGroup({
-            groupId: 0,
-            splits: _splitsArray
-        });
+        _splitsGroup[0] = JBSplitGroup({groupId: 0, splits: _splitsArray});
 
         vm.expectRevert(abi.encodeWithSignature("INVALID_PROJECT_ID()"));
         _splits.setSplitGroupsOf(_projectId, _rulesetId, _splitsGroup);
     }
 
-    function test_GivenSplitsTotalToGtSPLITS_TOTAL_PERCENT()
-        external
-        whenCallerIsController
-    {
+    function test_GivenSplitsTotalToGtSPLITS_TOTAL_PERCENT() external whenCallerIsController {
         // it will revert with INVALID_TOTAL_PERCENT
 
         // data for call with total percent > 100
@@ -190,19 +169,13 @@ contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
         });
 
         // outer structure
-        _splitsGroup[0] = JBSplitGroup({
-            groupId: 0,
-            splits: _splitsArray
-        });
+        _splitsGroup[0] = JBSplitGroup({groupId: 0, splits: _splitsArray});
 
         vm.expectRevert(abi.encodeWithSignature("INVALID_TOTAL_PERCENT()"));
         _splits.setSplitGroupsOf(_projectId, _rulesetId, _splitsGroup);
     }
 
-    function test_GivenLockedUntilGtUint48Max()
-        external
-        whenCallerIsController
-    {
+    function test_GivenLockedUntilGtUint48Max() external whenCallerIsController {
         // it will revert with INVALID_LOCKED_UNTIL
 
         // data for call
@@ -220,19 +193,13 @@ contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
         });
 
         // outer structure
-        _splitsGroup[0] = JBSplitGroup({
-            groupId: 0,
-            splits: _splitsArray
-        });
+        _splitsGroup[0] = JBSplitGroup({groupId: 0, splits: _splitsArray});
 
         vm.expectRevert(abi.encodeWithSignature("INVALID_LOCKED_UNTIL()"));
         _splits.setSplitGroupsOf(_projectId, _rulesetId, _splitsGroup);
     }
 
-    function test_GivenAllConditionsAreSatisfied()
-        external
-        whenCallerIsController
-    {
+    function test_GivenAllConditionsAreSatisfied() external whenCallerIsController {
         // it will store splits and emit SetSplit for each configured
 
         // data for call
@@ -260,10 +227,7 @@ contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
         });
 
         // outer structure
-        _splitsGroup[0] = JBSplitGroup({
-            groupId: 0,
-            splits: _splitsArray
-        });
+        _splitsGroup[0] = JBSplitGroup({groupId: 0, splits: _splitsArray});
 
         // should emit an event for each split
         vm.expectEmit();
@@ -293,10 +257,7 @@ contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
         });
 
         // outer structure
-        _splitsGroup[0] = JBSplitGroup({
-            groupId: 0,
-            splits: _splitsArray
-        });
+        _splitsGroup[0] = JBSplitGroup({groupId: 0, splits: _splitsArray});
 
         vm.expectEmit();
         emit IJBSplits.SetSplit(_projectId, block.timestamp, 0, _splitsArray[0], address(this));
@@ -317,10 +278,7 @@ contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
         });
 
         // outer structure
-        _splitsGroup[0] = JBSplitGroup({
-            groupId: 0,
-            splits: _splitsArray
-        });
+        _splitsGroup[0] = JBSplitGroup({groupId: 0, splits: _splitsArray});
 
         vm.expectEmit();
         emit IJBSplits.SetSplit(_projectId, block.timestamp, 0, _splitsArray[0], address(this));
@@ -350,10 +308,7 @@ contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
         });
 
         // outer structure
-        _splitsGroup[0] = JBSplitGroup({
-            groupId: 0,
-            splits: _splitsArray
-        });
+        _splitsGroup[0] = JBSplitGroup({groupId: 0, splits: _splitsArray});
 
         vm.expectEmit();
         emit IJBSplits.SetSplit(_projectId, block.timestamp, 0, _splitsArray[0], address(this));
@@ -385,10 +340,7 @@ contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
         });
 
         // outer structure
-        _splitsGroup[0] = JBSplitGroup({
-            groupId: 0,
-            splits: _splitsArray2
-        });
+        _splitsGroup[0] = JBSplitGroup({groupId: 0, splits: _splitsArray2});
 
         vm.expectEmit();
         emit IJBSplits.SetSplit(_projectId, block.timestamp, 0, _splitsArray2[0], address(this));
@@ -400,5 +352,4 @@ contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
         assertEq(_current[0].lockedUntil, block.timestamp + 100);
         assertEq(_current[1].lockedUntil, block.timestamp + 200);
     }
-
 }
