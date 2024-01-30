@@ -71,6 +71,7 @@ import {IJBPermitTerminal} from "src/interfaces/terminal/IJBPermitTerminal.sol";
 import {IJBFeeTerminal} from "src/interfaces/terminal/IJBFeeTerminal.sol";
 import {IJBFeelessAddresses} from "src/interfaces/IJBFeelessAddresses.sol";
 import {IJBTerminal} from "src/interfaces/terminal/IJBTerminal.sol";
+import {IJBTokenUriResolver} from "src/interfaces/IJBTokenUriResolver.sol";
 import {IJBPriceFeed} from "src/interfaces/IJBPriceFeed.sol";
 import {IJBPermissioned} from "src/interfaces/IJBPermissioned.sol";
 import {IJBRulesetApprovalHook} from "src/interfaces/IJBRulesetApprovalHook.sol";
