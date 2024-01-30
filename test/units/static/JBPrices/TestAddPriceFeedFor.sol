@@ -36,7 +36,7 @@ contract TestAddPriceFeedFor_Local is JBPricesSetup {
         _prices.addPriceFeedFor(DEFAULT_PROJECT_ID, _pricingCurrency, _unitCurrency, _feed);
     }
 
-    modifier whenProjectIsNotDefaultAndHasPermissions {
+    modifier whenProjectIsNotDefaultAndHasPermissions() {
         // mock ownerOf call
         bytes memory projectsOwnerCall = abi.encodeCall(IERC721.ownerOf, (_projectId));
         bytes memory returned = abi.encode(_projectOneOwner);
@@ -44,7 +44,9 @@ contract TestAddPriceFeedFor_Local is JBPricesSetup {
         mockExpect(address(projects), projectsOwnerCall, returned);
 
         // mock hasPermissions call
-        bytes memory permissionsCall = abi.encodeCall(IJBPermissions.hasPermission, (address(this), _projectOneOwner, _projectId, JBPermissionIds.ADD_PRICE_FEED));
+        bytes memory permissionsCall = abi.encodeCall(
+            IJBPermissions.hasPermission, (address(this), _projectOneOwner, _projectId, JBPermissionIds.ADD_PRICE_FEED)
+        );
         bytes memory returned2 = abi.encode(true);
 
         mockExpect(address(permissions), permissionsCall, returned2);
@@ -67,7 +69,10 @@ contract TestAddPriceFeedFor_Local is JBPricesSetup {
         _prices.addPriceFeedFor(_projectId, _pricingCurrency, _invalidCurrency, _feed);
     }
 
-    function test_WhenADefaultFeedForTheCurrencyPairOrItsInverseAlreadyExists() external whenProjectIsNotDefaultAndHasPermissions {
+    function test_WhenADefaultFeedForTheCurrencyPairOrItsInverseAlreadyExists()
+        external
+        whenProjectIsNotDefaultAndHasPermissions
+    {
         // it should revert with PRICE_FEED_ALREADY_EXISTS
 
         vm.prank(_owner);
@@ -77,7 +82,10 @@ contract TestAddPriceFeedFor_Local is JBPricesSetup {
         _prices.addPriceFeedFor(_projectId, _pricingCurrency, _unitCurrency, _feed);
     }
 
-    function test_WhenThisProjectAlreadyHasFeedsForTheCurrencyPairOrItsInverse() external whenProjectIsNotDefaultAndHasPermissions {
+    function test_WhenThisProjectAlreadyHasFeedsForTheCurrencyPairOrItsInverse()
+        external
+        whenProjectIsNotDefaultAndHasPermissions
+    {
         // it should revert with PRICE_FEED_ALREADY_EXISTS
 
         _prices.addPriceFeedFor(_projectId, _pricingCurrency, _unitCurrency, _feed);
@@ -92,7 +100,7 @@ contract TestAddPriceFeedFor_Local is JBPricesSetup {
 
         vm.expectEmit();
         emit IJBPrices.AddPriceFeed(_projectId, _pricingCurrency, _unitCurrency, _feed);
-        
+
         _prices.addPriceFeedFor(_projectId, _pricingCurrency, _unitCurrency, _feed);
     }
 }

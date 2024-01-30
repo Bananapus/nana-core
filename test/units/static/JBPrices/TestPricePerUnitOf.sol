@@ -8,8 +8,8 @@ contract TestPricePerUnitOf_Local is JBPricesSetup {
     IJBPriceFeed _feed = IJBPriceFeed(makeAddr("priceFeed"));
     uint256 DEFAULT_PROJECT_ID = 0;
     uint256 _projectId = 1;
-    uint256 _defaultDirectPrice = 1000000000;
-    uint256 _directPrice = 2000000000;
+    uint256 _defaultDirectPrice = 1_000_000_000;
+    uint256 _directPrice = 2_000_000_000;
     uint256 _inversePrice = 1e18;
     uint256 _directDecimals = 18;
     uint256 _inverseDecimals = 6;
@@ -20,7 +20,7 @@ contract TestPricePerUnitOf_Local is JBPricesSetup {
         super.pricesSetup();
     }
 
-    modifier givenDirectFeedExists {
+    modifier givenDirectFeedExists() {
         // Find the storage slot
         bytes32 priceFeedForSlot = keccak256(abi.encode(_projectId, uint256(1)));
         bytes32 pricingSlot = keccak256(abi.encode(_pricingCurrency, uint256(priceFeedForSlot)));
@@ -30,7 +30,7 @@ contract TestPricePerUnitOf_Local is JBPricesSetup {
 
         // Set direct price feed
         vm.store(address(_prices), slot, feedBytes);
-        
+
         // Confirm price feed was set
         IJBPriceFeed feed = _prices.priceFeedFor(_projectId, _pricingCurrency, _unitCurrency);
         assertEq(address(feed), address(_feed));
@@ -42,7 +42,7 @@ contract TestPricePerUnitOf_Local is JBPricesSetup {
         _;
     }
 
-    modifier givenIndirectFeedExists {
+    modifier givenIndirectFeedExists() {
         // Find the storage slot
         bytes32 priceFeedForSlot = keccak256(abi.encode(_projectId, uint256(1)));
         bytes32 pricingSlot = keccak256(abi.encode(_unitCurrency, uint256(priceFeedForSlot)));
@@ -52,7 +52,7 @@ contract TestPricePerUnitOf_Local is JBPricesSetup {
 
         // Set direct price feed
         vm.store(address(_prices), slot, feedBytes);
-        
+
         // Confirm price feed was set
         IJBPriceFeed feed = _prices.priceFeedFor(_projectId, _unitCurrency, _pricingCurrency);
         assertEq(address(feed), address(_feed));
@@ -64,7 +64,7 @@ contract TestPricePerUnitOf_Local is JBPricesSetup {
         _;
     }
 
-    modifier givenOnlyDefaultDirectFeedExists {
+    modifier givenOnlyDefaultDirectFeedExists() {
         // Find the storage slot
         bytes32 priceFeedForSlot = keccak256(abi.encode(DEFAULT_PROJECT_ID, uint256(1)));
         bytes32 pricingSlot = keccak256(abi.encode(_pricingCurrency, uint256(priceFeedForSlot)));
@@ -74,7 +74,7 @@ contract TestPricePerUnitOf_Local is JBPricesSetup {
 
         // Set direct price feed
         vm.store(address(_prices), slot, feedBytes);
-        
+
         // Confirm price feed was set
         IJBPriceFeed feed = _prices.priceFeedFor(DEFAULT_PROJECT_ID, _pricingCurrency, _unitCurrency);
         assertEq(address(feed), address(_feed));
@@ -100,14 +100,20 @@ contract TestPricePerUnitOf_Local is JBPricesSetup {
         assertEq(pricesPrice, _directPrice);
     }
 
-    function test_WhenInversePriceFeedExistsForProjectIdAndUnitCurrencyToPricingCurrency() external givenIndirectFeedExists {
+    function test_WhenInversePriceFeedExistsForProjectIdAndUnitCurrencyToPricingCurrency()
+        external
+        givenIndirectFeedExists
+    {
         // it should return the inverse of the current price from inverse price feed
 
         uint256 inversePrice = _prices.pricePerUnitOf(_projectId, _pricingCurrency, _unitCurrency, 18);
         assertEq(inversePrice, _inversePrice);
     }
 
-    function test_WhenProjectIdIsNotTheDEFAULT_PROJECT_IDAndNoDirectOrInversePriceFeedIsFound() external givenOnlyDefaultDirectFeedExists {
+    function test_WhenProjectIdIsNotTheDEFAULT_PROJECT_IDAndNoDirectOrInversePriceFeedIsFound()
+        external
+        givenOnlyDefaultDirectFeedExists
+    {
         // it should attempt to use the default price feed for DEFAULT_PROJECT_ID
 
         uint256 defaultPrice = _prices.pricePerUnitOf(_projectId, _pricingCurrency, _unitCurrency, 6);
@@ -116,7 +122,7 @@ contract TestPricePerUnitOf_Local is JBPricesSetup {
 
     function test_WhenNoPriceFeedIsFoundOrExistsIncludingDefaultCase() external {
         // it should revert with PRICE_FEED_NOT_FOUND
-        
+
         vm.expectRevert(abi.encodeWithSignature("PRICE_FEED_NOT_FOUND()"));
         _prices.pricePerUnitOf(_projectId, _pricingCurrency, _unitCurrency, 6);
     }
