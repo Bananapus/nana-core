@@ -50,7 +50,7 @@ contract TestPricePerUnitOf_Local is JBPricesSetup {
 
         bytes32 feedBytes = bytes32(uint256(uint160(address(_feed))));
 
-        // Set direct price feed
+        // Set indirect price feed
         vm.store(address(_prices), slot, feedBytes);
 
         // Confirm price feed was set
