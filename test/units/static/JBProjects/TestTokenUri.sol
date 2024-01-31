@@ -24,10 +24,7 @@ contract TestTokenURI_Local is JBProjectsSetup {
         // it will return the resolved URI
 
         // set tokenUriResolver
-        stdstore
-        .target(address(_projects))
-        .sig("tokenUriResolver()")
-        .checked_write(address(_resolver));
+        stdstore.target(address(_projects)).sig("tokenUriResolver()").checked_write(address(_resolver));
 
         // mock call to mock resolver
         bytes memory resolverCall = abi.encodeCall(IJBTokenUriResolver.getUri, (0));

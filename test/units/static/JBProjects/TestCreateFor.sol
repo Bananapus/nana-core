@@ -7,6 +7,7 @@ import {JBProjectsSetup} from "./JBProjectsSetup.sol";
 
 contract TestCreateFor_Local is JBProjectsSetup {
     using stdStorage for StdStorage;
+
     address _user = makeAddr("sudoer");
 
     function setUp() public {
@@ -17,10 +18,7 @@ contract TestCreateFor_Local is JBProjectsSetup {
         // it will revert with overflow
 
         // set storage to uint256 max
-        stdstore
-        .target(address(_projects))
-        .sig("count()")
-        .checked_write(type(uint256).max);
+        stdstore.target(address(_projects)).sig("count()").checked_write(type(uint256).max);
 
         assertEq(_projects.count(), type(uint256).max);
 
@@ -41,7 +39,7 @@ contract TestCreateFor_Local is JBProjectsSetup {
 
         _projects.createFor(_user);
 
-        // check count is incrementing 
+        // check count is incrementing
         assertEq(_projects.count(), 1);
     }
 
@@ -49,7 +47,8 @@ contract TestCreateFor_Local is JBProjectsSetup {
         // it will mint and emit Create
 
         // mock IERC721Receiver support (return interface selector for onERC721Received)
-        bytes memory receiverCall = abi.encodeCall(IERC721Receiver.onERC721Received, (address(this), address(0), 1, bytes("")));
+        bytes memory receiverCall =
+            abi.encodeCall(IERC721Receiver.onERC721Received, (address(this), address(0), 1, bytes("")));
         bytes memory returned = abi.encode(IERC721Receiver.onERC721Received.selector);
 
         mockExpect(address(this), receiverCall, returned);
@@ -57,10 +56,7 @@ contract TestCreateFor_Local is JBProjectsSetup {
         _projects.createFor(address(this));
     }
 
-    function test_GivenItDoesNotSupportIERC721Receiver()
-        external
-        whenProjectIdPlusOneIsLtOrEqToUint256Max
-    {
+    function test_GivenItDoesNotSupportIERC721Receiver() external whenProjectIdPlusOneIsLtOrEqToUint256Max {
         // it will revert
 
         // encode custom error
