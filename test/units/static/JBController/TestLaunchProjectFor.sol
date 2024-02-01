@@ -41,10 +41,6 @@ contract TestLaunchProjectFor_Local is JBControllerSetup {
         _controller.launchProjectFor(address(this), _metadata, _rulesets, _terminals, "");
     }
 
-    /* function test_GivenValidRulesetsAreProvided() external whenCalled {
-        // it will set rulesets
-    } */
-
     function test_GivenRulesetHasInvalidReservedRate() external whenCalledDefault {
         // it will revert INVALID_RESERVED_RATE()
 
