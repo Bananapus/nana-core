@@ -1,4 +1,4 @@
-TestMintTokensOf
+TestMintTokensOf_Local
 ├── when no ruleset is active
 │   └── it should be able to mint
 ├── when minting is disabled in the funding cycle ruleset
