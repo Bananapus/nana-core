@@ -92,7 +92,7 @@ contract TestLaunchProject_Local is TestBaseWorkflow {
 
         uint256 projectId = _controller.launchProjectFor({
             owner: _projectOwner,
-            projectMetadata: "myIPFSHash",
+            projectUri: "myIPFSHash",
             rulesetConfigurations: _rulesetConfig,
             terminalConfigurations: _terminalConfigurations,
             memo: ""
@@ -142,7 +142,7 @@ contract TestLaunchProject_Local is TestBaseWorkflow {
 
         _projectId = _controller.launchProjectFor({
             owner: _projectOwner,
-            projectMetadata: "myIPFSHash",
+            projectUri: "myIPFSHash",
             rulesetConfigurations: _rulesetConfig,
             terminalConfigurations: _terminalConfigurations,
             memo: ""
@@ -195,7 +195,7 @@ contract TestLaunchProject_Local is TestBaseWorkflow {
 
             _projectId = _controller.launchProjectFor({
                 owner: _projectOwner,
-                projectMetadata: "myIPFSHash",
+                projectUri: "myIPFSHash",
                 rulesetConfigurations: _rulesetConfig,
                 terminalConfigurations: _terminalConfigurations,
                 memo: ""
@@ -203,7 +203,7 @@ contract TestLaunchProject_Local is TestBaseWorkflow {
         } else {
             _projectId = _controller.launchProjectFor({
                 owner: _projectOwner,
-                projectMetadata: "myIPFSHash",
+                projectUri: "myIPFSHash",
                 rulesetConfigurations: _rulesetConfig,
                 terminalConfigurations: _terminalConfigurations,
                 memo: ""

@@ -66,7 +66,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
 
         uint256 projectId = _controller.launchProjectFor({
             owner: address(multisig()),
-            projectMetadata: "myIPFSHash",
+            projectUri: "myIPFSHash",
             rulesetConfigurations: _rulesetConfig,
             terminalConfigurations: _terminalConfigurations,
             memo: ""
@@ -117,7 +117,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
 
         uint256 projectId = _controller.launchProjectFor({
             owner: address(multisig()),
-            projectMetadata: "myIPFSHash",
+            projectUri: "myIPFSHash",
             rulesetConfigurations: _rulesetConfig,
             terminalConfigurations: _terminalConfigurations,
             memo: ""

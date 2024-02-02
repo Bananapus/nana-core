@@ -123,7 +123,7 @@ contract TestFees_Local is TestBaseWorkflow {
         // Dummy project that receive fees.
         _controller.launchProjectFor({
             owner: _projectOwner,
-            projectMetadata: "myIPFSHash",
+            projectUri: "myIPFSHash",
             rulesetConfigurations: _feeProjectRuleset,
             terminalConfigurations: _terminalConfigurations,
             memo: ""
@@ -131,7 +131,7 @@ contract TestFees_Local is TestBaseWorkflow {
 
         _projectId = _controller.launchProjectFor({
             owner: _projectOwner,
-            projectMetadata: "myIPFSHash",
+            projectUri: "myIPFSHash",
             rulesetConfigurations: _rulesetConfig,
             terminalConfigurations: _terminalConfigurations,
             memo: ""

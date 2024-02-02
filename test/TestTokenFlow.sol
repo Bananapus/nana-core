@@ -59,7 +59,7 @@ contract TestTokenFlow_Local is TestBaseWorkflow {
 
         _projectId = _controller.launchProjectFor({
             owner: address(_projectOwner),
-            projectMetadata: "myIPFSHash",
+            projectUri: "myIPFSHash",
             rulesetConfigurations: _rulesetConfig,
             terminalConfigurations: _terminalConfigurations,
             memo: ""

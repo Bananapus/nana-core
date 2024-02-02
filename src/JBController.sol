@@ -19,7 +19,7 @@ import {IJBRulesetDataHook} from "./interfaces/IJBRulesetDataHook.sol";
 import {IJBPermissions} from "./interfaces/IJBPermissions.sol";
 import {IJBTerminal} from "./interfaces/terminal/IJBTerminal.sol";
 import {IJBProjects} from "./interfaces/IJBProjects.sol";
-import {IJBProjectMetadataRegistry} from "./interfaces/IJBProjectMetadataRegistry.sol";
+import {IJBProjectUriRegistry} from "./interfaces/IJBProjectUriRegistry.sol";
 import {IJBSplitHook} from "./interfaces/IJBSplitHook.sol";
 import {IJBSplits} from "./interfaces/IJBSplits.sol";
 import {IJBToken} from "./interfaces/IJBToken.sol";
@@ -87,9 +87,9 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     /// @custom:param projectId The ID of the project to get the pending reserved token balance of.
     mapping(uint256 projectId => uint256) public override pendingReservedTokenBalanceOf;
 
-    /// @notice The metadata for each project.
+    /// @notice The metadata URI for each project.
     /// @custom:param projectId The ID of the project to which the metadata belongs.
-    mapping(uint256 projectId => string) public override metadataOf;
+    mapping(uint256 projectId => string) public override uriOf;
 
     //*********************************************************************//
     // ------------------------- external views -------------------------- //
@@ -220,8 +220,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     /// @param interfaceId The ID of the interface to check for adherance to.
     /// @return A flag indicating if the provided interface ID is supported.
     function supportsInterface(bytes4 interfaceId) public view virtual override(ERC165, IERC165) returns (bool) {
-        return interfaceId == type(IJBController).interfaceId
-            || interfaceId == type(IJBProjectMetadataRegistry).interfaceId
+        return interfaceId == type(IJBController).interfaceId || interfaceId == type(IJBProjectUriRegistry).interfaceId
             || interfaceId == type(IJBDirectoryAccessControl).interfaceId || interfaceId == type(IJBMigratable).interfaceId
             || interfaceId == type(IJBPermissioned).interfaceId || super.supportsInterface(interfaceId);
     }
@@ -267,7 +266,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     /// @dev Each operation within this transaction can be done in sequence separately.
     /// @dev Anyone can deploy a project on an owner's behalf.
     /// @param owner The address to set as the owner of the project. The project ERC-721 will be owned by this address.
-    /// @param projectMetadata Metadata to associate with the project. This can be updated any time by the owner of the
+    /// @param projectUri A URI to associate with the project. This can be updated any time by the owner of the
     /// project.
     /// @param rulesetConfigurations The ruleset configurations to queue.
     /// @param terminalConfigurations The terminal configurations to add for the project.
@@ -275,7 +274,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     /// @return projectId The ID of the project.
     function launchProjectFor(
         address owner,
-        string calldata projectMetadata,
+        string calldata projectUri,
         JBRulesetConfig[] calldata rulesetConfigurations,
         JBTerminalConfig[] calldata terminalConfigurations,
         string memory memo
@@ -289,8 +288,8 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         projectId = PROJECTS.createFor(owner);
 
         // Set project metadata if one was provided.
-        if (bytes(projectMetadata).length > 0) {
-            metadataOf[projectId] = projectMetadata;
+        if (bytes(projectUri).length > 0) {
+            uriOf[projectId] = projectUri;
         }
 
         // Set this contract as the project's controller in the directory.
@@ -302,7 +301,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         // Configure the terminals.
         _configureTerminals(projectId, terminalConfigurations);
 
-        emit LaunchProject(rulesetId, projectId, projectMetadata, memo, _msgSender());
+        emit LaunchProject(rulesetId, projectId, projectUri, memo, _msgSender());
     }
 
     /// @notice Creates an initial sequence of one or more rulesets for an existing project.
@@ -521,10 +520,9 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
 
         // Copy the main metadata if relevant.
         if (
-            from.supportsInterface(type(IJBProjectMetadataRegistry).interfaceId)
-                && DIRECTORY.controllerOf(projectId) == from
+            from.supportsInterface(type(IJBProjectUriRegistry).interfaceId) && DIRECTORY.controllerOf(projectId) == from
         ) {
-            metadataOf[projectId] = IJBProjectMetadataRegistry(address(from)).metadataOf(projectId);
+            uriOf[projectId] = IJBProjectUriRegistry(address(from)).uriOf(projectId);
         }
     }
 
@@ -560,12 +558,12 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         emit MigrateController(projectId, to, _msgSender());
     }
 
-    /// @notice Set a project's metadata content.
+    /// @notice Set a project's metadata URI content.
     /// @dev Only a project's owner can set its metadata through the project's controller.
     /// @dev Frontends typically use an IPFS hash for the metadata content.
     /// @param projectId The ID of the project to set the metadata of.
     /// @param metadata The metadata content to set.
-    function setMetadataOf(uint256 projectId, string calldata metadata) external override {
+    function setUriOf(uint256 projectId, string calldata metadata) external override {
         // Enforce permissions.
         _requirePermissionFrom({
             account: PROJECTS.ownerOf(projectId),
@@ -574,7 +572,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         });
 
         // Set the project's new metadata content.
-        metadataOf[projectId] = metadata;
+        uriOf[projectId] = metadata;
 
         emit SetMetadata(projectId, metadata, _msgSender());
     }
