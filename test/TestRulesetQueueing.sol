@@ -695,14 +695,14 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         }
     }
 
-    function testRulesetQueueingViewAccuracy() public {
+    function testRulesetViewAccuracy() public {
         // setup: deploy project and queue 2 rulesets atop the initial ruleset
         uint256 id = launchProjectForTestWithThreeRulesets();
 
         // Get a list of queued rulesets
         JBRuleset[] memory rulesetsOf = jbRulesets().rulesetsOf(id, 0, 3);
 
-        // check: two queued
+        // check: three rulesets returned
         assertEq(rulesetsOf.length, 3);
 
         // check: queued with furthest start time
@@ -711,11 +711,11 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         // check: queued with nearest start time
         assertEq(rulesetsOf[1].weight, _weight + 100);
 
+        // check: current with nearest start time
+        assertEq(rulesetsOf[2].weight, _weight);
+
         // get the current ruleset
         JBRuleset memory currentRuleset = jbRulesets().currentOf(id);
-
-        // check: queued with nearest start time
-        assertEq(rulesetsOf[2].weight, currentRuleset.weight);
 
         // check: current should be the initial ruleset
         assertEq(currentRuleset.weight, _weight);
@@ -725,5 +725,68 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
 
         // check: upcoming ruleset should be 2nd queued
         assertEq(upcomingRuleset.weight, _weight + 100);
+
+        // Get a list of queued rulesets
+        rulesetsOf = jbRulesets().rulesetsOf(id, 0, 3);
+
+        // check: three rulesets returned again
+        assertEq(rulesetsOf.length, 3);
+
+        // check: queued with furthest start time
+        assertEq(rulesetsOf[0].weight, _weight + 200);
+
+        // check: current with nearest start time
+        assertEq(rulesetsOf[1].weight, _weight + 100);
+
+        // check: past with nearest start time
+        assertEq(rulesetsOf[2].weight, _weight);
+
+        // Get a list of queued rulesets
+        rulesetsOf = jbRulesets().rulesetsOf(id, 0, 2);
+
+        // check: two rulesets returned again
+        assertEq(rulesetsOf.length, 2);
+
+        // check: queued with furthest start time
+        assertEq(rulesetsOf[0].weight, _weight + 200);
+
+        // check: current with nearest start time
+        assertEq(rulesetsOf[1].weight, _weight + 100);
+
+        // Get a list of queued rulesets
+        rulesetsOf = jbRulesets().rulesetsOf(id, upcomingRuleset.id, 2);
+
+        // check: two rulesets returned again
+        assertEq(rulesetsOf.length, 2);
+
+        // check: current with nearest start time
+        assertEq(rulesetsOf[0].weight, _weight + 100);
+
+        // check: past with nearest start time
+        assertEq(rulesetsOf[1].weight, _weight);
+
+        // Get a list of queued rulesets
+        rulesetsOf = jbRulesets().rulesetsOf(id, upcomingRuleset.id, 1);
+
+        // check: one rulesets returned again
+        assertEq(rulesetsOf.length, 1);
+
+        // check: current with nearest start time
+        assertEq(rulesetsOf[0].weight, _weight + 100);
+
+        // Get a list of queued rulesets with a larger size than there are rulesets.
+        rulesetsOf = jbRulesets().rulesetsOf(id, 0, 10);
+
+        // check: three rulesets returned
+        assertEq(rulesetsOf.length, 3);
+
+        // check: queued with furthest start time
+        assertEq(rulesetsOf[0].weight, _weight + 200);
+
+        // check: queued with nearest start time
+        assertEq(rulesetsOf[1].weight, _weight + 100);
+
+        // check: current with nearest start time
+        assertEq(rulesetsOf[2].weight, _weight);
     }
 }
