@@ -137,34 +137,40 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         metadata = ruleset.expandMetadata();
     }
 
-    /// @notice Get all the currently queued rulesets for a project, including their metadata.
-    /// @param projectId The ID of the project to get the queued rulesets of.
-    /// @return queuedRulesets The queued rulesets as an array of `JBRulesetWithMetadata` structs.
-    function queuedRulesetsOf(uint256 projectId)
+    /// @notice Get a page of rulesets for a project in order of latest to earliest.
+    /// @param projectId The ID of the project to get the rulesets of.
+    /// @param startingId The ID of the ruleset to begin with. If 0 is passed, the latest ruleset will be used.
+    /// @param size The number of rulesets to return.
+    /// @return rulesets The rulesets as an array of `JBRuleset` structs.
+    function rulesetsOf(
+        uint256 projectId,
+        uint256 startingId,
+        uint256 size
+    )
         external
         view
         override
-        returns (JBRulesetWithMetadata[] memory queuedRulesets)
+        returns (JBRulesetWithMetadata[] memory rulesets)
     {
-        // Get the queued rulesets.
-        JBRuleset[] memory rulesets = RULESETS.queuedRulesetsOf(projectId);
+        // Get the rulesets.
+        JBRuleset[] memory baseRulesets = RULESETS.rulesetsOf(projectId, startingId, size);
 
         // Keep a reference to the number of rulesets.
-        uint256 numberOfRulesets = rulesets.length;
+        uint256 numberOfRulesets = baseRulesets.length;
 
         // Initialize the array being returned.
-        queuedRulesets = new JBRulesetWithMetadata[](numberOfRulesets);
+        rulesets = new JBRulesetWithMetadata[](numberOfRulesets);
 
         // Keep a reference to the ruleset being iterated on.
-        JBRuleset memory ruleset;
+        JBRuleset memory baseRuleset;
 
         // Populate the array with the rulesets and their metadata.
         for (uint256 i; i < numberOfRulesets; i++) {
             // Set the ruleset being iterated on.
-            ruleset = rulesets[i];
+            baseRuleset = baseRulesets[i];
 
             // Set the returned value.
-            queuedRulesets[i] = JBRulesetWithMetadata({ruleset: ruleset, metadata: ruleset.expandMetadata()});
+            rulesets[i] = JBRulesetWithMetadata({ruleset: baseRuleset, metadata: baseRuleset.expandMetadata()});
         }
     }
 
