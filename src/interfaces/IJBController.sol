@@ -15,13 +15,13 @@ import {IJBDirectoryAccessControl} from "./IJBDirectoryAccessControl.sol";
 import {IJBFundAccessLimits} from "./IJBFundAccessLimits.sol";
 import {IJBRulesets} from "./IJBRulesets.sol";
 import {IJBMigratable} from "./IJBMigratable.sol";
-import {IJBProjectMetadataRegistry} from "./IJBProjectMetadataRegistry.sol";
+import {IJBProjectUriRegistry} from "./IJBProjectUriRegistry.sol";
 import {IJBProjects} from "./IJBProjects.sol";
 import {IJBSplits} from "./IJBSplits.sol";
 import {IJBToken} from "./IJBToken.sol";
 import {IJBTokens} from "./IJBTokens.sol";
 
-interface IJBController is IERC165, IJBProjectMetadataRegistry, IJBDirectoryAccessControl {
+interface IJBController is IERC165, IJBProjectUriRegistry, IJBDirectoryAccessControl {
     event LaunchProject(uint256 rulesetId, uint256 projectId, string metadata, string memo, address caller);
 
     event LaunchRulesets(uint256 rulesetId, uint256 projectId, string memo, address caller);
@@ -118,7 +118,7 @@ interface IJBController is IERC165, IJBProjectMetadataRegistry, IJBDirectoryAcce
 
     function launchProjectFor(
         address owner,
-        string calldata projectMetadata,
+        string calldata projectUri,
         JBRulesetConfig[] calldata rulesetConfigurations,
         JBTerminalConfig[] memory terminalConfigurations,
         string calldata memo

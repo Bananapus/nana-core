@@ -66,7 +66,7 @@ contract TestPayBurnRedeemFlow_Local is TestBaseWorkflow {
         // Dummy project that will receive fees.
         _controller.launchProjectFor({
             owner: _projectOwner,
-            projectMetadata: "myIPFSHash",
+            projectUri: "myIPFSHash",
             rulesetConfigurations: _rulesetConfig,
             terminalConfigurations: _terminalConfigurations,
             memo: ""
@@ -74,7 +74,7 @@ contract TestPayBurnRedeemFlow_Local is TestBaseWorkflow {
 
         _projectId = _controller.launchProjectFor({
             owner: _projectOwner,
-            projectMetadata: "myIPFSHash",
+            projectUri: "myIPFSHash",
             rulesetConfigurations: _rulesetConfig,
             terminalConfigurations: _terminalConfigurations,
             memo: ""

@@ -60,7 +60,7 @@ contract TestMintTokensOf_Local is TestBaseWorkflow {
 
         _projectId = _controller.launchProjectFor({
             owner: _projectOwner,
-            projectMetadata: "myIPFSHash",
+            projectUri: "myIPFSHash",
             rulesetConfigurations: _rulesetConfig,
             terminalConfigurations: _terminalConfigurations,
             memo: ""
@@ -106,7 +106,7 @@ contract TestMintTokensOf_Local is TestBaseWorkflow {
 
         _projectId = _controller.launchProjectFor({
             owner: _projectOwner,
-            projectMetadata: "myIPFSHash",
+            projectUri: "myIPFSHash",
             rulesetConfigurations: _rulesetConfig,
             terminalConfigurations: _terminalConfigurations,
             memo: ""

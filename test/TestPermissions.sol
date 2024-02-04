@@ -59,7 +59,7 @@ contract TestPermissions_Local is TestBaseWorkflow {
 
         _projectZero = _controller.launchProjectFor({
             owner: makeAddr("zeroOwner"),
-            projectMetadata: "myIPFSHash",
+            projectUri: "myIPFSHash",
             rulesetConfigurations: _rulesetConfig,
             terminalConfigurations: _terminalConfigurations,
             memo: ""
@@ -67,7 +67,7 @@ contract TestPermissions_Local is TestBaseWorkflow {
 
         _projectOne = _controller.launchProjectFor({
             owner: _projectOwner,
-            projectMetadata: "myIPFSHash",
+            projectUri: "myIPFSHash",
             rulesetConfigurations: _rulesetConfig,
             terminalConfigurations: _terminalConfigurations,
             memo: ""

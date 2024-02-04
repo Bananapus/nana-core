@@ -70,7 +70,7 @@ contract TestRulesetWeightCaching_Local is TestBaseWorkflow {
         //     // Create the project to test.
         //     _projectId1 = _controller.launchProjectFor({
         //         owner: _projectOwner,
-        //         projectMetadata: "myIPFSHash",
+        //         projectUri: "myIPFSHash",
         //         rulesetConfigurations: _rulesetConfigurations,
         //         terminalConfigurations: new JBTerminalConfig[](0),
         //         memo: ""
@@ -79,7 +79,7 @@ contract TestRulesetWeightCaching_Local is TestBaseWorkflow {
         //     // Create the project to test.
         //     _projectId2 = _controller.launchProjectFor({
         //         owner: _projectOwner,
-        //         projectMetadata: "myIPFSHash",
+        //         projectUri: "myIPFSHash",
         //         rulesetConfigurations: _rulesetConfigurations,
         //         terminalConfigurations: new JBTerminalConfig[](0),
         //         memo: ""

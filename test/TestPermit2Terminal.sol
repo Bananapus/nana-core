@@ -83,7 +83,7 @@ contract TestPermit2Terminal_Local is TestBaseWorkflow, PermitSignature {
         // Create a first project to collect fees.
         _controller.launchProjectFor({
             owner: _projectOwner,
-            projectMetadata: "myIPFSHash",
+            projectUri: "myIPFSHash",
             rulesetConfigurations: _rulesetConfig,
             terminalConfigurations: _terminalConfigurations,
             memo: ""
@@ -91,7 +91,7 @@ contract TestPermit2Terminal_Local is TestBaseWorkflow, PermitSignature {
 
         _projectId = _controller.launchProjectFor({
             owner: _projectOwner,
-            projectMetadata: "myIPFSHash",
+            projectUri: "myIPFSHash",
             rulesetConfigurations: _rulesetConfig,
             terminalConfigurations: _terminalConfigurations,
             memo: ""

@@ -118,7 +118,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             // Create a first project to collect fees.
             _controller.launchProjectFor({
                 owner: address(420), // Random.
-                projectMetadata: "whatever",
+                projectUri: "whatever",
                 rulesetConfigurations: _rulesetConfigurations,
                 terminalConfigurations: _terminalConfigurations, // Set terminals to receive fees.
                 memo: ""
@@ -127,7 +127,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             // Create the project to test.
             _projectId = _controller.launchProjectFor({
                 owner: _projectOwner,
-                projectMetadata: "myIPFSHash",
+                projectUri: "myIPFSHash",
                 rulesetConfigurations: _rulesetConfigurations,
                 terminalConfigurations: _terminalConfigurations,
                 memo: ""
@@ -347,7 +347,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             // Create a project to collect fees.
             _controller.launchProjectFor({
                 owner: address(420), // Random.
-                projectMetadata: "whatever",
+                projectUri: "whatever",
                 rulesetConfigurations: _rulesetConfigurations, // Use the same ruleset configurations.
                 terminalConfigurations: _terminalConfigurations, // set the terminals where fees will be received
                 memo: ""
@@ -356,7 +356,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             // Create the project to test.
             _projectId = _controller.launchProjectFor({
                 owner: _projectOwner,
-                projectMetadata: "myIPFSHash",
+                projectUri: "myIPFSHash",
                 rulesetConfigurations: _rulesetConfigurations,
                 terminalConfigurations: _terminalConfigurations,
                 memo: ""
@@ -600,7 +600,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             // Create a first project to collect fees.
             _controller.launchProjectFor({
                 owner: address(420), // Random.
-                projectMetadata: "whatever",
+                projectUri: "whatever",
                 rulesetConfigurations: new JBRulesetConfig[](0), // No ruleset config will force revert when paid.
                 // Set the fee collecting terminal's native token accounting context if the test calls for doing so.
                 terminalConfigurations: _feeProjectAcceptsToken ? _terminalConfigurations : new JBTerminalConfig[](0), // Set
@@ -622,7 +622,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             // Create the project to test.
             _projectId = _controller.launchProjectFor({
                 owner: _projectOwner,
-                projectMetadata: "myIPFSHash",
+                projectUri: "myIPFSHash",
                 rulesetConfigurations: _rulesetConfigurations,
                 terminalConfigurations: _terminalConfigurations,
                 memo: ""
@@ -858,7 +858,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             // Create the project to test.
             _projectId = _controller.launchProjectFor({
                 owner: _projectOwner,
-                projectMetadata: "myIPFSHash",
+                projectUri: "myIPFSHash",
                 rulesetConfigurations: _rulesetConfigurations,
                 terminalConfigurations: _terminalConfigurations,
                 memo: ""
@@ -1118,7 +1118,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             // Create a first project to collect fees.
             _controller.launchProjectFor({
                 owner: address(420), // Random.
-                projectMetadata: "whatever",
+                projectUri: "whatever",
                 rulesetConfigurations: _rulesetConfigurations, // Use the same ruleset configurations.
                 terminalConfigurations: _terminalConfigurations, // Set terminals to receive fees.
                 memo: ""
@@ -1127,7 +1127,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             // Create the project to test.
             _projectId = _controller.launchProjectFor({
                 owner: _projectOwner,
-                projectMetadata: "myIPFSHash",
+                projectUri: "myIPFSHash",
                 rulesetConfigurations: _rulesetConfigurations,
                 terminalConfigurations: _terminalConfigurations,
                 memo: ""
@@ -1721,7 +1721,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             // Create a first project to collect fees.
             _controller.launchProjectFor({
                 owner: address(420), // Random.
-                projectMetadata: "whatever",
+                projectUri: "whatever",
                 rulesetConfigurations: _rulesetConfigurations, // Use the same ruleset configurations.
                 terminalConfigurations: _terminalConfigurations1, // Set terminals to receive fees.
                 memo: ""
@@ -1730,7 +1730,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             // Create the project to test.
             _projectId = _controller.launchProjectFor({
                 owner: _projectOwner,
-                projectMetadata: "myIPFSHash",
+                projectUri: "myIPFSHash",
                 rulesetConfigurations: _rulesetConfigurations,
                 terminalConfigurations: _terminalConfigurations2,
                 memo: ""
