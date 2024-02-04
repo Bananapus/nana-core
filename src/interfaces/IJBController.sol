@@ -97,10 +97,14 @@ interface IJBController is IERC165, IJBProjectMetadataRegistry, IJBDirectoryAcce
         view
         returns (JBRuleset memory, JBRulesetMetadata memory metadata, JBApprovalStatus);
 
-    function queuedRulesetsOf(uint256 projectId)
+    function rulesetsOf(
+        uint256 projectId,
+        uint256 startingId,
+        uint256 size
+    )
         external
         view
-        returns (JBRulesetWithMetadata[] memory queuedRulesets);
+        returns (JBRulesetWithMetadata[] memory rulesets);
 
     function currentRulesetOf(uint256 projectId)
         external

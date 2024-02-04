@@ -120,21 +120,32 @@ contract JBRulesets is JBControlled, IJBRulesets {
         });
     }
 
-    /// @notice Get all the currently queued rulesets for a project.
-    /// @param projectId The ID of the project to get the queued rulesets of.
-    /// @return queuedRulesets The queued rulesets as an array of `JBRuleset` structs.
-    function queuedRulesetsOf(uint256 projectId) external view override returns (JBRuleset[] memory queuedRulesets) {
-        // Get the latest ruleset's ID.
-        uint256 latestId = latestRulesetIdOf[projectId];
+    /// @notice Get a page of rulesets for a project in order of latest to earliest.
+    /// @param projectId The ID of the project to get the rulesets of.
+    /// @param startingId The ID of the ruleset to begin with. If 0 is passed, the latest ruleset will be used.
+    /// @param size The number of rulesets to return.
+    /// @return rulesets The rulesets as an array of `JBRuleset` structs.
+    function rulesetsOf(
+        uint256 projectId,
+        uint256 startingId,
+        uint256 size
+    )
+        external
+        view
+        override
+        returns (JBRuleset[] memory rulesets)
+    {
+        // Set the starting ID to be the latest if one wasn't provided.
+        if (startingId == 0) startingId = latestRulesetIdOf[projectId];
 
-        // Keep a reference to the number of queued rulesets.
+        // Keep a reference to the number of rulesets being returned.
         uint256 count = 0;
 
-        // Keep a reference to the latest ruleset.
-        JBRuleset memory ruleset = _getStructFor(projectId, latestId);
+        // Keep a reference to the starting ruleset.
+        JBRuleset memory ruleset = _getStructFor(projectId, startingId);
 
         // First, count the number of queued rulesets (backwards from the latest ruleset).
-        while (ruleset.id != 0 && ruleset.start > block.timestamp) {
+        while (ruleset.id != 0 && count < size) {
             // Increment the counter.
             count++;
 
@@ -143,28 +154,26 @@ contract JBRulesets is JBControlled, IJBRulesets {
         }
 
         // Keep a reference to the array of rulesets that'll be populated.
-        queuedRulesets = new JBRuleset[](count);
+        rulesets = new JBRuleset[](count);
 
         // Return empty array if nothing is queued.
         if (count == 0) {
-            return queuedRulesets;
+            return rulesets;
         }
 
-        // Reset the ruleset being iterated on to the latest ruleset.
-        ruleset = _getStructFor(projectId, latestId);
+        // Reset the ruleset being iterated on to the starting ruleset.
+        ruleset = _getStructFor(projectId, startingId);
 
         // Set counter.
-        uint256 i = count;
+        uint256 i;
 
         // Populate the array of queued rulesets.
-        while (i > 0) {
-            i--;
-
+        while (i < count) {
             // Add the ruleset to the array to be returned.
-            queuedRulesets[i] = ruleset;
+            rulesets[i++] = ruleset;
 
             // Get the ruleset it was based on if needed.
-            if (i != 0) ruleset = _getStructFor(projectId, ruleset.basedOnId);
+            if (i != count) ruleset = _getStructFor(projectId, ruleset.basedOnId);
         }
     }
 
