@@ -1,0 +1,8 @@
+TestTransferCreditsFrom_Local
+├── when caller is permissioned
+│   ├── given ruleset allows credit transfers
+│   │   └── it will call JBTokens to transfer the credits
+│   └── given ruleset does not allow credit transfers
+│       └── it will revert CREDIT_TRANSFERS_PAUSED
+└── when caller is not permissioned
+    └── it will revert UNAUTHORIZED
