@@ -26,7 +26,8 @@ contract TestClaimTokensFor_Local is JBControllerSetup {
         mockExpect(address(permissions), _permCall, _permReturn);
 
         // it will call JBTokens to claim when permissioned
-        bytes memory _tokensCall = abi.encodeCall(IJBTokens.claimTokensFor, (_holder, _projectId, _amount, _beneficiary));
+        bytes memory _tokensCall =
+            abi.encodeCall(IJBTokens.claimTokensFor, (_holder, _projectId, _amount, _beneficiary));
         bytes memory _tokensReturn = abi.encode();
         mockExpect(address(tokens), _tokensCall, _tokensReturn);
 

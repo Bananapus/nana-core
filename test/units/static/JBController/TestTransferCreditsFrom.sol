@@ -6,7 +6,7 @@ import {JBControllerSetup} from "./JBControllerSetup.sol";
 
 contract TestTransferCreditsFrom_Local is JBControllerSetup {
     using JBRulesetMetadataResolver for JBRulesetMetadata;
-    
+
     address _holder = makeAddr("hodler");
     uint256 _projectId = 1;
     uint256 _rootId = 0;
@@ -71,7 +71,8 @@ contract TestTransferCreditsFrom_Local is JBControllerSetup {
         mockExpect(address(rulesets), _rulesetCall, _rulesetCallReturn);
 
         // mock the subsequent call to JBTokens transferCreditsFrom
-        bytes memory _transferCall = abi.encodeCall(IJBTokens.transferCreditsFrom, (_holder, _projectId, _beneficiary, _amount));
+        bytes memory _transferCall =
+            abi.encodeCall(IJBTokens.transferCreditsFrom, (_holder, _projectId, _beneficiary, _amount));
         bytes memory _transferCallReturn = abi.encode();
         mockExpect(address(tokens), _transferCall, _transferCallReturn);
 
