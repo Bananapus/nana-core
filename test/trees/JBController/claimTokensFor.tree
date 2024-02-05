@@ -1,0 +1,5 @@
+TestClaimTokensFor_Local
+├── when caller is permissioned
+│   └── it should call JBTokens to claim on behalf of holder
+└── when caller is not permissioned
+    └── it should revert UNAUTHORIZED
