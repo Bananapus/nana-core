@@ -42,12 +42,12 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     error TERMINAL_MIGRATION_NOT_ALLOWED();
 
     //*********************************************************************//
-    // -------------------------- private constants ---------------------- //
+    // -------------------------- internal constants --------------------- //
     //*********************************************************************//
 
     /// @notice Constrains `mulDiv` operations on fixed point numbers to a maximum number of decimal points of persisted
     /// fidelity.
-    uint256 private constant _MAX_FIXED_POINT_FIDELITY = 18;
+    uint256 internal constant _MAX_FIXED_POINT_FIDELITY = 18;
 
     //*********************************************************************//
     // ---------------- public immutable stored properties --------------- //
@@ -721,7 +721,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     }
 
     //*********************************************************************//
-    // --------------------- private helper functions -------------------- //
+    // --------------------- internal helper functions ------------------- //
     //*********************************************************************//
 
     /// @notice The amount of surplus which is available for reclaiming via redemption given the number of tokens being
@@ -738,7 +738,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
         uint256 totalSupply,
         uint256 surplus
     )
-        private
+        internal
         pure
         returns (uint256)
     {
@@ -786,7 +786,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
         uint256 targetDecimals,
         uint256 targetCurrency
     )
-        private
+        internal
         view
         returns (uint256 surplus)
     {
@@ -829,7 +829,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
         uint256 targetDecimals,
         uint256 targetCurrency
     )
-        private
+        internal
         view
         returns (uint256 surplus)
     {
@@ -924,7 +924,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
         uint256 decimals,
         uint256 currency
     )
-        private
+        internal
         view
         returns (uint256 surplus)
     {

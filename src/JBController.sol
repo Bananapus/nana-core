@@ -728,7 +728,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     }
 
     //*********************************************************************//
-    // ---------------------- private transactions ----------------------- //
+    // ---------------------- internal transactions ---------------------- //
     //*********************************************************************//
 
     /// @notice Sends pending reserved tokens to the project's reserved token splits.
@@ -741,7 +741,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         uint256 projectId,
         string memory memo
     )
-        private
+        internal
         returns (uint256 tokenCount)
     {
         // Get the current ruleset to read the reserved rate from.
@@ -785,7 +785,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         uint256 groupId,
         uint256 amount
     )
-        private
+        internal
         returns (uint256 leftoverAmount)
     {
         // Set the leftover amount to the initial amount.
@@ -854,7 +854,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         uint256 projectId,
         JBRulesetConfig[] calldata rulesetConfigurations
     )
-        private
+        internal
         returns (uint256 rulesetId)
     {
         // Keep a reference to the number of ruleset configurations being queued.
@@ -909,7 +909,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     /// @notice Configure terminals for use.
     /// @param projectId The ID of the project configuring the terminals for use.
     /// @param terminalConfigs The terminal configurations to enact.
-    function _configureTerminals(uint256 projectId, JBTerminalConfig[] calldata terminalConfigs) private {
+    function _configureTerminals(uint256 projectId, JBTerminalConfig[] calldata terminalConfigs) internal {
         // Keep a reference to the number of terminals being configured.
         uint256 numberOfTerminalConfigs = terminalConfigs.length;
 

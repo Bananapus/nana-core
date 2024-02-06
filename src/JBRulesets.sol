@@ -29,14 +29,14 @@ contract JBRulesets is JBControlled, IJBRulesets {
     error BLOCK_ALREADY_CONTAINS_RULESET();
 
     //*********************************************************************//
-    // ------------------------- private constants ----------------------- //
+    // ------------------------- internal constants ----------------------- //
     //*********************************************************************//
 
     /// @notice The maximum number of decay rate multiples that can be cached at a time.
-    uint256 private constant _MAX_DECAY_MULTIPLE_CACHE_THRESHOLD = 50_000;
+    uint256 internal constant _MAX_DECAY_MULTIPLE_CACHE_THRESHOLD = 50_000;
 
     /// @notice The number of decay rate multiples before a cached value is sought.
-    uint256 private constant _DECAY_MULTIPLE_CACHE_LOOKUP_THRESHOLD = 1000;
+    uint256 internal constant _DECAY_MULTIPLE_CACHE_LOOKUP_THRESHOLD = 1000;
 
     //*********************************************************************//
     // --------------------- public stored properties -------------------- //
@@ -51,27 +51,27 @@ contract JBRulesets is JBControlled, IJBRulesets {
     mapping(uint256 projectId => uint256) public override latestRulesetIdOf;
 
     //*********************************************************************//
-    // --------------------- private stored properties ------------------- //
+    // --------------------- internal stored properties ------------------- //
     //*********************************************************************//
 
     /// @notice The user-defined properties of each ruleset, packed into one storage slot.
     /// @custom:param projectId The ID of the project to get the user-defined properties of.
     /// @custom:param rulesetId The ID of the ruleset to get the user-defined properties of.
-    mapping(uint256 projectId => mapping(uint256 rulesetId => uint256)) private _packedUserPropertiesOf;
+    mapping(uint256 projectId => mapping(uint256 rulesetId => uint256)) internal _packedUserPropertiesOf;
 
     /// @notice The mechanism-added properties to manage and schedule each ruleset, packed into one storage slot.
     /// @custom:param projectId The ID of the project to get the intrinsic properties of.
     /// @custom:param rulesetId The ID of the ruleset to get the intrinsic properties of.
-    mapping(uint256 projectId => mapping(uint256 rulesetId => uint256)) private _packedIntrinsicPropertiesOf;
+    mapping(uint256 projectId => mapping(uint256 rulesetId => uint256)) internal _packedIntrinsicPropertiesOf;
 
     /// @notice The metadata for each ruleset, packed into one storage slot.
     /// @custom:param projectId The ID of the project to get metadata of.
     /// @custom:param rulesetId The ID of the ruleset to get metadata of.
-    mapping(uint256 projectId => mapping(uint256 rulesetId => uint256)) private _metadataOf;
+    mapping(uint256 projectId => mapping(uint256 rulesetId => uint256)) internal _metadataOf;
 
     /// @notice Cached weight values to derive rulesets from.
     /// @custom:param projectId The ID of the project to which the cache applies.
-    mapping(uint256 projectId => JBRulesetWeightCache) private _weightCacheOf;
+    mapping(uint256 projectId => JBRulesetWeightCache) internal _weightCacheOf;
 
     //*********************************************************************//
     // ------------------------- external views -------------------------- //
@@ -488,7 +488,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
     }
 
     //*********************************************************************//
-    // --------------------- private helper functions -------------------- //
+    // --------------------- internal helper functions ------------------- //
     //*********************************************************************//
 
     /// @notice Updates the latest ruleset for this project if it exists. If there is no ruleset, initializes one.
@@ -503,7 +503,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
         uint256 weight,
         uint256 mustStartAtOrAfter
     )
-        private
+        internal
     {
         // Keep a reference to the project's latest ruleset's ID.
         uint256 latestId = latestRulesetIdOf[projectId];
@@ -585,7 +585,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
         uint256 mustStartAtOrAfter,
         uint256 weight
     )
-        private
+        internal
     {
         // If there is no base, initialize a first ruleset.
         if (baseRuleset.cycleNumber == 0) {
@@ -642,7 +642,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
         uint256 basedOnId,
         uint256 start
     )
-        private
+        internal
     {
         // `weight` in bits 0-87.
         uint256 packed = weight;
@@ -665,7 +665,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
     /// @dev Assumes the project has a `latestRulesetIdOf` value.
     /// @param projectId The ID of the project to check for an upcoming approvable ruleset.
     /// @return rulesetId The `rulesetId` of the upcoming approvable ruleset if one exists, or 0 if one doesn't exist.
-    function _upcomingApprovableRulesetIdOf(uint256 projectId) private view returns (uint256 rulesetId) {
+    function _upcomingApprovableRulesetIdOf(uint256 projectId) internal view returns (uint256 rulesetId) {
         // Get a reference to the ID of the project's latest ruleset.
         rulesetId = latestRulesetIdOf[projectId];
 
@@ -715,7 +715,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
     /// @dev Assumes the project has a latest ruleset.
     /// @param projectId The ID of the project to check for a currently approvable ruleset.
     /// @return The ID of a currently approvable ruleset if one exists, or 0 if one doesn't exist.
-    function _currentlyApprovableRulesetIdOf(uint256 projectId) private view returns (uint256) {
+    function _currentlyApprovableRulesetIdOf(uint256 projectId) internal view returns (uint256) {
         // Get a reference to the project's latest ruleset.
         uint256 rulesetId = latestRulesetIdOf[projectId];
 
@@ -754,7 +754,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
         JBRuleset memory baseRuleset,
         bool allowMidRuleset
     )
-        private
+        internal
         view
         returns (JBRuleset memory)
     {
@@ -791,7 +791,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
         JBRuleset memory baseRuleset,
         uint256 mustStartAtOrAfter
     )
-        private
+        internal
         pure
         returns (uint256 start)
     {
@@ -823,7 +823,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
     /// @param baseRuleset The ruleset to base the calculation on (the previous ruleset).
     /// @param start The start time of the ruleset to derive a weight for.
     /// @return weight The derived weight, as a fixed point number with 18 decimals.
-    function _deriveWeightFrom(JBRuleset memory baseRuleset, uint256 start) private view returns (uint256 weight) {
+    function _deriveWeightFrom(JBRuleset memory baseRuleset, uint256 start) internal view returns (uint256 weight) {
         // A subsequent ruleset to one with a duration of 0 should have the next possible weight.
         if (baseRuleset.duration == 0) {
             return mulDiv(
@@ -877,7 +877,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
     /// @param baseRuleset The previously queued ruleset, to base the calculation on.
     /// @param start The start time of the ruleset to derive a cycle number for.
     /// @return The ruleset's cycle number.
-    function _deriveCycleNumberFrom(JBRuleset memory baseRuleset, uint256 start) private pure returns (uint256) {
+    function _deriveCycleNumberFrom(JBRuleset memory baseRuleset, uint256 start) internal pure returns (uint256) {
         // A subsequent ruleset to one with a duration of 0 should be the next number.
         if (baseRuleset.duration == 0) {
             return baseRuleset.cycleNumber + 1;
@@ -894,7 +894,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
     /// @param projectId The ID of the project that the ruleset belongs to.
     /// @param ruleset The ruleset to get an approval flag for.
     /// @return The approval status of the project's ruleset.
-    function _approvalStatusOf(uint256 projectId, JBRuleset memory ruleset) private view returns (JBApprovalStatus) {
+    function _approvalStatusOf(uint256 projectId, JBRuleset memory ruleset) internal view returns (JBApprovalStatus) {
         return _approvalStatusOf({
             projectId: projectId,
             rulesetId: ruleset.id,
@@ -915,7 +915,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
         uint256 start,
         uint256 approvalHookRulesetId
     )
-        private
+        internal
         view
         returns (JBApprovalStatus)
     {
@@ -938,7 +938,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
     /// @param projectId The ID of the project the ruleset belongs to.
     /// @param rulesetId The ID of the ruleset to get the full struct for.
     /// @return ruleset A ruleset struct.
-    function _getStructFor(uint256 projectId, uint256 rulesetId) private view returns (JBRuleset memory ruleset) {
+    function _getStructFor(uint256 projectId, uint256 rulesetId) internal view returns (JBRuleset memory ruleset) {
         // Return an empty ruleset if the specified `rulesetId` is 0.
         if (rulesetId == 0) return ruleset;
 
