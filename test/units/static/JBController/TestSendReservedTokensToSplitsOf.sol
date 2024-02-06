@@ -5,7 +5,6 @@ import /* {*} from */ "../../../helpers/TestBaseWorkflow.sol";
 import {JBControllerSetup} from "./JBControllerSetup.sol";
 
 contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
-
     function setUp() public {
         super.controllerSetup();
     }
