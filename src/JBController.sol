@@ -54,6 +54,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     error CONTROLLER_MIGRATION_NOT_ALLOWED();
     error MINT_NOT_ALLOWED_AND_NOT_TERMINAL_OR_HOOK();
     error NO_BURNABLE_TOKENS();
+    error NO_RESERVED_TOKENS();
     error CREDIT_TRANSFERS_PAUSED();
     error ZERO_TOKENS_TO_MINT();
 
@@ -740,11 +741,14 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         private
         returns (uint256 tokenCount)
     {
-        // Get the current ruleset to read the reserved rate from.
-        JBRuleset memory ruleset = RULESETS.currentOf(projectId);
-
         // Get a reference to the number of tokens that need to be minted.
         tokenCount = pendingReservedTokenBalanceOf[projectId];
+
+        // Revert if there are no reserved tokens
+        if (tokenCount == 0) revert NO_RESERVED_TOKENS();
+
+        // Get the current ruleset to read the reserved rate from.
+        JBRuleset memory ruleset = RULESETS.currentOf(projectId);
 
         // Reset the reserved token balance
         pendingReservedTokenBalanceOf[projectId] = 0;
