@@ -4,6 +4,8 @@ pragma solidity 0.8.23;
 import {Context} from "lib/openzeppelin-contracts/contracts/utils/Context.sol";
 import {ERC165} from "lib/openzeppelin-contracts/contracts/utils/introspection/ERC165.sol";
 import {IERC165} from "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol";
+import {IERC20} from "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
+import {SafeERC20} from "lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 import {ERC2771Context} from "lib/openzeppelin-contracts/contracts/metatx/ERC2771Context.sol";
 import {mulDiv} from "lib/prb-math/src/Common.sol";
 import {JBPermissioned} from "./abstract/JBPermissioned.sol";
@@ -41,6 +43,9 @@ import {JBSplitHookContext} from "./structs/JBSplitHookContext.sol";
 contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, IJBMigratable {
     // A library that parses packed ruleset metadata into a friendlier format.
     using JBRulesetMetadataResolver for JBRuleset;
+
+    // A library that adds default safety checks to ERC20 functionality.
+    using SafeERC20 for IERC20;
 
     //*********************************************************************//
     // --------------------------- custom errors ------------------------- //
@@ -803,46 +808,93 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
             JBSplit memory split = splits[i];
 
             // Calculate the amount to send towards the split.
-            uint256 tokenCount = mulDiv(amount, split.percent, JBConstants.SPLITS_TOTAL_PERCENT);
+            uint256 splitAmount = mulDiv(amount, split.percent, JBConstants.SPLITS_TOTAL_PERCENT);
 
             // Mints tokens for the split if needed.
-            if (tokenCount > 0) {
-                // If a `hook` is set in the splits, set it as the beneficiary.
-                // Otherwise, if a `projectId` is set in the split, set the project's owner as the beneficiary.
+            if (splitAmount > 0) {
+                // If a `hook` is set in the splits, fulfill its `processSplitWith` transaction.
+                // Otherwise, if a `projectId` is set in the split, try to pay the project using the split's beneficiary
+                // or the `_msgSender()` as the payment's beneficiary.
                 // Otherwise, if the split has a beneficiary send to the split's beneficiary.
                 // Otherwise, send to the `_msgSender()`.
-                address _benenficiary = split.hook != IJBSplitHook(address(0))
-                    ? address(split.hook)
-                    : split.projectId != 0
-                        ? PROJECTS.ownerOf(split.projectId)
-                        : split.beneficiary != address(0) ? split.beneficiary : _msgSender();
-
-                // Mint the tokens.
-                TOKENS.mintFor(_benenficiary, projectId, tokenCount);
 
                 // If there's a split hook, trigger its `processSplitWith` function.
                 if (split.hook != IJBSplitHook(address(0))) {
-                    // Get a reference to the project's token.
+                    // Mint the tokens for the split hook.
+                    TOKENS.mintFor(address(split.hook), projectId, splitAmount);
+
+                    // Get a reference to the project's token. This will return the 0 address if the project doesn't yet
+                    // have a token.
                     IJBToken token = TOKENS.tokenOf(projectId);
 
                     // Process.
                     split.hook.processSplitWith(
                         JBSplitHookContext({
                             token: address(token),
-                            amount: tokenCount,
-                            decimals: token.decimals(),
+                            amount: splitAmount,
+                            decimals: 18, // Hardcoded in JBTokens.
                             projectId: projectId,
                             groupId: groupId,
                             split: split
                         })
                     );
+                    // If there's a project ID, try to pay the project. If it fails, fallback to paying the beneficiary.
+                } else if (split.projectId != 0) {
+                    // Get a reference to the project's token. This will return the 0 address if the project doesn't yet
+                    // have a token.
+                    IJBToken token = TOKENS.tokenOf(projectId);
+
+                    // Get a reference to the project's payment terminal that accepts the token.
+                    IJBTerminal terminal = token == IJBToken(address(0))
+                        ? IJBTerminal(address(0))
+                        : DIRECTORY.primaryTerminalOf(split.projectId, address(token));
+
+                    // If the paying project doesn't have a token or the receiving project isn't accepting the token,
+                    // fallback to sending to the beneficiary.
+                    if (address(token) == address(0) || address(terminal) == address(0)) {
+                        // Use the split's beneficiary if provided, otherwise use the msg sender.
+                        address beneficiary = split.beneficiary != address(0) ? split.beneficiary : _msgSender();
+                        // Mint the tokens.
+                        TOKENS.mintFor(beneficiary, projectId, splitAmount);
+                    } else {
+                        // Mint the tokens to this contract.
+                        TOKENS.mintFor(address(0), projectId, splitAmount);
+
+                        // Send the projectId in the metadata.
+                        bytes memory metadata = bytes(abi.encodePacked(projectId));
+
+                        // Try to fulfill the payment
+                        try terminal.pay({
+                            projectId: split.projectId,
+                            token: address(token),
+                            amount: splitAmount,
+                            beneficiary: split.beneficiary,
+                            minReturnedTokens: 0,
+                            memo: "",
+                            metadata: metadata
+                        }) {} catch (bytes memory) {
+                            // Use the split's beneficiary if provided, otherwise use the msg sender.
+                            address beneficiary = split.beneficiary != address(0) ? split.beneficiary : _msgSender();
+
+                            // Transfer the tokens from this contract to the beneficiary.
+                            IERC20(address(token)).safeTransfer(beneficiary, splitAmount);
+                        }
+                    }
+                    // Check to see if the project accepts the token.
+                    // try to pay the project. catch revert to just paying the project owner.
+                } else {
+                    // Use the split's beneficiary if provided, otherwise use the msg sender.
+                    address beneficiary = split.beneficiary != address(0) ? split.beneficiary : _msgSender();
+
+                    // Mint the tokens.
+                    TOKENS.mintFor(beneficiary, projectId, splitAmount);
                 }
 
                 // Subtract from the amount to be sent to the beneficiary.
-                leftoverAmount = leftoverAmount - tokenCount;
+                leftoverAmount = leftoverAmount - splitAmount;
             }
 
-            emit SendReservedTokensToSplit(projectId, rulesetId, groupId, split, tokenCount, _msgSender());
+            emit SendReservedTokensToSplit(projectId, rulesetId, groupId, split, splitAmount, _msgSender());
         }
     }
 
