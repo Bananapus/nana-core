@@ -863,19 +863,19 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
                         // Send the projectId in the metadata.
                         bytes memory metadata = bytes(abi.encodePacked(projectId));
 
+                        // Use the split's beneficiary if provided, otherwise use the msg sender.
+                        address beneficiary = split.beneficiary != address(0) ? split.beneficiary : _msgSender();
+
                         // Try to fulfill the payment
                         try terminal.pay({
                             projectId: split.projectId,
                             token: address(token),
                             amount: splitAmount,
-                            beneficiary: split.beneficiary,
+                            beneficiary: beneficiary,
                             minReturnedTokens: 0,
                             memo: "",
                             metadata: metadata
                         }) {} catch (bytes memory) {
-                            // Use the split's beneficiary if provided, otherwise use the msg sender.
-                            address beneficiary = split.beneficiary != address(0) ? split.beneficiary : _msgSender();
-
                             // Transfer the tokens from this contract to the beneficiary.
                             IERC20(address(token)).safeTransfer(beneficiary, splitAmount);
                         }
