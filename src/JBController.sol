@@ -839,55 +839,54 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
                         })
                     );
                     // If there's a project ID, try to pay the project. If it fails, fallback to paying the beneficiary.
-                } else if (split.projectId != 0) {
-                    // Get a reference to the project's token. This will return the 0 address if the project doesn't yet
-                    // have a token.
-                    IJBToken token = TOKENS.tokenOf(projectId);
-
-                    // Get a reference to the project's payment terminal that accepts the token.
-                    IJBTerminal terminal = token == IJBToken(address(0))
-                        ? IJBTerminal(address(0))
-                        : DIRECTORY.primaryTerminalOf(split.projectId, address(token));
-
-                    // If the paying project doesn't have a token or the receiving project isn't accepting the token,
-                    // fallback to sending to the beneficiary.
-                    if (address(token) == address(0) || address(terminal) == address(0)) {
-                        // Use the split's beneficiary if provided, otherwise use the msg sender.
-                        address beneficiary = split.beneficiary != address(0) ? split.beneficiary : _msgSender();
-                        // Mint the tokens.
-                        TOKENS.mintFor(beneficiary, projectId, splitAmount);
-                    } else {
-                        // Mint the tokens to this contract.
-                        TOKENS.mintFor(address(0), projectId, splitAmount);
-
-                        // Send the projectId in the metadata.
-                        bytes memory metadata = bytes(abi.encodePacked(projectId));
-
-                        // Use the split's beneficiary if provided, otherwise use the msg sender.
-                        address beneficiary = split.beneficiary != address(0) ? split.beneficiary : _msgSender();
-
-                        // Try to fulfill the payment
-                        try terminal.pay({
-                            projectId: split.projectId,
-                            token: address(token),
-                            amount: splitAmount,
-                            beneficiary: beneficiary,
-                            minReturnedTokens: 0,
-                            memo: "",
-                            metadata: metadata
-                        }) {} catch (bytes memory) {
-                            // Transfer the tokens from this contract to the beneficiary.
-                            IERC20(address(token)).safeTransfer(beneficiary, splitAmount);
-                        }
-                    }
-                    // Check to see if the project accepts the token.
-                    // try to pay the project. catch revert to just paying the project owner.
                 } else {
                     // Use the split's beneficiary if provided, otherwise use the msg sender.
                     address beneficiary = split.beneficiary != address(0) ? split.beneficiary : _msgSender();
 
-                    // Mint the tokens.
-                    TOKENS.mintFor(beneficiary, projectId, splitAmount);
+                    if (split.projectId != 0) {
+                        // Get a reference to the project's token. This will return the 0 address if the project doesn't
+                        // yet
+                        // have a token.
+                        IJBToken token = TOKENS.tokenOf(projectId);
+
+                        // Get a reference to the project's payment terminal that accepts the token.
+                        IJBTerminal terminal = token == IJBToken(address(0))
+                            ? IJBTerminal(address(0))
+                            : DIRECTORY.primaryTerminalOf(split.projectId, address(token));
+
+                        // If the paying project doesn't have a token or the receiving project isn't accepting the
+                        // token,
+                        // fallback to sending to the beneficiary.
+                        if (address(token) == address(0) || address(terminal) == address(0)) {
+                            // Mint the tokens.
+                            TOKENS.mintFor(beneficiary, projectId, splitAmount);
+                        } else {
+                            // Mint the tokens to this contract.
+                            TOKENS.mintFor(address(0), projectId, splitAmount);
+
+                            // Send the projectId in the metadata.
+                            bytes memory metadata = bytes(abi.encodePacked(projectId));
+
+                            // Try to fulfill the payment
+                            try terminal.pay({
+                                projectId: split.projectId,
+                                token: address(token),
+                                amount: splitAmount,
+                                beneficiary: beneficiary,
+                                minReturnedTokens: 0,
+                                memo: "",
+                                metadata: metadata
+                            }) {} catch (bytes memory) {
+                                // Transfer the tokens from this contract to the beneficiary.
+                                IERC20(address(token)).safeTransfer(beneficiary, splitAmount);
+                            }
+                        }
+                        // Check to see if the project accepts the token.
+                        // try to pay the project. catch revert to just paying the project owner.
+                    } else {
+                        // Mint the tokens.
+                        TOKENS.mintFor(beneficiary, projectId, splitAmount);
+                    }
                 }
 
                 // Subtract from the amount to be sent to the beneficiary.
