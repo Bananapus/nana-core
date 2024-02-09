@@ -886,7 +886,6 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
 
                             // Reset token approval of the terminal.
                             IERC20(address(token)).approve(address(terminal), 0);
-
                         }
                         // Check to see if the project accepts the token.
                         // try to pay the project. catch revert to just paying the project owner.
