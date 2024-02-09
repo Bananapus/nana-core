@@ -184,7 +184,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
         _controller.sendReservedTokensToSplitsOf(_projectId, _memo);
     }
 
-    function test_GivenABeneficiaryIsConfigured() external whenTheProjectHasReservedTokensGtZero {
+    function test_GivenABeneficiaryIsConfiguredAndProjectIsZero() external whenTheProjectHasReservedTokensGtZero {
         // it will mint for the beneficiary
 
         JBRulesetMetadata memory _rulesMetadata = JBRulesetMetadata({
@@ -217,7 +217,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
         _splits[0] = JBSplit({
             preferAddToBalance: false,
             percent: JBConstants.SPLITS_TOTAL_PERCENT,
-            projectId: _projectId,
+            projectId: 0,
             beneficiary: payable(_beneficiary),
             lockedUntil: 0,
             hook: IJBSplitHook(address(0))
@@ -281,7 +281,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
             token: address(_token),
             amount: _tokenCount,
             decimals: _decimals,
-            projectId: _projectId,
+            projectId: 0,
             groupId: 1,
             split: _splits[0]
         });
