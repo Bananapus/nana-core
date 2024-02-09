@@ -865,7 +865,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
                             TOKENS.mintFor(address(this), projectId, splitAmount);
 
                             // Approve the terminal.
-                            token.approve(address(terminal), splitAmount);
+                            IERC20(address(token)).approve(address(terminal), splitAmount);
 
                             // Send the projectId in the metadata.
                             bytes memory metadata = bytes(abi.encodePacked(projectId));
@@ -883,6 +883,10 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
                                 // Transfer the tokens from this contract to the beneficiary.
                                 IERC20(address(token)).safeTransfer(beneficiary, splitAmount);
                             }
+
+                            // Reset token approval of the terminal.
+                            IERC20(address(token)).approve(address(terminal), 0);
+
                         }
                         // Check to see if the project accepts the token.
                         // try to pay the project. catch revert to just paying the project owner.
