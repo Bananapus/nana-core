@@ -862,7 +862,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
                             TOKENS.mintFor(beneficiary, projectId, splitAmount);
                         } else {
                             // Mint the tokens to this contract.
-                            TOKENS.mintFor(address(0), projectId, splitAmount);
+                            TOKENS.mintFor(address(this), projectId, splitAmount);
 
                             // Send the projectId in the metadata.
                             bytes memory metadata = bytes(abi.encodePacked(projectId));
