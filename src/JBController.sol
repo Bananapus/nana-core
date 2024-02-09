@@ -867,6 +867,9 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
                             // Send the projectId in the metadata.
                             bytes memory metadata = bytes(abi.encodePacked(projectId));
 
+                            // Approve the terminal.
+                            token.approve(address(terminal), splitAmount);
+
                             // Try to fulfill the payment
                             try terminal.pay({
                                 projectId: split.projectId,
