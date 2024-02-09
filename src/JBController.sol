@@ -864,11 +864,11 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
                             // Mint the tokens to this contract.
                             TOKENS.mintFor(address(this), projectId, splitAmount);
 
-                            // Send the projectId in the metadata.
-                            bytes memory metadata = bytes(abi.encodePacked(projectId));
-
                             // Approve the terminal.
                             token.approve(address(terminal), splitAmount);
+
+                            // Send the projectId in the metadata.
+                            bytes memory metadata = bytes(abi.encodePacked(projectId));
 
                             // Try to fulfill the payment
                             try terminal.pay({
