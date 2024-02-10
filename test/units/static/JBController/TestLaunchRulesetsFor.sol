@@ -144,7 +144,7 @@ contract TestLaunchRulesetsFor_Local is JBControllerSetup {
         mockExpect(
             address(directory),
             abi.encodeCall(IJBDirectory.setControllerOf, (_projectId, IERC165(address(_controller)))),
-            abi.encode()
+            ""
         );
 
         // mock call to rulesets queueFor
@@ -172,14 +172,14 @@ contract TestLaunchRulesetsFor_Local is JBControllerSetup {
         // Mock call to splits setSplitGroupsOf
         bytes memory _setSplitsCall =
             abi.encodeCall(IJBSplits.setSplitGroupsOf, (_projectId, _ts, _rulesetConfigs[0].splitGroups));
-        bytes memory _splitsReturn = abi.encode();
+        bytes memory _splitsReturn = "";
         mockExpect(address(splits), _setSplitsCall, _splitsReturn);
 
         // Mock call to fundaccesslimits setFundAccessLimitsFor
         bytes memory _fundAccessCall = abi.encodeCall(
             IJBFundAccessLimits.setFundAccessLimitsFor, (_projectId, _ts, _rulesetConfigs[0].fundAccessLimitGroups)
         );
-        bytes memory _accessReturn = abi.encode();
+        bytes memory _accessReturn = "";
         mockExpect(address(fundAccessLimits), _fundAccessCall, _accessReturn);
 
         // event as expected

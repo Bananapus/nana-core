@@ -153,7 +153,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
 
         // mock call to JBTokens mintFor
         bytes memory _tokensMintCall = abi.encodeCall(IJBTokens.mintFor, (address(_hook), _projectId, _tokenCount));
-        mockExpect(address(tokens), _tokensMintCall, abi.encode());
+        mockExpect(address(tokens), _tokensMintCall, "");
 
         // mock call to JBTokens tokenOf
         bytes memory _tokenOfCall = abi.encodeCall(IJBTokens.tokenOf, (_projectId));
@@ -175,7 +175,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
 
         // mock call to split hook processSplitWith
         bytes memory _hookCall = abi.encodeCall(IJBSplitHook.processSplitWith, (_context));
-        mockExpect(address(_hook), _hookCall, abi.encode());
+        mockExpect(address(_hook), _hookCall, "");
 
         vm.expectEmit();
         emit IJBController.SendReservedTokensToSplits(
@@ -266,7 +266,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
 
         // mock call to JBTokens mintFor
         bytes memory _tokensMintCall = abi.encodeCall(IJBTokens.mintFor, (_beneficiary, _projectId, _tokenCount));
-        mockExpect(address(tokens), _tokensMintCall, abi.encode());
+        mockExpect(address(tokens), _tokensMintCall, "");
 
         // mock call to JBTokens tokenOf
         /* bytes memory _tokenOfCall = abi.encodeCall(IJBTokens.tokenOf, (_projectId));
@@ -288,7 +288,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
 
         /*  // mock call to split hook processSplitWith
         bytes memory _hookCall = abi.encodeCall(IJBSplitHook.processSplitWith, (_context));
-        mockExpect(address(_hook), _hookCall, abi.encode()); */
+        mockExpect(address(_hook), _hookCall, ""); */
 
         vm.expectEmit();
         emit IJBController.SendReservedTokensToSplit(

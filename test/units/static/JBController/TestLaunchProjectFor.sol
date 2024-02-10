@@ -24,7 +24,7 @@ contract TestLaunchProjectFor_Local is JBControllerSetup {
 
         bytes memory setControllerCall =
             abi.encodeCall(IJBDirectory.setControllerOf, (1, IERC165(address(_controller))));
-        bytes memory setControllerReturn = abi.encode();
+        bytes memory setControllerReturn = "";
         mockExpect(address(directory), setControllerCall, setControllerReturn);
         _;
     }
@@ -245,13 +245,13 @@ contract TestLaunchProjectFor_Local is JBControllerSetup {
 
         // JBSplits call
         bytes memory splitsCall = abi.encodeCall(IJBSplits.setSplitGroupsOf, (1, block.timestamp, _splitsGroup));
-        bytes memory splitsReturned = abi.encode();
+        bytes memory splitsReturned = "";
         mockExpect(address(splits), splitsCall, splitsReturned);
 
         // JBFundAccess call
         bytes memory fundsCall =
             abi.encodeCall(IJBFundAccessLimits.setFundAccessLimitsFor, (1, block.timestamp, _fundAccessLimitGroup));
-        bytes memory fundsReturned = abi.encode();
+        bytes memory fundsReturned = "";
         mockExpect(address(fundAccessLimits), fundsCall, fundsReturned);
 
         _controller.launchProjectFor(address(this), _metadata, _rulesetConfigurations, _terminals, _memo);

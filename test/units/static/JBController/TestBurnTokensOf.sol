@@ -52,7 +52,7 @@ contract TestBurnTokensOf_Local is JBControllerSetup {
 
         // since we spoofed a terminal it will call JBTokens to burn
         bytes memory _burnFromCall = abi.encodeCall(IJBTokens.burnFrom, (_holder, _projectId, _validCount));
-        bytes memory _burnFromReturn = abi.encode();
+        bytes memory _burnFromReturn = "";
         mockExpect(address(tokens), _burnFromCall, _burnFromReturn);
 
         vm.expectEmit();
@@ -84,7 +84,7 @@ contract TestBurnTokensOf_Local is JBControllerSetup {
 
         // since we spoofed root permissions it will call JBTokens to burn
         bytes memory _burnFromCall = abi.encodeCall(IJBTokens.burnFrom, (_holder, _projectId, _validCount));
-        bytes memory _burnFromReturn = abi.encode();
+        bytes memory _burnFromReturn = "";
         mockExpect(address(tokens), _burnFromCall, _burnFromReturn);
 
         vm.expectEmit();

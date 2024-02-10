@@ -73,7 +73,7 @@ contract TestTransferCreditsFrom_Local is JBControllerSetup {
         // mock the subsequent call to JBTokens transferCreditsFrom
         bytes memory _transferCall =
             abi.encodeCall(IJBTokens.transferCreditsFrom, (_holder, _projectId, _beneficiary, _amount));
-        bytes memory _transferCallReturn = abi.encode();
+        bytes memory _transferCallReturn = "";
         mockExpect(address(tokens), _transferCall, _transferCallReturn);
 
         _controller.transferCreditsFrom(_holder, _projectId, _beneficiary, _amount);
