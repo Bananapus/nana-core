@@ -87,7 +87,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     /// @custom:param projectId The ID of the project to get the pending reserved token balance of.
     mapping(uint256 projectId => uint256) public override pendingReservedTokenBalanceOf;
 
-    /// @notice The metadata URI for each project.
+    /// @notice The metadata URI for each project. This is typically an IPFS hash, optionally with the `ipfs://` prefix.
     /// @custom:param projectId The ID of the project to which the metadata belongs.
     mapping(uint256 projectId => string) public override uriOf;
 
@@ -137,11 +137,13 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         metadata = ruleset.expandMetadata();
     }
 
-    /// @notice Get a page of rulesets for a project in order of latest to earliest.
+    /// @notice Get an array of a project's rulesets (with metadata) up to a maximum array size, sorted from latest to
+    /// earliest.
     /// @param projectId The ID of the project to get the rulesets of.
-    /// @param startingId The ID of the ruleset to begin with. If 0 is passed, the latest ruleset will be used.
-    /// @param size The number of rulesets to return.
-    /// @return rulesets The rulesets as an array of `JBRuleset` structs.
+    /// @param startingId The ID of the ruleset to begin with. This will be the latest ruleset in the result. If 0 is
+    /// passed, the project's latest ruleset will be used.
+    /// @param size The maximum number of rulesets to return.
+    /// @return rulesets The rulesets with their metadata as an array of `JBRulesetWithMetadata` structs.
     function rulesetsOf(
         uint256 projectId,
         uint256 startingId,
@@ -273,7 +275,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     /// @dev Anyone can deploy a project on an owner's behalf.
     /// @param owner The address to set as the owner of the project. The project ERC-721 will be owned by this address.
     /// @param projectUri A URI to associate with the project. This can be updated any time by the owner of the
-    /// project.
+    /// project. This is typically an IPFS hash, optionally with the `ipfs://` prefix.
     /// @param rulesetConfigurations The ruleset configurations to queue.
     /// @param terminalConfigurations The terminal configurations to add for the project.
     /// @param memo A memo to pass along to the emitted event.
@@ -566,7 +568,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
 
     /// @notice Set a project's metadata URI content.
     /// @dev Only a project's owner can set its metadata through the project's controller.
-    /// @dev Frontends typically use an IPFS hash for the metadata content.
+    /// @dev Frontends typically use an IPFS hash for the metadata content, optionally with the `ipfs://` prefix.
     /// @param projectId The ID of the project to set the metadata of.
     /// @param metadata The metadata content to set.
     function setUriOf(uint256 projectId, string calldata metadata) external override {
