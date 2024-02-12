@@ -122,7 +122,8 @@ contract JBRulesets is JBControlled, IJBRulesets {
 
     /// @notice Get an array of a project's rulesets up to a maximum array size, sorted from latest to earliest.
     /// @param projectId The ID of the project to get the rulesets of.
-    /// @param startingId The ID of the ruleset to begin with. This will be the latest ruleset in the result. If 0 is passed, the project's latest ruleset will be used.
+    /// @param startingId The ID of the ruleset to begin with. This will be the latest ruleset in the result. If 0 is
+    /// passed, the project's latest ruleset will be used.
     /// @param size The maximum number of rulesets to return.
     /// @return rulesets The rulesets as an array of `JBRuleset` structs.
     function rulesetsOf(
@@ -144,7 +145,8 @@ contract JBRulesets is JBControlled, IJBRulesets {
         // Keep a reference to the starting ruleset.
         JBRuleset memory ruleset = _getStructFor(projectId, startingId);
 
-        // First, count the number of rulesets to include in the result by iterating backwards from the starting ruleset.
+        // First, count the number of rulesets to include in the result by iterating backwards from the starting
+        // ruleset.
         while (ruleset.id != 0 && count < size) {
             // Increment the counter.
             count++;

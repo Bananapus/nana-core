@@ -137,9 +137,11 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         metadata = ruleset.expandMetadata();
     }
 
-    /// @notice Get an array of a project's rulesets (with metadata) up to a maximum array size, sorted from latest to earliest.
+    /// @notice Get an array of a project's rulesets (with metadata) up to a maximum array size, sorted from latest to
+    /// earliest.
     /// @param projectId The ID of the project to get the rulesets of.
-    /// @param startingId The ID of the ruleset to begin with. This will be the latest ruleset in the result. If 0 is passed, the project's latest ruleset will be used.
+    /// @param startingId The ID of the ruleset to begin with. This will be the latest ruleset in the result. If 0 is
+    /// passed, the project's latest ruleset will be used.
     /// @param size The maximum number of rulesets to return.
     /// @return rulesets The rulesets with their metadata as an array of `JBRulesetWithMetadata` structs.
     function rulesetsOf(
