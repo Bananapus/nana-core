@@ -62,6 +62,10 @@ interface IJBController is IERC165, IJBProjectUriRegistry, IJBDirectoryAccessCon
         address indexed holder, uint256 indexed projectId, uint256 tokenCount, string memo, address caller
     );
 
+    event ReservedDistributionReverted(
+        uint256 indexed projectId, JBSplit split, uint256 amount, bytes reason, address caller
+    );
+
     event MigrateController(uint256 indexed projectId, IJBMigratable to, address caller);
 
     event PrepMigration(uint256 indexed projectId, address from, address caller);
