@@ -1,14 +1,12 @@
-# juice-contracts-v4
-
-https://github.com/bananapus/juice-contracts-v4
+# Juicebox v4
 
 Juicebox is a flexible toolkit for launching and managing a treasury-backed token on Ethereum and L2s.
 
-To learn more about the protocol, visit the [Juicebox Docs](https://docs.juicebox.money/).
+To learn more about the protocol, visit the [Juicebox Docs](https://docs.juicebox.money/). If you have questions, reach out on [Discord](https://discord.com/invite/ErQYmth4dS).
 
 ## Develop
 
-`juice-contracts-v4` uses the [Foundry](https://github.com/foundry-rs/foundry) development toolchain for builds, tests, and deployments. To get set up, install [Foundry](https://github.com/foundry-rs/foundry):
+`juice-contracts-v4` uses [npm](https://www.npmjs.com/) for package management and the [Foundry](https://github.com/foundry-rs/foundry) development toolchain for builds, tests, and deployments. To get set up, [install Node.js](https://nodejs.org/en/download) and install [Foundry](https://github.com/foundry-rs/foundry):
 
 ```bash
 curl -L https://foundry.paradigm.xyz | sh
@@ -17,7 +15,7 @@ curl -L https://foundry.paradigm.xyz | sh
 You can download and install dependencies with:
 
 ```bash
-forge install
+npm install && forge install
 ```
 
 If you run into trouble with `forge install`, try using `git submodule update --init --recursive` to ensure that nested submodules have been properly initialized.
@@ -26,7 +24,6 @@ Some useful commands:
 
 | Command               | Description                                         |
 | --------------------- | --------------------------------------------------- |
-| `forge install`       | Install the dependencies.                           |
 | `forge build`         | Compile the contracts and write artifacts to `out`. |
 | `forge fmt`           | Lint.                                               |
 | `forge test`          | Run the tests.                                      |
@@ -36,8 +33,6 @@ Some useful commands:
 | `forge clean`         | Remove the build artifacts and cache directories.   |
 
 To learn more, visit the [Foundry Book](https://book.getfoundry.sh/) docs.
-
-We recommend using [Juan Blanco's solidity extension](https://marketplace.visualstudio.com/items?itemName=JuanBlanco.solidity) for VSCode.
 
 ## Utilities
 

@@ -8,6 +8,7 @@ optimizer_runs = 200
 block_number = 14126430
 block_timestamp = 1643802347
 runs = 4096
+libs = ["node_modules", "lib"]
 
 [profile.fork] # run via FOUNDRY_PROFILE=fork foundry test
 fs_permissions = [{ access = "read", path = "./deployments/mainnet" }] # Get the deployment addresses for forking
