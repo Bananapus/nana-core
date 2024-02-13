@@ -1,6 +1,5 @@
-lib/openzeppelin-contracts/contracts/=node_modules/@openzeppelin/contracts
 openzeppelin-contracts/contracts/=node_modules/@openzeppelin/contracts
-
-lib/chainlink/=node_modules/@chainlink/
-lib/prb-math=node_modules/@prb/math
-lib/permit2/=node_modules/@uniswap/permit2
+chainlink/=node_modules/@chainlink/
+prb-math=node_modules/@prb/math
+permit2/=node_modules/@uniswap/permit2
+forge-std/=lib/forge-std/src/
