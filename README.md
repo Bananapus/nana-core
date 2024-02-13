@@ -1,12 +1,26 @@
-# Juicebox v4
+# Bananapus Core
 
-Juicebox is a flexible toolkit for launching and managing a treasury-backed token on Ethereum and L2s.
+This repository contains the core protocol contracts for Bananapus' Juicebox v4. Juicebox is a flexible toolkit for launching and managing a treasury-backed token on Ethereum and L2s.
 
 To learn more about the protocol, visit the [Juicebox Docs](https://docs.juicebox.money/). If you have questions, reach out on [Discord](https://discord.com/invite/ErQYmth4dS).
 
+## Install
+
+```bash
+npm install @bananapus/core
+```
+
+OR
+
+```bash
+forge install Bananapus/bananapus-core
+```
+
+Add `@bananapus=lib/bananapus-core/` to `remappings.txt`
+
 ## Develop
 
-`juice-contracts-v4` uses [npm](https://www.npmjs.com/) for package management and the [Foundry](https://github.com/foundry-rs/foundry) development toolchain for builds, tests, and deployments. To get set up, [install Node.js](https://nodejs.org/en/download) and install [Foundry](https://github.com/foundry-rs/foundry):
+`core` uses [npm](https://www.npmjs.com/) for package management and the [Foundry](https://github.com/foundry-rs/foundry) development toolchain for builds, tests, and deployments. To get set up, [install Node.js](https://nodejs.org/en/download) and install [Foundry](https://github.com/foundry-rs/foundry):
 
 ```bash
 curl -L https://foundry.paradigm.xyz | sh
