@@ -132,13 +132,13 @@ contract JBPermissions is JBPermissioned, IJBPermissions {
     }
 
     //*********************************************************************//
-    // --------------------- private helper functions -------------------- //
+    // --------------------- internal helper functions ------------------- //
     //*********************************************************************//
 
     /// @notice Converts an array of permission IDs to a packed `uint256`.
     /// @param permissionIds The IDs of the permissions to pack.
     /// @return packed The packed value.
-    function _packedPermissions(uint256[] calldata permissionIds) private pure returns (uint256 packed) {
+    function _packedPermissions(uint256[] calldata permissionIds) internal pure returns (uint256 packed) {
         // Keep a reference to the number of IDs being iterated on.
         uint256 numberOfIds = permissionIds.length;
 
