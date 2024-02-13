@@ -30,7 +30,7 @@ contract TestCurrentSurplusOf_Local is JBTerminalStoreSetup {
 
         bytes32 balanceBytes = bytes32(_balance);
 
-        // Set direct price feed
+        // Set balance
         vm.store(address(_store), slot, balanceBytes);
 
         // Ensure balance is set correctly
