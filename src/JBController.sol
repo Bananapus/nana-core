@@ -845,8 +845,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
 
                     if (split.projectId != 0) {
                         // Get a reference to the project's token. This will return the 0 address if the project doesn't
-                        // yet
-                        // have a token.
+                        // yet have a token.
                         IJBToken token = TOKENS.tokenOf(projectId);
 
                         // Get a reference to the project's payment terminal that accepts the token.
@@ -879,9 +878,11 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
                                 minReturnedTokens: 0,
                                 memo: "",
                                 metadata: metadata
-                            }) {} catch (bytes memory) {
+                            }) {} catch (bytes memory reason) {
                                 // Transfer the tokens from this contract to the beneficiary.
                                 IERC20(address(token)).safeTransfer(beneficiary, splitAmount);
+
+                                emit ReservedDistributionReverted(projectId, split, splitAmount, reason, _msgSender());
                             }
 
                             // Reset token approval of the terminal.
