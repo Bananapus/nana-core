@@ -1,0 +1,17 @@
+name: juice-contracts-publish
+on:
+  push:
+    branches:
+      - main
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: bahmutov/npm-install@v1
+      # Publish deploy artifacts NPM packages. This will only run if there are new deploys.
+      - name: Publish NPM package
+        uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
+          access: "public"
