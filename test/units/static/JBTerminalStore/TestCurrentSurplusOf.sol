@@ -17,6 +17,8 @@ contract TestCurrentSurplusOf_Local is JBTerminalStoreSetup {
     IJBFundAccessLimits _accessLimits = IJBFundAccessLimits(makeAddr("funds"));
 
     uint32 _currency = uint32(uint160(address(_token)));
+    address _nativeAddress = JBConstants.NATIVE_TOKEN;
+    uint32 _nativeCurrency = uint32(uint160(JBConstants.NATIVE_TOKEN));
 
     function setUp() public {
         super.terminalStoreSetup();
@@ -62,19 +64,19 @@ contract TestCurrentSurplusOf_Local is JBTerminalStoreSetup {
         });
 
         // mock call to JBRulesets currentOf
-        bytes memory _currentOfCall = abi.encodeCall(IJBRulesets.currentOf, (_projectId));
-        bytes memory _currentOfReturn = abi.encode(_returnedRuleset);
-        mockExpect(address(rulesets), _currentOfCall, _currentOfReturn);
+        mockExpect(address(rulesets), abi.encodeCall(IJBRulesets.currentOf, (_projectId)), abi.encode(_returnedRuleset));
 
         // mock call to JBDirectory controllerOf
-        bytes memory _controllerOfCall = abi.encodeCall(IJBDirectory.controllerOf, (_projectId));
-        bytes memory _controllerOfReturn = abi.encode(address(_controller));
-        mockExpect(address(directory), _controllerOfCall, _controllerOfReturn);
+        mockExpect(
+            address(directory),
+            abi.encodeCall(IJBDirectory.controllerOf, (_projectId)),
+            abi.encode(address(_controller))
+        );
 
         // mock call to controller FUND_ACCESS_LIMITS
-        bytes memory _accessLimitsCall = abi.encodeCall(IJBController.FUND_ACCESS_LIMITS, ());
-        bytes memory _accessLimitsReturn = abi.encode(_accessLimits);
-        mockExpect(address(_controller), _accessLimitsCall, _accessLimitsReturn);
+        mockExpect(
+            address(_controller), abi.encodeCall(IJBController.FUND_ACCESS_LIMITS, ()), abi.encode(_accessLimits)
+        );
 
         JBCurrencyAmount[] memory _payoutLimits = new JBCurrencyAmount[](1);
         _payoutLimits[0] = JBCurrencyAmount({amount: 1e17, currency: _currency});
@@ -98,6 +100,59 @@ contract TestCurrentSurplusOf_Local is JBTerminalStoreSetup {
         whenSurplusRequiresDecimalAdjustment
     {
         // it will convert surplus to target currency with decimal adjustment
+        JBAccountingContext[] memory _contexts = new JBAccountingContext[](1);
+
+        _contexts[0] = JBAccountingContext({token: address(_token), decimals: 18, currency: _currency});
+
+        // JBRulesets calldata
+        JBRuleset memory _returnedRuleset = JBRuleset({
+            cycleNumber: block.timestamp,
+            id: block.timestamp,
+            basedOnId: 0,
+            start: block.timestamp,
+            duration: block.timestamp + 1000,
+            weight: 1e18,
+            decayRate: 0,
+            approvalHook: IJBRulesetApprovalHook(address(0)),
+            metadata: 0
+        });
+
+        // mock call to JBRulesets currentOf
+        mockExpect(address(rulesets), abi.encodeCall(IJBRulesets.currentOf, (_projectId)), abi.encode(_returnedRuleset));
+
+        // mock call to JBDirectory controllerOf
+        mockExpect(
+            address(directory),
+            abi.encodeCall(IJBDirectory.controllerOf, (_projectId)),
+            abi.encode(address(_controller))
+        );
+
+        // mock call to controller FUND_ACCESS_LIMITS
+        bytes memory _accessLimitsCall = abi.encodeCall(IJBController.FUND_ACCESS_LIMITS, ());
+        bytes memory _accessLimitsReturn = abi.encode(_accessLimits);
+        mockExpect(address(_controller), _accessLimitsCall, _accessLimitsReturn);
+
+        JBCurrencyAmount[] memory _payoutLimits = new JBCurrencyAmount[](1);
+        _payoutLimits[0] = JBCurrencyAmount({amount: 1e17, currency: _currency});
+
+        // mock call to fundAccessLimits payoutLimitsOf
+        bytes memory _payoutLimitsCall = abi.encodeCall(
+            IJBFundAccessLimits.payoutLimitsOf, (_projectId, block.timestamp, address(_terminal), address(_token))
+        );
+        bytes memory _payoutLimitsReturn = abi.encode(_payoutLimits);
+        mockExpect(address(_accessLimits), _payoutLimitsCall, _payoutLimitsReturn);
+
+        // mock call to JBPrices pricePerUnitOf
+        bytes memory _pricePerCall =
+            abi.encodeCall(IJBPrices.pricePerUnitOf, (_projectId, _currency, _nativeCurrency, 18));
+        bytes memory _pricePerReturn = abi.encode(uint256(1));
+        mockExpect(address(prices), _pricePerCall, _pricePerReturn);
+
+        uint256 currentSurplus = _store.currentSurplusOf(address(_terminal), _projectId, _contexts, 6, _nativeCurrency);
+
+        // assert correct calcs
+        uint256 expectedSurplus = ((1e18 - 1e17) * 1e18) / 10 ** (18 - 6);
+        assertEq(expectedSurplus, currentSurplus);
     }
 
     modifier whenSurplusDoesNotRequireDecimalAdjustment() {
