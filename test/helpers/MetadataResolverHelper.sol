@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.23;
 
-import {JBMetadataResolver} from "src/libraries/JBMetadataResolver.sol";
+import {JBMetadataResolver} from "../../src/libraries/JBMetadataResolver.sol";
 
 /**
  * @notice Contract to create structured metadata, storing {id: data} entries.
