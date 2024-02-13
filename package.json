@@ -5,6 +5,7 @@
     "type": "git",
     "url": "https://github.com/Bananapus/juice-contracts-v4.git"
   },
+  "license": "MIT",
   "dependencies": {
     "@chainlink/contracts": "^0.8.0",
     "@openzeppelin/contracts": "^5.0.1",
