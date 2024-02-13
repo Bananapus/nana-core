@@ -13,10 +13,10 @@ npm install @bananapus/core
 OR
 
 ```bash
-forge install Bananapus/bananapus-core
+forge install Bananapus/nana-core
 ```
 
-Add `@bananapus=lib/bananapus-core/` to `remappings.txt`
+Add `@bananapus=lib/nana-core/` to `remappings.txt`
 
 ## Develop
 
@@ -48,16 +48,18 @@ Some useful commands:
 
 To learn more, visit the [Foundry Book](https://book.getfoundry.sh/) docs.
 
-## Utilities
+## Scripts
 
-For convenience, several utility commands are available in `util.sh`. To see a list, run:
+For convenience, several utility commands are available in `package.json`.
 
-```bash
-`bash util.sh --help`.
-```
-
-Or make the script executable and run:
-
-```bash
-./util.sh --help
-```
+| Command                           | Description                            |
+| --------------------------------- | -------------------------------------- |
+| `npm test`                        | Run local tests.                       |
+| `npm run test:fork`               | Run fork tests (for use in CI).        |
+| `npm run coverage:lcov`           | Generate an LCOV test coverage report. |
+| `npm run deploy:ethereum-mainnet` | Deploy to Ethereum mainnet             |
+| `npm run deploy:ethereum-sepolia` | Deploy to Ethereum Sepolia testnet     |
+| `npm run deploy:optimism-mainnet` | Deploy to Optimism mainnet             |
+| `npm run deploy:optimism-testnet` | Deploy to Optimism testnet             |
+| `npm run deploy:polygon-mainnet`  | Deploy to Polygon mainnet              |
+| `npm run deploy:polygon-mumbai`   | Deploy to Polygon Mumbai testnet       |
