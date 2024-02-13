@@ -274,9 +274,9 @@ contract TestPermit2Terminal_Local is TestBaseWorkflow {
         });
     }
 
-
     /// Permit2 signature helpers.
-    /// (required because `permit2/test/utils/PermitSignature.sol` imports `draft-EIP712.sol` which is no longer a draft.)
+    /// (required because `permit2/test/utils/PermitSignature.sol` imports `draft-EIP712.sol` which is no longer a
+    /// draft.)
 
     bytes32 public constant _PERMIT_DETAILS_TYPEHASH =
         keccak256("PermitDetails(address token,uint160 amount,uint48 expiration,uint48 nonce)");
@@ -303,7 +303,11 @@ contract TestPermit2Terminal_Local is TestBaseWorkflow {
         IAllowanceTransfer.PermitSingle memory permit,
         uint256 privateKey,
         bytes32 domainSeparator
-    ) internal pure returns (uint8 v, bytes32 r, bytes32 s) {
+    )
+        internal
+        pure
+        returns (uint8 v, bytes32 r, bytes32 s)
+    {
         bytes32 permitHash = keccak256(abi.encode(_PERMIT_DETAILS_TYPEHASH, permit.details));
 
         bytes32 msgHash = keccak256(
@@ -321,7 +325,11 @@ contract TestPermit2Terminal_Local is TestBaseWorkflow {
         IAllowanceTransfer.PermitSingle memory permit,
         uint256 privateKey,
         bytes32 domainSeparator
-    ) internal pure returns (bytes memory sig) {
+    )
+        internal
+        pure
+        returns (bytes memory sig)
+    {
         (uint8 v, bytes32 r, bytes32 s) = getPermitSignatureRaw(permit, privateKey, domainSeparator);
         return bytes.concat(r, s, bytes1(v));
     }
