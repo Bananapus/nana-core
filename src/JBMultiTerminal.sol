@@ -611,6 +611,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             uint256 payValue = token == JBConstants.NATIVE_TOKEN ? amount : 0;
             // Send the fee.
             // If this terminal's token is ETH, send it in msg.value.
+            // slither-disable-next-line unused-return
             feeTerminal.pay{value: payValue}({
                 projectId: _FEE_BENEFICIARY_PROJECT_ID,
                 token: token,
@@ -747,6 +748,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
                     // Make the payment.
                     // If this terminal's token is the native token, send it in `msg.value`.
+                    // slither-disable-next-line unused-return
                     terminal.pay{value: payValue}({
                         projectId: split.projectId,
                         token: token,
@@ -1614,6 +1616,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     )
         internal
     {
+        // slither-disable-start reentrancy-no-eth
         try this.executeProcessFee(projectId, token, amount, beneficiary, feeTerminal) {
             emit ProcessFee(projectId, token, amount, wasHeld, beneficiary, _msgSender());
         } catch (bytes memory reason) {
@@ -1621,6 +1624,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
             emit FeeReverted(projectId, token, _FEE_BENEFICIARY_PROJECT_ID, amount, reason, _msgSender());
         }
+        // slither-disable-end reentrancy-no-eth
     }
 
     /// @notice Returns held fees to the project who paid them based on the specified amount.
@@ -1658,6 +1662,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             // Save the fee being iterated on.
             heldFee = heldFees[i];
 
+            // slither-disable-next-line incorrect-equality
             if (leftoverAmount == 0) {
                 _heldFeesOf[projectId][token].push(heldFee);
             } else {
