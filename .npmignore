@@ -6,13 +6,18 @@ node_modules
 # Git
 .git/
 .github/
+.gitmodules
 
 # Misc
+.example.env
 utils/
+
+# Output
+out
+broadcast/
 
 # Foundry
 lib/
-out
 
 # Hardhat files
 cache
