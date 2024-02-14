@@ -2,7 +2,7 @@
 pragma solidity >=0.8.6;
 
 import /* {*} from */ "./helpers/TestBaseWorkflow.sol";
-import {ERC2771Forwarder} from "openzeppelin-contracts/contracts/metatx/ERC2771Forwarder.sol";
+import {ERC2771Forwarder} from "@openzeppelin/contracts/metatx/ERC2771Forwarder.sol";
 import {ERC2771ForwarderMock, ForwardRequest} from "./mock/ERC2771ForwarderMock.sol";
 
 contract TestMetaTx_Local is TestBaseWorkflow {

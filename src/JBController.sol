@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.23;
 
-import {Context} from "openzeppelin-contracts/contracts/utils/Context.sol";
-import {ERC165} from "openzeppelin-contracts/contracts/utils/introspection/ERC165.sol";
-import {IERC165} from "openzeppelin-contracts/contracts/utils/introspection/IERC165.sol";
-import {IERC20} from "openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
-import {SafeERC20} from "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
-import {ERC2771Context} from "openzeppelin-contracts/contracts/metatx/ERC2771Context.sol";
-import {mulDiv} from "prb-math/src/Common.sol";
+import {Context} from "@openzeppelin/contracts/utils/Context.sol";
+import {ERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
+import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import {ERC2771Context} from "@openzeppelin/contracts/metatx/ERC2771Context.sol";
+import {mulDiv} from "@prb/math/src/Common.sol";
 import {JBPermissioned} from "./abstract/JBPermissioned.sol";
 import {JBApprovalStatus} from "./enums/JBApprovalStatus.sol";
 import {IJBController} from "./interfaces/IJBController.sol";

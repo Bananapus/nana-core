@@ -3,11 +3,11 @@ pragma solidity ^0.8.6;
 
 import "forge-std/Test.sol";
 
-import {IERC721} from "openzeppelin-contracts/contracts/token/ERC721/IERC721.sol";
-import {IERC721Metadata} from "openzeppelin-contracts/contracts/token/ERC721/extensions/IERC721Metadata.sol";
-import {IERC20Metadata} from "openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol";
-import {Ownable} from "openzeppelin-contracts/contracts/access/Ownable.sol";
-import {ERC165, IERC165} from "openzeppelin-contracts/contracts/utils/introspection/ERC165.sol";
+import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import {IERC721Metadata} from "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
+import {IERC20Metadata} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {ERC165, IERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import {JBController} from "../../src/JBController.sol";
 import {JBDirectory} from "../../src/JBDirectory.sol";
 import {JBTerminalStore} from "../../src/JBTerminalStore.sol";
@@ -77,15 +77,15 @@ import {JBSplitGroupIds} from "../../src/libraries/JBSplitGroupIds.sol";
 import {JBPermissionIds} from "../../src/libraries/JBPermissionIds.sol";
 import {JBPermissionIds} from "../../src/libraries/JBPermissionIds.sol";
 
-import {IPermit2, IAllowanceTransfer} from "permit2/src/interfaces/IPermit2.sol";
-import {DeployPermit2} from "permit2/test/utils/DeployPermit2.sol";
+import {IPermit2, IAllowanceTransfer} from "@uniswap/permit2/src/interfaces/IPermit2.sol";
+import {DeployPermit2} from "@uniswap/permit2/test/utils/DeployPermit2.sol";
 
 import {MetadataResolverHelper} from "./MetadataResolverHelper.sol";
 
 import {MockERC20} from "./../mock/MockERC20.sol";
 
-import {mulDiv} from "prb-math/src/Common.sol";
-import {mul as UD60x18mul, wrap as UD60x18wrap, unwrap as UD60x18unwrap} from "prb-math/src/UD60x18.sol";
+import {mulDiv} from "@prb/math/src/Common.sol";
+import {mul as UD60x18mul, wrap as UD60x18wrap, unwrap as UD60x18unwrap} from "@prb/math/src/UD60x18.sol";
 
 // Base contract for Juicebox system tests.
 // Provides common functionality, such as deploying contracts on test setup.

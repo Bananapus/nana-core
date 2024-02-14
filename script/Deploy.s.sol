@@ -2,7 +2,7 @@
 pragma solidity 0.8.23;
 
 import "forge-std/Script.sol";
-import {IPermit2} from "permit2/src/interfaces/IPermit2.sol";
+import {IPermit2} from "@uniswap/permit2/src/interfaces/IPermit2.sol";
 import {JBPermissions} from "src/JBPermissions.sol";
 import {JBProjects} from "src/JBProjects.sol";
 import {JBPrices} from "src/JBPrices.sol";

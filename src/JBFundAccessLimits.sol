@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.23;
 
-import {ERC165} from "openzeppelin-contracts/contracts/utils/introspection/ERC165.sol";
+import {ERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import {JBControlled} from "./abstract/JBControlled.sol";
 import {IJBFundAccessLimits} from "./interfaces/IJBFundAccessLimits.sol";
 import {IJBDirectory} from "./interfaces/IJBDirectory.sol";
