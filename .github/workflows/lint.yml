@@ -1,4 +1,4 @@
-name: juice-contracts-template-lint
+name: contracts-template-lint
 on:
   pull_request:
     branches:
