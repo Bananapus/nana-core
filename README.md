@@ -6,21 +6,23 @@ To learn more about the protocol, visit the [Juicebox Docs](https://docs.juicebo
 
 ## Install
 
+For `npm` projects (recommended):
+
 ```bash
 npm install @bananapus/core
 ```
 
-OR
+For `forge` projects (not recommended):
 
 ```bash
 forge install Bananapus/nana-core
 ```
 
-Add `@bananapus=lib/nana-core/` to `remappings.txt`
+Add `@bananapus/core/=lib/nana-core/` to `remappings.txt`. You'll also need to install `nana-core`'s dependencies and add similar remappings for them.
 
 ## Develop
 
-`core` uses [npm](https://www.npmjs.com/) for package management and the [Foundry](https://github.com/foundry-rs/foundry) development toolchain for builds, tests, and deployments. To get set up, [install Node.js](https://nodejs.org/en/download) and install [Foundry](https://github.com/foundry-rs/foundry):
+`nana-core` uses [npm](https://www.npmjs.com/) for package management and the [Foundry](https://github.com/foundry-rs/foundry) development toolchain for builds, tests, and deployments. To get set up, [install Node.js](https://nodejs.org/en/download) and install [Foundry](https://github.com/foundry-rs/foundry):
 
 ```bash
 curl -L https://foundry.paradigm.xyz | sh
