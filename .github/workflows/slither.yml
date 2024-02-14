@@ -7,3 +7,6 @@ jobs:
       - uses: actions/checkout@v4
       - uses: onbjerg/foundry-toolchain@v1
       - uses: crytic/slither-action@v0.3.1
+        with:
+            slither-config: slither-ci.config.json
+            fail-on: medium

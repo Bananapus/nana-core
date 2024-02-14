@@ -1,0 +1,11 @@
+{
+    "detectors_to_exclude": "timestamp,uninitialized-local",
+    "exclude_informational": true,
+    "exclude_low": false,
+    "exclude_medium": false,
+    "exclude_high": false,
+    "json": "",
+    "disable_color": false,
+    "filter_paths": "(mocks/|test/|node_modules/)",
+    "legacy_ast": false
+}
