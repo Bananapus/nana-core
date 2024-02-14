@@ -611,6 +611,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             uint256 payValue = token == JBConstants.NATIVE_TOKEN ? amount : 0;
             // Send the fee.
             // If this terminal's token is ETH, send it in msg.value.
+            // slither-disable-next-line unused-return
             feeTerminal.pay{value: payValue}({
                 projectId: _FEE_BENEFICIARY_PROJECT_ID,
                 token: token,
@@ -747,6 +748,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
                     // Make the payment.
                     // If this terminal's token is the native token, send it in `msg.value`.
+                    // slither-disable-next-line unused-return
                     terminal.pay{value: payValue}({
                         projectId: split.projectId,
                         token: token,

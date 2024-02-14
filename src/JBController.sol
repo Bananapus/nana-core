@@ -866,12 +866,13 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
                             TOKENS.mintFor(address(this), projectId, splitAmount);
 
                             // Approve the terminal.
-                            IERC20(address(token)).approve(address(terminal), splitAmount);
+                            IERC20(address(token)).forceApprove(address(terminal), splitAmount);
 
                             // Send the projectId in the metadata.
                             bytes memory metadata = bytes(abi.encodePacked(projectId));
 
                             // Try to fulfill the payment
+                            // slither-disable-next-line unused-return
                             try terminal.pay({
                                 projectId: split.projectId,
                                 token: address(token),
@@ -885,7 +886,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
                                 IERC20(address(token)).safeTransfer(beneficiary, splitAmount);
 
                                 // Reset token approval of the terminal.
-                                IERC20(address(token)).approve(address(terminal), 0);
+                                assert(IERC20(address(token)).approve(address(terminal), 0));
 
                                 emit ReservedDistributionReverted(projectId, split, splitAmount, reason, _msgSender());
                             }
