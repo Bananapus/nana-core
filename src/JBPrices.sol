@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.23;
 
-import {Ownable} from "lib/openzeppelin-contracts/contracts/access/Ownable.sol";
+import {Ownable} from "openzeppelin-contracts/contracts/access/Ownable.sol";
 import {JBPermissioned} from "./abstract/JBPermissioned.sol";
-import {mulDiv} from "lib/prb-math/src/Common.sol";
+import {mulDiv} from "prb-math/src/Common.sol";
 import {IJBPriceFeed} from "./interfaces/IJBPriceFeed.sol";
 import {IJBProjects} from "./interfaces/IJBProjects.sol";
 import {IJBPermissions} from "./interfaces/IJBPermissions.sol";
