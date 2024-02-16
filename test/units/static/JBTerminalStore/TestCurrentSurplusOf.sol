@@ -207,10 +207,7 @@ contract TestCurrentSurplusOf_Local is JBTerminalStoreSetup {
         assertEq(expectedSurplus, currentSurplus);
     }
 
-    function test_GivenAccountingCurrencyDoesNotMatchTargetCurrency()
-        external
-        whenProjectHasBalance
-    {
+    function test_GivenAccountingCurrencyDoesNotMatchTargetCurrency() external whenProjectHasBalance {
         // it will convert surplus to target currency without decimal adjustment
         JBAccountingContext[] memory _contexts = new JBAccountingContext[](1);
 
@@ -267,10 +264,7 @@ contract TestCurrentSurplusOf_Local is JBTerminalStoreSetup {
         assertEq(expectedSurplus, currentSurplus);
     }
 
-    function test_GivenPayoutLimitCurrencyMatchesTargetCurrency()
-        external
-        whenProjectHasBalance
-    {
+    function test_GivenPayoutLimitCurrencyMatchesTargetCurrency() external whenProjectHasBalance {
         // it will return standard surplus
 
         JBAccountingContext[] memory _contexts = new JBAccountingContext[](1);
@@ -322,10 +316,7 @@ contract TestCurrentSurplusOf_Local is JBTerminalStoreSetup {
         assertEq(expectedSurplus, currentSurplus);
     }
 
-    function test_GivenPayoutLimitCurrencyDoesNotMatchTargetCurrency()
-        external
-        whenProjectHasBalance
-    {
+    function test_GivenPayoutLimitCurrencyDoesNotMatchTargetCurrency() external whenProjectHasBalance {
         // it will convert payout limit target currency without decimal adjustment
 
         JBAccountingContext[] memory _contexts = new JBAccountingContext[](1);
