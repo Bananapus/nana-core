@@ -742,11 +742,11 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
         pure
         returns (uint256)
     {
-        // If the amount being redeemed is the total supply, return the rest of the surplus.
-        if (tokenCount == totalSupply) return surplus;
-
         // If the redemption rate is 0, nothing is claimable.
         if (ruleset.redemptionRate() == 0) return 0;
+
+        // If the amount being redeemed is the total supply, return the rest of the surplus.
+        if (tokenCount == totalSupply) return surplus;
 
         // Get a reference to the linear proportion.
         uint256 base = mulDiv(surplus, tokenCount, totalSupply);
