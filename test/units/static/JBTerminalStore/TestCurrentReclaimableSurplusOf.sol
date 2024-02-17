@@ -404,4 +404,49 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
 
         assertEq(assumed, reclaimable);
     }
+
+    function test_GivenNotOverloaded() external whenProjectHasBalance {
+        // it will get the current ruleset and proceed to return reclaimable as above
+
+        // Params
+        JBRulesetMetadata memory _metadata = JBRulesetMetadata({
+            reservedRate: 0,
+            redemptionRate: JBConstants.MAX_REDEMPTION_RATE / 2,
+            baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
+            pausePay: false,
+            pauseCreditTransfers: false,
+            allowOwnerMinting: false,
+            allowTerminalMigration: false,
+            allowSetTerminals: false,
+            allowControllerMigration: false,
+            allowSetController: false,
+            holdFees: false,
+            useTotalSurplusForRedemptions: false,
+            useDataHookForPay: false,
+            useDataHookForRedeem: false,
+            dataHook: address(0),
+            metadata: 0
+        });
+
+        uint256 _packedMetadata = JBRulesetMetadataResolver.packRulesetMetadata(_metadata);
+
+        // JBRulesets return calldata
+        JBRuleset memory _returnedRuleset = JBRuleset({
+            cycleNumber: block.timestamp,
+            id: block.timestamp,
+            basedOnId: 0,
+            start: block.timestamp,
+            duration: block.timestamp + 1000,
+            weight: 1e18,
+            decayRate: 0,
+            approvalHook: IJBRulesetApprovalHook(address(0)),
+            metadata: _packedMetadata
+        });
+
+        // mock call to JBRulesets currentOf
+        mockExpect(address(rulesets), abi.encodeCall(IJBRulesets.currentOf, (_projectId)), abi.encode(_returnedRuleset));
+
+        uint256 reclaimable = _store.currentReclaimableSurplusOf(_projectId, _tokenCount, 1e18, 1e18);
+        assertEq(1e18, reclaimable);
+    }
 }
