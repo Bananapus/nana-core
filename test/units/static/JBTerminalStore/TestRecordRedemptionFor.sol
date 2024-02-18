@@ -357,7 +357,6 @@ contract TestRecordRedemptionFor_Local is JBTerminalStoreSetup {
 
         _balanceContexts[0] = JBAccountingContext({token: address(_token), decimals: 18, currency: _currency});
 
-        
         uint256 _redeemCount = 1e18; // within balance bounds
         uint256 expectedRedemption = mulDiv(3e18, _redeemCount, _totalSupply);
 
