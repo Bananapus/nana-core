@@ -430,19 +430,6 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
         // mock call to JBRulesets currentOf
         mockExpect(address(rulesets), abi.encodeCall(IJBRulesets.currentOf, (_projectId)), abi.encode(_returnedRuleset));
 
-        // params for data hook beforePayRecordedWith
-        JBBeforePayRecordedContext memory _context = JBBeforePayRecordedContext({
-            terminal: address(this),
-            payer: address(this),
-            amount: _tokenAmount,
-            projectId: _projectId,
-            rulesetId: block.timestamp,
-            beneficiary: address(this),
-            weight: _returnedRuleset.weight,
-            reservedRate: _returnedRuleset.reservedRate(),
-            metadata: ""
-        });
-
         // return data
         JBPayHookSpecification[] memory _spec = new JBPayHookSpecification[](1);
         _spec[0] = JBPayHookSpecification({hook: _payHook, amount: _defaultValue / 2, metadata: ""});
