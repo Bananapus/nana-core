@@ -1,0 +1,5 @@
+TestRecordTerminalMigration_Local
+├── when ruleset allows migration
+│   └── it will return the current balance and set balance to zero
+└── when ruleset dn allow migration
+    └── it will revert TERMINAL_MIGRATION_NOT_ALLOWED
