@@ -1,22 +1,21 @@
-name: contracts-template-lint
+name: lint
 on:
   pull_request:
     branches:
       - main
+      - master
   push:
     branches:
       - main
+      - master
 jobs:
   forge-test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
-      - uses: bahmutov/npm-install@v1
       - name: Install Foundry
-        uses: onbjerg/foundry-toolchain@v1
-        with:
-          version: nightly
+        uses: foundry-rs/foundry-toolchain@v1
       - name: Check linting
         run: forge fmt --check
