@@ -393,8 +393,8 @@ contract JBRulesets is JBControlled, IJBRulesets {
         // Weight must fit into a uint88.
         if (weight > type(uint88).max) revert INVALID_WEIGHT();
 
-        // If the start date is in the past, set it to be the current timestamp.
-        if (mustStartAtOrAfter < block.timestamp) {
+        // If the start date is not set, set it to be the current timestamp.
+        if (mustStartAtOrAfter == 0) {
             mustStartAtOrAfter = block.timestamp;
         }
 
