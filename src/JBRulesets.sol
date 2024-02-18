@@ -71,7 +71,8 @@ contract JBRulesets is JBControlled, IJBRulesets {
 
     /// @notice Cached weight values to derive rulesets from.
     /// @custom:param projectId The ID of the project to which the cache applies.
-    mapping(uint256 projectId => JBRulesetWeightCache) internal _weightCacheOf;
+    /// @custom:param rulesetId The ID of the ruleset to which the cache applies.
+    mapping(uint256 projectId => mapping(uint256 rulesetId => JBRulesetWeightCache)) internal _weightCacheOf;
 
     //*********************************************************************//
     // ------------------------- external views -------------------------- //
@@ -230,7 +231,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
         // Check to see if this ruleset's approval hook hasn't failed.
         // If so, return a ruleset based on it.
         if (approvalStatus == JBApprovalStatus.Approved || approvalStatus == JBApprovalStatus.Empty) {
-            return _simulateCycledRulesetBasedOn({baseRuleset: ruleset, allowMidRuleset: false});
+            return _simulateCycledRulesetBasedOn({projectId: projectId, baseRuleset: ruleset, allowMidRuleset: false});
         }
 
         // Get the ruleset of its base ruleset, which carries the last approved configuration.
@@ -240,7 +241,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
         if (ruleset.duration == 0) return _getStructFor(0, 0);
 
         // Return a simulated cycled ruleset.
-        return _simulateCycledRulesetBasedOn({baseRuleset: ruleset, allowMidRuleset: false});
+        return _simulateCycledRulesetBasedOn({projectId: projectId, baseRuleset: ruleset, allowMidRuleset: false});
     }
 
     /// @notice The ruleset that is currently active for the specified project.
@@ -302,7 +303,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
         if (ruleset.duration == 0) return ruleset;
 
         // Return a simulation of the current ruleset.
-        return _simulateCycledRulesetBasedOn({baseRuleset: ruleset, allowMidRuleset: true});
+        return _simulateCycledRulesetBasedOn({projectId: projectId, baseRuleset: ruleset, allowMidRuleset: true});
     }
 
     /// @notice The current approval status of a given project's latest ruleset.
@@ -465,7 +466,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
         if (latestQueuedRuleset.duration == 0 || latestQueuedRuleset.decayRate == 0) return;
 
         // Get a reference to the current cache.
-        JBRulesetWeightCache storage cache = _weightCacheOf[latestQueuedRuleset.id];
+        JBRulesetWeightCache storage cache = _weightCacheOf[projectId][latestQueuedRuleset.id];
 
         // Determine the largest start timestamp the cache can be filled to.
         uint256 maxStart = latestQueuedRuleset.start
@@ -485,7 +486,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
         }
 
         // Store the new values.
-        cache.weight = _deriveWeightFrom(latestQueuedRuleset, start);
+        cache.weight = _deriveWeightFrom({projectId: projectId, baseRuleset: latestQueuedRuleset, start: start});
         cache.decayMultiple = decayMultiple;
     }
 
@@ -607,7 +608,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
             // A weight of 1 is treated as a weight of 0.
             // This is to allow a weight of 0 (default) to represent inheriting the decayed weight of the previous
             // ruleset.
-            weight = weight > 0 ? (weight == 1 ? 0 : weight) : _deriveWeightFrom(baseRuleset, start);
+            weight = weight > 0 ? (weight == 1 ? 0 : weight) : _deriveWeightFrom(projectId, baseRuleset, start);
 
             // Derive the correct ruleset cycle number.
             uint256 rulesetCycleNumber = _deriveCycleNumberFrom(baseRuleset, start);
@@ -748,11 +749,13 @@ contract JBRulesets is JBControlled, IJBRulesets {
     /// doesn't queue a new ruleset).
     /// @dev Returns an empty ruleset if a ruleset can't be simulated based on the provided one.
     /// @dev Assumes a simulated ruleset will never be based on a ruleset with a duration of 0.
+    /// @param projectId The ID of the project of the ruleset.
     /// @param baseRuleset The ruleset that the simulated ruleset should be based on.
     /// @param allowMidRuleset A flag indicating if the simulated ruleset is allowed to already be mid ruleset.
     /// @return A simulated ruleset struct: the next ruleset by default. This will be overwritten if a new ruleset is
     /// queued for the project.
     function _simulateCycledRulesetBasedOn(
+        uint256 projectId,
         JBRuleset memory baseRuleset,
         bool allowMidRuleset
     )
@@ -777,7 +780,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
             basedOnId: baseRuleset.basedOnId,
             start: start,
             duration: baseRuleset.duration,
-            weight: _deriveWeightFrom(baseRuleset, start),
+            weight: _deriveWeightFrom(projectId, baseRuleset, start),
             decayRate: baseRuleset.decayRate,
             approvalHook: baseRuleset.approvalHook,
             metadata: baseRuleset.metadata
@@ -822,10 +825,19 @@ contract JBRulesets is JBControlled, IJBRulesets {
     }
 
     /// @notice The accumulated weight change since the specified ruleset.
+    /// @param projectId The ID of the project to which the ruleset weights apply.
     /// @param baseRuleset The ruleset to base the calculation on (the previous ruleset).
     /// @param start The start time of the ruleset to derive a weight for.
     /// @return weight The derived weight, as a fixed point number with 18 decimals.
-    function _deriveWeightFrom(JBRuleset memory baseRuleset, uint256 start) internal view returns (uint256 weight) {
+    function _deriveWeightFrom(
+        uint256 projectId,
+        JBRuleset memory baseRuleset,
+        uint256 start
+    )
+        internal
+        view
+        returns (uint256 weight)
+    {
         // A subsequent ruleset to one with a duration of 0 should have the next possible weight.
         if (baseRuleset.duration == 0) {
             return mulDiv(
@@ -851,7 +863,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
         // Check the cache if needed.
         if (decayMultiple > _DECAY_MULTIPLE_CACHE_LOOKUP_THRESHOLD) {
             // Get a cached weight for the rulesetId.
-            JBRulesetWeightCache memory cache = _weightCacheOf[baseRuleset.id];
+            JBRulesetWeightCache memory cache = _weightCacheOf[projectId][baseRuleset.id];
 
             // If a cached value is available, use it.
             if (cache.decayMultiple > 0) {
