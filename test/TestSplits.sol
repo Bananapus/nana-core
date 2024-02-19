@@ -191,6 +191,97 @@ contract TestSplits_Local is TestBaseWorkflow {
         assertEq(_tokens.totalBalanceOf(_splitsGuy, _projectId), _reserveRateDistributionAmount);
     }
 
+    function testReservedRateSplitTerminal_reverts() public {
+        uint256 _amount = 100 ether;
+        uint256 _mockProjectId = 9_999_999;
+        address _mockTerminal = address(88_888_888);
+        JBSplit[] memory _reserveRateSplits = new JBSplit[](1);
+
+        // Configure a reserve rate split recipient.
+        _reserveRateSplits[0] = JBSplit({
+            preferAddToBalance: false,
+            percent: JBConstants.SPLITS_TOTAL_PERCENT,
+            projectId: _mockProjectId,
+            beneficiary: _splitsGuy,
+            lockedUntil: 0,
+            hook: IJBSplitHook(address(0))
+        });
+
+        JBSplitGroup[] memory _splitsGroup = new JBSplitGroup[](1);
+        _splitsGroup[0] = JBSplitGroup({groupId: JBSplitGroupIds.RESERVED_TOKENS, splits: _reserveRateSplits});
+
+        _metadata = JBRulesetMetadata({
+            reservedRate: JBConstants.MAX_RESERVED_RATE,
+            redemptionRate: 0,
+            baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
+            pausePay: false,
+            pauseCreditTransfers: false,
+            allowOwnerMinting: true,
+            allowTerminalMigration: false,
+            allowSetTerminals: false,
+            allowControllerMigration: false,
+            allowSetController: false,
+            holdFees: false,
+            useTotalSurplusForRedemptions: false,
+            useDataHookForPay: false,
+            useDataHookForRedeem: false,
+            dataHook: address(0),
+            metadata: 0
+        });
+
+        // Package up ruleset configuration.
+        JBRulesetConfig[] memory _rulesetConfig = new JBRulesetConfig[](1);
+        _rulesetConfig[0].mustStartAtOrAfter = 0;
+        _rulesetConfig[0].duration = 0;
+        _rulesetConfig[0].weight = _weight;
+        _rulesetConfig[0].decayRate = 0;
+        _rulesetConfig[0].approvalHook = IJBRulesetApprovalHook(address(0));
+        _rulesetConfig[0].metadata = _metadata;
+        _rulesetConfig[0].splitGroups = _splitsGroup;
+
+        // Create a new project.
+        _projectId = _controller.launchProjectFor({
+            owner: _projectOwner,
+            projectUri: "myIPFSHash",
+            rulesetConfigurations: _rulesetConfig,
+            terminalConfigurations: new JBTerminalConfig[](0),
+            memo: ""
+        });
+
+        // Deploy the token.
+        vm.startPrank(_projectOwner);
+        IERC20Metadata _token = IERC20Metadata(address(_controller.deployERC20For(_projectId, "Token", "Token")));
+
+        // Mint tokens with reservedRate enabled.
+        _controller.mintTokensOf({
+            projectId: _projectId,
+            tokenCount: _amount,
+            beneficiary: _projectOwner,
+            memo: "",
+            useReservedRate: true
+        });
+
+        // Mock the primary terminal of the mock project.
+        vm.mockCall({
+            callee: address(jbDirectory()),
+            msgValue: 0,
+            data: abi.encodeCall(IJBDirectory.primaryTerminalOf, (_mockProjectId, address(_token))),
+            returnData: abi.encode(_mockTerminal)
+        });
+
+        // Make it revert on payment.
+        vm.mockCallRevert({callee: _mockTerminal, data: abi.encode(IJBTerminal.pay.selector), revertData: ""});
+
+        // Distribute the tokens to the reverting terminal.
+        _controller.sendReservedTokensToSplitsOf(_projectId, "");
+
+        // Assert that the terminal does *NOT* have any allowance.
+        assertEq(_token.allowance(address(_controller), address(_mockTerminal)), 0);
+
+        // Assert that the beneficiary did receive the tokens.
+        assertEq(_token.balanceOf(_splitsGuy), _amount);
+    }
+
     function testFuzzedSplitParameters(uint256 _currencyId, uint256 _multiplier) public {
         _currencyId = bound(_currencyId, 0, type(uint32).max);
         _multiplier = bound(_multiplier, 2, JBConstants.SPLITS_TOTAL_PERCENT);

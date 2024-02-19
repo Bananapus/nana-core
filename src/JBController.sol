@@ -713,6 +713,46 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         TOKENS.transferCreditsFrom(holder, projectId, recipient, amount);
     }
 
+    /// @notice Pay the reserved rate tokens to a projects terminal.
+    /// @dev Can only be called by this terminal itself.
+    /// @param terminal The terminal to pay the token to.
+    /// @param projectId The projectId that is being paid.
+    /// @param token The token that is being paid.
+    /// @param splitAmount The amount that is being send to the terminal as part of this split.
+    /// @param beneficiary The beneficiary of the payment.
+    /// @param metadata The metadata that gets send to the terminal.
+    function payReservedTokenToTerminal(
+        IJBTerminal terminal,
+        uint256 projectId,
+        IJBToken token,
+        uint256 splitAmount,
+        address beneficiary,
+        bytes calldata metadata
+    )
+        external
+    {
+        // Can only be called by this contract.
+        require(msg.sender == address(this));
+
+        // Approve the terminal.
+        IERC20(address(token)).forceApprove(address(terminal), splitAmount);
+
+        // Perform the pay.
+        // slither-disable-next-line unused-return
+        terminal.pay({
+            projectId: projectId,
+            token: address(token),
+            amount: splitAmount,
+            beneficiary: beneficiary,
+            minReturnedTokens: 0,
+            memo: "",
+            metadata: metadata
+        });
+
+        // Make sure that the terminal took the tokens.
+        assert(IERC20(address(token)).allowance(address(this), address(terminal)) == 0);
+    }
+
     //*********************************************************************//
     // ---------------------- internal transactions ---------------------- //
     //*********************************************************************//
@@ -865,29 +905,20 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
                             // Mint the tokens to this contract.
                             TOKENS.mintFor(address(this), projectId, splitAmount);
 
-                            // Approve the terminal.
-                            IERC20(address(token)).forceApprove(address(terminal), splitAmount);
-
                             // Send the projectId in the metadata.
                             bytes memory metadata = bytes(abi.encodePacked(projectId));
 
-                            // Try to fulfill the payment
-                            // slither-disable-next-line unused-return
-                            try terminal.pay({
+                            // Try to fulfill the payment.
+                            try this.payReservedTokenToTerminal({
                                 projectId: split.projectId,
-                                token: address(token),
-                                amount: splitAmount,
+                                terminal: terminal,
+                                token: token,
+                                splitAmount: splitAmount,
                                 beneficiary: beneficiary,
-                                minReturnedTokens: 0,
-                                memo: "",
                                 metadata: metadata
                             }) {} catch (bytes memory reason) {
                                 // Transfer the tokens from this contract to the beneficiary.
                                 IERC20(address(token)).safeTransfer(beneficiary, splitAmount);
-
-                                // Reset token approval of the terminal.
-                                assert(IERC20(address(token)).approve(address(terminal), 0));
-
                                 emit ReservedDistributionReverted(projectId, split, splitAmount, reason, _msgSender());
                             }
                         }
