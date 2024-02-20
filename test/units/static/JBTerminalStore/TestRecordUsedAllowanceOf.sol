@@ -39,7 +39,6 @@ contract TestRecordUsedAllowanceOf_Local is JBTerminalStoreSetup {
         uint256 _balanceCallReturn = _store.balanceOf(address(this), _projectId, address(_token));
         assertEq(_balanceCallReturn, _balance);
 
-        // Params for tests
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedRate: 0,
             redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
@@ -139,7 +138,6 @@ contract TestRecordUsedAllowanceOf_Local is JBTerminalStoreSetup {
         uint256 _balanceCallReturn = _store.balanceOf(address(this), _projectId, address(_nativeAddress));
         assertEq(_balanceCallReturn, _balance);
 
-        // Params for tests
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedRate: 0,
             redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
@@ -241,7 +239,6 @@ contract TestRecordUsedAllowanceOf_Local is JBTerminalStoreSetup {
         uint256 _balanceCallReturn = _store.balanceOf(address(this), _projectId, address(_token));
         assertEq(_balanceCallReturn, _balance); */
 
-        // Params for tests
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedRate: 0,
             redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
@@ -339,7 +336,6 @@ contract TestRecordUsedAllowanceOf_Local is JBTerminalStoreSetup {
             _store.usedSurplusAllowanceOf(address(this), _projectId, address(_token), block.timestamp, _currency);
         assertEq(_usedSurplusCallReturn, _balance);
 
-        // Params for tests
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedRate: 0,
             redemptionRate: JBConstants.MAX_REDEMPTION_RATE,

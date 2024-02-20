@@ -63,7 +63,6 @@ contract TestRecordRedemptionFor_Local is JBTerminalStoreSetup {
         bytes memory _terminal2Return = abi.encode(2e18);
         mockExpect(address(_terminal2), _terminal2Call, _terminal2Return);
 
-        // Params for tests
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedRate: 0,
             redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
@@ -142,7 +141,6 @@ contract TestRecordRedemptionFor_Local is JBTerminalStoreSetup {
         bytes memory _terminal2Return = abi.encode(2e18);
         mockExpect(address(_terminal2), _terminal2Call, _terminal2Return);
 
-        // Params for tests
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedRate: 0,
             redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
@@ -221,7 +219,6 @@ contract TestRecordRedemptionFor_Local is JBTerminalStoreSetup {
         bytes memory _terminal2Return = abi.encode(2e18);
         mockExpect(address(_terminal2), _terminal2Call, _terminal2Return);
 
-        // Params for tests
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedRate: 0,
             redemptionRate: JBConstants.MAX_REDEMPTION_RATE,

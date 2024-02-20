@@ -102,7 +102,6 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
         JBAccountingContext[] memory _contexts = new JBAccountingContext[](1);
         _contexts[0] = JBAccountingContext({token: address(_token), decimals: 18, currency: _currency});
 
-        // Params for tests
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedRate: 0,
             redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
@@ -177,7 +176,6 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
         JBAccountingContext[] memory _contexts = new JBAccountingContext[](1);
         _contexts[0] = JBAccountingContext({token: address(_token), decimals: 18, currency: _currency});
 
-        // Params for tests
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedRate: 0,
             redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
@@ -252,7 +250,6 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
         JBAccountingContext[] memory _contexts = new JBAccountingContext[](1);
         _contexts[0] = JBAccountingContext({token: address(_token), decimals: 18, currency: _currency});
 
-        // Params for tests
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedRate: 0,
             redemptionRate: 0,
@@ -331,7 +328,6 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
         JBAccountingContext[] memory _contexts = new JBAccountingContext[](1);
         _contexts[0] = JBAccountingContext({token: address(_token), decimals: 18, currency: _currency});
 
-        // Params for tests
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedRate: 0,
             redemptionRate: JBConstants.MAX_REDEMPTION_RATE / 2,

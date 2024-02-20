@@ -25,7 +25,6 @@ contract TestRecordPayoutFor_Local is JBTerminalStoreSetup {
     }
 
     modifier whenThereIsAZeroUsedPayoutLimitOfTheSenderForCurrentRuleset() {
-        // Params for tests
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedRate: 0,
             redemptionRate: JBConstants.MAX_REDEMPTION_RATE,

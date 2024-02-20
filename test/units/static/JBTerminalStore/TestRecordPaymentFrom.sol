@@ -73,7 +73,6 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
             currency: _currency
         });
 
-        // Params for tests
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedRate: 0,
             redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
@@ -140,7 +139,6 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
             currency: _currency
         });
 
-        // Params for tests
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedRate: 0,
             redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
@@ -225,7 +223,6 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
             currency: _currency
         });
 
-        // Params for tests
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedRate: 0,
             redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
@@ -309,7 +306,6 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
             currency: _currency
         });
 
-        // Params for tests
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedRate: 0,
             redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
@@ -391,7 +387,6 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
             currency: _currency
         });
 
-        // Params for tests
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedRate: 0,
             redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
@@ -456,7 +451,6 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
             currency: _currency
         });
 
-        // Params for tests
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedRate: 0,
             redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
