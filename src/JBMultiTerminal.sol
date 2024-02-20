@@ -1099,6 +1099,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             holder,
             beneficiary,
             redeemCount,
+            ruleset.redemptionRate(),
             reclaimAmount,
             metadata,
             _msgSender()

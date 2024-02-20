@@ -220,11 +220,11 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
         if (tokenCount > totalSupply) return 0;
 
         // Return the reclaimable surplus amount.
-        return _reclaimableSurplusDuring({
-            ruleset: ruleset,
+        return _reclaimableSurplusFrom({
+            surplus: currentSurplus,
             tokenCount: tokenCount,
             totalSupply: totalSupply,
-            surplus: currentSurplus
+            redemptionRate: ruleset.redemptionRate()
         });
     }
 
@@ -258,7 +258,12 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
         JBRuleset memory ruleset = RULESETS.currentOf(projectId);
 
         // Return the reclaimable surplus amount.
-        return _reclaimableSurplusDuring(ruleset, tokenCount, totalSupply, surplus);
+        return _reclaimableSurplusFrom({
+            surplus: surplus,
+            tokenCount: tokenCount,
+            totalSupply: totalSupply,
+            redemptionRate: ruleset.redemptionRate()
+        });
     }
 
     //*********************************************************************//
@@ -406,7 +411,8 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     /// @param balanceAccountingContexts The accounting contexts of the tokens whose balances should contribute to the
     /// surplus being reclaimed from.
     /// @param metadata Bytes to send to the data hook, if the project's current ruleset specifies one.
-    /// @return ruleset The ruleset during the redemption was made during, as a `JBRuleset` struct.
+    /// @return ruleset The ruleset during the redemption was made during, as a `JBRuleset` struct. This ruleset will
+    /// have a redemption rate provided by the redemption hook if applicable.
     /// @return reclaimAmount The amount of tokens reclaimed from the terminal, as a fixed point number with 18
     /// decimals.
     /// @return hookSpecifications A list of redeem hooks, including data and amounts to send to them. The terminal
@@ -452,26 +458,8 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
         // Can't redeem more tokens that are in the supply.
         if (redeemCount > totalSupply) revert INSUFFICIENT_TOKENS();
 
-        if (currentSurplus != 0) {
-            // Calculate reclaim amount using the current surplus amount.
-            reclaimAmount = _reclaimableSurplusDuring({
-                ruleset: ruleset,
-                tokenCount: redeemCount,
-                totalSupply: totalSupply,
-                surplus: currentSurplus
-            });
-        }
-
         // If the ruleset has a data hook which is enabled for redemptions, use it to derive a claim amount and memo.
         if (ruleset.useDataHookForRedeem() && ruleset.dataHook() != address(0)) {
-            // Create the struct that describes the amount being reclaimed.
-            JBTokenAmount memory reclaimedTokenAmount = JBTokenAmount({
-                token: accountingContext.token,
-                value: reclaimAmount,
-                decimals: accountingContext.decimals,
-                currency: accountingContext.currency
-            });
-
             // Create the redeem context that'll be sent to the data hook.
             JBBeforeRedeemRecordedContext memory context = JBBeforeRedeemRecordedContext({
                 terminal: msg.sender,
@@ -480,24 +468,48 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
                 rulesetId: ruleset.id,
                 redeemCount: redeemCount,
                 totalSupply: totalSupply,
-                surplus: currentSurplus,
-                reclaimAmount: reclaimedTokenAmount,
+                surplus: JBTokenAmount({
+                    token: accountingContext.token,
+                    value: currentSurplus,
+                    decimals: accountingContext.decimals,
+                    currency: accountingContext.currency
+                }),
                 useTotalSurplus: ruleset.useTotalSurplusForRedemptions(),
                 redemptionRate: ruleset.redemptionRate(),
                 metadata: metadata
             });
-            (reclaimAmount, hookSpecifications) =
+
+            // Keep a reference to the redemption rate being returned.
+            uint256 redemptionRate;
+
+            (redemptionRate, hookSpecifications) =
                 IJBRulesetDataHook(ruleset.dataHook()).beforeRedeemRecordedWith(context);
+
+            // Set the redemption rate in the ruleset if needed.
+            if (redemptionRate != ruleset.redemptionRate()) {
+                // Set the custom redemption rate in the ruleset.
+                ruleset = ruleset.setRedemptionRateTo(redemptionRate);
+            }
+        }
+
+        if (currentSurplus != 0) {
+            // Calculate reclaim amount using the current surplus amount.
+            reclaimAmount = _reclaimableSurplusFrom({
+                surplus: currentSurplus,
+                tokenCount: redeemCount,
+                totalSupply: totalSupply,
+                redemptionRate: ruleset.redemptionRate()
+            });
         }
 
         // Keep a reference to the amount that should be subtracted from the project's balance.
         uint256 balanceDiff = reclaimAmount;
 
-        // Keep a reference to the number of redeem hooks specified.
-        uint256 numberOfSpecifications = hookSpecifications.length;
-
         // Ensure that the specifications have valid amounts.
-        if (numberOfSpecifications != 0) {
+        if (hookSpecifications.length != 0) {
+            // Keep a reference to the number of redeem hooks specified.
+            uint256 numberOfSpecifications = hookSpecifications.length;
+
             // Loop through each specification.
             for (uint256 i; i < numberOfSpecifications; i++) {
                 // Get a reference to the specification's amount.
@@ -726,17 +738,17 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
 
     /// @notice The amount of surplus which is available for reclaiming via redemption given the number of tokens being
     /// redeemed, the total supply, the current surplus, and the current ruleset.
-    /// @param ruleset The ruleset during which reclaimable surplus is being calculated.
+    /// @param surplus The surplus amount to make the calculation with.
     /// @param tokenCount The number of tokens to make the calculation with, as a fixed point number with 18 decimals.
     /// @param totalSupply The total supply of tokens to make the calculation with, as a fixed point number with 18
     /// decimals.
-    /// @param surplus The surplus amount to make the calculation with.
+    /// @param redemptionRate The redemption rate with which the reclaimable surplus is being calculated.
     /// @return The amount of surplus tokens that can be reclaimed.
-    function _reclaimableSurplusDuring(
-        JBRuleset memory ruleset,
+    function _reclaimableSurplusFrom(
+        uint256 surplus,
         uint256 tokenCount,
         uint256 totalSupply,
-        uint256 surplus
+        uint256 redemptionRate
     )
         internal
         pure
@@ -746,21 +758,20 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
         if (tokenCount == totalSupply) return surplus;
 
         // If the redemption rate is 0, nothing is claimable.
-        if (ruleset.redemptionRate() == 0) return 0;
+        if (redemptionRate == 0) return 0;
 
         // Get a reference to the linear proportion.
         uint256 base = mulDiv(surplus, tokenCount, totalSupply);
 
         // These conditions are all part of the same curve. Edge conditions are separated because fewer operation are
         // necessary.
-        if (ruleset.redemptionRate() == JBConstants.MAX_REDEMPTION_RATE) {
+        if (redemptionRate == JBConstants.MAX_REDEMPTION_RATE) {
             return base;
         }
 
         return mulDiv(
             base,
-            ruleset.redemptionRate()
-                + mulDiv(tokenCount, JBConstants.MAX_REDEMPTION_RATE - ruleset.redemptionRate(), totalSupply),
+            redemptionRate + mulDiv(tokenCount, JBConstants.MAX_REDEMPTION_RATE - redemptionRate, totalSupply),
             JBConstants.MAX_REDEMPTION_RATE
         );
     }

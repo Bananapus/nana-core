@@ -34,10 +34,11 @@ interface IJBRulesetDataHook is IERC165 {
     /// terminal's `redeemTokensOf(...)` transaction.
     /// @param context The context passed to this data hook by the `redeemTokensOf(...)` function as a
     /// `JBBeforeRedeemRecordedContext` struct.
-    /// @return reclaimAmount The amount to claim, overriding the terminal logic.
+    /// @return redemptionRate The rate determining the amount that should be reclaimable for a given surplus and token
+    /// supply.
     /// @return hookSpecifications The amount and data to send to redeem hooks instead of returning to the beneficiary.
     function beforeRedeemRecordedWith(JBBeforeRedeemRecordedContext calldata context)
         external
         view
-        returns (uint256 reclaimAmount, JBRedeemHookSpecification[] memory hookSpecifications);
+        returns (uint256 redemptionRate, JBRedeemHookSpecification[] memory hookSpecifications);
 }
