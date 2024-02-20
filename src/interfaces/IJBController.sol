@@ -168,7 +168,8 @@ interface IJBController is IERC165, IJBProjectUriRegistry, IJBDirectoryAccessCon
     function deployERC20For(
         uint256 projectId,
         string calldata name,
-        string calldata symbol
+        string calldata symbol,
+        bytes32 salt
     )
         external
         returns (IJBToken token);

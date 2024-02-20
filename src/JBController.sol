@@ -629,7 +629,8 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     function deployERC20For(
         uint256 projectId,
         string calldata name,
-        string calldata symbol
+        string calldata symbol,
+        bytes32 salt
     )
         external
         virtual
@@ -643,7 +644,9 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
             permissionId: JBPermissionIds.ISSUE_TOKEN
         });
 
-        return TOKENS.deployERC20For(projectId, name, symbol);
+        bytes32 _salt = salt == bytes32(0) ? salt : keccak256(abi.encodePacked(_msgSender(), salt));
+
+        return TOKENS.deployERC20For(projectId, name, symbol, _salt);
     }
 
     /// @notice Set a project's token if not already set.

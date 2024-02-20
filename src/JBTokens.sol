@@ -113,7 +113,8 @@ contract JBTokens is JBControlled, IJBTokens {
     function deployERC20For(
         uint256 projectId,
         string calldata name,
-        string calldata symbol
+        string calldata symbol,
+        bytes32 salt
     )
         external
         override
@@ -129,8 +130,9 @@ contract JBTokens is JBControlled, IJBTokens {
         // The project shouldn't already have a token.
         if (tokenOf[projectId] != IJBToken(address(0))) revert PROJECT_ALREADY_HAS_TOKEN();
 
-        // Deploy the token contract.
-        token = new JBERC20(name, symbol, address(this));
+        token = salt == bytes32(0)
+            ? new JBERC20(name, symbol, address(this))
+            : new JBERC20{salt: salt}(name, symbol, address(this));
 
         // Store the token contract.
         tokenOf[projectId] = token;
