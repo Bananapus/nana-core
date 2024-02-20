@@ -140,7 +140,7 @@ contract JBTokens is JBControlled, IJBTokens {
         // Store the project for the token.
         projectIdOf[token] = projectId;
 
-        emit DeployERC20(projectId, token, name, symbol, msg.sender);
+        emit DeployERC20(projectId, token, name, symbol, salt, msg.sender);
     }
 
     /// @notice Set a project's token if not already set.
