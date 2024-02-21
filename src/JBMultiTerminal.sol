@@ -1029,7 +1029,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
         // Scoped section prevents stack too deep.
         {
-            JBAccountingContext[] memory balanceAccountingContexts = ;
+            JBAccountingContext[] memory balanceAccountingContexts = _accountingContextsOf[projectId];
 
             // Record the redemption.
             (ruleset, reclaimAmount, redemptionRate, hookSpecifications) = STORE.recordRedemptionFor({

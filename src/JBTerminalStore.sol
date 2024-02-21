@@ -415,7 +415,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     /// have a redemption rate provided by the redemption hook if applicable.
     /// @return reclaimAmount The amount of tokens reclaimed from the terminal, as a fixed point number with 18
     /// decimals.
-    /// @param redemptionRate The redemption rate influencing the reclaim amount.
+    /// @return redemptionRate The redemption rate influencing the reclaim amount.
     /// @return hookSpecifications A list of redeem hooks, including data and amounts to send to them. The terminal
     /// should fulfill these specifications.
 
