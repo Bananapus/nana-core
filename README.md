@@ -58,7 +58,7 @@ For convenience, several utility commands are available in `package.json`.
 | --------------------------------- | -------------------------------------- |
 | `npm test`                        | Run local tests.                       |
 | `npm run test:fork`               | Run fork tests (for use in CI).        |
-| `npm run coverage:lcov`           | Generate an LCOV test coverage report. |
+| `npm run coverage`                | Generate an LCOV test coverage report. |
 | `npm run deploy:ethereum-mainnet` | Deploy to Ethereum mainnet             |
 | `npm run deploy:ethereum-sepolia` | Deploy to Ethereum Sepolia testnet     |
 | `npm run deploy:optimism-mainnet` | Deploy to Optimism mainnet             |

@@ -186,6 +186,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
     /// @return ruleset The struct for the project's upcoming ruleset.
     function upcomingRulesetOf(uint256 projectId) external view override returns (JBRuleset memory ruleset) {
         // If the project does not have a latest ruleset, return an empty struct.
+        // slither-disable-next-line incorrect-equality
         if (latestRulesetIdOf[projectId] == 0) return _getStructFor(0, 0);
 
         // Get a reference to the upcoming approvable ruleset's ID.
@@ -250,6 +251,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
     /// @return ruleset The project's current ruleset.
     function currentOf(uint256 projectId) external view override returns (JBRuleset memory ruleset) {
         // If the project does not have a ruleset, return an empty struct.
+        // slither-disable-next-line incorrect-equality
         if (latestRulesetIdOf[projectId] == 0) return _getStructFor(0, 0);
 
         // Get a reference to the currently approvable ruleset's ID.
@@ -512,6 +514,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
         uint256 latestId = latestRulesetIdOf[projectId];
 
         // If the project doesn't have a ruleset yet, initialize one.
+        // slither-disable-next-line incorrect-equality
         if (latestId == 0) {
             // Use an empty ruleset as the base.
             return _initializeRulesetFor({
@@ -552,6 +555,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
         }
 
         // The specified `rulesetId` can't be the same as the base ruleset's ID.
+        // slither-disable-next-line incorrect-equality
         if (baseRuleset.id == rulesetId) {
             revert BLOCK_ALREADY_CONTAINS_RULESET();
         }
@@ -813,6 +817,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
 
         // The amount of seconds since the `mustStartAtOrAfter` time which results in a start time that might satisfy
         // the specified limits.
+        // slither-disable-next-line weak-prng
         uint256 timeFromImmediateStartMultiple = (mustStartAtOrAfter - nextImmediateStart) % baseRuleset.duration;
 
         // A reference to the first possible start timestamp.
@@ -954,6 +959,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
     /// @return ruleset A ruleset struct.
     function _getStructFor(uint256 projectId, uint256 rulesetId) internal view returns (JBRuleset memory ruleset) {
         // Return an empty ruleset if the specified `rulesetId` is 0.
+        // slither-disable-next-line incorrect-equality
         if (rulesetId == 0) return ruleset;
 
         ruleset.id = rulesetId;
