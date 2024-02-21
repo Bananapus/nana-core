@@ -90,7 +90,7 @@ contract TestPayBurnRedeemFlow_Local is TestBaseWorkflow {
     {
         // Issue an ERC-20 token for project.
         vm.prank(_projectOwner);
-        _controller.deployERC20For(_projectId, "TestName", "TestSymbol");
+        _controller.deployERC20For(_projectId, "TestName", "TestSymbol", bytes32(0));
 
         // Make a payment.
         _terminal.pay{value: _nativePayAmount}({
