@@ -789,4 +789,68 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         // check: current with nearest start time
         assertEq(rulesetsOf[2].weight, _weight);
     }
+
+    function testWithThreeHistoricalRulesets() public {
+        // Package up ruleset configuration.
+        JBRulesetConfig[] memory _rulesetConfig = new JBRulesetConfig[](3);
+
+        // first ruleset in the past
+        _rulesetConfig[0].mustStartAtOrAfter = block.timestamp - 2 days;
+        _rulesetConfig[0].duration = 1 hours;
+        _rulesetConfig[0].weight = _weight;
+        _rulesetConfig[0].decayRate = 0;
+        _rulesetConfig[0].approvalHook = IJBRulesetApprovalHook(address(0));
+        _rulesetConfig[0].metadata = _metadata;
+        _rulesetConfig[0].splitGroups = new JBSplitGroup[](0);
+        _rulesetConfig[0].fundAccessLimitGroups = new JBFundAccessLimitGroup[](0);
+
+        // second ruleset started in the past but should still be active
+        _rulesetConfig[1].mustStartAtOrAfter = block.timestamp - 2 hours;
+        _rulesetConfig[1].duration = 1 hours;
+        _rulesetConfig[1].weight = _weight + 100;
+        _rulesetConfig[1].decayRate = 0;
+        _rulesetConfig[1].approvalHook = IJBRulesetApprovalHook(address(0));
+        _rulesetConfig[1].metadata = _metadata;
+        _rulesetConfig[1].splitGroups = new JBSplitGroup[](0);
+        _rulesetConfig[1].fundAccessLimitGroups = new JBFundAccessLimitGroup[](0);
+
+        // third
+        _rulesetConfig[2].mustStartAtOrAfter = block.timestamp + 1 days;
+        _rulesetConfig[2].duration = 1 days;
+        _rulesetConfig[2].weight = _weight + 200;
+        _rulesetConfig[2].decayRate = 0;
+        _rulesetConfig[2].approvalHook = IJBRulesetApprovalHook(address(0));
+        _rulesetConfig[2].metadata = _metadata;
+        _rulesetConfig[2].splitGroups = new JBSplitGroup[](0);
+        _rulesetConfig[2].fundAccessLimitGroups = new JBFundAccessLimitGroup[](0);
+
+        // Package up terminal configuration.
+        JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
+        address[] memory _tokensToAccept = new address[](1);
+        _tokensToAccept[0] = JBConstants.NATIVE_TOKEN;
+        _terminalConfigurations[0] = JBTerminalConfig({terminal: _terminal, tokensToAccept: _tokensToAccept});
+
+        uint256 projectId = _controller.launchProjectFor({
+            owner: address(multisig()),
+            projectUri: "myIPFSHash",
+            rulesetConfigurations: _rulesetConfig,
+            terminalConfigurations: _terminalConfigurations,
+            memo: ""
+        });
+
+        // Get a list of queued rulesets
+        JBRuleset[] memory rulesetsOf = jbRulesets().rulesetsOf(projectId, 0, 3);
+
+        // check: three rulesets returned
+        assertEq(rulesetsOf.length, 3);
+
+        // get the current ruleset
+        JBRuleset memory currentRuleset = jbRulesets().currentOf(projectId);
+
+        // check: current should be the second ruleset
+        assertEq(currentRuleset.weight, _weight + 100);
+
+        // check: current should be an iterated cycle.
+        assertEq(currentRuleset.cycleNumber, (2 days / 1 hours) + 1);
+    }
 }
