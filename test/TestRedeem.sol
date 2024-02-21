@@ -61,7 +61,7 @@ contract TestRedeem_Local is TestBaseWorkflow {
         // Create a first project to collect fees.
         _controller.launchProjectFor({
             owner: address(420), // Random.
-            projectMetadata: "whatever",
+            projectUri: "whatever",
             rulesetConfigurations: _rulesetConfig,
             terminalConfigurations: _terminalConfigurations, // Set terminals to receive fees.
             memo: ""
@@ -70,7 +70,7 @@ contract TestRedeem_Local is TestBaseWorkflow {
         // Create the project to test.
         _projectId = _controller.launchProjectFor({
             owner: _projectOwner,
-            projectMetadata: "myIPFSHash",
+            projectUri: "myIPFSHash",
             rulesetConfigurations: _rulesetConfig,
             terminalConfigurations: _terminalConfigurations,
             memo: ""
@@ -82,7 +82,7 @@ contract TestRedeem_Local is TestBaseWorkflow {
 
         // Issue the project's tokens.
         vm.prank(_projectOwner);
-        _controller.deployERC20For(_projectId, "TestName", "TestSymbol");
+        _controller.deployERC20For(_projectId, "TestName", "TestSymbol", bytes32(0));
 
         // Pay the project.
         _terminal.pay{value: _nativePayAmount}({

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.23;
 
-import {Ownable} from "lib/openzeppelin-contracts/contracts/access/Ownable.sol";
-import {IERC165} from "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import {JBPermissioned} from "./abstract/JBPermissioned.sol";
 import {IJBDirectory} from "./interfaces/IJBDirectory.sol";
 import {IJBDirectoryAccessControl} from "./interfaces/IJBDirectoryAccessControl.sol";
@@ -44,17 +44,17 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
     mapping(address addr => bool) public override isAllowedToSetFirstController;
 
     //*********************************************************************//
-    // --------------------- private stored properties ------------------- //
+    // --------------------- internal stored properties ------------------ //
     //*********************************************************************//
 
     /// @notice For each project ID, the terminals that are currently managing its funds.
     /// @custom:param projectId The ID of the project to get terminals of.
-    mapping(uint256 projectId => IJBTerminal[]) private _terminalsOf;
+    mapping(uint256 projectId => IJBTerminal[]) internal _terminalsOf;
 
     /// @notice The project's primary terminal for a given token.
     /// @custom:param projectId The ID of the project to get the primary terminal of.
     /// @custom:param token The token to get the project's primary terminal for.
-    mapping(uint256 projectId => mapping(address token => IJBTerminal)) private _primaryTerminalOf;
+    mapping(uint256 projectId => mapping(address token => IJBTerminal)) internal _primaryTerminalOf;
 
     //*********************************************************************//
     // ------------------------- external views -------------------------- //
@@ -276,14 +276,14 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
     }
 
     //*********************************************************************//
-    // --------------------- private helper functions -------------------- //
+    // --------------------- internal helper functions ------------------- //
     //*********************************************************************//
 
     /// @notice Add a terminal to a project's list of terminals if it hasn't already been added.
     /// @dev Unless the caller is the project's controller, the project's ruleset must allow setting terminals.
     /// @param projectId The ID of the project to add the terminal to.
     /// @param terminal The terminal to add.
-    function _addTerminalIfNeeded(uint256 projectId, IJBTerminal terminal) private {
+    function _addTerminalIfNeeded(uint256 projectId, IJBTerminal terminal) internal {
         // Ensure that the terminal has not already been added.
         if (isTerminalOf(projectId, terminal)) return;
 

@@ -25,17 +25,17 @@ contract JBSplits is JBControlled, IJBSplits {
     //*********************************************************************//
 
     /// @notice the ID of the ruleset that will be checked if nothing was found in the provided rulesetId.
-    uint256 public override FALLBACK_RULESET_ID = 0;
+    uint256 public constant override FALLBACK_RULESET_ID = 0;
 
     //*********************************************************************//
-    // --------------------- private stored properties ------------------- //
+    // --------------------- internal stored properties ------------------ //
     //*********************************************************************//
 
     /// @notice The number of splits currently stored in a group given a project ID, ruleset ID, and group ID.
     /// @custom:param projectId The ID of the project the split applies to.
     /// @custom:param rulesetId The ID of the ruleset that the group is specified within.
     /// @custom:param groupId The ID of the group to count this splits of.
-    mapping(uint256 projectId => mapping(uint256 rulesetId => mapping(uint256 groupId => uint256))) private
+    mapping(uint256 projectId => mapping(uint256 rulesetId => mapping(uint256 groupId => uint256))) internal
         _splitCountOf;
 
     /// @notice Packed split data given the split's project, ruleset, and group IDs, as well as the split's index within
@@ -50,7 +50,7 @@ contract JBSplits is JBControlled, IJBSplits {
     /// `uint256`.
     mapping(
         uint256 projectId => mapping(uint256 rulesetId => mapping(uint256 groupId => mapping(uint256 index => uint256)))
-    ) private _packedSplitParts1Of;
+    ) internal _packedSplitParts1Of;
 
     /// @notice More packed split data given the split's project, ruleset, and group IDs, as well as the split's index
     /// within that group.
@@ -63,7 +63,7 @@ contract JBSplits is JBControlled, IJBSplits {
     /// @custom:return The split's `lockedUntil` and `hook` packed into one `uint256`.
     mapping(
         uint256 projectId => mapping(uint256 rulesetId => mapping(uint256 groupId => mapping(uint256 index => uint256)))
-    ) private _packedSplitParts2Of;
+    ) internal _packedSplitParts2Of;
 
     //*********************************************************************//
     // ------------------------- external views -------------------------- //
@@ -137,7 +137,7 @@ contract JBSplits is JBControlled, IJBSplits {
     }
 
     //*********************************************************************//
-    // --------------------- private helper functions -------------------- //
+    // --------------------- internal helper functions ------------------- //
     //*********************************************************************//
 
     /// @notice Sets the splits for a group given a project, ruleset, and group ID.
@@ -147,7 +147,7 @@ contract JBSplits is JBControlled, IJBSplits {
     /// @param rulesetId The ID of the ruleset the splits should be considered active within.
     /// @param groupId The ID of the group to set the splits within.
     /// @param splits An array of splits to set.
-    function _setSplitsOf(uint256 projectId, uint256 rulesetId, uint256 groupId, JBSplit[] memory splits) private {
+    function _setSplitsOf(uint256 projectId, uint256 rulesetId, uint256 groupId, JBSplit[] memory splits) internal {
         // Get a reference to the current split structs within the project, ruleset, and group.
         JBSplit[] memory currentSplits = _getStructsFor(projectId, rulesetId, groupId);
 
@@ -223,7 +223,7 @@ contract JBSplits is JBControlled, IJBSplits {
     /// @param splits The array of splits to check within.
     /// @param lockedSplit The locked split.
     /// @return A flag indicating if the `lockedSplit` is contained in the `splits`.
-    function _includesLockedSplits(JBSplit[] memory splits, JBSplit memory lockedSplit) private pure returns (bool) {
+    function _includesLockedSplits(JBSplit[] memory splits, JBSplit memory lockedSplit) internal pure returns (bool) {
         // Keep a reference to the number of splits.
         uint256 numberOfSplits = splits.length;
 
@@ -252,7 +252,7 @@ contract JBSplits is JBControlled, IJBSplits {
         uint256 rulesetId,
         uint256 groupId
     )
-        private
+        internal
         view
         returns (JBSplit[] memory)
     {

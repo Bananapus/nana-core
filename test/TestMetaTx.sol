@@ -2,7 +2,7 @@
 pragma solidity >=0.8.6;
 
 import /* {*} from */ "./helpers/TestBaseWorkflow.sol";
-import {ERC2771Forwarder} from "lib/openzeppelin-contracts/contracts/metatx/ERC2771Forwarder.sol";
+import {ERC2771Forwarder} from "@openzeppelin/contracts/metatx/ERC2771Forwarder.sol";
 import {ERC2771ForwarderMock, ForwardRequest} from "./mock/ERC2771ForwarderMock.sol";
 
 contract TestMetaTx_Local is TestBaseWorkflow {
@@ -116,7 +116,7 @@ contract TestMetaTx_Local is TestBaseWorkflow {
         // First project for fee collection
         _controller.launchProjectFor({
             owner: _projectOwner,
-            projectMetadata: "myIPFSHash",
+            projectUri: "myIPFSHash",
             rulesetConfigurations: _rulesetConfig,
             terminalConfigurations: _terminalConfigurations,
             memo: ""
@@ -124,7 +124,7 @@ contract TestMetaTx_Local is TestBaseWorkflow {
 
         _projectId = _controller.launchProjectFor({
             owner: _projectOwner,
-            projectMetadata: "myIPFSHash",
+            projectUri: "myIPFSHash",
             rulesetConfigurations: _rulesetConfig,
             terminalConfigurations: _terminalConfigurations,
             memo: ""

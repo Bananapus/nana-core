@@ -171,7 +171,7 @@ contract JBDelegateMetadataLib_Test is Test {
         bytes memory _metadata = parser.createMetadata(_ids, _datas);
 
         bytes memory _modifiedMetadata =
-            parser.addDataToMetadata(bytes4(uint32(type(uint32).max)), abi.encode(123_456), _metadata);
+            parser.addDataToMetadata(_metadata, bytes4(uint32(type(uint32).max)), abi.encode(123_456));
 
         // Check
         (bool _found, bytes memory _dataParsed) = parser.getDataFor(bytes4(uint32(type(uint32).max)), _modifiedMetadata);
@@ -206,9 +206,9 @@ contract JBDelegateMetadataLib_Test is Test {
         bytes memory _metadata = parser.createMetadata(_ids, _datas);
 
         bytes memory _modifiedMetadata = parser.addDataToMetadata(
+            _metadata,
             bytes4(uint32(type(uint32).max)),
-            abi.encode(bytes32(uint256(type(uint256).max)), bytes32(hex"123456")),
-            _metadata
+            abi.encode(bytes32(uint256(type(uint256).max)), bytes32(hex"123456"))
         );
 
         (bool _found, bytes memory _dataParsed) = parser.getDataFor(bytes4(uint32(type(uint32).max)), _modifiedMetadata);
@@ -248,7 +248,7 @@ contract JBDelegateMetadataLib_Test is Test {
         bytes memory _metadata = parser.createMetadata(_ids, _datas);
 
         bytes memory _modifiedMetadata = parser.addDataToMetadata(
-            bytes4(uint32(type(uint32).max)), abi.encode(uint32(69), bytes32(uint256(type(uint256).max))), _metadata
+            _metadata, bytes4(uint32(type(uint32).max)), abi.encode(uint32(69), bytes32(uint256(type(uint256).max)))
         );
 
         (bool _found, bytes memory _dataParsed) = parser.getDataFor(bytes4(uint32(type(uint32).max)), _modifiedMetadata);
@@ -265,6 +265,55 @@ contract JBDelegateMetadataLib_Test is Test {
             assertTrue(_found);
             assertEq(_data, _i * 4);
         }
+    }
+
+    /**
+     * @notice Test adding `bytes32` and `uint` to an empty metadata.
+     */
+    function test_addToMetadata_emptyInitialMetadata() external {
+        bytes memory _metadata;
+
+        bytes memory _modifiedMetadata = parser.addDataToMetadata(
+            _metadata, bytes4(uint32(type(uint32).max)), abi.encode(uint32(69), bytes32(uint256(type(uint256).max)))
+        );
+
+        (bool _found, bytes memory _dataParsed) = parser.getDataFor(bytes4(uint32(type(uint32).max)), _modifiedMetadata);
+        (uint32 _a, bytes32 _b) = abi.decode(_dataParsed, (uint32, bytes32));
+
+        assertTrue(_found);
+        assertEq(_a, uint32(69));
+        assertEq(_b, bytes32(uint256(type(uint256).max)));
+    }
+
+    /**
+     * @notice Test adding `bytes32` and `uint` to a metadata which contains something in the first bytes32
+     */
+    function test_addToMetadata_preexistingMetadata(uint256 _reserved) external {
+        bytes memory _metadata = abi.encode(_reserved);
+
+        bytes memory _modifiedMetadata = parser.addDataToMetadata(
+            _metadata, bytes4(uint32(type(uint32).max)), abi.encode(uint32(69), bytes32(uint256(type(uint256).max)))
+        );
+
+        (bool _found, bytes memory _dataParsed) = parser.getDataFor(bytes4(uint32(type(uint32).max)), _modifiedMetadata);
+        (uint32 _a, bytes32 _b) = abi.decode(_dataParsed, (uint32, bytes32));
+
+        assertTrue(_found);
+        assertEq(_a, uint32(69));
+        assertEq(_b, bytes32(uint256(type(uint256).max)));
+
+        assertEq(uint256(bytes32(_modifiedMetadata)), _reserved);
+    }
+
+    function test_addToMetadata_invalidExistingTable_reverts() public {
+        vm.expectRevert(abi.encodeWithSignature("METADATA_TOO_SHORT()"));
+
+        // Preexisting metadata: 32B + 4B
+        parser.addDataToMetadata(
+            abi.encodePacked(bytes32(uint256(type(uint256).max)), bytes4(uint32(type(uint32).max))),
+            bytes4(uint32(type(uint32).max)),
+            bytes("12345678901234567890123456789012345678901234567890123456789012345678901234567890")
+        );
     }
 
     /**

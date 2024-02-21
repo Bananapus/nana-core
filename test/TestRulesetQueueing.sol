@@ -66,7 +66,58 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
 
         uint256 projectId = _controller.launchProjectFor({
             owner: address(multisig()),
-            projectMetadata: "myIPFSHash",
+            projectUri: "myIPFSHash",
+            rulesetConfigurations: _rulesetConfig,
+            terminalConfigurations: _terminalConfigurations,
+            memo: ""
+        });
+
+        return projectId;
+    }
+
+    function launchProjectForTestWithThreeRulesets() public returns (uint256) {
+        // Package up ruleset configuration.
+        JBRulesetConfig[] memory _rulesetConfig = new JBRulesetConfig[](3);
+
+        // first ruleset
+        _rulesetConfig[0].mustStartAtOrAfter = 0;
+        _rulesetConfig[0].duration = 1 days;
+        _rulesetConfig[0].weight = _weight;
+        _rulesetConfig[0].decayRate = 0;
+        _rulesetConfig[0].approvalHook = IJBRulesetApprovalHook(address(0));
+        _rulesetConfig[0].metadata = _metadata;
+        _rulesetConfig[0].splitGroups = new JBSplitGroup[](0);
+        _rulesetConfig[0].fundAccessLimitGroups = new JBFundAccessLimitGroup[](0);
+
+        // second
+        _rulesetConfig[1].mustStartAtOrAfter = block.timestamp + 1 days;
+        _rulesetConfig[1].duration = 1 days;
+        _rulesetConfig[1].weight = _weight + 100;
+        _rulesetConfig[1].decayRate = 0;
+        _rulesetConfig[1].approvalHook = IJBRulesetApprovalHook(address(0));
+        _rulesetConfig[1].metadata = _metadata;
+        _rulesetConfig[1].splitGroups = new JBSplitGroup[](0);
+        _rulesetConfig[1].fundAccessLimitGroups = new JBFundAccessLimitGroup[](0);
+
+        // third
+        _rulesetConfig[2].mustStartAtOrAfter = block.timestamp + 2 days;
+        _rulesetConfig[2].duration = 1 days;
+        _rulesetConfig[2].weight = _weight + 200;
+        _rulesetConfig[2].decayRate = 0;
+        _rulesetConfig[2].approvalHook = IJBRulesetApprovalHook(address(0));
+        _rulesetConfig[2].metadata = _metadata;
+        _rulesetConfig[2].splitGroups = new JBSplitGroup[](0);
+        _rulesetConfig[2].fundAccessLimitGroups = new JBFundAccessLimitGroup[](0);
+
+        // Package up terminal configuration.
+        JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
+        address[] memory _tokensToAccept = new address[](1);
+        _tokensToAccept[0] = JBConstants.NATIVE_TOKEN;
+        _terminalConfigurations[0] = JBTerminalConfig({terminal: _terminal, tokensToAccept: _tokensToAccept});
+
+        uint256 projectId = _controller.launchProjectFor({
+            owner: address(multisig()),
+            projectUri: "myIPFSHash",
             rulesetConfigurations: _rulesetConfig,
             terminalConfigurations: _terminalConfigurations,
             memo: ""
@@ -305,11 +356,11 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
             upcomingRuleset = jbRulesets().upcomingRulesetOf(projectId);
 
             // Get a list of queued rulesets
-            JBRuleset[] memory queuedRulesetsOf = jbRulesets().queuedRulesetsOf(projectId);
+            JBRuleset[] memory rulesetsOf = jbRulesets().rulesetsOf(projectId, 0, 1);
 
             // Make sure the upcoming ruleset is the ruleset currently under the approval hook.
             assertEq(upcomingRuleset.weight, _config[0].weight);
-            assertEq(queuedRulesetsOf[0].weight, _config[0].weight);
+            assertEq(rulesetsOf[0].weight, _config[0].weight);
 
             // If the full deadline duration included in the ruleset.
             if (
@@ -533,9 +584,9 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         assertEq(_queued.weight, _weightFirstQueued);
 
         // Get a list of queued rulesets
-        JBRuleset[] memory queuedRulesets = jbRulesets().queuedRulesetsOf(projectId);
+        JBRuleset[] memory queuedRulesets = jbRulesets().rulesetsOf(projectId, 0, 1);
 
-        // Ensure queuedRulesetsOf is accurate
+        // Ensure rulesetsOf is accurate
         assertEq(queuedRulesets[0].weight, _weightFirstQueued);
 
         // Package up another config.
@@ -563,9 +614,9 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         assertEq(_requeued.weight, _weightInitial);
 
         // Get a list of queued rulesets
-        JBRuleset[] memory queuedRulesets2 = jbRulesets().queuedRulesetsOf(projectId);
+        JBRuleset[] memory queuedRulesets2 = jbRulesets().rulesetsOf(projectId, 0, 1);
 
-        // Ensure queuedRulesetsOf is accurate
+        // Ensure rulesetsOf is accurate
         assertEq(queuedRulesets2[0].weight, _weightSecondQueued);
 
         // Warp to when the initial ruleset rolls over and again becomes the current.
@@ -584,9 +635,9 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         assertEq(_requeued2.weight, _weightSecondQueued);
 
         // Get queued rulesets
-        JBRuleset[] memory queuedRulesets3 = jbRulesets().queuedRulesetsOf(projectId);
+        JBRuleset[] memory queuedRulesets3 = jbRulesets().rulesetsOf(projectId, 0, 1);
 
-        // Ensure queuedRulesetsOf is accurate
+        // Ensure rulesetsOf is accurate
         assertEq(queuedRulesets3[0].weight, _weightSecondQueued);
     }
 
@@ -695,21 +746,24 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         }
     }
 
-    function testRulesetQueueingViewAccuracy() public {
+    function testRulesetViewAccuracy() public {
         // setup: deploy project and queue 2 rulesets atop the initial ruleset
         uint256 id = launchProjectForTestWithThreeRulesets();
 
         // Get a list of queued rulesets
-        JBRuleset[] memory queuedRulesetsOf = jbRulesets().queuedRulesetsOf(id);
+        JBRuleset[] memory rulesetsOf = jbRulesets().rulesetsOf(id, 0, 3);
 
-        // check: two queued
-        assertEq(queuedRulesetsOf.length, 2);
-
-        // check: queued with nearest start time
-        assertEq(queuedRulesetsOf[0].weight, _weight + 100);
+        // check: three rulesets returned
+        assertEq(rulesetsOf.length, 3);
 
         // check: queued with furthest start time
-        assertEq(queuedRulesetsOf[1].weight, _weight + 200);
+        assertEq(rulesetsOf[0].weight, _weight + 200);
+
+        // check: queued with nearest start time
+        assertEq(rulesetsOf[1].weight, _weight + 100);
+
+        // check: current with nearest start time
+        assertEq(rulesetsOf[2].weight, _weight);
 
         // get the current ruleset
         JBRuleset memory currentRuleset = jbRulesets().currentOf(id);
@@ -722,5 +776,68 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
 
         // check: upcoming ruleset should be 2nd queued
         assertEq(upcomingRuleset.weight, _weight + 100);
+
+        // Get a list of queued rulesets
+        rulesetsOf = jbRulesets().rulesetsOf(id, 0, 3);
+
+        // check: three rulesets returned again
+        assertEq(rulesetsOf.length, 3);
+
+        // check: queued with furthest start time
+        assertEq(rulesetsOf[0].weight, _weight + 200);
+
+        // check: current with nearest start time
+        assertEq(rulesetsOf[1].weight, _weight + 100);
+
+        // check: past with nearest start time
+        assertEq(rulesetsOf[2].weight, _weight);
+
+        // Get a list of queued rulesets
+        rulesetsOf = jbRulesets().rulesetsOf(id, 0, 2);
+
+        // check: two rulesets returned again
+        assertEq(rulesetsOf.length, 2);
+
+        // check: queued with furthest start time
+        assertEq(rulesetsOf[0].weight, _weight + 200);
+
+        // check: current with nearest start time
+        assertEq(rulesetsOf[1].weight, _weight + 100);
+
+        // Get a list of queued rulesets
+        rulesetsOf = jbRulesets().rulesetsOf(id, upcomingRuleset.id, 2);
+
+        // check: two rulesets returned again
+        assertEq(rulesetsOf.length, 2);
+
+        // check: current with nearest start time
+        assertEq(rulesetsOf[0].weight, _weight + 100);
+
+        // check: past with nearest start time
+        assertEq(rulesetsOf[1].weight, _weight);
+
+        // Get a list of queued rulesets
+        rulesetsOf = jbRulesets().rulesetsOf(id, upcomingRuleset.id, 1);
+
+        // check: one rulesets returned again
+        assertEq(rulesetsOf.length, 1);
+
+        // check: current with nearest start time
+        assertEq(rulesetsOf[0].weight, _weight + 100);
+
+        // Get a list of queued rulesets with a larger size than there are rulesets.
+        rulesetsOf = jbRulesets().rulesetsOf(id, 0, 10);
+
+        // check: three rulesets returned
+        assertEq(rulesetsOf.length, 3);
+
+        // check: queued with furthest start time
+        assertEq(rulesetsOf[0].weight, _weight + 200);
+
+        // check: queued with nearest start time
+        assertEq(rulesetsOf[1].weight, _weight + 100);
+
+        // check: current with nearest start time
+        assertEq(rulesetsOf[2].weight, _weight);
     }
 }

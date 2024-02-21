@@ -1,0 +1,39 @@
+node_modules
+.env
+*.txt
+!remappings.txt
+
+# Git
+.git/
+.github/
+.gitmodules
+
+# Misc
+.example.env
+utils/
+
+# Output
+out
+
+# Foundry
+lib/
+
+# Hardhat files
+cache
+artifacts
+deployments/localhost/**
+
+# Mac OSX
+.DS_Store
+
+# Code coverage reports
+coverage/
+coverage.json
+lcov.info
+
+# VSCode
+workspace.code-workspace
+.vscode/
+
+backup/
+.secret

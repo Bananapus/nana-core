@@ -60,7 +60,7 @@ contract TestMintTokensOf_Local is TestBaseWorkflow {
 
         _projectId = _controller.launchProjectFor({
             owner: _projectOwner,
-            projectMetadata: "myIPFSHash",
+            projectUri: "myIPFSHash",
             rulesetConfigurations: _rulesetConfig,
             terminalConfigurations: _terminalConfigurations,
             memo: ""
@@ -106,7 +106,7 @@ contract TestMintTokensOf_Local is TestBaseWorkflow {
 
         _projectId = _controller.launchProjectFor({
             owner: _projectOwner,
-            projectMetadata: "myIPFSHash",
+            projectUri: "myIPFSHash",
             rulesetConfigurations: _rulesetConfig,
             terminalConfigurations: _terminalConfigurations,
             memo: ""
@@ -123,7 +123,7 @@ contract TestMintTokensOf_Local is TestBaseWorkflow {
         assertEq(balance, 1);
     }
 
-    function test_GivenADataSourceIsConfigured() external {
+    function test_GivenThatADataSourceIsConfigured() external {
         // it should be able to mint
         vm.prank(address(_DATA_HOOK));
 
@@ -135,7 +135,7 @@ contract TestMintTokensOf_Local is TestBaseWorkflow {
         assertEq(balance, 1);
     }
 
-    function test_GivenADataSourceHasPermissionedAnotherContractToMint() external {
+    function test_GivenThatADataSourceHasPermissionedAnotherContractToMint() external {
         // it should be able to mint
 
         // setup: mock the datasource mint permission, allowing this contract to mint

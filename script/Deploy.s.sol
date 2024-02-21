@@ -1,20 +1,20 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.23;
 
-import "lib/forge-std/src/Script.sol";
-import {IPermit2} from "lib/permit2/src/interfaces/IPermit2.sol";
-import {JBPermissions} from "../src/JBPermissions.sol";
-import {JBProjects} from "../src/JBProjects.sol";
-import {JBPrices} from "../src/JBPrices.sol";
-import {JBRulesets} from "../src/JBRulesets.sol";
-import {JBDirectory} from "../src/JBDirectory.sol";
-import {JBTokens} from "../src/JBTokens.sol";
-import {JBSplits} from "../src/JBSplits.sol";
-import {JBFeelessAddresses} from "../src/JBFeelessAddresses.sol";
-import {JBFundAccessLimits} from "../src/JBFundAccessLimits.sol";
-import {JBController} from "../src/JBController.sol";
-import {JBTerminalStore} from "../src/JBTerminalStore.sol";
-import {JBMultiTerminal} from "../src/JBMultiTerminal.sol";
+import "forge-std/Script.sol";
+import {IPermit2} from "@uniswap/permit2/src/interfaces/IPermit2.sol";
+import {JBPermissions} from "src/JBPermissions.sol";
+import {JBProjects} from "src/JBProjects.sol";
+import {JBPrices} from "src/JBPrices.sol";
+import {JBRulesets} from "src/JBRulesets.sol";
+import {JBDirectory} from "src/JBDirectory.sol";
+import {JBTokens} from "src/JBTokens.sol";
+import {JBSplits} from "src/JBSplits.sol";
+import {JBFeelessAddresses} from "src/JBFeelessAddresses.sol";
+import {JBFundAccessLimits} from "src/JBFundAccessLimits.sol";
+import {JBController} from "src/JBController.sol";
+import {JBTerminalStore} from "src/JBTerminalStore.sol";
+import {JBMultiTerminal} from "src/JBMultiTerminal.sol";
 
 contract Deploy is Script {
     /// @notice The universal PERMIT2 address.

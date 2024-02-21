@@ -1,0 +1,29 @@
+name: slither
+on:
+    pull_request:
+      branches:
+        - main
+        - master
+    push:
+      branches:
+        - main
+        - master
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: actions/setup-node@v4
+        with:
+          node-version: latest
+      - name: Install npm dependencies
+        run: npm ci
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+      - name: Run slither
+        uses: crytic/slither-action@v0.3.1
+        with:
+            slither-config: slither-ci.config.json
+            fail-on: medium

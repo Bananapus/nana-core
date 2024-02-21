@@ -5,7 +5,7 @@ import {JBAccountingContext} from "../../structs/JBAccountingContext.sol";
 import {JBAfterPayRecordedContext} from "../../structs/JBAfterPayRecordedContext.sol";
 
 import {IJBPayHook} from "../../interfaces/IJBPayHook.sol";
-import {IERC165} from "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol";
+import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
 /// @notice A terminal that accepts payments and can be migrated.
 interface IJBTerminal is IERC165 {

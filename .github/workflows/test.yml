@@ -1,0 +1,30 @@
+name: test
+on:
+  pull_request:
+    branches:
+      - main
+      - master
+  push:
+    branches:
+      - main
+      - master
+jobs:
+  forge-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: actions/setup-node@v4
+        with:
+          node-version: latest
+      - name: Install npm dependencies
+        run: npm ci
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+      - name: Run local tests
+        run: forge snapshot --fail-fast --summary --detailed
+      - name: Run fork tests
+        run: FOUNDRY_PROFILE=fork forge snapshot --fail-fast --summary --detailed
+      - name: Check contract sizes
+        run: forge build --sizes

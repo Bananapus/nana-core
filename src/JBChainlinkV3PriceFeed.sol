@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.23;
 
-import {AggregatorV3Interface} from "lib/chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
+import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import {IJBPriceFeed} from "./interfaces/IJBPriceFeed.sol";
 import {JBFixedPointNumber} from "./libraries/JBFixedPointNumber.sol";
 
@@ -33,6 +33,7 @@ contract JBChainlinkV3PriceFeed is IJBPriceFeed {
     /// @return The current price of the feed, as a fixed point number with the specified number of decimals.
     function currentUnitPrice(uint256 decimals) external view override returns (uint256) {
         // Get the latest round information.
+        // slither-disable-next-line unused-return
         (uint80 roundId, int256 price,, uint256 updatedAt, uint80 answeredInRound) = FEED.latestRoundData();
 
         // Make sure the price isn't stale.

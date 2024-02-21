@@ -5,7 +5,9 @@ import {IJBToken} from "./IJBToken.sol";
 import {IJBControlled} from "./IJBControlled.sol";
 
 interface IJBTokens is IJBControlled {
-    event DeployERC20(uint256 indexed projectId, IJBToken indexed token, string name, string symbol, address caller);
+    event DeployERC20(
+        uint256 indexed projectId, IJBToken indexed token, string name, string symbol, bytes32 salt, address caller
+    );
 
     event Mint(
         address indexed holder, uint256 indexed projectId, uint256 amount, bool tokensWereClaimed, address caller
@@ -50,7 +52,8 @@ interface IJBTokens is IJBControlled {
     function deployERC20For(
         uint256 projectId,
         string calldata name,
-        string calldata symbol
+        string calldata symbol,
+        bytes32 salt
     )
         external
         returns (IJBToken token);

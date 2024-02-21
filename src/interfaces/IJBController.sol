@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {IERC165} from "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol";
+import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import {JBApprovalStatus} from "./../enums/JBApprovalStatus.sol";
 import {JBRuleset} from "./../structs/JBRuleset.sol";
 import {JBRulesetWithMetadata} from "./../structs/JBRulesetWithMetadata.sol";
@@ -15,13 +15,13 @@ import {IJBDirectoryAccessControl} from "./IJBDirectoryAccessControl.sol";
 import {IJBFundAccessLimits} from "./IJBFundAccessLimits.sol";
 import {IJBRulesets} from "./IJBRulesets.sol";
 import {IJBMigratable} from "./IJBMigratable.sol";
-import {IJBProjectMetadataRegistry} from "./IJBProjectMetadataRegistry.sol";
+import {IJBProjectUriRegistry} from "./IJBProjectUriRegistry.sol";
 import {IJBProjects} from "./IJBProjects.sol";
 import {IJBSplits} from "./IJBSplits.sol";
 import {IJBToken} from "./IJBToken.sol";
 import {IJBTokens} from "./IJBTokens.sol";
 
-interface IJBController is IERC165, IJBProjectMetadataRegistry, IJBDirectoryAccessControl {
+interface IJBController is IERC165, IJBProjectUriRegistry, IJBDirectoryAccessControl {
     event LaunchProject(uint256 rulesetId, uint256 projectId, string metadata, string memo, address caller);
 
     event LaunchRulesets(uint256 rulesetId, uint256 projectId, string memo, address caller);
@@ -62,6 +62,10 @@ interface IJBController is IERC165, IJBProjectMetadataRegistry, IJBDirectoryAcce
         address indexed holder, uint256 indexed projectId, uint256 tokenCount, string memo, address caller
     );
 
+    event ReservedDistributionReverted(
+        uint256 indexed projectId, JBSplit split, uint256 amount, bytes reason, address caller
+    );
+
     event MigrateController(uint256 indexed projectId, IJBMigratable to, address caller);
 
     event PrepMigration(uint256 indexed projectId, address from, address caller);
@@ -97,10 +101,14 @@ interface IJBController is IERC165, IJBProjectMetadataRegistry, IJBDirectoryAcce
         view
         returns (JBRuleset memory, JBRulesetMetadata memory metadata, JBApprovalStatus);
 
-    function queuedRulesetsOf(uint256 projectId)
+    function rulesetsOf(
+        uint256 projectId,
+        uint256 startingId,
+        uint256 size
+    )
         external
         view
-        returns (JBRulesetWithMetadata[] memory queuedRulesets);
+        returns (JBRulesetWithMetadata[] memory rulesets);
 
     function currentRulesetOf(uint256 projectId)
         external
@@ -114,7 +122,7 @@ interface IJBController is IERC165, IJBProjectMetadataRegistry, IJBDirectoryAcce
 
     function launchProjectFor(
         address owner,
-        string calldata projectMetadata,
+        string calldata projectUri,
         JBRulesetConfig[] calldata rulesetConfigurations,
         JBTerminalConfig[] memory terminalConfigurations,
         string calldata memo
@@ -160,7 +168,8 @@ interface IJBController is IERC165, IJBProjectMetadataRegistry, IJBDirectoryAcce
     function deployERC20For(
         uint256 projectId,
         string calldata name,
-        string calldata symbol
+        string calldata symbol,
+        bytes32 salt
     )
         external
         returns (IJBToken token);
