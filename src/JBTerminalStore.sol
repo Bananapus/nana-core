@@ -415,6 +415,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     /// have a redemption rate provided by the redemption hook if applicable.
     /// @return reclaimAmount The amount of tokens reclaimed from the terminal, as a fixed point number with 18
     /// decimals.
+    /// @param redemptionRate The redemption rate influencing the reclaim amount.
     /// @return hookSpecifications A list of redeem hooks, including data and amounts to send to them. The terminal
     /// should fulfill these specifications.
 
@@ -429,7 +430,12 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
         external
         override
         nonReentrant
-        returns (JBRuleset memory ruleset, uint256 reclaimAmount, JBRedeemHookSpecification[] memory hookSpecifications)
+        returns (
+            JBRuleset memory ruleset,
+            uint256 reclaimAmount,
+            uint256 redemptionRate,
+            JBRedeemHookSpecification[] memory hookSpecifications
+        )
     {
         // Get a reference to the project's current ruleset.
         ruleset = RULESETS.currentOf(projectId);
@@ -480,17 +486,10 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
                 metadata: metadata
             });
 
-            // Keep a reference to the redemption rate being returned.
-            uint256 redemptionRate;
-
             (redemptionRate, hookSpecifications) =
                 IJBRulesetDataHook(ruleset.dataHook()).beforeRedeemRecordedWith(context);
-
-            // Set the redemption rate in the ruleset if needed.
-            if (redemptionRate != ruleset.redemptionRate()) {
-                // Set the custom redemption rate in the ruleset.
-                ruleset = ruleset.setRedemptionRateTo(redemptionRate);
-            }
+        } else {
+            redemptionRate = ruleset.redemptionRate();
         }
 
         if (currentSurplus != 0) {
@@ -499,7 +498,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
                 surplus: currentSurplus,
                 tokenCount: redeemCount,
                 totalSupply: totalSupply,
-                redemptionRate: ruleset.redemptionRate()
+                redemptionRate: redemptionRate
             });
         }
 

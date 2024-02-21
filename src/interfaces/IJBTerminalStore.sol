@@ -103,7 +103,12 @@ interface IJBTerminalStore {
         bytes calldata metadata
     )
         external
-        returns (JBRuleset memory ruleset, uint256 reclaimAmount, JBRedeemHookSpecification[] memory hookSpecifications);
+        returns (
+            JBRuleset memory ruleset,
+            uint256 reclaimAmount,
+            uint256 redemptionRate,
+            JBRedeemHookSpecification[] memory hookSpecifications
+        );
 
     function recordPayoutFor(
         uint256 projectId,
