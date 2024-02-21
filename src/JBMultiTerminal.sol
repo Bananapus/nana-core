@@ -1469,13 +1469,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             // Set the specification being iterated on.
             specification = specifications[i];
 
-            // Trigger any inherited pre-transfer logic.
-            _beforeTransferTo({
-                to: address(specification.hook),
-                token: beneficiaryReclaimAmount.token,
-                amount: specification.amount
-            });
-
             // Get the fee for the specified amount.
             uint256 specificationAmountFee = takesFee ? JBFees.feeAmountIn(specification.amount, FEE) : 0;
 
@@ -1495,6 +1488,13 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
             // Pass the correct metadata from the data hook's specification.
             context.hookMetadata = specification.metadata;
+
+            // Trigger any inherited pre-transfer logic.
+            _beforeTransferTo({
+                to: address(specification.hook),
+                token: beneficiaryReclaimAmount.token,
+                amount: specification.amount
+            });
 
             // Keep a reference to the amount that'll be paid as a `msg.value`.
             uint256 payValue = beneficiaryReclaimAmount.token == JBConstants.NATIVE_TOKEN ? specification.amount : 0;
