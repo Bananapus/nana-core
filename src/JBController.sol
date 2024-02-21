@@ -644,7 +644,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
             permissionId: JBPermissionIds.ISSUE_TOKEN
         });
 
-        salt = salt == bytes32(0) ? salt : keccak256(abi.encodePacked(_msgSender(), salt));
+        if (salt != bytes32(0)) salt = keccak256(abi.encodePacked(_msgSender(), salt));
 
         return TOKENS.deployERC20For(projectId, name, symbol, salt);
     }
