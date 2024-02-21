@@ -1005,6 +1005,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// applicable.
     /// @return reclaimAmount The number of terminal tokens reclaimed for the `beneficiary`, as a fixed point number
     /// with 18 decimals.
+
     function _redeemTokensOf(
         address holder,
         uint256 projectId,
@@ -1022,15 +1023,26 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // Keep a reference to the redeem hook specifications.
         JBRedeemHookSpecification[] memory hookSpecifications;
 
-        // Record the redemption.
-        (ruleset, reclaimAmount, hookSpecifications) = STORE.recordRedemptionFor({
-            holder: holder,
-            projectId: projectId,
-            accountingContext: _accountingContextForTokenOf[projectId][tokenToReclaim],
-            balanceAccountingContexts: _accountingContextsOf[projectId],
-            redeemCount: redeemCount,
-            metadata: metadata
-        });
+        // Keep a reference to the redemption rate being used.
+        uint256 redemptionRate;
+
+        // Keep a reference to the accounting context of the token being reclaimed.
+        JBAccountingContext memory accountingContext = _accountingContextForTokenOf[projectId][tokenToReclaim];
+
+        // Scoped section prevents stack too deep.
+        {
+            JBAccountingContext[] memory balanceAccountingContexts = _accountingContextsOf[projectId];
+
+            // Record the redemption.
+            (ruleset, reclaimAmount, redemptionRate, hookSpecifications) = STORE.recordRedemptionFor({
+                holder: holder,
+                projectId: projectId,
+                accountingContext: accountingContext,
+                balanceAccountingContexts: balanceAccountingContexts,
+                redeemCount: redeemCount,
+                metadata: metadata
+            });
+        }
 
         // Burn the project tokens.
         if (redeemCount != 0) {
@@ -1042,36 +1054,14 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             });
         }
 
-        // Determine if a fee should be taken. Fees are not exercised if the redemption rate is at its max (100%),
-        // if the beneficiary is feeless, or if the fee beneficiary doesn't accept the given token.
-        bool takesFee =
-            !FEELESS_ADDRESSES.isFeeless(beneficiary) && ruleset.redemptionRate() != JBConstants.MAX_REDEMPTION_RATE;
-
         // Keep a reference to the amount being reclaimed that is subject to fees.
         uint256 amountEligibleForFees;
 
-        // If the data hook returned redeem hook specifications, fulfill them.
-        if (hookSpecifications.length != 0) {
-            // Get a reference to the token's accounting context.
-            JBAccountingContext memory context = _accountingContextForTokenOf[projectId][tokenToReclaim];
-
-            // Fulfill the redeem hook specifications.
-            amountEligibleForFees += _fulfillRedeemHookSpecificationsFor({
-                projectId: projectId,
-                holder: holder,
-                redeemCount: redeemCount,
-                ruleset: ruleset,
-                beneficiary: beneficiary,
-                beneficiaryReclaimAmount: JBTokenAmount(tokenToReclaim, reclaimAmount, context.decimals, context.currency),
-                specifications: hookSpecifications,
-                takesFee: takesFee,
-                metadata: metadata
-            });
-        }
-
         // Send the reclaimed funds to the beneficiary.
         if (reclaimAmount != 0) {
-            if (takesFee) {
+            // Determine if a fee should be taken. Fees are not exercised if the redemption rate is at its max (100%),
+            // if the beneficiary is feeless, or if the fee beneficiary doesn't accept the given token.
+            if (!FEELESS_ADDRESSES.isFeeless(beneficiary) && redemptionRate != JBConstants.MAX_REDEMPTION_RATE) {
                 amountEligibleForFees += reclaimAmount;
                 // Subtract the fee for the reclaimed amount.
                 reclaimAmount -= JBFees.feeAmountIn(reclaimAmount, FEE);
@@ -1081,6 +1071,24 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             if (reclaimAmount != 0) {
                 _transferFrom({from: address(this), to: beneficiary, token: tokenToReclaim, amount: reclaimAmount});
             }
+        }
+
+        // If the data hook returned redeem hook specifications, fulfill them.
+        if (hookSpecifications.length != 0) {
+            // Fulfill the redeem hook specifications.
+            amountEligibleForFees += _fulfillRedeemHookSpecificationsFor({
+                projectId: projectId,
+                holder: holder,
+                redeemCount: redeemCount,
+                ruleset: ruleset,
+                redemptionRate: redemptionRate,
+                beneficiary: beneficiary,
+                beneficiaryReclaimAmount: JBTokenAmount(
+                    tokenToReclaim, reclaimAmount, accountingContext.decimals, accountingContext.currency
+                    ),
+                specifications: hookSpecifications,
+                metadata: metadata
+            });
         }
 
         // Take the fee from all outbound reclaimings.
@@ -1101,6 +1109,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             holder,
             beneficiary,
             redeemCount,
+            redemptionRate,
             reclaimAmount,
             metadata,
             _msgSender()
@@ -1426,9 +1435,9 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @param redeemCount The number of tokens being redeemed.
     /// @param metadata Bytes to send along to the emitted event and redeem hooks as applicable.
     /// @param ruleset The ruleset the redemption is being made during as a `JBRuleset` struct.
+    /// @param redemptionRate The redemption rate influencing the reclaim amount.
     /// @param beneficiary The address which will receive any terminal tokens that are reclaimed by this redemption.
     /// @param specifications The hook specifications being fulfilled.
-    /// @param takesFee A flag indicating if a fee should be taken from the amount sent to hooks.
     /// @return amountEligibleForFees The amount of funds which were allocated to redeem hooks and are eligible for
     /// fees.
     function _fulfillRedeemHookSpecificationsFor(
@@ -1438,9 +1447,9 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         uint256 redeemCount,
         bytes memory metadata,
         JBRuleset memory ruleset,
+        uint256 redemptionRate,
         address payable beneficiary,
-        JBRedeemHookSpecification[] memory specifications,
-        bool takesFee
+        JBRedeemHookSpecification[] memory specifications
     )
         internal
         returns (uint256 amountEligibleForFees)
@@ -1453,7 +1462,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             redeemCount: redeemCount,
             reclaimedAmount: beneficiaryReclaimAmount,
             forwardedAmount: beneficiaryReclaimAmount,
-            redemptionRate: ruleset.redemptionRate(),
+            redemptionRate: redemptionRate,
             beneficiary: beneficiary,
             hookMetadata: "",
             redeemerMetadata: metadata
@@ -1470,7 +1479,9 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             specification = specifications[i];
 
             // Get the fee for the specified amount.
-            uint256 specificationAmountFee = takesFee ? JBFees.feeAmountIn(specification.amount, FEE) : 0;
+            uint256 specificationAmountFee = FEELESS_ADDRESSES.isFeeless(address(specification.hook))
+                ? 0
+                : JBFees.feeAmountIn(specification.amount, FEE);
 
             // Add the specification's amount to the amount eligible for fees.
             if (specificationAmountFee != 0) {

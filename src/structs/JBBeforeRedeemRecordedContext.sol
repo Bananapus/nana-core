@@ -12,9 +12,8 @@ import {JBTokenAmount} from "./JBTokenAmount.sol";
 /// @custom:member totalSupply The total token supply being used for the calculation, as a fixed point number with 18
 /// decimals.
 /// @custom:member surplus The surplus amount used for the calculation, as a fixed point number with 18 decimals.
-/// @custom:member reclaimAmount The token amount that should be reclaimed by the redeemer using the protocol's standard
-/// bonding curve redemption formula. Includes the token being reclaimed, the reclaim value, the number of decimals
-/// included, and the currency of the reclaim amount.
+/// Includes the token of the surplus, the surplus value, the number of decimals
+/// included, and the currency of the surplus.
 /// @custom:member useTotalSurplus If surplus across all of a project's terminals is being used when making redemptions.
 /// @custom:member redemptionRate The redemption rate of the ruleset the redemption is being made during.
 /// @custom:member metadata Extra data provided by the redeemer.
@@ -25,8 +24,7 @@ struct JBBeforeRedeemRecordedContext {
     uint256 rulesetId;
     uint256 redeemCount;
     uint256 totalSupply;
-    uint256 surplus;
-    JBTokenAmount reclaimAmount;
+    JBTokenAmount surplus;
     bool useTotalSurplus;
     uint256 redemptionRate;
     bytes metadata;

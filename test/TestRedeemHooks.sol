@@ -4,6 +4,8 @@ pragma solidity >=0.8.6;
 import /* {*} from */ "./helpers/TestBaseWorkflow.sol";
 
 contract TestRedeemHooks_Local is TestBaseWorkflow {
+    using JBRulesetMetadataResolver for JBRuleset;
+
     uint256 private constant _WEIGHT = 1000 * 10 ** 18;
     address private constant _DATA_HOOK = address(bytes20(keccak256("datahook")));
 
@@ -86,7 +88,7 @@ contract TestRedeemHooks_Local is TestBaseWorkflow {
         assertEq(address(_tokens.tokenOf(_projectId)), address(_token));
     }
 
-    function testRedeemHook() public {
+    function testRedeemHookWithNoFees() public {
         // Reference and bound pay amount.
         uint256 _nativePayAmount = 10 ether;
         uint256 _halfPaid = 5 ether;
@@ -129,6 +131,11 @@ contract TestRedeemHooks_Local is TestBaseWorkflow {
         _specifications[0] =
             JBRedeemHookSpecification({hook: IJBRedeemHook(_redeemHook), amount: _halfPaid, metadata: ""});
 
+        vm.startPrank(multisig());
+        // Set the hook as feeless.
+        _terminal.FEELESS_ADDRESSES().setFeelessAddress(_redeemHook, true);
+        vm.stopPrank();
+
         // Redeem context.
         JBAfterRedeemRecordedContext memory _redeemContext = JBAfterRedeemRecordedContext({
             holder: address(this),
@@ -170,7 +177,125 @@ contract TestRedeemHooks_Local is TestBaseWorkflow {
         vm.mockCall(
             _DATA_HOOK,
             abi.encodeWithSelector(IJBRulesetDataHook.beforeRedeemRecordedWith.selector),
-            abi.encode(_halfPaid, _specifications)
+            abi.encode(_ruleset.redemptionRate(), _specifications)
+        );
+
+        _terminal.redeemTokensOf({
+            holder: address(this),
+            projectId: _projectId,
+            tokenToReclaim: JBConstants.NATIVE_TOKEN,
+            redeemCount: _beneficiaryTokenBalance / 2,
+            minTokensReclaimed: 0,
+            beneficiary: payable(address(this)),
+            metadata: new bytes(0)
+        });
+    }
+
+    function testRedeemHookWithFeesAndCustomRedemptionRate() public {
+        // Reference and bound pay amount.
+        uint256 _nativePayAmount = 10 ether;
+        uint256 _halfPaid = 5 ether;
+
+        // Redeem hook address.
+        address _redeemHook = makeAddr("SOFA");
+        vm.label(_redeemHook, "Redemption Delegate");
+
+        // Keep a reference to the current ruleset.
+        (JBRuleset memory _ruleset,) = _controller.currentRulesetOf(_projectId);
+
+        vm.deal(address(this), _nativePayAmount);
+        uint256 _beneficiaryTokensReceived = _terminal.pay{value: _nativePayAmount}({
+            projectId: _projectId,
+            amount: _nativePayAmount,
+            token: JBConstants.NATIVE_TOKEN,
+            beneficiary: address(this),
+            minReturnedTokens: 0,
+            memo: "Forge Test",
+            metadata: ""
+        });
+
+        // Make sure the beneficiary has a balance of project tokens.
+        uint256 _beneficiaryTokenBalance =
+            UD60x18unwrap(UD60x18mul(UD60x18wrap(_nativePayAmount), UD60x18wrap(_WEIGHT)));
+        assertEq(_tokens.totalBalanceOf(address(this), _projectId), _beneficiaryTokenBalance);
+        assertEq(_beneficiaryTokensReceived, _beneficiaryTokenBalance);
+        emit log_uint(_beneficiaryTokenBalance);
+
+        // Make sure the native token balance in terminal is up to date.
+        uint256 _nativeTerminalBalance = _nativePayAmount;
+        assertEq(
+            jbTerminalStore().balanceOf(address(_terminal), _projectId, JBConstants.NATIVE_TOKEN),
+            _nativeTerminalBalance
+        );
+
+        // Reference redeem hook specifications.
+        JBRedeemHookSpecification[] memory _specifications = new JBRedeemHookSpecification[](1);
+
+        _specifications[0] =
+            JBRedeemHookSpecification({hook: IJBRedeemHook(_redeemHook), amount: _halfPaid, metadata: ""});
+
+        uint256 _customRedemptionRate = JBConstants.MAX_REDEMPTION_RATE / 2;
+
+        uint256 _forwardedAmount =
+            _halfPaid - (_halfPaid - mulDiv(_halfPaid, JBConstants.MAX_FEE, _terminal.FEE() + JBConstants.MAX_FEE));
+
+        uint256 _beneficiaryAmount = mulDiv(
+            mulDiv(_nativePayAmount, _beneficiaryTokenBalance / 2, _beneficiaryTokenBalance),
+            _customRedemptionRate
+                + mulDiv(
+                    _beneficiaryTokenBalance / 2,
+                    JBConstants.MAX_REDEMPTION_RATE - _customRedemptionRate,
+                    _beneficiaryTokenBalance
+                ),
+            JBConstants.MAX_REDEMPTION_RATE
+        );
+
+        _beneficiaryAmount -= (
+            _beneficiaryAmount - mulDiv(_beneficiaryAmount, JBConstants.MAX_FEE, _terminal.FEE() + JBConstants.MAX_FEE)
+        );
+
+        // Redeem context.
+        JBAfterRedeemRecordedContext memory _redeemContext = JBAfterRedeemRecordedContext({
+            holder: address(this),
+            projectId: _projectId,
+            rulesetId: _ruleset.id,
+            redeemCount: _beneficiaryTokenBalance / 2,
+            reclaimedAmount: JBTokenAmount(
+                JBConstants.NATIVE_TOKEN,
+                _beneficiaryAmount,
+                _terminal.accountingContextForTokenOf(_projectId, JBConstants.NATIVE_TOKEN).decimals,
+                _terminal.accountingContextForTokenOf(_projectId, JBConstants.NATIVE_TOKEN).currency
+                ),
+            forwardedAmount: JBTokenAmount(
+                JBConstants.NATIVE_TOKEN,
+                _forwardedAmount,
+                _terminal.accountingContextForTokenOf(_projectId, JBConstants.NATIVE_TOKEN).decimals,
+                _terminal.accountingContextForTokenOf(_projectId, JBConstants.NATIVE_TOKEN).currency
+                ),
+            redemptionRate: _customRedemptionRate,
+            beneficiary: payable(address(this)),
+            hookMetadata: "",
+            redeemerMetadata: ""
+        });
+
+        // Mock the hook.
+        vm.mockCall(
+            _redeemHook,
+            abi.encodeWithSelector(IJBRedeemHook.afterRedeemRecordedWith.selector),
+            abi.encode(_redeemContext)
+        );
+
+        // Assert that the hook gets called with the expected value.
+        vm.expectCall(
+            _redeemHook,
+            _forwardedAmount,
+            abi.encodeWithSelector(IJBRedeemHook.afterRedeemRecordedWith.selector, _redeemContext)
+        );
+
+        vm.mockCall(
+            _DATA_HOOK,
+            abi.encodeWithSelector(IJBRulesetDataHook.beforeRedeemRecordedWith.selector),
+            abi.encode(_customRedemptionRate, _specifications)
         );
 
         _terminal.redeemTokensOf({

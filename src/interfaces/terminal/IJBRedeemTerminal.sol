@@ -14,6 +14,7 @@ interface IJBRedeemTerminal is IJBTerminal {
         address holder,
         address beneficiary,
         uint256 tokenCount,
+        uint256 redemptionRate,
         uint256 reclaimedAmount,
         bytes metadata,
         address caller
