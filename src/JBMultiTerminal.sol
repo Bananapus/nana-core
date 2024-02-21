@@ -1003,6 +1003,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// applicable.
     /// @return reclaimAmount The number of terminal tokens reclaimed for the `beneficiary`, as a fixed point number
     /// with 18 decimals.
+
     function _redeemTokensOf(
         address holder,
         uint256 projectId,
@@ -1047,10 +1048,9 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         if (reclaimAmount != 0) {
             // Determine if a fee should be taken. Fees are not exercised if the redemption rate is at its max (100%),
             // if the beneficiary is feeless, or if the fee beneficiary doesn't accept the given token.
-            bool takesFee =
-                !FEELESS_ADDRESSES.isFeeless(beneficiary) && ruleset.redemptionRate() != JBConstants.MAX_REDEMPTION_RATE;
-
-            if (takesFee) {
+            if (
+                !FEELESS_ADDRESSES.isFeeless(beneficiary) && ruleset.redemptionRate() != JBConstants.MAX_REDEMPTION_RATE
+            ) {
                 amountEligibleForFees += reclaimAmount;
                 // Subtract the fee for the reclaimed amount.
                 reclaimAmount -= JBFees.feeAmountIn(reclaimAmount, FEE);

@@ -417,6 +417,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     /// decimals.
     /// @return hookSpecifications A list of redeem hooks, including data and amounts to send to them. The terminal
     /// should fulfill these specifications.
+
     function recordRedemptionFor(
         address holder,
         uint256 projectId,
