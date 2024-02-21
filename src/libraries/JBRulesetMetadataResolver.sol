@@ -17,7 +17,9 @@ library JBRulesetMetadataResolver {
     function setRedemptionRateTo(JBRuleset memory ruleset, uint256 value) internal pure returns (JBRuleset memory) {
         // redemption rate in bits 20-35 (16 bits).
         // redemption rate is a number 0-10000.
-        ruleset.metadata |= value << 20;
+        JBRulesetMetadata memory adjustedMetadata = expandMetadata(ruleset);
+        adjustedMetadata.redemptionRate = value;
+        ruleset.metadata = packRulesetMetadata(adjustedMetadata);
         return ruleset;
     }
 

@@ -1040,13 +1040,27 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             });
         }
 
-        // Determine if a fee should be taken. Fees are not exercised if the redemption rate is at its max (100%),
-        // if the beneficiary is feeless, or if the fee beneficiary doesn't accept the given token.
-        bool takesFee =
-            !FEELESS_ADDRESSES.isFeeless(beneficiary) && ruleset.redemptionRate() != JBConstants.MAX_REDEMPTION_RATE;
-
         // Keep a reference to the amount being reclaimed that is subject to fees.
         uint256 amountEligibleForFees;
+
+        // Send the reclaimed funds to the beneficiary.
+        if (reclaimAmount != 0) {
+            // Determine if a fee should be taken. Fees are not exercised if the redemption rate is at its max (100%),
+            // if the beneficiary is feeless, or if the fee beneficiary doesn't accept the given token.
+            bool takesFee =
+                !FEELESS_ADDRESSES.isFeeless(beneficiary) && ruleset.redemptionRate() != JBConstants.MAX_REDEMPTION_RATE;
+
+            if (takesFee) {
+                amountEligibleForFees += reclaimAmount;
+                // Subtract the fee for the reclaimed amount.
+                reclaimAmount -= JBFees.feeAmountIn(reclaimAmount, FEE);
+            }
+
+            // Subtract the fee from the reclaim amount.
+            if (reclaimAmount != 0) {
+                _transferFrom({from: address(this), to: beneficiary, token: tokenToReclaim, amount: reclaimAmount});
+            }
+        }
 
         // If the data hook returned redeem hook specifications, fulfill them.
         if (hookSpecifications.length != 0) {
@@ -1062,23 +1076,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                 beneficiary: beneficiary,
                 beneficiaryReclaimAmount: JBTokenAmount(tokenToReclaim, reclaimAmount, context.decimals, context.currency),
                 specifications: hookSpecifications,
-                takesFee: takesFee,
                 metadata: metadata
             });
-        }
-
-        // Send the reclaimed funds to the beneficiary.
-        if (reclaimAmount != 0) {
-            if (takesFee) {
-                amountEligibleForFees += reclaimAmount;
-                // Subtract the fee for the reclaimed amount.
-                reclaimAmount -= JBFees.feeAmountIn(reclaimAmount, FEE);
-            }
-
-            // Subtract the fee from the reclaim amount.
-            if (reclaimAmount != 0) {
-                _transferFrom({from: address(this), to: beneficiary, token: tokenToReclaim, amount: reclaimAmount});
-            }
         }
 
         // Take the fee from all outbound reclaimings.
@@ -1427,7 +1426,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @param ruleset The ruleset the redemption is being made during as a `JBRuleset` struct.
     /// @param beneficiary The address which will receive any terminal tokens that are reclaimed by this redemption.
     /// @param specifications The hook specifications being fulfilled.
-    /// @param takesFee A flag indicating if a fee should be taken from the amount sent to hooks.
     /// @return amountEligibleForFees The amount of funds which were allocated to redeem hooks and are eligible for
     /// fees.
     function _fulfillRedeemHookSpecificationsFor(
@@ -1438,8 +1436,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         bytes memory metadata,
         JBRuleset memory ruleset,
         address payable beneficiary,
-        JBRedeemHookSpecification[] memory specifications,
-        bool takesFee
+        JBRedeemHookSpecification[] memory specifications
     )
         internal
         returns (uint256 amountEligibleForFees)
@@ -1476,7 +1473,9 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             });
 
             // Get the fee for the specified amount.
-            uint256 specificationAmountFee = takesFee ? JBFees.feeAmountIn(specification.amount, FEE) : 0;
+            uint256 specificationAmountFee = FEELESS_ADDRESSES.isFeeless(address(specification.hook))
+                ? 0
+                : JBFees.feeAmountIn(specification.amount, FEE);
 
             // Add the specification's amount to the amount eligible for fees.
             if (specificationAmountFee != 0) {
