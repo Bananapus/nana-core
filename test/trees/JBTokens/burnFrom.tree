@@ -1,0 +1,10 @@
+TestBurnFrom_Local
+├── when caller is controller
+│   ├── given the calling amount GT tokenbalance plus creditbalance of holder
+│   │   └── it will revert INSUFFICIENT_FUNDS
+│   ├── given there is a credit balance
+│   │   └── it will subtract credits from creditBalanceOf and totalCreditSupplyOf
+│   └── given there is erc20 token balance
+│       └── it will burn tokens
+└── when caller DNEQ controller
+    └── it will revert CONTROLLER_UNAUTHORIZED

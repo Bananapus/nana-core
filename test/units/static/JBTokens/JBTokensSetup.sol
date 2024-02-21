@@ -14,7 +14,7 @@ contract JBTokensSetup is JBTest {
     // Target Contract
     IJBTokens public _tokens;
 
-    function terminalStoreSetup() public virtual {
+    function tokensSetup() public virtual {
         // Instantiate the contract being tested
         _tokens = new JBTokens(directory);
     }
