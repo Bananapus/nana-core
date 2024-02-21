@@ -1,17 +1,20 @@
-name: contracts-publish
+name: publish
 on:
   push:
     branches:
       - main
+      - master
 jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - uses: bahmutov/npm-install@v1
-      # Publish deploy artifacts NPM packages. This will only run if there are new deploys.
-      - name: Publish NPM package
-        uses: JS-DevTools/npm-publish@v1
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          token: ${{ secrets.NPM_TOKEN }}
-          access: "public"
+          node-version: latest
+          registry-url: https://registry.npmjs.org
+      # This will fail if the version in package.json has not increased.
+      - name: Publish to npm
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
