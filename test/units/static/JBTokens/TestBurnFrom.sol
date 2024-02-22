@@ -7,6 +7,9 @@ import {JBTokensSetup} from "./JBTokensSetup.sol";
 contract TestBurnFrom_Local is JBTokensSetup {
     uint256 _projectId = 1;
     uint256 _defaultAmount = 1e18;
+
+    // Mocks
+    IJBToken _token = IJBToken(makeAddr("token"));
     
     function setUp() public {
         super.tokensSetup();
@@ -64,11 +67,48 @@ contract TestBurnFrom_Local is JBTokensSetup {
         assertEq(0, _creditBalanceAfter);
     }
 
-    /* function test_GivenThereIsErc20TokenBalance() external whenCallerIsController {
+    function test_GivenThereIsErc20TokenBalance() external whenCallerIsController {
         // it will burn tokens
+
+        // Find the storage slot to set credit balance
+        bytes32 tokenOfSlot = keccak256(abi.encode(_projectId, uint256(0)));
+
+        // Set storage
+        vm.store(address(_tokens), tokenOfSlot, bytes32(uint256(uint160(address(_token)))));
+
+        // Ensure it's set
+        IJBToken _storedToken = _tokens.tokenOf(_projectId);
+        assertEq(address(_storedToken), address(_token));
+
+        // mock call to token balanceOf
+        mockExpect(
+            address(_token),
+            abi.encodeCall(IJBToken.balanceOf, (address(this))),
+            abi.encode(_defaultAmount)
+        );
+
+        // mock call to token burn()
+        mockExpect(
+            address(_token),
+            abi.encodeCall(IJBToken.burn, (address(this), _defaultAmount)),
+            abi.encode()
+        );
+
+        _tokens.burnFrom(address(this), _projectId, _defaultAmount);
     }
 
     function test_WhenCallerDNEQController() external {
         // it will revert CONTROLLER_UNAUTHORIZED
-    } */
+
+        // mock call that says zero address is controller of project
+        mockExpect(
+            address(directory),
+            abi.encodeCall(IJBDirectory.controllerOf, (_projectId)),
+            // will cause revert
+            abi.encode(address(0))
+        );
+
+        vm.expectRevert(abi.encodeWithSignature("CONTROLLER_UNAUTHORIZED()"));
+        _tokens.burnFrom(address(this), _projectId, _defaultAmount);
+    }
 }
