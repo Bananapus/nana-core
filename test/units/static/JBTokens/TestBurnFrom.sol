@@ -10,7 +10,7 @@ contract TestBurnFrom_Local is JBTokensSetup {
 
     // Mocks
     IJBToken _token = IJBToken(makeAddr("token"));
-    
+
     function setUp() public {
         super.tokensSetup();
     }
@@ -18,9 +18,7 @@ contract TestBurnFrom_Local is JBTokensSetup {
     modifier whenCallerIsController() {
         // mock call to JBDirectory controllerOf
         mockExpect(
-            address(directory),
-            abi.encodeCall(IJBDirectory.controllerOf, (_projectId)),
-            abi.encode(address(this))
+            address(directory), abi.encodeCall(IJBDirectory.controllerOf, (_projectId)), abi.encode(address(this))
         );
 
         _;
@@ -42,7 +40,7 @@ contract TestBurnFrom_Local is JBTokensSetup {
 
         // Set storage
         vm.store(address(_tokens), slot, bytes32(_defaultAmount));
-        
+
         // Ensure it is correctly set
         uint256 _creditBalance = _tokens.creditBalanceOf(address(this), _projectId);
         assertEq(_defaultAmount, _creditBalance);
@@ -81,18 +79,10 @@ contract TestBurnFrom_Local is JBTokensSetup {
         assertEq(address(_storedToken), address(_token));
 
         // mock call to token balanceOf
-        mockExpect(
-            address(_token),
-            abi.encodeCall(IJBToken.balanceOf, (address(this))),
-            abi.encode(_defaultAmount)
-        );
+        mockExpect(address(_token), abi.encodeCall(IJBToken.balanceOf, (address(this))), abi.encode(_defaultAmount));
 
         // mock call to token burn()
-        mockExpect(
-            address(_token),
-            abi.encodeCall(IJBToken.burn, (address(this), _defaultAmount)),
-            abi.encode()
-        );
+        mockExpect(address(_token), abi.encodeCall(IJBToken.burn, (address(this), _defaultAmount)), abi.encode());
 
         _tokens.burnFrom(address(this), _projectId, _defaultAmount);
     }

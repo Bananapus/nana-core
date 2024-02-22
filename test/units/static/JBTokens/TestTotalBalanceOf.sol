@@ -5,7 +5,6 @@ import /* {*} from */ "../../../helpers/TestBaseWorkflow.sol";
 import {JBTokensSetup} from "./JBTokensSetup.sol";
 
 contract TestTotalBalanceOf_Local is JBTokensSetup {
-
     function setUp() public {
         super.tokensSetup();
     }

@@ -218,7 +218,6 @@ contract TestRedeemHooks_Local is TestBaseWorkflow {
             UD60x18unwrap(UD60x18mul(UD60x18wrap(_nativePayAmount), UD60x18wrap(_WEIGHT)));
         assertEq(_tokens.totalBalanceOf(address(this), _projectId), _beneficiaryTokenBalance);
         assertEq(_beneficiaryTokensReceived, _beneficiaryTokenBalance);
-        emit log_uint(_beneficiaryTokenBalance);
 
         // Make sure the native token balance in terminal is up to date.
         uint256 _nativeTerminalBalance = _nativePayAmount;
