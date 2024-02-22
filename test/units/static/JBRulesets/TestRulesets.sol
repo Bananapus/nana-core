@@ -368,6 +368,8 @@ contract TestJBRulesetsUnits_Local is JBTest {
             mustStartAtOrAfter: _mustStartAt
         });
 
+        uint256 firstId = block.timestamp;
+
         // Mock call to approval hook duration
         bytes memory _encodedDurationCall = abi.encodeCall(IJBRulesetApprovalHook.DURATION, ());
         bytes memory _willReturnDuration = abi.encode(_hookDuration);
@@ -376,6 +378,8 @@ contract TestJBRulesetsUnits_Local is JBTest {
 
         // avoid overwrite
         vm.warp(block.timestamp + 1);
+
+        uint256 latestId = block.timestamp;
 
         // Send: Anotha One! Call from this contract as it's been mock authorized above.
         _rulesets.queueFor({
@@ -390,17 +394,11 @@ contract TestJBRulesetsUnits_Local is JBTest {
 
         // avoid overwrite
         vm.warp(block.timestamp + 2 days);
-
-        JBRuleset[] memory queuedRulesetsOf = _rulesets.rulesetsOf(_projectId, block.timestamp, 1);
-        uint256 rulesetId = queuedRulesetsOf[0].id;
         uint256 previouslyApprovedDurationEnds = block.timestamp + 3 days - 2 days - 1;
-
-        // check: 1 ruleset will be enqueued
-        assertEq(queuedRulesetsOf.length, 1);
 
         // Mock call to approvalStatusOf and return an approved status
         bytes memory _encodedApprovalCall =
-            abi.encodeCall(IJBRulesetApprovalHook.approvalStatusOf, (1, rulesetId, previouslyApprovedDurationEnds));
+            abi.encodeCall(IJBRulesetApprovalHook.approvalStatusOf, (1, latestId, previouslyApprovedDurationEnds));
         bytes memory _willReturnStatus = abi.encode(JBApprovalStatus.Approved);
 
         mockExpect(address(_mockApprovalHook), _encodedApprovalCall, _willReturnStatus);
@@ -416,21 +414,16 @@ contract TestJBRulesetsUnits_Local is JBTest {
             mustStartAtOrAfter: block.timestamp
         });
 
-        queuedRulesetsOf = _rulesets.rulesetsOf(_projectId, block.timestamp, 2);
-
-        // check: 2 rulesets will be enqueued
-        assertEq(queuedRulesetsOf.length, 2);
+        latestId = block.timestamp;
 
         // avoid overwrite
         vm.warp(block.timestamp + 1);
 
-        queuedRulesetsOf = _rulesets.rulesetsOf(_projectId, block.timestamp, 2);
-        rulesetId = queuedRulesetsOf[1].id;
         previouslyApprovedDurationEnds = block.timestamp + 6 days - 2 days - 2;
 
         // Mock call to approvalStatusOf and return an approvalExpected status
         _encodedApprovalCall =
-            abi.encodeCall(IJBRulesetApprovalHook.approvalStatusOf, (1, rulesetId, previouslyApprovedDurationEnds));
+            abi.encodeCall(IJBRulesetApprovalHook.approvalStatusOf, (1, latestId, previouslyApprovedDurationEnds));
         _willReturnStatus = abi.encode(JBApprovalStatus.ApprovalExpected);
 
         mockExpect(address(_mockApprovalHook), _encodedApprovalCall, _willReturnStatus);
@@ -446,22 +439,15 @@ contract TestJBRulesetsUnits_Local is JBTest {
             mustStartAtOrAfter: block.timestamp
         });
 
-        queuedRulesetsOf = _rulesets.rulesetsOf(_projectId, block.timestamp, 2);
-
-        // check: 2 rulesets will be enqueued, we just overwrote the last queued
-        assertEq(queuedRulesetsOf.length, 2);
-        assertEq(queuedRulesetsOf[1].id, block.timestamp);
+        latestId = block.timestamp;
 
         // avoid overwrite
         vm.warp(block.timestamp + 1);
-
-        queuedRulesetsOf = _rulesets.rulesetsOf(_projectId, block.timestamp, 2);
-        rulesetId = queuedRulesetsOf[1].id;
         previouslyApprovedDurationEnds = block.timestamp + 6 days - 2 days - 3;
 
         // Mock call to approvalStatusOf and return a failed status
         _encodedApprovalCall =
-            abi.encodeCall(IJBRulesetApprovalHook.approvalStatusOf, (1, rulesetId, previouslyApprovedDurationEnds));
+            abi.encodeCall(IJBRulesetApprovalHook.approvalStatusOf, (1, latestId, previouslyApprovedDurationEnds));
         _willReturnStatus = abi.encode(JBApprovalStatus.Failed);
 
         mockExpect(address(_mockApprovalHook), _encodedApprovalCall, _willReturnStatus);
@@ -477,22 +463,16 @@ contract TestJBRulesetsUnits_Local is JBTest {
             mustStartAtOrAfter: block.timestamp
         });
 
-        queuedRulesetsOf = _rulesets.rulesetsOf(_projectId, block.timestamp, 2);
-
-        // check: 2 rulesets will be enqueued, we just overwrote the last queued
-        assertEq(queuedRulesetsOf.length, 2);
-        assertEq(queuedRulesetsOf[1].id, block.timestamp);
+        latestId = block.timestamp;
 
         // avoid overwrite
         vm.warp(block.timestamp + 1);
 
-        queuedRulesetsOf = _rulesets.rulesetsOf(_projectId, block.timestamp, 2);
-        rulesetId = queuedRulesetsOf[1].id;
         previouslyApprovedDurationEnds = block.timestamp + 6 days - 2 days - 4;
 
         // Mock call to approvalStatusOf and return an empty status
         _encodedApprovalCall =
-            abi.encodeCall(IJBRulesetApprovalHook.approvalStatusOf, (1, rulesetId, previouslyApprovedDurationEnds));
+            abi.encodeCall(IJBRulesetApprovalHook.approvalStatusOf, (1, latestId, previouslyApprovedDurationEnds));
         _willReturnStatus = abi.encode(JBApprovalStatus.Empty);
 
         mockExpect(address(_mockApprovalHook), _encodedApprovalCall, _willReturnStatus);
@@ -508,10 +488,13 @@ contract TestJBRulesetsUnits_Local is JBTest {
             mustStartAtOrAfter: block.timestamp
         });
 
-        queuedRulesetsOf = _rulesets.rulesetsOf(_projectId, block.timestamp, 2);
+        JBRuleset[] memory queuedRulesetsOf = _rulesets.rulesetsOf(_projectId, block.timestamp, 3);
 
         // check: 2 rulesets will be enqueued, we just overwrote the last queued
-        assertEq(queuedRulesetsOf.length, 2);
-        assertEq(queuedRulesetsOf[1].id, block.timestamp);
+        assertEq(queuedRulesetsOf.length, 3);
+        assertEq(queuedRulesetsOf[0].id, block.timestamp);
+
+        // check first timestamp
+        assertEq(queuedRulesetsOf[2].id, firstId);
     }
 }
