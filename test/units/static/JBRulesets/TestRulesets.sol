@@ -391,7 +391,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
         // avoid overwrite
         vm.warp(block.timestamp + 2 days);
 
-        JBRuleset[] memory queuedRulesetsOf = _rulesets.queuedRulesetsOf(_projectId);
+        JBRuleset[] memory queuedRulesetsOf = _rulesets.rulesetsOf(_projectId, block.timestamp - 2 days, 1);
         uint256 rulesetId = queuedRulesetsOf[0].id;
         uint256 previouslyApprovedDurationEnds = block.timestamp + 3 days - 2 days - 1;
 
@@ -416,7 +416,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
             mustStartAtOrAfter: block.timestamp
         });
 
-        queuedRulesetsOf = _rulesets.queuedRulesetsOf(_projectId);
+        queuedRulesetsOf = _rulesets.rulesetsOf(_projectId, block.timestamp, 2);
 
         // check: 2 rulesets will be enqueued
         assertEq(queuedRulesetsOf.length, 2);
@@ -424,7 +424,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
         // avoid overwrite
         vm.warp(block.timestamp + 1);
 
-        queuedRulesetsOf = _rulesets.queuedRulesetsOf(_projectId);
+        queuedRulesetsOf = _rulesets.rulesetsOf(_projectId, block.timestamp - 1, 2);
         rulesetId = queuedRulesetsOf[1].id;
         previouslyApprovedDurationEnds = block.timestamp + 6 days - 2 days - 2;
 
@@ -446,7 +446,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
             mustStartAtOrAfter: block.timestamp
         });
 
-        queuedRulesetsOf = _rulesets.queuedRulesetsOf(_projectId);
+        queuedRulesetsOf = _rulesets.rulesetsOf(_projectId, block.timestamp, 2);
 
         // check: 2 rulesets will be enqueued, we just overwrote the last queued
         assertEq(queuedRulesetsOf.length, 2);
@@ -455,7 +455,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
         // avoid overwrite
         vm.warp(block.timestamp + 1);
 
-        queuedRulesetsOf = _rulesets.queuedRulesetsOf(_projectId);
+        queuedRulesetsOf = _rulesets.rulesetsOf(_projectId, block.timestamp - 1, 2);
         rulesetId = queuedRulesetsOf[1].id;
         previouslyApprovedDurationEnds = block.timestamp + 6 days - 2 days - 3;
 
@@ -477,7 +477,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
             mustStartAtOrAfter: block.timestamp
         });
 
-        queuedRulesetsOf = _rulesets.queuedRulesetsOf(_projectId);
+        queuedRulesetsOf = _rulesets.rulesetsOf(_projectId, block.timestamp, 2);
 
         // check: 2 rulesets will be enqueued, we just overwrote the last queued
         assertEq(queuedRulesetsOf.length, 2);
@@ -486,7 +486,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
         // avoid overwrite
         vm.warp(block.timestamp + 1);
 
-        queuedRulesetsOf = _rulesets.queuedRulesetsOf(_projectId);
+        queuedRulesetsOf = _rulesets.rulesetsOf(_projectId, block.timestamp - 1, 2);
         rulesetId = queuedRulesetsOf[1].id;
         previouslyApprovedDurationEnds = block.timestamp + 6 days - 2 days - 4;
 
@@ -508,7 +508,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
             mustStartAtOrAfter: block.timestamp
         });
 
-        queuedRulesetsOf = _rulesets.queuedRulesetsOf(_projectId);
+        queuedRulesetsOf = _rulesets.rulesetsOf(_projectId, block.timestamp, 2);
 
         // check: 2 rulesets will be enqueued, we just overwrote the last queued
         assertEq(queuedRulesetsOf.length, 2);

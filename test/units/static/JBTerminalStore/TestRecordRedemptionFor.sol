@@ -319,7 +319,7 @@ contract TestRecordRedemptionFor_Local is JBTerminalStoreSetup {
         uint256 _redeemCount = 6; // within balance bounds
         uint256 expectedRedemption = mulDiv(3e18, _redeemCount, _totalSupply);
 
-        (, uint256 reclaimed,) = _store.recordRedemptionFor({
+        (, uint256 reclaimed, ,) = _store.recordRedemptionFor({
             holder: address(this),
             projectId: _projectId,
             redeemCount: _redeemCount,
@@ -373,8 +373,7 @@ contract TestRecordRedemptionFor_Local is JBTerminalStoreSetup {
             rulesetId: block.timestamp,
             redeemCount: _redeemCount,
             totalSupply: _totalSupply,
-            surplus: _currentSurplus,
-            reclaimAmount: _reclaimedTokenAmount,
+            surplus: _reclaimedTokenAmount,
             useTotalSurplus: true,
             redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
             metadata: ""
@@ -393,7 +392,7 @@ contract TestRecordRedemptionFor_Local is JBTerminalStoreSetup {
 
         uint256 balanceBefore = _store.balanceOf(address(this), _projectId, _accountingContexts.token);
 
-        (, uint256 reclaimed,) = _store.recordRedemptionFor({
+        (, uint256 reclaimed, ,) = _store.recordRedemptionFor({
             holder: address(this),
             projectId: _projectId,
             redeemCount: _redeemCount,

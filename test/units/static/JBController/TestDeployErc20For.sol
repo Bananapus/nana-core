@@ -9,6 +9,7 @@ contract TestDeployERC20For_Local is JBControllerSetup {
     IJBToken _token = IJBToken(makeAddr("token"));
     string _name = "Juice";
     string _symbol = "JCY";
+    bytes32 _salt = bytes32(0);
 
     function setUp() public {
         super.controllerSetup();
@@ -23,11 +24,11 @@ contract TestDeployERC20For_Local is JBControllerSetup {
         mockExpect(address(projects), _projectsCall, _projectsCallReturn);
 
         // mock the call to JBTokens deployERC20For
-        bytes memory _deployCall = abi.encodeCall(IJBTokens.deployERC20For, (_projectId, _name, _symbol));
+        bytes memory _deployCall = abi.encodeCall(IJBTokens.deployERC20For, (_projectId, _name, _symbol, _salt));
         bytes memory _deployCallReturn = abi.encode(_token);
         mockExpect(address(tokens), _deployCall, _deployCallReturn);
 
-        _controller.deployERC20For(_projectId, _name, _symbol);
+        _controller.deployERC20For(_projectId, _name, _symbol, _salt);
     }
 
     function test_WhenCallerIsNotPermissioned() external {
@@ -52,6 +53,6 @@ contract TestDeployERC20For_Local is JBControllerSetup {
         mockExpect(address(permissions), _permissionCall2, _permissionCallReturn2);
 
         vm.expectRevert(abi.encodeWithSignature("UNAUTHORIZED()"));
-        _controller.deployERC20For(_projectId, _name, _symbol);
+        _controller.deployERC20For(_projectId, _name, _symbol, _salt);
     }
 }

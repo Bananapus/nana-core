@@ -20,7 +20,7 @@ contract TestSetMetadataOf_Local is JBControllerSetup {
         vm.expectEmit();
         emit IJBController.SetMetadata(1, "Juicay", address(this));
 
-        _controller.setMetadataOf(1, "Juicay");
+        _controller.setUriOf(1, "Juicay");
     }
 
     function test_RevertWhenCallerIsNotOwnerOrHasPermission() external {
@@ -48,6 +48,6 @@ contract TestSetMetadataOf_Local is JBControllerSetup {
         mockExpect(address(permissions), _permissionsCall2, _permissionsReturned2);
 
         vm.expectRevert(abi.encodeWithSignature("UNAUTHORIZED()"));
-        _controller.setMetadataOf(1, "Not Juicay");
+        _controller.setUriOf(1, "Not Juicay");
     }
 }

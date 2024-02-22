@@ -250,7 +250,7 @@ contract TestSplits_Local is TestBaseWorkflow {
 
         // Deploy the token.
         vm.startPrank(_projectOwner);
-        IERC20Metadata _token = IERC20Metadata(address(_controller.deployERC20For(_projectId, "Token", "Token")));
+        IERC20Metadata _token = IERC20Metadata(address(_controller.deployERC20For(_projectId, "Token", "Token", bytes32(0))));
 
         // Mint tokens with reservedRate enabled.
         _controller.mintTokensOf({

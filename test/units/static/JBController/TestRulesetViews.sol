@@ -123,13 +123,13 @@ contract TestRulesetViews_Local is JBControllerSetup {
         rulesetsArray[1] = data2;
 
         // setup: mock call
-        bytes memory _encodedCall = abi.encodeCall(IJBRulesets.queuedRulesetsOf, (1));
+        bytes memory _encodedCall = abi.encodeCall(IJBRulesets.rulesetsOf, (1, block.timestamp, 2));
         bytes memory _willReturn = abi.encode(rulesetsArray);
 
         mockExpect(address(rulesets), _encodedCall, _willReturn);
 
         // send
-        (JBRulesetWithMetadata[] memory queuedRulesets) = _controller.queuedRulesetsOf(1);
+        (JBRulesetWithMetadata[] memory queuedRulesets) = _controller.rulesetsOf(1, block.timestamp, 2);
 
         // check: return makes sense
         assertEq(rulesetsArray[0].weight, queuedRulesets[0].ruleset.weight);
