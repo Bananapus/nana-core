@@ -180,6 +180,13 @@ contract TestMigrateController_Local is JBControllerSetup {
 
         mockExpect(address(tokens), _mintCall, _mintReturn);
 
+        // mock tokenOf call
+        mockExpect(
+            address(tokens),
+            abi.encodeCall(IJBTokens.tokenOf, (1)),
+            abi.encode(address(0))
+        );
+
         // event as expected
         vm.expectEmit();
         emit IJBController.SendReservedTokensToSplit(1, block.timestamp, 1, splitsArray[0], 50, address(this));

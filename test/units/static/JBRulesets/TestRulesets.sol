@@ -179,7 +179,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
             _decayRate,
             _hook,
             _packedMetadata,
-            block.timestamp,
+            block.timestamp - 1,
             address(this)
         );
 
@@ -203,7 +203,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
             cycleNumber: 1,
             id: block.timestamp,
             basedOnId: 0,
-            start: block.timestamp,
+            start: block.timestamp - 1,
             duration: _duration,
             weight: _weight,
             decayRate: _decayRate,
@@ -391,7 +391,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
         // avoid overwrite
         vm.warp(block.timestamp + 2 days);
 
-        JBRuleset[] memory queuedRulesetsOf = _rulesets.rulesetsOf(_projectId, block.timestamp - 2 days, 1);
+        JBRuleset[] memory queuedRulesetsOf = _rulesets.rulesetsOf(_projectId, block.timestamp, 1);
         uint256 rulesetId = queuedRulesetsOf[0].id;
         uint256 previouslyApprovedDurationEnds = block.timestamp + 3 days - 2 days - 1;
 
@@ -424,7 +424,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
         // avoid overwrite
         vm.warp(block.timestamp + 1);
 
-        queuedRulesetsOf = _rulesets.rulesetsOf(_projectId, block.timestamp - 1, 2);
+        queuedRulesetsOf = _rulesets.rulesetsOf(_projectId, block.timestamp, 2);
         rulesetId = queuedRulesetsOf[1].id;
         previouslyApprovedDurationEnds = block.timestamp + 6 days - 2 days - 2;
 
@@ -455,7 +455,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
         // avoid overwrite
         vm.warp(block.timestamp + 1);
 
-        queuedRulesetsOf = _rulesets.rulesetsOf(_projectId, block.timestamp - 1, 2);
+        queuedRulesetsOf = _rulesets.rulesetsOf(_projectId, block.timestamp, 2);
         rulesetId = queuedRulesetsOf[1].id;
         previouslyApprovedDurationEnds = block.timestamp + 6 days - 2 days - 3;
 
@@ -486,7 +486,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
         // avoid overwrite
         vm.warp(block.timestamp + 1);
 
-        queuedRulesetsOf = _rulesets.rulesetsOf(_projectId, block.timestamp - 1, 2);
+        queuedRulesetsOf = _rulesets.rulesetsOf(_projectId, block.timestamp, 2);
         rulesetId = queuedRulesetsOf[1].id;
         previouslyApprovedDurationEnds = block.timestamp + 6 days - 2 days - 4;
 

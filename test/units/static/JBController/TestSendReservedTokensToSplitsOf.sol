@@ -160,9 +160,6 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
         bytes memory _tokenOfReturn = abi.encode(_token);
         mockExpect(address(tokens), _tokenOfCall, _tokenOfReturn);
 
-        // mock call to tokens decimals
-        mockExpect(address(_token), abi.encodeCall(IJBToken.decimals, ()), abi.encode(_decimals));
-
         // split hook data
         JBSplitHookContext memory _context = JBSplitHookContext({
             token: address(_token),

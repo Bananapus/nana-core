@@ -360,7 +360,7 @@ contract TestRecordRedemptionFor_Local is JBTerminalStoreSetup {
         // Create the struct that describes the amount being reclaimed.
         JBTokenAmount memory _reclaimedTokenAmount = JBTokenAmount({
             token: _accountingContexts.token,
-            value: expectedRedemption,
+            value: 3e18,
             decimals: _accountingContexts.decimals,
             currency: _accountingContexts.currency
         });
@@ -387,7 +387,7 @@ contract TestRecordRedemptionFor_Local is JBTerminalStoreSetup {
         mockExpect(
             address(_dataHook),
             abi.encodeCall(IJBRulesetDataHook.beforeRedeemRecordedWith, (_context)),
-            abi.encode(expectedRedemption, _spec)
+            abi.encode(JBConstants.MAX_REDEMPTION_RATE, _spec)
         );
 
         uint256 balanceBefore = _store.balanceOf(address(this), _projectId, _accountingContexts.token);
