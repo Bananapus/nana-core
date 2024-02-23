@@ -12,6 +12,7 @@ import {ERC165Checker} from "@openzeppelin/contracts/utils/introspection/ERC165C
 import {mulDiv} from "@prb/math/src/Common.sol";
 import {IPermit2} from "@uniswap/permit2/src/interfaces/IPermit2.sol";
 import {IAllowanceTransfer} from "@uniswap/permit2/src/interfaces/IPermit2.sol";
+import {JBPermissionIds} from "@bananapus/permission-ids/src/JBPermissionIds.sol";
 import {IJBController} from "./interfaces/IJBController.sol";
 import {IJBDirectory} from "./interfaces/IJBDirectory.sol";
 import {IJBFeelessAddresses} from "./interfaces/IJBFeelessAddresses.sol";
@@ -25,7 +26,6 @@ import {JBConstants} from "./libraries/JBConstants.sol";
 import {JBFees} from "./libraries/JBFees.sol";
 import {JBRulesetMetadataResolver} from "./libraries/JBRulesetMetadataResolver.sol";
 import {JBMetadataResolver} from "./libraries/JBMetadataResolver.sol";
-import {JBPermissionIds} from "./libraries/JBPermissionIds.sol";
 import {JBAfterRedeemRecordedContext} from "./structs/JBAfterRedeemRecordedContext.sol";
 import {JBAfterPayRecordedContext} from "./structs/JBAfterPayRecordedContext.sol";
 import {JBFee} from "./structs/JBFee.sol";

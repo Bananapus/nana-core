@@ -2,13 +2,13 @@
 pragma solidity 0.8.23;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {JBPermissioned} from "./abstract/JBPermissioned.sol";
 import {mulDiv} from "@prb/math/src/Common.sol";
+import {JBPermissionIds} from "@bananapus/permission-ids/src/JBPermissionIds.sol";
+import {JBPermissioned} from "./abstract/JBPermissioned.sol";
 import {IJBPriceFeed} from "./interfaces/IJBPriceFeed.sol";
 import {IJBProjects} from "./interfaces/IJBProjects.sol";
 import {IJBPermissions} from "./interfaces/IJBPermissions.sol";
 import {IJBPrices} from "./interfaces/IJBPrices.sol";
-import {JBPermissionIds} from "./libraries/JBPermissionIds.sol";
 
 /// @notice Manages and normalizes price feeds. Price feeds are contracts which return the "pricing currency" cost of 1
 /// "unit currency".
