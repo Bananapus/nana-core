@@ -176,7 +176,9 @@ contract TestRedeemHooks_Local is TestBaseWorkflow {
         vm.mockCall(
             _DATA_HOOK,
             abi.encodeWithSelector(IJBRulesetDataHook.beforeRedeemRecordedWith.selector),
-            abi.encode(_ruleset.redemptionRate(), _specifications)
+            abi.encode(
+                _ruleset.redemptionRate(), _beneficiaryTokenBalance / 2, _beneficiaryTokenBalance, _specifications
+            )
         );
 
         _terminal.redeemTokensOf({
@@ -190,7 +192,7 @@ contract TestRedeemHooks_Local is TestBaseWorkflow {
         });
     }
 
-    function testRedeemHookWithFeesAndCustomRedemptionRate() public {
+    function testRedeemHookWithFeesAndCustomInfo() public {
         // Reference and bound pay amount.
         uint256 _nativePayAmount = 10 ether;
         uint256 _halfPaid = 5 ether;
@@ -233,18 +235,16 @@ contract TestRedeemHooks_Local is TestBaseWorkflow {
             JBRedeemHookSpecification({hook: IJBRedeemHook(_redeemHook), amount: _halfPaid, metadata: ""});
 
         uint256 _customRedemptionRate = JBConstants.MAX_REDEMPTION_RATE / 2;
+        uint256 _customRedeemCount = 1 * 10 ** 18;
+        uint256 _customTotalSupply = 5 * 10 ** 18;
 
         uint256 _forwardedAmount =
             _halfPaid - (_halfPaid - mulDiv(_halfPaid, JBConstants.MAX_FEE, _terminal.FEE() + JBConstants.MAX_FEE));
 
         uint256 _beneficiaryAmount = mulDiv(
-            mulDiv(_nativePayAmount, _beneficiaryTokenBalance / 2, _beneficiaryTokenBalance),
+            mulDiv(_nativePayAmount, _customRedeemCount, _customTotalSupply),
             _customRedemptionRate
-                + mulDiv(
-                    _beneficiaryTokenBalance / 2,
-                    JBConstants.MAX_REDEMPTION_RATE - _customRedemptionRate,
-                    _beneficiaryTokenBalance
-                ),
+                + mulDiv(_customRedeemCount, JBConstants.MAX_REDEMPTION_RATE - _customRedemptionRate, _customTotalSupply),
             JBConstants.MAX_REDEMPTION_RATE
         );
 
@@ -293,7 +293,7 @@ contract TestRedeemHooks_Local is TestBaseWorkflow {
         vm.mockCall(
             _DATA_HOOK,
             abi.encodeWithSelector(IJBRulesetDataHook.beforeRedeemRecordedWith.selector),
-            abi.encode(_customRedemptionRate, _specifications)
+            abi.encode(_customRedemptionRate, _customRedeemCount, _customTotalSupply, _specifications)
         );
 
         _terminal.redeemTokensOf({

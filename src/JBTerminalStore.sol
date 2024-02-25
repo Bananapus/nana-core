@@ -418,7 +418,6 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     /// @return redemptionRate The redemption rate influencing the reclaim amount.
     /// @return hookSpecifications A list of redeem hooks, including data and amounts to send to them. The terminal
     /// should fulfill these specifications.
-
     function recordRedemptionFor(
         address holder,
         uint256 projectId,
@@ -486,7 +485,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
                 metadata: metadata
             });
 
-            (redemptionRate, hookSpecifications) =
+            (redemptionRate, redeemCount, totalSupply, hookSpecifications) =
                 IJBRulesetDataHook(ruleset.dataHook()).beforeRedeemRecordedWith(context);
         } else {
             redemptionRate = ruleset.redemptionRate();

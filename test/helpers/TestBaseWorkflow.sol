@@ -8,6 +8,7 @@ import {IERC721Metadata} from "@openzeppelin/contracts/token/ERC721/extensions/I
 import {IERC20Metadata} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ERC165, IERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
+import {JBPermissionIds} from "@bananapus/permission-ids/src/JBPermissionIds.sol";
 import {JBController} from "../../src/JBController.sol";
 import {JBDirectory} from "../../src/JBDirectory.sol";
 import {JBTerminalStore} from "../../src/JBTerminalStore.sol";
@@ -80,8 +81,6 @@ import {JBConstants} from "../../src/libraries/JBConstants.sol";
 import {JBCurrencyIds} from "../../src/libraries/JBCurrencyIds.sol";
 import {JBRulesetMetadataResolver} from "../../src/libraries/JBRulesetMetadataResolver.sol";
 import {JBSplitGroupIds} from "../../src/libraries/JBSplitGroupIds.sol";
-import {JBPermissionIds} from "../../src/libraries/JBPermissionIds.sol";
-import {JBPermissionIds} from "../../src/libraries/JBPermissionIds.sol";
 
 import {IPermit2, IAllowanceTransfer} from "@uniswap/permit2/src/interfaces/IPermit2.sol";
 import {DeployPermit2} from "@uniswap/permit2/test/utils/DeployPermit2.sol";

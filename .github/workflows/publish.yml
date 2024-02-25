@@ -15,6 +15,6 @@ jobs:
           registry-url: https://registry.npmjs.org
       # This will fail if the version in package.json has not increased.
       - name: Publish to npm
-        run: npm publish
+        run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.23;
 
+import {JBPermissionIds} from "@bananapus/permission-ids/src/JBPermissionIds.sol";
 import {JBPermissioned} from "./abstract/JBPermissioned.sol";
 import {IJBPermissions} from "./interfaces/IJBPermissions.sol";
-import {JBPermissionIds} from "./libraries/JBPermissionIds.sol";
 import {JBPermissionsData} from "./structs/JBPermissionsData.sol";
 
 /// @notice Stores permissions for all addresses and operators. Addresses can give permissions to any other address
