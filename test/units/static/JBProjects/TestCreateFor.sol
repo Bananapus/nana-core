@@ -2,7 +2,7 @@
 pragma solidity 0.8.23;
 
 import /* {*} from */ "../../../helpers/TestBaseWorkflow.sol";
-import {IERC721Receiver} from "lib/openzeppelin-contracts/contracts/token/ERC721/IERC721Receiver.sol";
+import {IERC721Receiver} from "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import {JBProjectsSetup} from "./JBProjectsSetup.sol";
 
 contract TestCreateFor_Local is JBProjectsSetup {
