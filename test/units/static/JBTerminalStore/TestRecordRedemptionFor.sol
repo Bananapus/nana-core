@@ -387,7 +387,7 @@ contract TestRecordRedemptionFor_Local is JBTerminalStoreSetup {
         mockExpect(
             address(_dataHook),
             abi.encodeCall(IJBRulesetDataHook.beforeRedeemRecordedWith, (_context)),
-            abi.encode(JBConstants.MAX_REDEMPTION_RATE, _spec)
+            abi.encode(JBConstants.MAX_REDEMPTION_RATE, 1e18, _totalSupply, _spec)
         );
 
         uint256 balanceBefore = _store.balanceOf(address(this), _projectId, _accountingContexts.token);
