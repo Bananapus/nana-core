@@ -1,0 +1,16 @@
+TestUseAllowanceOf_Local
+├── when caller does not have permission
+│   └── it will revert UNAUTHORIZED
+├── when amountPaidOut LT minTokensPaidOut
+│   └── it will revert INADEQUATE_PAYOUT_AMOUNT
+├── when msgSender EQ feeless
+│   └── it will not incur fees
+├── when msgSender DNEQ feeless
+│   ├── given ruleset holdFees EQ true
+│   │   └── it will hold fees and emit HoldFee
+│   └── given ruleset holdFees DNEQ true
+│       └── it will not hold fees and emit ProcessFee
+├── when token EQ NATIVE_TOKEN
+│   └── it will send ETH via sendValue
+└── when token EQ ERC20
+    └── it will call safeTransfer

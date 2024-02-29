@@ -4,7 +4,7 @@ TestRedeemTokensOf_Local
 ├── when caller has permission
 │   ├── given redeemCount gt zero
 │   │   └── it will call directory controller of and burnTokensOf
-│   ├── given reclaimAmount gt zero beneficiary is not feeless and redemptionRate dneq JBConstants.MAX_REDEMPTION_RATE
+│   ├── given reclaimAmount gt zero beneficiary is not feeless and redemptionRate dneq MAX_REDEMPTION_RATE
 │   │   └── it will subtract the fee for the reclaim
 │   ├── given the token is native
 │   │   └── it will sendValue

@@ -1,0 +1,10 @@
+TestAddAccountingContextsFor_Local
+├── when caller is not permissioned
+│   └── it will revert UNAUTHORIZED
+├── when caller is permissioned
+│   ├── given the context is already set
+│   │   └── it will revert ACCOUNTING_CONTEXT_ALREADY_SET
+│   └── given happypath
+│       └── it will set the context and emit SetAccountingContext
+└── when caller is controller
+    └── it will alsoGrantAccess

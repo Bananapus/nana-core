@@ -1,0 +1,34 @@
+TestPayoutsOf_Local
+├── when amountPaidOut lt minTokensPaidOut
+│   └── it will revert INADEQUATE_PAYOUT_AMOUNT
+├── when a split hook is configured
+│   ├── given the split hook is feeless
+│   │   └── it will not process a fee
+│   ├── given the split hook DNEQ feeless
+│   │   └── it will process a fee
+│   ├── given the split hook DN support split hook interface
+│   │   └── it will revert 400_1
+│   ├── given the payout token is erc20
+│   │   └── it will safe increase allowance
+│   └── given the payout token is native
+│       └── it will send eth in msgvalue
+├── when a split projectId is configured
+│   ├── given the projects terminal EQ zero address
+│   │   └── it will revert 404_2
+│   ├── given preferAddToBalance EQ true and terminal EQ this address
+│   │   └── it will call _addToBalanceOf internal
+│   ├── given preferAddToBalance EQ true and terminal EQ another address
+│   │   └── it will call that terminals addToBalanceOf
+│   ├── given preferAddToBalance DNEQ true and terminal EQ this address
+│   │   └── it will call internal _pay
+│   └── given preferAddToBalance DNEQ true and terminal EQ another address
+│       └── it will call that terminals pay function
+├── when a beneficiary is configured
+│   ├── given beneficiary EQ feeless
+│   │   └── it will payout to the beneficiary without taking fees
+│   └── given beneficiary DNEQ feeless
+│       └── it will payout to the beneficiary incurring fee
+├── when there is no beneficiary split hook or project to pay
+│   └── it will payout msgSender
+└── when there are leftover payout funds
+    └── it will payout the rest to the project owner
