@@ -9,6 +9,17 @@ block_number = 14126430
 block_timestamp = 1643802347
 runs = 4096
 libs = ["node_modules", "lib"]
+build_info = true
+extra_output = ['storageLayout']
+fs_permissions = [{ access = "read-write", path = "./"}]
+
+[rpc_endpoints]
+ethereum ="https://rpc.ankr.com/eth"
+optimism = "https://rpc.ankr.com/optimism"
+polygon = "https://rpc.ankr.com/polygon"
+ethereum_sepolia ="https://rpc.ankr.com/eth_sepolia"
+optimism_sepolia = "https://rpc.ankr.com/optimism_sepolia"
+polygon_mumbai = "https://rpc.ankr.com/polygon_mumbai"
 
 [profile.fork] # run via FOUNDRY_PROFILE=fork foundry test
 fs_permissions = [{ access = "read", path = "./deployments/mainnet" }] # Get the deployment addresses for forking
