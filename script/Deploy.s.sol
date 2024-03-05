@@ -29,33 +29,19 @@ contract Deploy is Sphinx {
 
     function configureSphinx() public override {
         // TODO: Update to contain JB Emergency Developers
-        sphinxConfig.owners = [
-            0x26416423d530b1931A2a7a6b7D435Fac65eED27d
-        ];
+        sphinxConfig.owners = [0x26416423d530b1931A2a7a6b7D435Fac65eED27d];
         sphinxConfig.orgId = "cltepuu9u0003j58rjtbd0hvu";
         sphinxConfig.projectName = "nana-core";
         sphinxConfig.threshold = 1;
-        sphinxConfig.mainnets = [
-            "ethereum",
-            "optimism",
-            "polygon"
-        ];
-        sphinxConfig.testnets = [
-            "ethereum_sepolia",
-            "optimism_sepolia",
-            "polygon_mumbai"
-        ];
+        sphinxConfig.mainnets = ["ethereum", "optimism", "polygon"];
+        sphinxConfig.testnets = ["ethereum_sepolia", "optimism_sepolia", "polygon_mumbai"];
     }
 
     /// @notice Deploys the protocol.
-    function run() sphinx public {
+    function run() public sphinx {
         if (
-            block.chainid != 1 &&
-            block.chainid != 11_155_111 &&
-            block.chainid != 420 &&
-            block.chainid != 11_155_420 &&
-            block.chainid != 137 &&
-            block.chainid != 80_001
+            block.chainid != 1 && block.chainid != 11_155_111 && block.chainid != 420 && block.chainid != 11_155_420
+                && block.chainid != 137 && block.chainid != 80_001
         ) {
             revert("Invalid RPC / no juice contracts deployed on this network");
         }
