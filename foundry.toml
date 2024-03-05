@@ -14,12 +14,12 @@ extra_output = ['storageLayout']
 fs_permissions = [{ access = "read-write", path = "./"}]
 
 [rpc_endpoints]
-ethereum ="https://rpc.ankr.com/eth"
-optimism = "https://rpc.ankr.com/optimism"
-polygon = "https://rpc.ankr.com/polygon"
-ethereum_sepolia ="https://rpc.ankr.com/eth_sepolia"
-optimism_sepolia = "https://rpc.ankr.com/optimism_sepolia"
-polygon_mumbai = "https://rpc.ankr.com/polygon_mumbai"
+ethereum ="${RPC_ETHEREUM_MAINNET}"
+optimism = "${RPC_OPTIMISM_MAINNET}"
+polygon = "${RPC_POLYGON_MUMBAI}"
+ethereum_sepolia ="${RPC_ETHEREUM_SEPOLIA}"
+optimism_sepolia = "${RPC_OPTIMISM_SEPOLIA}"
+polygon_mumbai = "${RPC_POLYGON_MUMBAI}"
 
 [profile.fork] # run via FOUNDRY_PROFILE=fork foundry test
 fs_permissions = [{ access = "read", path = "./deployments/mainnet" }] # Get the deployment addresses for forking
