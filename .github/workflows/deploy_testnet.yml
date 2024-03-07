@@ -27,7 +27,7 @@ jobs:
         uses: foundry-rs/foundry-toolchain@v1
         with:
           version: nightly
-      - name: Install Sphinx Solidity Library
-        run: npx sphinx install
+    #   - name: Install Sphinx Solidity Library
+    #     run: npx sphinx install
       - name: Dry Run
         run: npx sphinx propose script/Deploy.s.sol --dry-run --networks testnets
