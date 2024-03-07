@@ -24,7 +24,7 @@ jobs:
       - name: Install npm dependencies
         run: npm ci
       - name: Install Foundry
-        uses: foundry/foundry-toolchain@v1
+        uses: foundry-rs/foundry-toolchain@v1
         with:
           version: nightly
       - name: Install Sphinx Solidity Library
