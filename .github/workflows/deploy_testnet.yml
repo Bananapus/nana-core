@@ -28,6 +28,6 @@ jobs:
         with:
           version: nightly
       - name: Install Sphinx Solidity Library
-        run: yarn sphinx install
+        run: npx sphinx install
       - name: Dry Run
         run: npx sphinx propose script/Deploy.s.sol --dry-run --networks testnets
