@@ -4,18 +4,18 @@ pragma solidity 0.8.23;
 import {stdJson} from "forge-std/Script.sol";
 import {Vm} from "forge-std/Vm.sol";
 
-import {JBPermissions} from "src/JBPermissions.sol";
-import {JBProjects} from "src/JBProjects.sol";
-import {JBPrices} from "src/JBPrices.sol";
-import {JBRulesets} from "src/JBRulesets.sol";
-import {JBDirectory} from "src/JBDirectory.sol";
-import {JBTokens} from "src/JBTokens.sol";
-import {JBSplits} from "src/JBSplits.sol";
-import {JBFeelessAddresses} from "src/JBFeelessAddresses.sol";
-import {JBFundAccessLimits} from "src/JBFundAccessLimits.sol";
-import {JBController} from "src/JBController.sol";
-import {JBTerminalStore} from "src/JBTerminalStore.sol";
-import {JBMultiTerminal} from "src/JBMultiTerminal.sol";
+import {JBPermissions} from "../../src/JBPermissions.sol";
+import {JBProjects} from "../../src/JBProjects.sol";
+import {JBPrices} from "../../src/JBPrices.sol";
+import {JBRulesets} from "../../src/JBRulesets.sol";
+import {JBDirectory} from "../../src/JBDirectory.sol";
+import {JBTokens} from "../../src/JBTokens.sol";
+import {JBSplits} from "../../src/JBSplits.sol";
+import {JBFeelessAddresses} from "../../src/JBFeelessAddresses.sol";
+import {JBFundAccessLimits} from "../../src/JBFundAccessLimits.sol";
+import {JBController} from "../../src/JBController.sol";
+import {JBTerminalStore} from "../../src/JBTerminalStore.sol";
+import {JBMultiTerminal} from "../../src/JBMultiTerminal.sol";
 
 import {SphinxConstants, NetworkInfo} from "@sphinx-labs/contracts/SphinxConstants.sol";
 
