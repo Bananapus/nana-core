@@ -39,7 +39,7 @@ library CoreDeploymentLib{
     address internal constant VM_ADDRESS = address(uint160(uint256(keccak256("hevm cheat code"))));
     Vm internal constant vm = Vm(VM_ADDRESS);
 
-    function getDeployment(string memory path) public returns (CoreDeployment memory deployment) {
+    function getDeployment(string memory path) internal returns (CoreDeployment memory deployment) {
         // get chainId for which we need to get the deployment.
         uint256 chainId = block.chainid;
 
@@ -57,7 +57,7 @@ library CoreDeploymentLib{
         revert("ChainID is not (currently) supported by Sphinx.");
     }
 
-    function getDeployment(string memory path, string memory network_name) public view returns (CoreDeployment memory deployment)  {
+    function getDeployment(string memory path, string memory network_name) internal view returns (CoreDeployment memory deployment)  {
         deployment.permissions = JBPermissions(_getDeploymentAddress(
             path,
             "nana-core",
