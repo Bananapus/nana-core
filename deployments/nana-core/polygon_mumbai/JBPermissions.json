@@ -1,0 +1,644 @@
+{
+	"_format": "sphinx-sol-ct-artifact-1",
+	"merkleRoot": "0x58025795c33f9e0121b492c9ea8dc31dc6803cc81b9066cd376333e802464741",
+	"contractName": "JBPermissions",
+	"address": "0xBA24624AE5dc821866E9E71Ed050412Ef01E2fe6",
+	"abi": [
+		{
+			"type": "constructor",
+			"inputs": [],
+			"stateMutability": "nonpayable"
+		},
+		{
+			"type": "function",
+			"name": "PERMISSIONS",
+			"inputs": [],
+			"outputs": [
+				{
+					"name": "",
+					"type": "address",
+					"internalType": "contract IJBPermissions"
+				}
+			],
+			"stateMutability": "view"
+		},
+		{
+			"type": "function",
+			"name": "hasPermission",
+			"inputs": [
+				{
+					"name": "operator",
+					"type": "address",
+					"internalType": "address"
+				},
+				{
+					"name": "account",
+					"type": "address",
+					"internalType": "address"
+				},
+				{
+					"name": "projectId",
+					"type": "uint256",
+					"internalType": "uint256"
+				},
+				{
+					"name": "permissionId",
+					"type": "uint256",
+					"internalType": "uint256"
+				}
+			],
+			"outputs": [
+				{
+					"name": "",
+					"type": "bool",
+					"internalType": "bool"
+				}
+			],
+			"stateMutability": "view"
+		},
+		{
+			"type": "function",
+			"name": "hasPermissions",
+			"inputs": [
+				{
+					"name": "operator",
+					"type": "address",
+					"internalType": "address"
+				},
+				{
+					"name": "account",
+					"type": "address",
+					"internalType": "address"
+				},
+				{
+					"name": "projectId",
+					"type": "uint256",
+					"internalType": "uint256"
+				},
+				{
+					"name": "permissionIds",
+					"type": "uint256[]",
+					"internalType": "uint256[]"
+				}
+			],
+			"outputs": [
+				{
+					"name": "",
+					"type": "bool",
+					"internalType": "bool"
+				}
+			],
+			"stateMutability": "view"
+		},
+		{
+			"type": "function",
+			"name": "permissionsOf",
+			"inputs": [
+				{
+					"name": "operator",
+					"type": "address",
+					"internalType": "address"
+				},
+				{
+					"name": "account",
+					"type": "address",
+					"internalType": "address"
+				},
+				{
+					"name": "projectId",
+					"type": "uint256",
+					"internalType": "uint256"
+				}
+			],
+			"outputs": [
+				{
+					"name": "",
+					"type": "uint256",
+					"internalType": "uint256"
+				}
+			],
+			"stateMutability": "view"
+		},
+		{
+			"type": "function",
+			"name": "setPermissionsFor",
+			"inputs": [
+				{
+					"name": "account",
+					"type": "address",
+					"internalType": "address"
+				},
+				{
+					"name": "permissionsData",
+					"type": "tuple",
+					"internalType": "struct JBPermissionsData",
+					"components": [
+						{
+							"name": "operator",
+							"type": "address",
+							"internalType": "address"
+						},
+						{
+							"name": "projectId",
+							"type": "uint256",
+							"internalType": "uint256"
+						},
+						{
+							"name": "permissionIds",
+							"type": "uint256[]",
+							"internalType": "uint256[]"
+						}
+					]
+				}
+			],
+			"outputs": [],
+			"stateMutability": "nonpayable"
+		},
+		{
+			"type": "event",
+			"name": "OperatorPermissionsSet",
+			"inputs": [
+				{
+					"name": "operator",
+					"type": "address",
+					"indexed": true,
+					"internalType": "address"
+				},
+				{
+					"name": "account",
+					"type": "address",
+					"indexed": true,
+					"internalType": "address"
+				},
+				{
+					"name": "projectId",
+					"type": "uint256",
+					"indexed": true,
+					"internalType": "uint256"
+				},
+				{
+					"name": "permissionIds",
+					"type": "uint256[]",
+					"indexed": false,
+					"internalType": "uint256[]"
+				},
+				{
+					"name": "packed",
+					"type": "uint256",
+					"indexed": false,
+					"internalType": "uint256"
+				},
+				{
+					"name": "caller",
+					"type": "address",
+					"indexed": false,
+					"internalType": "address"
+				}
+			],
+			"anonymous": false
+		},
+		{
+			"type": "error",
+			"name": "PERMISSION_ID_OUT_OF_BOUNDS",
+			"inputs": []
+		},
+		{
+			"type": "error",
+			"name": "UNAUTHORIZED",
+			"inputs": []
+		}
+	],
+	"solcInputHash": "b2112d617c776ac2cceb92d11c578094",
+	"receipt": {
+		"blockHash": "0x69c7cd7e3847eae2da72bbf2de2ac386b2a6a8b732217c90533a79135e253700",
+		"blockNumber": 46704671,
+		"contractAddress": null,
+		"cumulativeGasUsed": "11078218",
+		"from": "0xC034550B542b83BA1De312b21d1C94a9a52B1595",
+		"gasPrice": "30000000015",
+		"gasUsed": "10951852",
+		"hash": "0xbf9ca26369c3d3a6c1efc6276cc5ae9e6a05669b49a3c98ea7e63c871d557ed6",
+		"index": 1,
+		"logs": [
+			{
+				"address": "0xB5E96127D417b1B3ef8438496a38A143167209c7",
+				"blockHash": "0x69c7cd7e3847eae2da72bbf2de2ac386b2a6a8b732217c90533a79135e253700",
+				"blockNumber": 46704671,
+				"data": "0x0000000000000000000000000000000000000000000000000000000000000000",
+				"index": 4,
+				"topics": [
+					"0x572f161235911da04685a68c06adf558fc7e4a36909dca394650e0adc19cc93d",
+					"0x000000000000000000000000c034550b542b83ba1de312b21d1c94a9a52b1595",
+					"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c",
+					"0xcd0b344ddd1631182d69a2b8612b6e4f11fd38fd6ade0278c5532a0b2805bfc3"
+				],
+				"transactionHash": "0xbf9ca26369c3d3a6c1efc6276cc5ae9e6a05669b49a3c98ea7e63c871d557ed6",
+				"transactionIndex": 1
+			},
+			{
+				"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+				"blockHash": "0x69c7cd7e3847eae2da72bbf2de2ac386b2a6a8b732217c90533a79135e253700",
+				"blockNumber": 46704671,
+				"data": "0x",
+				"index": 5,
+				"topics": [
+					"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
+					"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
+				],
+				"transactionHash": "0xbf9ca26369c3d3a6c1efc6276cc5ae9e6a05669b49a3c98ea7e63c871d557ed6",
+				"transactionIndex": 1
+			},
+			{
+				"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
+				"blockHash": "0x69c7cd7e3847eae2da72bbf2de2ac386b2a6a8b732217c90533a79135e253700",
+				"blockNumber": 46704671,
+				"data": "0x0000000000000000000000000000000000000000000000000000000000000001",
+				"index": 6,
+				"topics": [
+					"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
+					"0x58025795c33f9e0121b492c9ea8dc31dc6803cc81b9066cd376333e802464741"
+				],
+				"transactionHash": "0xbf9ca26369c3d3a6c1efc6276cc5ae9e6a05669b49a3c98ea7e63c871d557ed6",
+				"transactionIndex": 1
+			},
+			{
+				"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+				"blockHash": "0x69c7cd7e3847eae2da72bbf2de2ac386b2a6a8b732217c90533a79135e253700",
+				"blockNumber": 46704671,
+				"data": "0x000000000000000000000000ba24624ae5dc821866e9e71ed050412ef01e2fe6",
+				"index": 7,
+				"topics": [
+					"0x4db17dd5e4732fb6da34a148104a592783ca119a1e7bb8829eba6cbadef0b511"
+				],
+				"transactionHash": "0xbf9ca26369c3d3a6c1efc6276cc5ae9e6a05669b49a3c98ea7e63c871d557ed6",
+				"transactionIndex": 1
+			},
+			{
+				"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+				"blockHash": "0x69c7cd7e3847eae2da72bbf2de2ac386b2a6a8b732217c90533a79135e253700",
+				"blockNumber": 46704671,
+				"data": "0x",
+				"index": 8,
+				"topics": [
+					"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
+					"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
+				],
+				"transactionHash": "0xbf9ca26369c3d3a6c1efc6276cc5ae9e6a05669b49a3c98ea7e63c871d557ed6",
+				"transactionIndex": 1
+			},
+			{
+				"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
+				"blockHash": "0x69c7cd7e3847eae2da72bbf2de2ac386b2a6a8b732217c90533a79135e253700",
+				"blockNumber": 46704671,
+				"data": "0x0000000000000000000000000000000000000000000000000000000000000002",
+				"index": 9,
+				"topics": [
+					"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
+					"0x58025795c33f9e0121b492c9ea8dc31dc6803cc81b9066cd376333e802464741"
+				],
+				"transactionHash": "0xbf9ca26369c3d3a6c1efc6276cc5ae9e6a05669b49a3c98ea7e63c871d557ed6",
+				"transactionIndex": 1
+			},
+			{
+				"address": "0x4d9207aBEcA883161A1eAee9DaBeDC0001c198d7",
+				"blockHash": "0x69c7cd7e3847eae2da72bbf2de2ac386b2a6a8b732217c90533a79135e253700",
+				"blockNumber": 46704671,
+				"data": "0x",
+				"index": 10,
+				"topics": [
+					"0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+					"0x0000000000000000000000000000000000000000000000000000000000000000",
+					"0x000000000000000000000000823b92d6a4b2aed4b15675c7917c9f922ea8adad"
+				],
+				"transactionHash": "0xbf9ca26369c3d3a6c1efc6276cc5ae9e6a05669b49a3c98ea7e63c871d557ed6",
+				"transactionIndex": 1
+			},
+			{
+				"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+				"blockHash": "0x69c7cd7e3847eae2da72bbf2de2ac386b2a6a8b732217c90533a79135e253700",
+				"blockNumber": 46704671,
+				"data": "0x0000000000000000000000004d9207abeca883161a1eaee9dabedc0001c198d7",
+				"index": 11,
+				"topics": [
+					"0x4db17dd5e4732fb6da34a148104a592783ca119a1e7bb8829eba6cbadef0b511"
+				],
+				"transactionHash": "0xbf9ca26369c3d3a6c1efc6276cc5ae9e6a05669b49a3c98ea7e63c871d557ed6",
+				"transactionIndex": 1
+			},
+			{
+				"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+				"blockHash": "0x69c7cd7e3847eae2da72bbf2de2ac386b2a6a8b732217c90533a79135e253700",
+				"blockNumber": 46704671,
+				"data": "0x",
+				"index": 12,
+				"topics": [
+					"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
+					"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
+				],
+				"transactionHash": "0xbf9ca26369c3d3a6c1efc6276cc5ae9e6a05669b49a3c98ea7e63c871d557ed6",
+				"transactionIndex": 1
+			},
+			{
+				"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
+				"blockHash": "0x69c7cd7e3847eae2da72bbf2de2ac386b2a6a8b732217c90533a79135e253700",
+				"blockNumber": 46704671,
+				"data": "0x0000000000000000000000000000000000000000000000000000000000000003",
+				"index": 13,
+				"topics": [
+					"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
+					"0x58025795c33f9e0121b492c9ea8dc31dc6803cc81b9066cd376333e802464741"
+				],
+				"transactionHash": "0xbf9ca26369c3d3a6c1efc6276cc5ae9e6a05669b49a3c98ea7e63c871d557ed6",
+				"transactionIndex": 1
+			},
+			{
+				"address": "0x18017cfeD48E1dC0Adc445cEF8A9e6AfFCb330DA",
+				"blockHash": "0x69c7cd7e3847eae2da72bbf2de2ac386b2a6a8b732217c90533a79135e253700",
+				"blockNumber": 46704671,
+				"data": "0x",
+				"index": 14,
+				"topics": [
+					"0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+					"0x0000000000000000000000000000000000000000000000000000000000000000",
+					"0x0000000000000000000000001081b5aa9d9d4862a3da4d469433fb36ed80fa2a"
+				],
+				"transactionHash": "0xbf9ca26369c3d3a6c1efc6276cc5ae9e6a05669b49a3c98ea7e63c871d557ed6",
+				"transactionIndex": 1
+			},
+			{
+				"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+				"blockHash": "0x69c7cd7e3847eae2da72bbf2de2ac386b2a6a8b732217c90533a79135e253700",
+				"blockNumber": 46704671,
+				"data": "0x00000000000000000000000018017cfed48e1dc0adc445cef8a9e6affcb330da",
+				"index": 15,
+				"topics": [
+					"0x4db17dd5e4732fb6da34a148104a592783ca119a1e7bb8829eba6cbadef0b511"
+				],
+				"transactionHash": "0xbf9ca26369c3d3a6c1efc6276cc5ae9e6a05669b49a3c98ea7e63c871d557ed6",
+				"transactionIndex": 1
+			},
+			{
+				"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+				"blockHash": "0x69c7cd7e3847eae2da72bbf2de2ac386b2a6a8b732217c90533a79135e253700",
+				"blockNumber": 46704671,
+				"data": "0x",
+				"index": 16,
+				"topics": [
+					"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
+					"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
+				],
+				"transactionHash": "0xbf9ca26369c3d3a6c1efc6276cc5ae9e6a05669b49a3c98ea7e63c871d557ed6",
+				"transactionIndex": 1
+			},
+			{
+				"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
+				"blockHash": "0x69c7cd7e3847eae2da72bbf2de2ac386b2a6a8b732217c90533a79135e253700",
+				"blockNumber": 46704671,
+				"data": "0x0000000000000000000000000000000000000000000000000000000000000004",
+				"index": 17,
+				"topics": [
+					"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
+					"0x58025795c33f9e0121b492c9ea8dc31dc6803cc81b9066cd376333e802464741"
+				],
+				"transactionHash": "0xbf9ca26369c3d3a6c1efc6276cc5ae9e6a05669b49a3c98ea7e63c871d557ed6",
+				"transactionIndex": 1
+			},
+			{
+				"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+				"blockHash": "0x69c7cd7e3847eae2da72bbf2de2ac386b2a6a8b732217c90533a79135e253700",
+				"blockNumber": 46704671,
+				"data": "0x0000000000000000000000007cb4a75d21c45d1a0a0333bfa626f54636c84da5",
+				"index": 18,
+				"topics": [
+					"0x4db17dd5e4732fb6da34a148104a592783ca119a1e7bb8829eba6cbadef0b511"
+				],
+				"transactionHash": "0xbf9ca26369c3d3a6c1efc6276cc5ae9e6a05669b49a3c98ea7e63c871d557ed6",
+				"transactionIndex": 1
+			},
+			{
+				"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+				"blockHash": "0x69c7cd7e3847eae2da72bbf2de2ac386b2a6a8b732217c90533a79135e253700",
+				"blockNumber": 46704671,
+				"data": "0x",
+				"index": 19,
+				"topics": [
+					"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
+					"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
+				],
+				"transactionHash": "0xbf9ca26369c3d3a6c1efc6276cc5ae9e6a05669b49a3c98ea7e63c871d557ed6",
+				"transactionIndex": 1
+			},
+			{
+				"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
+				"blockHash": "0x69c7cd7e3847eae2da72bbf2de2ac386b2a6a8b732217c90533a79135e253700",
+				"blockNumber": 46704671,
+				"data": "0x0000000000000000000000000000000000000000000000000000000000000005",
+				"index": 20,
+				"topics": [
+					"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
+					"0x58025795c33f9e0121b492c9ea8dc31dc6803cc81b9066cd376333e802464741"
+				],
+				"transactionHash": "0xbf9ca26369c3d3a6c1efc6276cc5ae9e6a05669b49a3c98ea7e63c871d557ed6",
+				"transactionIndex": 1
+			},
+			{
+				"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+				"blockHash": "0x69c7cd7e3847eae2da72bbf2de2ac386b2a6a8b732217c90533a79135e253700",
+				"blockNumber": 46704671,
+				"data": "0x0000000000000000000000001eb7799d3a230a0440f0d6c477256df8d425adbb",
+				"index": 21,
+				"topics": [
+					"0x4db17dd5e4732fb6da34a148104a592783ca119a1e7bb8829eba6cbadef0b511"
+				],
+				"transactionHash": "0xbf9ca26369c3d3a6c1efc6276cc5ae9e6a05669b49a3c98ea7e63c871d557ed6",
+				"transactionIndex": 1
+			},
+			{
+				"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+				"blockHash": "0x69c7cd7e3847eae2da72bbf2de2ac386b2a6a8b732217c90533a79135e253700",
+				"blockNumber": 46704671,
+				"data": "0x",
+				"index": 22,
+				"topics": [
+					"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
+					"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
+				],
+				"transactionHash": "0xbf9ca26369c3d3a6c1efc6276cc5ae9e6a05669b49a3c98ea7e63c871d557ed6",
+				"transactionIndex": 1
+			},
+			{
+				"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
+				"blockHash": "0x69c7cd7e3847eae2da72bbf2de2ac386b2a6a8b732217c90533a79135e253700",
+				"blockNumber": 46704671,
+				"data": "0x0000000000000000000000000000000000000000000000000000000000000006",
+				"index": 23,
+				"topics": [
+					"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
+					"0x58025795c33f9e0121b492c9ea8dc31dc6803cc81b9066cd376333e802464741"
+				],
+				"transactionHash": "0xbf9ca26369c3d3a6c1efc6276cc5ae9e6a05669b49a3c98ea7e63c871d557ed6",
+				"transactionIndex": 1
+			},
+			{
+				"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+				"blockHash": "0x69c7cd7e3847eae2da72bbf2de2ac386b2a6a8b732217c90533a79135e253700",
+				"blockNumber": 46704671,
+				"data": "0x0000000000000000000000003295c9c7374e583cb2e6ed455eaf9908022159d0",
+				"index": 24,
+				"topics": [
+					"0x4db17dd5e4732fb6da34a148104a592783ca119a1e7bb8829eba6cbadef0b511"
+				],
+				"transactionHash": "0xbf9ca26369c3d3a6c1efc6276cc5ae9e6a05669b49a3c98ea7e63c871d557ed6",
+				"transactionIndex": 1
+			},
+			{
+				"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+				"blockHash": "0x69c7cd7e3847eae2da72bbf2de2ac386b2a6a8b732217c90533a79135e253700",
+				"blockNumber": 46704671,
+				"data": "0x",
+				"index": 25,
+				"topics": [
+					"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
+					"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
+				],
+				"transactionHash": "0xbf9ca26369c3d3a6c1efc6276cc5ae9e6a05669b49a3c98ea7e63c871d557ed6",
+				"transactionIndex": 1
+			},
+			{
+				"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
+				"blockHash": "0x69c7cd7e3847eae2da72bbf2de2ac386b2a6a8b732217c90533a79135e253700",
+				"blockNumber": 46704671,
+				"data": "0x0000000000000000000000000000000000000000000000000000000000000007",
+				"index": 26,
+				"topics": [
+					"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
+					"0x58025795c33f9e0121b492c9ea8dc31dc6803cc81b9066cd376333e802464741"
+				],
+				"transactionHash": "0xbf9ca26369c3d3a6c1efc6276cc5ae9e6a05669b49a3c98ea7e63c871d557ed6",
+				"transactionIndex": 1
+			},
+			{
+				"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+				"blockHash": "0x69c7cd7e3847eae2da72bbf2de2ac386b2a6a8b732217c90533a79135e253700",
+				"blockNumber": 46704671,
+				"data": "0x0000000000000000000000002fd39295dd948dfbb8aa7e2508ea5fc15096682b",
+				"index": 27,
+				"topics": [
+					"0x4db17dd5e4732fb6da34a148104a592783ca119a1e7bb8829eba6cbadef0b511"
+				],
+				"transactionHash": "0xbf9ca26369c3d3a6c1efc6276cc5ae9e6a05669b49a3c98ea7e63c871d557ed6",
+				"transactionIndex": 1
+			},
+			{
+				"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+				"blockHash": "0x69c7cd7e3847eae2da72bbf2de2ac386b2a6a8b732217c90533a79135e253700",
+				"blockNumber": 46704671,
+				"data": "0x",
+				"index": 28,
+				"topics": [
+					"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
+					"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
+				],
+				"transactionHash": "0xbf9ca26369c3d3a6c1efc6276cc5ae9e6a05669b49a3c98ea7e63c871d557ed6",
+				"transactionIndex": 1
+			},
+			{
+				"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
+				"blockHash": "0x69c7cd7e3847eae2da72bbf2de2ac386b2a6a8b732217c90533a79135e253700",
+				"blockNumber": 46704671,
+				"data": "0x0000000000000000000000000000000000000000000000000000000000000008",
+				"index": 29,
+				"topics": [
+					"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
+					"0x58025795c33f9e0121b492c9ea8dc31dc6803cc81b9066cd376333e802464741"
+				],
+				"transactionHash": "0xbf9ca26369c3d3a6c1efc6276cc5ae9e6a05669b49a3c98ea7e63c871d557ed6",
+				"transactionIndex": 1
+			},
+			{
+				"address": "0x0000000000000000000000000000000000001010",
+				"blockHash": "0x69c7cd7e3847eae2da72bbf2de2ac386b2a6a8b732217c90533a79135e253700",
+				"blockNumber": 46704671,
+				"data": "0x000000000000000000000000000000000000000000000000048f438a82c790000000000000000000000000000000000000000000000000003a8c8cf6cc255b4d00000000000000000000000000000000000000000000138276f0de142333f7bf00000000000000000000000000000000000000000000000035fd496c495dcb4d0000000000000000000000000000000000000000000013827b80219ea5fb87bf",
+				"index": 30,
+				"topics": [
+					"0x4dfe1bbbcf077ddc3e01291eea2d5c70c2b422b415d95645b9adcfd678cb1d63",
+					"0x0000000000000000000000000000000000000000000000000000000000001010",
+					"0x000000000000000000000000c034550b542b83ba1de312b21d1c94a9a52b1595",
+					"0x000000000000000000000000f903ba9e006193c1527bfbe65fe2123704ea3f99"
+				],
+				"transactionHash": "0xbf9ca26369c3d3a6c1efc6276cc5ae9e6a05669b49a3c98ea7e63c871d557ed6",
+				"transactionIndex": 1
+			}
+		],
+		"logsBloom": "0x00000000080010008208000000080000000000000008000000800010004000000060008000000020000000000040000000008000000000000000000000000000000000000000200402000008820000800001000020000000000300000000000000000000020000004000000000000800000000100020000080000008000000400001000000000000000100800000000000080000000000000000804000000000204000080010000000000000000000020200000000000080000000000006004080000000000000200081000008000000000000000000000000100000001020000000400000000004000000000000000200000000000000000000000000100000",
+		"status": 1,
+		"to": "0xB5E96127D417b1B3ef8438496a38A143167209c7"
+	},
+	"metadata": "{\"compiler\":{\"version\":\"0.8.23+commit.f704f362\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"PERMISSION_ID_OUT_OF_BOUNDS\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"UNAUTHORIZED\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\",\"indexed\":true},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\",\"indexed\":true},{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\",\"indexed\":true},{\"internalType\":\"uint256[]\",\"name\":\"permissionIds\",\"type\":\"uint256[]\",\"indexed\":false},{\"internalType\":\"uint256\",\"name\":\"packed\",\"type\":\"uint256\",\"indexed\":false},{\"internalType\":\"address\",\"name\":\"caller\",\"type\":\"address\",\"indexed\":false}],\"type\":\"event\",\"name\":\"OperatorPermissionsSet\",\"anonymous\":false},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"PERMISSIONS\",\"outputs\":[{\"internalType\":\"contract IJBPermissions\",\"name\":\"\",\"type\":\"address\"}]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"permissionId\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"hasPermission\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"},{\"internalType\":\"uint256[]\",\"name\":\"permissionIds\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"hasPermissions\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"permissionsOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"internalType\":\"struct JBPermissionsData\",\"name\":\"permissionsData\",\"type\":\"tuple\",\"components\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"},{\"internalType\":\"uint256[]\",\"name\":\"permissionIds\",\"type\":\"uint256[]\"}]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"setPermissionsFor\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"hasPermission(address,address,uint256,uint256)\":{\"params\":{\"account\":\"The account being operated on behalf of.\",\"operator\":\"The operator to check.\",\"permissionId\":\"The permission ID to check for.\",\"projectId\":\"The project ID that the operator has permission to operate under. 0 represents all projects.\"},\"returns\":{\"_0\":\"A flag indicating whether the operator has the specified permission.\"}},\"hasPermissions(address,address,uint256,uint256[])\":{\"params\":{\"account\":\"The account being operated on behalf of.\",\"operator\":\"The operator to check.\",\"permissionIds\":\"An array of permission IDs to check for.\",\"projectId\":\"The project ID that the operator has permission to operate under. 0 represents all projects.\"},\"returns\":{\"_0\":\"A flag indicating whether the operator has all specified permissions.\"}},\"setPermissionsFor(address,(address,uint256,uint256[]))\":{\"details\":\"Only an address can give permissions to or revoke permissions from its operators.\",\"params\":{\"account\":\"The account setting its operators' permissions.\",\"permissionsData\":\"The data which specifies the permissions the operator is being given.\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"PERMISSIONS()\":{\"notice\":\"A contract storing permissions.\"},\"hasPermission(address,address,uint256,uint256)\":{\"notice\":\"Check if an operator has a specific permission for a specific address and project ID.\"},\"hasPermissions(address,address,uint256,uint256[])\":{\"notice\":\"Check if an operator has all of the specified permissions for a specific address and project ID.\"},\"permissionsOf(address,address,uint256)\":{\"notice\":\"The permissions that an operator has been given by an account for a specific project.\"},\"setPermissionsFor(address,(address,uint256,uint256[]))\":{\"notice\":\"Sets permissions for an operator.\"}},\"version\":1}},\"settings\":{\"remappings\":[\"@bananapus/=node_modules/@bananapus/\",\"@chainlink/=node_modules/@chainlink/\",\"@eth-optimism/=node_modules/@eth-optimism/\",\"@gnosis.pm/=node_modules/@gnosis.pm/\",\"@openzeppelin/=node_modules/@openzeppelin/\",\"@prb/=node_modules/@prb/\",\"@sphinx-labs/contracts/=lib/sphinx/packages/contracts/contracts/foundry/\",\"@uniswap/=node_modules/@uniswap/\",\"ds-test/=lib/forge-std/lib/ds-test/src/\",\"forge-std/=lib/forge-std/src/\",\"hardhat/=node_modules/hardhat/\",\"solmate/=node_modules/solmate/\",\"sphinx-forge-std/=node_modules/sphinx-forge-std/\",\"sphinx-solmate/=node_modules/sphinx-solmate/\",\"sphinx/=lib/sphinx/\"],\"optimizer\":{\"enabled\":true,\"runs\":200},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"compilationTarget\":{\"src/JBPermissions.sol\":\"JBPermissions\"},\"evmVersion\":\"paris\",\"libraries\":{}},\"sources\":{\"node_modules/@bananapus/permission-ids/src/JBPermissionIds.sol\":{\"keccak256\":\"0xcc68735b4c801e953cb7962e069933f369515e7a4a09aea5b2170a268125a898\",\"urls\":[\"bzz-raw://e51f839d96be200efeca40ca4fb1d5b6096303564cdde5cf67aecf58e2d36db3\",\"dweb:/ipfs/QmRnJ5s974eUeyvTuLUpt4TK8t5TjVmz7DyDSAKxgYTnA5\"],\"license\":\"UNLICENSED\"},\"node_modules/@openzeppelin/contracts/utils/Context.sol\":{\"keccak256\":\"0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2\",\"urls\":[\"bzz-raw://6a708e8a5bdb1011c2c381c9a5cfd8a9a956d7d0a9dc1bd8bcdaf52f76ef2f12\",\"dweb:/ipfs/Qmax9WHBnVsZP46ZxEMNRQpLQnrdE4dK8LehML1Py8FowF\"],\"license\":\"MIT\"},\"src/JBPermissions.sol\":{\"keccak256\":\"0x5d7cbebd7ea868bb17b2df9bd68ebc7a6fd5299c75601fe755b53f14c368d963\",\"urls\":[\"bzz-raw://1812675baaafeeb5074c7ddc6f9b5c5344fe5a213534f1a53f92d664ab0e2d02\",\"dweb:/ipfs/QmY9TC8njokB9gfPPEvDbTntNSd59K3hgKQia4oeJurNwr\"],\"license\":\"MIT\"},\"src/abstract/JBPermissioned.sol\":{\"keccak256\":\"0xbe593894bc9893f7fe5c96f14c013add8f50df762538e3d7cb96ed39ad195664\",\"urls\":[\"bzz-raw://efb81264b24776e6be537680abaeb8c4893e70d8a62231748d860e25a7c2340d\",\"dweb:/ipfs/QmacN9gFgPqkhTEwRD7Zben3whq9DRr2ZkSmScGvioTXXR\"],\"license\":\"MIT\"},\"src/interfaces/IJBPermissioned.sol\":{\"keccak256\":\"0x5b038d4dee116584e88b230920e56d48e135053e3f7e5642eaea14a775c1dad7\",\"urls\":[\"bzz-raw://19e43102f349fd4a1da1c0943ffb8f2950007fe4bb4bb7e8f74fc142575d091b\",\"dweb:/ipfs/QmXHAt4KzDTdDZgDDefEXH2WKi7NcfkJb9R7nxW5uDqsNp\"],\"license\":\"MIT\"},\"src/interfaces/IJBPermissions.sol\":{\"keccak256\":\"0x18870e500edf0fbadc353e273a5574701fb80466376b908c65e7cc3f11044d4d\",\"urls\":[\"bzz-raw://352a47c45853aec80e7acf0d286ade3106eb4cb456776b28a3c2f3f1091bed90\",\"dweb:/ipfs/QmQeYd3YbudYZy2hfbfht9kwhxhw4tuuLKMEYy9UY6dcSy\"],\"license\":\"MIT\"},\"src/structs/JBPermissionsData.sol\":{\"keccak256\":\"0x8f0f69a6ebf5f3704e3dfcb3712fb9d3f94ae7c1ab89bf3e37bad42a3e7a0487\",\"urls\":[\"bzz-raw://57b0c5e52843e2217082889ed47b4da3943e0da4590d5768dcebfe3edad4a6b8\",\"dweb:/ipfs/QmRz48vuWLw81kUP836rh1qzqWiJFGbksgRUA9xGEDNKTY\"],\"license\":\"MIT\"}},\"version\":1}",
+	"args": [],
+	"bytecode": "0x60a060405234801561001057600080fd5b50306080526080516107b361003d6000396000818160ef01528181610358015261040101526107b36000f3fe608060405234801561001057600080fd5b50600436106100575760003560e01c806305d2912e1461005c5780630f5932f01461007157806380deb23014610099578063c161c93f146100d7578063f434c914146100ea575b600080fd5b61006f61006a366004610512565b610129565b005b61008461007f366004610567565b610204565b60405190151581526020015b60405180910390f35b6100c96100a7366004610605565b6000602081815293815260408082208552928152828120909352825290205481565b604051908152602001610090565b6100846100e5366004610641565b6102ad565b6101117f000000000000000000000000000000000000000000000000000000000000000081565b6040516001600160a01b039091168152602001610090565b610139828260200135600161030e565b600061015061014b6040840184610683565b610492565b90508060008061016360208601866106d4565b6001600160a01b039081168252602080830193909352604091820160009081209188168082529184528281208785018035808452919095529290209390935591906101ae90856106d4565b6001600160a01b03167ff8cdf10a0ce6189c6d069e97320ef146e2bcbd32d6c0b86dcbfbf3bd8578fa706101e56040870187610683565b86336040516101f794939291906106f6565b60405180910390a4505050565b60008181805b8281101561029c5785858281811061022457610224610745565b90506020020135915060ff82111561024f576040516334f9a01d60e21b815260040160405180910390fd5b6001600160a01b03898116600090815260208181526040808320938c1683529281528282208a8352905290812054831c600116900361029457600093505050506102a4565b60010161020a565b506001925050505b95945050505050565b600060ff8211156102d1576040516334f9a01d60e21b815260040160405180910390fd5b506001600160a01b03808516600090815260208181526040808320938716835292815282822085835290522054600190821c811614949350505050565b336001600160a01b03841681148015906103c5575060405163c161c93f60e01b81526001600160a01b038281166004830152858116602483015260448201859052606482018490527f0000000000000000000000000000000000000000000000000000000000000000169063c161c93f90608401602060405180830381865afa15801561039f573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906103c3919061075b565b155b801561046e575060405163c161c93f60e01b81526001600160a01b038281166004830152858116602483015260006044830152606482018490527f0000000000000000000000000000000000000000000000000000000000000000169063c161c93f90608401602060405180830381865afa158015610448573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061046c919061075b565b155b1561048c5760405163075fd2b160e01b815260040160405180910390fd5b50505050565b60008181805b828110156104ed578585828181106104b2576104b2610745565b90506020020135915060ff8211156104dd576040516334f9a01d60e21b815260040160405180910390fd5b600180831b949094179301610498565b50505092915050565b80356001600160a01b038116811461050d57600080fd5b919050565b6000806040838503121561052557600080fd5b61052e836104f6565b9150602083013567ffffffffffffffff81111561054a57600080fd5b83016060818603121561055c57600080fd5b809150509250929050565b60008060008060006080868803121561057f57600080fd5b610588866104f6565b9450610596602087016104f6565b935060408601359250606086013567ffffffffffffffff808211156105ba57600080fd5b818801915088601f8301126105ce57600080fd5b8135818111156105dd57600080fd5b8960208260051b85010111156105f257600080fd5b9699959850939650602001949392505050565b60008060006060848603121561061a57600080fd5b610623846104f6565b9250610631602085016104f6565b9150604084013590509250925092565b6000806000806080858703121561065757600080fd5b610660856104f6565b935061066e602086016104f6565b93969395505050506040820135916060013590565b6000808335601e1984360301811261069a57600080fd5b83018035915067ffffffffffffffff8211156106b557600080fd5b6020019150600581901b36038213156106cd57600080fd5b9250929050565b6000602082840312156106e657600080fd5b6106ef826104f6565b9392505050565b6060808252810184905260006001600160fb1b0385111561071657600080fd5b8460051b808760808501376020830194909452506001600160a01b039190911660408201520160800192915050565b634e487b7160e01b600052603260045260246000fd5b60006020828403121561076d57600080fd5b815180151581146106ef57600080fdfea264697066735822122020dc514244f7e02b9f3867b389de13e1f7f5cdf7fd0337585222f2706e6c8a0964736f6c63430008170033",
+	"deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100575760003560e01c806305d2912e1461005c5780630f5932f01461007157806380deb23014610099578063c161c93f146100d7578063f434c914146100ea575b600080fd5b61006f61006a366004610512565b610129565b005b61008461007f366004610567565b610204565b60405190151581526020015b60405180910390f35b6100c96100a7366004610605565b6000602081815293815260408082208552928152828120909352825290205481565b604051908152602001610090565b6100846100e5366004610641565b6102ad565b6101117f000000000000000000000000ba24624ae5dc821866e9e71ed050412ef01e2fe681565b6040516001600160a01b039091168152602001610090565b610139828260200135600161030e565b600061015061014b6040840184610683565b610492565b90508060008061016360208601866106d4565b6001600160a01b039081168252602080830193909352604091820160009081209188168082529184528281208785018035808452919095529290209390935591906101ae90856106d4565b6001600160a01b03167ff8cdf10a0ce6189c6d069e97320ef146e2bcbd32d6c0b86dcbfbf3bd8578fa706101e56040870187610683565b86336040516101f794939291906106f6565b60405180910390a4505050565b60008181805b8281101561029c5785858281811061022457610224610745565b90506020020135915060ff82111561024f576040516334f9a01d60e21b815260040160405180910390fd5b6001600160a01b03898116600090815260208181526040808320938c1683529281528282208a8352905290812054831c600116900361029457600093505050506102a4565b60010161020a565b506001925050505b95945050505050565b600060ff8211156102d1576040516334f9a01d60e21b815260040160405180910390fd5b506001600160a01b03808516600090815260208181526040808320938716835292815282822085835290522054600190821c811614949350505050565b336001600160a01b03841681148015906103c5575060405163c161c93f60e01b81526001600160a01b038281166004830152858116602483015260448201859052606482018490527f000000000000000000000000ba24624ae5dc821866e9e71ed050412ef01e2fe6169063c161c93f90608401602060405180830381865afa15801561039f573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906103c3919061075b565b155b801561046e575060405163c161c93f60e01b81526001600160a01b038281166004830152858116602483015260006044830152606482018490527f000000000000000000000000ba24624ae5dc821866e9e71ed050412ef01e2fe6169063c161c93f90608401602060405180830381865afa158015610448573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061046c919061075b565b155b1561048c5760405163075fd2b160e01b815260040160405180910390fd5b50505050565b60008181805b828110156104ed578585828181106104b2576104b2610745565b90506020020135915060ff8211156104dd576040516334f9a01d60e21b815260040160405180910390fd5b600180831b949094179301610498565b50505092915050565b80356001600160a01b038116811461050d57600080fd5b919050565b6000806040838503121561052557600080fd5b61052e836104f6565b9150602083013567ffffffffffffffff81111561054a57600080fd5b83016060818603121561055c57600080fd5b809150509250929050565b60008060008060006080868803121561057f57600080fd5b610588866104f6565b9450610596602087016104f6565b935060408601359250606086013567ffffffffffffffff808211156105ba57600080fd5b818801915088601f8301126105ce57600080fd5b8135818111156105dd57600080fd5b8960208260051b85010111156105f257600080fd5b9699959850939650602001949392505050565b60008060006060848603121561061a57600080fd5b610623846104f6565b9250610631602085016104f6565b9150604084013590509250925092565b6000806000806080858703121561065757600080fd5b610660856104f6565b935061066e602086016104f6565b93969395505050506040820135916060013590565b6000808335601e1984360301811261069a57600080fd5b83018035915067ffffffffffffffff8211156106b557600080fd5b6020019150600581901b36038213156106cd57600080fd5b9250929050565b6000602082840312156106e657600080fd5b6106ef826104f6565b9392505050565b6060808252810184905260006001600160fb1b0385111561071657600080fd5b8460051b808760808501376020830194909452506001600160a01b039190911660408201520160800192915050565b634e487b7160e01b600052603260045260246000fd5b60006020828403121561076d57600080fd5b815180151581146106ef57600080fdfea264697066735822122020dc514244f7e02b9f3867b389de13e1f7f5cdf7fd0337585222f2706e6c8a0964736f6c63430008170033",
+	"devdoc": {
+		"kind": "dev",
+		"methods": {
+			"hasPermission(address,address,uint256,uint256)": {
+				"params": {
+					"account": "The account being operated on behalf of.",
+					"operator": "The operator to check.",
+					"permissionId": "The permission ID to check for.",
+					"projectId": "The project ID that the operator has permission to operate under. 0 represents all projects."
+				},
+				"returns": {
+					"_0": "A flag indicating whether the operator has the specified permission."
+				}
+			},
+			"hasPermissions(address,address,uint256,uint256[])": {
+				"params": {
+					"account": "The account being operated on behalf of.",
+					"operator": "The operator to check.",
+					"permissionIds": "An array of permission IDs to check for.",
+					"projectId": "The project ID that the operator has permission to operate under. 0 represents all projects."
+				},
+				"returns": {
+					"_0": "A flag indicating whether the operator has all specified permissions."
+				}
+			},
+			"setPermissionsFor(address,(address,uint256,uint256[]))": {
+				"details": "Only an address can give permissions to or revoke permissions from its operators.",
+				"params": {
+					"account": "The account setting its operators' permissions.",
+					"permissionsData": "The data which specifies the permissions the operator is being given."
+				}
+			}
+		},
+		"version": 1
+	},
+	"userdoc": {
+		"kind": "user",
+		"methods": {
+			"PERMISSIONS()": {
+				"notice": "A contract storing permissions."
+			},
+			"hasPermission(address,address,uint256,uint256)": {
+				"notice": "Check if an operator has a specific permission for a specific address and project ID."
+			},
+			"hasPermissions(address,address,uint256,uint256[])": {
+				"notice": "Check if an operator has all of the specified permissions for a specific address and project ID."
+			},
+			"permissionsOf(address,address,uint256)": {
+				"notice": "The permissions that an operator has been given by an account for a specific project."
+			},
+			"setPermissionsFor(address,(address,uint256,uint256[]))": {
+				"notice": "Sets permissions for an operator."
+			}
+		},
+		"version": 1
+	},
+	"gitCommit": "b03f34d98eacd4484804213a3ba52efcdbe9107e",
+	"sourceName": "src/JBPermissions.sol",
+	"chainId": "80001",
+	"linkReferences": {},
+	"deployedLinkReferences": {},
+	"history": []
+}

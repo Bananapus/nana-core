@@ -2,6 +2,8 @@
 pragma solidity 0.8.23;
 
 import "@sphinx-labs/contracts/SphinxPlugin.sol";
+import {Script, stdJson, VmSafe} from "forge-std/Script.sol";
+import {CoreDeploymentLib} from "./helpers/CoreDeploymentLib.sol";
 
 import {IPermit2} from "@uniswap/permit2/src/interfaces/IPermit2.sol";
 import {JBPermissions} from "src/JBPermissions.sol";
@@ -17,7 +19,7 @@ import {JBController} from "src/JBController.sol";
 import {JBTerminalStore} from "src/JBTerminalStore.sol";
 import {JBMultiTerminal} from "src/JBMultiTerminal.sol";
 
-contract Deploy is Sphinx {
+contract Deploy is Script, Sphinx {
     /// @notice The universal PERMIT2 address.
     IPermit2 private constant _PERMIT2 = IPermit2(0x000000000022D473030F116dDEE9F6B43aC78BA3);
 
