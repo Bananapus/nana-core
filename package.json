@@ -11,7 +11,8 @@
     "test:fork": "FOUNDRY_PROFILE=CI forge test",
     "coverage": "forge coverage --match-path \"./src/*.sol\" --report lcov --report summary",
     "deploy:mainnets": "source ./.env && npx sphinx propose ./script/Deploy.s.sol --networks mainnets",
-    "deploy:testnets": "source ./.env && npx sphinx propose ./script/Deploy.s.sol --networks testnets"
+    "deploy:testnets": "source ./.env && npx sphinx propose ./script/Deploy.s.sol --networks testnets",
+    "artifacts": "source ./.env && npx sphinx artifacts --org-id 'cltepuu9u0003j58rjtbd0hvu' --project-name 'nana-core'"
   },
   "dependencies": {
     "@bananapus/permission-ids": "^0.0.2",
