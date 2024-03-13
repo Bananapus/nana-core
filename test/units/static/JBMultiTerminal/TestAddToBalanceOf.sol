@@ -41,16 +41,7 @@ contract TestAddToBalanceOf_Local is JBMultiTerminalSetup {
         JBAccountingContext memory _storedContext = _terminal.accountingContextForTokenOf(_projectId, _native);
         assertEq(_storedContext.token, _native);
 
-        // Fee to set
-        JBFee[] memory fees = new JBFee[](1);
-
-        fees[0] = JBFee({
-            amount: 1,
-            beneficiary: address(this),
-            unlockTimestamp: 0
-        });
-
-         // Find the storage slot for fees array
+        // Find the storage slot for fees array
         bytes32 feeSlot = keccak256(abi.encode(_projectId, uint256(2)));
         bytes32 slotForArrayLength = keccak256(abi.encode(_native, feeSlot));
 
@@ -64,13 +55,6 @@ contract TestAddToBalanceOf_Local is JBMultiTerminalSetup {
 
         JBFee[] memory setFees = _terminal.heldFeesOf(_projectId, _native);
         assertEq(setFees[0].amount, 1);
-
-        /* // mock token balanceOf call
-        mockExpect(
-            _usdc,
-            abi.encodeCall(IERC20.balanceOf, address(_terminal)),
-            abi.encode(_terminalUSDCBalance)
-        ); */
 
         // mock call to store recordAddedBalanceFor
         mockExpect(
@@ -98,6 +82,60 @@ contract TestAddToBalanceOf_Local is JBMultiTerminalSetup {
         whenShouldReturnHeldFeesEqTrue
     {
         // it will return feeAmountIn
+
+        // Accounting Context to set
+        JBAccountingContext memory _context =
+            JBAccountingContext({token: _native, decimals: 18, currency: uint32(_nativeCurrency)});
+
+        // Find the storage slot
+        bytes32 contextSlot = keccak256(abi.encode(_projectId, uint256(0)));
+        bytes32 slot = keccak256(abi.encode(_native, contextSlot));
+
+        // Set storage
+        vm.store(address(_terminal), slot, bytes32(abi.encode(_context)));
+
+        JBAccountingContext memory _storedContext = _terminal.accountingContextForTokenOf(_projectId, _native);
+        assertEq(_storedContext.token, _native);
+
+        // Find the storage slot for fees array
+        bytes32 feeSlot = keccak256(abi.encode(_projectId, uint256(2)));
+        bytes32 slotForArrayLength = keccak256(abi.encode(_native, feeSlot));
+
+        // Set the length of the fees array in the storage slot
+        vm.store(address(_terminal), slotForArrayLength, bytes32(uint256(1)));
+
+        // First item should be stored at the next slot
+        bytes32 firstItemSlot = keccak256(abi.encodePacked(slotForArrayLength));
+
+        uint256 feeAmount = 1e9;
+
+        vm.store(address(_terminal), firstItemSlot, bytes32(feeAmount));
+
+        JBFee[] memory setFees = _terminal.heldFeesOf(_projectId, _native);
+        assertEq(setFees[0].amount, feeAmount);
+
+        uint256 payAmount = 2e18;
+        uint256 feeAmountIn = JBFees.feeAmountIn(feeAmount, 25);
+
+        // mock call to store recordAddedBalanceFor
+        mockExpect(
+            address(store),
+            abi.encodeCall(IJBTerminalStore.recordAddedBalanceFor, (_projectId, _native, payAmount + feeAmountIn)),
+            abi.encode()
+        );
+
+        _terminal.addToBalanceOf{value: payAmount}({
+            projectId: _projectId,
+            token: _native,
+            amount: payAmount,
+            shouldReturnHeldFees: _shouldReturnHeldFees,
+            memo: "",
+            metadata: ""
+        });
+
+        // Heldfee should be erased
+        JBFee[] memory feesAfter = _terminal.heldFeesOf(_projectId, _native);
+        assertEq(feesAfter.length, 0);
     }
 
     function test_GivenReturnAmountIsNon_zeroAndLeftoverAmountLTAmountFromFee()
