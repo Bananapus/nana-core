@@ -228,6 +228,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @param feelessAddresses A contract that stores addresses that shouldn't incur fees when being paid towards or
     /// from.
     /// @param permit2 A permit2 utility.
+    /// @param trustedForwarder A trusted forwarder of transactions to this contract.
     constructor(
         IJBPermissions permissions,
         IJBProjects projects,
