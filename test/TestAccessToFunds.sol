@@ -1048,17 +1048,19 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
     )
         public
     {
+        _nativeCurrencySurplusAllowance = 0;
+        _nativeCurrencyPayoutLimit = 2;
+        _nativePayAmount = 3;
+        _usdCurrencySurplusAllowance = 0;
+        _usdCurrencyPayoutLimit = 2000;
+        _usdcPayAmount = 0;
+
         // Make sure the amount of native tokens to pay is bounded.
         _nativePayAmount = bound(_nativePayAmount, 0, 1_000_000 * 10 ** _NATIVE_DECIMALS);
         _usdcPayAmount = bound(_usdcPayAmount, 0, 1_000_000 * 10 ** _usdcToken.decimals());
 
         // Make sure the values don't overflow the registry.
         unchecked {
-            // vm.assume(_nativeCurrencySurplusAllowance + _cumulativePayoutLimit  >= _nativeCurrencySurplusAllowance &&
-            // _nativeCurrencySurplusAllowance + _cumulativePayoutLimit >= _cumulativePayoutLimit);
-            // vm.assume(_usdCurrencySurplusAllowance + (_usdCurrencyPayoutLimit + mulDiv(_nativeCurrencyPayoutLimit,
-            // _USD_PRICE_PER_NATIVE, 10**_PRICE_FEED_DECIMALS))*2 >= _usdCurrencySurplusAllowance &&
-            // _usdCurrencySurplusAllowance + _usdCurrencyPayoutLimit >= _usdCurrencyPayoutLimit);
             vm.assume(
                 _nativeCurrencySurplusAllowance + _nativeCurrencyPayoutLimit >= _nativeCurrencySurplusAllowance
                     && _nativeCurrencySurplusAllowance + _nativeCurrencyPayoutLimit >= _nativeCurrencyPayoutLimit
@@ -1369,6 +1371,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                     _nativePayAmount - _beneficiaryNativeBalance - _projectOwnerNativeBalance
                 );
 
+                // TODO stack too deep
                 // Make sure the project owner got the expected number of tokens.
                 // assertEq(_tokens.totalBalanceOf(_projectOwner, _FEE_PROJECT_ID),
                 // _unreservedPortion(mulDiv(_nativeCurrencySurplusAllowance + _toNative(_usdCurrencySurplusAllowance) -
@@ -1391,7 +1394,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                 vm.expectRevert(abi.encodeWithSignature("PAYOUT_LIMIT_EXCEEDED()"));
             }
 
-            // Pay out native tokens up to the payout limit. Since `splits[]` is empty, everything goes to project
+            // Pay out usdc tokens up to the payout limit. Since `splits[]` is empty, everything goes to project
             // owner.
             _terminal.sendPayoutsOf({
                 projectId: _projectId,
@@ -1443,7 +1446,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             _nativePayAmount - _nativeCurrencySurplusAllowance - _toNative(_usdCurrencySurplusAllowance);
         if (_nativeCurrencyPayoutLimit <= _nativePayAmount) {
             _nativeBalance -= _nativeCurrencyPayoutLimit;
-            if (_toNative(_usdCurrencyPayoutLimit) + _nativeCurrencyPayoutLimit < _nativePayAmount) {
+            if (_toNative(_usdCurrencyPayoutLimit) + _nativeCurrencyPayoutLimit <= _nativePayAmount) {
                 _nativeBalance -= _toNative(_usdCurrencyPayoutLimit);
             }
         } else if (_toNative(_usdCurrencyPayoutLimit) <= _nativePayAmount) {
