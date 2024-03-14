@@ -1048,13 +1048,6 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
     )
         public
     {
-        _nativeCurrencySurplusAllowance = 0;
-        _nativeCurrencyPayoutLimit = 2;
-        _nativePayAmount = 3;
-        _usdCurrencySurplusAllowance = 0;
-        _usdCurrencyPayoutLimit = 2000;
-        _usdcPayAmount = 0;
-
         // Make sure the amount of native tokens to pay is bounded.
         _nativePayAmount = bound(_nativePayAmount, 0, 1_000_000 * 10 ** _NATIVE_DECIMALS);
         _usdcPayAmount = bound(_usdcPayAmount, 0, 1_000_000 * 10 ** _usdcToken.decimals());
