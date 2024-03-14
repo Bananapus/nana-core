@@ -1371,12 +1371,15 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                     _nativePayAmount - _beneficiaryNativeBalance - _projectOwnerNativeBalance
                 );
 
-                // TODO stack too deep
+                uint256 _fullPortion = mulDiv(
+                    _nativeCurrencySurplusAllowance + _toNative(_usdCurrencySurplusAllowance)
+                        - _beneficiaryNativeBalance + _nativeCurrencyPayoutLimit - _projectOwnerNativeBalance,
+                    _weight,
+                    10 ** _NATIVE_DECIMALS
+                );
+
                 // Make sure the project owner got the expected number of tokens.
-                // assertEq(_tokens.totalBalanceOf(_projectOwner, _FEE_PROJECT_ID),
-                // _unreservedPortion(mulDiv(_nativeCurrencySurplusAllowance + _toNative(_usdCurrencySurplusAllowance) -
-                // _beneficiaryNativeBalance + _nativeCurrencyPayoutLimit - _projectOwnerNativeBalance, _weight, 10
-                // ** _NATIVE_DECIMALS)));
+                assertEq(_tokens.totalBalanceOf(_projectOwner, _FEE_PROJECT_ID), _unreservedPortion(_fullPortion));
             }
 
             // Revert if the payout limit is greater than the balance.
