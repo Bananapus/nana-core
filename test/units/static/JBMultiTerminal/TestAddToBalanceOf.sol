@@ -12,6 +12,9 @@ contract TestAddToBalanceOf_Local is JBMultiTerminalSetup {
     uint256 _usdcCurrency = uint32(uint160(_usdc));
     uint256 _terminalUSDCBalance = 1e18;
 
+    uint256 payAmount;
+    uint256 feeAmount;
+    uint256 feeAmountIn;
     bool _shouldReturnHeldFees;
 
     function setUp() public {
@@ -19,14 +22,6 @@ contract TestAddToBalanceOf_Local is JBMultiTerminalSetup {
     }
 
     modifier whenShouldReturnHeldFeesEqTrue() {
-        _shouldReturnHeldFees = true;
-
-        _;
-    }
-
-    function test_GivenReturnAmountIsZero() external whenShouldReturnHeldFeesEqTrue {
-        // it will set heldFeesOf project to the previously set heldFee
-
         // Accounting Context to set
         JBAccountingContext memory _context =
             JBAccountingContext({token: _native, decimals: 18, currency: uint32(_nativeCurrency)});
@@ -51,10 +46,23 @@ contract TestAddToBalanceOf_Local is JBMultiTerminalSetup {
         // First item should be stored at the next slot
         bytes32 firstItemSlot = keccak256(abi.encodePacked(slotForArrayLength));
 
-        vm.store(address(_terminal), firstItemSlot, bytes32(uint256(1)));
+        feeAmount = 1e9;
+
+        vm.store(address(_terminal), firstItemSlot, bytes32(feeAmount));
 
         JBFee[] memory setFees = _terminal.heldFeesOf(_projectId, _native);
-        assertEq(setFees[0].amount, 1);
+        assertEq(setFees[0].amount, feeAmount);
+
+        payAmount = 2e18;
+        feeAmountIn = JBFees.feeAmountIn(feeAmount, 25);
+
+        _shouldReturnHeldFees = true;
+
+        _;
+    }
+
+    function test_GivenReturnAmountIsZero() external whenShouldReturnHeldFeesEqTrue {
+        // it will set heldFeesOf project to the previously set heldFee
 
         // mock call to store recordAddedBalanceFor
         mockExpect(
@@ -74,48 +82,14 @@ contract TestAddToBalanceOf_Local is JBMultiTerminalSetup {
 
         // Heldfee should remain
         JBFee[] memory feesAfter = _terminal.heldFeesOf(_projectId, _native);
-        assertEq(feesAfter[0].amount, 1);
+        assertEq(feesAfter[0].amount, feeAmount);
     }
 
     function test_GivenReturnAmountIsNon_zeroAndLeftoverAmountGTEQAmountFromFee()
         external
         whenShouldReturnHeldFeesEqTrue
     {
-        // it will return feeAmountIn
-
-        // Accounting Context to set
-        JBAccountingContext memory _context =
-            JBAccountingContext({token: _native, decimals: 18, currency: uint32(_nativeCurrency)});
-
-        // Find the storage slot
-        bytes32 contextSlot = keccak256(abi.encode(_projectId, uint256(0)));
-        bytes32 slot = keccak256(abi.encode(_native, contextSlot));
-
-        // Set storage
-        vm.store(address(_terminal), slot, bytes32(abi.encode(_context)));
-
-        JBAccountingContext memory _storedContext = _terminal.accountingContextForTokenOf(_projectId, _native);
-        assertEq(_storedContext.token, _native);
-
-        // Find the storage slot for fees array
-        bytes32 feeSlot = keccak256(abi.encode(_projectId, uint256(2)));
-        bytes32 slotForArrayLength = keccak256(abi.encode(_native, feeSlot));
-
-        // Set the length of the fees array in the storage slot
-        vm.store(address(_terminal), slotForArrayLength, bytes32(uint256(1)));
-
-        // First item should be stored at the next slot
-        bytes32 firstItemSlot = keccak256(abi.encodePacked(slotForArrayLength));
-
-        uint256 feeAmount = 1e9;
-
-        vm.store(address(_terminal), firstItemSlot, bytes32(feeAmount));
-
-        JBFee[] memory setFees = _terminal.heldFeesOf(_projectId, _native);
-        assertEq(setFees[0].amount, feeAmount);
-
-        uint256 payAmount = 2e18;
-        uint256 feeAmountIn = JBFees.feeAmountIn(feeAmount, 25);
+        // it will return leftoverAmount - amountFromFee and return the held fee to beneficiary
 
         // mock call to store recordAddedBalanceFor
         mockExpect(
@@ -123,6 +97,12 @@ contract TestAddToBalanceOf_Local is JBMultiTerminalSetup {
             abi.encodeCall(IJBTerminalStore.recordAddedBalanceFor, (_projectId, _native, payAmount + feeAmountIn)),
             abi.encode()
         );
+
+        uint256 amountFromFee = feeAmount - feeAmountIn;
+        uint256 leftOverAmount = payAmount - amountFromFee;
+
+        vm.expectEmit();
+        emit IJBFeeTerminal.ReturnHeldFees(_projectId, _native, payAmount, feeAmountIn, leftOverAmount, address(this));
 
         _terminal.addToBalanceOf{value: payAmount}({
             projectId: _projectId,
