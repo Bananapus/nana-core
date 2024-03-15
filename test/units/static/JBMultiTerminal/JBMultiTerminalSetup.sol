@@ -10,6 +10,7 @@ Tests relative to this contract will be dependent on mock calls/emits and stdSto
 contract JBMultiTerminalSetup is JBTest {
     // Target Contract
     IJBMultiTerminal public _terminal;
+    MetadataResolverHelper public _metadataHelper;
 
     // Mocks
     IJBPermissions public permissions = IJBPermissions(makeAddr("permissions"));
@@ -26,5 +27,7 @@ contract JBMultiTerminalSetup is JBTest {
         _terminal = new JBMultiTerminal(
             permissions, projects, directory, splits, store, feelessAddresses, permit2, trustedForwarder
         );
+
+        _metadataHelper = new MetadataResolverHelper();
     }
 }
