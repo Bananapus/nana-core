@@ -211,13 +211,7 @@ contract TestAddToBalanceOf_Local is JBMultiTerminalSetup {
             memo: "",
             metadata: ""
         });
-
     }
-
-    /* function test_WhenTheTerminalsTokenEqNativeToken() external {
-        // it will use msg.value
-        // tested above
-    } */
 
     function test_WhenTheSpecifiedTokenDNEQNativeTokenAndMsgvalueEqZero() external {
         // it will revert NO_MSG_VALUE_ALLOWED
@@ -246,13 +240,7 @@ contract TestAddToBalanceOf_Local is JBMultiTerminalSetup {
             memo: "",
             metadata: ""
         });
-
     }
-
-    /* function test_WhenTheTerminalIsCallingItself() external {
-        // it will not transfer
-        // not sure how to test this
-    } */
 
     modifier whenPayMetadataContainsPermitData() {
         _;
