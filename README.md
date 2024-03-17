@@ -65,3 +65,15 @@ For convenience, several utility commands are available in `package.json`.
 | `npm run deploy:optimism-testnet` | Deploy to Optimism testnet             |
 | `npm run deploy:polygon-mainnet`  | Deploy to Polygon mainnet              |
 | `npm run deploy:polygon-mumbai`   | Deploy to Polygon Mumbai testnet       |
+
+## Tips
+
+To view test coverage, run `npm run coverage` to generate an LCOV test report. You can use an extension like [Coverage Gutters](https://marketplace.visualstudio.com/items?itemName=ryanluker.vscode-coverage-gutters) to view coverage in your editor.
+
+If you're using Nomic Foundation's [Solidity](https://marketplace.visualstudio.com/items?itemName=NomicFoundation.hardhat-solidity) extension in VSCode, you may run into LSP errors because the extension cannot find dependencies outside of `lib`. You can often fix this by running:
+
+```bash
+forge remappings >> remappings.txt
+```
+
+This makes the extension aware of default remappings.
