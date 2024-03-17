@@ -43,6 +43,7 @@ interface IJBPayoutTerminal is IJBTerminal {
 
     event PayoutReverted(uint256 indexed projectId, JBSplit split, uint256 amount, bytes reason, address caller);
 
+    /// @notice Only callable by itself, included for testing.
     function executePayout(
         JBSplit calldata split,
         uint256 projectId,
