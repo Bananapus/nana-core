@@ -8,7 +8,6 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {ERC2771Context} from "@openzeppelin/contracts/metatx/ERC2771Context.sol";
 import {IERC20Metadata} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import {ERC165Checker} from "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
 import {mulDiv} from "@prb/math/src/Common.sol";
 import {IPermit2} from "@uniswap/permit2/src/interfaces/IPermit2.sol";
 import {IAllowanceTransfer} from "@uniswap/permit2/src/interfaces/IPermit2.sol";
@@ -667,7 +666,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             });
 
             // Make sure that the address supports the split hook interface.
-            if (ERC165Checker.supportsInterface(address(split.hook), type(IJBSplitHook).interfaceId)) {
+            if (!split.hook.supportsInterface(type(IJBSplitHook).interfaceId)) {
                 revert("400_1");
             }
 
