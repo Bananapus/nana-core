@@ -103,7 +103,7 @@ contract TestAddToBalanceOf_Local is JBMultiTerminalSetup {
         mockExpect(
             address(store),
             abi.encodeCall(IJBTerminalStore.recordAddedBalanceFor, (_projectId, _native, 0)),
-            abi.encode()
+            ""
         );
 
         _terminal.addToBalanceOf({
@@ -130,7 +130,7 @@ contract TestAddToBalanceOf_Local is JBMultiTerminalSetup {
         mockExpect(
             address(store),
             abi.encodeCall(IJBTerminalStore.recordAddedBalanceFor, (_projectId, _native, payAmount + feeAmountIn)),
-            abi.encode()
+            ""
         );
 
         vm.expectEmit();
@@ -163,7 +163,7 @@ contract TestAddToBalanceOf_Local is JBMultiTerminalSetup {
         mockExpect(
             address(store),
             abi.encodeCall(IJBTerminalStore.recordAddedBalanceFor, (_projectId, _native, lowerPayAmount + returnedFee)),
-            abi.encode()
+            ""
         );
 
         vm.expectEmit();
@@ -192,7 +192,7 @@ contract TestAddToBalanceOf_Local is JBMultiTerminalSetup {
         mockExpect(
             address(store),
             abi.encodeCall(IJBTerminalStore.recordAddedBalanceFor, (_projectId, _native, payAmount + feeAmountIn)),
-            abi.encode()
+            ""
         );
 
         vm.expectEmit();
@@ -424,7 +424,7 @@ contract TestAddToBalanceOf_Local is JBMultiTerminalSetup {
         mockExpect(
             address(permit2),
             abi.encodeCall(IAllowanceTransfer.permit(address, PermitSingle, bytes), (address(from), permit, sig)),
-            abi.encode()
+            ""
         );
 
         vm.startPrank(from);

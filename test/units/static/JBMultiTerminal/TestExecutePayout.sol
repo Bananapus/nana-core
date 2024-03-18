@@ -73,7 +73,7 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
         });
 
         // mock call to hooks processSplitWith
-        mockExpect(address(_hook), abi.encodeCall(IJBSplitHook.processSplitWith, (context)), abi.encode());
+        mockExpect(address(_hook), abi.encodeCall(IJBSplitHook.processSplitWith, (context)), "");
 
         _terminal.executePayout({
             split: _split,
@@ -119,7 +119,7 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
         });
 
         // mock call to hooks processSplitWith
-        mockExpect(address(_hook), abi.encodeCall(IJBSplitHook.processSplitWith, (context)), abi.encode());
+        mockExpect(address(_hook), abi.encodeCall(IJBSplitHook.processSplitWith, (context)), "");
 
         _terminal.executePayout({
             split: _split,
@@ -339,7 +339,7 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
         );
 
         // mock call for SafeERC20s safeIncreaseAllowance approval
-        mockExpect(_usdc, abi.encodeCall(IERC20.approve, (_mockSecondTerminal, amountAfterTax)), abi.encode());
+        mockExpect(_usdc, abi.encodeCall(IERC20.approve, (_mockSecondTerminal, amountAfterTax)), "");
 
         // mock call to second terminals addToBalanceOf
         mockExpect(
@@ -475,7 +475,7 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
         );
 
         // mock call for SafeERC20s safeIncreaseAllowance approval
-        mockExpect(_usdc, abi.encodeCall(IERC20.approve, (_mockSecondTerminal, amountAfterTax)), abi.encode());
+        mockExpect(_usdc, abi.encodeCall(IERC20.approve, (_mockSecondTerminal, amountAfterTax)), "");
 
         // mock call to second terminals pay function
         mockExpect(

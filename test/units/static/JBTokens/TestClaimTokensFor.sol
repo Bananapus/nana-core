@@ -82,7 +82,7 @@ contract TestClaimTokensFor_Local is JBTokensSetup {
         assertEq(_defaultAmount, _totalCreditSupply);
 
         // mock call to token mint()
-        mockExpect(address(_token), abi.encodeCall(IJBToken.mint, (_beneficiary, _defaultAmount)), abi.encode());
+        mockExpect(address(_token), abi.encodeCall(IJBToken.mint, (_beneficiary, _defaultAmount)), "");
 
         _tokens.claimTokensFor(_holder, _projectId, _defaultAmount, _beneficiary);
 

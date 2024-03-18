@@ -57,7 +57,7 @@ contract TestMintFor_Local is JBTokensSetup {
         vm.store(address(_tokens), tokenOfSlot, bytes32(uint256(uint160(address(_token)))));
 
         // mock call to token mint()
-        mockExpect(address(_token), abi.encodeCall(IJBToken.mint, (_holder, _defaultAmount)), abi.encode());
+        mockExpect(address(_token), abi.encodeCall(IJBToken.mint, (_holder, _defaultAmount)), "");
 
         // mock call to token totalSupply()
         mockExpect(address(_token), abi.encodeCall(IJBToken.totalSupply, ()), abi.encode(_totalSupply));
@@ -75,7 +75,7 @@ contract TestMintFor_Local is JBTokensSetup {
         vm.store(address(_tokens), tokenOfSlot, bytes32(uint256(uint160(address(_token)))));
 
         // mock call to token mint()
-        mockExpect(address(_token), abi.encodeCall(IJBToken.mint, (_holder, _defaultAmount)), abi.encode());
+        mockExpect(address(_token), abi.encodeCall(IJBToken.mint, (_holder, _defaultAmount)), "");
 
         // mock call to token totalSupply()
         mockExpect(address(_token), abi.encodeCall(IJBToken.totalSupply, ()), abi.encode(_overflowedSupply));

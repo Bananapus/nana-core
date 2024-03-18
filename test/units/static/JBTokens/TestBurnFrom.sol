@@ -82,7 +82,7 @@ contract TestBurnFrom_Local is JBTokensSetup {
         mockExpect(address(_token), abi.encodeCall(IJBToken.balanceOf, (address(this))), abi.encode(_defaultAmount));
 
         // mock call to token burn()
-        mockExpect(address(_token), abi.encodeCall(IJBToken.burn, (address(this), _defaultAmount)), abi.encode());
+        mockExpect(address(_token), abi.encodeCall(IJBToken.burn, (address(this), _defaultAmount)), "");
 
         _tokens.burnFrom(address(this), _projectId, _defaultAmount);
     }
