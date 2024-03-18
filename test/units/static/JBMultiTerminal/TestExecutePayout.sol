@@ -156,6 +156,64 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
 
     function test_GivenThePayoutTokenIsErc20() external whenASplitHookIsConfigured {
         // it will safe increase allowance
+
+        // mock call to split hook supportsInterface
+        mockExpect(
+            address(_hook),
+            abi.encodeCall(IERC165.supportsInterface, (type(IJBSplitHook).interfaceId)),
+            abi.encode(true)
+        );
+
+        // mock call to FeelessAddresses isFeeless
+        mockExpect(address(feelessAddresses), abi.encodeCall(IJBFeelessAddresses.isFeeless, (_hook)), abi.encode(false));
+
+        JBSplit memory _splitMemory = JBSplit({
+            preferAddToBalance: false,
+            percent: JBConstants.SPLITS_TOTAL_PERCENT,
+            projectId: _noProject,
+            beneficiary: _noBene,
+            lockedUntil: _lockedUntil,
+            hook: IJBSplitHook(_hook)
+        });
+
+        uint256 taxedAmount = JBFees.feeAmountIn(_defaultAmount, _fee);
+
+        // Create the context to send to the split hook.
+        JBSplitHookContext memory context = JBSplitHookContext({
+            token: _usdc,
+            amount: _defaultAmount - taxedAmount, // It will call with taxed amount
+            decimals: 0,
+            projectId: _noProject,
+            groupId: uint256(uint160(_usdc)),
+            split: _splitMemory
+        });
+
+        // mock call to hooks processSplitWith
+        mockExpect(address(_hook), abi.encodeCall(IJBSplitHook.processSplitWith, (context)), abi.encode());
+
+        // mock call to usdc allowance
+        mockExpect(
+            address(_usdc),
+            abi.encodeCall(IERC20.allowance, (address(_terminal), _hook)),
+            abi.encode(0)
+        );
+
+        // Why isn't this being called? Something with SafeErc20 lib??
+        // mock call to usdc approve
+        mockExpect(
+            _usdc,
+            abi.encodeCall(IERC20.approve, (_hook, _defaultAmount)),
+            abi.encode()
+        );
+
+        _terminal.executePayout({
+            split: _split,
+            projectId: _noProject,
+            token: _usdc,
+            amount: _defaultAmount,
+            originalMessageSender: address(this)
+        });
+
     }
 
     function test_GivenThePayoutTokenIsNative() external whenASplitHookIsConfigured {
