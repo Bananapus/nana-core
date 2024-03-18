@@ -12,5 +12,5 @@ interface IJBToken {
 
     function burn(address account, uint256 amount) external;
 
-    function initialize(uint256 id, string memory name, string memory symbol, address owner) external;
+    function initialize(string memory name, string memory symbol, address owner) external;
 }

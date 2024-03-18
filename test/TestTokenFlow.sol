@@ -75,9 +75,7 @@ contract TestTokenFlow_Local is TestBaseWorkflow {
         } else {
             // Create a new `IJBToken` and change it's owner to the `JBTokens` contract.
             IJBToken _newToken = new JBERC20();
-            _newToken.initialize({id: _projectId, name: "NewTestName", symbol: "NewTestSymbol", owner: _projectOwner});
-
-            Ownable(address(_newToken)).transferOwnership(address(_tokens));
+            _newToken.initialize({name: "NewTestName", symbol: "NewTestSymbol", owner: address(_tokens)});
 
             // Set the projects token to `_newToken`.
             _controller.setTokenFor(_projectId, _newToken);

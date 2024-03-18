@@ -33,7 +33,7 @@ contract JBTokens is JBControlled, IJBTokens {
 
     //*********************************************************************//
     // --------------- public immutable stored properties ---------------- //
-    //*********************************************************************// 
+    //*********************************************************************//
 
     IJBToken public immutable TOKEN;
 
@@ -144,12 +144,8 @@ contract JBTokens is JBControlled, IJBTokens {
             ? IJBToken(Clones.clone(address(TOKEN)))
             : IJBToken(Clones.cloneDeterministic(address(TOKEN), salt));
 
-        token.initialize({
-            id: projectId,
-            name: name,
-            symbol: symbol,
-            owner: address(this)
-        });
+        // Initialize the token.
+        token.initialize({name: name, symbol: symbol, owner: address(this)});
 
         // Store the token contract.
         tokenOf[projectId] = token;

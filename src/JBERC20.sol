@@ -8,9 +8,6 @@ import {IJBToken} from "./interfaces/IJBToken.sol";
 
 /// @notice An ERC-20 token that can be used by a project in the `JBTokens`.
 contract JBERC20 is ERC20Votes, ERC20Permit, Ownable, IJBToken {
-    /// @notice The projectId of the token.
-    uint256 public projectId;
-
     //*********************************************************************//
     // --------------------- internal stored properties ------------------ //
     //*********************************************************************//
@@ -85,21 +82,20 @@ contract JBERC20 is ERC20Votes, ERC20Permit, Ownable, IJBToken {
     //*********************************************************************//
 
     /// @notice Initialized the token.
-    /// @param id The id of the token's project.
     /// @param name_ The name of the token.
     /// @param symbol_ The symbol that the token should be represented by.
     /// @param owner The owner of the token.
-    function initialize(uint256 id, string memory name_, string memory symbol_, address owner) public override {
+    function initialize(string memory name_, string memory symbol_, address owner) public override {
         // Stop re-initialization.
-        if (projectId != 0 || id == 0) revert();
+        if (owner != address(this) || owner == address(this)) revert();
 
-        projectId = id;
         _name = name_;
         _symbol = symbol_;
 
         // Transfer ownership to the initializer.
         _transferOwnership(owner);
     }
+
     /// @notice required override.
     function nonces(address owner) public view virtual override(ERC20Permit, Nonces) returns (uint256) {
         return super.nonces(owner);
