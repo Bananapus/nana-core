@@ -694,7 +694,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             }
 
             // Trigger any inherited pre-transfer logic.
-            _beforeTransferTo({to: address(terminal), token: token, amount: netPayoutAmount});
+            if (terminal != this) _beforeTransferTo({to: address(terminal), token: token, amount: netPayoutAmount});
 
             // Send the `projectId` in the metadata as a referral.
             bytes memory metadata = bytes(abi.encodePacked(projectId));
