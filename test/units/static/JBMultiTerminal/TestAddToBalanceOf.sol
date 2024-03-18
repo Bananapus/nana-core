@@ -100,11 +100,7 @@ contract TestAddToBalanceOf_Local is JBMultiTerminalSetup {
         // it will set heldFeesOf project to the previously set heldFee
 
         // mock call to store recordAddedBalanceFor
-        mockExpect(
-            address(store),
-            abi.encodeCall(IJBTerminalStore.recordAddedBalanceFor, (_projectId, _native, 0)),
-            ""
-        );
+        mockExpect(address(store), abi.encodeCall(IJBTerminalStore.recordAddedBalanceFor, (_projectId, _native, 0)), "");
 
         _terminal.addToBalanceOf({
             projectId: _projectId,
