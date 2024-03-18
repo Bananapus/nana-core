@@ -8,6 +8,7 @@ import {JBProjects} from "src/JBProjects.sol";
 import {JBPrices} from "src/JBPrices.sol";
 import {JBRulesets} from "src/JBRulesets.sol";
 import {JBDirectory} from "src/JBDirectory.sol";
+import {JBERC20} from "src/JBERC20.sol";
 import {JBTokens} from "src/JBTokens.sol";
 import {JBSplits} from "src/JBSplits.sol";
 import {JBFeelessAddresses} from "src/JBFeelessAddresses.sol";
@@ -74,7 +75,7 @@ contract Deploy is Script {
                     projects: projects,
                     directory: directory,
                     rulesets: rulesets,
-                    tokens: new JBTokens(directory),
+                    tokens: new JBTokens(directory, new JBERC20()),
                     splits: splits,
                     fundAccessLimits: new JBFundAccessLimits(directory),
                     trustedForwarder: trustedForwarder
