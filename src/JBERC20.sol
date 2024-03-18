@@ -80,14 +80,14 @@ contract JBERC20 is ERC20Votes, ERC20Permit, Ownable, IJBToken {
     //*********************************************************************//
     // ----------------------- public transactions ----------------------- //
     //*********************************************************************//
-
+    
     /// @notice Initialized the token.
     /// @param name_ The name of the token.
     /// @param symbol_ The symbol that the token should be represented by.
     /// @param owner The owner of the token.
     function initialize(string memory name_, string memory symbol_, address owner) public override {
         // Stop re-initialization.
-        if (owner != address(this) || owner == address(this)) revert();
+        if (this.owner() != address(0) || owner == address(0)) revert();
 
         _name = name_;
         _symbol = symbol_;

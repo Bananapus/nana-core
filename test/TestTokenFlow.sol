@@ -74,7 +74,7 @@ contract TestTokenFlow_Local is TestBaseWorkflow {
             _controller.deployERC20For({projectId: _projectId, name: "TestName", symbol: "TestSymbol", salt: bytes32(0)});
         } else {
             // Create a new `IJBToken` and change it's owner to the `JBTokens` contract.
-            IJBToken _newToken = new JBERC20();
+            IJBToken _newToken = IJBToken(Clones.clone(address(new JBERC20())));
             _newToken.initialize({name: "NewTestName", symbol: "NewTestSymbol", owner: address(_tokens)});
 
             // Set the projects token to `_newToken`.
