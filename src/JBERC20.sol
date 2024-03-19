@@ -80,7 +80,7 @@ contract JBERC20 is ERC20Votes, ERC20Permit, Ownable, IJBToken {
     //*********************************************************************//
     // ----------------------- public transactions ----------------------- //
     //*********************************************************************//
-    
+
     /// @notice Initialized the token.
     /// @param name_ The name of the token.
     /// @param symbol_ The symbol that the token should be represented by.
