@@ -41,13 +41,6 @@ contract Deploy is Script, Sphinx {
 
     /// @notice Deploys the protocol.
     function run() public sphinx {
-        if (
-            block.chainid != 1 && block.chainid != 11_155_111 && block.chainid != 420 && block.chainid != 11_155_420
-                && block.chainid != 137 && block.chainid != 80_001
-        ) {
-            revert("Invalid RPC / no juice contracts deployed on this network");
-        }
-
         address _sender = safeAddress();
 
         JBPermissions permissions = new JBPermissions();
