@@ -1,0 +1,14 @@
+TestRecordPaymentFrom_Local
+├── when current ruleset cycleNumber is zero
+│   └── it will revert INVALID_RULESET
+├── when current ruleset pausePay eq true
+│   └── it will revert RULESET_PAYMENT_PAUSED
+├── when current ruleset useDataHookForPay eq true and the hook dneq zero address
+│   ├── given the hook returns a non zero specifiedAmount
+│   │   └── it will decrement the amount being added to the local balance
+│   └── given weight returned by the hook is zero
+│       └── it will return zero as the tokenCount
+├── when a hook is not configured
+│   └── it will derive weight from the ruleset
+└── when the terminal should base its weight on a currency other than the ruleset baseCurrency
+    └── it will return an adjusted weightRatio

@@ -1,0 +1,9 @@
+TestBurnTokensOf_Local
+├── when caller is not permissioned or terminal
+│   └── it should revert UNAUTHORIZED()
+├── when caller is terminal and tokenCount gt zero
+│   └── it should burn and emit BurnTokens
+├── when caller has permission and tokenCount gt zero
+│   └── it should burn and emit BurnTokens
+└── when tokenCount eq zero
+    └── it should revert NO_BURNABLE_TOKENS

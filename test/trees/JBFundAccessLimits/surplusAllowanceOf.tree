@@ -1,0 +1,5 @@
+TestSurplusAllowanceOf_Local
+├── when a project has the specific surplus configured
+│   └── it will return uin256 surplusAllowance
+└── when it doesnt have the specific surplus configured
+    └── it will return 0

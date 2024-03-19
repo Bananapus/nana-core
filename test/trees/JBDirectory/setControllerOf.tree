@@ -1,0 +1,11 @@
+TestSetControllerOf_Local
+├── when caller does not have any permission
+│   └── it should revert
+└── when caller isAllowedToSetFirstController or has permission
+    ├── given that a project doesn't exist
+    │   └── it should revert
+    └── given that the project exists
+        ├── given that the current controller is not setControllerAllowed
+        │   └── it should revert
+        └── given that the current controller is setControllerAllowed
+            └── it should set controllerOf and emit SetController

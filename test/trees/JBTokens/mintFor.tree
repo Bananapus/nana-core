@@ -1,0 +1,10 @@
+TestMintFor_Local
+├── when caller is controller of project
+│   ├── given token of the project EQ zero address
+│   │   └── it will add tokens to credit balances and total credit supply
+│   ├── given token DNEQ zero address
+│   │   └── it will call token mint
+│   └── given total supply after mint or credits GT uint208 max
+│       └── it will revert OVERFLOW_ALERT
+└── when caller is not controller
+    └── it will revert CONTROLLER_UNAUTHORIZED

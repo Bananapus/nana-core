@@ -1,0 +1,25 @@
+TestCurrentSurplusOf_Local
+├── when surplus requires decimal adjustment
+│   ├── given surplus requires decimal adjustment and accounting currency matches target currency
+│   │   └── it will adjust surplus to target decimals without conversion
+│   └── given surplus requires decimal adjustment and accounting currency does not match target currency
+│       └── it will convert surplus to target currency with decimal adjustment
+├── when surplus does not require decimal adjustment
+│   ├── given accounting currency matches target currency
+│   │   └── it will return standard surplus
+│   └── given accounting currency does not match target currency
+│       └── it will convert surplus to target currency without decimal adjustment
+├── given a payout limit requires decimal adjustment
+│   ├── given a payout limit requires decimal adjustment and payout limit currency matches target currency
+│   │   └── it will adjust payout limit to target decimals without conversion
+│   └── given payout limit currency that requires decimal adjustment does not match target currency
+│       └── it will convert payout limit to target currency with decimal adjustment
+├── given a payout limit does not require decimal adjustment
+│   ├── given payout limit currency matches target currency
+│   │   └── it will return standard surplus
+│   └── given payout limit currency does not match target currency
+│       └── it will convert payout limit target currency without decimal adjustment
+├── given cumulative payout limit greater than surplus
+│   └── it will decrease surplus by payout limit amount
+└── given cumulative payout limit not greater than surplus
+    └── it will return zero

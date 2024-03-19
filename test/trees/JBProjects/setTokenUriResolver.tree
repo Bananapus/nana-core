@@ -1,0 +1,5 @@
+TestSetTokenURIResolver_Local
+├── when caller is owner
+│   └── it will set resolver and emit SetTokenUriResolver
+└── when caller is not owner
+    └── it will revert

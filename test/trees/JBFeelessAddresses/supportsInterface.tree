@@ -1,0 +1,5 @@
+TestSupportsInterface_Local
+├── when it supports either IJBFeelessAddresses or IERC165
+│   └── it should return true
+└── when it doesnt support either IJBFeelessAddresses or IERC165
+    └── it should return false

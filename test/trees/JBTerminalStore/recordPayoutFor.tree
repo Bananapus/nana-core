@@ -1,0 +1,10 @@
+TestRecordPayoutFor_Local
+└── when there is a used payout limit of the current ruleset
+    ├── given the calling amount gt what is available to payout
+    │   └── it will revert PAYOUT_LIMIT_EXCEEDED
+    ├── given the calling currency eq the context currency
+    │   └── it will not convert prices and return
+    ├── given the calling currency dneq the context currency
+    │   └── it will convert prices and return
+    └── given the amountPaidOut exceeds balance
+        └── it will revert INADEQUATE_TERMINAL_STORE_BALANCE

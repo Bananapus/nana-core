@@ -1,0 +1,8 @@
+TestSurplusAllowancesOf_Local
+└── when a project has specified surplus allowances
+    ├── given they are specified for a specific ruleset
+    │   └── it will return them
+    ├── given they are specified for a specific terminal
+    │   └── it will return them
+    └── given they are specified for a specific token
+        └── it will return them

@@ -1,0 +1,5 @@
+TestTokenURI_Local
+├── when there's no resolver
+│   └── it will return empty string
+└── when there's a resolver
+    └── it will return the resolved URI

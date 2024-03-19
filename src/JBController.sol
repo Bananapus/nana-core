@@ -52,12 +52,14 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     //*********************************************************************//
 
     error RULESET_ALREADY_LAUNCHED();
+    error RULESETS_ARRAY_EMPTY();
     error INVALID_BASE_CURRENCY();
     error INVALID_REDEMPTION_RATE();
     error INVALID_RESERVED_RATE();
     error CONTROLLER_MIGRATION_NOT_ALLOWED();
     error MINT_NOT_ALLOWED_AND_NOT_TERMINAL_OR_HOOK();
     error NO_BURNABLE_TOKENS();
+    error NO_RESERVED_TOKENS();
     error CREDIT_TRANSFERS_PAUSED();
     error ZERO_TOKENS_TO_MINT();
 
@@ -337,6 +339,8 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         override
         returns (uint256 rulesetId)
     {
+        if (rulesetConfigurations.length == 0) revert RULESETS_ARRAY_EMPTY();
+
         // Enforce permissions.
         _requirePermissionFrom({
             account: PROJECTS.ownerOf(projectId),
@@ -528,9 +532,6 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     /// @param from The controller being migrated from.
     /// @param projectId The ID of the project that will be migrated to this controller.
     function receiveMigrationFrom(IERC165 from, uint256 projectId) external virtual override {
-        projectId; // Prevents unused var compiler and natspec complaints.
-        from; // Prevents unused var compiler and natspec complaints.
-
         // Copy the main metadata if relevant.
         if (
             from.supportsInterface(type(IJBProjectUriRegistry).interfaceId) && DIRECTORY.controllerOf(projectId) == from
@@ -794,11 +795,14 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         internal
         returns (uint256 tokenCount)
     {
-        // Get the current ruleset to read the reserved rate from.
-        JBRuleset memory ruleset = RULESETS.currentOf(projectId);
-
         // Get a reference to the number of tokens that need to be minted.
         tokenCount = pendingReservedTokenBalanceOf[projectId];
+
+        // Revert if there are no reserved tokens
+        if (tokenCount == 0) revert NO_RESERVED_TOKENS();
+
+        // Get the current ruleset to read the reserved rate from.
+        JBRuleset memory ruleset = RULESETS.currentOf(projectId);
 
         // Reset the reserved token balance
         pendingReservedTokenBalanceOf[projectId] = 0;

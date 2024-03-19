@@ -1,0 +1,14 @@
+TestAddPriceFeedFor_Local
+├── when projectId is the DEFAULT_PROJECT_ID and msg sender is the owner
+│   └── it should add the price feed without checking permissions
+├── when projectId is not the DEFAULT_PROJECT_ID
+│   └── it should require ADD_PRICE_FEED permission from the project's owner or an operator
+├── when pricingCurrency or unitCurrency is 0
+│   └── it should revert with INVALID_CURRENCY
+├── when a default feed for the currency pair or its inverse already exists
+│   └── it should revert with PRICE_FEED_ALREADY_EXISTS
+├── when this project already has feeds for the currency pair or its inverse
+│   └── it should revert with PRICE_FEED_ALREADY_EXISTS
+└── given the above conditions are met
+    ├── it should store the feed for the project and currency pair
+    └── it should emit AddPriceFeed event with projectId, pricingCurrency, unitCurrency, and feed

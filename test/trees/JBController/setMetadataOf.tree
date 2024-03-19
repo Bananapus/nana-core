@@ -1,0 +1,5 @@
+TestSetMetadataOf_Local
+├── when caller is owner or has permission
+│   └── it should set metadata and emit SetMetadata
+└── when caller is not owner or has permission
+    └── it should revert

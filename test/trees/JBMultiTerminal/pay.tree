@@ -1,0 +1,23 @@
+TestPay_Local
+├── when tokens returned LT minReturnedTokens
+│   └── it will revert UNDER_MIN_RETURNED_TOKENS
+├── when terminalStore returns tokenCount GT zero and happypath
+│   └── it will mint tokens and emit Pay
+├── when a pay hook is configured and happypath
+│   ├── given the paid token is an ERC20
+│   │   └── it will increase allowance to the hook and emit HookAfterRecordPay and Pay
+│   └── given the paid token is native
+│       └── it will send ETH to the hook and emit HookAfterRecordPay and Pay
+├── when the project DNH accounting context for the token
+│   └── it will revert TOKEN_NOT_ACCEPTED
+├── when the terminals token eq native token
+│   └── it will use msg.value
+├── when the terminals token eq native token and msgvalue eq zero
+│   └── it will revert NO_MSG_VALUE_ALLOWED
+├── when the terminal is calling itself
+│   └── it will not transfer
+└── when pay metadata contains permit data
+    ├── given the permit allowance lt amount
+    │   └── it will revert PERMIT_ALLOWANCE_NOT_ENOUGH
+    └── given permit allowance is good
+        └── it will set permit allowance to spend tokens for user via permit2

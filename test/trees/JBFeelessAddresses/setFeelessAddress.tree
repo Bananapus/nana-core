@@ -1,0 +1,5 @@
+TestSetFeelessAddress_Local
+├── when caller is owner
+│   └── it should set isFeeless and emit SetFeelessAddress
+└── when caller is not owner
+    └── it should revert

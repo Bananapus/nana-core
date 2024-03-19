@@ -1,0 +1,14 @@
+TestExecuteProcessFee_Local
+├── when caller is not itself
+│   └── it will revert
+├── when feeTerminal EQ zero address
+│   └── it will revert 404_1
+├── when token is erc20
+│   └── it will safeIncreaseAllowance
+├── when feeTerminal EQ this address
+│   └── it will call internal _pay
+└── when feeTerminal DNEQ this address
+    ├── given token EQ NATIVE_TOKEN
+    │   └── it will call external pay with msgvalue
+    └── given token DNEQ NATIVE_TOKEN
+        └── it will call external pay with zero msgvalue

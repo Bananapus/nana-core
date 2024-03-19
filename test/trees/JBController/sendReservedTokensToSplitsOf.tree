@@ -1,0 +1,12 @@
+TestSendReservedTokensToSplitsOf_Local
+├── when the project has no reserved token splits
+│   └── it will mint to the project owner
+└── when the project has reserved token splits
+    ├── given a hook is configured
+    │   └── it will mint to hook and call its processSplitWith function
+    ├── given a beneficiary is configured
+    │   └── it will mint for the beneficiary
+    ├── given the projectId of split is nonzero and a beneficiary and hook are not configured
+    │   └── it will mint to the owner of the project
+    └── given projectId is zero and nothing is configured
+        └── it will mint to whoever called sendReservedTokens

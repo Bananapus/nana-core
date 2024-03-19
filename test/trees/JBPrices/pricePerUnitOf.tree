@@ -1,0 +1,11 @@
+TestPricePerUnitOf_Local
+├── when pricingCurrency is the same as unitCurrency
+│   └── it should return 1 with requested decimals
+├── when price feed exists for projectId and pricingCurrency to unitCurrency
+│   └── it should return the current price from price feed
+├── when inverse price feed exists for projectId and unitCurrency to pricingCurrency
+│   └── it should return the inverse of the current price from inverse price feed
+├── when projectId is not the DEFAULT_PROJECT_ID and no direct or inverse price feed is found
+│   └── it should attempt to use the default price feed for DEFAULT_PROJECT_ID
+└── when no price feed is found or exists including default case
+    └── it should revert with PRICE_FEED_NOT_FOUND

@@ -1,0 +1,11 @@
+TestSetTerminalsOf_Local
+├── when caller has no permission
+│   └── it should revert with UNAUTHORIZED()
+└── when caller has permission
+    ├── given that not setTerminalsAllowed
+    │   └── it should revert with revert SET_TERMINALS_NOT_ALLOWED()
+    └── given that setTerminalsAllowed
+        ├── given that duplicate terminals were added
+        │   └── it should revert with DUPLICATE_TERMINALS()
+        └── given that duplicate terminals were not added
+            └── it should set terminals and emit SetTerminals

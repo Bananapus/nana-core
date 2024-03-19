@@ -1,0 +1,15 @@
+TestSetPrimaryTerminalOf_Local
+├── when caller has no permission
+│   └── it should revert with UNAUTHORIZED()
+└── when caller has permission
+    ├── given that there is no accountingContextForTokenOf
+    │   └── it should revert with TOKEN_NOT_ACCEPTED
+    └── given that there is an accountingContextForTokenOf
+        ├── given that the terminal has already been added
+        │   └── it should not add the terminal
+        └── given that the terminal has not been added
+            ├── given that the project is not allowed to set terminals
+            │   └── it should revert with SET_TERMINALS_NOT_ALLOWED
+            └── given that the project is allowed to set terminals
+                ├── it should set the terminal and emit AddTerminal
+                └── it should set the terminal as primary and emit SetPrimaryTerminal

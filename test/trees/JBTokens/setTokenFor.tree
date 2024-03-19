@@ -1,0 +1,11 @@
+TestSetTokenFor_Local
+├── when token is the zero address
+│   └── it will revert EMPTY_TOKEN
+├── when a token is already set
+│   └── it will revert TOKEN_ALREADY_SET
+├── when a token is associated with another project
+│   └── it will revert TOKEN_ALREADY_SET
+├── when a tokens decimals DNEQ 18
+│   └── it will revert TOKENS_MUST_HAVE_18_DECIMALS
+└── when happy path
+    └── it will set token states and emit SetToken
