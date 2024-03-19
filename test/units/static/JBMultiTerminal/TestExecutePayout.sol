@@ -664,7 +664,5 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
             amount: _defaultAmount,
             originalMessageSender: address(this)
         });
-
     }
-
 }
