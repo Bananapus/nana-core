@@ -630,4 +630,41 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
             originalMessageSender: address(this)
         });
     }
+
+    function test_WhenTheCallerIsNotItself() external {
+        // it will revert
+
+        JBSplit memory _splitMemory = JBSplit({
+            preferAddToBalance: false,
+            percent: JBConstants.SPLITS_TOTAL_PERCENT,
+            projectId: _noProject,
+            beneficiary: _noBene,
+            lockedUntil: _lockedUntil,
+            hook: IJBSplitHook(address(0))
+        });
+
+        uint256 taxedAmount = JBFees.feeAmountIn(_defaultAmount, _fee);
+        uint256 amountAfterTax = _defaultAmount - taxedAmount;
+
+        // Create the context to send to the split hook.
+        JBSplitHookContext memory context = JBSplitHookContext({
+            token: _usdc,
+            amount: amountAfterTax,
+            decimals: 0,
+            projectId: _noProject,
+            groupId: uint256(uint160(_usdc)),
+            split: _splitMemory
+        });
+
+        vm.expectRevert();
+        _terminal.executePayout({
+            split: _splitMemory,
+            projectId: _projectId,
+            token: _usdc,
+            amount: _defaultAmount,
+            originalMessageSender: address(this)
+        });
+
+    }
+
 }
