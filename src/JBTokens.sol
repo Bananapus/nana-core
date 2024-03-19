@@ -142,7 +142,7 @@ contract JBTokens is JBControlled, IJBTokens {
 
         token = salt == bytes32(0)
             ? IJBToken(Clones.clone(address(TOKEN)))
-            : IJBToken(Clones.cloneDeterministic(address(TOKEN), salt));
+            : IJBToken(Clones.cloneDeterministic(address(TOKEN), keccak256(abi.encode(msg.sender, salt))));
 
         // Initialize the token.
         token.initialize({name: name, symbol: symbol, owner: address(this)});
