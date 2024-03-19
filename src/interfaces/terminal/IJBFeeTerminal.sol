@@ -50,4 +50,13 @@ interface IJBFeeTerminal is IJBTerminal {
     function heldFeesOf(uint256 projectId, address token) external view returns (JBFee[] memory);
 
     function processHeldFeesOf(uint256 projectId, address token) external;
+
+    function executeProcessFee(
+        uint256 projectId,
+        address token,
+        uint256 amount,
+        address beneficiary,
+        IJBTerminal feeTerminal
+    )
+        external;
 }
