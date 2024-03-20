@@ -16,8 +16,15 @@ contract TestPay_Local is JBMultiTerminalSetup {
     address _mockController = makeAddr("mc");
     IJBPayHook _mockHook = IJBPayHook(makeAddr("hook"));
 
+    // mock erc20 necessary for balance checks
+    MockERC20 _mockToken;
+    uint256 _mockTokenCurrency;
+
     function setUp() public {
         super.multiTerminalSetup();
+
+        _mockToken = new MockERC20("testToken", "TT");
+        _mockTokenCurrency = uint32(uint160(address(_mockToken)));
     }
 
     modifier whenNativeTokenIsAccepted() {
@@ -48,13 +55,13 @@ contract TestPay_Local is JBMultiTerminalSetup {
 
         // mock call to token decimals
         mockExpect(
-            _usdc,
+            address(_mockToken),
             abi.encodeCall(IERC20Metadata.decimals, ()),
             abi.encode(6)
         );
 
         address[] memory _tokens = new address[](1);
-        _tokens[0] = _usdc;
+        _tokens[0] = address(_mockToken);
 
         _terminal.addAccountingContextsFor(_projectId, _tokens);
 
@@ -164,50 +171,23 @@ contract TestPay_Local is JBMultiTerminalSetup {
         _;
     }
 
-    function test_GivenThePaidTokenIsAnERC20() external whenERC20IsAccepted() {
+    function test_GivenThePaidTokenIsAnERC20AndPayHookIsConfigured() external whenERC20IsAccepted() {
         // it will increase allowance to the hook and emit HookAfterRecordPay and Pay
+
+        // mint mocked erc20 tokens to this contract
+        _mockToken.mint(address(this), _defaultAmount);
+
+        // approve those tokens to the terminal
+        _mockToken.approve(address(_terminal), _defaultAmount);
 
         uint256 _mintAmount = 1e9;
 
-        // mock call to usdc balanceOf
-        mockExpect(
-            _usdc,
-            abi.encodeCall(IERC20.balanceOf, (address(_terminal))),
-            abi.encode(_defaultAmount)
-        );
-
-        // mock call to usdc allowance
-        mockExpect(
-            _usdc,
-            abi.encodeCall(IERC20.allowance, (address(this), address(_terminal))),
-            abi.encode(_defaultAmount)
-        );
-
-        // mock transferFrom
-        mockExpect(
-            _usdc,
-            abi.encodeCall(IERC20.transferFrom, (address(this), address(_terminal), _defaultAmount)),
-            abi.encode(true)
-        );
-
-        // mock hook allowance call
-        mockExpect(
-            _usdc,
-            abi.encodeCall(IERC20.allowance, (address(_terminal), address(_mockHook))),
-            abi.encode(_defaultAmount)
-        );
-
-        // mock the subsequent approval call
-        mockExpect(
-            _usdc,
-            abi.encodeCall(IERC20.approve, (address(_mockHook), _defaultAmount * 2)),
-            abi.encode(true)
-        );
+        // set an approval to the pay hook as the terminal
+        vm.prank(address(_terminal));
+        _mockToken.approve(address(_mockHook), _defaultAmount);
 
         // needed for next mock call returns
-        /// @notice the value here is zero as self balance of the terminal is called twice and we cant separately mock
-        /// the subsequent second call with the correct value _defaultAmount (forge limitation).
-        JBTokenAmount memory tokenAmount = JBTokenAmount(_usdc, 0, 6, uint32(_usdcCurrency));
+        JBTokenAmount memory tokenAmount = JBTokenAmount(address(_mockToken), _defaultAmount, 6, uint32(_mockTokenCurrency));
         JBPayHookSpecification[] memory hookSpecifications = new JBPayHookSpecification[](1);
         hookSpecifications[0] = JBPayHookSpecification({
             hook: _mockHook,
@@ -243,7 +223,7 @@ contract TestPay_Local is JBMultiTerminalSetup {
             abi.encode(_mintAmount)
         );
 
-        /* // Needed for hook call
+        // Needed for hook call
         JBAfterPayRecordedContext memory context = JBAfterPayRecordedContext({
             payer: address(this),
             projectId: _projectId,
@@ -262,24 +242,28 @@ contract TestPay_Local is JBMultiTerminalSetup {
             address(_mockHook),
             abi.encodeCall(IJBPayHook.afterPayRecordedWith, (context)),
             ""
-        ); */
+        );
 
-        /* vm.expectEmit();
+        // expect _fulfillPayHookSpecificationsFor emit
+        vm.expectEmit();
+        emit IJBTerminal.HookAfterRecordPay(_mockHook, context, _defaultAmount, address(this));
+
+        vm.expectEmit();
         emit IJBTerminal.Pay(
             returnedRuleset.id,
             returnedRuleset.cycleNumber,
             _projectId,
             address(this),
             _bene,
-            0,
+            _defaultAmount,
             _mintAmount,
             "",
             bytes(""),
             address(this)
-        ); */
+        );
         _terminal.pay({
             projectId: _projectId,
-            token: _usdc,
+            token: address(_mockToken),
             amount: _defaultAmount,
             beneficiary: _bene,
             minReturnedTokens: _mintAmount,
@@ -288,8 +272,97 @@ contract TestPay_Local is JBMultiTerminalSetup {
         });
     }
 
-    function test_GivenThePaidTokenIsNative() external whenAPayHookIsConfiguredAndHappypath {
+    function test_GivenThePaidTokenIsNativeAndPayHookIsConfigured() external whenNativeTokenIsAccepted {
         // it will send ETH to the hook and emit HookAfterRecordPay and Pay
+
+        // needed for next mock call returns
+        JBTokenAmount memory tokenAmount = JBTokenAmount(_native, _defaultAmount, 18, uint32(_nativeCurrency));
+        JBPayHookSpecification[] memory hookSpecifications = new JBPayHookSpecification[](1);
+        hookSpecifications[0] = JBPayHookSpecification({
+            hook: _mockHook,
+            amount: _defaultAmount,
+            metadata: ""
+        });
+
+        JBRuleset memory returnedRuleset = JBRuleset({
+            cycleNumber: 1,
+            id: 1,
+            basedOnId: 0,
+            start: 0,
+            duration: 0,
+            weight: 0,
+            decayRate: 0,
+            approvalHook: IJBRulesetApprovalHook(address(0)),
+            metadata: 0
+        });
+
+        uint256 _mintAmount = 1e9;
+
+        // mock call to JBTerminalStore recordPaymentFrom
+        mockExpect(
+            address(store),
+            abi.encodeCall(
+                IJBTerminalStore.recordPaymentFrom, (address(this), tokenAmount, _projectId, _bene, bytes(""))
+            ),
+            abi.encode(returnedRuleset, _mintAmount, hookSpecifications)
+        );
+
+        // mock call to controller (this contract per modifier mock call) mintTokensOf
+        mockExpect(
+            address(this),
+            abi.encodeCall(IJBController.mintTokensOf, (_projectId, _mintAmount, _bene, "", true)),
+            abi.encode(_mintAmount)
+        );
+
+        // Needed for hook call
+        JBAfterPayRecordedContext memory context = JBAfterPayRecordedContext({
+            payer: address(this),
+            projectId: _projectId,
+            rulesetId: returnedRuleset.id,
+            amount: tokenAmount,
+            forwardedAmount: tokenAmount,
+            weight: returnedRuleset.weight,
+            projectTokenCount: _mintAmount,
+            beneficiary: _bene,
+            hookMetadata: bytes(""),
+            payerMetadata: bytes("")
+        });
+
+        // mock call to hook (including msg.value)
+        mockExpect(
+            address(_mockHook),
+            abi.encodeCall(IJBPayHook.afterPayRecordedWith, (context)),
+            ""
+        );
+
+        // expect _fulfillPayHookSpecificationsFor emit
+        vm.expectEmit();
+        emit IJBTerminal.HookAfterRecordPay(_mockHook, context, _defaultAmount, address(this));
+
+        vm.expectEmit();
+        emit IJBTerminal.Pay(
+            returnedRuleset.id,
+            returnedRuleset.cycleNumber,
+            _projectId,
+            address(this),
+            _bene,
+            _defaultAmount,
+            _mintAmount,
+            "",
+            bytes(""),
+            address(this)
+        );
+
+        _terminal.pay{value: 1e18}({
+            projectId: _projectId,
+            token: _native,
+            amount: _defaultAmount,
+            beneficiary: _bene,
+            minReturnedTokens: 0,
+            memo: "",
+            metadata: ""
+        });
+
     }
 
     function test_WhenTheProjectDNHAccountingContextForTheToken() external {
