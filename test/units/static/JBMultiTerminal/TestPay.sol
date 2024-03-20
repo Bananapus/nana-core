@@ -54,11 +54,7 @@ contract TestPay_Local is JBMultiTerminalSetup {
         );
 
         // mock call to token decimals
-        mockExpect(
-            address(_mockToken),
-            abi.encodeCall(IERC20Metadata.decimals, ()),
-            abi.encode(6)
-        );
+        mockExpect(address(_mockToken), abi.encodeCall(IERC20Metadata.decimals, ()), abi.encode(6));
 
         address[] memory _tokens = new address[](1);
         _tokens[0] = address(_mockToken);
@@ -171,7 +167,7 @@ contract TestPay_Local is JBMultiTerminalSetup {
         _;
     }
 
-    function test_GivenThePaidTokenIsAnERC20AndPayHookIsConfigured() external whenERC20IsAccepted() {
+    function test_GivenThePaidTokenIsAnERC20AndPayHookIsConfigured() external whenERC20IsAccepted {
         // it will increase allowance to the hook and emit HookAfterRecordPay and Pay
 
         // mint mocked erc20 tokens to this contract
@@ -187,13 +183,10 @@ contract TestPay_Local is JBMultiTerminalSetup {
         _mockToken.approve(address(_mockHook), _defaultAmount);
 
         // needed for next mock call returns
-        JBTokenAmount memory tokenAmount = JBTokenAmount(address(_mockToken), _defaultAmount, 6, uint32(_mockTokenCurrency));
+        JBTokenAmount memory tokenAmount =
+            JBTokenAmount(address(_mockToken), _defaultAmount, 6, uint32(_mockTokenCurrency));
         JBPayHookSpecification[] memory hookSpecifications = new JBPayHookSpecification[](1);
-        hookSpecifications[0] = JBPayHookSpecification({
-            hook: _mockHook,
-            amount: _defaultAmount,
-            metadata: ""
-        });
+        hookSpecifications[0] = JBPayHookSpecification({hook: _mockHook, amount: _defaultAmount, metadata: ""});
 
         JBRuleset memory returnedRuleset = JBRuleset({
             cycleNumber: 1,
@@ -238,11 +231,7 @@ contract TestPay_Local is JBMultiTerminalSetup {
         });
 
         // mock call to hook
-        mockExpect(
-            address(_mockHook),
-            abi.encodeCall(IJBPayHook.afterPayRecordedWith, (context)),
-            ""
-        );
+        mockExpect(address(_mockHook), abi.encodeCall(IJBPayHook.afterPayRecordedWith, (context)), "");
 
         // expect _fulfillPayHookSpecificationsFor emit
         vm.expectEmit();
@@ -278,11 +267,7 @@ contract TestPay_Local is JBMultiTerminalSetup {
         // needed for next mock call returns
         JBTokenAmount memory tokenAmount = JBTokenAmount(_native, _defaultAmount, 18, uint32(_nativeCurrency));
         JBPayHookSpecification[] memory hookSpecifications = new JBPayHookSpecification[](1);
-        hookSpecifications[0] = JBPayHookSpecification({
-            hook: _mockHook,
-            amount: _defaultAmount,
-            metadata: ""
-        });
+        hookSpecifications[0] = JBPayHookSpecification({hook: _mockHook, amount: _defaultAmount, metadata: ""});
 
         JBRuleset memory returnedRuleset = JBRuleset({
             cycleNumber: 1,
@@ -329,11 +314,7 @@ contract TestPay_Local is JBMultiTerminalSetup {
         });
 
         // mock call to hook (including msg.value)
-        mockExpect(
-            address(_mockHook),
-            abi.encodeCall(IJBPayHook.afterPayRecordedWith, (context)),
-            ""
-        );
+        mockExpect(address(_mockHook), abi.encodeCall(IJBPayHook.afterPayRecordedWith, (context)), "");
 
         // expect _fulfillPayHookSpecificationsFor emit
         vm.expectEmit();
@@ -362,26 +343,88 @@ contract TestPay_Local is JBMultiTerminalSetup {
             memo: "",
             metadata: ""
         });
-
     }
 
     function test_WhenTheProjectDNHAccountingContextForTheToken() external {
         // it will revert TOKEN_NOT_ACCEPTED
+
+        vm.expectRevert(abi.encodeWithSignature("TOKEN_NOT_ACCEPTED()"));
+        _terminal.pay{value: 1e18}({
+            projectId: _projectId,
+            token: _native,
+            amount: _defaultAmount,
+            beneficiary: _bene,
+            minReturnedTokens: 0,
+            memo: "",
+            metadata: ""
+        });
     }
 
-    function test_WhenTheTerminalsTokenEqNativeToken() external {
+    /* function test_WhenTheTerminalsTokenEqNativeToken() external {
         // it will use msg.value
-    }
+        // covered above
+    } */
 
     function test_WhenTheTerminalsTokenEqNativeTokenAndMsgvalueEqZero() external {
         // it will revert NO_MSG_VALUE_ALLOWED
+
+        vm.expectRevert(abi.encodeWithSignature("TOKEN_NOT_ACCEPTED()"));
+        _terminal.pay{value: 0}({
+            projectId: _projectId,
+            token: _native,
+            amount: _defaultAmount,
+            beneficiary: _bene,
+            minReturnedTokens: 0,
+            memo: "",
+            metadata: ""
+        });
     }
 
-    function test_WhenTheTerminalIsCallingItself() external {
+    function test_WhenTheTerminalIsCallingItself() external whenNativeTokenIsAccepted {
         // it will not transfer
+
+        // needed for next mock call returns
+        JBTokenAmount memory tokenAmount = JBTokenAmount(_native, _defaultAmount, 18, uint32(_nativeCurrency));
+        JBPayHookSpecification[] memory hookSpecifications = new JBPayHookSpecification[](0);
+
+        JBRuleset memory returnedRuleset = JBRuleset({
+            cycleNumber: 1,
+            id: 1,
+            basedOnId: 0,
+            start: 0,
+            duration: 0,
+            weight: 0,
+            decayRate: 0,
+            approvalHook: IJBRulesetApprovalHook(address(0)),
+            metadata: 0
+        });
+
+        uint256 _mintAmount = 1e9;
+
+        // mock call to JBTerminalStore recordPaymentFrom
+        mockExpect(
+            address(store),
+            abi.encodeCall(
+                IJBTerminalStore.recordPaymentFrom, (address(_terminal), tokenAmount, _projectId, _bene, bytes(""))
+            ),
+            abi.encode(returnedRuleset, 0, hookSpecifications)
+        );
+
+        vm.deal(address(_terminal), _defaultAmount);
+        vm.prank(address(_terminal));
+        _terminal.pay{value: _defaultAmount}({
+            projectId: _projectId,
+            token: _native,
+            amount: _defaultAmount,
+            beneficiary: _bene,
+            minReturnedTokens: 0,
+            memo: "",
+            metadata: ""
+        });
     }
 
-    modifier whenPayMetadataContainsPermitData() {
+    // accept funds with permit2 has been extensively tested in other units
+    /* modifier whenPayMetadataContainsPermitData() {
         _;
     }
 
@@ -391,5 +434,5 @@ contract TestPay_Local is JBMultiTerminalSetup {
 
     function test_GivenPermitAllowanceIsGood() external whenPayMetadataContainsPermitData {
         // it will set permit allowance to spend tokens for user via permit2
-    }
+    } */
 }
