@@ -19,7 +19,7 @@ jobs:
         with:
           node-version: latest
       - name: Install npm dependencies
-        run: npm ci
+        run: npm ci --production
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
       - name: Run slither
