@@ -138,27 +138,29 @@ contract TestPermissions_Local is TestBaseWorkflow {
         uint256 _projectId,
         uint8[] memory _u8_check_permissions,
         uint8[] memory _u8_set_permissions
-    ) public {
+    )
+        public
+    {
         uint256[] memory _check_permissions = new uint256[](_u8_check_permissions.length);
         uint256[] memory _set_permissions = new uint256[](_u8_set_permissions.length);
 
         // Check if all the items in `check_permissions` also exist in `set_permissions`.
         bool _shouldHavePermissions = true;
-        for(uint256 _i; _i < _u8_check_permissions.length; _i++) {
+        for (uint256 _i; _i < _u8_check_permissions.length; _i++) {
             bool _exists;
-             _check_permissions[_i] = _u8_check_permissions[_i];
-            for(uint256 _j; _j < _u8_set_permissions.length; _j++) {
+            _check_permissions[_i] = _u8_check_permissions[_i];
+            for (uint256 _j; _j < _u8_set_permissions.length; _j++) {
                 // We update this lots of times unnecesarily but no need to optimize this.
                 _set_permissions[_j] = _u8_set_permissions[_j];
                 // If we find this item we break and mark the flag.
-                if(_u8_check_permissions[_i] == _u8_set_permissions[_j]){
+                if (_u8_check_permissions[_i] == _u8_set_permissions[_j]) {
                     _exists = true;
                     break;
                 }
             }
 
             // If any item does not exist we should not have permission.
-            if(_exists == false) {
+            if (_exists == false) {
                 _shouldHavePermissions = false;
                 break;
             }
@@ -166,16 +168,12 @@ contract TestPermissions_Local is TestBaseWorkflow {
 
         // Set the permissions.
         vm.prank(_account);
-        _permissions.setPermissionsFor(_account, JBPermissionsData({
-            operator: _operator,
-            projectId: _projectId,
-            permissionIds: _set_permissions
-        }));
-
+        _permissions.setPermissionsFor(
+            _account, JBPermissionsData({operator: _operator, projectId: _projectId, permissionIds: _set_permissions})
+        );
 
         assertEq(
-            _permissions.hasPermissions(_operator, _account, _projectId, _check_permissions),
-            _shouldHavePermissions
+            _permissions.hasPermissions(_operator, _account, _projectId, _check_permissions), _shouldHavePermissions
         );
     }
 

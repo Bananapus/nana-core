@@ -104,7 +104,8 @@ contract JBPermissions is IJBPermissions {
     function setPermissionsFor(address account, JBPermissionsData calldata permissionsData) external override {
         // Enforce permissions.
         if (
-            msg.sender != account && !hasPermission(msg.sender, account, permissionsData.projectId, JBPermissionIds.ROOT)
+            msg.sender != account
+                && !hasPermission(msg.sender, account, permissionsData.projectId, JBPermissionIds.ROOT)
                 && !hasPermission(msg.sender, account, 0, JBPermissionIds.ROOT)
         ) revert UNAUTHORIZED();
 
