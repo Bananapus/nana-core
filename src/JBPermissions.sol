@@ -2,17 +2,17 @@
 pragma solidity 0.8.23;
 
 import {JBPermissionIds} from "@bananapus/permission-ids/src/JBPermissionIds.sol";
-import {JBPermissioned} from "./abstract/JBPermissioned.sol";
 import {IJBPermissions} from "./interfaces/IJBPermissions.sol";
 import {JBPermissionsData} from "./structs/JBPermissionsData.sol";
 
 /// @notice Stores permissions for all addresses and operators. Addresses can give permissions to any other address
 /// (i.e. an *operator*) to execute specific operations on their behalf.
-contract JBPermissions is JBPermissioned, IJBPermissions {
+contract JBPermissions is IJBPermissions {
     //*********************************************************************//
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
     error PERMISSION_ID_OUT_OF_BOUNDS();
+    error UNAUTHORIZED();
 
     //*********************************************************************//
     // --------------------- public stored properties -------------------- //
@@ -47,7 +47,7 @@ contract JBPermissions is JBPermissioned, IJBPermissions {
         uint256 projectId,
         uint256 permissionId
     )
-        external
+        public
         view
         override
         returns (bool)
@@ -74,30 +74,24 @@ contract JBPermissions is JBPermissioned, IJBPermissions {
         override
         returns (bool)
     {
-        // Keep a reference to the number of permissions being iterated on.
-        uint256 numberOfPermissions = permissionIds.length;
-
         // Keep a reference to the permission being iterated on.
         uint256 permissionId;
 
-        for (uint256 i; i < numberOfPermissions; i++) {
+        // Keep a reference to the permission item being checked.
+        uint256 operatorAccountProjectPermissions = permissionsOf[operator][account][projectId];
+
+        for (uint256 i; i < permissionIds.length; i++) {
             // Set the permission being iterated on.
             permissionId = permissionIds[i];
 
             if (permissionId > 255) revert PERMISSION_ID_OUT_OF_BOUNDS();
 
-            if (((permissionsOf[operator][account][projectId] >> permissionId) & 1) == 0) {
+            if (((operatorAccountProjectPermissions >> permissionId) & 1) == 0) {
                 return false;
             }
         }
         return true;
     }
-
-    //*********************************************************************//
-    // -------------------------- constructor ---------------------------- //
-    //*********************************************************************//
-
-    constructor() JBPermissioned(this) {}
 
     //*********************************************************************//
     // ---------------------- external transactions ---------------------- //
@@ -109,11 +103,10 @@ contract JBPermissions is JBPermissioned, IJBPermissions {
     /// @param permissionsData The data which specifies the permissions the operator is being given.
     function setPermissionsFor(address account, JBPermissionsData calldata permissionsData) external override {
         // Enforce permissions.
-        _requirePermissionFrom({
-            account: account,
-            projectId: permissionsData.projectId,
-            permissionId: JBPermissionIds.ROOT
-        });
+        if (
+            msg.sender != account && !hasPermission(msg.sender, account, permissionsData.projectId, JBPermissionIds.ROOT)
+                && !hasPermission(msg.sender, account, 0, JBPermissionIds.ROOT)
+        ) revert UNAUTHORIZED();
 
         // Pack the permission IDs into a uint256.
         uint256 packed = _packedPermissions(permissionsData.permissionIds);
@@ -139,13 +132,10 @@ contract JBPermissions is JBPermissioned, IJBPermissions {
     /// @param permissionIds The IDs of the permissions to pack.
     /// @return packed The packed value.
     function _packedPermissions(uint256[] calldata permissionIds) internal pure returns (uint256 packed) {
-        // Keep a reference to the number of IDs being iterated on.
-        uint256 numberOfIds = permissionIds.length;
-
         // Keep a reference to the permission being iterated on.
         uint256 permissionId;
 
-        for (uint256 i; i < numberOfIds; i++) {
+        for (uint256 i; i < permissionIds.length; i++) {
             // Set the permission being iterated on.
             permissionId = permissionIds[i];
 
