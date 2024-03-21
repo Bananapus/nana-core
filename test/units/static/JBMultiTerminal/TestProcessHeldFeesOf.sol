@@ -5,7 +5,9 @@ import /* {*} from */ "../../../helpers/TestBaseWorkflow.sol";
 import {JBMultiTerminalSetup} from "./JBMultiTerminalSetup.sol";
 
 contract TestProcessHeldFeesOf_Local is JBMultiTerminalSetup {
-    function setUp() public {
+// covered extensively in other units but leaving the scaffolding for now
+
+/* function setUp() public {
         super.multiTerminalSetup();
     }
 
@@ -23,5 +25,5 @@ contract TestProcessHeldFeesOf_Local is JBMultiTerminalSetup {
 
     function test_GivenExecuteProcessFeeFails() external whenHeldFeeIsUnlocked {
         // it will readd balance and emit FeeReverted
-    }
+    } */
 }
