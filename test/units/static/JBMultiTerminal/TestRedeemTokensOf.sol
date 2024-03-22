@@ -69,8 +69,8 @@ contract TestRedeemTokensOf_Local is JBMultiTerminalSetup {
         _;
     }
 
-    function test_GivenRedeemCountGtZero() external whenCallerHasPermission {
-        // it will call directory controller of and burnTokensOf
+    function test_GivenRedeemCountLTMinTokensReclaimed() external whenCallerHasPermission {
+        // it will revert INADEQUATE_RECLAIM_AMOUNT
 
         uint256 reclaimAmount = 1e9;
         JBRedeemHookSpecification[] memory hookSpecifications = new JBRedeemHookSpecification[](0);
@@ -115,6 +115,55 @@ contract TestRedeemTokensOf_Local is JBMultiTerminalSetup {
         mockExpect(address(feelessAddresses), abi.encodeCall(IJBFeelessAddresses.isFeeless, (_bene)), abi.encode(true));
 
         _terminal.redeemTokensOf(_holder, _projectId, _mockToken, _defaultAmount, _minReclaimed, _bene, "");
+    }
+
+    function test_GivenRedeemCountGtZero() external whenCallerHasPermission {
+        // it will call directory controller of and burnTokensOf
+
+        uint256 reclaimAmount = 1e9;
+        JBRedeemHookSpecification[] memory hookSpecifications = new JBRedeemHookSpecification[](0);
+        JBAccountingContext[] memory mockBalanceContext = new JBAccountingContext[](0);
+        JBAccountingContext memory mockTokenContext = JBAccountingContext({token: address(0), decimals: 0, currency: 0});
+        JBRuleset memory returnedRuleset = JBRuleset({
+            cycleNumber: 1,
+            id: 1,
+            basedOnId: 0,
+            start: 0,
+            duration: 0,
+            weight: 0,
+            decayRate: 0,
+            approvalHook: IJBRulesetApprovalHook(address(0)),
+            metadata: 0
+        });
+
+        // mock call to JBTerminalStore recordRedemptionFor
+        mockExpect(
+            address(store),
+            abi.encodeCall(
+                IJBTerminalStore.recordRedemptionFor,
+                (_holder, _projectId, _defaultAmount, mockTokenContext, mockBalanceContext, "")
+            ),
+            abi.encode(returnedRuleset, reclaimAmount, _maxRedemptionRate, hookSpecifications)
+        );
+
+        // mock call to find the controller (we'll just use this contracts address for simplicity)
+        mockExpect(
+            address(directory), abi.encodeCall(IJBDirectory.controllerOf, (_projectId)), abi.encode(address(this))
+        );
+
+        // mock controller burn call
+        mockExpect(
+            address(this), abi.encodeCall(IJBController.burnTokensOf, (_holder, _projectId, _defaultAmount, "")), ""
+        );
+
+        // put code at mockToken address to pass OZ Address check
+        vm.etch(_mockToken, abi.encode(1));
+
+        // mock feeless address check
+        mockExpect(address(feelessAddresses), abi.encodeCall(IJBFeelessAddresses.isFeeless, (_bene)), abi.encode(true));
+        vm.expectRevert(abi.encodeWithSignature("INADEQUATE_RECLAIM_AMOUNT()"));
+        _terminal.redeemTokensOf(_holder, _projectId, _mockToken, _defaultAmount, 1e18, _bene, ""); // minReclaimAmount
+            // = 1e18 but only 1e19 reclaimed
     }
 
     function test_GivenReclaimAmountGtZeroBeneficiaryIsNotFeelessAndRedemptionRateDneqMAX_REDEMPTION_RATE()
