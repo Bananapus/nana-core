@@ -75,6 +75,7 @@ import {IJBFeeTerminal} from "../../src/interfaces/terminal/IJBFeeTerminal.sol";
 import {IJBTerminal} from "../../src/interfaces/terminal/IJBTerminal.sol";
 import {IJBPriceFeed} from "../../src/interfaces/IJBPriceFeed.sol";
 import {IJBPermissioned} from "../../src/interfaces/IJBPermissioned.sol";
+import {IJBProjectUriRegistry} from "../../src/interfaces/IJBProjectUriRegistry.sol";
 import {IJBRulesetApprovalHook} from "../../src/interfaces/IJBRulesetApprovalHook.sol";
 import {IJBPrices} from "../../src/interfaces/IJBPrices.sol";
 
