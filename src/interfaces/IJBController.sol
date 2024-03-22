@@ -18,6 +18,7 @@ import {IJBMigratable} from "./IJBMigratable.sol";
 import {IJBProjectUriRegistry} from "./IJBProjectUriRegistry.sol";
 import {IJBProjects} from "./IJBProjects.sol";
 import {IJBSplits} from "./IJBSplits.sol";
+import {IJBTerminal} from "./terminal/IJBTerminal.sol";
 import {IJBToken} from "./IJBToken.sol";
 import {IJBTokens} from "./IJBTokens.sol";
 
@@ -156,6 +157,16 @@ interface IJBController is IERC165, IJBProjectUriRegistry, IJBDirectoryAccessCon
     )
         external
         returns (uint256 beneficiaryTokenCount);
+
+    function payReservedTokenToTerminal(
+        IJBTerminal terminal,
+        uint256 projectId,
+        IJBToken token,
+        uint256 splitAmount,
+        address beneficiary,
+        bytes calldata metadata
+    )
+        external;
 
     function burnTokensOf(address holder, uint256 projectId, uint256 tokenCount, string calldata memo) external;
 
