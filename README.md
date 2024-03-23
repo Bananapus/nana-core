@@ -31,7 +31,7 @@ curl -L https://foundry.paradigm.xyz | sh
 You can download and install dependencies with:
 
 ```bash
-npm install && forge install
+npm install --production && forge install
 ```
 
 If you run into trouble with `forge install`, try using `git submodule update --init --recursive` to ensure that nested submodules have been properly initialized.
@@ -52,7 +52,9 @@ To learn more, visit the [Foundry Book](https://book.getfoundry.sh/) docs.
 
 ## Scripts
 
-For convenience, several utility commands are available in `package.json`.
+In order to be able to run deployment scripts you have to install the npm `devDependencies`, to do this run `npm install`.
+
+ For convenience, several utility commands are available in `package.json`.
 
 | Command                           | Description                            |
 | --------------------------------- | -------------------------------------- |
