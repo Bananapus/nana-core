@@ -6,6 +6,7 @@ import "forge-std/Test.sol";
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import {IERC721Metadata} from "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
 import {IERC20Metadata} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
+import {Clones} from "@openzeppelin/contracts/proxy/Clones.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ERC165, IERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import {JBPermissionIds} from "@bananapus/permission-ids/src/JBPermissionIds.sol";
@@ -100,6 +101,7 @@ contract TestBaseWorkflow is Test, DeployPermit2 {
     JBPrices private _jbPrices;
     JBDirectory private _jbDirectory;
     JBRulesets private _jbRulesets;
+    JBERC20 private _jbErc20;
     JBTokens private _jbTokens;
     JBSplits private _jbSplits;
     JBController private _jbController;
@@ -144,6 +146,10 @@ contract TestBaseWorkflow is Test, DeployPermit2 {
 
     function jbRulesets() internal view returns (JBRulesets) {
         return _jbRulesets;
+    }
+
+    function jbErc20() internal view returns (JBERC20) {
+        return _jbErc20;
     }
 
     function jbTokens() internal view returns (JBTokens) {
@@ -192,7 +198,8 @@ contract TestBaseWorkflow is Test, DeployPermit2 {
         _jbProjects = new JBProjects(_multisig);
         _jbPrices = new JBPrices(_jbPermissions, _jbProjects, _multisig);
         _jbDirectory = new JBDirectory(_jbPermissions, _jbProjects, _multisig);
-        _jbTokens = new JBTokens(_jbDirectory);
+        _jbErc20 = new JBERC20();
+        _jbTokens = new JBTokens(_jbDirectory, _jbErc20);
         _jbRulesets = new JBRulesets(_jbDirectory);
         _jbSplits = new JBSplits(_jbDirectory);
         _jbFundAccessLimits = new JBFundAccessLimits(_jbDirectory);

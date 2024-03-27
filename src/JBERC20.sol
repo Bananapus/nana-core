@@ -9,8 +9,28 @@ import {IJBToken} from "./interfaces/IJBToken.sol";
 /// @notice An ERC-20 token that can be used by a project in the `JBTokens`.
 contract JBERC20 is ERC20Votes, ERC20Permit, Ownable, IJBToken {
     //*********************************************************************//
+    // --------------------- internal stored properties ------------------ //
+    //*********************************************************************//
+
+    /// @notice The token's name.
+    string private _name;
+
+    /// @notice The token's symbol.
+    string private _symbol;
+
+    //*********************************************************************//
     // -------------------------- public views --------------------------- //
     //*********************************************************************//
+
+    /// @notice The token's name.
+    function name() public view virtual override returns (string memory) {
+        return _name;
+    }
+
+    /// @notice The token's symbol.
+    function symbol() public view virtual override returns (string memory) {
+        return _symbol;
+    }
 
     /// @notice The number of decimals included in the fixed point accounting of this token.
     /// @return The number of decimals.
@@ -35,18 +55,7 @@ contract JBERC20 is ERC20Votes, ERC20Permit, Ownable, IJBToken {
     // -------------------------- constructor ---------------------------- //
     //*********************************************************************//
 
-    /// @param name The name of the token.
-    /// @param symbol The symbol that the token should be represented by.
-    /// @param owner The owner of the token.
-    constructor(
-        string memory name,
-        string memory symbol,
-        address owner
-    )
-        ERC20(name, symbol)
-        ERC20Permit(name)
-        Ownable(owner)
-    {}
+    constructor() Ownable(address(this)) ERC20("invalid", "invalid") ERC20Permit("JBToken") {}
 
     //*********************************************************************//
     // ---------------------- external transactions ---------------------- //
@@ -66,6 +75,26 @@ contract JBERC20 is ERC20Votes, ERC20Permit, Ownable, IJBToken {
     /// @param amount The amount of tokens to burn, as a fixed point number with 18 decimals.
     function burn(address account, uint256 amount) external override onlyOwner {
         return _burn(account, amount);
+    }
+
+    //*********************************************************************//
+    // ----------------------- public transactions ----------------------- //
+    //*********************************************************************//
+
+    /// @notice Initialized the token.
+    /// @param name_ The name of the token.
+    /// @param symbol_ The symbol that the token should be represented by.
+    /// @param owner The owner of the token.
+    function initialize(string memory name_, string memory symbol_, address owner) public override {
+        // Stop re-initialization by preventing setting a name if one already exists, and making sure a non-empty name
+        // is provided when initializing.
+        if (bytes(_name).length != 0 || bytes(name_).length == 0) revert();
+
+        _name = name_;
+        _symbol = symbol_;
+
+        // Transfer ownership to the initializer.
+        _transferOwnership(owner);
     }
 
     /// @notice required override.
