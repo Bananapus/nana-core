@@ -86,7 +86,8 @@ contract JBERC20 is ERC20Votes, ERC20Permit, Ownable, IJBToken {
     /// @param symbol_ The symbol that the token should be represented by.
     /// @param owner The owner of the token.
     function initialize(string memory name_, string memory symbol_, address owner) public override {
-        // Stop re-initialization by preventing setting a name if one already exists, and making sure a non-empty name is provided when initializing.
+        // Stop re-initialization by preventing setting a name if one already exists, and making sure a non-empty name
+        // is provided when initializing.
         if (bytes(_name).length != 0 || bytes(name_).length == 0) revert();
 
         _name = name_;
