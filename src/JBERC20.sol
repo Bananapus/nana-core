@@ -55,7 +55,7 @@ contract JBERC20 is ERC20Votes, ERC20Permit, Ownable, IJBToken {
     // -------------------------- constructor ---------------------------- //
     //*********************************************************************//
 
-    constructor() Ownable(address(this)) ERC20("", "") ERC20Permit("JBToken") {}
+    constructor() Ownable(address(this)) ERC20("invalid", "invalid") ERC20Permit("JBToken") {}
 
     //*********************************************************************//
     // ---------------------- external transactions ---------------------- //
