@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {JBAccountingContext} from "../../structs/JBAccountingContext.sol";
-import {JBAfterPayRecordedContext} from "../../structs/JBAfterPayRecordedContext.sol";
-
-import {IJBPayHook} from "../../interfaces/IJBPayHook.sol";
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
+
+import {JBAccountingContext} from "../structs/JBAccountingContext.sol";
+import {JBAfterPayRecordedContext} from "../structs/JBAfterPayRecordedContext.sol";
+import {IJBPayHook} from "../interfaces/IJBPayHook.sol";
 
 /// @notice A terminal that accepts payments and can be migrated.
 interface IJBTerminal is IERC165 {

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {IJBToken} from "./IJBToken.sol";
 import {IJBControlled} from "./IJBControlled.sol";
+import {IJBToken} from "./IJBToken.sol";
 
 interface IJBTokens is IJBControlled {
     event DeployERC20(

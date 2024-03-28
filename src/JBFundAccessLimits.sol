@@ -2,11 +2,12 @@
 pragma solidity 0.8.23;
 
 import {ERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
+
 import {JBControlled} from "./abstract/JBControlled.sol";
-import {IJBFundAccessLimits} from "./interfaces/IJBFundAccessLimits.sol";
 import {IJBDirectory} from "./interfaces/IJBDirectory.sol";
-import {JBFundAccessLimitGroup} from "./structs/JBFundAccessLimitGroup.sol";
+import {IJBFundAccessLimits} from "./interfaces/IJBFundAccessLimits.sol";
 import {JBCurrencyAmount} from "./structs/JBCurrencyAmount.sol";
+import {JBFundAccessLimitGroup} from "./structs/JBFundAccessLimitGroup.sol";
 
 /// @notice Stores and manages terminal fund access limits for each project.
 /// @dev See the `JBFundAccessLimitGroup` struct to learn about payout limits and surplus allowances.

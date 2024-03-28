@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
+
 import {JBApprovalStatus} from "./../enums/JBApprovalStatus.sol";
 
 interface IJBRulesetApprovalHook is IERC165 {

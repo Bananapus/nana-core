@@ -1,14 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.23;
 
+import {JBPermissionIds} from "@bananapus/permission-ids/src/JBPermissionIds.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
-import {JBPermissionIds} from "@bananapus/permission-ids/src/JBPermissionIds.sol";
+
 import {JBPermissioned} from "./abstract/JBPermissioned.sol";
 import {IJBDirectory} from "./interfaces/IJBDirectory.sol";
 import {IJBDirectoryAccessControl} from "./interfaces/IJBDirectoryAccessControl.sol";
 import {IJBPermissions} from "./interfaces/IJBPermissions.sol";
-import {IJBTerminal} from "./interfaces/terminal/IJBTerminal.sol";
+import {IJBTerminal} from "./interfaces/IJBTerminal.sol";
 import {IJBProjects} from "./interfaces/IJBProjects.sol";
 
 /// @notice Tracks which terminal contracts each project is currently accepting funds through, and which controller

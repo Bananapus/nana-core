@@ -3,6 +3,7 @@ pragma solidity 0.8.23;
 
 import {ERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
+
 import {JBApprovalStatus} from "./enums/JBApprovalStatus.sol";
 import {IJBRulesetApprovalHook} from "./interfaces/IJBRulesetApprovalHook.sol";
 import {JBRuleset} from "./structs/JBRuleset.sol";

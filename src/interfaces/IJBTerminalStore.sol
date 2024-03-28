@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {JBRuleset} from "./../structs/JBRuleset.sol";
+import {JBAccountingContext} from "./../structs/JBAccountingContext.sol";
 import {JBPayHookSpecification} from "./../structs/JBPayHookSpecification.sol";
 import {JBRedeemHookSpecification} from "./../structs/JBRedeemHookSpecification.sol";
-import {JBAccountingContext} from "./../structs/JBAccountingContext.sol";
+import {JBRuleset} from "./../structs/JBRuleset.sol";
 import {JBTokenAmount} from "./../structs/JBTokenAmount.sol";
 import {IJBDirectory} from "./IJBDirectory.sol";
-import {IJBRulesets} from "./IJBRulesets.sol";
 import {IJBPrices} from "./IJBPrices.sol";
+import {IJBRulesets} from "./IJBRulesets.sol";
 
 interface IJBTerminalStore {
     function RULESETS() external view returns (IJBRulesets);

@@ -2,12 +2,13 @@
 pragma solidity 0.8.23;
 
 import {mulDiv} from "@prb/math/src/Common.sol";
+
 import {JBControlled} from "./abstract/JBControlled.sol";
 import {JBApprovalStatus} from "./enums/JBApprovalStatus.sol";
-import {JBConstants} from "./libraries/JBConstants.sol";
 import {IJBDirectory} from "./interfaces/IJBDirectory.sol";
 import {IJBRulesetApprovalHook} from "./interfaces/IJBRulesetApprovalHook.sol";
 import {IJBRulesets} from "./interfaces/IJBRulesets.sol";
+import {JBConstants} from "./libraries/JBConstants.sol";
 import {JBRuleset} from "./structs/JBRuleset.sol";
 import {JBRulesetWeightCache} from "./structs/JBRulesetWeightCache.sol";
 
