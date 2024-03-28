@@ -52,7 +52,7 @@ It is possible for a project to accept and store ETH, but issue its $TOKENs rela
 
 A project may manage payouts and reserved token distributions to groups of addresses, other projects, and split hooks. These references are stored in `src/JBSplits.sol` to allow access to various groups of splits across various rulesets over time.
 
-### Fund access limits
+### Fund Access Limits
 
 A project may give itself access to accumulated funds from its treasury either for scheduled payouts or discretionary surplus spending. The limits of its access are stored in `src/JBFundAccessLimits.sol`.
 
