@@ -1,0 +1,10 @@
+TestLatestQueuedRulesetOf_Local
+├── when the latest rulesetId dneq zero
+│   ├── given the ruleset is based on ruleset zero
+│   │   └── it will return JBApprovalStatus.Empty
+│   ├── given the ruleset is based on nonzero ruleset and the basedOn approvalhook dneq zero address
+│   │   └── it will return the approvalHooks approvalStatusOf
+│   └── given the ruleset is based on nonzero ruleset and the basedOn approvalhook eq zero address
+│       └── it will return JBApprovalStatus.Empty
+└── when the latest rulesetId eq zero
+    └── it will return empty ruleset and JBApprovalStatus.Empty

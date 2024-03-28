@@ -1,0 +1,8 @@
+TestCurrentApprovalStatusForLatestRulesetOf_Local
+└── when a ruleset is configured
+    ├── given the basedOn ruleset eq zero
+    │   └── it will return status Empty
+    ├── given there is no approval hook
+    │   └── it will return status Empty
+    └── given basedOn DNEQ zero and there is an approval hook
+        └── it will return the approval status
