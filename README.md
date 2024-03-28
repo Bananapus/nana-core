@@ -4,9 +4,11 @@ This repository contains the core protocol contracts for Bananapus' Juicebox v4.
 
 ### Basics
 
-Each project (`src/JBProjects.sol`) has a controller (`src/interfaces/IJBController.sol`) that is responsible for interactions with the project’s tokens (`src/JBTokens.sol`), splits (`src/JBSplits.sol`), and rulesets (`src/JBRulesets.sol`), and any number of payment terminals (`src/interfaces/IJBTerminal.sol`) to accept payments and give access to funds through. A project’s controller and terminals can be found through the directory (`src/JBDirectory.sol`).
+Project are represented by a 721 NFT (`src/JBProjects.sol`) owned by some address. Each project has a controller (`src/interfaces/IJBController.sol`) that is responsible for interactions with the project’s tokens (`src/JBTokens.sol`), splits (`src/JBSplits.sol`), and rulesets (`src/JBRulesets.sol`), and any number of payment terminals (`src/interfaces/IJBTerminal.sol`) to accept payments and give access to funds through. A project’s controller and terminals can be found through the directory (`src/JBDirectory.sol`).
 
-A well-known and trusted controller, multi terminal, directory, project contract, token contract, split contract, and ruleset contract will be deployed by JuiceboxDAO (`script/Deploy.s.sol`) for projects to use, but projects can always bring their own. Get a project's current terminals using `directory.terminalsOf(…)` (`src/JBDirectory.sol`), it's primary terminal for given inbound token using `directory.primaryTerminalOf(…)` (`src/JBDirectory.sol`), and its controller using `directory.controllerOf(…)` (`src/JBDirectory.sol`).
+A well-known and trusted controller, multi terminal, directory, project contract, token contract, split contract, and ruleset contract will be deployed by JuiceboxDAO (`script/Deploy.s.sol`) for projects to use, but project owners can always bring their own. 
+
+Get a project's current terminals using `directory.terminalsOf(…)` (`src/JBDirectory.sol`), it's primary terminal for given inbound token using `directory.primaryTerminalOf(…)` (`src/JBDirectory.sol`), and its controller using `directory.controllerOf(…)` (`src/JBDirectory.sol`).
 
 Learn how everything fits together by launching a new project using `controller.launchProjectFor(…)` (`src/JBController.sol`). 
 
@@ -18,6 +20,10 @@ If reserved tokens have accumulated as payments have come in, distribute them to
 
 If you, the project’s owner, wish to queue a new ruleset to take effect after the current one, use `controller.queueRulesetsOf(…)` (`src/JBController.sol`).
 
+### Multi Terminal
+
+The multi terminal (`src/JBMultiTerminal.sol`) allows projects to receive and store native tokens and any ERC-20 a project wishes to mint its tokens with and keep exposure to.
+
 ### Hooks
 
 A project can attach a data hook (`src/interfaces/IJBRulesetDataHook.sol`) address to its rulesets. The data hook can specify custom contract code that runs when the project gets paid (`src/interfaces/IJBPayHook.sol`) or when the project’s tokens are redeemed (`src/interfaces/IJBRedeemHook.sol`).
@@ -25,7 +31,30 @@ A project can attach a data hook (`src/interfaces/IJBRulesetDataHook.sol`) addre
 A project can also schedule payouts to split hooks (`src/interfaces/IJBSplitHook.sol`) alongside splits to addresses and/or other Juicebox projects.
 
 When a project queues new rulesets, its manifestation depends on an optional approval hook (`src/interfaces/IJBRulesetApprovalHook.sol`) of the preceding ruleset. This can be used to prevent scheduled rule changes unless certain conditions are met. 
+ 
+### Rulesets
 
+A project has one active ruleset at a time, and can queue any number of rulesets to become active over time. Each project's rulesets are stored in `JBRulesets` (`src/JBRulesetStore.sol`), which also handles their timing and scheduling.
+
+### Tokens
+
+By default, each project uses a simple internal accounting mechanism to manage token issuance and redemptions. At any time, project's can optionally deploy an ERC-20 (`src/JBERC20.sol`) for it's community of holders to claim in place of the default internal token, which can then be used across ERC20 compatible ecosystems. 
+
+### Permissions
+
+Addresses can give other operator addresses permissions to manage certain ecosystem actions on their behalf.
+
+### Prices
+
+It is possible for a project to accept and store ETH, but issue its $TOKENs relative to USD (i.e. 1,000 $TOKENs issued per 1 USD worth of ETH paid). If a project is managing it's accounting in terms of a certain currency but accepting and storing a token with a different currency, the `src/JBPrices.sol` contract is used to normalize the prices to maintain consistent accounting.
+
+### Splits
+
+A project may manage payouts and reserved token distributions to groups of addresses, other projects, and split hooks. These references are stored in `src/JBSplits.sol` to allow access to various groups of splits across various rulesets over time.
+
+### Fund access limits
+
+A project may give itself access to accumulated funds from its treasury either for scheduled payouts or discretionary surplus spending. The limits of its access are stored in `src/JBFundAccessLimits.sol`.
 
 
 To learn more about the protocol, visit the [Juicebox Docs](https://docs.juicebox.money/). If you have questions, reach out on [Discord](https://discord.com/invite/ErQYmth4dS).
