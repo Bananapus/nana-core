@@ -5,7 +5,6 @@ import /* {*} from */ "../../../helpers/TestBaseWorkflow.sol";
 import {JBRulesetsSetup} from "./JBRulesetsSetup.sol";
 
 contract TestCurrentOf_Local is JBRulesetsSetup {
-
     function setUp() public {
         super.rulesetsSetup();
     }
