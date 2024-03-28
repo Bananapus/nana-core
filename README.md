@@ -2,6 +2,32 @@
 
 This repository contains the core protocol contracts for Bananapus' Juicebox v4. Juicebox is a flexible toolkit for launching and managing a treasury-backed token on Ethereum and L2s.
 
+### Basics
+
+Each project (`src/JBProjects.sol`) has a controller (`src/interfaces/IJBController.sol`) that is responsible for interactions with the project’s tokens (`src/JBTokens.sol`), splits (`src/JBSplits.sol`), and rulesets (`src/JBRulesets.sol`), and any number of payment terminals (`src/interfaces/IJBTerminal.sol`) to accept payments and give access to funds through. A project’s controller and terminals can be found through the directory (`src/JBDirectory.sol`).
+
+A well-known and trusted controller, multi terminal, directory, project contract, token contract, split contract, and ruleset contract will be deployed by JuiceboxDAO (`script/Deploy.s.sol`) for projects to use, but projects can always bring their own. Get a project's current terminals using `directory.terminalsOf(…)` (`src/JBDirectory.sol`), it's primary terminal for given inbound token using `directory.primaryTerminalOf(…)` (`src/JBDirectory.sol`), and its controller using `directory.controllerOf(…)` (`src/JBDirectory.sol`).
+
+Learn how everything fits together by launching a new project using `controller.launchProjectFor(…)` (`src/JBController.sol`). 
+
+Next, try paying a project using `terminal.pay(…)` (`src/JBMultiTerminal.sol`) using a payment terminal specified when launching the project. 
+
+Next, distribute scheduled payouts from the project using `terminal.distributePayoutsOf(…)` (`src/JBMultiTerminal.sol`), use the project’s surplus if you’re the owner using `terminal.useSurplusAllowanceOf(…)` (`src/JBMultiTerminal.sol`), or redeem the project’s tokens for access to treasury funds using `terminal.redeemTokensOf(…)` (`src/JBMultiTerminal`). The specifics of how funds can be accessed in both cases depends on the rulesets and fund access constraints specified when launching the project.
+
+If reserved tokens have accumulated as payments have come in, distribute them to the prespecified recipients using `controller.sendReservedTokensToSplitsOf(…)` (`src/JBController.sol`).
+
+If you, the project’s owner, wish to queue a new ruleset to take effect after the current one, use `controller.queueRulesetsOf(…)` (`src/JBController.sol`).
+
+### Hooks
+
+A project can attach a data hook (`src/interfaces/IJBRulesetDataHook.sol`) address to its rulesets. The data hook can specify custom contract code that runs when the project gets paid (`src/interfaces/IJBPayHook.sol`) or when the project’s tokens are redeemed (`src/interfaces/IJBRedeemHook.sol`).
+
+A project can also schedule payouts to split hooks (`src/interfaces/IJBSplitHook.sol`) alongside splits to addresses and/or other Juicebox projects.
+
+When a project queues new rulesets, its manifestation depends on an optional approval hook (`src/interfaces/IJBRulesetApprovalHook.sol`) of the preceding ruleset. This can be used to prevent scheduled rule changes unless certain conditions are met. 
+
+
+
 To learn more about the protocol, visit the [Juicebox Docs](https://docs.juicebox.money/). If you have questions, reach out on [Discord](https://discord.com/invite/ErQYmth4dS).
 
 ## Install

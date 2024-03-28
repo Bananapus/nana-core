@@ -36,7 +36,6 @@ interface IJBController is IERC165, IJBProjectUriRegistry, IJBDirectoryAccessCon
         address beneficiary,
         uint256 tokenCount,
         uint256 beneficiaryTokenCount,
-        string memo,
         address caller
     );
 
@@ -160,7 +159,7 @@ interface IJBController is IERC165, IJBProjectUriRegistry, IJBDirectoryAccessCon
 
     function burnTokensOf(address holder, uint256 projectId, uint256 tokenCount, string calldata memo) external;
 
-    function sendReservedTokensToSplitsOf(uint256 projectId, string memory memo) external returns (uint256);
+    function sendReservedTokensToSplitsOf(uint256 projectId) external returns (uint256);
 
     function migrateController(uint256 projectId, IJBMigratable to) external;
 

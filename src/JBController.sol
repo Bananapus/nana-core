@@ -510,18 +510,9 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     /// @dev If the project has no reserved token splits, or they don't add up to 100%, the leftover tokens are minted
     /// to the project's owner.
     /// @param projectId The ID of the project to which the reserved tokens belong.
-    /// @param memo A memo to pass along to the emitted event.
     /// @return The amount of reserved tokens minted and sent.
-    function sendReservedTokensToSplitsOf(
-        uint256 projectId,
-        string calldata memo
-    )
-        external
-        virtual
-        override
-        returns (uint256)
-    {
-        return _sendReservedTokensToSplitsOf(projectId, memo);
+    function sendReservedTokensToSplitsOf(uint256 projectId) external virtual override returns (uint256) {
+        return _sendReservedTokensToSplitsOf(projectId);
     }
 
     /// @notice Allows other controllers to signal to this one that a migration is expected for the specified project.
@@ -563,7 +554,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
 
         // All reserved tokens must be minted before migrating.
         if (pendingReservedTokenBalanceOf[projectId] != 0) {
-            _sendReservedTokensToSplitsOf(projectId, "");
+            _sendReservedTokensToSplitsOf(projectId);
         }
 
         // Make sure the new controller is prepped for the migration.
@@ -786,15 +777,8 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     /// @dev If the project has no reserved token splits, or they don't add up to 100%, the leftover tokens are minted
     /// to the project's owner.
     /// @param projectId The ID of the project the reserved tokens belong to.
-    /// @param memo A memo to pass along to the emitted event.
     /// @return tokenCount The number of reserved tokens minted/sent.
-    function _sendReservedTokensToSplitsOf(
-        uint256 projectId,
-        string memory memo
-    )
-        internal
-        returns (uint256 tokenCount)
-    {
+    function _sendReservedTokensToSplitsOf(uint256 projectId) internal returns (uint256 tokenCount) {
         // Get the current ruleset to read the reserved rate from.
         JBRuleset memory ruleset = RULESETS.currentOf(projectId);
 
@@ -819,7 +803,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         }
 
         emit SendReservedTokensToSplits(
-            ruleset.id, ruleset.cycleNumber, projectId, owner, tokenCount, leftoverTokenCount, memo, _msgSender()
+            ruleset.id, ruleset.cycleNumber, projectId, owner, tokenCount, leftoverTokenCount, _msgSender()
         );
     }
 
