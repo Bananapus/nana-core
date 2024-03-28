@@ -3,24 +3,24 @@ pragma solidity 0.8.23;
 
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {mulDiv} from "@prb/math/src/Common.sol";
+
 import {IJBController} from "./interfaces/IJBController.sol";
 import {IJBDirectory} from "./interfaces/IJBDirectory.sol";
+import {IJBPrices} from "./interfaces/IJBPrices.sol";
 import {IJBRulesetDataHook} from "./interfaces/IJBRulesetDataHook.sol";
 import {IJBRulesets} from "./interfaces/IJBRulesets.sol";
-import {IJBPrices} from "./interfaces/IJBPrices.sol";
-import {IJBPrices} from "./interfaces/IJBPrices.sol";
-import {IJBTerminal} from "./interfaces/terminal/IJBTerminal.sol";
+import {IJBTerminal} from "./interfaces/IJBTerminal.sol";
 import {IJBTerminalStore} from "./interfaces/IJBTerminalStore.sol";
 import {JBConstants} from "./libraries/JBConstants.sol";
 import {JBFixedPointNumber} from "./libraries/JBFixedPointNumber.sol";
-import {JBCurrencyAmount} from "./structs/JBCurrencyAmount.sol";
 import {JBRulesetMetadataResolver} from "./libraries/JBRulesetMetadataResolver.sol";
-import {JBRuleset} from "./structs/JBRuleset.sol";
-import {JBPayHookSpecification} from "./structs/JBPayHookSpecification.sol";
+import {JBAccountingContext} from "./structs/JBAccountingContext.sol";
 import {JBBeforePayRecordedContext} from "./structs/JBBeforePayRecordedContext.sol";
 import {JBBeforeRedeemRecordedContext} from "./structs/JBBeforeRedeemRecordedContext.sol";
+import {JBCurrencyAmount} from "./structs/JBCurrencyAmount.sol";
+import {JBPayHookSpecification} from "./structs/JBPayHookSpecification.sol";
 import {JBRedeemHookSpecification} from "./structs/JBRedeemHookSpecification.sol";
-import {JBAccountingContext} from "./structs/JBAccountingContext.sol";
+import {JBRuleset} from "./structs/JBRuleset.sol";
 import {JBTokenAmount} from "./structs/JBTokenAmount.sol";
 
 /// @notice Manages all bookkeeping for inflows and outflows of funds from any terminal address.

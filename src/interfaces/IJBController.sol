@@ -2,21 +2,22 @@
 pragma solidity ^0.8.0;
 
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
+
 import {JBApprovalStatus} from "./../enums/JBApprovalStatus.sol";
 import {JBRuleset} from "./../structs/JBRuleset.sol";
-import {JBRulesetWithMetadata} from "./../structs/JBRulesetWithMetadata.sol";
 import {JBRulesetConfig} from "./../structs/JBRulesetConfig.sol";
 import {JBRulesetMetadata} from "./../structs/JBRulesetMetadata.sol";
-import {JBTerminalConfig} from "./../structs/JBTerminalConfig.sol";
+import {JBRulesetWithMetadata} from "./../structs/JBRulesetWithMetadata.sol";
 import {JBSplit} from "./../structs/JBSplit.sol";
 import {JBSplitGroup} from "./../structs/JBSplitGroup.sol";
+import {JBTerminalConfig} from "./../structs/JBTerminalConfig.sol";
 import {IJBDirectory} from "./IJBDirectory.sol";
 import {IJBDirectoryAccessControl} from "./IJBDirectoryAccessControl.sol";
 import {IJBFundAccessLimits} from "./IJBFundAccessLimits.sol";
-import {IJBRulesets} from "./IJBRulesets.sol";
 import {IJBMigratable} from "./IJBMigratable.sol";
-import {IJBProjectUriRegistry} from "./IJBProjectUriRegistry.sol";
 import {IJBProjects} from "./IJBProjects.sol";
+import {IJBProjectUriRegistry} from "./IJBProjectUriRegistry.sol";
+import {IJBRulesets} from "./IJBRulesets.sol";
 import {IJBSplits} from "./IJBSplits.sol";
 import {IJBToken} from "./IJBToken.sol";
 import {IJBTokens} from "./IJBTokens.sol";

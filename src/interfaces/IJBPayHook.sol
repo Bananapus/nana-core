@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
+
 import {JBAfterPayRecordedContext} from "./../structs/JBAfterPayRecordedContext.sol";
 
 /// @notice Hook called after a terminal's `pay(...)` logic completes (if passed by the ruleset's data hook).

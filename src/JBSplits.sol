@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.23;
 
-import {IJBDirectory} from "./interfaces/IJBDirectory.sol";
-import {IJBSplits} from "./interfaces/IJBSplits.sol";
-import {IJBSplitHook} from "./interfaces/IJBSplitHook.sol";
-import {JBConstants} from "./libraries/JBConstants.sol";
-import {JBSplitGroup} from "./structs/JBSplitGroup.sol";
-import {JBSplit} from "./structs/JBSplit.sol";
 import {JBControlled} from "./abstract/JBControlled.sol";
+import {IJBDirectory} from "./interfaces/IJBDirectory.sol";
+import {IJBSplitHook} from "./interfaces/IJBSplitHook.sol";
+import {IJBSplits} from "./interfaces/IJBSplits.sol";
+import {JBConstants} from "./libraries/JBConstants.sol";
+import {JBSplit} from "./structs/JBSplit.sol";
+import {JBSplitGroup} from "./structs/JBSplitGroup.sol";
 
 /// @notice Stores and manages splits for each project.
 contract JBSplits is JBControlled, IJBSplits {

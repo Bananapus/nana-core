@@ -2,9 +2,10 @@
 pragma solidity ^0.8.0;
 
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
-import {JBPayHookSpecification} from "./../structs/JBPayHookSpecification.sol";
+
 import {JBBeforePayRecordedContext} from "./../structs/JBBeforePayRecordedContext.sol";
 import {JBBeforeRedeemRecordedContext} from "./../structs/JBBeforeRedeemRecordedContext.sol";
+import {JBPayHookSpecification} from "./../structs/JBPayHookSpecification.sol";
 import {JBRedeemHookSpecification} from "./../structs/JBRedeemHookSpecification.sol";
 
 /// @notice Data hooks can extend a terminal's core pay/redeem functionality by overriding the weight or memo. They can

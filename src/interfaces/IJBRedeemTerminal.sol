@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import {JBAfterRedeemRecordedContext} from "../structs/JBAfterRedeemRecordedContext.sol";
+import {IJBRedeemHook} from "./IJBRedeemHook.sol";
 import {IJBTerminal} from "./IJBTerminal.sol";
-import {IJBRedeemHook} from "../IJBRedeemHook.sol";
-import {JBAfterRedeemRecordedContext} from "../../structs/JBAfterRedeemRecordedContext.sol";
 
 /// @notice A terminal that can be redeemed from.
 interface IJBRedeemTerminal is IJBTerminal {
