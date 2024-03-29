@@ -5,6 +5,9 @@ import /* {*} from */ "../../../helpers/TestBaseWorkflow.sol";
 import {JBRulesetsSetup} from "./JBRulesetsSetup.sol";
 
 contract TestRulesetsOf_Local is JBRulesetsSetup {
+    // Necessary params
+    uint256 _projectId = 1;
+
     function setUp() public {
         super.rulesetsSetup();
     }
@@ -19,6 +22,9 @@ contract TestRulesetsOf_Local is JBRulesetsSetup {
 
     function test_WhenSizeIsZero() external {
         // it will return an empty array
+
+        JBRuleset[] memory _rulesets = _rulesets.rulesetsOf(_projectId, 0, 0);
+        assertEq(_rulesets.length, 0);
     }
 
     function test_WhenThereAreNoRulesets() external {
