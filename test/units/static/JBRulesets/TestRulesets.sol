@@ -99,7 +99,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
             useTotalSurplusForRedemptions: false,
             useDataHookForPay: false,
             useDataHookForRedeem: false,
-            dataHook: address(_mockApprovalHook),
+            dataHook: address(0),
             metadata: 0
         });
 

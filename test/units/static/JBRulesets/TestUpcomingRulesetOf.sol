@@ -58,7 +58,7 @@ contract TestUpcomingRulesetOf_Local is JBRulesetsSetup {
             useTotalSurplusForRedemptions: false,
             useDataHookForPay: false,
             useDataHookForRedeem: false,
-            dataHook: address(_mockApprovalHook),
+            dataHook: address(0),
             metadata: 0
         });
 
