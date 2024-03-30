@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {JBSplitGroup} from "./../structs/JBSplitGroup.sol";
 import {JBSplit} from "./../structs/JBSplit.sol";
-import {IJBProjects} from "./IJBProjects.sol";
+import {JBSplitGroup} from "./../structs/JBSplitGroup.sol";
 import {IJBControlled} from "./IJBControlled.sol";
+import {IJBProjects} from "./IJBProjects.sol";
 
 interface IJBSplits is IJBControlled {
     event SetSplit(

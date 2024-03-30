@@ -2,6 +2,7 @@
 pragma solidity 0.8.23;
 
 import {Clones} from "@openzeppelin/contracts/proxy/Clones.sol";
+
 import {JBControlled} from "./abstract/JBControlled.sol";
 import {IJBDirectory} from "./interfaces/IJBDirectory.sol";
 import {IJBToken} from "./interfaces/IJBToken.sol";

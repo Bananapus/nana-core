@@ -2,8 +2,9 @@
 pragma solidity ^0.8.0;
 
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
-import {JBFundAccessLimitGroup} from "./../structs/JBFundAccessLimitGroup.sol";
+
 import {JBCurrencyAmount} from "./../structs/JBCurrencyAmount.sol";
+import {JBFundAccessLimitGroup} from "./../structs/JBFundAccessLimitGroup.sol";
 
 interface IJBFundAccessLimits is IERC165 {
     event SetFundAccessLimits(

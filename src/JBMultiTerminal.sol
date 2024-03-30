@@ -1,49 +1,50 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.23;
 
-import {Address} from "@openzeppelin/contracts/utils/Address.sol";
-import {Context} from "@openzeppelin/contracts/utils/Context.sol";
-import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {JBPermissionIds} from "@bananapus/permission-ids/src/JBPermissionIds.sol";
 import {ERC2771Context} from "@openzeppelin/contracts/metatx/ERC2771Context.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IERC20Metadata} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import {Address} from "@openzeppelin/contracts/utils/Address.sol";
+import {Context} from "@openzeppelin/contracts/utils/Context.sol";
 import {ERC165Checker} from "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
+import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import {mulDiv} from "@prb/math/src/Common.sol";
+import {IAllowanceTransfer} from "@uniswap/permit2/src/interfaces/IAllowanceTransfer.sol";
 import {IPermit2} from "@uniswap/permit2/src/interfaces/IPermit2.sol";
-import {IAllowanceTransfer} from "@uniswap/permit2/src/interfaces/IPermit2.sol";
-import {JBPermissionIds} from "@bananapus/permission-ids/src/JBPermissionIds.sol";
+
+import {JBPermissioned} from "./abstract/JBPermissioned.sol";
 import {IJBController} from "./interfaces/IJBController.sol";
 import {IJBDirectory} from "./interfaces/IJBDirectory.sol";
 import {IJBFeelessAddresses} from "./interfaces/IJBFeelessAddresses.sol";
-import {IJBSplits} from "./interfaces/IJBSplits.sol";
+import {IJBFeeTerminal} from "./interfaces/IJBFeeTerminal.sol";
+import {IJBMultiTerminal} from "./interfaces/IJBMultiTerminal.sol";
+import {IJBPayoutTerminal} from "./interfaces/IJBPayoutTerminal.sol";
 import {IJBPermissioned} from "./interfaces/IJBPermissioned.sol";
+import {IJBPermitTerminal} from "./interfaces/IJBPermitTerminal.sol";
 import {IJBPermissions} from "./interfaces/IJBPermissions.sol";
 import {IJBProjects} from "./interfaces/IJBProjects.sol";
-import {IJBTerminalStore} from "./interfaces/IJBTerminalStore.sol";
+import {IJBRedeemTerminal} from "./interfaces/IJBRedeemTerminal.sol";
 import {IJBSplitHook} from "./interfaces/IJBSplitHook.sol";
+import {IJBSplits} from "./interfaces/IJBSplits.sol";
+import {IJBTerminal} from "./interfaces/IJBTerminal.sol";
+import {IJBTerminalStore} from "./interfaces/IJBTerminalStore.sol";
 import {JBConstants} from "./libraries/JBConstants.sol";
 import {JBFees} from "./libraries/JBFees.sol";
-import {JBRulesetMetadataResolver} from "./libraries/JBRulesetMetadataResolver.sol";
 import {JBMetadataResolver} from "./libraries/JBMetadataResolver.sol";
-import {JBAfterRedeemRecordedContext} from "./structs/JBAfterRedeemRecordedContext.sol";
+import {JBRulesetMetadataResolver} from "./libraries/JBRulesetMetadataResolver.sol";
+import {JBAccountingContext} from "./structs/JBAccountingContext.sol";
 import {JBAfterPayRecordedContext} from "./structs/JBAfterPayRecordedContext.sol";
+import {JBAfterRedeemRecordedContext} from "./structs/JBAfterRedeemRecordedContext.sol";
 import {JBFee} from "./structs/JBFee.sol";
-import {JBRuleset} from "./structs/JBRuleset.sol";
 import {JBPayHookSpecification} from "./structs/JBPayHookSpecification.sol";
 import {JBRedeemHookSpecification} from "./structs/JBRedeemHookSpecification.sol";
+import {JBRuleset} from "./structs/JBRuleset.sol";
 import {JBSingleAllowanceContext} from "./structs/JBSingleAllowanceContext.sol";
 import {JBSplit} from "./structs/JBSplit.sol";
 import {JBSplitHookContext} from "./structs/JBSplitHookContext.sol";
-import {JBAccountingContext} from "./structs/JBAccountingContext.sol";
 import {JBTokenAmount} from "./structs/JBTokenAmount.sol";
-import {JBPermissioned} from "./abstract/JBPermissioned.sol";
-import {IJBMultiTerminal} from "./interfaces/terminal/IJBMultiTerminal.sol";
-import {IJBFeeTerminal} from "./interfaces/terminal/IJBFeeTerminal.sol";
-import {IJBTerminal} from "./interfaces/terminal/IJBTerminal.sol";
-import {IJBRedeemTerminal} from "./interfaces/terminal/IJBRedeemTerminal.sol";
-import {IJBPayoutTerminal} from "./interfaces/terminal/IJBPayoutTerminal.sol";
-import {IJBPermitTerminal} from "./interfaces/terminal/IJBPermitTerminal.sol";
 
 /// @notice Generic terminal managing inflows and outflows of funds into the protocol ecosystem.
 contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {

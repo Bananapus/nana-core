@@ -2,6 +2,7 @@
 pragma solidity 0.8.23;
 
 import {JBPermissionIds} from "@bananapus/permission-ids/src/JBPermissionIds.sol";
+
 import {IJBPermissions} from "./interfaces/IJBPermissions.sol";
 import {JBPermissionsData} from "./structs/JBPermissionsData.sol";
 
