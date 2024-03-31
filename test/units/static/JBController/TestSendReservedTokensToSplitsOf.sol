@@ -59,7 +59,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
         _rulesetConfigurations[0].fundAccessLimitGroups = _fundAccessLimitGroup;
 
         vm.expectRevert(abi.encodeWithSignature("NO_RESERVED_TOKENS()"));
-        _controller.sendReservedTokensToSplitsOf(_projectId, _memo);
+        _controller.sendReservedTokensToSplitsOf(_projectId);
     }
 
     modifier whenTheProjectHasReservedTokensGtZero() {
@@ -176,9 +176,9 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
 
         vm.expectEmit();
         emit IJBController.SendReservedTokensToSplits(
-            block.timestamp, block.timestamp, _projectId, address(this), _tokenCount, 0, _memo, address(this)
+            block.timestamp, block.timestamp, _projectId, address(this), _tokenCount, 0, address(this)
         );
-        _controller.sendReservedTokensToSplitsOf(_projectId, _memo);
+        _controller.sendReservedTokensToSplitsOf(_projectId);
     }
 
     function test_GivenABeneficiaryIsConfiguredAndProjectIsZero() external whenTheProjectHasReservedTokensGtZero {
@@ -279,7 +279,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
         emit IJBController.SendReservedTokensToSplit(
             _projectId, block.timestamp, 1, _splits[0], _tokenCount, address(this)
         );
-        _controller.sendReservedTokensToSplitsOf(_projectId, _memo);
+        _controller.sendReservedTokensToSplitsOf(_projectId);
     }
 
     function test_GivenTheProjectIdOfSplitIsNonzeroAndABeneficiaryAndHookAreNotConfigured()

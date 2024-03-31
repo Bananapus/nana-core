@@ -6,6 +6,7 @@ import "forge-std/Test.sol";
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import {IERC721Metadata} from "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
 import {IERC20Metadata} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
+import {Clones} from "@openzeppelin/contracts/proxy/Clones.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ERC165, IERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
@@ -67,12 +68,12 @@ import {IJBPayHook} from "../../src/interfaces/IJBPayHook.sol";
 import {IJBRulesetDataHook} from "../../src/interfaces/IJBRulesetDataHook.sol";
 import {IJBRedeemHook} from "../../src/interfaces/IJBRedeemHook.sol";
 import {IJBRulesetDataHook} from "../../src/interfaces/IJBRulesetDataHook.sol";
-import {IJBMultiTerminal} from "../../src/interfaces/terminal/IJBMultiTerminal.sol";
-import {IJBRedeemTerminal} from "../../src/interfaces/terminal/IJBRedeemTerminal.sol";
-import {IJBPayoutTerminal} from "../../src/interfaces/terminal/IJBPayoutTerminal.sol";
-import {IJBPermitTerminal} from "../../src/interfaces/terminal/IJBPermitTerminal.sol";
-import {IJBFeeTerminal} from "../../src/interfaces/terminal/IJBFeeTerminal.sol";
-import {IJBTerminal} from "../../src/interfaces/terminal/IJBTerminal.sol";
+import {IJBMultiTerminal} from "../../src/interfaces/IJBMultiTerminal.sol";
+import {IJBRedeemTerminal} from "../../src/interfaces/IJBRedeemTerminal.sol";
+import {IJBPayoutTerminal} from "../../src/interfaces/IJBPayoutTerminal.sol";
+import {IJBPermitTerminal} from "../../src/interfaces/IJBPermitTerminal.sol";
+import {IJBFeeTerminal} from "../../src/interfaces/IJBFeeTerminal.sol";
+import {IJBTerminal} from "../../src/interfaces/IJBTerminal.sol";
 import {IJBPriceFeed} from "../../src/interfaces/IJBPriceFeed.sol";
 import {IJBPermissioned} from "../../src/interfaces/IJBPermissioned.sol";
 import {IJBProjectUriRegistry} from "../../src/interfaces/IJBProjectUriRegistry.sol";
@@ -109,6 +110,7 @@ contract TestBaseWorkflow is Test, DeployPermit2 {
     JBPrices private _jbPrices;
     JBDirectory private _jbDirectory;
     JBRulesets private _jbRulesets;
+    JBERC20 private _jbErc20;
     JBTokens private _jbTokens;
     JBSplits private _jbSplits;
     JBController private _jbController;
@@ -153,6 +155,10 @@ contract TestBaseWorkflow is Test, DeployPermit2 {
 
     function jbRulesets() internal view returns (JBRulesets) {
         return _jbRulesets;
+    }
+
+    function jbErc20() internal view returns (JBERC20) {
+        return _jbErc20;
     }
 
     function jbTokens() internal view returns (JBTokens) {
@@ -201,7 +207,8 @@ contract TestBaseWorkflow is Test, DeployPermit2 {
         _jbProjects = new JBProjects(_multisig);
         _jbPrices = new JBPrices(_jbPermissions, _jbProjects, _multisig);
         _jbDirectory = new JBDirectory(_jbPermissions, _jbProjects, _multisig);
-        _jbTokens = new JBTokens(_jbDirectory);
+        _jbErc20 = new JBERC20();
+        _jbTokens = new JBTokens(_jbDirectory, _jbErc20);
         _jbRulesets = new JBRulesets(_jbDirectory);
         _jbSplits = new JBSplits(_jbDirectory);
         _jbFundAccessLimits = new JBFundAccessLimits(_jbDirectory);

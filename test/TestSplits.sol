@@ -182,7 +182,7 @@ contract TestSplits_Local is TestBaseWorkflow {
         });
 
         vm.prank(_projectOwner);
-        _controller.sendReservedTokensToSplitsOf(_projectId, "");
+        _controller.sendReservedTokensToSplitsOf(_projectId);
 
         // 10 native tokens paid -> 1000 per Eth, 10000 total, 50% reserve rate, 5000 tokens sent.
         uint256 _reserveRateDistributionAmount =
@@ -274,7 +274,7 @@ contract TestSplits_Local is TestBaseWorkflow {
         vm.mockCallRevert({callee: _mockTerminal, data: abi.encode(IJBTerminal.pay.selector), revertData: ""});
 
         // Distribute the tokens to the reverting terminal.
-        _controller.sendReservedTokensToSplitsOf(_projectId, "");
+        _controller.sendReservedTokensToSplitsOf(_projectId);
 
         // Assert that the terminal does *NOT* have any allowance.
         assertEq(_token.allowance(address(_controller), address(_mockTerminal)), 0);

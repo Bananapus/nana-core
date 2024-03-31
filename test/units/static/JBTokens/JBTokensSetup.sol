@@ -10,12 +10,13 @@ Tests relative to this contract will be dependent on mock calls/emits and stdSto
 contract JBTokensSetup is JBTest {
     // Mocks
     IJBDirectory public directory = IJBDirectory(makeAddr("directory"));
+    IJBToken public jbToken = IJBToken(makeAddr("juicayy"));
 
     // Target Contract
     IJBTokens public _tokens;
 
     function tokensSetup() public virtual {
         // Instantiate the contract being tested
-        _tokens = new JBTokens(directory);
+        _tokens = new JBTokens(directory, jbToken);
     }
 }

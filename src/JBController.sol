@@ -1,43 +1,44 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.23;
 
+import {JBPermissionIds} from "@bananapus/permission-ids/src/JBPermissionIds.sol";
+import {ERC2771Context} from "@openzeppelin/contracts/metatx/ERC2771Context.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {Context} from "@openzeppelin/contracts/utils/Context.sol";
 import {ERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import {ERC2771Context} from "@openzeppelin/contracts/metatx/ERC2771Context.sol";
 import {mulDiv} from "@prb/math/src/Common.sol";
-import {JBPermissionIds} from "@bananapus/permission-ids/src/JBPermissionIds.sol";
+
 import {JBPermissioned} from "./abstract/JBPermissioned.sol";
 import {JBApprovalStatus} from "./enums/JBApprovalStatus.sol";
 import {IJBController} from "./interfaces/IJBController.sol";
 import {IJBDirectory} from "./interfaces/IJBDirectory.sol";
-import {IJBFundAccessLimits} from "./interfaces/IJBFundAccessLimits.sol";
-import {IJBRulesets} from "./interfaces/IJBRulesets.sol";
 import {IJBDirectoryAccessControl} from "./interfaces/IJBDirectoryAccessControl.sol";
+import {IJBFundAccessLimits} from "./interfaces/IJBFundAccessLimits.sol";
 import {IJBMigratable} from "./interfaces/IJBMigratable.sol";
 import {IJBPermissioned} from "./interfaces/IJBPermissioned.sol";
-import {IJBRulesetDataHook} from "./interfaces/IJBRulesetDataHook.sol";
 import {IJBPermissions} from "./interfaces/IJBPermissions.sol";
-import {IJBTerminal} from "./interfaces/terminal/IJBTerminal.sol";
 import {IJBProjects} from "./interfaces/IJBProjects.sol";
 import {IJBProjectUriRegistry} from "./interfaces/IJBProjectUriRegistry.sol";
+import {IJBRulesets} from "./interfaces/IJBRulesets.sol";
+import {IJBRulesetDataHook} from "./interfaces/IJBRulesetDataHook.sol";
 import {IJBSplitHook} from "./interfaces/IJBSplitHook.sol";
 import {IJBSplits} from "./interfaces/IJBSplits.sol";
+import {IJBTerminal} from "./interfaces/IJBTerminal.sol";
 import {IJBToken} from "./interfaces/IJBToken.sol";
 import {IJBTokens} from "./interfaces/IJBTokens.sol";
 import {JBConstants} from "./libraries/JBConstants.sol";
 import {JBRulesetMetadataResolver} from "./libraries/JBRulesetMetadataResolver.sol";
 import {JBSplitGroupIds} from "./libraries/JBSplitGroupIds.sol";
 import {JBRuleset} from "./structs/JBRuleset.sol";
-import {JBRulesetWithMetadata} from "./structs/JBRulesetWithMetadata.sol";
 import {JBRulesetConfig} from "./structs/JBRulesetConfig.sol";
 import {JBRulesetMetadata} from "./structs/JBRulesetMetadata.sol";
-import {JBTerminalConfig} from "./structs/JBTerminalConfig.sol";
+import {JBRulesetWithMetadata} from "./structs/JBRulesetWithMetadata.sol";
 import {JBSplit} from "./structs/JBSplit.sol";
 import {JBSplitGroup} from "./structs/JBSplitGroup.sol";
 import {JBSplitHookContext} from "./structs/JBSplitHookContext.sol";
+import {JBTerminalConfig} from "./structs/JBTerminalConfig.sol";
 
 /// @notice Stitches together rulesets and project tokens, making sure all activity is accounted for and correct.
 contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, IJBMigratable {
@@ -51,7 +52,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
 
-    error RULESET_ALREADY_LAUNCHED();
+    error CREDIT_TRANSFERS_PAUSED();
     error RULESETS_ARRAY_EMPTY();
     error INVALID_BASE_CURRENCY();
     error INVALID_REDEMPTION_RATE();
@@ -60,7 +61,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     error MINT_NOT_ALLOWED_AND_NOT_TERMINAL_OR_HOOK();
     error NO_BURNABLE_TOKENS();
     error NO_RESERVED_TOKENS();
-    error CREDIT_TRANSFERS_PAUSED();
+    error RULESET_ALREADY_LAUNCHED();
     error ZERO_TOKENS_TO_MINT();
 
     //*********************************************************************//
@@ -513,18 +514,9 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     /// @dev If the project has no reserved token splits, or they don't add up to 100%, the leftover tokens are minted
     /// to the project's owner.
     /// @param projectId The ID of the project to which the reserved tokens belong.
-    /// @param memo A memo to pass along to the emitted event.
     /// @return The amount of reserved tokens minted and sent.
-    function sendReservedTokensToSplitsOf(
-        uint256 projectId,
-        string calldata memo
-    )
-        external
-        virtual
-        override
-        returns (uint256)
-    {
-        return _sendReservedTokensToSplitsOf(projectId, memo);
+    function sendReservedTokensToSplitsOf(uint256 projectId) external virtual override returns (uint256) {
+        return _sendReservedTokensToSplitsOf(projectId);
     }
 
     /// @notice Allows other controllers to signal to this one that a migration is expected for the specified project.
@@ -563,7 +555,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
 
         // All reserved tokens must be minted before migrating.
         if (pendingReservedTokenBalanceOf[projectId] != 0) {
-            _sendReservedTokensToSplitsOf(projectId, "");
+            _sendReservedTokensToSplitsOf(projectId);
         }
 
         // Make sure the new controller is prepped for the migration.
@@ -786,23 +778,16 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     /// @dev If the project has no reserved token splits, or they don't add up to 100%, the leftover tokens are minted
     /// to the project's owner.
     /// @param projectId The ID of the project the reserved tokens belong to.
-    /// @param memo A memo to pass along to the emitted event.
     /// @return tokenCount The number of reserved tokens minted/sent.
-    function _sendReservedTokensToSplitsOf(
-        uint256 projectId,
-        string memory memo
-    )
-        internal
-        returns (uint256 tokenCount)
-    {
+    function _sendReservedTokensToSplitsOf(uint256 projectId) internal returns (uint256 tokenCount) {
+        // Get the current ruleset to read the reserved rate from.
+        JBRuleset memory ruleset = RULESETS.currentOf(projectId);
+
         // Get a reference to the number of tokens that need to be minted.
         tokenCount = pendingReservedTokenBalanceOf[projectId];
 
         // Revert if there are no reserved tokens
         if (tokenCount == 0) revert NO_RESERVED_TOKENS();
-
-        // Get the current ruleset to read the reserved rate from.
-        JBRuleset memory ruleset = RULESETS.currentOf(projectId);
 
         // Reset the reserved token balance
         pendingReservedTokenBalanceOf[projectId] = 0;
@@ -822,7 +807,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         }
 
         emit SendReservedTokensToSplits(
-            ruleset.id, ruleset.cycleNumber, projectId, owner, tokenCount, leftoverTokenCount, memo, _msgSender()
+            ruleset.id, ruleset.cycleNumber, projectId, owner, tokenCount, leftoverTokenCount, _msgSender()
         );
     }
 

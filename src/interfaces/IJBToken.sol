@@ -11,4 +11,6 @@ interface IJBToken {
     function mint(address account, uint256 amount) external;
 
     function burn(address account, uint256 amount) external;
+
+    function initialize(string memory name, string memory symbol, address owner) external;
 }

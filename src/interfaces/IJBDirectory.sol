@@ -2,8 +2,9 @@
 pragma solidity ^0.8.0;
 
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
-import {IJBTerminal} from "./terminal/IJBTerminal.sol";
+
 import {IJBProjects} from "./IJBProjects.sol";
+import {IJBTerminal} from "./IJBTerminal.sol";
 
 interface IJBDirectory {
     event SetController(uint256 indexed projectId, IERC165 indexed controller, address caller);

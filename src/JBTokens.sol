@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.23;
 
+import {Clones} from "@openzeppelin/contracts/proxy/Clones.sol";
+
 import {JBControlled} from "./abstract/JBControlled.sol";
 import {IJBDirectory} from "./interfaces/IJBDirectory.sol";
 import {IJBToken} from "./interfaces/IJBToken.sol";
@@ -29,6 +31,12 @@ contract JBTokens is JBControlled, IJBTokens {
     error TOKEN_NOT_FOUND();
     error TOKENS_MUST_HAVE_18_DECIMALS();
     error OVERFLOW_ALERT();
+
+    //*********************************************************************//
+    // --------------- public immutable stored properties ---------------- //
+    //*********************************************************************//
+
+    IJBToken public immutable TOKEN;
 
     //*********************************************************************//
     // --------------------- public stored properties -------------------- //
@@ -97,7 +105,10 @@ contract JBTokens is JBControlled, IJBTokens {
     //*********************************************************************//
 
     /// @param directory A contract storing directories of terminals and controllers for each project.
-    constructor(IJBDirectory directory) JBControlled(directory) {}
+    /// @param token The implementation of the token contract that project can deploy.
+    constructor(IJBDirectory directory, IJBToken token) JBControlled(directory) {
+        TOKEN = token;
+    }
 
     //*********************************************************************//
     // ---------------------- external transactions ---------------------- //
@@ -131,8 +142,11 @@ contract JBTokens is JBControlled, IJBTokens {
         if (tokenOf[projectId] != IJBToken(address(0))) revert PROJECT_ALREADY_HAS_TOKEN();
 
         token = salt == bytes32(0)
-            ? new JBERC20(name, symbol, address(this))
-            : new JBERC20{salt: salt}(name, symbol, address(this));
+            ? IJBToken(Clones.clone(address(TOKEN)))
+            : IJBToken(Clones.cloneDeterministic(address(TOKEN), keccak256(abi.encode(msg.sender, salt))));
+
+        // Initialize the token.
+        token.initialize({name: name, symbol: symbol, owner: address(this)});
 
         // Store the token contract.
         tokenOf[projectId] = token;
