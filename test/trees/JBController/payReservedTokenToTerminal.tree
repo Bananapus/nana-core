@@ -1,0 +1,8 @@
+TestPayReservedTokenToTerminal_Local
+├── when caller is not itself
+│   └── it will revert
+└── when caller is itself
+    ├── given allowance EQ zero after pay
+    │   └── it will not revert
+    └── given allowance DNEQ zero after pay
+        └── it will revert

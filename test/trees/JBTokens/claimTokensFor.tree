@@ -1,0 +1,10 @@
+TestClaimTokensFor_Local
+├── when caller is controller
+│   ├── given token address EQ zero
+│   │   └── it will revert TOKEN_NOT_FOUND
+│   ├── given creditBalanceOf GT calling amount
+│   │   └── it will revert INSUFFICIENT_CREDITS
+│   └── given happy path
+│       └── it will mint to the beneficiary and emit ClaimTokens
+└── when caller is not controller
+    └── it will revert CONTROLLER_UNAUTHORIZED

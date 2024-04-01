@@ -1,0 +1,16 @@
+TestRecordRedemptionFor_Local
+├── when current ruleset useTotalSurplusForRedemptions eq true
+│   ├── given the redeemCount gt totalSupply
+│   │   └── it will revert INSUFFICIENT_TOKENS
+│   ├── given the currentSurplus gt zero
+│   │   └── it will set reclaim amount using the currentSurplus
+│   ├── given current ruleset useDataHookForRedeem eq true
+│   │   └── it will call the dataHook for the reclaim amount and hookSpecs
+│   ├── given the amount reclaimed gt projects balance
+│   │   └── it will revert INADEQUATE_TERMINAL_STORE_BALANCE
+│   ├── given the balance diff gt zero
+│   │   └── it will deduct from the projects balance
+│   └── given the balance diff eq zero
+│       └── it will not deduct
+└── when the current ruleset useTotalSurplusForRedemptions eq false
+    └── it will use the standard surplus calculation

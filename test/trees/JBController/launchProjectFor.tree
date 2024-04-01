@@ -1,0 +1,12 @@
+TestLaunchProjectFor_Local
+└── when called
+    ├── given metadata is provided
+    │   └── it will set metadata
+    ├── given rulesets are provided
+    │   └── it will set rulesets
+    ├── given terminals are provided
+    │   └── it will set terminals
+    ├── given memo is provided
+    │   └── it will be included in the emit
+    └── given Directory exists
+        └── it will setControllerOf to itself

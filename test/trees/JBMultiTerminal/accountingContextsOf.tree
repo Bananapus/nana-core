@@ -1,0 +1,5 @@
+TestAccountingContextsFor_Local
+├── when accounting contexts are set
+│   └── it will return contexts
+└── when accounting contexts are not set
+    └── it will return an empty array

@@ -1,0 +1,11 @@
+TestRulesetsOf_Local
+├── when startingId eq zero
+│   └── it will return latest ruleset
+├── when startingId dneq zero
+│   └── it will return predecessors up to latest ruleset
+├── when size is zero
+│   └── it will return an empty array
+├── when there are no rulesets
+│   └── it will return an empty array
+└── when size is gt configured rulesets
+    └── it will return up to latest ruleset

@@ -1,0 +1,20 @@
+TestUpcomingRulesetOf_Local
+├── when latest ruleset Id EQ zero
+│   └── it will return an empty ruleset
+├── when upcoming ruleset Id DNEQ zero
+│   ├── given status EQ Approved or ApprovalExpected or Empty
+│   │   └── it will return that ruleset
+│   └── given status DNEQ Approved or ApprovalExpected or Empty
+│       └── it will return the ruleset upcoming was based on
+├── when upcoming ruleset Id EQ zero
+│   └── given the latest ruleset starts in the future
+│       └── it will return the ruleset that latestRuleset is based on
+├── when latest ruleset has duration eq zero
+│   └── it will return an empty ruleset
+└── when ruleset duration dneq zero
+    ├── given approval status is approved or empty
+    │   └── it will return a simulatedCycledRulesetBasedOn
+    ├── given the rulesets approval failed and it's basedOn duration DNEQ zero
+    │   └── it will return the simulatedCycledRulesetBasedOn it was based on
+    └── given the rulesets approval failed and it's basedOn duration EQ zero
+        └── it will return an empty ruleset

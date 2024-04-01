@@ -1,0 +1,5 @@
+TestGetRulesetOf_Local
+├── when rulesetId dneq zero
+│   └── it will return a JBRuleset derived from _packedIntrinsicPropertiesOf
+└── when rulesetId eq zero
+    └── it will return an empty ruleset

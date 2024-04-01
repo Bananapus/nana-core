@@ -1,0 +1,12 @@
+TestCurrentOf_Local
+├── when latestrulesetOf project EQ zero
+│   └── it will return an empty ruleset
+├── when latest rulesetId DNEQ zero
+│   ├── given the currentlyApprovableRulesetIdOf approval status EQ Approved or Empty
+│   │   └── it will return the latest approved ruleset
+│   ├── given the currentlyApprovableRulesetIdOf approval status DNEQ Approved or Empty
+│   │   └── it will return the ruleset the pending approval ruleset is basedOn
+│   └── given the currentlyApprovableRulesetIdOf EQ zero and approval status of the latest ruleset DNEQ Approved or Empty
+│       └── it will return the basedOn of the latest ruleset
+└── when base of the currentlyApprovableRulesetIdOf duration EQ zero
+    └── it will return simulateCycledRulesetBasedOn with allowMidRuleset true

@@ -1,0 +1,10 @@
+TestRecordUsedAllowanceOf_Local
+├── when amount is within range to use surplus allowance
+│   ├── given calling currency eq accounting currency
+│   │   └── it will not convert prices
+│   ├── given calling currency dneq accounting currency
+│   │   └── it will convert prices
+│   └── given there is inadequate balance after price conversion
+│       └── it will revert INADEQUATE_TERMINAL_STORE_BALANCE
+└── when amount is not within range to use surplus allowance
+    └── it will revert INADEQUATE_CONTROLLER_ALLOWANCE

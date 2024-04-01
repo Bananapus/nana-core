@@ -1,0 +1,8 @@
+TestHasPermissions_Local
+├── when permissionId gt 255
+│   └── it will revert with PERMISSION_ID_OUT_OF_BOUNDS
+└── when permissionId lt 255
+    ├── given operator has permission for account of project
+    │   └── it will return true
+    └── given operator doesn't have permission for account of project
+        └── it will return false

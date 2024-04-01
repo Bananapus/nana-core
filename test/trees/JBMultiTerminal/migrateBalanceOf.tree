@@ -1,0 +1,12 @@
+TestMigrateBalanceOf_Local
+├── when caller does not have permission
+│   └── it will revert UNAUTHORIZED
+├── when the terminal to does not accept the token
+│   └── it will revert TERMINAL_TOKENS_INCOMPATIBLE
+└── when balance GT zero and caller is permissioned
+    ├── given there are held fees
+    │   └── it will process held fees
+    ├── given token is ERC20
+    │   └── it will safeIncreaseAllowance and addToBalanceOf
+    └── given token is native
+        └── it will addToBalanceOf with value in msgvalue

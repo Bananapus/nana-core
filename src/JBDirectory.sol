@@ -166,7 +166,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
         // Keep a reference to the current controller.
         IERC165 currentController = controllerOf[projectId];
 
-        // Get a reference to the flag indicating if the project is allowed to set terminals.
+        // Get a reference to the flag indicating if the project is allowed to set controllers.
         bool allowSetController = address(currentController) == address(0)
             || !currentController.supportsInterface(type(IJBDirectoryAccessControl).interfaceId)
             ? true

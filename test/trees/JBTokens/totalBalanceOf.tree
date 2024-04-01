@@ -1,0 +1,5 @@
+TestTotalBalanceOf_Local
+├── when a projects token DNEQ zero address
+│   └── it will return creditBalanceOf plus token balance of holder
+└── when a projects token EQ zero address
+    └── it will return zero

@@ -1,0 +1,9 @@
+TestSupportsInterface_Local
+├── when interfaceId is IJBProjects
+│   └── it will return true
+├── when interfaceId is IERC721
+│   └── it will return true
+├── when interfaceId is IERC721Metadata
+│   └── it will return true
+└── when interfaceId is anything else
+    └── it will return false

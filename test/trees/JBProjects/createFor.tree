@@ -1,0 +1,11 @@
+TestCreateFor_Local
+├── when projectId plus one is gt uint256 max
+│   └── it will revert
+└── when projectId plus one is lt or eq to uint256 max
+    ├── given owner is not a contract
+    │   └── it will mint and emit Create
+    └── given owner is a contract
+        ├── given it is IERC721Receiver
+        │   └── it will mint and emit Create
+        └── given it does not support IERC721Receiver
+            └── it will revert

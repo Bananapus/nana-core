@@ -1,0 +1,5 @@
+TestSetSplitGroupsOf_Local
+├── when caller is permissioned
+│   └── it will set splits
+└── when caller is not permissioned
+    └── it will revert UNAUTHORIZED

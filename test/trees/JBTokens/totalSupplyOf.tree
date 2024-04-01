@@ -1,0 +1,5 @@
+TestTotalSupplyOf_Local
+├── when a projects token DNEQ zero address
+│   └── it will return totalCreditSupplyOf plus token total supply
+└── when a projects token EQ zero address
+    └── it will return zero

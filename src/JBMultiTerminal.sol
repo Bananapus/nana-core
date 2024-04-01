@@ -669,7 +669,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             });
 
             // Make sure that the address supports the split hook interface.
-            if (ERC165Checker.supportsInterface(address(split.hook), type(IJBSplitHook).interfaceId)) {
+            if (!split.hook.supportsInterface(type(IJBSplitHook).interfaceId)) {
                 revert("400_1");
             }
 
@@ -697,7 +697,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             }
 
             // Trigger any inherited pre-transfer logic.
-            _beforeTransferTo({to: address(terminal), token: token, amount: netPayoutAmount});
+            if (terminal != this) _beforeTransferTo({to: address(terminal), token: token, amount: netPayoutAmount});
 
             // Send the `projectId` in the metadata as a referral.
             bytes memory metadata = bytes(abi.encodePacked(projectId));

@@ -1,0 +1,5 @@
+TestCurrentTotalSurplusOf_Local
+├── when terminals are configured in JBDirectory
+│   └── it will return the cumulative surplus
+└── when terminals are not configured in JBDirectory
+    └── it will return zero

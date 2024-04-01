@@ -1,0 +1,8 @@
+TestTransferCreditsFrom_Local
+└── when caller is controller
+    ├── given recipient EQ zero address
+    │   └── it will revert RECIPIENT_ZERO_ADDRESS
+    ├── given calling amount GT creditBalance
+    │   └── it will revert INSUFFICIENT_CREDITS
+    └── given happy path
+        └── it will subtract creditBalanceOf from holder to recipient and emit TransferCredits

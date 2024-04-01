@@ -1,0 +1,5 @@
+TestSetPermissionsFor_Local
+├── when caller does not have ROOT permission
+│   └── it will revert UNAUTHORIZED
+└── when caller has ROOT permission
+    └── it packs permissions into a bitfield, stores them, and emits OperatorPermissionsSet
