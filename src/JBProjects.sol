@@ -43,9 +43,9 @@ contract JBProjects is ERC721Votes, Ownable, IJBProjects {
         return resolver.getUri(projectId);
     }
 
-    /// @notice Indicates if this contract adheres to the specified interface.
+    /// @notice Indicates whether this contract adheres to the specified interface.
     /// @dev See {IERC165-supportsInterface}.
-    /// @param interfaceId The ID of the interface to check for adherance to.
+    /// @param interfaceId The ID of the interface to check for adherence to.
     /// @return A flag indicating if the provided interface ID is supported.
     function supportsInterface(bytes4 interfaceId) public view virtual override(IERC165, ERC721) returns (bool) {
         return interfaceId == type(IJBProjects).interfaceId || super.supportsInterface(interfaceId);

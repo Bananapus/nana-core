@@ -24,9 +24,9 @@ contract JBFeelessAddresses is Ownable, ERC165, IJBFeelessAddresses {
     // -------------------------- public views --------------------------- //
     //*********************************************************************//
 
-    /// @notice Indicates if this contract adheres to the specified interface.
+    /// @notice Indicates whether this contract adheres to the specified interface.
     /// @dev See {IERC165-supportsInterface}.
-    /// @param interfaceId The ID of the interface to check for adherance to.
+    /// @param interfaceId The ID of the interface to check for adherence to.
     /// @return A flag indicating if the provided interface ID is supported.
     function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {
         return interfaceId == type(IJBFeelessAddresses).interfaceId || interfaceId == type(IERC165).interfaceId;

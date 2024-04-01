@@ -40,8 +40,7 @@ import {JBSplitGroup} from "./structs/JBSplitGroup.sol";
 import {JBSplitHookContext} from "./structs/JBSplitHookContext.sol";
 import {JBTerminalConfig} from "./structs/JBTerminalConfig.sol";
 
-/// @notice `JBController` coordinates rulesets and project tokens, and is the entry point for most operations related
-/// to projects and their tokens.
+/// @notice `JBController` coordinates rulesets and project tokens, and is the entry point for most operations related to rulesets and project tokens.
 contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, IJBMigratable {
     // A library that parses packed ruleset metadata into a friendlier format.
     using JBRulesetMetadataResolver for JBRuleset;
@@ -232,9 +231,9 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     // -------------------------- public views --------------------------- //
     //*********************************************************************//
 
-    /// @notice Indicates if this contract adheres to the specified interface.
+    /// @notice Indicates whether this contract adheres to the specified interface.
     /// @dev See {IERC165-supportsInterface}.
-    /// @param interfaceId The ID of the interface to check for adherance to.
+    /// @param interfaceId The ID of the interface to check for adherence to.
     /// @return A flag indicating if the provided interface ID is supported.
     function supportsInterface(bytes4 interfaceId) public view virtual override(ERC165, IERC165) returns (bool) {
         return interfaceId == type(IJBController).interfaceId || interfaceId == type(IJBProjectUriRegistry).interfaceId
