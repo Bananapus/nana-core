@@ -523,7 +523,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
     /// @notice Adds accounting contexts for a project to this terminal so the project can begin accepting the tokens in
     /// those contexts.
-    /// @dev Only a project's owner, an operator with the `SET_ACCOUNTING_CONTEXT` permission from that owner, or a
+    /// @dev Only a project's owner, an operator with the `ADD_ACCOUNTING_CONTEXTS` permission from that owner, or a
     /// project's controller can add accounting contexts for the project.
     /// @param projectId The ID of the project having to add accounting contexts for.
     /// @param tokens The tokens to add accounting contexts for.
@@ -532,7 +532,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         _requirePermissionAllowingOverrideFrom({
             account: PROJECTS.ownerOf(projectId),
             projectId: projectId,
-            permissionId: JBPermissionIds.SET_ACCOUNTING_CONTEXT,
+            permissionId: JBPermissionIds.ADD_ACCOUNTING_CONTEXTS,
             alsoGrantAccessIf: _msgSender() == address(DIRECTORY.controllerOf(projectId))
         });
 

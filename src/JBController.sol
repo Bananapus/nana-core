@@ -585,7 +585,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     }
 
     /// @notice Sets a project's split groups. The new split groups must include any current splits which are locked.
-    /// @dev Can only be called by the project's owner or an address with the owner's permission to `SET_SPLITS`.
+    /// @dev Can only be called by the project's owner or an address with the owner's permission to `SET_SPLIT_GROUPS`.
     /// @param projectId The ID of the project to set the split groups of.
     /// @param rulesetId The ID of the ruleset the split groups should be active in. Use a `rulesetId` of 0 to set the
     /// default split groups, which are used when a ruleset has no splits set. If there are no default splits and no
@@ -604,7 +604,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         _requirePermissionFrom({
             account: PROJECTS.ownerOf(projectId),
             projectId: projectId,
-            permissionId: JBPermissionIds.SET_SPLITS
+            permissionId: JBPermissionIds.SET_SPLIT_GROUPS
         });
 
         // Set the split groups.
@@ -613,7 +613,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
 
     /// @notice Deploys an ERC-20 token for a project. It will be used when claiming tokens (with credits).
     /// @dev Deploys the project's ERC-20 contract.
-    /// @dev Can only be called by the project's owner or an address with the owner's permission to `ISSUE_TOKENS`.
+    /// @dev Can only be called by the project's owner or an address with the owner's permission to `DEPLOY_ERC20`.
     /// @param projectId The ID of the project to deploy the ERC-20 for.
     /// @param name The ERC-20's name.
     /// @param symbol The ERC-20's symbol.
@@ -633,7 +633,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         _requirePermissionFrom({
             account: PROJECTS.ownerOf(projectId),
             projectId: projectId,
-            permissionId: JBPermissionIds.ISSUE_TOKEN
+            permissionId: JBPermissionIds.DEPLOY_ERC20
         });
 
         if (salt != bytes32(0)) salt = keccak256(abi.encodePacked(_msgSender(), salt));
@@ -679,7 +679,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     }
 
     /// @notice Allows a credit holder to transfer credits to another address.
-    /// @dev Can only be called by the credit holder or an address with the holder's permission to `TRANSFER_TOKENS`.
+    /// @dev Can only be called by the credit holder or an address with the holder's permission to `TRANSFER_CREDITS`.
     /// @param holder The address to transfer credits from.
     /// @param projectId The ID of the project whose credits are being transferred.
     /// @param recipient The address to transfer credits to.
@@ -695,7 +695,7 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
         override
     {
         // Enforce permissions.
-        _requirePermissionFrom({account: holder, projectId: projectId, permissionId: JBPermissionIds.TRANSFER_TOKENS});
+        _requirePermissionFrom({account: holder, projectId: projectId, permissionId: JBPermissionIds.TRANSFER_CREDITS});
 
         // Get a reference to the project's ruleset.
         JBRuleset memory ruleset = RULESETS.currentOf(projectId);

@@ -20,7 +20,7 @@ contract TestTransferCreditsFrom_Local is JBControllerSetup {
     modifier whenCallerIsPermissioned() {
         // it will call permissions
         bytes memory _permCall = abi.encodeCall(
-            IJBPermissions.hasPermission, (address(this), _holder, _projectId, JBPermissionIds.TRANSFER_TOKENS)
+            IJBPermissions.hasPermission, (address(this), _holder, _projectId, JBPermissionIds.TRANSFER_CREDITS)
         );
         bytes memory _permReturn = abi.encode(true);
         mockExpect(address(permissions), _permCall, _permReturn);
@@ -131,14 +131,14 @@ contract TestTransferCreditsFrom_Local is JBControllerSetup {
         // it will revert UNAUTHORIZED
         // it will call permissions
         bytes memory _permCall = abi.encodeCall(
-            IJBPermissions.hasPermission, (address(this), _holder, _projectId, JBPermissionIds.TRANSFER_TOKENS)
+            IJBPermissions.hasPermission, (address(this), _holder, _projectId, JBPermissionIds.TRANSFER_CREDITS)
         );
         bytes memory _permReturn = abi.encode(false);
         mockExpect(address(permissions), _permCall, _permReturn);
 
         // it will call permissions again to check root permission
         bytes memory _permCall2 = abi.encodeCall(
-            IJBPermissions.hasPermission, (address(this), _holder, _rootId, JBPermissionIds.TRANSFER_TOKENS)
+            IJBPermissions.hasPermission, (address(this), _holder, _rootId, JBPermissionIds.TRANSFER_CREDITS)
         );
         bytes memory _permReturn2 = abi.encode(false);
         mockExpect(address(permissions), _permCall2, _permReturn2);
