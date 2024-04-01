@@ -780,14 +780,14 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     /// @param projectId The ID of the project the reserved tokens belong to.
     /// @return tokenCount The number of reserved tokens minted/sent.
     function _sendReservedTokensToSplitsOf(uint256 projectId) internal returns (uint256 tokenCount) {
-        // Get the current ruleset to read the reserved rate from.
-        JBRuleset memory ruleset = RULESETS.currentOf(projectId);
-
         // Get a reference to the number of tokens that need to be minted.
         tokenCount = pendingReservedTokenBalanceOf[projectId];
 
         // Revert if there are no reserved tokens
         if (tokenCount == 0) revert NO_RESERVED_TOKENS();
+
+        // Get the current ruleset to read the reserved rate from.
+        JBRuleset memory ruleset = RULESETS.currentOf(projectId);
 
         // Reset the reserved token balance
         pendingReservedTokenBalanceOf[projectId] = 0;
