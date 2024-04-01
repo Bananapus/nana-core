@@ -126,7 +126,7 @@ contract TestLaunchRulesetsFor_Local is JBControllerSetup {
 
         mockExpect(address(rulesets), _latestRulesetIdOfCall, _returnData);
 
-        vm.expectRevert(abi.encodeWithSignature("RULESET_ALREADY_LAUNCHED()"));
+        vm.expectRevert(abi.encodeWithSignature("RULESETS_ALREADY_LAUNCHED()"));
 
         _controller.launchRulesetsFor(1, _rulesetConfigs, _terminalConfigs, "");
     }
