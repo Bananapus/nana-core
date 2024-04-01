@@ -86,7 +86,7 @@ curl -L https://foundry.paradigm.xyz | sh
 You can download and install dependencies with:
 
 ```bash
-npm install --production && forge install
+npm ci && forge install
 ```
 
 If you run into trouble with `forge install`, try using `git submodule update --init --recursive` to ensure that nested submodules have been properly initialized.
