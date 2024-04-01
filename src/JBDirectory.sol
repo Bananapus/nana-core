@@ -12,7 +12,8 @@ import {IJBPermissions} from "./interfaces/IJBPermissions.sol";
 import {IJBTerminal} from "./interfaces/IJBTerminal.sol";
 import {IJBProjects} from "./interfaces/IJBProjects.sol";
 
-/// @notice Tracks which `IJBTerminal`s each project is currently accepting funds through, and which `IJBController` is
+/// @notice `JBDirectory` tracks the terminals and the controller used by each project.
+/// @dev Tracks which `IJBTerminal`s each project is currently accepting funds through, and which `IJBController` is
 /// managing each project's tokens and rulesets.
 contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
     //*********************************************************************//

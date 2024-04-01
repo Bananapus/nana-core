@@ -7,17 +7,17 @@ import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
 import {IJBFeelessAddresses} from "./interfaces/IJBFeelessAddresses.sol";
 
-/// @notice Stores and manages addresses that shouldn't incur fees when being paid towards or from.
+/// @notice Stores a list of addresses that shouldn't incur fees when sending or receiving payments.
 contract JBFeelessAddresses is Ownable, ERC165, IJBFeelessAddresses {
     //*********************************************************************//
     // --------------------- public stored properties -------------------- //
     //*********************************************************************//
 
-    /// @notice Feeless addresses for this terminal.
+    /// @notice Check if the specified address is feeless.
     /// @dev Feeless addresses can receive payouts without incurring a fee.
     /// @dev Feeless addresses can use the surplus allowance without incurring a fee.
     /// @dev Feeless addresses can be the beneficary of redemptions without incurring a fee.
-    /// @custom:param addr The address that may or may not be feeless.
+    /// @custom:param addr The address to check.
     mapping(address addr => bool) public override isFeeless;
 
     //*********************************************************************//
@@ -32,22 +32,18 @@ contract JBFeelessAddresses is Ownable, ERC165, IJBFeelessAddresses {
         return interfaceId == type(IJBFeelessAddresses).interfaceId || interfaceId == type(IERC165).interfaceId;
     }
 
-    /// @param owner The address that will own this contract.
+    /// @param owner This contract's owner.
     constructor(address owner) Ownable(owner) {}
 
     //*********************************************************************//
     // ---------------------- external transactions ---------------------- //
     //*********************************************************************//
 
-    /// @notice Sets an address as feeless or not feeless for this terminal.
-    /// @dev Only the owner of this contract can set addresses as feeless or not feeless.
-    /// @dev Feeless addresses can receive payouts without incurring a fee.
-    /// @dev Feeless addresses can use the surplus allowance without incurring a fee.
-    /// @dev Feeless addresses can be the beneficary of redemptions without incurring a fee.
-    /// @param addr The address to make feeless or not feeless.
-    /// @param flag A flag indicating whether the `address` should be made feeless or not feeless.
+    /// @notice Sets whether an address is feeless.
+    /// @dev Can only be called by this contract's owner.
+    /// @param addr The address to set as feeless or not feeless.
+    /// @param flag Whether the address should be feeless (`true`) or not feeless (`false`).
     function setFeelessAddress(address addr, bool flag) external virtual override onlyOwner {
-        // Set the flag value.
         isFeeless[addr] = flag;
 
         emit SetFeelessAddress(addr, flag, _msgSender());
