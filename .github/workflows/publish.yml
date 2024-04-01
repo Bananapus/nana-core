@@ -13,8 +13,7 @@ jobs:
         with:
           node-version: latest
           registry-url: https://registry.npmjs.org
-      # This will fail if the version in package.json has not increased.
       - name: Publish to npm
-        run: npm publish --access public
+        run: bash ./utils/update-if-new-version.sh package.json
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
