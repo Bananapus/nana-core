@@ -8,8 +8,10 @@ import {JBApprovalStatus} from "./enums/JBApprovalStatus.sol";
 import {IJBRulesetApprovalHook} from "./interfaces/IJBRulesetApprovalHook.sol";
 import {JBRuleset} from "./structs/JBRuleset.sol";
 
-/// @notice `JBDeadline` is a ruleset approval hook which rejects rulesets if they are not queued at least `duration` seconds before the current ruleset ends. In other words, rulesets must be queued before the deadline to take effect.
-/// @dev Project rulesets are stored in a queue. Rulesets take effect after the previous ruleset in the queue ends, and only if they are approved by the previous ruleset's approval hook.
+/// @notice `JBDeadline` is a ruleset approval hook which rejects rulesets if they are not queued at least `duration`
+/// seconds before the current ruleset ends. In other words, rulesets must be queued before the deadline to take effect.
+/// @dev Project rulesets are stored in a queue. Rulesets take effect after the previous ruleset in the queue ends, and
+/// only if they are approved by the previous ruleset's approval hook.
 contract JBDeadline is ERC165, IJBRulesetApprovalHook {
     //*********************************************************************//
     // --------------------------- custom errors ------------------------- //
@@ -21,7 +23,8 @@ contract JBDeadline is ERC165, IJBRulesetApprovalHook {
     // ---------------- public immutable stored properties --------------- //
     //*********************************************************************//
 
-    /// @notice The minimum number of seconds between the time a ruleset is queued and the time it starts. If the difference is greater than this number, the ruleset is `Approved`.
+    /// @notice The minimum number of seconds between the time a ruleset is queued and the time it starts. If the
+    /// difference is greater than this number, the ruleset is `Approved`.
     uint256 public immutable override DURATION;
 
     //*********************************************************************//
@@ -50,7 +53,8 @@ contract JBDeadline is ERC165, IJBRulesetApprovalHook {
         if (rulesetId > start) return JBApprovalStatus.Failed;
 
         unchecked {
-            // If there aren't enough seconds between the time the ruleset was queued and the time it starts, it has `Failed`.
+            // If there aren't enough seconds between the time the ruleset was queued and the time it starts, it has
+            // `Failed`.
             // Otherwise, if there is still time before the deadline, the ruleset's status is `ApprovalExpected`.
             // If we've already passed the deadline, the ruleset is `Approved`.
             return (start - rulesetId < DURATION)
@@ -71,7 +75,8 @@ contract JBDeadline is ERC165, IJBRulesetApprovalHook {
     // -------------------------- constructor ---------------------------- //
     //*********************************************************************//
 
-    /// @param duration The minimum number of seconds between the time a ruleset is queued and the time it starts for it to be `Approved`.
+    /// @param duration The minimum number of seconds between the time a ruleset is queued and the time it starts for it
+    /// to be `Approved`.
     constructor(uint256 duration) {
         // Ensure we don't underflow in `approvalStatusOf(...)`.
         if (duration > block.timestamp) revert DURATION_TOO_LONG();
