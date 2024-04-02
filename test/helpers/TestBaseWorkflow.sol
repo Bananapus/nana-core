@@ -204,7 +204,7 @@ contract TestBaseWorkflow is Test, DeployPermit2 {
     // Deploys and initializes contracts for testing.
     function setUp() public virtual {
         _jbPermissions = new JBPermissions();
-        _jbProjects = new JBProjects(_multisig);
+        _jbProjects = new JBProjects(_multisig, address(0));
         _jbPrices = new JBPrices(_jbPermissions, _jbProjects, _multisig);
         _jbDirectory = new JBDirectory(_jbPermissions, _jbProjects, _multisig);
         _jbErc20 = new JBERC20();

@@ -56,21 +56,30 @@ contract JBProjects is ERC721Votes, Ownable, IJBProjects {
     //*********************************************************************//
 
     /// @param owner The owner of the contract who can set metadata.
-    constructor(address owner)
+    /// @param feeProjectOwner The address that will receive the fee-project. If `address(0)` the fee-project will not
+    /// be minted.
+    constructor(
+        address owner,
+        address feeProjectOwner
+    )
         ERC721("Juicebox Projects", "JUICEBOX")
         EIP712("Juicebox Projects", "1")
         Ownable(owner)
-    {}
+    {
+        if (feeProjectOwner != address(0)) {
+            createFor(feeProjectOwner);
+        }
+    }
 
     //*********************************************************************//
-    // ---------------------- external transactions ---------------------- //
+    // ---------------------- public transactions ---------------------- //
     //*********************************************************************//
 
     /// @notice Create a new project for the specified owner, which mints an NFT (ERC-721) into their wallet.
     /// @dev Anyone can create a project on an owner's behalf.
     /// @param owner The address that will be the owner of the project.
     /// @return projectId The token ID of the newly created project.
-    function createFor(address owner) external override returns (uint256 projectId) {
+    function createFor(address owner) public override returns (uint256 projectId) {
         // Increment the count, which will be used as the ID.
         projectId = ++count;
 
@@ -79,6 +88,10 @@ contract JBProjects is ERC721Votes, Ownable, IJBProjects {
 
         emit Create(projectId, owner, _msgSender());
     }
+
+    //*********************************************************************//
+    // ---------------------- external transactions ---------------------- //
+    //*********************************************************************//
 
     /// @notice Sets the address of the resolver used to retrieve the tokenURI of projects.
     /// @param newResolver The address of the new resolver.
