@@ -46,7 +46,7 @@ import {JBSplit} from "./structs/JBSplit.sol";
 import {JBSplitHookContext} from "./structs/JBSplitHookContext.sol";
 import {JBTokenAmount} from "./structs/JBTokenAmount.sol";
 
-/// @notice Generic terminal managing inflows and outflows of funds into the protocol ecosystem.
+/// @notice `JBMultiTerminal` manages native/ERC-20 payments, redemptions, and surplus allowance usage for any number of projects. Terminals are the entry point for operations involving inflows and outflows of funds.
 contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     // A library that parses the packed ruleset metadata into a friendlier format.
     using JBRulesetMetadataResolver for JBRuleset;
@@ -72,21 +72,19 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     // ------------------------- public constants ------------------------ //
     //*********************************************************************//
 
-    /// @notice The fee percent (out of `JBConstants.MAX_FEE`).
-    /// @dev Fees are charged on payouts to addresses, when the surplus allowance is used, and on redemptions where the
-    /// redemption rate is less than 100%.
+    /// @notice This terminal's fee (as a fraction out of `JBConstants.MAX_FEE`).
+    /// @dev Fees are charged on payouts to addresses, surplus allowance usage, and redemptions if the redemption rate is less than 100%.
     uint256 public constant override FEE = 25; // 2.5%
 
     //*********************************************************************//
     // ------------------------ internal constants ----------------------- //
     //*********************************************************************//
 
-    /// @notice The ID of the project which receives fees is 1, as it should be the first project launched during the
-    /// deployment process.
+    /// @notice Project ID #1 receives fees. It should be the first project launched during the deployment process.
     uint256 internal constant _FEE_BENEFICIARY_PROJECT_ID = 1;
 
-    /// @notice 28 days, the number of seconds a fee can be held for.
-    uint256 internal constant _FEE_HOLDING_SECONDS = 2_419_200;
+    /// @notice The number of seconds fees can be held for.
+    uint256 internal constant _FEE_HOLDING_SECONDS = 2_419_200; // 28 days
 
     //*********************************************************************//
     // ---------------- public immutable stored properties --------------- //
