@@ -46,8 +46,8 @@ contract Deploy is Script, Sphinx {
     /// @notice Deploys the protocol.
     function run() public sphinx {
         // Set the manager, this can be changed and won't affect deployment addresses.
-        MANAGER = 0x823b92d6a4b2AED4b15675c7917c9f922ea8ADAD;
-        FEE_PROJECT_OWNER = 0x823b92d6a4b2AED4b15675c7917c9f922ea8ADAD;
+        MANAGER = safeAddress();
+        FEE_PROJECT_OWNER = safeAddress();
 
         // Deploy the protocol.
         deploy();
