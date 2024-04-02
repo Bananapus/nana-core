@@ -6,6 +6,9 @@
     "type": "git",
     "url": "git+https://github.com/Bananapus/nana-core"
   },
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "scripts": {
     "test": "forge test",
     "test:fork": "FOUNDRY_PROFILE=CI forge test",
