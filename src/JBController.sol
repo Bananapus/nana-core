@@ -6,7 +6,6 @@ import {ERC2771Context} from "@openzeppelin/contracts/metatx/ERC2771Context.sol"
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {Context} from "@openzeppelin/contracts/utils/Context.sol";
-import {ERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import {mulDiv} from "@prb/math/src/Common.sol";
 
@@ -42,7 +41,7 @@ import {JBTerminalConfig} from "./structs/JBTerminalConfig.sol";
 
 /// @notice `JBController` coordinates rulesets and project tokens, and is the entry point for most operations related
 /// to rulesets and project tokens.
-contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, IJBMigratable {
+contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigratable {
     // A library that parses packed ruleset metadata into a friendlier format.
     using JBRulesetMetadataResolver for JBRuleset;
 
@@ -236,10 +235,10 @@ contract JBController is JBPermissioned, ERC2771Context, ERC165, IJBController, 
     /// @dev See {IERC165-supportsInterface}.
     /// @param interfaceId The ID of the interface to check for adherence to.
     /// @return A flag indicating if the provided interface ID is supported.
-    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC165, IERC165) returns (bool) {
+    function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {
         return interfaceId == type(IJBController).interfaceId || interfaceId == type(IJBProjectUriRegistry).interfaceId
             || interfaceId == type(IJBDirectoryAccessControl).interfaceId || interfaceId == type(IJBMigratable).interfaceId
-            || interfaceId == type(IJBPermissioned).interfaceId || super.supportsInterface(interfaceId);
+            || interfaceId == type(IJBPermissioned).interfaceId || interfaceId == type(IERC165).interfaceId;
     }
 
     //*********************************************************************//
