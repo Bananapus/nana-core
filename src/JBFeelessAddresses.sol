@@ -2,13 +2,12 @@
 pragma solidity 0.8.23;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
 import {IJBFeelessAddresses} from "./interfaces/IJBFeelessAddresses.sol";
 
 /// @notice Stores a list of addresses that shouldn't incur fees when sending or receiving payments.
-contract JBFeelessAddresses is Ownable, ERC165, IJBFeelessAddresses {
+contract JBFeelessAddresses is Ownable, IJBFeelessAddresses, IERC165 {
     //*********************************************************************//
     // --------------------- public stored properties -------------------- //
     //*********************************************************************//

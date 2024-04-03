@@ -3,10 +3,9 @@ pragma solidity ^0.8.0;
 
 import {JBApprovalStatus} from "./../enums/JBApprovalStatus.sol";
 import {JBRuleset} from "./../structs/JBRuleset.sol";
-import {IJBControlled} from "./IJBControlled.sol";
 import {IJBRulesetApprovalHook} from "./IJBRulesetApprovalHook.sol";
 
-interface IJBRulesets is IJBControlled {
+interface IJBRulesets {
     event RulesetQueued(
         uint256 indexed rulesetId,
         uint256 indexed projectId,
