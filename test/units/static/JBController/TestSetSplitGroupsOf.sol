@@ -43,14 +43,15 @@ contract TestSetSplitGroupsOf_Local is JBControllerSetup {
 
         // mock call to JBPermissions
         bytes memory _permCall = abi.encodeCall(
-            IJBPermissions.hasPermission, (address(this), address(0), _projectId, JBPermissionIds.SET_SPLITS)
+            IJBPermissions.hasPermission, (address(this), address(0), _projectId, JBPermissionIds.SET_SPLIT_GROUPS)
         );
         bytes memory _permReturn = abi.encode(false);
         mockExpect(address(permissions), _permCall, _permReturn);
 
         // mock call to JBPermissions that checks root
-        bytes memory _permCall2 =
-            abi.encodeCall(IJBPermissions.hasPermission, (address(this), address(0), 0, JBPermissionIds.SET_SPLITS));
+        bytes memory _permCall2 = abi.encodeCall(
+            IJBPermissions.hasPermission, (address(this), address(0), 0, JBPermissionIds.SET_SPLIT_GROUPS)
+        );
         bytes memory _permReturn2 = abi.encode(false);
         mockExpect(address(permissions), _permCall2, _permReturn2);
 

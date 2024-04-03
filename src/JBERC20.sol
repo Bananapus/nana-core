@@ -7,7 +7,10 @@ import {ERC20Votes, ERC20} from "@openzeppelin/contracts/token/ERC20/extensions/
 
 import {IJBToken} from "./interfaces/IJBToken.sol";
 
-/// @notice An ERC-20 token that can be used by a project in the `JBTokens`.
+/// @notice An ERC-20 token that can be used by a project in `JBTokens` and `JBController`.
+/// @dev By default, a project uses "credits" to track balances. Once a project sets their `IJBToken` using
+/// `JBController.deployERC20For(...)` or `JBController.setTokenFor(...)`, credits can be redeemed to claim tokens.
+/// @dev `JBController.deployERC20For(...)` deploys a `JBERC20` contract and sets it as the project's token.
 contract JBERC20 is ERC20Votes, ERC20Permit, Ownable, IJBToken {
     //*********************************************************************//
     // --------------------- internal stored properties ------------------ //
@@ -33,21 +36,21 @@ contract JBERC20 is ERC20Votes, ERC20Permit, Ownable, IJBToken {
         return _symbol;
     }
 
-    /// @notice The number of decimals included in the fixed point accounting of this token.
+    /// @notice The number of decimals used for this token's fixed point accounting.
     /// @return The number of decimals.
     function decimals() public view override(ERC20, IJBToken) returns (uint8) {
         return super.decimals();
     }
 
-    /// @notice The total supply of this ERC20.
+    /// @notice The total supply of this ERC20 i.e. the total number of tokens in existence.
     /// @return The total supply of this ERC20, as a fixed point number.
     function totalSupply() public view override(ERC20, IJBToken) returns (uint256) {
         return super.totalSupply();
     }
 
-    /// @notice An account's balance of this ERC20.
-    /// @param account The account to get a balance of.
-    /// @return The balance of the `account` of this ERC20, as a fixed point number with 18 decimals.
+    /// @notice The balance of the given address.
+    /// @param account The account to get the balance of.
+    /// @return The number of tokens owned by the `account`, as a fixed point number with 18 decimals.
     function balanceOf(address account) public view override(ERC20, IJBToken) returns (uint256) {
         return super.balanceOf(account);
     }
@@ -62,17 +65,17 @@ contract JBERC20 is ERC20Votes, ERC20Permit, Ownable, IJBToken {
     // ---------------------- external transactions ---------------------- //
     //*********************************************************************//
 
-    /// @notice Mints more of the token.
-    /// @dev Only the owner of this contract cant mint more of it.
-    /// @param account The account to mint the tokens for.
+    /// @notice Mints more of this token.
+    /// @dev Can only be called by this contract's owner.
+    /// @param account The address to mint the new tokens to.
     /// @param amount The amount of tokens to mint, as a fixed point number with 18 decimals.
     function mint(address account, uint256 amount) external override onlyOwner {
         return _mint(account, amount);
     }
 
     /// @notice Burn some outstanding tokens.
-    /// @dev Only the owner of this contract cant burn some of its supply.
-    /// @param account The account to burn tokens from.
+    /// @dev Can only be called by this contract's owner.
+    /// @param account The address to burn tokens from.
     /// @param amount The amount of tokens to burn, as a fixed point number with 18 decimals.
     function burn(address account, uint256 amount) external override onlyOwner {
         return _burn(account, amount);
@@ -82,23 +85,22 @@ contract JBERC20 is ERC20Votes, ERC20Permit, Ownable, IJBToken {
     // ----------------------- public transactions ----------------------- //
     //*********************************************************************//
 
-    /// @notice Initialized the token.
-    /// @param name_ The name of the token.
-    /// @param symbol_ The symbol that the token should be represented by.
-    /// @param owner The owner of the token.
+    /// @notice Initializes the token.
+    /// @param name_ The token's name.
+    /// @param symbol_ The token's symbol.
+    /// @param owner The token contract's owner.
     function initialize(string memory name_, string memory symbol_, address owner) public override {
-        // Stop re-initialization by preventing setting a name if one already exists, and making sure a non-empty name
-        // is provided when initializing.
+        // Prevent re-initialization by reverting if a name is already set or if the provided name is empty.
         if (bytes(_name).length != 0 || bytes(name_).length == 0) revert();
 
         _name = name_;
         _symbol = symbol_;
 
-        // Transfer ownership to the initializer.
+        // Transfer ownership to the owner.
         _transferOwnership(owner);
     }
 
-    /// @notice required override.
+    /// @notice Required override.
     function nonces(address owner) public view virtual override(ERC20Permit, Nonces) returns (uint256) {
         return super.nonces(owner);
     }
@@ -107,7 +109,7 @@ contract JBERC20 is ERC20Votes, ERC20Permit, Ownable, IJBToken {
     // ---------------------- internal transactions ---------------------- //
     //*********************************************************************//
 
-    /// @notice required override.
+    /// @notice Required override.
     function _update(address from, address to, uint256 value) internal virtual override(ERC20, ERC20Votes) {
         super._update(from, to, value);
     }

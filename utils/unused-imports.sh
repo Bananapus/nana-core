@@ -5,7 +5,7 @@ BOLD='\033[1m'
 NC='\033[0m'
 
 for file in $(find src/ test/ script/ -iname "*.sol"); do
-    output=$(awk '# Build map of imports.
+    output=$(gawk '# Build map of imports.
       /^import/ {
 
         if (match($0, /{([^}]+)}/, arr)) {
