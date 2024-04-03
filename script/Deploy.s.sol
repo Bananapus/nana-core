@@ -47,7 +47,8 @@ contract Deploy is Script, Sphinx {
     function run() public sphinx {
         // Set the manager, this can be changed and won't affect deployment addresses.
         MANAGER = safeAddress();
-        FEE_PROJECT_OWNER = safeAddress();
+        // NOTICE: THIS IS FOR TESTNET ONLY! REPLACE!
+        FEE_PROJECT_OWNER = 0x1F96512db9A74b8805d900c8e553879C0Cb8Bb2a;
 
         // Deploy the protocol.
         deploy();
@@ -101,7 +102,7 @@ contract Deploy is Script, Sphinx {
 
         // Transfer ownership to the fee project owner.
         if (FEE_PROJECT_OWNER != _safe && FEE_PROJECT_OWNER != address(0)) {
-            projects.safeTransferFrom(_safe, MANAGER, 1);
+            projects.safeTransferFrom(_safe, FEE_PROJECT_OWNER, 1);
         }
     }
 }
