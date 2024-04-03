@@ -13,7 +13,7 @@ import {IJBProjects} from "./interfaces/IJBProjects.sol";
 
 /// @notice Manages and normalizes price feeds. Price feeds are contracts which return the "pricing currency" cost of 1
 /// "unit currency".
-contract JBPrices is Ownable, JBPermissioned, IJBPrices {
+contract JBPrices is JBPermissioned, Ownable, IJBPrices {
     //*********************************************************************//
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
