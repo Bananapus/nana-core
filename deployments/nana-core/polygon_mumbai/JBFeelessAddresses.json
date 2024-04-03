@@ -1,8 +1,8 @@
 {
 	"_format": "sphinx-sol-ct-artifact-1",
-	"merkleRoot": "0x9e0e602421b8af18b231044c4a9fcd3210b88a991260bd2d68511776273418b9",
+	"merkleRoot": "0xd585c33ce71711649e9771716c78530681c13a65cc62ef35805d17b1536fb647",
 	"contractName": "JBFeelessAddresses",
-	"address": "0x8E3376c408000FB95F4f17E2c16318926F3d1b6d",
+	"address": "0xf2233B2578Eda901c9df79401EaEcDB203BB37E3",
 	"abi": [
 		{
 			"type": "constructor",
@@ -171,155 +171,285 @@
 			]
 		}
 	],
-	"solcInputHash": "72b97eca88a7a2645b499cd15964090b",
+	"solcInputHash": "9c8ada04ecb46a70149f6960114cde6f",
 	"receipt": {
-		"blockHash": "0xea8e001401646ab0490ce66c3d5480ac07f16e20f56ab68f74dd27a38b09b050",
-		"blockNumber": 47249552,
+		"blockHash": "0x2db078772906bec7f3676116dd54e1842e02f955dfd37b854522df1ee6ae6fe9",
+		"blockNumber": 47798984,
 		"contractAddress": null,
-		"cumulativeGasUsed": "3678289",
+		"cumulativeGasUsed": "9737971",
 		"from": "0xC034550B542b83BA1De312b21d1C94a9a52B1595",
 		"gasPrice": "30000000015",
-		"gasUsed": "3601813",
-		"hash": "0xd795608c98b2c3631cb0495646a0381ee86b9d6bc215d0a99f79b75920f08224",
-		"index": 1,
+		"gasUsed": "9737971",
+		"hash": "0x4f057b7692a1c4cb3a900bcde8d353daf94c28bf2a7b7072fe041154ae1a9001",
+		"index": 0,
 		"logs": [
 			{
 				"address": "0xB5E96127D417b1B3ef8438496a38A143167209c7",
-				"blockHash": "0xea8e001401646ab0490ce66c3d5480ac07f16e20f56ab68f74dd27a38b09b050",
-				"blockNumber": 47249552,
+				"blockHash": "0x2db078772906bec7f3676116dd54e1842e02f955dfd37b854522df1ee6ae6fe9",
+				"blockNumber": 47798984,
 				"data": "0x0000000000000000000000000000000000000000000000000000000000000000",
-				"index": 3,
+				"index": 0,
 				"topics": [
 					"0x572f161235911da04685a68c06adf558fc7e4a36909dca394650e0adc19cc93d",
 					"0x000000000000000000000000c034550b542b83ba1de312b21d1c94a9a52b1595",
 					"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c",
-					"0x424cb30a638d987c0e82f5ad29da7069c9a4c871d84f3c324c423dac99b1486f"
+					"0xdc9a5843bbe52a3231fc6a52dee9a5dd9abb9fc23a94e011a95cbe4b0efbb1e7"
 				],
-				"transactionHash": "0xd795608c98b2c3631cb0495646a0381ee86b9d6bc215d0a99f79b75920f08224",
-				"transactionIndex": 1
+				"transactionHash": "0x4f057b7692a1c4cb3a900bcde8d353daf94c28bf2a7b7072fe041154ae1a9001",
+				"transactionIndex": 0
 			},
 			{
 				"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
-				"blockHash": "0xea8e001401646ab0490ce66c3d5480ac07f16e20f56ab68f74dd27a38b09b050",
-				"blockNumber": 47249552,
-				"data": "0x0000000000000000000000004a13af5bbe0a9f8a7d4280f34d09638d2087eb0f",
-				"index": 4,
+				"blockHash": "0x2db078772906bec7f3676116dd54e1842e02f955dfd37b854522df1ee6ae6fe9",
+				"blockNumber": 47798984,
+				"data": "0x000000000000000000000000beb17ba97066906106d72fca2f05f1e307e74b76",
+				"index": 1,
 				"topics": [
 					"0x4db17dd5e4732fb6da34a148104a592783ca119a1e7bb8829eba6cbadef0b511"
 				],
-				"transactionHash": "0xd795608c98b2c3631cb0495646a0381ee86b9d6bc215d0a99f79b75920f08224",
-				"transactionIndex": 1
+				"transactionHash": "0x4f057b7692a1c4cb3a900bcde8d353daf94c28bf2a7b7072fe041154ae1a9001",
+				"transactionIndex": 0
 			},
 			{
 				"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
-				"blockHash": "0xea8e001401646ab0490ce66c3d5480ac07f16e20f56ab68f74dd27a38b09b050",
-				"blockNumber": 47249552,
+				"blockHash": "0x2db078772906bec7f3676116dd54e1842e02f955dfd37b854522df1ee6ae6fe9",
+				"blockNumber": 47798984,
+				"data": "0x",
+				"index": 2,
+				"topics": [
+					"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
+					"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
+				],
+				"transactionHash": "0x4f057b7692a1c4cb3a900bcde8d353daf94c28bf2a7b7072fe041154ae1a9001",
+				"transactionIndex": 0
+			},
+			{
+				"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
+				"blockHash": "0x2db078772906bec7f3676116dd54e1842e02f955dfd37b854522df1ee6ae6fe9",
+				"blockNumber": 47798984,
+				"data": "0x0000000000000000000000000000000000000000000000000000000000000009",
+				"index": 3,
+				"topics": [
+					"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
+					"0xd585c33ce71711649e9771716c78530681c13a65cc62ef35805d17b1536fb647"
+				],
+				"transactionHash": "0x4f057b7692a1c4cb3a900bcde8d353daf94c28bf2a7b7072fe041154ae1a9001",
+				"transactionIndex": 0
+			},
+			{
+				"address": "0x71Ff91C8A27b436f7025C053c01A3F6AAE3Fc62E",
+				"blockHash": "0x2db078772906bec7f3676116dd54e1842e02f955dfd37b854522df1ee6ae6fe9",
+				"blockNumber": 47798984,
+				"data": "0x0000000000000000000000001081b5aa9d9d4862a3da4d469433fb36ed80fa2a",
+				"index": 4,
+				"topics": [
+					"0x11207664cc48b0fa81c8674795f1d8f642960f38d5d2d305ad813093bed85fab",
+					"0x000000000000000000000000beb17ba97066906106d72fca2f05f1e307e74b76",
+					"0x0000000000000000000000000000000000000000000000000000000000000001"
+				],
+				"transactionHash": "0x4f057b7692a1c4cb3a900bcde8d353daf94c28bf2a7b7072fe041154ae1a9001",
+				"transactionIndex": 0
+			},
+			{
+				"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+				"blockHash": "0x2db078772906bec7f3676116dd54e1842e02f955dfd37b854522df1ee6ae6fe9",
+				"blockNumber": 47798984,
 				"data": "0x",
 				"index": 5,
 				"topics": [
 					"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
 					"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
 				],
-				"transactionHash": "0xd795608c98b2c3631cb0495646a0381ee86b9d6bc215d0a99f79b75920f08224",
-				"transactionIndex": 1
+				"transactionHash": "0x4f057b7692a1c4cb3a900bcde8d353daf94c28bf2a7b7072fe041154ae1a9001",
+				"transactionIndex": 0
 			},
 			{
 				"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
-				"blockHash": "0xea8e001401646ab0490ce66c3d5480ac07f16e20f56ab68f74dd27a38b09b050",
-				"blockNumber": 47249552,
-				"data": "0x000000000000000000000000000000000000000000000000000000000000000c",
+				"blockHash": "0x2db078772906bec7f3676116dd54e1842e02f955dfd37b854522df1ee6ae6fe9",
+				"blockNumber": 47798984,
+				"data": "0x000000000000000000000000000000000000000000000000000000000000000a",
 				"index": 6,
 				"topics": [
 					"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
-					"0x9e0e602421b8af18b231044c4a9fcd3210b88a991260bd2d68511776273418b9"
+					"0xd585c33ce71711649e9771716c78530681c13a65cc62ef35805d17b1536fb647"
 				],
-				"transactionHash": "0xd795608c98b2c3631cb0495646a0381ee86b9d6bc215d0a99f79b75920f08224",
-				"transactionIndex": 1
+				"transactionHash": "0x4f057b7692a1c4cb3a900bcde8d353daf94c28bf2a7b7072fe041154ae1a9001",
+				"transactionIndex": 0
 			},
 			{
-				"address": "0x8E3376c408000FB95F4f17E2c16318926F3d1b6d",
-				"blockHash": "0xea8e001401646ab0490ce66c3d5480ac07f16e20f56ab68f74dd27a38b09b050",
-				"blockNumber": 47249552,
+				"address": "0xf2233B2578Eda901c9df79401EaEcDB203BB37E3",
+				"blockHash": "0x2db078772906bec7f3676116dd54e1842e02f955dfd37b854522df1ee6ae6fe9",
+				"blockNumber": 47798984,
 				"data": "0x",
 				"index": 7,
 				"topics": [
 					"0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
 					"0x0000000000000000000000000000000000000000000000000000000000000000",
-					"0x000000000000000000000000823b92d6a4b2aed4b15675c7917c9f922ea8adad"
+					"0x0000000000000000000000001081b5aa9d9d4862a3da4d469433fb36ed80fa2a"
 				],
-				"transactionHash": "0xd795608c98b2c3631cb0495646a0381ee86b9d6bc215d0a99f79b75920f08224",
-				"transactionIndex": 1
+				"transactionHash": "0x4f057b7692a1c4cb3a900bcde8d353daf94c28bf2a7b7072fe041154ae1a9001",
+				"transactionIndex": 0
 			},
 			{
 				"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
-				"blockHash": "0xea8e001401646ab0490ce66c3d5480ac07f16e20f56ab68f74dd27a38b09b050",
-				"blockNumber": 47249552,
-				"data": "0x0000000000000000000000008e3376c408000fb95f4f17e2c16318926f3d1b6d",
+				"blockHash": "0x2db078772906bec7f3676116dd54e1842e02f955dfd37b854522df1ee6ae6fe9",
+				"blockNumber": 47798984,
+				"data": "0x000000000000000000000000f2233b2578eda901c9df79401eaecdb203bb37e3",
 				"index": 8,
 				"topics": [
 					"0x4db17dd5e4732fb6da34a148104a592783ca119a1e7bb8829eba6cbadef0b511"
 				],
-				"transactionHash": "0xd795608c98b2c3631cb0495646a0381ee86b9d6bc215d0a99f79b75920f08224",
-				"transactionIndex": 1
+				"transactionHash": "0x4f057b7692a1c4cb3a900bcde8d353daf94c28bf2a7b7072fe041154ae1a9001",
+				"transactionIndex": 0
 			},
 			{
 				"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
-				"blockHash": "0xea8e001401646ab0490ce66c3d5480ac07f16e20f56ab68f74dd27a38b09b050",
-				"blockNumber": 47249552,
+				"blockHash": "0x2db078772906bec7f3676116dd54e1842e02f955dfd37b854522df1ee6ae6fe9",
+				"blockNumber": 47798984,
 				"data": "0x",
 				"index": 9,
 				"topics": [
 					"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
 					"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
 				],
-				"transactionHash": "0xd795608c98b2c3631cb0495646a0381ee86b9d6bc215d0a99f79b75920f08224",
-				"transactionIndex": 1
+				"transactionHash": "0x4f057b7692a1c4cb3a900bcde8d353daf94c28bf2a7b7072fe041154ae1a9001",
+				"transactionIndex": 0
 			},
 			{
 				"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
-				"blockHash": "0xea8e001401646ab0490ce66c3d5480ac07f16e20f56ab68f74dd27a38b09b050",
-				"blockNumber": 47249552,
-				"data": "0x000000000000000000000000000000000000000000000000000000000000000d",
+				"blockHash": "0x2db078772906bec7f3676116dd54e1842e02f955dfd37b854522df1ee6ae6fe9",
+				"blockNumber": 47798984,
+				"data": "0x000000000000000000000000000000000000000000000000000000000000000b",
 				"index": 10,
 				"topics": [
 					"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
-					"0x9e0e602421b8af18b231044c4a9fcd3210b88a991260bd2d68511776273418b9"
+					"0xd585c33ce71711649e9771716c78530681c13a65cc62ef35805d17b1536fb647"
 				],
-				"transactionHash": "0xd795608c98b2c3631cb0495646a0381ee86b9d6bc215d0a99f79b75920f08224",
-				"transactionIndex": 1
+				"transactionHash": "0x4f057b7692a1c4cb3a900bcde8d353daf94c28bf2a7b7072fe041154ae1a9001",
+				"transactionIndex": 0
+			},
+			{
+				"address": "0x08A5638AE0efd3Aabc61622D1C46daA9b6DCEA09",
+				"blockHash": "0x2db078772906bec7f3676116dd54e1842e02f955dfd37b854522df1ee6ae6fe9",
+				"blockNumber": 47798984,
+				"data": "0x",
+				"index": 11,
+				"topics": [
+					"0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+					"0x0000000000000000000000000000000000000000000000000000000000000000",
+					"0x0000000000000000000000001081b5aa9d9d4862a3da4d469433fb36ed80fa2a"
+				],
+				"transactionHash": "0x4f057b7692a1c4cb3a900bcde8d353daf94c28bf2a7b7072fe041154ae1a9001",
+				"transactionIndex": 0
+			},
+			{
+				"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+				"blockHash": "0x2db078772906bec7f3676116dd54e1842e02f955dfd37b854522df1ee6ae6fe9",
+				"blockNumber": 47798984,
+				"data": "0x00000000000000000000000008a5638ae0efd3aabc61622d1c46daa9b6dcea09",
+				"index": 12,
+				"topics": [
+					"0x4db17dd5e4732fb6da34a148104a592783ca119a1e7bb8829eba6cbadef0b511"
+				],
+				"transactionHash": "0x4f057b7692a1c4cb3a900bcde8d353daf94c28bf2a7b7072fe041154ae1a9001",
+				"transactionIndex": 0
+			},
+			{
+				"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+				"blockHash": "0x2db078772906bec7f3676116dd54e1842e02f955dfd37b854522df1ee6ae6fe9",
+				"blockNumber": 47798984,
+				"data": "0x",
+				"index": 13,
+				"topics": [
+					"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
+					"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
+				],
+				"transactionHash": "0x4f057b7692a1c4cb3a900bcde8d353daf94c28bf2a7b7072fe041154ae1a9001",
+				"transactionIndex": 0
+			},
+			{
+				"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
+				"blockHash": "0x2db078772906bec7f3676116dd54e1842e02f955dfd37b854522df1ee6ae6fe9",
+				"blockNumber": 47798984,
+				"data": "0x000000000000000000000000000000000000000000000000000000000000000c",
+				"index": 14,
+				"topics": [
+					"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
+					"0xd585c33ce71711649e9771716c78530681c13a65cc62ef35805d17b1536fb647"
+				],
+				"transactionHash": "0x4f057b7692a1c4cb3a900bcde8d353daf94c28bf2a7b7072fe041154ae1a9001",
+				"transactionIndex": 0
+			},
+			{
+				"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+				"blockHash": "0x2db078772906bec7f3676116dd54e1842e02f955dfd37b854522df1ee6ae6fe9",
+				"blockNumber": 47798984,
+				"data": "0x0000000000000000000000009ef5ff7aca23b94309986ee3b4c1b13082913b59",
+				"index": 15,
+				"topics": [
+					"0x4db17dd5e4732fb6da34a148104a592783ca119a1e7bb8829eba6cbadef0b511"
+				],
+				"transactionHash": "0x4f057b7692a1c4cb3a900bcde8d353daf94c28bf2a7b7072fe041154ae1a9001",
+				"transactionIndex": 0
+			},
+			{
+				"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+				"blockHash": "0x2db078772906bec7f3676116dd54e1842e02f955dfd37b854522df1ee6ae6fe9",
+				"blockNumber": 47798984,
+				"data": "0x",
+				"index": 16,
+				"topics": [
+					"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
+					"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
+				],
+				"transactionHash": "0x4f057b7692a1c4cb3a900bcde8d353daf94c28bf2a7b7072fe041154ae1a9001",
+				"transactionIndex": 0
+			},
+			{
+				"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
+				"blockHash": "0x2db078772906bec7f3676116dd54e1842e02f955dfd37b854522df1ee6ae6fe9",
+				"blockNumber": 47798984,
+				"data": "0x000000000000000000000000000000000000000000000000000000000000000d",
+				"index": 17,
+				"topics": [
+					"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
+					"0xd585c33ce71711649e9771716c78530681c13a65cc62ef35805d17b1536fb647"
+				],
+				"transactionHash": "0x4f057b7692a1c4cb3a900bcde8d353daf94c28bf2a7b7072fe041154ae1a9001",
+				"transactionIndex": 0
 			},
 			{
 				"address": "0x0000000000000000000000000000000000001010",
-				"blockHash": "0xea8e001401646ab0490ce66c3d5480ac07f16e20f56ab68f74dd27a38b09b050",
-				"blockNumber": 47249552,
-				"data": "0x000000000000000000000000000000000000000000000000017fe2e52c5f1c0000000000000000000000000000000000000000000000000014b7d78a58bbacc60000000000000000000000000000000000000000000036e40836dfac3fb5f6240000000000000000000000000000000000000000000000001337f4a52c5c90c60000000000000000000000000000000000000000000036e409b6c2916c151224",
-				"index": 11,
+				"blockHash": "0x2db078772906bec7f3676116dd54e1842e02f955dfd37b854522df1ee6ae6fe9",
+				"blockNumber": 47798984,
+				"data": "0x000000000000000000000000000000000000000000000000040de2fdaca444000000000000000000000000000000000000000000000000000e025a42eafb9871000000000000000000000000000000000000000000000872fc0c942df64924e900000000000000000000000000000000000000000000000009f477453e575471000000000000000000000000000000000000000000000873001a772ba2ed68e9",
+				"index": 18,
 				"topics": [
 					"0x4dfe1bbbcf077ddc3e01291eea2d5c70c2b422b415d95645b9adcfd678cb1d63",
 					"0x0000000000000000000000000000000000000000000000000000000000001010",
 					"0x000000000000000000000000c034550b542b83ba1de312b21d1c94a9a52b1595",
-					"0x000000000000000000000000be188d6641e8b680743a4815dfa0f6208038960f"
+					"0x0000000000000000000000005082f249cdb2f2c1ee035e4f423c46ea2dab3ab1"
 				],
-				"transactionHash": "0xd795608c98b2c3631cb0495646a0381ee86b9d6bc215d0a99f79b75920f08224",
-				"transactionIndex": 1
+				"transactionHash": "0x4f057b7692a1c4cb3a900bcde8d353daf94c28bf2a7b7072fe041154ae1a9001",
+				"transactionIndex": 0
 			}
 		],
-		"logsBloom": "0x00020000080010000008000000080000000000000008000000800000004000000040008000000000000000000040000000008000000800000000000000000002400000000000200400000000820000800001000000000000000500000000004000000000020000000000000000000800000000100020000080000000040000400001000000000000000100000000800000000000000080000000804000000000204000080010000000000000000000020200000000000080000000000006004002000000000000200001000008000000000000000000000000100040000020000000000000000000000000000000000200000000000004000000000000100000",
+		"logsBloom": "0x80000000080010000008000000080000000000000008000000800000024000000060008002000000004000000040000000008000000000000000000000040000000000001000200400000000020000800801000000040000000300000001000000000000020000020000000000000800000000100020000090020000000200400001000800000000000100000000000400000000000000000300804000000020204200000010000000000000000000020200400000000000000000000006004000000000000000200001010008000000000000000000040000100000000060000000000000000084000000000040080200000000000000000000000010100000",
 		"status": 1,
 		"to": "0xB5E96127D417b1B3ef8438496a38A143167209c7"
 	},
-	"metadata": "{\"compiler\":{\"version\":\"0.8.23+commit.f704f362\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"type\":\"error\",\"name\":\"OwnableInvalidOwner\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"type\":\"error\",\"name\":\"OwnableUnauthorizedAccount\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\",\"indexed\":true},{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\",\"indexed\":true}],\"type\":\"event\",\"name\":\"OwnershipTransferred\",\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\",\"indexed\":true},{\"internalType\":\"bool\",\"name\":\"isFeeless\",\"type\":\"bool\",\"indexed\":true},{\"internalType\":\"address\",\"name\":\"caller\",\"type\":\"address\",\"indexed\":false}],\"type\":\"event\",\"name\":\"SetFeelessAddress\",\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"isFeeless\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}]},{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"renounceOwnership\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"},{\"internalType\":\"bool\",\"name\":\"flag\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"setFeelessAddress\"},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceId\",\"type\":\"bytes4\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"transferOwnership\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"constructor\":{\"params\":{\"owner\":\"The address that will own this contract.\"}},\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"renounceOwnership()\":{\"details\":\"Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner.\"},\"setFeelessAddress(address,bool)\":{\"details\":\"Only the owner of this contract can set addresses as feeless or not feeless.Feeless addresses can receive payouts without incurring a fee.Feeless addresses can use the surplus allowance without incurring a fee.Feeless addresses can be the beneficary of redemptions without incurring a fee.\",\"params\":{\"addr\":\"The address to make feeless or not feeless.\",\"flag\":\"A flag indicating whether the `address` should be made feeless or not feeless.\"}},\"supportsInterface(bytes4)\":{\"details\":\"See {IERC165-supportsInterface}.\",\"params\":{\"interfaceId\":\"The ID of the interface to check for adherance to.\"},\"returns\":{\"_0\":\"A flag indicating if the provided interface ID is supported.\"}},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"isFeeless(address)\":{\"notice\":\"Feeless addresses for this terminal.\"},\"setFeelessAddress(address,bool)\":{\"notice\":\"Sets an address as feeless or not feeless for this terminal.\"},\"supportsInterface(bytes4)\":{\"notice\":\"Indicates if this contract adheres to the specified interface.\"}},\"version\":1}},\"settings\":{\"remappings\":[\"@bananapus/=node_modules/@bananapus/\",\"@chainlink/=node_modules/@chainlink/\",\"@eth-optimism/=node_modules/@eth-optimism/\",\"@gnosis.pm/=node_modules/@gnosis.pm/\",\"@openzeppelin/=node_modules/@openzeppelin/\",\"@prb/=node_modules/@prb/\",\"@sphinx-labs/contracts/=lib/sphinx/packages/contracts/contracts/foundry/\",\"@uniswap/=node_modules/@uniswap/\",\"ds-test/=lib/forge-std/lib/ds-test/src/\",\"forge-std/=lib/forge-std/src/\",\"hardhat/=node_modules/hardhat/\",\"solmate/=node_modules/solmate/\",\"sphinx-forge-std/=node_modules/sphinx-forge-std/\",\"sphinx-solmate/=node_modules/sphinx-solmate/\",\"sphinx/=lib/sphinx/\"],\"optimizer\":{\"enabled\":true,\"runs\":200},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"compilationTarget\":{\"src/JBFeelessAddresses.sol\":\"JBFeelessAddresses\"},\"evmVersion\":\"paris\",\"libraries\":{}},\"sources\":{\"node_modules/@openzeppelin/contracts/access/Ownable.sol\":{\"keccak256\":\"0xff6d0bb2e285473e5311d9d3caacb525ae3538a80758c10649a4d61029b017bb\",\"urls\":[\"bzz-raw://8ed324d3920bb545059d66ab97d43e43ee85fd3bd52e03e401f020afb0b120f6\",\"dweb:/ipfs/QmfEckWLmZkDDcoWrkEvMWhms66xwTLff9DDhegYpvHo1a\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/utils/Context.sol\":{\"keccak256\":\"0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2\",\"urls\":[\"bzz-raw://6a708e8a5bdb1011c2c381c9a5cfd8a9a956d7d0a9dc1bd8bcdaf52f76ef2f12\",\"dweb:/ipfs/Qmax9WHBnVsZP46ZxEMNRQpLQnrdE4dK8LehML1Py8FowF\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/utils/introspection/ERC165.sol\":{\"keccak256\":\"0x9e8778b14317ba9e256c30a76fd6c32b960af621987f56069e1e819c77c6a133\",\"urls\":[\"bzz-raw://1777404f1dcd0fac188e55a288724ec3c67b45288e49cc64723e95e702b49ab8\",\"dweb:/ipfs/QmZFdC626GButBApwDUvvTnUzdinevC3B24d7yyh57XkiA\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/utils/introspection/IERC165.sol\":{\"keccak256\":\"0x4296879f55019b23e135000eb36896057e7101fb7fb859c5ef690cf14643757b\",\"urls\":[\"bzz-raw://87b3541437c8c443ccd36795e56a338ed12855eec17f8da624511b8d1a7e14df\",\"dweb:/ipfs/QmeJQCtZrQjtJLr6u7ZHWeH3pBnjtLWzvRrKViAi7UZqxL\"],\"license\":\"MIT\"},\"src/JBFeelessAddresses.sol\":{\"keccak256\":\"0x860d0650289bd755ecd25b7be4b2f0bb7b8432e267da9437bb928322d3c217a7\",\"urls\":[\"bzz-raw://0fa76cec4171ad3dfadb8228773300c41068d1892926a47c0766fa37012ca9db\",\"dweb:/ipfs/QmSEbFm4kmBrVNRBgw6bmhwwPVNQxcm3dYrZhJsaxDEsVN\"],\"license\":\"MIT\"},\"src/interfaces/IJBFeelessAddresses.sol\":{\"keccak256\":\"0xe5df42cfa71c5fa41b905c122de5825df13c2aab2f9cc4cf4bafa331dd69c27e\",\"urls\":[\"bzz-raw://3773bf3b42cc57d1e4086147e52135ff1dbff4309c45ca0398f821dfaa071563\",\"dweb:/ipfs/QmXUEJssHaxYKfV33tMZGf81JTR5a5yxEVshzNus84xLuT\"],\"license\":\"MIT\"}},\"version\":1}",
+	"metadata": "{\"compiler\":{\"version\":\"0.8.23+commit.f704f362\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"type\":\"error\",\"name\":\"OwnableInvalidOwner\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"type\":\"error\",\"name\":\"OwnableUnauthorizedAccount\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\",\"indexed\":true},{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\",\"indexed\":true}],\"type\":\"event\",\"name\":\"OwnershipTransferred\",\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\",\"indexed\":true},{\"internalType\":\"bool\",\"name\":\"isFeeless\",\"type\":\"bool\",\"indexed\":true},{\"internalType\":\"address\",\"name\":\"caller\",\"type\":\"address\",\"indexed\":false}],\"type\":\"event\",\"name\":\"SetFeelessAddress\",\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"isFeeless\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}]},{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"renounceOwnership\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"},{\"internalType\":\"bool\",\"name\":\"flag\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"setFeelessAddress\"},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceId\",\"type\":\"bytes4\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"transferOwnership\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"constructor\":{\"params\":{\"owner\":\"This contract's owner.\"}},\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"renounceOwnership()\":{\"details\":\"Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner.\"},\"setFeelessAddress(address,bool)\":{\"details\":\"Can only be called by this contract's owner.\",\"params\":{\"addr\":\"The address to set as feeless or not feeless.\",\"flag\":\"Whether the address should be feeless (`true`) or not feeless (`false`).\"}},\"supportsInterface(bytes4)\":{\"details\":\"See {IERC165-supportsInterface}.\",\"params\":{\"interfaceId\":\"The ID of the interface to check for adherence to.\"},\"returns\":{\"_0\":\"A flag indicating if the provided interface ID is supported.\"}},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"isFeeless(address)\":{\"notice\":\"Check if the specified address is feeless.\"},\"setFeelessAddress(address,bool)\":{\"notice\":\"Sets whether an address is feeless.\"},\"supportsInterface(bytes4)\":{\"notice\":\"Indicates whether this contract adheres to the specified interface.\"}},\"version\":1}},\"settings\":{\"remappings\":[\"@bananapus/=node_modules/@bananapus/\",\"@chainlink/=node_modules/@chainlink/\",\"@eth-optimism/=node_modules/@eth-optimism/\",\"@gnosis.pm/=node_modules/@gnosis.pm/\",\"@openzeppelin/=node_modules/@openzeppelin/\",\"@prb/=node_modules/@prb/\",\"@sphinx-labs/contracts/=lib/sphinx/packages/contracts/contracts/foundry/\",\"@uniswap/=node_modules/@uniswap/\",\"ds-test/=lib/forge-std/lib/ds-test/src/\",\"forge-std/=lib/forge-std/src/\",\"hardhat/=node_modules/hardhat/\",\"solmate/=node_modules/solmate/\",\"sphinx-forge-std/=node_modules/sphinx-forge-std/\",\"sphinx-solmate/=node_modules/sphinx-solmate/\",\"sphinx/=lib/sphinx/\"],\"optimizer\":{\"enabled\":true,\"runs\":200},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"compilationTarget\":{\"src/JBFeelessAddresses.sol\":\"JBFeelessAddresses\"},\"evmVersion\":\"paris\",\"libraries\":{}},\"sources\":{\"node_modules/@openzeppelin/contracts/access/Ownable.sol\":{\"keccak256\":\"0xff6d0bb2e285473e5311d9d3caacb525ae3538a80758c10649a4d61029b017bb\",\"urls\":[\"bzz-raw://8ed324d3920bb545059d66ab97d43e43ee85fd3bd52e03e401f020afb0b120f6\",\"dweb:/ipfs/QmfEckWLmZkDDcoWrkEvMWhms66xwTLff9DDhegYpvHo1a\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/utils/Context.sol\":{\"keccak256\":\"0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2\",\"urls\":[\"bzz-raw://6a708e8a5bdb1011c2c381c9a5cfd8a9a956d7d0a9dc1bd8bcdaf52f76ef2f12\",\"dweb:/ipfs/Qmax9WHBnVsZP46ZxEMNRQpLQnrdE4dK8LehML1Py8FowF\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/utils/introspection/ERC165.sol\":{\"keccak256\":\"0x9e8778b14317ba9e256c30a76fd6c32b960af621987f56069e1e819c77c6a133\",\"urls\":[\"bzz-raw://1777404f1dcd0fac188e55a288724ec3c67b45288e49cc64723e95e702b49ab8\",\"dweb:/ipfs/QmZFdC626GButBApwDUvvTnUzdinevC3B24d7yyh57XkiA\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/utils/introspection/IERC165.sol\":{\"keccak256\":\"0x4296879f55019b23e135000eb36896057e7101fb7fb859c5ef690cf14643757b\",\"urls\":[\"bzz-raw://87b3541437c8c443ccd36795e56a338ed12855eec17f8da624511b8d1a7e14df\",\"dweb:/ipfs/QmeJQCtZrQjtJLr6u7ZHWeH3pBnjtLWzvRrKViAi7UZqxL\"],\"license\":\"MIT\"},\"src/JBFeelessAddresses.sol\":{\"keccak256\":\"0x1743d390650d6257819f936a41f9ad6daea202cea1d387718c08c2359aa0c9e8\",\"urls\":[\"bzz-raw://c8256727b82d4d7384bc2e8db918e03280fd980cc9fab36e10d96e74002efe48\",\"dweb:/ipfs/QmUpqtCcrnTo1otxszUXTiEC6zF9hoWas1fz9shteiWk9G\"],\"license\":\"MIT\"},\"src/interfaces/IJBFeelessAddresses.sol\":{\"keccak256\":\"0xe5df42cfa71c5fa41b905c122de5825df13c2aab2f9cc4cf4bafa331dd69c27e\",\"urls\":[\"bzz-raw://3773bf3b42cc57d1e4086147e52135ff1dbff4309c45ca0398f821dfaa071563\",\"dweb:/ipfs/QmXUEJssHaxYKfV33tMZGf81JTR5a5yxEVshzNus84xLuT\"],\"license\":\"MIT\"}},\"version\":1}",
 	"args": [
-		"0x823b92d6a4b2AED4b15675c7917c9f922ea8ADAD"
+		"0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A"
 	],
-	"bytecode": "0x608060405234801561001057600080fd5b5060405161045038038061045083398101604081905261002f916100be565b806001600160a01b03811661005e57604051631e4fbdf760e01b81526000600482015260240160405180910390fd5b6100678161006e565b50506100ee565b600080546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b6000602082840312156100d057600080fd5b81516001600160a01b03811681146100e757600080fd5b9392505050565b610353806100fd6000396000f3fe608060405234801561001057600080fd5b50600436106100625760003560e01c806301ffc9a714610067578063715018a61461008f5780637258002c146100995780638da5cb5b146100ac578063ae74a1b5146100c7578063f2fde38b146100ea575b600080fd5b61007a610075366004610279565b6100fd565b60405190151581526020015b60405180910390f35b610097610134565b005b6100976100a73660046102c6565b610148565b6000546040516001600160a01b039091168152602001610086565b61007a6100d5366004610302565b60016020526000908152604090205460ff1681565b6100976100f8366004610302565b6101b9565b60006001600160e01b0319821663dc2ca19960e01b148061012e57506001600160e01b031982166301ffc9a760e01b145b92915050565b61013c6101fc565b6101466000610229565b565b6101506101fc565b6001600160a01b0382166000818152600160205260409020805460ff1916831515908117909155907fa2653e25a502c023a5830d0de847ef6f458387865b1f4f575d7594f9f2c0d71e336040516001600160a01b03909116815260200160405180910390a35050565b6101c16101fc565b6001600160a01b0381166101f057604051631e4fbdf760e01b8152600060048201526024015b60405180910390fd5b6101f981610229565b50565b6000546001600160a01b031633146101465760405163118cdaa760e01b81523360048201526024016101e7565b600080546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b60006020828403121561028b57600080fd5b81356001600160e01b0319811681146102a357600080fd5b9392505050565b80356001600160a01b03811681146102c157600080fd5b919050565b600080604083850312156102d957600080fd5b6102e2836102aa565b9150602083013580151581146102f757600080fd5b809150509250929050565b60006020828403121561031457600080fd5b6102a3826102aa56fea26469706673582212208a2354b0c33bc389c30912e168b6230eaef57e6b7244c0375c9146ee349b47f764736f6c63430008170033",
-	"deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100625760003560e01c806301ffc9a714610067578063715018a61461008f5780637258002c146100995780638da5cb5b146100ac578063ae74a1b5146100c7578063f2fde38b146100ea575b600080fd5b61007a610075366004610279565b6100fd565b60405190151581526020015b60405180910390f35b610097610134565b005b6100976100a73660046102c6565b610148565b6000546040516001600160a01b039091168152602001610086565b61007a6100d5366004610302565b60016020526000908152604090205460ff1681565b6100976100f8366004610302565b6101b9565b60006001600160e01b0319821663dc2ca19960e01b148061012e57506001600160e01b031982166301ffc9a760e01b145b92915050565b61013c6101fc565b6101466000610229565b565b6101506101fc565b6001600160a01b0382166000818152600160205260409020805460ff1916831515908117909155907fa2653e25a502c023a5830d0de847ef6f458387865b1f4f575d7594f9f2c0d71e336040516001600160a01b03909116815260200160405180910390a35050565b6101c16101fc565b6001600160a01b0381166101f057604051631e4fbdf760e01b8152600060048201526024015b60405180910390fd5b6101f981610229565b50565b6000546001600160a01b031633146101465760405163118cdaa760e01b81523360048201526024016101e7565b600080546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b60006020828403121561028b57600080fd5b81356001600160e01b0319811681146102a357600080fd5b9392505050565b80356001600160a01b03811681146102c157600080fd5b919050565b600080604083850312156102d957600080fd5b6102e2836102aa565b9150602083013580151581146102f757600080fd5b809150509250929050565b60006020828403121561031457600080fd5b6102a3826102aa56fea26469706673582212208a2354b0c33bc389c30912e168b6230eaef57e6b7244c0375c9146ee349b47f764736f6c63430008170033",
+	"bytecode": "0x608060405234801561001057600080fd5b5060405161045038038061045083398101604081905261002f916100be565b806001600160a01b03811661005e57604051631e4fbdf760e01b81526000600482015260240160405180910390fd5b6100678161006e565b50506100ee565b600080546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b6000602082840312156100d057600080fd5b81516001600160a01b03811681146100e757600080fd5b9392505050565b610353806100fd6000396000f3fe608060405234801561001057600080fd5b50600436106100625760003560e01c806301ffc9a714610067578063715018a61461008f5780637258002c146100995780638da5cb5b146100ac578063ae74a1b5146100c7578063f2fde38b146100ea575b600080fd5b61007a610075366004610279565b6100fd565b60405190151581526020015b60405180910390f35b610097610134565b005b6100976100a73660046102c6565b610148565b6000546040516001600160a01b039091168152602001610086565b61007a6100d5366004610302565b60016020526000908152604090205460ff1681565b6100976100f8366004610302565b6101b9565b60006001600160e01b0319821663dc2ca19960e01b148061012e57506001600160e01b031982166301ffc9a760e01b145b92915050565b61013c6101fc565b6101466000610229565b565b6101506101fc565b6001600160a01b0382166000818152600160205260409020805460ff1916831515908117909155907fa2653e25a502c023a5830d0de847ef6f458387865b1f4f575d7594f9f2c0d71e336040516001600160a01b03909116815260200160405180910390a35050565b6101c16101fc565b6001600160a01b0381166101f057604051631e4fbdf760e01b8152600060048201526024015b60405180910390fd5b6101f981610229565b50565b6000546001600160a01b031633146101465760405163118cdaa760e01b81523360048201526024016101e7565b600080546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b60006020828403121561028b57600080fd5b81356001600160e01b0319811681146102a357600080fd5b9392505050565b80356001600160a01b03811681146102c157600080fd5b919050565b600080604083850312156102d957600080fd5b6102e2836102aa565b9150602083013580151581146102f757600080fd5b809150509250929050565b60006020828403121561031457600080fd5b6102a3826102aa56fea26469706673582212208a167dcfbb114479ce17330774d2d02ca0b9afac69d5d4749c93f881826761ac64736f6c63430008170033",
+	"deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100625760003560e01c806301ffc9a714610067578063715018a61461008f5780637258002c146100995780638da5cb5b146100ac578063ae74a1b5146100c7578063f2fde38b146100ea575b600080fd5b61007a610075366004610279565b6100fd565b60405190151581526020015b60405180910390f35b610097610134565b005b6100976100a73660046102c6565b610148565b6000546040516001600160a01b039091168152602001610086565b61007a6100d5366004610302565b60016020526000908152604090205460ff1681565b6100976100f8366004610302565b6101b9565b60006001600160e01b0319821663dc2ca19960e01b148061012e57506001600160e01b031982166301ffc9a760e01b145b92915050565b61013c6101fc565b6101466000610229565b565b6101506101fc565b6001600160a01b0382166000818152600160205260409020805460ff1916831515908117909155907fa2653e25a502c023a5830d0de847ef6f458387865b1f4f575d7594f9f2c0d71e336040516001600160a01b03909116815260200160405180910390a35050565b6101c16101fc565b6001600160a01b0381166101f057604051631e4fbdf760e01b8152600060048201526024015b60405180910390fd5b6101f981610229565b50565b6000546001600160a01b031633146101465760405163118cdaa760e01b81523360048201526024016101e7565b600080546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b60006020828403121561028b57600080fd5b81356001600160e01b0319811681146102a357600080fd5b9392505050565b80356001600160a01b03811681146102c157600080fd5b919050565b600080604083850312156102d957600080fd5b6102e2836102aa565b9150602083013580151581146102f757600080fd5b809150509250929050565b60006020828403121561031457600080fd5b6102a3826102aa56fea26469706673582212208a167dcfbb114479ce17330774d2d02ca0b9afac69d5d4749c93f881826761ac64736f6c63430008170033",
 	"devdoc": {
 		"kind": "dev",
 		"methods": {
 			"constructor": {
 				"params": {
-					"owner": "The address that will own this contract."
+					"owner": "This contract's owner."
 				}
 			},
 			"owner()": {
@@ -329,16 +459,16 @@
 				"details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner."
 			},
 			"setFeelessAddress(address,bool)": {
-				"details": "Only the owner of this contract can set addresses as feeless or not feeless.Feeless addresses can receive payouts without incurring a fee.Feeless addresses can use the surplus allowance without incurring a fee.Feeless addresses can be the beneficary of redemptions without incurring a fee.",
+				"details": "Can only be called by this contract's owner.",
 				"params": {
-					"addr": "The address to make feeless or not feeless.",
-					"flag": "A flag indicating whether the `address` should be made feeless or not feeless."
+					"addr": "The address to set as feeless or not feeless.",
+					"flag": "Whether the address should be feeless (`true`) or not feeless (`false`)."
 				}
 			},
 			"supportsInterface(bytes4)": {
 				"details": "See {IERC165-supportsInterface}.",
 				"params": {
-					"interfaceId": "The ID of the interface to check for adherance to."
+					"interfaceId": "The ID of the interface to check for adherence to."
 				},
 				"returns": {
 					"_0": "A flag indicating if the provided interface ID is supported."
@@ -354,18 +484,18 @@
 		"kind": "user",
 		"methods": {
 			"isFeeless(address)": {
-				"notice": "Feeless addresses for this terminal."
+				"notice": "Check if the specified address is feeless."
 			},
 			"setFeelessAddress(address,bool)": {
-				"notice": "Sets an address as feeless or not feeless for this terminal."
+				"notice": "Sets whether an address is feeless."
 			},
 			"supportsInterface(bytes4)": {
-				"notice": "Indicates if this contract adheres to the specified interface."
+				"notice": "Indicates whether this contract adheres to the specified interface."
 			}
 		},
 		"version": 1
 	},
-	"gitCommit": "62158c420c722b49faeb8974b2a980f19906fb7a",
+	"gitCommit": "810aab8b9c3a0626e80bb9e6b819daaf6dcfee82",
 	"sourceName": "src/JBFeelessAddresses.sol",
 	"chainId": "80001",
 	"linkReferences": {},
