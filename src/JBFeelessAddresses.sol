@@ -7,8 +7,7 @@ import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import {IJBFeelessAddresses} from "./interfaces/IJBFeelessAddresses.sol";
 
 /// @notice Stores a list of addresses that shouldn't incur fees when sending or receiving payments.
-contract JBFeelessAddresses is Ownable, IJBFeelessAddresses, IERC165  {
-
+contract JBFeelessAddresses is Ownable, IJBFeelessAddresses, IERC165 {
     //*********************************************************************//
     // --------------------- public stored properties -------------------- //
     //*********************************************************************//
