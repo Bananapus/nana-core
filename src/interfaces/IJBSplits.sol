@@ -3,10 +3,9 @@ pragma solidity ^0.8.0;
 
 import {JBSplit} from "./../structs/JBSplit.sol";
 import {JBSplitGroup} from "./../structs/JBSplitGroup.sol";
-import {IJBControlled} from "./IJBControlled.sol";
 import {IJBProjects} from "./IJBProjects.sol";
 
-interface IJBSplits is IJBControlled {
+interface IJBSplits {
     event SetSplit(
         uint256 indexed projectId, uint256 indexed rulesetId, uint256 indexed group, JBSplit split, address caller
     );
