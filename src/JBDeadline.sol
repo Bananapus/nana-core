@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.23;
 
-import {ERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
 import {JBApprovalStatus} from "./enums/JBApprovalStatus.sol";
@@ -12,7 +11,7 @@ import {JBRuleset} from "./structs/JBRuleset.sol";
 /// seconds before the current ruleset ends. In other words, rulesets must be queued before the deadline to take effect.
 /// @dev Project rulesets are stored in a queue. Rulesets take effect after the previous ruleset in the queue ends, and
 /// only if they are approved by the previous ruleset's approval hook.
-contract JBDeadline is ERC165, IJBRulesetApprovalHook {
+contract JBDeadline is IJBRulesetApprovalHook {
     //*********************************************************************//
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
@@ -67,8 +66,8 @@ contract JBDeadline is ERC165, IJBRulesetApprovalHook {
     /// @dev See {IERC165-supportsInterface}.
     /// @param interfaceId The ID of the interface to check for adherence to.
     /// @return A flag indicating if this contract adheres to the specified interface.
-    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC165, IERC165) returns (bool) {
-        return interfaceId == type(IJBRulesetApprovalHook).interfaceId || super.supportsInterface(interfaceId);
+    function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {
+        return interfaceId == type(IJBRulesetApprovalHook).interfaceId || interfaceId == type(IERC165).interfaceId;
     }
 
     //*********************************************************************//
