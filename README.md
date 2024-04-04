@@ -22,7 +22,7 @@ This repository contains the core protocol contracts for Bananapus' Juicebox v4.
         <li><a href="#payouts">Payouts</a></li>
         <li><a href="#surplus-allowance">Surplus Allowance</a></li>
         </ul>
-      <li><a href="#payments,-tokens,-and-redemptions">Payments, Tokens, and Redemptions</a></li>
+      <li><a href="#payments-tokens-and-redemptions">Payments, Tokens, and Redemptions</a></li>
       <ul>
         <li><a href="#redemptions">Redemptions</a></li>
         </ul>

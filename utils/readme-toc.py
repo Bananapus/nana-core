@@ -8,9 +8,9 @@ def generate_toc(md_file_path):
         for line in md_file:
             match = re.match(r'^(#{2,6}) (.*)', line)
             if match:
-                level = len(match.group(1)) - 1  
+                level = len(match.group(1)) - 1
                 heading = match.group(2).strip()
-                anchor = heading.lower().replace(' ', '-')
+                anchor = re.sub(r'[^0-9a-zA-Z\- ]', '', heading).replace(' ', '-').lower()
 
                 while level < current_level:
                     toc_lines.append('  ' * current_level + '</ul>')
