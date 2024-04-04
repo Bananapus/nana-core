@@ -234,7 +234,7 @@ Jeff wants to raise funds for his startup, "Bingle". He decides to launch a Bing
 
 His `rulesetConfigurations` array only contains a single ruleset, and looks like this:
 
-```json
+```js
 [
   {
     "mustStartAtOrAfter": 1, // Jeff's ruleset takes effect immediately.
@@ -312,7 +312,7 @@ For a detailed description of the fields in the structs above, see the natspec d
 
 His `terminalConfigurations` array sets up two terminals. The first is the [`JBMultiTerminal`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol), which the Bingle project uses to accept ETH payouts, make redemptions available, and manage payouts. The second terminal is the [`JBSwapTerminal`](https://github.com/Bananapus/nana-swap-terminal/blob/main/src/JBSwapTerminal.sol), which the Bingle project uses to accept USDC and convert them to ETH on payment (for a more detailed explanation, see [`nana-swap-terminal`](https://github.com/Bananapus/nana-swap-terminal)). The `terminalConfigurations` look like this:
 
-```json
+```js
 [
   {
     "terminal": "0x789…", // This is the address of `JBMultiTerminal`.
