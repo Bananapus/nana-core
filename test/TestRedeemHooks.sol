@@ -156,7 +156,8 @@ contract TestRedeemHooks_Local is TestBaseWorkflow {
             redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
             beneficiary: payable(address(this)),
             hookMetadata: "",
-            redeemerMetadata: ""
+            redeemerMetadata: "",
+            specifications: _specifications
         });
 
         // Mock the hook.
@@ -273,7 +274,8 @@ contract TestRedeemHooks_Local is TestBaseWorkflow {
             redemptionRate: _customRedemptionRate,
             beneficiary: payable(address(this)),
             hookMetadata: "",
-            redeemerMetadata: ""
+            redeemerMetadata: "",
+            specifications: _specifications
         });
 
         // Mock the hook.

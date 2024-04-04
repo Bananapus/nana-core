@@ -227,7 +227,8 @@ contract TestPay_Local is JBMultiTerminalSetup {
             projectTokenCount: _mintAmount,
             beneficiary: _bene,
             hookMetadata: bytes(""),
-            payerMetadata: bytes("")
+            payerMetadata: bytes(""),
+            specifications: hookSpecifications
         });
 
         // mock call to hook
@@ -310,7 +311,8 @@ contract TestPay_Local is JBMultiTerminalSetup {
             projectTokenCount: _mintAmount,
             beneficiary: _bene,
             hookMetadata: bytes(""),
-            payerMetadata: bytes("")
+            payerMetadata: bytes(""),
+            specifications: hookSpecifications
         });
 
         // mock call to hook (including msg.value)

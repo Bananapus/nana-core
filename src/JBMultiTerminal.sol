@@ -1392,7 +1392,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             projectTokenCount: beneficiaryTokenCount,
             beneficiary: beneficiary,
             hookMetadata: bytes(""),
-            payerMetadata: metadata
+            payerMetadata: metadata,
+            specifications: specifications
         });
 
         // Keep a reference to the number of pay hook specifications to iterate through.
@@ -1467,7 +1468,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             redemptionRate: redemptionRate,
             beneficiary: beneficiary,
             hookMetadata: "",
-            redeemerMetadata: metadata
+            redeemerMetadata: metadata,
+            specifications: specifications
         });
 
         // Keep a reference to the number of redeem hook specifications being iterated through.

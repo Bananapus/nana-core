@@ -133,7 +133,8 @@ contract TestPayHooks_Local is TestBaseWorkflow {
                 projectTokenCount: mulDiv(_nativePayAmount, _DATA_HOOK_WEIGHT, 10 ** _NATIVE_TOKEN_DECIMALS),
                 beneficiary: _beneficiary,
                 hookMetadata: _hookMetadata,
-                payerMetadata: _PAYER_METADATA
+                payerMetadata: _PAYER_METADATA,
+                specifications: _specifications
             });
 
             // Mock the hook.

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import {JBRedeemHookSpecification} from "./JBRedeemHookSpecification.sol";
 import {JBTokenAmount} from "./JBTokenAmount.sol";
 
 /// @custom:member holder The holder of the tokens being redeemed.
@@ -16,6 +17,7 @@ import {JBTokenAmount} from "./JBTokenAmount.sol";
 /// @custom:member beneficiary The address the reclaimed amount will be sent to.
 /// @custom:member hookMetadata Extra data specified by the data hook, which is sent to the redeem hook.
 /// @custom:member redeemerMetadata Extra data specified by the redeemer, which is sent to the redeem hook.
+/// @custom:member specifications The specifications of redeem hooks.
 struct JBAfterRedeemRecordedContext {
     address holder;
     uint256 projectId;
@@ -27,4 +29,5 @@ struct JBAfterRedeemRecordedContext {
     address payable beneficiary;
     bytes hookMetadata;
     bytes redeemerMetadata;
+    JBRedeemHookSpecification[] specifications;
 }

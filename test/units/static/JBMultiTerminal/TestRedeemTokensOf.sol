@@ -342,7 +342,8 @@ contract TestRedeemTokensOf_Local is JBMultiTerminalSetup {
             redemptionRate: _maxRedemptionRate,
             beneficiary: _bene,
             hookMetadata: "",
-            redeemerMetadata: ""
+            redeemerMetadata: "",
+            specifications: hookSpecifications
         });
 
         mockExpect(address(_mockHook), abi.encodeCall(IJBRedeemHook.afterRedeemRecordedWith, (context)), "");
@@ -448,7 +449,8 @@ contract TestRedeemTokensOf_Local is JBMultiTerminalSetup {
             redemptionRate: _maxRedemptionRate,
             beneficiary: _bene,
             hookMetadata: "",
-            redeemerMetadata: ""
+            redeemerMetadata: "",
+            specifications: hookSpecifications
         });
 
         mockExpect(address(_mockHook), abi.encodeCall(IJBRedeemHook.afterRedeemRecordedWith, (context)), "");
