@@ -239,11 +239,11 @@ There are two main entry points for interacting with a Juicebox project:
 
 `nana-core` provides a trusted and well-understood implementation for each: [`JBMultiTerminal`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol) is a generic terminal which manages payments, redemptions, payouts, and surplus allowance spending (more on this later) in native/ERC-20 tokens, and [`JBController`](https://github.com/Bananapus/nana-core/blob/main/src/JBController.sol) is a straightforward controller which coordinates rulesets (more on this under [_Rulesets_](#rulesets)) and project tokens. Projects can also bring their own terminals (which implement [`IJBTerminal`](https://github.com/Bananapus/nana-core/blob/main/src/interfaces/IJBTerminal.sol)), or their own controllers (which implement [`IJBController`](https://github.com/Bananapus/nana-core/blob/main/src/interfaces/IJBController.sol)).
 
-If the project's rules allow it, a project can migrate from one controller to another one with [`JBController.migrateController(...)`](https://github.com/Bananapus/nana-core/blob/main/src/JBController.sol#L539), or from one terminal to another with [`JBMultiTerminal.migrateBalanceOf(...)`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol#L467).
+If the project's rules allow it, a project can migrate from one controller to another one with [`JBController.migrateController(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBController.sol#L539), or from one terminal to another with [`JBMultiTerminal.migrateBalanceOf(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol#L467).
 
 [`JBDirectory`](https://github.com/Bananapus/nana-core/blob/main/src/JBDirectory.sol) stores mappings of each project's current controller and terminals. It also stores their primary terminals – the primary terminal for a token is where payments in that token are routed to by default.
 
-To launch a Juicebox project, any address can call [`JBController.launchProjectFor(...)`](https://github.com/Bananapus/nana-core/blob/main/src/JBController.sol#L291), which will:
+To launch a Juicebox project, any address can call [`JBController.launchProjectFor(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBController.sol#L291), which will:
 
 1. Mint the project's ERC-721 into the owner's wallet. Whoever owns this NFT is the project's owner, and has permission to manage the project's rules. These NFTs are stored in the [`JBProjects`](https://github.com/Bananapus/nana-core/blob/main/src/JBProjects.sol) contract.
 2. Store the project's metadata (if provided). This is typically an IPFS hash pointing to a [JSON file with the project's name, description, and logo](https://docs.juicebox.money/dev/frontend/metadata/), but clients can use any metadata schema they'd like.
@@ -253,7 +253,7 @@ To launch a Juicebox project, any address can call [`JBController.launchProjectF
 
 ### Rulesets
 
-The rules which dictate a project's behavior—including what happens when the project is paid, how its funds can be accessed, and how the project's rules can change in the future—are expressed as a queue of _rulesets_. A ruleset is a list of all the rules that currently apply to a project, which lasts for a pre-defined duration. The project's owner can add new rulesets to the end of the queue at any time by calling [`JBController.queueRulesetsOf(...)`](https://github.com/Bananapus/nana-core/blob/main/src/JBController.sol#L376).
+The rules which dictate a project's behavior—including what happens when the project is paid, how its funds can be accessed, and how the project's rules can change in the future—are expressed as a queue of _rulesets_. A ruleset is a list of all the rules that currently apply to a project, which lasts for a pre-defined duration. The project's owner can add new rulesets to the end of the queue at any time by calling [`JBController.queueRulesetsOf(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBController.sol#L376).
 
 Rulesets are stored and managed by the [`JBRulesets`](https://github.com/Bananapus/nana-core/blob/main/src/JBRulesets.sol) contract, and are represented by the [`JBRuleset`](https://github.com/Bananapus/nana-core/blob/main/src/structs/JBRuleset.sol) and [`JBRulesetMetadata`](https://github.com/Bananapus/nana-core/blob/main/src/structs/JBRulesetMetadata.sol) structs. As mentioned above, the entry point for ruleset operations is the project's controller.
 
@@ -274,13 +274,13 @@ Aside from redemptions (see [_Redemptions_](#redemptions)), funds can be accesse
 
 #### Payouts
 
-Payouts are the primary way a project can distribute funds from its terminals. Anyone can send a project's payouts with [`JBMultiTerminal.sendPayoutsOf(...)`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol#L397), which pays out funds within the bounds of the ruleset's pre-defined payout limits:
+Payouts are the primary way a project can distribute funds from its terminals. Anyone can send a project's payouts with [`JBMultiTerminal.sendPayoutsOf(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol#L397), which pays out funds within the bounds of the ruleset's pre-defined payout limits:
 
 Each ruleset is associated with a list of _payout limits_, which are stored in [`JBFundAccessLimits`](https://github.com/Bananapus/nana-core/blob/main/src/JBFundAccessLimits.sol). Each payout limit specifies an amount of funds that can be withdrawn from a project's terminals in terms of a specific currency. If a payout limit's currency is different from the currency used in a terminal, the amount of funds which can be paid out from that terminal varies depending on their exchange rate, as reported by [`JBPrices`](https://github.com/Bananapus/nana-core/blob/main/src/JBPrices.sol). Payout limits can only be set by the project's controller, and are set when a ruleset is queued.
 
 The sum of a ruleset's payout limits is the maximum amount of funds a project can pay out from its terminals during that ruleset. By default, all payouts go to the project's owner, but the owner can send payouts to multiple _splits_, which are other wallets or projects which will receive a percent of the payouts. Splits are stored and managed by [`JBSplits`](https://github.com/Bananapus/nana-core/blob/main/src/JBSplits.sol) – you can learn how splits are represented in the [`JBSplit`](https://github.com/Bananapus/nana-core/blob/main/src/structs/JBSplit.sol) struct.
 
-Splits are stored slightly differently from the project's other rules, and can be changed by the project's owner at any time (independently of the ruleset) with [`JBController.setSplitGroupsOf(...)`](https://github.com/Bananapus/nana-core/blob/main/src/JBController.sol#L593) unless they are locked – splits have an optional `lockedUntil` timestamp which prevents them from being changed until that time has passed.
+Splits are stored slightly differently from the project's other rules, and can be changed by the project's owner at any time (independently of the ruleset) with [`JBController.setSplitGroupsOf(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBController.sol#L593) unless they are locked – splits have an optional `lockedUntil` timestamp which prevents them from being changed until that time has passed.
 
 Payout limits reset at the start of each ruleset – projects can use rulesets as a regular cadence for recurring payouts. If payouts are not sent out during a ruleset, the funds stay in the project's terminals.
 
@@ -288,7 +288,7 @@ Funds in excess of the payout limits are "surplus funds". Surplus funds stay in 
 
 #### Surplus Allowance
 
-Project creators also have the option to withdraw surplus funds from a terminal with [`JBMultiTerminal.useAllowanceOf(...)`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol#L432), which withdraws surplus funds for the `beneficiary` specified by the project owner up to the pre-defined surplus allowance limit:
+Project creators also have the option to withdraw surplus funds from a terminal with [`JBMultiTerminal.useAllowanceOf(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol#L432), which withdraws surplus funds for the `beneficiary` specified by the project owner up to the pre-defined surplus allowance limit:
 
 Like payout limits, surplus allowance limits are stored in [`JBFundAccessLimits`](https://github.com/Bananapus/nana-core/blob/main/src/JBFundAccessLimits.sol), and each surplus allowance limit specifies an amount of funds that can be withdrawn from a project's terminals in terms of a specific currency. Surplus allowance limits can only be set by the project's controller, and are set when a ruleset is queued.
 
@@ -298,14 +298,14 @@ _Unlike_ payout limits, the surplus allowance **does not** reset at the start of
 
 Juicebox project can receive funds in two ways:
 
-1. Funds can simply be added to a project's balance in a terminal with [`JBMultiTerminal.addToBalanceOf(...)`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol).
-2. More often, a project is paid with [`JBMultiTerminal.pay(...)`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol), minting credits or tokens for the payer or a beneficiary they specify.
+1. Funds can simply be added to a project's balance in a terminal with [`JBMultiTerminal.addToBalanceOf(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol).
+2. More often, a project is paid with [`JBMultiTerminal.pay(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol), minting credits or tokens for the payer or a beneficiary they specify.
 
-By default, the [`JBTokens`](https://github.com/Bananapus/nana-core/blob/main/src/JBTokens.sol) contract tracks credit balances for a project's payers. Credits are a simple accounting mechanism – they can be transferred with [`JBController.transferCreditsFrom(...)`](https://github.com/Bananapus/nana-core/blob/main/src/JBController.sol#L686), or redeemed with [`JBMultiTerminal.redeemTokensOf(...)`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol#L355) (redeeming reclaims some funds from the project's terminal – read more under [_Redemptions_](#redemptions)).
+By default, the [`JBTokens`](https://github.com/Bananapus/nana-core/blob/main/src/JBTokens.sol) contract tracks credit balances for a project's payers. Credits are a simple accounting mechanism – they can be transferred with [`JBController.transferCreditsFrom(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBController.sol#L686), or redeemed with [`JBMultiTerminal.redeemTokensOf(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol#L355) (redeeming reclaims some funds from the project's terminal – read more under [_Redemptions_](#redemptions)).
 
-A project's creator can call [`JBController.deployERC20For(...)`](https://github.com/Bananapus/nana-core/blob/main/src/JBController.sol#L620) to deploy a [`JBERC20`](https://github.com/Bananapus/nana-core/blob/main/src/JBERC20.sol) token for their project which can be traded on exchanges, used for on-chain voting (`JBERC20` implements `ERC20Votes`), and more. From then on, [`JBTokens`](https://github.com/Bananapus/nana-core/blob/main/src/JBTokens.sol) will track balances in both credits _and_ the ERC-20 token. Credit holders can use [`JBController.claimTokensFor(...)`](https://github.com/Bananapus/nana-core/blob/main/src/JBController.sol#L664) to exchange their credits for the ERC-20 tokens, and like credits, tokens can be redeemed with [`JBMultiTerminal.redeemTokensOf(...)`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol#L355).
+A project's creator can call [`JBController.deployERC20For(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBController.sol#L620) to deploy a [`JBERC20`](https://github.com/Bananapus/nana-core/blob/main/src/JBERC20.sol) token for their project which can be traded on exchanges, used for on-chain voting (`JBERC20` implements `ERC20Votes`), and more. From then on, [`JBTokens`](https://github.com/Bananapus/nana-core/blob/main/src/JBTokens.sol) will track balances in both credits _and_ the ERC-20 token. Credit holders can use [`JBController.claimTokensFor(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBController.sol#L664) to exchange their credits for the ERC-20 tokens, and like credits, tokens can be redeemed with [`JBMultiTerminal.redeemTokensOf(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol#L355).
 
-Project creators can bring their own token as long as it implements [`IJBToken`](https://github.com/Bananapus/nana-core/blob/main/src/interfaces/IJBToken.sol), and set it as their project's token using [`JBController.setTokenFor(...)`](https://github.com/Bananapus/nana-core/blob/main/src/JBController.sol#L647).
+Project creators can bring their own token as long as it implements [`IJBToken`](https://github.com/Bananapus/nana-core/blob/main/src/interfaces/IJBToken.sol), and set it as their project's token using [`JBController.setTokenFor(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBController.sol#L647).
 
 When someone pays a project, the number of credits or tokens they receive is determined by the ruleset:
 
@@ -317,7 +317,7 @@ If the ruleset queue is empty and a ruleset is cycling (re-starting each time it
 
 #### Redemptions
 
-Credits and project tokens can be redeemed to reclaim some funds from the treasury with [`JBMultiTerminal.redeemTokensOf(...)`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol#L355). Only funds not being used for payouts (surplus funds) are available for redemption, so if a project's combined payout limits exceed its combined terminal balances, it can't be redeemed from. Redemptions are influenced by the ruleset's _redemption rate_ ([`JBRulesetMetadata.redemptionRate`](https://github.com/Bananapus/nana-core/blob/main/src/structs/JBRulesetMetadata.sol), expressed as a fraction out of [`JBConstants.MAX_REDEMPTION_RATE`](https://github.com/Bananapus/nana-core/blob/main/src/libraries/JBConstants.sol)):
+Credits and project tokens can be redeemed to reclaim some funds from the treasury with [`JBMultiTerminal.redeemTokensOf(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol#L355). Only funds not being used for payouts (surplus funds) are available for redemption, so if a project's combined payout limits exceed its combined terminal balances, it can't be redeemed from. Redemptions are influenced by the ruleset's _redemption rate_ ([`JBRulesetMetadata.redemptionRate`](https://github.com/Bananapus/nana-core/blob/main/src/structs/JBRulesetMetadata.sol), expressed as a fraction out of [`JBConstants.MAX_REDEMPTION_RATE`](https://github.com/Bananapus/nana-core/blob/main/src/libraries/JBConstants.sol)):
 
 1. With a 0% redemption rate, redemptions are turned off.
 2. With a 100% redemption rate, redemptions are 1:1 — somebody redeeming 10% of all project tokens will receive 10% of the surplus funds.
@@ -343,7 +343,7 @@ Where:
 
 ### Permissions
 
-[`JBPermissions`](https://github.com/Bananapus/nana-core/blob/main/src/JBPermissions.sol) allows one address to grant another address permission to call functions in Juicebox contracts on their behalf. Each ID in [`JBPermissionIds`](https://github.com/Bananapus/nana-permission-ids/blob/master/src/JBPermissionIds.sol) grants access to a specific set of these functions, which can be granted to another address with [`JBPermissions.setPermissionsFor(...)`](https://github.com/Bananapus/nana-core/blob/main/src/JBPermissions.sol#L105).
+[`JBPermissions`](https://github.com/Bananapus/nana-core/blob/main/src/JBPermissions.sol) allows one address to grant another address permission to call functions in Juicebox contracts on their behalf. Each ID in [`JBPermissionIds`](https://github.com/Bananapus/nana-permission-ids/blob/master/src/JBPermissionIds.sol) grants access to a specific set of these functions, which can be granted to another address with [`JBPermissions.setPermissionsFor(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBPermissions.sol#L105).
 
 For example, if `alice.eth` owns project ID #5, she can queue new rulesets for the project. If `alice.eth` gives `bob.eth` permission to `QUEUE_RULESETS`, `bob.eth` can also queue rulesets for project ID #5.
 
@@ -402,33 +402,33 @@ The ruleset's data hook is called by the terminal upon payments if [`JBRulesetMe
 
 #### Pay Hooks
 
-The data hook can return one or more _pay hooks_ for the terminal to call after its `pay(...)` logic completes and has been recorded in the [`JBTerminalStore`](https://github.com/Bananapus/nana-core/blob/main/src/JBTerminalStore.sol). Pay hooks implement [`IJBPayHook`](https://github.com/Bananapus/nana-core/blob/main/src/interfaces/IJBPayHook.sol), and can be used to implement custom logic triggered by payments.
+The data hook can return one or more _pay hooks_ for the terminal to call after its `pay(…)` logic completes and has been recorded in the [`JBTerminalStore`](https://github.com/Bananapus/nana-core/blob/main/src/JBTerminalStore.sol). Pay hooks implement [`IJBPayHook`](https://github.com/Bananapus/nana-core/blob/main/src/interfaces/IJBPayHook.sol), and can be used to implement custom logic triggered by payments.
 
 A common pattern is for a single contract to be both a data hook and a pay hook. [`JB721TiersHook`](https://github.com/Bananapus/nana-721-hook/blob/main/src/JB721TiersHook.sol) (from [`nana-721-hook`](https://github.com/Bananapus/nana-721-hook)) and [`JBBuybackHook`](https://github.com/Bananapus/nana-buyback-hook/blob/main/src/JBBuybackHook.sol) (from [`nana-buyback-hook`](https://github.com/Bananapus/nana-buyback-hook)) are both examples of this.
 
 #### Redeem Hooks
 
-The data hook can return one or more _redeem hooks_ for the terminal to call after its `redeemTokensOf(...)` logic completes and has been recorded in the [`JBTerminalStore`](https://github.com/Bananapus/nana-core/blob/main/src/JBTerminalStore.sol). Redeem hooks implement [`IJBRedeemHook`](https://github.com/Bananapus/nana-core/blob/main/src/interfaces/IJBRedeemHook.sol), and can be used to implement custom logic triggered by redemptions.
+The data hook can return one or more _redeem hooks_ for the terminal to call after its `redeemTokensOf(…)` logic completes and has been recorded in the [`JBTerminalStore`](https://github.com/Bananapus/nana-core/blob/main/src/JBTerminalStore.sol). Redeem hooks implement [`IJBRedeemHook`](https://github.com/Bananapus/nana-core/blob/main/src/interfaces/IJBRedeemHook.sol), and can be used to implement custom logic triggered by redemptions.
 
 Like pay hooks, a single contract can be a data hook and a redeem hook. [`JB721TiersHook`](https://github.com/Bananapus/nana-721-hook/blob/main/src/JB721TiersHook.sol) (from [`nana-721-hook`](https://github.com/Bananapus/nana-721-hook)) is a data hook, a pay hook, **and** a redeem hook.
 
 #### Split Hooks
 
-Each split can have a _split hook_ (an [`IJBSplitHook`](https://github.com/Bananapus/nana-core/blob/main/src/interfaces/IJBSplitHook.sol) under [`JBSplit.splitHook`](https://github.com/Bananapus/nana-core/blob/main/src/structs/JBSplit.sol)) which defines custom logic, triggered when a terminal is processing a payout to that split – the terminal optimistically transfers the tokens to the split and calls its `processSplitWith(...)` function.
+Each split can have a _split hook_ (an [`IJBSplitHook`](https://github.com/Bananapus/nana-core/blob/main/src/interfaces/IJBSplitHook.sol) under [`JBSplit.splitHook`](https://github.com/Bananapus/nana-core/blob/main/src/structs/JBSplit.sol)) which defines custom logic, triggered when a terminal is processing a payout to that split – the terminal optimistically transfers the tokens to the split and calls its `processSplitWith(…)` function.
 
 ### Fees
 
 Terminals have the option to charge fees. [`JBMultiTerminal`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol) charges a 2.5% fee on payouts to addresses, surplus allowance usage, and redemptions if the redemption rate is less than 100%:
 
-1. Projects pay a 2.5% fee when they pay addresses with [`JBMultiTerminal.sendPayoutsOf(...)`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol#L397) – payouts to other projects don't incur fees.
-2. Project owners pay a 2.5% fee when they use surplus allowance with [`JBMultiTerminal.useAllowanceOf(...)`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol#L432).
-3. If the redemption rate is not 100%, redeemers pay a 2.5% fee on redemptions through [`JBMultiTerminal.redeemTokensOf(...)`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol#L355).
+1. Projects pay a 2.5% fee when they pay addresses with [`JBMultiTerminal.sendPayoutsOf(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol#L397) – payouts to other projects don't incur fees.
+2. Project owners pay a 2.5% fee when they use surplus allowance with [`JBMultiTerminal.useAllowanceOf(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol#L432).
+3. If the redemption rate is not 100%, redeemers pay a 2.5% fee on redemptions through [`JBMultiTerminal.redeemTokensOf(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol#L355).
 
 [`JBMultiTerminal`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol) sends fees to Project ID #1, which is the first project launched during the deployment process.
 
 #### Held Fees
 
-If a ruleset has [`JBRulesetMetadata.holdFees`](https://github.com/Bananapus/nana-core/blob/main/src/structs/JBRulesetMetadata.sol) set to true, `JBMultiTerminal` will not immediately pay the fees to project #1. Instead, the fees will be held in the terminal, and can be unlocked (returned to the project's balance) by adding the same amount of funds that incurred the fees back to the project's balance (by calling [`JBMultiTerminal.addToBalanceOf(...)`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol#L314) with `shouldReturnHeldFees` set to true). Held fees are "safe" for 28 days – after that time, anyone can process them by calling [`JBMultiTerminal.processHeldFeesOf(...)`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol#L520).
+If a ruleset has [`JBRulesetMetadata.holdFees`](https://github.com/Bananapus/nana-core/blob/main/src/structs/JBRulesetMetadata.sol) set to true, `JBMultiTerminal` will not immediately pay the fees to project #1. Instead, the fees will be held in the terminal, and can be unlocked (returned to the project's balance) by adding the same amount of funds that incurred the fees back to the project's balance (by calling [`JBMultiTerminal.addToBalanceOf(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol#L314) with `shouldReturnHeldFees` set to true). Held fees are "safe" for 28 days – after that time, anyone can process them by calling [`JBMultiTerminal.processHeldFeesOf(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol#L520).
 
 #### Feeless Addresses
 
