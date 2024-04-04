@@ -304,15 +304,38 @@ Each ruleset can have a *data hook* (an [`IJBRulesetDataHook`](https://github.co
 The ruleset's data hook is called by the terminal upon payments if [`JBRulesetMetadata.useDataHookForPay`](https://github.com/Bananapus/nana-core/blob/main/src/structs/JBRulesetMetadata.sol) is true, and upon redemptions if [`JBRulesetMetadata.useDataHookForRedeem`](https://github.com/Bananapus/nana-core/blob/main/src/structs/JBRulesetMetadata.sol) is true. Data hooks operate *before* the payment or redemption is recorded in the [`JBTerminalStore`](https://github.com/Bananapus/nana-core/blob/main/src/JBTerminalStore.sol).
 
 #### Pay Hooks
-- A *pay hook* is called after a terminal's `pay(...)` logic completes (if passed by the ruleset's data hook).
+
+The data hook can return one or more *pay hooks* for the terminal to call after its `pay(...)` logic completes and has been recorded in the [`JBTerminalStore`](https://github.com/Bananapus/nana-core/blob/main/src/JBTerminalStore.sol). Pay hooks implement [`IJBPayHook`](https://github.com/Bananapus/nana-core/blob/main/src/interfaces/IJBPayHook.sol), and can be used to implement custom logic triggered by payments.
+
+A common pattern is for a single contract to be both a data hook and a pay hook. [`JB721TiersHook`](https://github.com/Bananapus/nana-721-hook/blob/main/src/JB721TiersHook.sol) (from [`nana-721-hook`](https://github.com/Bananapus/nana-721-hook)) and [`JBBuybackHook`](https://github.com/Bananapus/nana-buyback-hook/blob/main/src/JBBuybackHook.sol) (from [`nana-buyback-hook`](https://github.com/Bananapus/nana-buyback-hook)) are both examples of this.
 
 #### Redeem Hooks
-- A *redeem hook* is called after a terminal's `redeemTokensOf(...)` logic completes (if passed by the ruleset's data hook).
+
+The data hook can return one or more *redeem hooks* for the terminal to call after its `redeemTokensOf(...)` logic completes and has been recorded in the [`JBTerminalStore`](https://github.com/Bananapus/nana-core/blob/main/src/JBTerminalStore.sol). Redeem hooks implement [`IJBRedeemHook`](https://github.com/Bananapus/nana-core/blob/main/src/interfaces/IJBRedeemHook.sol), and can be used to implement custom logic triggered by redemptions.
+
+Like pay hooks, a single contract can be a data hook and a redeem hook. [`JB721TiersHook`](https://github.com/Bananapus/nana-721-hook/blob/main/src/JB721TiersHook.sol) (from [`nana-721-hook`](https://github.com/Bananapus/nana-721-hook)) is a data hook, a pay hook, **and** a redeem hook.
 
 #### Split Hooks
-- A *split hook* is defined on a single split, and allows an individual split to be processed with custom logic.
+
+Each split can have a *split hook* (an [`IJBSplitHook`](https://github.com/Bananapus/nana-core/blob/main/src/interfaces/IJBSplitHook.sol) under [`JBSplit.splitHook`](https://github.com/Bananapus/nana-core/blob/main/src/structs/JBSplit.sol)) which defines custom logic, triggered when a terminal is processing a payout to that split – the terminal optimistically transfers the tokens to the split and calls its `processSplitWith(...)` function.
 
 ### Fees
+
+Terminals have the option to charge fees. [`JBMultiTerminal`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol) charges a 2.5% fee on payouts to addresses, surplus allowance usage, and redemptions if the redemption rate is less than 100%:
+
+1. Projects pay a 2.5% fee when they pay addresses with [`JBMultiTerminal.sendPayoutsOf(...)`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol#L397) – payouts to other projects don't incur fees.
+2. Project owners pay a 2.5% fee when they use surplus allowance with [`JBMultiTerminal.useAllowanceOf(...)`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol#L432).
+3. If the redemption rate is not 100%, redeemers pay a 2.5% fee on redemptions through [`JBMultiTerminal.redeemTokensOf(...)`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol#L355).
+
+[`JBMultiTerminal`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol) sends fees to Project ID #1, which is the first project launched during the deployment process.
+
+#### Held Fees
+
+If a ruleset has [`JBRulesetMetadata.holdFees`](https://github.com/Bananapus/nana-core/blob/main/src/structs/JBRulesetMetadata.sol) set to true, `JBMultiTerminal` will not immediately pay the fees to project #1. Instead, the fees will be held in the terminal, and can be unlocked (returned to the project's balance) by adding the same amount of funds that incurred the fees back to the project's balance (by calling [`JBMultiTerminal.addToBalanceOf(...)`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol#L314) with `shouldReturnHeldFees` set to true). Held fees are "safe" for 28 days – after that time, anyone can process them by calling [`JBMultiTerminal.processHeldFeesOf(...)`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol#L520).
+
+#### Feeless Addresses
+
+[`JBFeelessAddresses`](https://github.com/Bananapus/nana-core/blob/main/src/JBFeelessAddresses.sol) manages a list of addresses which are exempt from fees. Feeless addresses can receive payouts, use surplus allowance, or be the beneficary of redemptions without incurring fees. Only the contract's owner can add or remove feeless addresses.
 
 ## Architecture
 
