@@ -1424,7 +1424,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             uint256 payValue = tokenAmount.token == JBConstants.NATIVE_TOKEN ? specification.amount : 0;
 
             // Fulfill the specification.
-            specification.hook.afterPayRecordedWith{value: payValue}(context);
+            context.payerMetadata = specification.hook.afterPayRecordedWith{value: payValue}(context);
 
             emit HookAfterRecordPay(specification.hook, context, specification.amount, _msgSender());
         }
@@ -1513,7 +1513,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             uint256 payValue = beneficiaryReclaimAmount.token == JBConstants.NATIVE_TOKEN ? specification.amount : 0;
 
             // Fulfill the specification.
-            specification.hook.afterRedeemRecordedWith{value: payValue}(context);
+            context.redeemerMetadata = specification.hook.afterRedeemRecordedWith{value: payValue}(context);
 
             emit HookAfterRecordRedeem(
                 specification.hook, context, specification.amount, specificationAmountFee, _msgSender()

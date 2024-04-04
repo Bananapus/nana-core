@@ -11,5 +11,6 @@ interface IJBRedeemHook is IERC165 {
     /// recorded in the terminal store.
     /// @dev Critical business logic should be protected by appropriate access control.
     /// @param context The context passed in by the terminal, as a `JBAfterRedeemRecordedContext` struct.
-    function afterRedeemRecordedWith(JBAfterRedeemRecordedContext calldata context) external payable;
+    /// @return metadata The metadata to pass to the next redeem hook.
+    function afterRedeemRecordedWith(JBAfterRedeemRecordedContext calldata context) external payable returns (bytes memory metadata);
 }

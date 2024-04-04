@@ -11,5 +11,6 @@ interface IJBPayHook is IERC165 {
     /// terminal store.
     /// @dev Critical business logic should be protected by appropriate access control.
     /// @param context The context passed in by the terminal, as a `JBAfterPayRecordedContext` struct.
-    function afterPayRecordedWith(JBAfterPayRecordedContext calldata context) external payable;
+    /// @return metadata The metadata to pass to the next redeem hook.
+    function afterPayRecordedWith(JBAfterPayRecordedContext calldata context) external payable returns (bytes memory metadata);
 }
