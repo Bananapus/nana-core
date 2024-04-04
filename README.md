@@ -228,9 +228,120 @@ A project's current controller and terminals can be found (or updated) through [
 | [`JBDeadline`](https://github.com/Bananapus/nana-core/blob/main/src/JBDeadline.sol)                         | A ruleset approval hook which rejects rulesets if they are not queued at least `duration` seconds before the current ruleset ends. In other words, rulesets must be queued before the deadline to take effect. |
 | [`JBERC20`](https://github.com/Bananapus/nana-core/blob/main/src/JBERC20.sol)                               | An ERC-20 token which project have the option of using in `JBTokens` and `JBController`.                                                                                                                       |
 
+## Example Usage
+
+_For a thorough core protocol overview, see the [Conceptual Overview](#conceptual-overview) section._
+
+Jeff wants to raise funds for his startup, "Bingle". He decides to launch a Bingle Juicebox project on Ethereum mainnet. To launch his project, he calls [`JBController.launchProjectFor(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBController.sol#L291), passing the following arguments:
+
+| Param                    | Value                                            | Why                                                                                                                  |
+| ------------------------ | ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| `owner`                  | `bingle.eth`                                     | This is the Bingle multisig, which Jeff wants to use to safely manage the project.                                   |
+| `projectUri`             | `QmQHGuXv7nDh1rxj48HnzFtwvVxwF1KU9AfB6HbfG8fmJF` | This IPFS hash points to a JSON file with the [Bingle metadata](https://docs.juicebox.money/dev/frontend/metadata/). |
+| `rulesetConfigurations`  | `[…]`                                            | More below.                                                                                                          |
+| `terminalConfigurations` | `[…]`                                            | More below.                                                                                                          |
+| `memo`                   | `"Bingle is the best startup in the world."`     | This memo is included in the event emitted by the project's launch.                                                  |
+
+His `rulesetConfigurations` array only contains a single ruleset, and looks like this:
+
+```json
+[
+  {
+    "mustStartAtOrAfter": 1, // Jeff's ruleset takes effect immediately.
+    "duration": 604_800, // The ruleset lasts for a week (which is 604,800 seconds).
+    "weight": 100_000_000_000_000_000_000, // The ruleset mints 100 tokens (with 18 decimals) per unit of payment.
+    "decayRate": 100_000_000, // The weight decays by 10% each cycle. Calculated out of `JBConstants.MAX_DECAY_RATE` (1e9).
+    "approvalHook": "0x123…", // This is the address of the `JBDeadline` approval hook with a 24 hour duration (86,400 seconds).
+    "metadata": {
+      "reservedRate": 3_000, // Jeff reserves 30% of the tokens minted while this ruleset is active. Calculated out of `JBConstants.MAX_RESERVED_RATE` (1e4).
+      "redemptionRate": 10_000, // Jeff allows 1:1 redemptions for the tokens minted while this ruleset is active. Calculated out of `JBConstants.MAX_REDEMPTION_RATE` (1e4).
+      "baseCurrency": "0x000000000000000000000000000000000000EEEe", // Jeff uses `JBConstants.NATIVE_TOKEN` (ETH) as the base currency.
+      "pausePay": false, // Jeff allows payments to the project.
+      "pauseCreditTransfers": false, // Jeff allows payers to transfer their credits.
+      "allowOwnerMinting": false, // Jeff doesn't allow the Bingle multisig to mint credits/tokens on demand.
+      /* Jeff doesn't allow the Bingle multisig to migrate or set terminals or controllers during the ruleset. */
+      "allowTerminalMigration": false,
+      "allowSetTerminals": false,
+      "allowControllerMigration": false,
+      "allowSetController": false,
+      "holdFees": false, // Jeff pays fees when they're incurred.
+      "useTotalSurplusForRedemptions": true, // Bingle credit/token holders can redeem from the project's total surplus across all terminals, and not just the local terminal surplus.
+      /* The Bingle project doesn't use a data hook for payments or redemptions. */
+      "useDataHookForPay": false,
+      "useDataHookForRedeem": false,
+      "dataHook": "0x0000000000000000000000000000000000000000",
+      "metadata": 0 // This ruleset doesn't need any metadata.
+    },
+    "splitGroups": [
+      {
+        1, // This splitGroupId comes from `JBSplitGroupIds.RESERVED_TOKENS`. This group is for reserved tokens.
+        [
+          {
+            "preferAddToBalance": false, // Typically used for payouts to projects. If true, it uses `addToBalanceOf(…)`. If false, it will `pay(…)` the project.
+            "percent": 250_000_000, // 25% of `JBConstants.SPLITS_TOTAL_PERCENT` (1e9).
+            "projectId": 5, // This split is paid to project #5, which helps Bingle with marketing.
+            "beneficiary": "0x456…", // Any tokens minted by this split's payment go to Jeff's friend (with wallet 0x456…).
+            "lockedUntil": 0, // This split can be changed by the Bingle multisig at any time.
+            "hook": "0x0000000000000000000000000000000000000000" // This split doesn't use a split hook.
+          },
+          {
+            "preferAddToBalance": false,
+            "percent": 300_000_000, // 30% of `JBConstants.SPLITS_TOTAL_PERCENT` (1e9).
+            "projectId": 0, // This split is paid directly to the `beneficiary` address, not a project.
+            "beneficiary": "0x456…", // This is Jeff's friend, who helped him set up the project.
+            "lockedUntil": 0, // This split can be changed by the Bingle multisig at any time.
+            "hook": "0x0000000000000000000000000000000000000000" // This split doesn't use a split hook.
+          }
+        ]
+      }
+    ],
+    "fundAccessLimitGroups": [
+    	{
+    	  "terminal": "0x789…", // This is the address of `JBMultiTerminal`, which the Bingle project uses to manage payouts.
+    	  "token": "0x000000000000000000000000000000000000EEEe", // These limits determine how much ETH (`JBConstants.NATIVE_TOKEN`) can be paid out from the terminal.
+    	  "payoutLimits": [
+            {
+              "amount": 1_000_000_000_000_000_000, // 1 (with 18 decimals).
+	      "currency": 0 // ETH (see `JBCurrencyIds`).
+            },
+	  ],
+    	  "surplusAllowances": [] // Jeff doesn't allow any surplus allowance usage.
+    	}
+    ]
+  }
+]
+```
+
+Some things to note:
+
+- Jeff only sets up a single ruleset, which takes effect immediately and lasts for a week. Unless he queues another ruleset at least 24 hours before the end of this ruleset (as required by the `JBDeadline` approval hook), this ruleset will cycle indefinitely. Each time it cycles, the `weight` will decay by 10%.
+- Jeff only specified a single split group, which is for reserved tokens. 25% of the tokens minted while the ruleset is active to project #5, and 30% go to his friend's wallet. The remaining 45% go to the project's owner (the Bingle multisig).
+- Jeff set up a single fund access limit group for `JBMultiTerminal`. This group restricts payouts to 1 ETH per ruleset, but this resets when the ruleset cycles over. Jeff didn't set up any surplus allowance limits, so he can't withdraw surplus funds from the terminal. Since Jeff didn't specify any split groups for payouts, all payouts go to the project's owner (the Bingle multisig).
+
+For a detailed description of the fields in the structs above, see the natspec documentation for [`JBRulesetConfig`](https://github.com/Bananapus/nana-core/blob/main/src/structs/JBRulesetConfig.sol), [`JBRulesetMetadata`](https://github.com/Bananapus/nana-core/blob/main/src/structs/JBRulesetMetadata.sol), [`JBSplitGroup`](https://github.com/Bananapus/nana-core/blob/main/src/structs/JBSplitGroup.sol), [`JBSplit`](https://github.com/Bananapus/nana-core/blob/main/src/structs/JBSplit.sol), [`JBFundAccessLimitGroup`](https://github.com/Bananapus/nana-core/blob/main/src/structs/JBFundAccessLimitGroup.sol), and [`JBCurrencyAmount`](https://github.com/Bananapus/nana-core/blob/main/src/structs/JBCurrencyAmount.sol).
+
+His `terminalConfigurations` array sets up two terminals. The first is the [`JBMultiTerminal`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol), which the Bingle project uses to accept ETH payouts, make redemptions available, and manage payouts. The second terminal is the [`JBSwapTerminal`](https://github.com/Bananapus/nana-swap-terminal/blob/main/src/JBSwapTerminal.sol), which the Bingle project uses to accept USDC and convert them to ETH on payment (for a more detailed explanation, see [`nana-swap-terminal`](https://github.com/Bananapus/nana-swap-terminal)). The `terminalConfigurations` look like this:
+
+```json
+[
+  {
+    "terminal": "0x789…", // This is the address of `JBMultiTerminal`.
+    "tokensToAccept": ["0x000000000000000000000000000000000000EEEe"] // The Bingle project accepts ETH (`JBConstants.NATIVE_TOKEN`) through this terminal.
+  },
+  {
+    "terminal": "0xABC…", // This is the address of `JBSwapTerminal`.
+    "tokensToAccept": ["0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"] // The Bingle project accepts USDC through the swap terminal.
+  }
+]
+```
+
+Note that Jeff didn't have to set his controller – the controller he calls `launchProjectFor(…)` on sets itself as the project's controller in the [`JBDirectory`](https://github.com/Bananapus/nana-core/blob/main/src/JBDirectory.sol).
+
+The controller also mints the [`JBProjects`](https://github.com/Bananapus/nana-core/blob/main/src/JBProjects.sol) ERC-721 which represents the project into the Bingle multisig's wallet, stores the project's metadata, queues the first ruleset, and sets up the terminals in the directory. The Bingle project is now live on Ethereum mainnet!
+
 ## Conceptual Overview
 
-Juicebox is a flexible toolkit for launching and managing a treasury-backed token on Ethereum and L2s.
+Juicebox is a flexible toolkit for launching and managing a treasury-backed token on EVMs.
 
 There are two main entry points for interacting with a Juicebox project:
 
@@ -433,59 +544,3 @@ If a ruleset has [`JBRulesetMetadata.holdFees`](https://github.com/Bananapus/nan
 #### Feeless Addresses
 
 [`JBFeelessAddresses`](https://github.com/Bananapus/nana-core/blob/main/src/JBFeelessAddresses.sol) manages a list of addresses which are exempt from fees. Feeless addresses can receive payouts, use surplus allowance, or be the beneficiary of redemptions without incurring fees. Only the contract's owner can add or remove feeless addresses.
-
-## Basics
-
-Projects are represented by a 721 NFT (`src/JBProjects.sol`) owned by some address. Each project has a controller (`src/interfaces/IJBController.sol`) that is responsible for interactions with the project’s tokens (`src/JBTokens.sol`), splits (`src/JBSplits.sol`), and rulesets (`src/JBRulesets.sol`), and any number of payment terminals (`src/interfaces/IJBTerminal.sol`) to accept payments and give access to funds through. A project’s controller and terminals can be found through the directory (`src/JBDirectory.sol`).
-
-A well-known and trusted controller, multi terminal, directory, project contract, token contract, split contract, and ruleset contract will be deployed by JuiceboxDAO (`script/Deploy.s.sol`) for projects to use, but project owners can always bring their own.
-
-Get a project's current terminals using `directory.terminalsOf(…)` (`src/JBDirectory.sol`), it's primary terminal for given inbound token using `directory.primaryTerminalOf(…)` (`src/JBDirectory.sol`), and its controller using `directory.controllerOf(…)` (`src/JBDirectory.sol`).
-
-Learn how everything fits together by launching a new project using `controller.launchProjectFor(…)` (`src/JBController.sol`).
-
-Next, try paying a project using `terminal.pay(…)` (`src/JBMultiTerminal.sol`) using a payment terminal specified when launching the project.
-
-Next, distribute scheduled payouts from the project using `terminal.distributePayoutsOf(…)` (`src/JBMultiTerminal.sol`), use the project’s surplus if you’re the owner using `terminal.useSurplusAllowanceOf(…)` (`src/JBMultiTerminal.sol`), or redeem the project’s tokens for access to treasury funds using `terminal.redeemTokensOf(…)` (`src/JBMultiTerminal`). The specifics of how funds can be accessed in both cases depends on the rulesets and fund access constraints specified when launching the project.
-
-If reserved tokens have accumulated as payments have come in, distribute them to the prespecified recipients using `controller.sendReservedTokensToSplitsOf(…)` (`src/JBController.sol`).
-
-If you, the project’s owner, wish to queue a new ruleset to take effect after the current one, use `controller.queueRulesetsOf(…)` (`src/JBController.sol`).
-
-### Multi Terminal
-
-The multi terminal (`src/JBMultiTerminal.sol`) allows projects to receive and store native tokens and any ERC-20 a project wishes to mint its tokens with and keep exposure to.
-
-### Hooks
-
-A project can attach a data hook (`src/interfaces/IJBRulesetDataHook.sol`) address to its rulesets. The data hook can specify custom contract code that runs when the project gets paid (`src/interfaces/IJBPayHook.sol`) or when the project’s tokens are redeemed (`src/interfaces/IJBRedeemHook.sol`).
-
-A project can also schedule payouts to split hooks (`src/interfaces/IJBSplitHook.sol`) alongside splits to addresses and/or other Juicebox projects.
-
-When a project queues new rulesets, its manifestation depends on an optional approval hook (`src/interfaces/IJBRulesetApprovalHook.sol`) of the preceding ruleset. This can be used to prevent scheduled rule changes unless certain conditions are met.
-
-### Rulesets
-
-A project has one active ruleset at a time, and can queue any number of rulesets to become active over time. Each project's rulesets are stored in `JBRulesets` (`src/JBRulesetStore.sol`), which also handles their timing and scheduling.
-
-### Tokens
-
-By default, each project uses a simple internal accounting mechanism to manage token issuance and redemptions. At any time, project's can optionally deploy an ERC-20 (`src/JBERC20.sol`) for it's community of holders to claim in place of the default internal token, which can then be used across ERC20 compatible ecosystems.
-
-### Permissions
-
-Addresses can give other operator addresses permissions to manage certain ecosystem actions on their behalf.
-
-### Prices
-
-It is possible for a project to accept and store ETH, but issue its $TOKENs relative to USD (i.e. 1,000 $TOKENs issued per 1 USD worth of ETH paid). If a project is managing it's accounting in terms of a certain currency but accepting and storing a token with a different currency, the `src/JBPrices.sol` contract is used to normalize the prices to maintain consistent accounting.
-
-### Splits
-
-A project may manage payouts and reserved token distributions to groups of addresses, other projects, and split hooks. These references are stored in `src/JBSplits.sol` to allow access to various groups of splits across various rulesets over time.
-
-### Fund Access Limits
-
-A project may give itself access to accumulated funds from its treasury either for scheduled payouts or discretionary surplus spending. The limits of its access are stored in `src/JBFundAccessLimits.sol`.
-
-To learn more about the protocol, visit the [Juicebox Docs](https://docs.juicebox.money/). If you have questions, reach out on [Discord](https://discord.com/invite/ErQYmth4dS).
