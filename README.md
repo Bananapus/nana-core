@@ -20,6 +20,7 @@ This repository contains the core protocol contracts for Bananapus' Juicebox v4.
     <li><a href="#surface-contracts">Surface Contracts</a></li>
     <li><a href="#utility-contracts">Utility Contracts</a></li>
     </ul>
+    <li><a href="#example-usage">Example Usage</a></li>
     <li><a href="#conceptual-overview">Conceptual Overview</a></li>
   <ul>
     <li><a href="#rulesets">Rulesets</a></li>
@@ -46,17 +47,6 @@ This repository contains the core protocol contracts for Bananapus' Juicebox v4.
       <li><a href="#held-fees">Held Fees</a></li>
       <li><a href="#feeless-addresses">Feeless Addresses</a></li>
       </ul>
-    </ul>
-    <li><a href="#basics">Basics</a></li>
-  <ul>
-    <li><a href="#multi-terminal">Multi Terminal</a></li>
-    <li><a href="#hooks">Hooks</a></li>
-    <li><a href="#rulesets">Rulesets</a></li>
-    <li><a href="#tokens">Tokens</a></li>
-    <li><a href="#permissions">Permissions</a></li>
-    <li><a href="#prices">Prices</a></li>
-    <li><a href="#splits">Splits</a></li>
-    <li><a href="#fund-access-limits">Fund Access Limits</a></li>
     </ul>
   </ul>
   </ol>
