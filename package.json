@@ -1,10 +1,13 @@
 {
   "name": "@bananapus/core",
-  "version": "0.0.7",
+  "version": "0.0.9",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Bananapus/nana-core"
+  },
+  "engines": {
+    "node": ">=20.0.0"
   },
   "scripts": {
     "test": "forge test",
@@ -15,13 +18,13 @@
     "artifacts": "source ./.env && npx sphinx artifacts --org-id 'cltepuu9u0003j58rjtbd0hvu' --project-name 'nana-core'"
   },
   "dependencies": {
-    "@bananapus/permission-ids": "^0.0.2",
+    "@bananapus/permission-ids": "^0.0.5",
     "@chainlink/contracts": "^0.8.0",
-    "@openzeppelin/contracts": "^5.0.1",
+    "@openzeppelin/contracts": "^5.0.2",
     "@prb/math": "^4.0.2",
     "@uniswap/permit2": "github:Uniswap/permit2"
   },
   "devDependencies": {
-    "@sphinx-labs/plugins": "^0.30.9"
+    "@sphinx-labs/plugins": "^0.30.12"
   }
 }

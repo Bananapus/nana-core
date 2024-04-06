@@ -145,14 +145,14 @@ contract JBTokens is JBControlled, IJBTokens {
             ? IJBToken(Clones.clone(address(TOKEN)))
             : IJBToken(Clones.cloneDeterministic(address(TOKEN), keccak256(abi.encode(msg.sender, salt))));
 
-        // Initialize the token.
-        token.initialize({name: name, symbol: symbol, owner: address(this)});
-
         // Store the token contract.
         tokenOf[projectId] = token;
 
         // Store the project for the token.
         projectIdOf[token] = projectId;
+
+        // Initialize the token.
+        token.initialize({name: name, symbol: symbol, owner: address(this)});
 
         emit DeployERC20(projectId, token, name, symbol, salt, msg.sender);
     }

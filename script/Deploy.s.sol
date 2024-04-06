@@ -28,7 +28,10 @@ contract Deploy is Script, Sphinx {
     address private constant TRUSTED_FORWARDER = 0xB2b5841DBeF766d4b521221732F9B618fCf34A87;
 
     /// @notice The address that will manage the few privileged functions of the protocol.
-    address private constant MANAGER = 0x823b92d6a4b2AED4b15675c7917c9f922ea8ADAD;
+    address private MANAGER;
+
+    /// @notice The address that will own the fee-project.
+    address private FEE_PROJECT_OWNER;
 
     function configureSphinx() public override {
         // TODO: Update to contain JB Emergency Developers
@@ -42,11 +45,21 @@ contract Deploy is Script, Sphinx {
 
     /// @notice Deploys the protocol.
     function run() public sphinx {
-        address _sender = safeAddress();
+        // Set the manager, this can be changed and won't affect deployment addresses.
+        MANAGER = safeAddress();
+        // NOTICE: THIS IS FOR TESTNET ONLY! REPLACE!
+        FEE_PROJECT_OWNER = 0x1F96512db9A74b8805d900c8e553879C0Cb8Bb2a;
+
+        // Deploy the protocol.
+        deploy();
+    }
+
+    function deploy() public sphinx {
+        address _safe = safeAddress();
 
         JBPermissions permissions = new JBPermissions();
-        JBProjects projects = new JBProjects(MANAGER);
-        JBDirectory directory = new JBDirectory(permissions, projects, _sender);
+        JBProjects projects = new JBProjects(_safe, _safe);
+        JBDirectory directory = new JBDirectory(permissions, projects, _safe);
         JBSplits splits = new JBSplits(directory);
         JBRulesets rulesets = new JBRulesets(directory);
         directory.setIsAllowedToSetFirstController(
@@ -64,20 +77,32 @@ contract Deploy is Script, Sphinx {
             ),
             true
         );
-        directory.transferOwnership(MANAGER);
+
+        JBFeelessAddresses feeless = new JBFeelessAddresses(_safe);
+        JBPrices prices = new JBPrices(permissions, projects, _safe);
+
         new JBMultiTerminal({
             permissions: permissions,
             projects: projects,
             directory: directory,
             splits: splits,
-            store: new JBTerminalStore({
-                directory: directory,
-                rulesets: rulesets,
-                prices: new JBPrices(permissions, projects, MANAGER)
-            }),
-            feelessAddresses: new JBFeelessAddresses(MANAGER),
+            store: new JBTerminalStore({directory: directory, rulesets: rulesets, prices: prices}),
+            feelessAddresses: feeless,
             permit2: _PERMIT2,
             trustedForwarder: TRUSTED_FORWARDER
         });
+
+        // If the manager is not the deployer we transfer all ownership to it.
+        if (MANAGER != _safe && MANAGER != address(0)) {
+            directory.transferOwnership(MANAGER);
+            feeless.transferOwnership(MANAGER);
+            prices.transferOwnership(MANAGER);
+            projects.transferOwnership(MANAGER);
+        }
+
+        // Transfer ownership to the fee project owner.
+        if (FEE_PROJECT_OWNER != _safe && FEE_PROJECT_OWNER != address(0)) {
+            projects.safeTransferFrom(_safe, FEE_PROJECT_OWNER, 1);
+        }
     }
 }

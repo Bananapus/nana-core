@@ -6,7 +6,7 @@ import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/interfaces/Ag
 import {IJBPriceFeed} from "./interfaces/IJBPriceFeed.sol";
 import {JBFixedPointNumber} from "./libraries/JBFixedPointNumber.sol";
 
-/// @notice A generalized price feed for the Chainlink AggregatorV3Interface.
+/// @notice An `IJBPriceFeed` implementation that reports prices from a Chainlink `AggregatorV3Interface`.
 contract JBChainlinkV3PriceFeed is IJBPriceFeed {
     // A library that provides utility for fixed point numbers.
     using JBFixedPointNumber for uint256;
@@ -14,6 +14,7 @@ contract JBChainlinkV3PriceFeed is IJBPriceFeed {
     //*********************************************************************//
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
+
     error STALE_PRICE();
     error INCOMPLETE_ROUND();
     error NEGATIVE_PRICE();
@@ -22,18 +23,18 @@ contract JBChainlinkV3PriceFeed is IJBPriceFeed {
     // ---------------- public stored immutable properties --------------- //
     //*********************************************************************//
 
-    /// @notice The feed that prices are reported from.
+    /// @notice The Chainlink feed that prices are reported from.
     AggregatorV3Interface public immutable FEED;
 
     //*********************************************************************//
     // ------------------------- external views -------------------------- //
     //*********************************************************************//
 
-    /// @notice Gets the current price (per unit) from the feed, normalized to the specified number of decimals.
-    /// @param decimals The number of decimals the returned fixed point price should include.
-    /// @return The current price of the feed, as a fixed point number with the specified number of decimals.
+    /// @notice Gets the current price (per 1 unit) from the feed.
+    /// @param decimals The number of decimals the return value should use.
+    /// @return The current unit price from the feed, as a fixed point number with the specified number of decimals.
     function currentUnitPrice(uint256 decimals) external view override returns (uint256) {
-        // Get the latest round information.
+        // Get the latest round information from the feed.
         // slither-disable-next-line unused-return
         (uint80 roundId, int256 price,, uint256 updatedAt, uint80 answeredInRound) = FEED.latestRoundData();
 
@@ -49,7 +50,7 @@ contract JBChainlinkV3PriceFeed is IJBPriceFeed {
         // Get a reference to the number of decimals the feed uses.
         uint256 feedDecimals = FEED.decimals();
 
-        // Return the price, adjusted to the target decimals.
+        // Return the price, adjusted to the specified number of decimals.
         return uint256(price).adjustDecimals({decimals: feedDecimals, targetDecimals: decimals});
     }
 
@@ -57,7 +58,7 @@ contract JBChainlinkV3PriceFeed is IJBPriceFeed {
     // -------------------------- constructor ---------------------------- //
     //*********************************************************************//
 
-    /// @param feed The feed to report prices from.
+    /// @param feed The Chainlink feed to report prices from.
     constructor(AggregatorV3Interface feed) {
         FEED = feed;
     }

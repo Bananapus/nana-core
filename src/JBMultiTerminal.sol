@@ -46,7 +46,8 @@ import {JBSplit} from "./structs/JBSplit.sol";
 import {JBSplitHookContext} from "./structs/JBSplitHookContext.sol";
 import {JBTokenAmount} from "./structs/JBTokenAmount.sol";
 
-/// @notice Generic terminal managing inflows and outflows of funds into the protocol ecosystem.
+/// @notice `JBMultiTerminal` manages native/ERC-20 payments, redemptions, and surplus allowance usage for any number of
+/// projects. Terminals are the entry point for operations involving inflows and outflows of funds.
 contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     // A library that parses the packed ruleset metadata into a friendlier format.
     using JBRulesetMetadataResolver for JBRuleset;
@@ -72,21 +73,20 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     // ------------------------- public constants ------------------------ //
     //*********************************************************************//
 
-    /// @notice The fee percent (out of `JBConstants.MAX_FEE`).
-    /// @dev Fees are charged on payouts to addresses, when the surplus allowance is used, and on redemptions where the
-    /// redemption rate is less than 100%.
+    /// @notice This terminal's fee (as a fraction out of `JBConstants.MAX_FEE`).
+    /// @dev Fees are charged on payouts to addresses, surplus allowance usage, and redemptions if the redemption rate
+    /// is less than 100%.
     uint256 public constant override FEE = 25; // 2.5%
 
     //*********************************************************************//
     // ------------------------ internal constants ----------------------- //
     //*********************************************************************//
 
-    /// @notice The ID of the project which receives fees is 1, as it should be the first project launched during the
-    /// deployment process.
+    /// @notice Project ID #1 receives fees. It should be the first project launched during the deployment process.
     uint256 internal constant _FEE_BENEFICIARY_PROJECT_ID = 1;
 
-    /// @notice 28 days, the number of seconds a fee can be held for.
-    uint256 internal constant _FEE_HOLDING_SECONDS = 2_419_200;
+    /// @notice The number of seconds fees can be held for.
+    uint256 internal constant _FEE_HOLDING_SECONDS = 2_419_200; // 28 days
 
     //*********************************************************************//
     // ---------------- public immutable stored properties --------------- //
@@ -193,9 +193,9 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     // -------------------------- public views --------------------------- //
     //*********************************************************************//
 
-    /// @notice Indicates if this contract adheres to the specified interface.
+    /// @notice Indicates whether this contract adheres to the specified interface.
     /// @dev See {IERC165-supportsInterface}.
-    /// @param interfaceId The ID of the interface to check for adherance to.
+    /// @param interfaceId The ID of the interface to check for adherence to.
     /// @return A flag indicating if the provided interface ID is supported.
     function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {
         return interfaceId == type(IJBMultiTerminal).interfaceId || interfaceId == type(IJBPermissioned).interfaceId
@@ -523,7 +523,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
     /// @notice Adds accounting contexts for a project to this terminal so the project can begin accepting the tokens in
     /// those contexts.
-    /// @dev Only a project's owner, an operator with the `SET_ACCOUNTING_CONTEXT` permission from that owner, or a
+    /// @dev Only a project's owner, an operator with the `ADD_ACCOUNTING_CONTEXTS` permission from that owner, or a
     /// project's controller can add accounting contexts for the project.
     /// @param projectId The ID of the project having to add accounting contexts for.
     /// @param tokens The tokens to add accounting contexts for.
@@ -532,7 +532,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         _requirePermissionAllowingOverrideFrom({
             account: PROJECTS.ownerOf(projectId),
             projectId: projectId,
-            permissionId: JBPermissionIds.SET_ACCOUNTING_CONTEXT,
+            permissionId: JBPermissionIds.ADD_ACCOUNTING_CONTEXTS,
             alsoGrantAccessIf: _msgSender() == address(DIRECTORY.controllerOf(projectId))
         });
 
@@ -784,19 +784,19 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     // ---------------------- internal transactions ---------------------- //
     //*********************************************************************//
 
-    /// @notice Returns the sender, prefered to use over `msg.sender`
-    /// @return sender the sender address of this call.
+    /// @notice The message's sender. Preferred to use over `msg.sender`.
+    /// @return sender The address which sent this call.
     function _msgSender() internal view override(ERC2771Context, Context) returns (address sender) {
         return ERC2771Context._msgSender();
     }
 
-    /// @notice Returns the calldata, prefered to use over `msg.data`
-    /// @return calldata the `msg.data` of this call
+    /// @notice The calldata. Preferred to use over `msg.data`.
+    /// @return calldata The `msg.data` of this call.
     function _msgData() internal view override(ERC2771Context, Context) returns (bytes calldata) {
         return ERC2771Context._msgData();
     }
 
-    /// @dev ERC-2771 specifies the context as being a single address (20 bytes).
+    /// @dev `ERC-2771` specifies the context as being a single address (20 bytes).
     function _contextSuffixLength() internal view virtual override(ERC2771Context, Context) returns (uint256) {
         return super._contextSuffixLength();
     }

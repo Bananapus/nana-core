@@ -15,6 +15,6 @@ contract JBProjectsSetup is JBTest {
 
     function projectsSetup() public virtual {
         // Instantiate the contract being tested
-        _projects = new JBProjects(_owner);
+        _projects = new JBProjects(_owner, address(0));
     }
 }

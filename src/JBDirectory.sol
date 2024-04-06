@@ -12,12 +12,14 @@ import {IJBPermissions} from "./interfaces/IJBPermissions.sol";
 import {IJBTerminal} from "./interfaces/IJBTerminal.sol";
 import {IJBProjects} from "./interfaces/IJBProjects.sol";
 
-/// @notice Tracks which terminal contracts each project is currently accepting funds through, and which controller
-/// contract is managing each project's tokens and rulesets.
+/// @notice `JBDirectory` tracks the terminals and the controller used by each project.
+/// @dev Tracks which `IJBTerminal`s each project is currently accepting funds through, and which `IJBController` is
+/// managing each project's tokens and rulesets.
 contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
     //*********************************************************************//
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
+
     error DUPLICATE_TERMINALS();
     error INVALID_PROJECT_ID_IN_DIRECTORY();
     error SET_CONTROLLER_NOT_ALLOWED();
@@ -35,49 +37,52 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
     // --------------------- public stored properties -------------------- //
     //*********************************************************************//
 
-    /// @notice The controller, which dictates how terminals interact with tokens and rulesets, for a given project ID.
+    /// @notice The specified project's controller, which dictates how its terminals interact with its tokens and
+    /// rulesets.
     /// @custom:param projectId The ID of the project to get the controller of.
     mapping(uint256 projectId => IERC165) public override controllerOf;
 
-    /// @notice Addresses allowed to set a project's first controller on their behalf. These addresses/contracts have
-    /// been vetted and verified by this contract's owner.
-    /// @custom:param addr The address that is either allowed or not.
+    /// @notice Whether the specified address is allowed to set a project's first controller on their behalf.
+    /// @dev These addresses/contracts have been vetted by this contract's owner.
+    /// @custom:param addr The address to check.
     mapping(address addr => bool) public override isAllowedToSetFirstController;
 
     //*********************************************************************//
     // --------------------- internal stored properties ------------------ //
     //*********************************************************************//
 
-    /// @notice For each project ID, the terminals that are currently managing its funds.
-    /// @custom:param projectId The ID of the project to get terminals of.
+    /// @notice The specified project's terminals.
+    /// @custom:param projectId The ID of the project to get the terminals of.
     mapping(uint256 projectId => IJBTerminal[]) internal _terminalsOf;
 
-    /// @notice The project's primary terminal for a given token.
+    /// @notice The primary terminal that a project uses for the specified token.
     /// @custom:param projectId The ID of the project to get the primary terminal of.
-    /// @custom:param token The token to get the project's primary terminal for.
+    /// @custom:param token The token that the terminal accepts.
     mapping(uint256 projectId => mapping(address token => IJBTerminal)) internal _primaryTerminalOf;
 
     //*********************************************************************//
     // ------------------------- external views -------------------------- //
     //*********************************************************************//
 
-    /// @notice For  given project ID, the terminals which are currently managing that project's funds.
+    /// @notice The specified project's terminals.
     /// @param projectId The ID of the project to get the terminals of.
-    /// @return An array of terminal addresses.
+    /// @return An array of the project's terminal addresses.
     function terminalsOf(uint256 projectId) external view override returns (IJBTerminal[] memory) {
         return _terminalsOf[projectId];
     }
 
-    /// @notice The primary terminal that a project is using to manage a specified token.
-    /// @dev The zero address is returned if a terminal isn't found for the specified token.
+    /// @notice The primary terminal that a project uses for the specified token.
+    /// @dev Returns the first terminal that accepts the token if the project hasn't explicitly set a primary terminal
+    /// for it.
+    /// @dev Returns the zero address if no terminal accepts the token.
     /// @param projectId The ID of the project to get the primary terminal of.
-    /// @param token The token the terminal accepts.
-    /// @return The address of the primary terminal for the specified project and token.
+    /// @param token The token that the terminal accepts.
+    /// @return The primary terminal's address.
     function primaryTerminalOf(uint256 projectId, address token) external view override returns (IJBTerminal) {
         // Keep a reference to the primary terminal for the provided project ID and token.
         IJBTerminal primaryTerminal = _primaryTerminalOf[projectId][token];
 
-        // If a primary terminal for the token was specifically set and it's one of the project's terminals, return it.
+        // If a primary terminal for the token was explicitly set and it's one of the project's terminals, return it.
         if (primaryTerminal != IJBTerminal(address(0)) && isTerminalOf(projectId, primaryTerminal)) {
             return primaryTerminal;
         }
@@ -104,17 +109,16 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
     // -------------------------- public views --------------------------- //
     //*********************************************************************//
 
-    /// @notice Check if a specified project uses a specified terminal.
-    /// @param projectId The ID of the project to check for the terminal.
-    /// @param terminal The address of the terminal to check for.
-    /// @return A flag indicating whether or not the specified terminal is a terminal of the specified project.
+    /// @notice Check if a project uses a specific terminal.
+    /// @param projectId The ID of the project to check.
+    /// @param terminal The terminal to check for.
+    /// @return A flag indicating whether the project uses the terminal.
     function isTerminalOf(uint256 projectId, IJBTerminal terminal) public view override returns (bool) {
         // Keep a reference to the number of terminals the project has.
         uint256 numberOfTerminals = _terminalsOf[projectId].length;
 
-        // Loop through and return true if the terminal is contained.
+        // Loop through and return true if the terminal is found.
         for (uint256 i; i < numberOfTerminals; i++) {
-            // If the terminal being iterated on matches the provided terminal, return true.
             if (_terminalsOf[projectId][i] == terminal) return true;
         }
 
@@ -145,13 +149,13 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
     //*********************************************************************//
 
     /// @notice Set a project's controller. Controllers manage how terminals interact with tokens and rulesets.
-    /// @dev A controller can be set if:
-    /// @dev - The project's ruleset allows setting the controller, and the message sender is the project owner or an
-    /// operator with the `SET_CONTROLLER` permission from them.
-    /// @dev - OR the message sender is the project's current controller.
-    /// @dev - OR an allowedlisted address is setting a controller for a project that doesn't already have a controller.
-    /// @param projectId The ID of the project to set the controller of.
-    /// @param controller The address of the new controller to set for the project.
+    /// @dev Can only be called if:
+    /// - The ruleset's metadata has `allowSetController` enabled, and the message's sender is the project's owner or an
+    /// address with the owner's permission to `SET_CONTROLLER`.
+    /// - OR the message's sender is the project's current controller.
+    /// - OR an address which `isAllowedToSetFirstController` is setting a project's first controller.
+    /// @param projectId The ID of the project whose controller is being set.
+    /// @param controller The address of the controller to set.
     function setControllerOf(uint256 projectId, IERC165 controller) external override {
         // Enforce permissions.
         _requirePermissionAllowingOverrideFrom({
@@ -166,16 +170,16 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
         // Keep a reference to the current controller.
         IERC165 currentController = controllerOf[projectId];
 
-        // Get a reference to the flag indicating if the project is allowed to set controllers.
+        // Get a reference to a flag indicating whether the project is allowed to set its controller.
+        // Setting the controller is allowed if the project doesn't have a controller,
+        // OR if the caller is the current controller,
+        // OR if the project's ruleset allows setting the controller.
         bool allowSetController = address(currentController) == address(0)
             || !currentController.supportsInterface(type(IJBDirectoryAccessControl).interfaceId)
             ? true
             : IJBDirectoryAccessControl(address(currentController)).setControllerAllowed(projectId);
 
-        // Setting controller is allowed if called from the current controller,
-        // OR if the project doesn't have a current controller,
-        // OR if the project's ruleset allows setting the controller.
-        // Otherwise, revert.
+        // If setting the controller is not allowed, revert.
         if (!allowSetController) {
             revert SET_CONTROLLER_NOT_ALLOWED();
         }
@@ -187,10 +191,10 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
     }
 
     /// @notice Set a project's terminals.
-    /// @dev Only a project's owner, an operator with the `SET_TERMINALS` permission from the owner, or the project's
-    /// controller can set its terminals.
+    /// @dev Can only be called by the project's owner, an address with the owner's permission to `SET_TERMINALS`, or
+    /// the project's controller.
     /// @dev Unless the caller is the project's controller, the project's ruleset must allow setting terminals.
-    /// @param projectId The ID of the project to set terminals for.
+    /// @param projectId The ID of the project whose terminals are being set.
     /// @param terminals An array of terminal addresses to set for the project.
     function setTerminalsOf(uint256 projectId, IJBTerminal[] calldata terminals) external override {
         // Enforce permissions.
@@ -201,14 +205,14 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
             alsoGrantAccessIf: msg.sender == address(controllerOf[projectId])
         });
 
-        // Keep a reference to the current controller.
+        // Keep a reference to the project's controller.
         IERC165 controller = controllerOf[projectId];
 
-        // Get a reference to the flag indicating if the project is allowed to set terminals.
+        // Get a reference to the flag indicating whether the project is allowed to set its terminals.
         bool allowSetTerminals = !controller.supportsInterface(type(IJBDirectoryAccessControl).interfaceId)
             || IJBDirectoryAccessControl(address(controller)).setTerminalsAllowed(projectId);
 
-        // Setting terminals must be allowed if not called from the current controller.
+        // If the caller is not the project's controller, the project's ruleset must allow setting terminals.
         if (msg.sender != address(controllerOf[projectId]) && !allowSetTerminals) {
             revert SET_TERMINALS_NOT_ALLOWED();
         }
@@ -219,7 +223,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
         // Keep a reference to the number of terminals being iterated upon.
         uint256 numberOfTerminals = terminals.length;
 
-        // Make sure duplicates were not added.
+        // If there are any duplicates, revert.
         if (numberOfTerminals > 1) {
             for (uint256 i; i < numberOfTerminals; i++) {
                 for (uint256 j = i + 1; j < numberOfTerminals; j++) {
@@ -230,14 +234,14 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
         emit SetTerminals(projectId, terminals, msg.sender);
     }
 
-    /// @notice Set a project's primary terminal for a particular token.
-    /// @dev The primary terminal is where a token should be routed to by default.
-    /// @dev This is useful in case a project has several terminals connected for a particular token.
-    /// @dev If setting a newly added terminal and the ruleset doesn't allow new terminals, the caller must be the
-    /// current controller.
-    /// @param projectId The ID of the project a primary token is being set for.
+    /// @notice Set a project's primary terminal for a token.
+    /// @dev The primary terminal for a token is where payments in that token are routed to by default.
+    /// @dev This is useful in cases where a project has multiple terminals which accept the same token.
+    /// @dev Can only be called by the project's owner, or an address with the owner's permission to
+    /// `SET_PRIMARY_TERMINAL`.
+    /// @param projectId The ID of the project whose primary terminal is being set.
     /// @param token The token to set the primary terminal for.
-    /// @param terminal The terminal to make the primary terminal for the project and token.
+    /// @param terminal The terminal being set as the primary terminal.
     function setPrimaryTerminalOf(uint256 projectId, address token, IJBTerminal terminal) external override {
         // Enforce permissions.
         _requirePermissionFrom({
@@ -246,29 +250,29 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
             permissionId: JBPermissionIds.SET_PRIMARY_TERMINAL
         });
 
-        // Can't set the primary terminal for a token if the terminal doesn't accept the token.
+        // If the terminal doesn't accept the token, revert.
         if (terminal.accountingContextForTokenOf(projectId, token).token == address(0)) {
             revert TOKEN_NOT_ACCEPTED();
         }
 
-        // Add the terminal to the project if it hasn't been already.
+        // If the terminal hasn't already been added to the project, add it.
         _addTerminalIfNeeded(projectId, terminal);
 
-        // Store the terminal as the primary terminal for the token.
+        // Store the terminal as the project's primary terminal for the token.
         _primaryTerminalOf[projectId][token] = terminal;
 
         emit SetPrimaryTerminal(projectId, token, terminal, msg.sender);
     }
 
-    /// @notice Add an address/contract to the list of trusted addresses which are allowed to set a first controller for
-    /// projects.
+    /// @notice Add or remove an address/contract from a list of trusted addresses which are allowed to set a first
+    /// controller for projects.
     /// @dev Only this contract's owner can call this function.
-    /// @dev These addresses are known and vetted controllers as well as contracts designed to launch new projects.
-    /// @dev A project can set its own controller without being on the allow list.
-    /// @dev If you would like an address/contract allowlisted, please reach out to the contract owner.
+    /// @dev These addresses are vetted controllers as well as contracts designed to launch new projects.
+    /// @dev A project can set its own controller without being on this list.
+    /// @dev If you would like to add an address/contract to this list, please reach out to this contract's owner.
     /// @param addr The address to allow or not allow.
-    /// @param flag Whether the address is allowed or not allowed to set first controllers for projects. Use `true` to
-    /// allow and `false` to not allow.
+    /// @param flag Whether the address is allowed to set first controllers for projects. Use `true` to allow and
+    /// `false` to not allow.
     function setIsAllowedToSetFirstController(address addr, bool flag) external override onlyOwner {
         // Set the flag in the allowlist.
         isAllowedToSetFirstController[addr] = flag;
@@ -280,8 +284,9 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
     // --------------------- internal helper functions ------------------- //
     //*********************************************************************//
 
-    /// @notice Add a terminal to a project's list of terminals if it hasn't already been added.
-    /// @dev Unless the caller is the project's controller, the project's ruleset must allow setting terminals.
+    /// @notice If a terminal hasn't already been added to a project's list of terminals, add it.
+    /// @dev Unless the caller is the project's controller, the project's ruleset must have `allowSetTerminals` set to
+    /// `true`.
     /// @param projectId The ID of the project to add the terminal to.
     /// @param terminal The terminal to add.
     function _addTerminalIfNeeded(uint256 projectId, IJBTerminal terminal) internal {
@@ -291,11 +296,11 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
         // Keep a reference to the current controller.
         IERC165 controller = controllerOf[projectId];
 
-        // Get a reference to the flag indicating if the project is allowed to set terminals.
+        // Get a reference to a flag indicating whether the project is allowed to set its terminals.
         bool allowSetTerminals = !controller.supportsInterface(type(IJBDirectoryAccessControl).interfaceId)
             || IJBDirectoryAccessControl(address(controller)).setTerminalsAllowed(projectId);
 
-        // Setting terminals must be allowed if not called from the current controller.
+        // If the caller is not the project's controller, the project's ruleset must allow setting terminals.
         if (msg.sender != address(controllerOf[projectId]) && !allowSetTerminals) {
             revert SET_TERMINALS_NOT_ALLOWED();
         }

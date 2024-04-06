@@ -32,8 +32,6 @@ contract MetadataResolverHelper {
     //*********************************************************************//
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
-    error LENGTH_MISMATCH();
-    error METADATA_TOO_LONG();
 
     /**
      * @notice Parse the metadata to find the data for a specific ID
