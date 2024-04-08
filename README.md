@@ -226,7 +226,7 @@ A project's current controller and terminals can be found (or updated) through [
 
 ## Conceptual Overview
 
-*If you prefer to learn by example, start with [Example Usage](#example-usage).*
+_If you prefer to learn by example, start with [Example Usage](#example-usage)._
 
 Juicebox is a flexible toolkit for launching and managing a treasury-backed token on EVMs.
 
@@ -442,7 +442,7 @@ Jeff wants to raise funds for his startup, "Bingle". He decides to launch a Bing
 
 | Param                    | Value                                            | Why                                                                                                                  |
 | ------------------------ | ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
-| `owner`                  | `0x765...` (`bingle.eth`)                        | This is the Bingle multisig, which Jeff wants to use to safely manage the project.                                   |
+| `owner`                  | `0x765…` (`bingle.eth`)                          | This is the Bingle multisig, which Jeff wants to use to safely manage the project.                                   |
 | `projectUri`             | `QmQHGuXv7nDh1rxj48HnzFtwvVxwF1KU9AfB6HbfG8fmJF` | This IPFS hash points to a JSON file with the [Bingle metadata](https://docs.juicebox.money/dev/frontend/metadata/). |
 | `rulesetConfigurations`  | `[…]`                                            | More below.                                                                                                          |
 | `terminalConfigurations` | `[…]`                                            | More below.                                                                                                          |
@@ -556,7 +556,7 @@ Stacy wants to support Bingle and get $BING tokens, so she decides to pay Jeff's
 | `projectId`         | `6`                                          | This is the Bingle project's ID from [`JBProjects`](https://github.com/Bananapus/nana-core/blob/main/src/JBProjects.sol)                               |
 | `token`             | `0x000000000000000000000000000000000000EEEe` | Stacy is paying with ETH, represented by [`JBConstants.NATIVE_TOKEN`](https://github.com/Bananapus/nana-core/blob/main/src/libraries/JBConstants.sol). |
 | `amount`            | `1000000000000000000`                        | 1 ETH, with 18 decimals.                                                                                                                               |
-| `beneficiary`       | `0x379...` (`stacy.eth`)                     | Stacy wants to receive the tokens minted by her payment.                                                                                               |
+| `beneficiary`       | `0x379…` (`stacy.eth`)                       | Stacy wants to receive the tokens minted by her payment.                                                                                               |
 | `minReturnedTokens` | `70000000000000000000`                       | Stacy expects to receive 70 tokens (with 18 decimals).                                                                                                 |
 | `memo`              | `"Bingle rocks."`                            | This memo is included in the event emitted by the payment.                                                                                             |
 | `metadata`          | `0x00`                                       | Metadata can be used to control custom features in hooks or terminals, but there's no need here.                                                       |
@@ -585,7 +585,7 @@ To mint and send out the pending reserved tokens, Jeff calls [`JBController.send
 The 30 $BING tokens are minted and divided between the splits according to the rules described in [`JBSplit`](https://github.com/Bananapus/nana-core/blob/main/src/structs/JBSplit.sol). As a reminder, Jeff originally set up 2 reserved token splits:
 
 1. 25% of the reserved tokens go to project #5. If project #5 had a payment terminal which accepted $BING, these tokens would be paid into that terminal. Since it doesn't, the tokens are sent to the wallet which owns project #5.
-2. 30% go to Jeff's friend's wallet (`0x456...`). These tokens are sent directly to the wallet.
+2. 30% go to Jeff's friend's wallet (`0x456…`). These tokens are sent directly to the wallet.
 3. Since the splits don't add up to 100%, the remaining 45% go to the Bingle project's current owner, the Bingle multisig. If the Bingle project was transferred to a new owner, the reserved tokens would go to the new owner instead.
 
 To send the payouts, Jeff calls [`JBMultiTerminal.sendPayoutsOf(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol#L397). When he does, the terminal:
