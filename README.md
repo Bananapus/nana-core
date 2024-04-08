@@ -20,7 +20,6 @@ This repository contains the core protocol contracts for Bananapus' Juicebox v4.
     <li><a href="#surface-contracts">Surface Contracts</a></li>
     <li><a href="#utility-contracts">Utility Contracts</a></li>
     </ul>
-    <li><a href="#example-usage">Example Usage</a></li>
     <li><a href="#conceptual-overview">Conceptual Overview</a></li>
   <ul>
     <li><a href="#rulesets">Rulesets</a></li>
@@ -47,6 +46,13 @@ This repository contains the core protocol contracts for Bananapus' Juicebox v4.
       <li><a href="#held-fees">Held Fees</a></li>
       <li><a href="#feeless-addresses">Feeless Addresses</a></li>
       </ul>
+    </ul>
+    <li><a href="#example-usage">Example Usage</a></li>
+  <ul>
+    <li><a href="#launching-a-project">Launching a Project</a></li>
+    <li><a href="#paying-a-project">Paying a Project</a></li>
+    <li><a href="#sending-reserved-tokens-and-payouts">Sending Reserved Tokens and Payouts</a></li>
+    <li><a href="#redeeming-tokens">Redeeming Tokens</a></li>
     </ul>
   </ul>
   </ol>
@@ -218,204 +224,9 @@ A project's current controller and terminals can be found (or updated) through [
 | [`JBDeadline`](https://github.com/Bananapus/nana-core/blob/main/src/JBDeadline.sol)                         | A ruleset approval hook which rejects rulesets if they are not queued at least `duration` seconds before the current ruleset ends. In other words, rulesets must be queued before the deadline to take effect. |
 | [`JBERC20`](https://github.com/Bananapus/nana-core/blob/main/src/JBERC20.sol)                               | An ERC-20 token which project have the option of using in `JBTokens` and `JBController`.                                                                                                                       |
 
-## Example Usage
-
-_For an explicit explanation, see the [Conceptual Overview](#conceptual-overview)._
-
-### Launching a Project
-
-Jeff wants to raise funds for his startup, "Bingle". He decides to launch a Bingle Juicebox project on Ethereum mainnet. To launch his project, he calls [`JBController.launchProjectFor(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBController.sol#L291), passing the following arguments:
-
-| Param                    | Value                                            | Why                                                                                                                  |
-| ------------------------ | ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
-| `owner`                  | `0x765...` (`bingle.eth`)                        | This is the Bingle multisig, which Jeff wants to use to safely manage the project.                                   |
-| `projectUri`             | `QmQHGuXv7nDh1rxj48HnzFtwvVxwF1KU9AfB6HbfG8fmJF` | This IPFS hash points to a JSON file with the [Bingle metadata](https://docs.juicebox.money/dev/frontend/metadata/). |
-| `rulesetConfigurations`  | `[…]`                                            | More below.                                                                                                          |
-| `terminalConfigurations` | `[…]`                                            | More below.                                                                                                          |
-| `memo`                   | `"Bingle is the best startup in the world."`     | This memo is included in the event emitted by the project's launch.                                                  |
-
-His `rulesetConfigurations` array only contains a single ruleset, and looks like this:
-
-```js
-[
-  {
-    "mustStartAtOrAfter": 1, // Jeff's ruleset takes effect immediately.
-    "duration": 604_800, // The ruleset lasts for a week (which is 604,800 seconds).
-    "weight": 100_000_000_000_000_000_000, // The ruleset mints 100 tokens (with 18 decimals) per unit of payment.
-    "decayRate": 100_000_000, // The weight decays by 10% each cycle. Calculated out of `JBConstants.MAX_DECAY_RATE` (1e9).
-    "approvalHook": "0x123…", // This is the address of the `JBDeadline` approval hook with a 24 hour duration (86,400 seconds).
-    "metadata": {
-      "reservedRate": 3_000, // Jeff reserves 30% of the tokens minted while this ruleset is active. Calculated out of `JBConstants.MAX_RESERVED_RATE` (1e4).
-      "redemptionRate": 10_000, // Jeff allows 1:1 redemptions for the tokens minted while this ruleset is active. Calculated out of `JBConstants.MAX_REDEMPTION_RATE` (1e4).
-      "baseCurrency": "0x000000000000000000000000000000000000EEEe", // Jeff uses `JBConstants.NATIVE_TOKEN` (ETH) as the base currency.
-      "pausePay": false, // Jeff allows payments to the project.
-      "pauseCreditTransfers": false, // Jeff allows payers to transfer their credits.
-      "allowOwnerMinting": false, // Jeff doesn't allow the Bingle multisig to mint credits/tokens on demand.
-      /* Jeff doesn't allow the Bingle multisig to migrate or set terminals or controllers during the ruleset. */
-      "allowTerminalMigration": false,
-      "allowSetTerminals": false,
-      "allowControllerMigration": false,
-      "allowSetController": false,
-      "holdFees": false, // Jeff pays fees when they're incurred.
-      "useTotalSurplusForRedemptions": true, // Bingle credit/token holders can redeem from the project's total surplus across all terminals, and not just the local terminal surplus.
-      /* The Bingle project doesn't use a data hook for payments or redemptions. */
-      "useDataHookForPay": false,
-      "useDataHookForRedeem": false,
-      "dataHook": "0x0000000000000000000000000000000000000000",
-      "metadata": 0 // This ruleset doesn't need any metadata.
-    },
-    "splitGroups": [
-      {
-        1, // This splitGroupId comes from `JBSplitGroupIds.RESERVED_TOKENS`. This group is for reserved tokens.
-        [
-          {
-            "preferAddToBalance": false, // Typically used for payouts to projects. If true, it uses `addToBalanceOf(…)`. If false, it will `pay(…)` the project.
-            "percent": 250_000_000, // 25% of `JBConstants.SPLITS_TOTAL_PERCENT` (1e9).
-            "projectId": 5, // This split is paid to project #5, which helps Bingle with marketing.
-            "beneficiary": "0x456…", // Any tokens minted by this split's payment go to Jeff's friend (with wallet 0x456…).
-            "lockedUntil": 0, // This split can be changed by the Bingle multisig at any time.
-            "hook": "0x0000000000000000000000000000000000000000" // This split doesn't use a split hook.
-          },
-          {
-            "preferAddToBalance": false,
-            "percent": 300_000_000, // 30% of `JBConstants.SPLITS_TOTAL_PERCENT` (1e9).
-            "projectId": 0, // This split is paid directly to the `beneficiary` address, not a project.
-            "beneficiary": "0x456…", // This is Jeff's friend, who helped him set up the project.
-            "lockedUntil": 0, // This split can be changed by the Bingle multisig at any time.
-            "hook": "0x0000000000000000000000000000000000000000" // This split doesn't use a split hook.
-          }
-        ]
-      }
-    ],
-    "fundAccessLimitGroups": [
-    	{
-    	  "terminal": "0x789…", // This is the address of `JBMultiTerminal`, which the Bingle project uses to manage payouts.
-    	  "token": "0x000000000000000000000000000000000000EEEe", // These limits determine how much ETH (`JBConstants.NATIVE_TOKEN`) can be paid out from the terminal.
-    	  "payoutLimits": [
-            {
-              "amount": 1_000_000_000_000_000_000, // 1 (with 18 decimals).
-	      "currency": 0 // ETH (see `JBCurrencyIds`).
-            },
-	  ],
-    	  "surplusAllowances": [] // Jeff doesn't allow any surplus allowance usage.
-    	}
-    ]
-  }
-]
-```
-
-Some things to note:
-
-- Jeff only sets up a single ruleset, which takes effect immediately and lasts for a week. Unless he queues another ruleset at least 24 hours before the end of this ruleset (as required by the `JBDeadline` approval hook), this ruleset will cycle indefinitely. Each time it cycles, the `weight` will decay by 10%.
-- Jeff only specified a single split group, which is for reserved tokens. 25% of the tokens minted while the ruleset is active to project #5, and 30% go to his friend's wallet. The remaining 45% go to the project's owner (the Bingle multisig).
-- Jeff set up a single fund access limit group for `JBMultiTerminal`. This group restricts payouts to 1 ETH per ruleset, but this resets when the ruleset cycles over. Jeff didn't set up any surplus allowance limits, so he can't withdraw surplus funds from the terminal. Since Jeff didn't specify any split groups for payouts, all payouts go to the project's owner (the Bingle multisig).
-
-For a detailed description of the fields in the structs above, see the natspec documentation for [`JBRulesetConfig`](https://github.com/Bananapus/nana-core/blob/main/src/structs/JBRulesetConfig.sol), [`JBRulesetMetadata`](https://github.com/Bananapus/nana-core/blob/main/src/structs/JBRulesetMetadata.sol), [`JBSplitGroup`](https://github.com/Bananapus/nana-core/blob/main/src/structs/JBSplitGroup.sol), [`JBSplit`](https://github.com/Bananapus/nana-core/blob/main/src/structs/JBSplit.sol), [`JBFundAccessLimitGroup`](https://github.com/Bananapus/nana-core/blob/main/src/structs/JBFundAccessLimitGroup.sol), and [`JBCurrencyAmount`](https://github.com/Bananapus/nana-core/blob/main/src/structs/JBCurrencyAmount.sol).
-
-His `terminalConfigurations` array sets up two terminals. The first is the [`JBMultiTerminal`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol), which the Bingle project uses to accept ETH payouts, make redemptions available, and manage payouts. The second terminal is the [`JBSwapTerminal`](https://github.com/Bananapus/nana-swap-terminal/blob/main/src/JBSwapTerminal.sol), which the Bingle project uses to accept USDC and convert them to ETH on payment (for a more detailed explanation, see [`nana-swap-terminal`](https://github.com/Bananapus/nana-swap-terminal)). The `terminalConfigurations` look like this:
-
-```js
-[
-  {
-    terminal: "0x789…", // This is the address of `JBMultiTerminal`.
-    tokensToAccept: ["0x000000000000000000000000000000000000EEEe"], // The Bingle project accepts ETH (`JBConstants.NATIVE_TOKEN`) through this terminal.
-  },
-  {
-    terminal: "0xABC…", // This is the address of `JBSwapTerminal`.
-    tokensToAccept: ["0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"], // The Bingle project accepts USDC through the swap terminal.
-  },
-];
-```
-
-Note that Jeff didn't have to set his controller – the controller he calls `launchProjectFor(…)` on sets itself as the project's controller in the [`JBDirectory`](https://github.com/Bananapus/nana-core/blob/main/src/JBDirectory.sol).
-
-The controller also mints the [`JBProjects`](https://github.com/Bananapus/nana-core/blob/main/src/JBProjects.sol) ERC-721 which represents the project into the Bingle multisig's wallet, stores the project's metadata, queues the first ruleset, and sets up the terminals in the directory. The Bingle project is now live on Ethereum mainnet!
-
-The Bingle multisig wants their project's token to be an ERC-20, so they call [`JBController.deployERC20For(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBController.sol#L620) to deploy the $BING token, which is a [`JBERC20`](https://github.com/Bananapus/nana-core/blob/main/src/JBERC20.sol) contract. From now on, the [`JBTokens`](https://github.com/Bananapus/nana-core/blob/main/src/JBTokens.sol) contract will automatically mint $BING ERC-20 tokens for payers.
-
-### Paying a Project
-
-Stacy wants to support Bingle and get $BING tokens, so she decides to pay Jeff's project 1 ETH. She calls [`JBMultiTerminal.pay(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol#L273), passing the following arguments:
-
-| Parameter           | Value                                        | Explanation                                                                                                                                            |
-| ------------------- | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `projectId`         | `6`                                          | This is the Bingle project's ID from [`JBProjects`](https://github.com/Bananapus/nana-core/blob/main/src/JBProjects.sol)                               |
-| `token`             | `0x000000000000000000000000000000000000EEEe` | Stacy is paying with ETH, represented by [`JBConstants.NATIVE_TOKEN`](https://github.com/Bananapus/nana-core/blob/main/src/libraries/JBConstants.sol). |
-| `amount`            | `1000000000000000000`                        | 1 ETH, with 18 decimals.                                                                                                                               |
-| `beneficiary`       | `0x379...` (`stacy.eth`)                     | Stacy wants to receive the tokens minted by her payment.                                                                                               |
-| `minReturnedTokens` | `70000000000000000000`                       | Stacy expects to receive 70 tokens (with 18 decimals).                                                                                                 |
-| `memo`              | `"Bingle rocks."`                            | This memo is included in the event emitted by the payment.                                                                                             |
-| `metadata`          | `0x00`                                       | Metadata can be used to control custom features in hooks or terminals, but there's no need here.                                                       |
-
-Since Stacy is paying with the native token (ETH), she has to include 1 ETH as her transaction's `msg.value`. Stacy expects to receive 70 tokens because:
-
-- The ruleset has a weight of `100000000000000000000` (100 with 18 decimals), meaning the Bingle project mints 100 $BING per ETH paid.
-- The ruleset has a 30% reserved rate, meaning 30 of the 100 $BING tokens minted are set aside for the reserved split group ([`JBSplitGroupIds.RESERVED_TOKENS`](https://github.com/Bananapus/nana-core/blob/main/src/libraries/JBSplitGroupIds.sol)). Stacy will get the 70 remaining $BING tokens. Because Stacy specified a `minReturnedTokens` of 70 tokens, the payment will revert if she doesn't receive at least that many tokens for some reason.
-
-Once `pay(…)` is called, the Bingle project's terminal will:
-
-1. Get the accounting context (see [`JBAccountingContext`](https://github.com/Bananapus/nana-core/blob/main/src/structs/JBAccountingContext.sol)) to use for the payment.
-2. Record the payment in the terminal's store by calling [`JBTerminalStore.recordPaymentFrom(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBTerminalStore.sol#L300). The terminal store uses the ruleset's weight and the accounting context to calculate how many $BING tokens should be minted. It also checks whether the payment should use any hooks by checking the ruleset's data hook – the Bingle project has no data hooks, so the payment proceeds.
-3. Using the results from the terminal store, the terminal calls the [`mintTokensOf(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBController.sol#L411) function on project's controller, with `useReservedRate` set to true. The controller then calls [`JBTokens.mintFor(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBTokens.sol#L191) to mint 70 tokens for the beneficiary (`stacy.eth`) and sets aside 30 tokens as "pending reserved tokens" (more on this [below](#sending-reserved-tokens-and-payouts)). Since the Bingle multisig deployed the $BING token, Stacy receives 70 $BING [`JBERC20`](https://github.com/Bananapus/nana-core/blob/main/src/JBERC20.sol) tokens in her wallet.
-4. If there were a data hook, and that data hook had returned pay hooks for the terminal to use, the terminal would call their `afterPayRecordedWith(…)` functions here. Since this payment didn't use any hooks, the payment proceeds.
-5. The terminal emits a `Pay` event with the payment details.
-
-Now the Bingle project has a balance of 1 ETH in its [`JBMultiTerminal`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol), and Stacy has 70 $BING tokens in her wallet!
-
-### Sending Reserved Tokens and Payouts
-
-Now that there are 30 reserved $BING tokens pending and 1 ETH in the Bingle project's terminal, Jeff decides the payouts and reserved tokens should be sent. Even though Jeff doesn't own the project (the Bingle multisig does), he can still send payouts and reserved tokens because they are public functions.
-
-To mint and send out the pending reserved tokens, Jeff calls [`JBController.sendReservedTokensToSplitsOf(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBController.sol#L517). When this function is called, the controller mints the 30 pending reserved tokens and sends them out to the reserved token split group.
-
-The 30 $BING tokens are minted and divided between the splits according to the rules described in [`JBSplit`](https://github.com/Bananapus/nana-core/blob/main/src/structs/JBSplit.sol). As a reminder, Jeff originally set up 2 reserved token splits:
-
-1. 25% of the reserved tokens go to project #5. If project #5 had a payment terminal which accepted $BING, these tokens would be paid into that terminal. Since it doesn't, the tokens are sent to the wallet which owns project #5.
-2. 30% go to Jeff's friend's wallet (`0x456...`). These tokens are sent directly to the wallet.
-3. Since the splits don't add up to 100%, the remaining 45% go to the Bingle project's current owner, the Bingle multisig. If the Bingle project was transferred to a new owner, the reserved tokens would go to the new owner instead.
-
-To send the payouts, Jeff calls [`JBMultiTerminal.sendPayoutsOf(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol#L397). When he does, the terminal:
-
-1. Records the payment in the terminal store, calling [`JBTerminalStore.recordPayoutFor(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBTerminalStore.sol#L547). In this function, the terminal store makes sure the payout doesn't exceed the project's payout limits in [`JBFundAccessLimits`](https://github.com/Bananapus/nana-core/blob/main/src/JBFundAccessLimits.sol), calculates how much should be paid out based on the terminal's accounting context and price values reported by [`JBPrices`](https://github.com/Bananapus/nana-core/blob/main/src/JBPrices.sol), and updates the project's balance for the calling terminal.
-2. Next, the terminal sends payouts to each split in the payout split group for the token (while following the rules described in [`JBSplit`](https://github.com/Bananapus/nana-core/blob/main/src/JBSplits.sol)). While doing this, the terminal calculates how much of what was paid out was eligible for fees. Since Jeff didn't set up any payout splits, the terminal proceesds.
-3. Any funds that weren't paid out to splits are sent to the project's owner, which is the Bingle multisig. [`JBMultiTerminal`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol#L79) charges a 2.5% fee on payouts to wallets, and 1 ETH is being paid to a wallet (the Bingle multisig), so 0.025 ETH is paid to project #1 (see [_Fees_](#fees)). If project #1 has a terminal which accepts ETH, this payment mints tokens from project #1 – those tokens are sent to the owner of the project paying the fees, which is the Bingle multisig.
-
-At the end of this:
-
-- The Bingle project has 0 ETH in its terminal.
-- The Bingle project used its entire 1 ETH payout limit, so it can't send any more payouts until the ruleset ends. It can still receive payments.
-- The Bingle multisig received 0.975 ETH, and 0.025 ETH's worth of tokens from project #1.
-
-### Redeeming Tokens
-
-After a few hours, Stacy decides she wants to redeem her 70 $BING tokens to get back some ETH. She calls [`JBMultiTerminal.redeemTokensOf(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol#L355) to redeem all of her $BING tokens, passing her own address as the beneficiary.
-
-Redemptions are calculated based on:
-
-- The number of tokens being redeemed (70 $BING).
-- The total token supply. Let's say that a few more payments have come in, and there are now 700 $BING tokens in circulation. This means Stacy is redeeming 10% of the $BING supply.
-- The project's balance. 7 ETH was paid in to mint the 700 $BING tokens, but 1 ETH was paid out, so the project's balance is 6 ETH.
-- The ruleset's redemption rate, which is 100% for the Bingle project. This means that 10% of the $BING token can be redeemed for 10% of the balance.
-
-This means that Stacy will receive 0.6 ETH by redeeming her 70 $BING tokens. When she calls the function, the terminal will:
-
-1. Get the accounting context (see [`JBAccountingContext`](https://github.com/Bananapus/nana-core/blob/main/src/structs/JBAccountingContext.sol)) to use for the redemption.
-2. Record the redemption in the terminal's store by calling [`JBTerminalStore.recordRedemptionFor(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBTerminalStore.sol#L421). The terminal store uses the current surplus (see [_Payouts_](#payouts)) and the numbers mentioned above to calculate how much ETH should be returned. It also checks whether the redemption should use any hooks by checking the ruleset's data hook – the Bingle project has no data hooks, so the redemption proceeds.
-3. Using the results from the terminal store, the terminal calls the [`burnTokensOf(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBController.sol#L485) function on project's controller, which in turn calls [`JBTokens.burnFrom(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBTokens.sol#L219) to burn the tokens being redeemed.
-4. If the redemption rate is less than 100%, [`JBMultiTerminal`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol) would take a 2.5% fee from the amount being redeemed. Since the Bingle project has a 100% redemption rate, Stacy doesn't pay any fees.
-5. If there were a data hook, and that data hook had returned redeem hooks for the terminal to use, the terminal would call their `afterRedeemRecordedWith(…)` functions here. Since this redemption didn't use any hooks, the redemption proceeds.
-6. The terminal emits a `RedeemTokens` event with the redemption details.
-
-Once the transaction has finished:
-
-- Stacy receives 0.6 ETH in her wallet.
-- Stacy has 0 $BING tokens in her wallet.
-- The Bingle project has 5.4 ETH left in its terminal (which is all surplus).
-- The total $BING supply is down to 630 tokens – when tokens are redeemed, they're burned and taken out of circulation.
-
-See [_Redemptions_](#redemptions) for more details on how redemptions are calculated.
-
 ## Conceptual Overview
+
+*If you prefer to learn by example, start with [Example Usage](#example-usage).*
 
 Juicebox is a flexible toolkit for launching and managing a treasury-backed token on EVMs.
 
@@ -620,3 +431,200 @@ If a ruleset has [`JBRulesetMetadata.holdFees`](https://github.com/Bananapus/nan
 #### Feeless Addresses
 
 [`JBFeelessAddresses`](https://github.com/Bananapus/nana-core/blob/main/src/JBFeelessAddresses.sol) manages a list of addresses which are exempt from fees. Feeless addresses can receive payouts, use surplus allowance, or be the beneficiary of redemptions without incurring fees. Only the contract's owner can add or remove feeless addresses.
+
+## Example Usage
+
+_For an explicit explanation, see the [Conceptual Overview](#conceptual-overview)._
+
+### Launching a Project
+
+Jeff wants to raise funds for his startup, "Bingle". He decides to launch a Bingle Juicebox project on Ethereum mainnet. To launch his project, he calls [`JBController.launchProjectFor(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBController.sol#L291), passing the following arguments:
+
+| Param                    | Value                                            | Why                                                                                                                  |
+| ------------------------ | ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| `owner`                  | `0x765...` (`bingle.eth`)                        | This is the Bingle multisig, which Jeff wants to use to safely manage the project.                                   |
+| `projectUri`             | `QmQHGuXv7nDh1rxj48HnzFtwvVxwF1KU9AfB6HbfG8fmJF` | This IPFS hash points to a JSON file with the [Bingle metadata](https://docs.juicebox.money/dev/frontend/metadata/). |
+| `rulesetConfigurations`  | `[…]`                                            | More below.                                                                                                          |
+| `terminalConfigurations` | `[…]`                                            | More below.                                                                                                          |
+| `memo`                   | `"Bingle is the best startup in the world."`     | This memo is included in the event emitted by the project's launch.                                                  |
+
+His `rulesetConfigurations` array only contains a single ruleset, and looks like this:
+
+```js
+[
+  {
+    "mustStartAtOrAfter": 1, // Jeff's ruleset takes effect immediately.
+    "duration": 604_800, // The ruleset lasts for a week (which is 604,800 seconds).
+    "weight": 100_000_000_000_000_000_000, // The ruleset mints 100 tokens (with 18 decimals) per unit of payment.
+    "decayRate": 100_000_000, // The weight decays by 10% each cycle. Calculated out of `JBConstants.MAX_DECAY_RATE` (1e9).
+    "approvalHook": "0x123…", // This is the address of the `JBDeadline` approval hook with a 24 hour duration (86,400 seconds).
+    "metadata": {
+      "reservedRate": 3_000, // Jeff reserves 30% of the tokens minted while this ruleset is active. Calculated out of `JBConstants.MAX_RESERVED_RATE` (1e4).
+      "redemptionRate": 10_000, // Jeff allows 1:1 redemptions for the tokens minted while this ruleset is active. Calculated out of `JBConstants.MAX_REDEMPTION_RATE` (1e4).
+      "baseCurrency": "0x000000000000000000000000000000000000EEEe", // Jeff uses `JBConstants.NATIVE_TOKEN` (ETH) as the base currency.
+      "pausePay": false, // Jeff allows payments to the project.
+      "pauseCreditTransfers": false, // Jeff allows payers to transfer their credits.
+      "allowOwnerMinting": false, // Jeff doesn't allow the Bingle multisig to mint credits/tokens on demand.
+      /* Jeff doesn't allow the Bingle multisig to migrate or set terminals or controllers during the ruleset. */
+      "allowTerminalMigration": false,
+      "allowSetTerminals": false,
+      "allowControllerMigration": false,
+      "allowSetController": false,
+      "holdFees": false, // Jeff pays fees when they're incurred.
+      "useTotalSurplusForRedemptions": true, // Bingle credit/token holders can redeem from the project's total surplus across all terminals, and not just the local terminal surplus.
+      /* The Bingle project doesn't use a data hook for payments or redemptions. */
+      "useDataHookForPay": false,
+      "useDataHookForRedeem": false,
+      "dataHook": "0x0000000000000000000000000000000000000000",
+      "metadata": 0 // This ruleset doesn't need any metadata.
+    },
+    "splitGroups": [
+      {
+        1, // This splitGroupId comes from `JBSplitGroupIds.RESERVED_TOKENS`. This group is for reserved tokens.
+        [
+          {
+            "preferAddToBalance": false, // Typically used for payouts to projects. If true, it uses `addToBalanceOf(…)`. If false, it will `pay(…)` the project.
+            "percent": 250_000_000, // 25% of `JBConstants.SPLITS_TOTAL_PERCENT` (1e9).
+            "projectId": 5, // This split is paid to project #5, which helps Bingle with marketing.
+            "beneficiary": "0x456…", // Any tokens minted by this split's payment go to Jeff's friend (with wallet 0x456…).
+            "lockedUntil": 0, // This split can be changed by the Bingle multisig at any time.
+            "hook": "0x0000000000000000000000000000000000000000" // This split doesn't use a split hook.
+          },
+          {
+            "preferAddToBalance": false,
+            "percent": 300_000_000, // 30% of `JBConstants.SPLITS_TOTAL_PERCENT` (1e9).
+            "projectId": 0, // This split is paid directly to the `beneficiary` address, not a project.
+            "beneficiary": "0x456…", // This is Jeff's friend, who helped him set up the project.
+            "lockedUntil": 0, // This split can be changed by the Bingle multisig at any time.
+            "hook": "0x0000000000000000000000000000000000000000" // This split doesn't use a split hook.
+          }
+        ]
+      }
+    ],
+    "fundAccessLimitGroups": [
+    	{
+    	  "terminal": "0x789…", // This is the address of `JBMultiTerminal`, which the Bingle project uses to manage payouts.
+    	  "token": "0x000000000000000000000000000000000000EEEe", // These limits determine how much ETH (`JBConstants.NATIVE_TOKEN`) can be paid out from the terminal.
+    	  "payoutLimits": [
+            {
+              "amount": 1_000_000_000_000_000_000, // 1 (with 18 decimals).
+	      "currency": 0 // ETH (see `JBCurrencyIds`).
+            },
+	  ],
+    	  "surplusAllowances": [] // Jeff doesn't allow any surplus allowance usage.
+    	}
+    ]
+  }
+]
+```
+
+Some things to note:
+
+- Jeff only sets up a single ruleset, which takes effect immediately and lasts for a week. Unless he queues another ruleset at least 24 hours before the end of this ruleset (as required by the `JBDeadline` approval hook), this ruleset will cycle indefinitely. Each time it cycles, the `weight` will decay by 10%.
+- Jeff only specified a single split group, which is for reserved tokens. 25% of the tokens minted while the ruleset is active to project #5, and 30% go to his friend's wallet. The remaining 45% go to the project's owner (the Bingle multisig).
+- Jeff set up a single fund access limit group for `JBMultiTerminal`. This group restricts payouts to 1 ETH per ruleset, but this resets when the ruleset cycles over. Jeff didn't set up any surplus allowance limits, so he can't withdraw surplus funds from the terminal. Since Jeff didn't specify any split groups for payouts, all payouts go to the project's owner (the Bingle multisig).
+
+For a detailed description of the fields in the structs above, see the natspec documentation for [`JBRulesetConfig`](https://github.com/Bananapus/nana-core/blob/main/src/structs/JBRulesetConfig.sol), [`JBRulesetMetadata`](https://github.com/Bananapus/nana-core/blob/main/src/structs/JBRulesetMetadata.sol), [`JBSplitGroup`](https://github.com/Bananapus/nana-core/blob/main/src/structs/JBSplitGroup.sol), [`JBSplit`](https://github.com/Bananapus/nana-core/blob/main/src/structs/JBSplit.sol), [`JBFundAccessLimitGroup`](https://github.com/Bananapus/nana-core/blob/main/src/structs/JBFundAccessLimitGroup.sol), and [`JBCurrencyAmount`](https://github.com/Bananapus/nana-core/blob/main/src/structs/JBCurrencyAmount.sol).
+
+His `terminalConfigurations` array sets up two terminals. The first is the [`JBMultiTerminal`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol), which the Bingle project uses to accept ETH payouts, make redemptions available, and manage payouts. The second terminal is the [`JBSwapTerminal`](https://github.com/Bananapus/nana-swap-terminal/blob/main/src/JBSwapTerminal.sol), which the Bingle project uses to accept USDC and convert them to ETH on payment (for a more detailed explanation, see [`nana-swap-terminal`](https://github.com/Bananapus/nana-swap-terminal)). The `terminalConfigurations` look like this:
+
+```js
+[
+  {
+    terminal: "0x789…", // This is the address of `JBMultiTerminal`.
+    tokensToAccept: ["0x000000000000000000000000000000000000EEEe"], // The Bingle project accepts ETH (`JBConstants.NATIVE_TOKEN`) through this terminal.
+  },
+  {
+    terminal: "0xABC…", // This is the address of `JBSwapTerminal`.
+    tokensToAccept: ["0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"], // The Bingle project accepts USDC through the swap terminal.
+  },
+];
+```
+
+Note that Jeff didn't have to set his controller – the controller he calls `launchProjectFor(…)` on sets itself as the project's controller in the [`JBDirectory`](https://github.com/Bananapus/nana-core/blob/main/src/JBDirectory.sol).
+
+The controller also mints the [`JBProjects`](https://github.com/Bananapus/nana-core/blob/main/src/JBProjects.sol) ERC-721 which represents the project into the Bingle multisig's wallet, stores the project's metadata, queues the first ruleset, and sets up the terminals in the directory. The Bingle project is now live on Ethereum mainnet!
+
+The Bingle multisig wants their project's token to be an ERC-20, so they call [`JBController.deployERC20For(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBController.sol#L620) to deploy the $BING token, which is a [`JBERC20`](https://github.com/Bananapus/nana-core/blob/main/src/JBERC20.sol) contract. From now on, the [`JBTokens`](https://github.com/Bananapus/nana-core/blob/main/src/JBTokens.sol) contract will automatically mint $BING ERC-20 tokens for payers.
+
+### Paying a Project
+
+Stacy wants to support Bingle and get $BING tokens, so she decides to pay Jeff's project 1 ETH. She calls [`JBMultiTerminal.pay(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol#L273), passing the following arguments:
+
+| Parameter           | Value                                        | Explanation                                                                                                                                            |
+| ------------------- | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `projectId`         | `6`                                          | This is the Bingle project's ID from [`JBProjects`](https://github.com/Bananapus/nana-core/blob/main/src/JBProjects.sol)                               |
+| `token`             | `0x000000000000000000000000000000000000EEEe` | Stacy is paying with ETH, represented by [`JBConstants.NATIVE_TOKEN`](https://github.com/Bananapus/nana-core/blob/main/src/libraries/JBConstants.sol). |
+| `amount`            | `1000000000000000000`                        | 1 ETH, with 18 decimals.                                                                                                                               |
+| `beneficiary`       | `0x379...` (`stacy.eth`)                     | Stacy wants to receive the tokens minted by her payment.                                                                                               |
+| `minReturnedTokens` | `70000000000000000000`                       | Stacy expects to receive 70 tokens (with 18 decimals).                                                                                                 |
+| `memo`              | `"Bingle rocks."`                            | This memo is included in the event emitted by the payment.                                                                                             |
+| `metadata`          | `0x00`                                       | Metadata can be used to control custom features in hooks or terminals, but there's no need here.                                                       |
+
+Since Stacy is paying with the native token (ETH), she has to include 1 ETH as her transaction's `msg.value`. Stacy expects to receive 70 tokens because:
+
+- The ruleset has a weight of `100000000000000000000` (100 with 18 decimals), meaning the Bingle project mints 100 $BING per ETH paid.
+- The ruleset has a 30% reserved rate, meaning 30 of the 100 $BING tokens minted are set aside for the reserved split group ([`JBSplitGroupIds.RESERVED_TOKENS`](https://github.com/Bananapus/nana-core/blob/main/src/libraries/JBSplitGroupIds.sol)). Stacy will get the 70 remaining $BING tokens. Because Stacy specified a `minReturnedTokens` of 70 tokens, the payment will revert if she doesn't receive at least that many tokens for some reason.
+
+Once `pay(…)` is called, the Bingle project's terminal will:
+
+1. Get the accounting context (see [`JBAccountingContext`](https://github.com/Bananapus/nana-core/blob/main/src/structs/JBAccountingContext.sol)) to use for the payment.
+2. Record the payment in the terminal's store by calling [`JBTerminalStore.recordPaymentFrom(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBTerminalStore.sol#L300). The terminal store uses the ruleset's weight and the accounting context to calculate how many $BING tokens should be minted. It also checks whether the payment should use any hooks by checking the ruleset's data hook – the Bingle project has no data hooks, so the payment proceeds.
+3. Using the results from the terminal store, the terminal calls the [`mintTokensOf(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBController.sol#L411) function on project's controller, with `useReservedRate` set to true. The controller then calls [`JBTokens.mintFor(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBTokens.sol#L191) to mint 70 tokens for the beneficiary (`stacy.eth`) and sets aside 30 tokens as "pending reserved tokens" (more on this [below](#sending-reserved-tokens-and-payouts)). Since the Bingle multisig deployed the $BING token, Stacy receives 70 $BING [`JBERC20`](https://github.com/Bananapus/nana-core/blob/main/src/JBERC20.sol) tokens in her wallet.
+4. If there were a data hook, and that data hook had returned pay hooks for the terminal to use, the terminal would call their `afterPayRecordedWith(…)` functions here. Since this payment didn't use any hooks, the payment proceeds.
+5. The terminal emits a `Pay` event with the payment details.
+
+Now the Bingle project has a balance of 1 ETH in its [`JBMultiTerminal`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol), and Stacy has 70 $BING tokens in her wallet!
+
+### Sending Reserved Tokens and Payouts
+
+Now that there are 30 reserved $BING tokens pending and 1 ETH in the Bingle project's terminal, Jeff decides the payouts and reserved tokens should be sent. Even though Jeff doesn't own the project (the Bingle multisig does), he can still send payouts and reserved tokens because they are public functions.
+
+To mint and send out the pending reserved tokens, Jeff calls [`JBController.sendReservedTokensToSplitsOf(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBController.sol#L517). When this function is called, the controller mints the 30 pending reserved tokens and sends them out to the reserved token split group.
+
+The 30 $BING tokens are minted and divided between the splits according to the rules described in [`JBSplit`](https://github.com/Bananapus/nana-core/blob/main/src/structs/JBSplit.sol). As a reminder, Jeff originally set up 2 reserved token splits:
+
+1. 25% of the reserved tokens go to project #5. If project #5 had a payment terminal which accepted $BING, these tokens would be paid into that terminal. Since it doesn't, the tokens are sent to the wallet which owns project #5.
+2. 30% go to Jeff's friend's wallet (`0x456...`). These tokens are sent directly to the wallet.
+3. Since the splits don't add up to 100%, the remaining 45% go to the Bingle project's current owner, the Bingle multisig. If the Bingle project was transferred to a new owner, the reserved tokens would go to the new owner instead.
+
+To send the payouts, Jeff calls [`JBMultiTerminal.sendPayoutsOf(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol#L397). When he does, the terminal:
+
+1. Records the payment in the terminal store, calling [`JBTerminalStore.recordPayoutFor(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBTerminalStore.sol#L547). In this function, the terminal store makes sure the payout doesn't exceed the project's payout limits in [`JBFundAccessLimits`](https://github.com/Bananapus/nana-core/blob/main/src/JBFundAccessLimits.sol), calculates how much should be paid out based on the terminal's accounting context and price values reported by [`JBPrices`](https://github.com/Bananapus/nana-core/blob/main/src/JBPrices.sol), and updates the project's balance for the calling terminal.
+2. Next, the terminal sends payouts to each split in the payout split group for the token (while following the rules described in [`JBSplit`](https://github.com/Bananapus/nana-core/blob/main/src/JBSplits.sol)). While doing this, the terminal calculates how much of what was paid out was eligible for fees. Since Jeff didn't set up any payout splits, the terminal proceesds.
+3. Any funds that weren't paid out to splits are sent to the project's owner, which is the Bingle multisig. [`JBMultiTerminal`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol#L79) charges a 2.5% fee on payouts to wallets, and 1 ETH is being paid to a wallet (the Bingle multisig), so 0.025 ETH is paid to project #1 (see [_Fees_](#fees)). If project #1 has a terminal which accepts ETH, this payment mints tokens from project #1 – those tokens are sent to the owner of the project paying the fees, which is the Bingle multisig.
+
+At the end of this:
+
+- The Bingle project has 0 ETH in its terminal.
+- The Bingle project used its entire 1 ETH payout limit, so it can't send any more payouts until the ruleset ends. It can still receive payments.
+- The Bingle multisig received 0.975 ETH, and 0.025 ETH's worth of tokens from project #1.
+
+### Redeeming Tokens
+
+After a few hours, Stacy decides she wants to redeem her 70 $BING tokens to get back some ETH. She calls [`JBMultiTerminal.redeemTokensOf(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol#L355) to redeem all of her $BING tokens, passing her own address as the beneficiary.
+
+Redemptions are calculated based on:
+
+- The number of tokens being redeemed (70 $BING).
+- The total token supply. Let's say that a few more payments have come in, and there are now 700 $BING tokens in circulation. This means Stacy is redeeming 10% of the $BING supply.
+- The project's balance. 7 ETH was paid in to mint the 700 $BING tokens, but 1 ETH was paid out, so the project's balance is 6 ETH.
+- The ruleset's redemption rate, which is 100% for the Bingle project. This means that 10% of the $BING token can be redeemed for 10% of the balance.
+
+This means that Stacy will receive 0.6 ETH by redeeming her 70 $BING tokens. When she calls the function, the terminal will:
+
+1. Get the accounting context (see [`JBAccountingContext`](https://github.com/Bananapus/nana-core/blob/main/src/structs/JBAccountingContext.sol)) to use for the redemption.
+2. Record the redemption in the terminal's store by calling [`JBTerminalStore.recordRedemptionFor(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBTerminalStore.sol#L421). The terminal store uses the current surplus (see [_Payouts_](#payouts)) and the numbers mentioned above to calculate how much ETH should be returned. It also checks whether the redemption should use any hooks by checking the ruleset's data hook – the Bingle project has no data hooks, so the redemption proceeds.
+3. Using the results from the terminal store, the terminal calls the [`burnTokensOf(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBController.sol#L485) function on project's controller, which in turn calls [`JBTokens.burnFrom(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBTokens.sol#L219) to burn the tokens being redeemed.
+4. If the redemption rate is less than 100%, [`JBMultiTerminal`](https://github.com/Bananapus/nana-core/blob/main/src/JBMultiTerminal.sol) would take a 2.5% fee from the amount being redeemed. Since the Bingle project has a 100% redemption rate, Stacy doesn't pay any fees.
+5. If there were a data hook, and that data hook had returned redeem hooks for the terminal to use, the terminal would call their `afterRedeemRecordedWith(…)` functions here. Since this redemption didn't use any hooks, the redemption proceeds.
+6. The terminal emits a `RedeemTokens` event with the redemption details.
+
+Once the transaction has finished:
+
+- Stacy receives 0.6 ETH in her wallet.
+- Stacy has 0 $BING tokens in her wallet.
+- The Bingle project has 5.4 ETH left in its terminal (which is all surplus).
+- The total $BING supply is down to 630 tokens – when tokens are redeemed, they're burned and taken out of circulation.
+
+See [_Redemptions_](#redemptions) for more details on how redemptions are calculated.
