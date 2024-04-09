@@ -113,5 +113,4 @@ contract MetadataResolverHelper {
     function getId(string memory functionality, address target) public view returns (bytes4) {
         return JBMetadataResolver.getId(functionality, target);
     }
-
 }
