@@ -264,7 +264,7 @@ library JBMetadataResolver {
      * @return id       The resulting id
      */
     function getId(string memory _functionality) internal view returns (bytes4) {
-        return bytes4(bytes20(address(this)) ^ bytes20(keccak256(bytes(_function))));
+        return bytes4(bytes20(address(this)) ^ bytes20(keccak256(bytes(_functionality))));
     }
 
     /// @notice Slice bytes from a start index to an end index.
