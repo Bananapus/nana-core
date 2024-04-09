@@ -835,7 +835,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         if (_msgSender() == address(this)) return amount;
 
         // The metadata ID is the first 4 bytes of this contract's address.
-        bytes4 metadataId = bytes4(bytes20(address(this)));
+        bytes4 metadataId = JBMetadataResolver.getId("permit2");
 
         // Unpack the allowance to use, if any, given by the frontend.
         (bool exists, bytes memory parsedMetadata) = JBMetadataResolver.getDataFor(metadataId, metadata);
@@ -1087,7 +1087,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                 beneficiary: beneficiary,
                 beneficiaryReclaimAmount: JBTokenAmount(
                     tokenToReclaim, reclaimAmount, accountingContext.decimals, accountingContext.currency
-                    ),
+                ),
                 specifications: hookSpecifications,
                 metadata: metadata
             });

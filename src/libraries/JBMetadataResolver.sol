@@ -254,6 +254,33 @@ library JBMetadataResolver {
         }
     }
 
+    /**
+     * @notice Returns an unique id following a suggested format
+     *         (`xor(address(this), functionality name)` where functionality name is a string
+     *         giving context to the id (Permit2, quoteForSwap, etc)
+     *
+     * @param functionality   A string describing the functionality associated with the id
+     *
+     * @return id       The resulting id
+     */
+    function getId(string memory functionality) internal view returns (bytes4) {
+        return getId(functionality, address(this));
+    }
+
+    /**
+     * @notice Returns an unique id following a suggested format
+     *         (`xor(address(this), functionality name)` where functionality name is a string
+     *         giving context to the id (Permit2, quoteForSwap, etc)
+     *
+     * @param functionality   A string describing the functionality associated with the id
+     * @param target          The target which will use the metadata
+     *
+     * @return id       The resulting id
+     */
+    function getId(string memory functionality, address target) internal view returns (bytes4) {
+        return bytes4(bytes20(target) ^ bytes20(keccak256(bytes(functionality))));
+    }
+
     /// @notice Slice bytes from a start index to an end index.
     /// @param data The bytes array to slice
     /// @param start The start index to slice at.
