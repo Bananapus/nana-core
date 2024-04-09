@@ -106,7 +106,7 @@ contract MetadataResolverHelper {
      *
      * @return id       The resulting id
      */
-    function getId(string memory _functionality) internal view returns (bytes4) {
+    function getId(string memory _functionality) public view returns (bytes4) {
         return JBMetadataResolver.getId(_functionality);
     }
 }
