@@ -835,7 +835,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         if (_msgSender() == address(this)) return amount;
 
         // The metadata ID is the first 4 bytes of this contract's address.
-        bytes4 metadataId = bytes4(bytes20(address(this)));
+        bytes4 metadataId = JBMetadataResolver.getId("allowance");
 
         // Unpack the allowance to use, if any, given by the frontend.
         (bool exists, bytes memory parsedMetadata) = JBMetadataResolver.getDataFor(metadataId, metadata);

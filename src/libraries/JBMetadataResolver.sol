@@ -259,12 +259,12 @@ library JBMetadataResolver {
      *         (`xor(address(this), functionality name)` where functionality name is a string
      *         giving context to the id (Permit2, quoteForSwap, etc)
      *
-     * @param _functionality   A string describing the functionality associated with the id
+     * @param functionality   A string describing the functionality associated with the id
      *
      * @return id       The resulting id
      */
-    function getId(string memory _functionality) internal view returns (bytes4) {
-        return getId(_functionality, address(this));
+    function getId(string memory functionality) internal view returns (bytes4) {
+        return getId(functionality, address(this));
     }
 
     /**
@@ -272,13 +272,13 @@ library JBMetadataResolver {
      *         (`xor(address(this), functionality name)` where functionality name is a string
      *         giving context to the id (Permit2, quoteForSwap, etc)
      *
-     * @param _functionality   A string describing the functionality associated with the id
-     * @param _target          The target which will use the metadata
+     * @param functionality   A string describing the functionality associated with the id
+     * @param target          The target which will use the metadata
      *
      * @return id       The resulting id
      */
-    function getId(string memory _functionality, address _target) internal view returns (bytes4) {
-        return bytes4(bytes20(_target) ^ bytes20(keccak256(bytes(_functionality))));
+    function getId(string memory functionality, address target) internal view returns (bytes4) {
+        return bytes4(bytes20(target) ^ bytes20(keccak256(bytes(functionality))));
     }
 
     /// @notice Slice bytes from a start index to an end index.

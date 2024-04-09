@@ -359,7 +359,7 @@ contract TestAddToBalanceOf_Local is JBMultiTerminalSetup {
         bytes4[] memory _ids = new bytes4[](1);
         bytes[] memory _datas = new bytes[](1);
         _datas[0] = abi.encode(permitData);
-        _ids[0] = bytes4(bytes20(address(_terminal)));
+        _ids[0] = _metadataHelper.getId("allowance", address(_terminal));
 
         // Setup: use the metadata library to encode.
         bytes memory _packedData = _metadataHelper.createMetadata(_ids, _datas);
@@ -412,7 +412,7 @@ contract TestAddToBalanceOf_Local is JBMultiTerminalSetup {
         bytes4[] memory _ids = new bytes4[](1);
         bytes[] memory _datas = new bytes[](1);
         _datas[0] = abi.encode(permitData);
-        _ids[0] = bytes4(bytes20(address(_terminal)));
+        _ids[0] = _metadataHelper.getId("allowance", _terminal)
 
         // Setup: use the metadata library to encode.
         bytes memory _packedData = _metadataHelper.createMetadata(_ids, _datas);
