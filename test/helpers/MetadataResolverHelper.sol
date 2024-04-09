@@ -96,4 +96,17 @@ contract MetadataResolverHelper {
     {
         return JBMetadataResolver.addToMetadata(originalMetadata, idToAdd, dataToAdd);
     }
+
+    /**
+     * @notice Returns an unique id following a suggested format
+     *         (`xor(address(this), functionality name)` where functionality name is a string
+     *         giving context to the id (Permit2, quoteForSwap, etc)
+     *
+     * @param _functionality   A string describing the functionality associated with the id
+     *
+     * @return id       The resulting id
+     */
+    function getId(string memory _functionality) internal view returns (bytes4) {
+        return JBMetadataResolver.getId(_functionality);
+    }
 }
