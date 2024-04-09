@@ -254,6 +254,10 @@ library JBMetadataResolver {
         }
     }
 
+    function getId(string memory _function) internal view returns (bytes4) {
+        return bytes4(bytes20(address(this)) ^ bytes20(keccak256(bytes(_function))));
+    }
+
     /// @notice Slice bytes from a start index to an end index.
     /// @param data The bytes array to slice
     /// @param start The start index to slice at.
