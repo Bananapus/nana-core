@@ -277,7 +277,7 @@ library JBMetadataResolver {
      *
      * @return id       The resulting id
      */
-    function getId(string memory functionality, address target) internal view returns (bytes4) {
+    function getId(string memory functionality, address target) internal pure returns (bytes4) {
         return bytes4(bytes20(target) ^ bytes20(keccak256(bytes(functionality))));
     }
 
