@@ -1087,7 +1087,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                 beneficiary: beneficiary,
                 beneficiaryReclaimAmount: JBTokenAmount(
                     tokenToReclaim, reclaimAmount, accountingContext.decimals, accountingContext.currency
-                    ),
+                ),
                 specifications: hookSpecifications,
                 metadata: metadata
             });

@@ -122,13 +122,13 @@ contract TestPayHooks_Local is TestBaseWorkflow {
                     _nativePayAmount,
                     _terminal.accountingContextForTokenOf(_projectId, JBConstants.NATIVE_TOKEN).decimals,
                     _terminal.accountingContextForTokenOf(_projectId, JBConstants.NATIVE_TOKEN).currency
-                    ),
+                ),
                 forwardedAmount: JBTokenAmount(
                     JBConstants.NATIVE_TOKEN,
                     _payHookAmounts[i],
                     _terminal.accountingContextForTokenOf(_projectId, JBConstants.NATIVE_TOKEN).decimals,
                     _terminal.accountingContextForTokenOf(_projectId, JBConstants.NATIVE_TOKEN).currency
-                    ),
+                ),
                 weight: _WEIGHT,
                 projectTokenCount: mulDiv(_nativePayAmount, _DATA_HOOK_WEIGHT, 10 ** _NATIVE_TOKEN_DECIMALS),
                 beneficiary: _beneficiary,

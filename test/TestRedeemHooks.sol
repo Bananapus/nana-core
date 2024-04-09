@@ -146,13 +146,13 @@ contract TestRedeemHooks_Local is TestBaseWorkflow {
                 _halfPaid,
                 _terminal.accountingContextForTokenOf(_projectId, JBConstants.NATIVE_TOKEN).decimals,
                 _terminal.accountingContextForTokenOf(_projectId, JBConstants.NATIVE_TOKEN).currency
-                ),
+            ),
             forwardedAmount: JBTokenAmount(
                 JBConstants.NATIVE_TOKEN,
                 _halfPaid,
                 _terminal.accountingContextForTokenOf(_projectId, JBConstants.NATIVE_TOKEN).decimals,
                 _terminal.accountingContextForTokenOf(_projectId, JBConstants.NATIVE_TOKEN).currency
-                ),
+            ),
             redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
             beneficiary: payable(address(this)),
             hookMetadata: "",
@@ -263,13 +263,13 @@ contract TestRedeemHooks_Local is TestBaseWorkflow {
                 _beneficiaryAmount,
                 _terminal.accountingContextForTokenOf(_projectId, JBConstants.NATIVE_TOKEN).decimals,
                 _terminal.accountingContextForTokenOf(_projectId, JBConstants.NATIVE_TOKEN).currency
-                ),
+            ),
             forwardedAmount: JBTokenAmount(
                 JBConstants.NATIVE_TOKEN,
                 _forwardedAmount,
                 _terminal.accountingContextForTokenOf(_projectId, JBConstants.NATIVE_TOKEN).decimals,
                 _terminal.accountingContextForTokenOf(_projectId, JBConstants.NATIVE_TOKEN).currency
-                ),
+            ),
             redemptionRate: _customRedemptionRate,
             beneficiary: payable(address(this)),
             hookMetadata: "",
