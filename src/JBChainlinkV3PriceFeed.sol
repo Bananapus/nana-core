@@ -59,7 +59,7 @@ contract JBChainlinkV3PriceFeed is IJBPriceFeed {
     //*********************************************************************//
 
     /// @param feed The Chainlink feed to report prices from.
-    constructor(AggregatorV3Interface feed) {
+    constructor(FeedRegistryInterface feed) {
         FEED = feed;
     }
 }
