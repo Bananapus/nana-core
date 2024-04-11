@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.23;
 
-import {FeedRegistryInterface} from "@chainlink/contracts/src/v0.8/interfaces/FeedRegistryInterface.sol";
+import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
 
 import {IJBPriceFeed} from "./interfaces/IJBPriceFeed.sol";
 import {JBFixedPointNumber} from "./libraries/JBFixedPointNumber.sol";
@@ -24,7 +24,7 @@ contract JBChainlinkV3PriceFeed is IJBPriceFeed {
     //*********************************************************************//
 
     /// @notice The Chainlink feed that prices are reported from.
-    FeedRegistryInterface public immutable FEED;
+    AggregatorV3Interface public immutable FEED;
 
     //*********************************************************************//
     // ------------------------- external views -------------------------- //
@@ -59,7 +59,7 @@ contract JBChainlinkV3PriceFeed is IJBPriceFeed {
     //*********************************************************************//
 
     /// @param feed The Chainlink feed to report prices from.
-    constructor(FeedRegistryInterface feed) {
+    constructor(AggregatorV3Interface feed) {
         FEED = feed;
     }
 }
