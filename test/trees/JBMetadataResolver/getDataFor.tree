@@ -1,0 +1,8 @@
+TestGetDataFor_Local
+├── when metadata length LTEQ MIN_METADATA_LENGTH
+│   └── it will return false and empty bytes
+└── when metadata length GT MIN_METADATA_LENGTH
+    ├── given id is found
+    │   └── it will return found EQ true and targetData
+    └── given id is not found
+        └── it will return found EQ false and empty bytes targetData
