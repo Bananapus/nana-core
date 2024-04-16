@@ -429,7 +429,6 @@ contract TestRedeemTokensOf_Local is JBMultiTerminalSetup {
             abi.encode(false)
         );
 
-        uint256 tax = JBFees.feeAmountIn(reclaimAmount, 25); // 25 = default fee
         uint256 hookTax = JBFees.feeAmountIn(_defaultAmount, 25);
         uint256 passedAfterTax = _defaultAmount - hookTax;
 
