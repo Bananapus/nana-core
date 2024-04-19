@@ -39,8 +39,8 @@ contract Deploy is Script, Sphinx {
         sphinxConfig.orgId = "cltepuu9u0003j58rjtbd0hvu";
         sphinxConfig.projectName = "nana-core";
         sphinxConfig.threshold = 1;
-        sphinxConfig.mainnets = ["ethereum", "optimism", "polygon"];
-        sphinxConfig.testnets = ["ethereum_sepolia", "optimism_sepolia", "polygon_mumbai"];
+        sphinxConfig.mainnets = ["ethereum", "optimism", "polygon", "arbitrum"];
+        sphinxConfig.testnets = ["ethereum_sepolia", "optimism_sepolia", "polygon_mumbai", "arbitrum_sepolia"];
     }
 
     /// @notice Deploys the protocol.
