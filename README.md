@@ -128,8 +128,8 @@ For convenience, several utility commands are available in `package.json`.
 
 You'll also need to set up a `.env` file based on `.example.env`. Then run one of the following commands:
 
-| Command                   | Description         |
-| ------------------------- | ------------------- |
+| Command                   | Description                  |
+| ------------------------- | ---------------------------- |
 | `npm run deploy:mainnets` | Propose mainnet deployments. |
 | `npm run deploy:testnets` | Propose testnet deployments. |
 
@@ -345,14 +345,14 @@ His `terminalConfigurations` array sets up two terminals. The first is the [`JBM
 ```js
 [
   {
-    "terminal": "0x789…", // This is the address of `JBMultiTerminal`.
-    "tokensToAccept": ["0x000000000000000000000000000000000000EEEe"] // The Bingle project accepts ETH (`JBConstants.NATIVE_TOKEN`) through this terminal.
+    terminal: "0x789…", // This is the address of `JBMultiTerminal`.
+    tokensToAccept: ["0x000000000000000000000000000000000000EEEe"], // The Bingle project accepts ETH (`JBConstants.NATIVE_TOKEN`) through this terminal.
   },
   {
-    "terminal": "0xABC…", // This is the address of `JBSwapTerminal`.
-    "tokensToAccept": ["0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"] // The Bingle project accepts USDC through the swap terminal.
-  }
-]
+    terminal: "0xABC…", // This is the address of `JBSwapTerminal`.
+    tokensToAccept: ["0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"], // The Bingle project accepts USDC through the swap terminal.
+  },
+];
 ```
 
 Note that Jeff didn't have to set his controller – the controller he calls `launchProjectFor(…)` on sets itself as the project's controller in the [`JBDirectory`](https://github.com/Bananapus/nana-core/blob/main/src/JBDirectory.sol).
