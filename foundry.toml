@@ -17,6 +17,8 @@ fs_permissions = [{ access = "read-write", path = "./"}]
 ethereum ="${RPC_ETHEREUM_MAINNET}"
 optimism = "${RPC_OPTIMISM_MAINNET}"
 polygon = "${RPC_POLYGON_MUMBAI}"
+arbitrum = "${RPC_ARBITRUM_MAINNET}"
+arbitrum_sepolia = "${RPC_ARBITRUM_SEPOLIA}"
 ethereum_sepolia ="${RPC_ETHEREUM_SEPOLIA}"
 optimism_sepolia = "${RPC_OPTIMISM_SEPOLIA}"
 polygon_mumbai = "${RPC_POLYGON_MUMBAI}"
