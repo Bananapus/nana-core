@@ -25,6 +25,6 @@
     "@uniswap/permit2": "github:Uniswap/permit2"
   },
   "devDependencies": {
-    "@sphinx-labs/plugins": "^0.31.6"
+    "@sphinx-labs/plugins": "^0.31.10"
   }
 }

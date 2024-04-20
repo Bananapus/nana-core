@@ -1782,6 +1782,2419 @@
 			"chainId": "80001",
 			"linkReferences": {},
 			"deployedLinkReferences": {}
+		},
+		{
+			"_format": "sphinx-sol-ct-artifact-1",
+			"merkleRoot": "0xfada22a01fc6019b369081d169c7f38ec6c9e2c67f065667d7be1b942a641e20",
+			"contractName": "JBFundAccessLimits",
+			"address": "0xf5B5E211b5943bEe27baa1D6aC46139f13850270",
+			"abi": [
+				{
+					"type": "constructor",
+					"inputs": [
+						{
+							"name": "directory",
+							"type": "address",
+							"internalType": "contract IJBDirectory"
+						}
+					],
+					"stateMutability": "nonpayable"
+				},
+				{
+					"type": "function",
+					"name": "DIRECTORY",
+					"inputs": [],
+					"outputs": [
+						{
+							"name": "",
+							"type": "address",
+							"internalType": "contract IJBDirectory"
+						}
+					],
+					"stateMutability": "view"
+				},
+				{
+					"type": "function",
+					"name": "payoutLimitOf",
+					"inputs": [
+						{
+							"name": "projectId",
+							"type": "uint256",
+							"internalType": "uint256"
+						},
+						{
+							"name": "rulesetId",
+							"type": "uint256",
+							"internalType": "uint256"
+						},
+						{
+							"name": "terminal",
+							"type": "address",
+							"internalType": "address"
+						},
+						{
+							"name": "token",
+							"type": "address",
+							"internalType": "address"
+						},
+						{
+							"name": "currency",
+							"type": "uint256",
+							"internalType": "uint256"
+						}
+					],
+					"outputs": [
+						{
+							"name": "payoutLimit",
+							"type": "uint256",
+							"internalType": "uint256"
+						}
+					],
+					"stateMutability": "view"
+				},
+				{
+					"type": "function",
+					"name": "payoutLimitsOf",
+					"inputs": [
+						{
+							"name": "projectId",
+							"type": "uint256",
+							"internalType": "uint256"
+						},
+						{
+							"name": "rulesetId",
+							"type": "uint256",
+							"internalType": "uint256"
+						},
+						{
+							"name": "terminal",
+							"type": "address",
+							"internalType": "address"
+						},
+						{
+							"name": "token",
+							"type": "address",
+							"internalType": "address"
+						}
+					],
+					"outputs": [
+						{
+							"name": "payoutLimits",
+							"type": "tuple[]",
+							"internalType": "struct JBCurrencyAmount[]",
+							"components": [
+								{
+									"name": "amount",
+									"type": "uint256",
+									"internalType": "uint256"
+								},
+								{
+									"name": "currency",
+									"type": "uint256",
+									"internalType": "uint256"
+								}
+							]
+						}
+					],
+					"stateMutability": "view"
+				},
+				{
+					"type": "function",
+					"name": "setFundAccessLimitsFor",
+					"inputs": [
+						{
+							"name": "projectId",
+							"type": "uint256",
+							"internalType": "uint256"
+						},
+						{
+							"name": "rulesetId",
+							"type": "uint256",
+							"internalType": "uint256"
+						},
+						{
+							"name": "fundAccessLimitGroup",
+							"type": "tuple[]",
+							"internalType": "struct JBFundAccessLimitGroup[]",
+							"components": [
+								{
+									"name": "terminal",
+									"type": "address",
+									"internalType": "address"
+								},
+								{
+									"name": "token",
+									"type": "address",
+									"internalType": "address"
+								},
+								{
+									"name": "payoutLimits",
+									"type": "tuple[]",
+									"internalType": "struct JBCurrencyAmount[]",
+									"components": [
+										{
+											"name": "amount",
+											"type": "uint256",
+											"internalType": "uint256"
+										},
+										{
+											"name": "currency",
+											"type": "uint256",
+											"internalType": "uint256"
+										}
+									]
+								},
+								{
+									"name": "surplusAllowances",
+									"type": "tuple[]",
+									"internalType": "struct JBCurrencyAmount[]",
+									"components": [
+										{
+											"name": "amount",
+											"type": "uint256",
+											"internalType": "uint256"
+										},
+										{
+											"name": "currency",
+											"type": "uint256",
+											"internalType": "uint256"
+										}
+									]
+								}
+							]
+						}
+					],
+					"outputs": [],
+					"stateMutability": "nonpayable"
+				},
+				{
+					"type": "function",
+					"name": "supportsInterface",
+					"inputs": [
+						{
+							"name": "interfaceId",
+							"type": "bytes4",
+							"internalType": "bytes4"
+						}
+					],
+					"outputs": [
+						{
+							"name": "",
+							"type": "bool",
+							"internalType": "bool"
+						}
+					],
+					"stateMutability": "view"
+				},
+				{
+					"type": "function",
+					"name": "surplusAllowanceOf",
+					"inputs": [
+						{
+							"name": "projectId",
+							"type": "uint256",
+							"internalType": "uint256"
+						},
+						{
+							"name": "rulesetId",
+							"type": "uint256",
+							"internalType": "uint256"
+						},
+						{
+							"name": "terminal",
+							"type": "address",
+							"internalType": "address"
+						},
+						{
+							"name": "token",
+							"type": "address",
+							"internalType": "address"
+						},
+						{
+							"name": "currency",
+							"type": "uint256",
+							"internalType": "uint256"
+						}
+					],
+					"outputs": [
+						{
+							"name": "surplusAllowance",
+							"type": "uint256",
+							"internalType": "uint256"
+						}
+					],
+					"stateMutability": "view"
+				},
+				{
+					"type": "function",
+					"name": "surplusAllowancesOf",
+					"inputs": [
+						{
+							"name": "projectId",
+							"type": "uint256",
+							"internalType": "uint256"
+						},
+						{
+							"name": "rulesetId",
+							"type": "uint256",
+							"internalType": "uint256"
+						},
+						{
+							"name": "terminal",
+							"type": "address",
+							"internalType": "address"
+						},
+						{
+							"name": "token",
+							"type": "address",
+							"internalType": "address"
+						}
+					],
+					"outputs": [
+						{
+							"name": "surplusAllowances",
+							"type": "tuple[]",
+							"internalType": "struct JBCurrencyAmount[]",
+							"components": [
+								{
+									"name": "amount",
+									"type": "uint256",
+									"internalType": "uint256"
+								},
+								{
+									"name": "currency",
+									"type": "uint256",
+									"internalType": "uint256"
+								}
+							]
+						}
+					],
+					"stateMutability": "view"
+				},
+				{
+					"type": "event",
+					"name": "SetFundAccessLimits",
+					"inputs": [
+						{
+							"name": "rulesetId",
+							"type": "uint256",
+							"indexed": true,
+							"internalType": "uint256"
+						},
+						{
+							"name": "projectId",
+							"type": "uint256",
+							"indexed": true,
+							"internalType": "uint256"
+						},
+						{
+							"name": "limits",
+							"type": "tuple",
+							"indexed": false,
+							"internalType": "struct JBFundAccessLimitGroup",
+							"components": [
+								{
+									"name": "terminal",
+									"type": "address",
+									"internalType": "address"
+								},
+								{
+									"name": "token",
+									"type": "address",
+									"internalType": "address"
+								},
+								{
+									"name": "payoutLimits",
+									"type": "tuple[]",
+									"internalType": "struct JBCurrencyAmount[]",
+									"components": [
+										{
+											"name": "amount",
+											"type": "uint256",
+											"internalType": "uint256"
+										},
+										{
+											"name": "currency",
+											"type": "uint256",
+											"internalType": "uint256"
+										}
+									]
+								},
+								{
+									"name": "surplusAllowances",
+									"type": "tuple[]",
+									"internalType": "struct JBCurrencyAmount[]",
+									"components": [
+										{
+											"name": "amount",
+											"type": "uint256",
+											"internalType": "uint256"
+										},
+										{
+											"name": "currency",
+											"type": "uint256",
+											"internalType": "uint256"
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "caller",
+							"type": "address",
+							"indexed": false,
+							"internalType": "address"
+						}
+					],
+					"anonymous": false
+				},
+				{
+					"type": "error",
+					"name": "CONTROLLER_UNAUTHORIZED",
+					"inputs": []
+				},
+				{
+					"type": "error",
+					"name": "INVALID_PAYOUT_LIMIT",
+					"inputs": []
+				},
+				{
+					"type": "error",
+					"name": "INVALID_PAYOUT_LIMIT_CURRENCY",
+					"inputs": []
+				},
+				{
+					"type": "error",
+					"name": "INVALID_PAYOUT_LIMIT_CURRENCY_ORDERING",
+					"inputs": []
+				},
+				{
+					"type": "error",
+					"name": "INVALID_SURPLUS_ALLOWANCE",
+					"inputs": []
+				},
+				{
+					"type": "error",
+					"name": "INVALID_SURPLUS_ALLOWANCE_CURRENCY",
+					"inputs": []
+				},
+				{
+					"type": "error",
+					"name": "INVALID_SURPLUS_ALLOWANCE_CURRENCY_ORDERING",
+					"inputs": []
+				}
+			],
+			"solcInputHash": "89b464e120c906a6209f84c95fbfe59a",
+			"receipt": {
+				"blockHash": "0xb357a6a3405ab58f8eb86ffcad5b997c5723b39d6897d0aeeecd49f0eceb83b1",
+				"blockNumber": 47012576,
+				"contractAddress": null,
+				"cumulativeGasUsed": "10996774",
+				"from": "0xC034550B542b83BA1De312b21d1C94a9a52B1595",
+				"gasPrice": "30000000015",
+				"gasUsed": "10920278",
+				"hash": "0xf394434265aa800f9d6a343ea113040e03ea643fd5b4c144b4e46d2b67cdd008",
+				"index": 1,
+				"logs": [
+					{
+						"address": "0xB5E96127D417b1B3ef8438496a38A143167209c7",
+						"blockHash": "0xb357a6a3405ab58f8eb86ffcad5b997c5723b39d6897d0aeeecd49f0eceb83b1",
+						"blockNumber": 47012576,
+						"data": "0x0000000000000000000000000000000000000000000000000000000000000000",
+						"index": 3,
+						"topics": [
+							"0x572f161235911da04685a68c06adf558fc7e4a36909dca394650e0adc19cc93d",
+							"0x000000000000000000000000c034550b542b83ba1de312b21d1c94a9a52b1595",
+							"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c",
+							"0xf72dbfe7f83d143f2b724a49a0ddb3d387c286794bf99d426b9abea5a0c04df7"
+						],
+						"transactionHash": "0xf394434265aa800f9d6a343ea113040e03ea643fd5b4c144b4e46d2b67cdd008",
+						"transactionIndex": 1
+					},
+					{
+						"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+						"blockHash": "0xb357a6a3405ab58f8eb86ffcad5b997c5723b39d6897d0aeeecd49f0eceb83b1",
+						"blockNumber": 47012576,
+						"data": "0x000000000000000000000000625e7bce20bce80d426384c38831f92d453fbf29",
+						"index": 4,
+						"topics": [
+							"0x4db17dd5e4732fb6da34a148104a592783ca119a1e7bb8829eba6cbadef0b511"
+						],
+						"transactionHash": "0xf394434265aa800f9d6a343ea113040e03ea643fd5b4c144b4e46d2b67cdd008",
+						"transactionIndex": 1
+					},
+					{
+						"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+						"blockHash": "0xb357a6a3405ab58f8eb86ffcad5b997c5723b39d6897d0aeeecd49f0eceb83b1",
+						"blockNumber": 47012576,
+						"data": "0x",
+						"index": 5,
+						"topics": [
+							"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
+							"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
+						],
+						"transactionHash": "0xf394434265aa800f9d6a343ea113040e03ea643fd5b4c144b4e46d2b67cdd008",
+						"transactionIndex": 1
+					},
+					{
+						"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
+						"blockHash": "0xb357a6a3405ab58f8eb86ffcad5b997c5723b39d6897d0aeeecd49f0eceb83b1",
+						"blockNumber": 47012576,
+						"data": "0x0000000000000000000000000000000000000000000000000000000000000001",
+						"index": 6,
+						"topics": [
+							"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
+							"0xfada22a01fc6019b369081d169c7f38ec6c9e2c67f065667d7be1b942a641e20"
+						],
+						"transactionHash": "0xf394434265aa800f9d6a343ea113040e03ea643fd5b4c144b4e46d2b67cdd008",
+						"transactionIndex": 1
+					},
+					{
+						"address": "0x5e8a3B68ad51E2Ae55E5D7215E9e59bC0f66e33F",
+						"blockHash": "0xb357a6a3405ab58f8eb86ffcad5b997c5723b39d6897d0aeeecd49f0eceb83b1",
+						"blockNumber": 47012576,
+						"data": "0x",
+						"index": 7,
+						"topics": [
+							"0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+							"0x0000000000000000000000000000000000000000000000000000000000000000",
+							"0x000000000000000000000000823b92d6a4b2aed4b15675c7917c9f922ea8adad"
+						],
+						"transactionHash": "0xf394434265aa800f9d6a343ea113040e03ea643fd5b4c144b4e46d2b67cdd008",
+						"transactionIndex": 1
+					},
+					{
+						"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+						"blockHash": "0xb357a6a3405ab58f8eb86ffcad5b997c5723b39d6897d0aeeecd49f0eceb83b1",
+						"blockNumber": 47012576,
+						"data": "0x0000000000000000000000005e8a3b68ad51e2ae55e5d7215e9e59bc0f66e33f",
+						"index": 8,
+						"topics": [
+							"0x4db17dd5e4732fb6da34a148104a592783ca119a1e7bb8829eba6cbadef0b511"
+						],
+						"transactionHash": "0xf394434265aa800f9d6a343ea113040e03ea643fd5b4c144b4e46d2b67cdd008",
+						"transactionIndex": 1
+					},
+					{
+						"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+						"blockHash": "0xb357a6a3405ab58f8eb86ffcad5b997c5723b39d6897d0aeeecd49f0eceb83b1",
+						"blockNumber": 47012576,
+						"data": "0x",
+						"index": 9,
+						"topics": [
+							"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
+							"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
+						],
+						"transactionHash": "0xf394434265aa800f9d6a343ea113040e03ea643fd5b4c144b4e46d2b67cdd008",
+						"transactionIndex": 1
+					},
+					{
+						"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
+						"blockHash": "0xb357a6a3405ab58f8eb86ffcad5b997c5723b39d6897d0aeeecd49f0eceb83b1",
+						"blockNumber": 47012576,
+						"data": "0x0000000000000000000000000000000000000000000000000000000000000002",
+						"index": 10,
+						"topics": [
+							"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
+							"0xfada22a01fc6019b369081d169c7f38ec6c9e2c67f065667d7be1b942a641e20"
+						],
+						"transactionHash": "0xf394434265aa800f9d6a343ea113040e03ea643fd5b4c144b4e46d2b67cdd008",
+						"transactionIndex": 1
+					},
+					{
+						"address": "0xdb72998F9FfEc87e51158E81a8FD49627EB412E8",
+						"blockHash": "0xb357a6a3405ab58f8eb86ffcad5b997c5723b39d6897d0aeeecd49f0eceb83b1",
+						"blockNumber": 47012576,
+						"data": "0x",
+						"index": 11,
+						"topics": [
+							"0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+							"0x0000000000000000000000000000000000000000000000000000000000000000",
+							"0x0000000000000000000000001081b5aa9d9d4862a3da4d469433fb36ed80fa2a"
+						],
+						"transactionHash": "0xf394434265aa800f9d6a343ea113040e03ea643fd5b4c144b4e46d2b67cdd008",
+						"transactionIndex": 1
+					},
+					{
+						"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+						"blockHash": "0xb357a6a3405ab58f8eb86ffcad5b997c5723b39d6897d0aeeecd49f0eceb83b1",
+						"blockNumber": 47012576,
+						"data": "0x000000000000000000000000db72998f9ffec87e51158e81a8fd49627eb412e8",
+						"index": 12,
+						"topics": [
+							"0x4db17dd5e4732fb6da34a148104a592783ca119a1e7bb8829eba6cbadef0b511"
+						],
+						"transactionHash": "0xf394434265aa800f9d6a343ea113040e03ea643fd5b4c144b4e46d2b67cdd008",
+						"transactionIndex": 1
+					},
+					{
+						"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+						"blockHash": "0xb357a6a3405ab58f8eb86ffcad5b997c5723b39d6897d0aeeecd49f0eceb83b1",
+						"blockNumber": 47012576,
+						"data": "0x",
+						"index": 13,
+						"topics": [
+							"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
+							"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
+						],
+						"transactionHash": "0xf394434265aa800f9d6a343ea113040e03ea643fd5b4c144b4e46d2b67cdd008",
+						"transactionIndex": 1
+					},
+					{
+						"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
+						"blockHash": "0xb357a6a3405ab58f8eb86ffcad5b997c5723b39d6897d0aeeecd49f0eceb83b1",
+						"blockNumber": 47012576,
+						"data": "0x0000000000000000000000000000000000000000000000000000000000000003",
+						"index": 14,
+						"topics": [
+							"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
+							"0xfada22a01fc6019b369081d169c7f38ec6c9e2c67f065667d7be1b942a641e20"
+						],
+						"transactionHash": "0xf394434265aa800f9d6a343ea113040e03ea643fd5b4c144b4e46d2b67cdd008",
+						"transactionIndex": 1
+					},
+					{
+						"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+						"blockHash": "0xb357a6a3405ab58f8eb86ffcad5b997c5723b39d6897d0aeeecd49f0eceb83b1",
+						"blockNumber": 47012576,
+						"data": "0x000000000000000000000000662b84fb924bf127804edc6d1722721dea01dd43",
+						"index": 15,
+						"topics": [
+							"0x4db17dd5e4732fb6da34a148104a592783ca119a1e7bb8829eba6cbadef0b511"
+						],
+						"transactionHash": "0xf394434265aa800f9d6a343ea113040e03ea643fd5b4c144b4e46d2b67cdd008",
+						"transactionIndex": 1
+					},
+					{
+						"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+						"blockHash": "0xb357a6a3405ab58f8eb86ffcad5b997c5723b39d6897d0aeeecd49f0eceb83b1",
+						"blockNumber": 47012576,
+						"data": "0x",
+						"index": 16,
+						"topics": [
+							"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
+							"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
+						],
+						"transactionHash": "0xf394434265aa800f9d6a343ea113040e03ea643fd5b4c144b4e46d2b67cdd008",
+						"transactionIndex": 1
+					},
+					{
+						"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
+						"blockHash": "0xb357a6a3405ab58f8eb86ffcad5b997c5723b39d6897d0aeeecd49f0eceb83b1",
+						"blockNumber": 47012576,
+						"data": "0x0000000000000000000000000000000000000000000000000000000000000004",
+						"index": 17,
+						"topics": [
+							"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
+							"0xfada22a01fc6019b369081d169c7f38ec6c9e2c67f065667d7be1b942a641e20"
+						],
+						"transactionHash": "0xf394434265aa800f9d6a343ea113040e03ea643fd5b4c144b4e46d2b67cdd008",
+						"transactionIndex": 1
+					},
+					{
+						"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+						"blockHash": "0xb357a6a3405ab58f8eb86ffcad5b997c5723b39d6897d0aeeecd49f0eceb83b1",
+						"blockNumber": 47012576,
+						"data": "0x000000000000000000000000208bb810b913b647b36967ee764b3da50fb7ad33",
+						"index": 18,
+						"topics": [
+							"0x4db17dd5e4732fb6da34a148104a592783ca119a1e7bb8829eba6cbadef0b511"
+						],
+						"transactionHash": "0xf394434265aa800f9d6a343ea113040e03ea643fd5b4c144b4e46d2b67cdd008",
+						"transactionIndex": 1
+					},
+					{
+						"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+						"blockHash": "0xb357a6a3405ab58f8eb86ffcad5b997c5723b39d6897d0aeeecd49f0eceb83b1",
+						"blockNumber": 47012576,
+						"data": "0x",
+						"index": 19,
+						"topics": [
+							"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
+							"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
+						],
+						"transactionHash": "0xf394434265aa800f9d6a343ea113040e03ea643fd5b4c144b4e46d2b67cdd008",
+						"transactionIndex": 1
+					},
+					{
+						"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
+						"blockHash": "0xb357a6a3405ab58f8eb86ffcad5b997c5723b39d6897d0aeeecd49f0eceb83b1",
+						"blockNumber": 47012576,
+						"data": "0x0000000000000000000000000000000000000000000000000000000000000005",
+						"index": 20,
+						"topics": [
+							"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
+							"0xfada22a01fc6019b369081d169c7f38ec6c9e2c67f065667d7be1b942a641e20"
+						],
+						"transactionHash": "0xf394434265aa800f9d6a343ea113040e03ea643fd5b4c144b4e46d2b67cdd008",
+						"transactionIndex": 1
+					},
+					{
+						"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+						"blockHash": "0xb357a6a3405ab58f8eb86ffcad5b997c5723b39d6897d0aeeecd49f0eceb83b1",
+						"blockNumber": 47012576,
+						"data": "0x000000000000000000000000bc7b4588af3ded562f8fa7b9dc299055d51e9159",
+						"index": 21,
+						"topics": [
+							"0x4db17dd5e4732fb6da34a148104a592783ca119a1e7bb8829eba6cbadef0b511"
+						],
+						"transactionHash": "0xf394434265aa800f9d6a343ea113040e03ea643fd5b4c144b4e46d2b67cdd008",
+						"transactionIndex": 1
+					},
+					{
+						"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+						"blockHash": "0xb357a6a3405ab58f8eb86ffcad5b997c5723b39d6897d0aeeecd49f0eceb83b1",
+						"blockNumber": 47012576,
+						"data": "0x",
+						"index": 22,
+						"topics": [
+							"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
+							"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
+						],
+						"transactionHash": "0xf394434265aa800f9d6a343ea113040e03ea643fd5b4c144b4e46d2b67cdd008",
+						"transactionIndex": 1
+					},
+					{
+						"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
+						"blockHash": "0xb357a6a3405ab58f8eb86ffcad5b997c5723b39d6897d0aeeecd49f0eceb83b1",
+						"blockNumber": 47012576,
+						"data": "0x0000000000000000000000000000000000000000000000000000000000000006",
+						"index": 23,
+						"topics": [
+							"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
+							"0xfada22a01fc6019b369081d169c7f38ec6c9e2c67f065667d7be1b942a641e20"
+						],
+						"transactionHash": "0xf394434265aa800f9d6a343ea113040e03ea643fd5b4c144b4e46d2b67cdd008",
+						"transactionIndex": 1
+					},
+					{
+						"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+						"blockHash": "0xb357a6a3405ab58f8eb86ffcad5b997c5723b39d6897d0aeeecd49f0eceb83b1",
+						"blockNumber": 47012576,
+						"data": "0x000000000000000000000000f5b5e211b5943bee27baa1d6ac46139f13850270",
+						"index": 24,
+						"topics": [
+							"0x4db17dd5e4732fb6da34a148104a592783ca119a1e7bb8829eba6cbadef0b511"
+						],
+						"transactionHash": "0xf394434265aa800f9d6a343ea113040e03ea643fd5b4c144b4e46d2b67cdd008",
+						"transactionIndex": 1
+					},
+					{
+						"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+						"blockHash": "0xb357a6a3405ab58f8eb86ffcad5b997c5723b39d6897d0aeeecd49f0eceb83b1",
+						"blockNumber": 47012576,
+						"data": "0x",
+						"index": 25,
+						"topics": [
+							"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
+							"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
+						],
+						"transactionHash": "0xf394434265aa800f9d6a343ea113040e03ea643fd5b4c144b4e46d2b67cdd008",
+						"transactionIndex": 1
+					},
+					{
+						"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
+						"blockHash": "0xb357a6a3405ab58f8eb86ffcad5b997c5723b39d6897d0aeeecd49f0eceb83b1",
+						"blockNumber": 47012576,
+						"data": "0x0000000000000000000000000000000000000000000000000000000000000007",
+						"index": 26,
+						"topics": [
+							"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
+							"0xfada22a01fc6019b369081d169c7f38ec6c9e2c67f065667d7be1b942a641e20"
+						],
+						"transactionHash": "0xf394434265aa800f9d6a343ea113040e03ea643fd5b4c144b4e46d2b67cdd008",
+						"transactionIndex": 1
+					},
+					{
+						"address": "0x0000000000000000000000000000000000001010",
+						"blockHash": "0xb357a6a3405ab58f8eb86ffcad5b997c5723b39d6897d0aeeecd49f0eceb83b1",
+						"blockNumber": 47012576,
+						"data": "0x000000000000000000000000000000000000000000000000048be60cab27c8000000000000000000000000000000000000000000000000001cd471ae48b9addb00000000000000000000000000000000000000000000077426de2fba288d55a800000000000000000000000000000000000000000000000018488ba19d91e5db0000000000000000000000000000000000000000000007742b6a15c6d3b51da8",
+						"index": 27,
+						"topics": [
+							"0x4dfe1bbbcf077ddc3e01291eea2d5c70c2b422b415d95645b9adcfd678cb1d63",
+							"0x0000000000000000000000000000000000000000000000000000000000001010",
+							"0x000000000000000000000000c034550b542b83ba1de312b21d1c94a9a52b1595",
+							"0x0000000000000000000000005082f249cdb2f2c1ee035e4f423c46ea2dab3ab1"
+						],
+						"transactionHash": "0xf394434265aa800f9d6a343ea113040e03ea643fd5b4c144b4e46d2b67cdd008",
+						"transactionIndex": 1
+					}
+				],
+				"logsBloom": "0x00000000080010000008000000080020000000080008000000800000024000000062008002000100000000000040000000008000000000000010000000000000000000000000200400000000820000800001000000000000000300000000000000000000020000000000000400000800000000100020000080000000000000400001000000000000000100000000000000000000000000000000804800000000204000080010040008000000000000020200000000000080000000000006004000000000000000200001000008000000000000008000000000100000000020000000000000000084000000000000000200000000000000000000000000140000",
+				"status": 1,
+				"to": "0xB5E96127D417b1B3ef8438496a38A143167209c7"
+			},
+			"metadata": "{\"compiler\":{\"version\":\"0.8.23+commit.f704f362\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"contract IJBDirectory\",\"name\":\"directory\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"CONTROLLER_UNAUTHORIZED\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"INVALID_PAYOUT_LIMIT\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"INVALID_PAYOUT_LIMIT_CURRENCY\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"INVALID_PAYOUT_LIMIT_CURRENCY_ORDERING\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"INVALID_SURPLUS_ALLOWANCE\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"INVALID_SURPLUS_ALLOWANCE_CURRENCY\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"INVALID_SURPLUS_ALLOWANCE_CURRENCY_ORDERING\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"rulesetId\",\"type\":\"uint256\",\"indexed\":true},{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\",\"indexed\":true},{\"internalType\":\"struct JBFundAccessLimitGroup\",\"name\":\"limits\",\"type\":\"tuple\",\"components\":[{\"internalType\":\"address\",\"name\":\"terminal\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"internalType\":\"struct JBCurrencyAmount[]\",\"name\":\"payoutLimits\",\"type\":\"tuple[]\",\"components\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"currency\",\"type\":\"uint256\"}]},{\"internalType\":\"struct JBCurrencyAmount[]\",\"name\":\"surplusAllowances\",\"type\":\"tuple[]\",\"components\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"currency\",\"type\":\"uint256\"}]}],\"indexed\":false},{\"internalType\":\"address\",\"name\":\"caller\",\"type\":\"address\",\"indexed\":false}],\"type\":\"event\",\"name\":\"SetFundAccessLimits\",\"anonymous\":false},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"DIRECTORY\",\"outputs\":[{\"internalType\":\"contract IJBDirectory\",\"name\":\"\",\"type\":\"address\"}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"rulesetId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"terminal\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"currency\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"payoutLimitOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"payoutLimit\",\"type\":\"uint256\"}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"rulesetId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"terminal\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"payoutLimitsOf\",\"outputs\":[{\"internalType\":\"struct JBCurrencyAmount[]\",\"name\":\"payoutLimits\",\"type\":\"tuple[]\",\"components\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"currency\",\"type\":\"uint256\"}]}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"rulesetId\",\"type\":\"uint256\"},{\"internalType\":\"struct JBFundAccessLimitGroup[]\",\"name\":\"fundAccessLimitGroup\",\"type\":\"tuple[]\",\"components\":[{\"internalType\":\"address\",\"name\":\"terminal\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"internalType\":\"struct JBCurrencyAmount[]\",\"name\":\"payoutLimits\",\"type\":\"tuple[]\",\"components\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"currency\",\"type\":\"uint256\"}]},{\"internalType\":\"struct JBCurrencyAmount[]\",\"name\":\"surplusAllowances\",\"type\":\"tuple[]\",\"components\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"currency\",\"type\":\"uint256\"}]}]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"setFundAccessLimitsFor\"},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceId\",\"type\":\"bytes4\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"rulesetId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"terminal\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"currency\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"surplusAllowanceOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"surplusAllowance\",\"type\":\"uint256\"}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"rulesetId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"terminal\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"surplusAllowancesOf\",\"outputs\":[{\"internalType\":\"struct JBCurrencyAmount[]\",\"name\":\"surplusAllowances\",\"type\":\"tuple[]\",\"components\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"currency\",\"type\":\"uint256\"}]}]}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"constructor\":{\"params\":{\"directory\":\"A contract storing directories of terminals and controllers for each project.\"}},\"payoutLimitOf(uint256,uint256,address,address,uint256)\":{\"details\":\"The fixed point amount returned will have the same number of decimals as the specified terminal.\",\"params\":{\"currency\":\"The currency the payout limit is denominated in.\",\"projectId\":\"The ID of the project to get the payout limit of.\",\"rulesetId\":\"The ID of the ruleset the payout limit applies to.\",\"terminal\":\"The terminal the payout limit applies to.\",\"token\":\"The token the payout limit applies to.\"},\"returns\":{\"payoutLimit\":\"The payout limit, as a fixed point number with the same number of decimals as the provided terminal.\"}},\"payoutLimitsOf(uint256,uint256,address,address)\":{\"details\":\"The fixed point `amount`s of the returned structs will have the same number of decimals as the specified terminal.\",\"params\":{\"projectId\":\"The ID of the project to get the payout limits of.\",\"rulesetId\":\"The ID of the ruleset the payout limits apply to.\",\"terminal\":\"The terminal the payout limits apply to.\",\"token\":\"The token the payout limits apply to.\"},\"returns\":{\"payoutLimits\":\"The payout limits.\"}},\"setFundAccessLimitsFor(uint256,uint256,(address,address,(uint256,uint256)[],(uint256,uint256)[])[])\":{\"details\":\"Only a project's current controller can set its fund access limits.Payout limits and surplus allowances must be specified in strictly increasing order (by currency) to prevent duplicates.\",\"params\":{\"fundAccessLimitGroup\":\"An array containing payout limits and surplus allowances for each payment terminal. Amounts are fixed point numbers using the same number of decimals as the accompanying terminal.\",\"projectId\":\"The ID of the project whose fund access limits are being set.\",\"rulesetId\":\"The ID of the ruleset that the limits will apply within.\"}},\"supportsInterface(bytes4)\":{\"details\":\"See {IERC165-supportsInterface}.\"},\"surplusAllowanceOf(uint256,uint256,address,address,uint256)\":{\"details\":\"The fixed point amount returned will have the same number of decimals as the specified terminal.\",\"params\":{\"currency\":\"The currency that the surplus allowance is denominated in.\",\"projectId\":\"The ID of the project to get the surplus allowance of.\",\"rulesetId\":\"The ID of the ruleset the surplus allowance applies to.\",\"terminal\":\"The terminal the surplus allowance applies to.\",\"token\":\"The token the surplus allowance applies to.\"},\"returns\":{\"surplusAllowance\":\"The surplus allowance, as a fixed point number with the same number of decimals as the provided terminal.\"}},\"surplusAllowancesOf(uint256,uint256,address,address)\":{\"details\":\"The number of decimals in the returned fixed point amount is the same as that of the specified terminal.\",\"params\":{\"projectId\":\"The ID of the project to get the surplus allowances of.\",\"rulesetId\":\"The ID of the ruleset the surplus allowances applies to.\",\"terminal\":\"The terminal the surplus allowances applies to.\",\"token\":\"The token the surplus allowances applies to.\"},\"returns\":{\"surplusAllowances\":\"The surplus allowances.\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"DIRECTORY()\":{\"notice\":\"The directory of terminals and controllers for projects.\"},\"payoutLimitOf(uint256,uint256,address,address,uint256)\":{\"notice\":\"A project's payout limit for a specific currency and a given ruleset, terminal, and token.\"},\"payoutLimitsOf(uint256,uint256,address,address)\":{\"notice\":\"A project's payout limits for a given ruleset, terminal, and token.The total value of `token`s that a project can pay out from the terminal during the ruleset is dictated by a list of payout limits. Each payout limit is in terms of its own amount and currency.\"},\"setFundAccessLimitsFor(uint256,uint256,(address,address,(uint256,uint256)[],(uint256,uint256)[])[])\":{\"notice\":\"Sets limits for the amount of funds a project can access from its terminals during a ruleset.\"},\"surplusAllowanceOf(uint256,uint256,address,address,uint256)\":{\"notice\":\"A project's surplus allowance for a specific currency and a given ruleset, terminal, and token.\"},\"surplusAllowancesOf(uint256,uint256,address,address)\":{\"notice\":\"A project's surplus allowances for a given ruleset, terminal, and token.The total value of `token`s that a project can pay out from its surplus in a terminal during the ruleset is dictated by a list of surplus allowances. Each surplus allowance is in terms of its own amount and currency.\"}},\"version\":1}},\"settings\":{\"remappings\":[\"@bananapus/=node_modules/@bananapus/\",\"@chainlink/=node_modules/@chainlink/\",\"@eth-optimism/=node_modules/@eth-optimism/\",\"@gnosis.pm/=node_modules/@gnosis.pm/\",\"@openzeppelin/=node_modules/@openzeppelin/\",\"@prb/=node_modules/@prb/\",\"@sphinx-labs/contracts/=lib/sphinx/packages/contracts/contracts/foundry/\",\"@uniswap/=node_modules/@uniswap/\",\"ds-test/=lib/forge-std/lib/ds-test/src/\",\"forge-std/=lib/forge-std/src/\",\"hardhat/=node_modules/hardhat/\",\"solmate/=node_modules/solmate/\",\"sphinx-forge-std/=node_modules/sphinx-forge-std/\",\"sphinx-solmate/=node_modules/sphinx-solmate/\",\"sphinx/=lib/sphinx/\"],\"optimizer\":{\"enabled\":true,\"runs\":200},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"compilationTarget\":{\"src/JBFundAccessLimits.sol\":\"JBFundAccessLimits\"},\"evmVersion\":\"paris\",\"libraries\":{}},\"sources\":{\"node_modules/@openzeppelin/contracts/token/ERC721/IERC721.sol\":{\"keccak256\":\"0x5ef46daa3b58ef2702279d514780316efaa952915ee1aa3396f041ee2982b0b4\",\"urls\":[\"bzz-raw://2f8f2a76e23b02fc69e8cd24c3cb47da6c7af3a2d6c3a382f8ac25c6e094ade7\",\"dweb:/ipfs/QmPV4ZS4tPVv4mTCf9ejyZ1ai57EEibDRj7mN2ARDCLV5n\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/utils/introspection/ERC165.sol\":{\"keccak256\":\"0x9e8778b14317ba9e256c30a76fd6c32b960af621987f56069e1e819c77c6a133\",\"urls\":[\"bzz-raw://1777404f1dcd0fac188e55a288724ec3c67b45288e49cc64723e95e702b49ab8\",\"dweb:/ipfs/QmZFdC626GButBApwDUvvTnUzdinevC3B24d7yyh57XkiA\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/utils/introspection/IERC165.sol\":{\"keccak256\":\"0x4296879f55019b23e135000eb36896057e7101fb7fb859c5ef690cf14643757b\",\"urls\":[\"bzz-raw://87b3541437c8c443ccd36795e56a338ed12855eec17f8da624511b8d1a7e14df\",\"dweb:/ipfs/QmeJQCtZrQjtJLr6u7ZHWeH3pBnjtLWzvRrKViAi7UZqxL\"],\"license\":\"MIT\"},\"src/JBFundAccessLimits.sol\":{\"keccak256\":\"0xf9217afc7b06699040803d425eb288703bd1e5f8e99edd17c8aed2abd6bc6b46\",\"urls\":[\"bzz-raw://e835efc129cb277c436005a73facb8797e3594cf607cfdd823c15449503a61cd\",\"dweb:/ipfs/QmYLKkFk99pGZD89XHvMXhvEk8DecgL6jf53RLnk8HMbQk\"],\"license\":\"MIT\"},\"src/abstract/JBControlled.sol\":{\"keccak256\":\"0xdbaab889d033617969b7e0b453564e8eb76acb54e65b22289fff6fac90599d64\",\"urls\":[\"bzz-raw://860d67885d8095d49694a5c6c933ff0ad048a3db72412412b04e6b14c0fc8c59\",\"dweb:/ipfs/QmRHV7RdjwbQHtjpUxhNgnWzzES5X9duVTUPtCnJYrvjjc\"],\"license\":\"MIT\"},\"src/interfaces/IJBControlled.sol\":{\"keccak256\":\"0x79fb8de7b3f809f1c3c7189f578b7331ec4dfe3350151d5b50240ecb3a2a907b\",\"urls\":[\"bzz-raw://45c82240dd4f0e9aec00d0d86f6b44bdda231db098ebdac17e922771b3e6f342\",\"dweb:/ipfs/QmPUvT8HZeVenrZDpP14HsZofaXPJjih8UAd35rTg3tU7E\"],\"license\":\"MIT\"},\"src/interfaces/IJBDirectory.sol\":{\"keccak256\":\"0xd15957cc32974cde4f9f194b92574df2ad8a7aeec049d947136ce3381f9145f6\",\"urls\":[\"bzz-raw://7543e5cbde75ff777b16067016ff9ac5e995752842f03662137eb4ef3fc3c868\",\"dweb:/ipfs/QmPJZAmqNKRcj1JQ4Kc9hExbMtPPzrRB5hZ787utCfBmXg\"],\"license\":\"MIT\"},\"src/interfaces/IJBFundAccessLimits.sol\":{\"keccak256\":\"0x2a2ece23837bedde2fddb728476e558bc37c644f641d397a8e08e8a1a85ea390\",\"urls\":[\"bzz-raw://f44187b5a720cdbe5af325331a5e351fc8504853836fb54b997c597949246726\",\"dweb:/ipfs/QmSKM2aMpnof458iCeui2Wkf7S8FfBRGs9zF3QG5DJLf7C\"],\"license\":\"MIT\"},\"src/interfaces/IJBPayHook.sol\":{\"keccak256\":\"0xe24aa2ca52f7a5f24f24ccae101cfc94d0f76705b2d23222f87c7852f8be4267\",\"urls\":[\"bzz-raw://6888140e9a7d4156fd22635654d5d08e21819af8b0356b5415f37b75083b3eb9\",\"dweb:/ipfs/QmbuwBNhar7rEbRhTJPiyo5PVsfaM5nqLow9NAkHhyvjV5\"],\"license\":\"MIT\"},\"src/interfaces/IJBProjects.sol\":{\"keccak256\":\"0x85539f72c5871c53a919edc7db78931155464e9e00fccd30079b17e75820ddb9\",\"urls\":[\"bzz-raw://505466dbfbdeec77f948ce065676897a5b4a74b70bb234c1053b893c4849f3a1\",\"dweb:/ipfs/QmYBpZQub3Mv19xsRWqvzgiQSBAp4UNaKcqWQ2wwH62H95\"],\"license\":\"MIT\"},\"src/interfaces/IJBTokenUriResolver.sol\":{\"keccak256\":\"0xfa5cb00dcd6085d1ef912d071fe73c63f9478a2cd0f9d8bddaf659b6af2d0967\",\"urls\":[\"bzz-raw://282e4e7c342d65f77cde0e9a08fcaf20ef5cf379c7a48b639842c0ffd0b2afb8\",\"dweb:/ipfs/QmbnN3PEQeZaXdPLT75V1J79kMg7KqSMru37RHrL3z8Yf2\"],\"license\":\"MIT\"},\"src/interfaces/terminal/IJBTerminal.sol\":{\"keccak256\":\"0x36f23bc27e56fa86d100281a75f5a6ce73f39f32e6a1667ce69f902da1d005ee\",\"urls\":[\"bzz-raw://e8ffa2e264fa12444799cb5706ca577034f3f8be9ff7a2f072981de6a61d706d\",\"dweb:/ipfs/QmR6gQDymvk8JQ77J8VxpFD1Hnxga4w7LLiRvAT3m4LG6T\"],\"license\":\"MIT\"},\"src/structs/JBAccountingContext.sol\":{\"keccak256\":\"0x2907ff54d1e903cc7e0390dd88c3975884702dc2673642aacbe22b66560b56de\",\"urls\":[\"bzz-raw://a66a5381ce877b32f0e0058ceeaf843e9b6b2bc8af666c0c9f4a9d01091da004\",\"dweb:/ipfs/QmQynCetUr37dBkS1YwDS8evxuXGiqanW6THmeUxXtim8w\"],\"license\":\"MIT\"},\"src/structs/JBAfterPayRecordedContext.sol\":{\"keccak256\":\"0xd26c3a774ff38be79064085970454fe2603a23a638c76270d5b1b3829206c3e8\",\"urls\":[\"bzz-raw://3b55dbe3bf1ef625b7ca04efab3de35406e6041d5b3d82c7265469c500e2b702\",\"dweb:/ipfs/QmUdBDo4Lt3mcsFcsXT2mqq3czFwZjQJFPLM89YA2VtD7k\"],\"license\":\"MIT\"},\"src/structs/JBCurrencyAmount.sol\":{\"keccak256\":\"0x12fe4b43f4824994624d4fe0abbd88c3fe7867fd637edb65c7f456dab27e2d6e\",\"urls\":[\"bzz-raw://8003a3e8f932cf891e86b827e67c9d31b0d34c2712e18c2bc333cfe5284ba6d5\",\"dweb:/ipfs/QmSoA6RsDcSnNzk6CB7KZtALkHmeSDAi2g6fg3TDmLDkWX\"],\"license\":\"MIT\"},\"src/structs/JBFundAccessLimitGroup.sol\":{\"keccak256\":\"0x9fdaa8d017b72da25f583700a444a86849df053f7fb8eac874ec5139bcf651e5\",\"urls\":[\"bzz-raw://c8e44c49ee444a98424a0dbeb6897a76a0bf00d88a613f62ac2012afdac754ee\",\"dweb:/ipfs/QmdYkAiRi5bXM1YYNkc7BiqimHSFodMGn1cjHR5hcpm4xH\"],\"license\":\"MIT\"},\"src/structs/JBTokenAmount.sol\":{\"keccak256\":\"0x5cf0626b73a596c1e2da17c89ae039a7c0374310b060d48568d3b6c11fbe6180\",\"urls\":[\"bzz-raw://63348b50be95e2995409394a17caffc563a646f0972650a1230bf864fbd3219b\",\"dweb:/ipfs/QmZXZpS3SbFD5nWaCauf6AqbEhLURv5qsKHpThBvQgDU6u\"],\"license\":\"MIT\"}},\"version\":1}",
+			"args": [
+				"0xdb72998F9FfEc87e51158E81a8FD49627EB412E8"
+			],
+			"bytecode": "0x60a060405234801561001057600080fd5b50604051610f82380380610f8283398101604081905261002f91610040565b6001600160a01b0316608052610070565b60006020828403121561005257600080fd5b81516001600160a01b038116811461006957600080fd5b9392505050565b608051610ef16100916000396000818160e1015261034c0152610ef16000f3fe608060405234801561001057600080fd5b506004361061007d5760003560e01c80638ca53ccd1161005b5780638ca53ccd1461011b578063971e46771461012e57806399195fde14610143578063c8668bfd1461016357600080fd5b806301ffc9a71461008257806329ed16cd146100bb57806388bc2ef3146100dc575b600080fd5b6100a6610090366004610ae5565b6001600160e01b0319166301ffc9a760e01b1490565b60405190151581526020015b60405180910390f35b6100ce6100c9366004610b2e565b610176565b6040519081526020016100b2565b6101037f000000000000000000000000000000000000000000000000000000000000000081565b6040516001600160a01b0390911681526020016100b2565b6100ce610129366004610b2e565b610258565b61014161013c366004610b80565b61032a565b005b610156610151366004610c03565b610831565b6040516100b29190610c4d565b610156610171366004610c03565b610990565b600085815260016020908152604080832087845282528083206001600160a01b03808816855290835281842090861684528252808320805482518185028101850190935280835284938301828280156101ee57602002820191906000526020600020905b8154815260200190600101908083116101da575b505050505090506000815190506000805b8281101561024a5783818151811061021957610219610c9c565b6020026020010151915060e082901c860361024257506001600160e01b0316925061024f915050565b6001016101ff565b505050505b95945050505050565b60008581526020818152604080832087845282528083206001600160a01b03808816855290835281842090861684528252808320805482518185028101850190935280835284938301828280156102ce57602002820191906000526020600020905b8154815260200190600101908083116102ba575b505050505090506000815190506000805b8281101561024a578381815181106102f9576102f9610c9c565b6020026020010151915060e082901c860361032257506001600160e01b0316925061024f915050565b6001016102df565b604051632eec7b5560e11b815260048101859052849033906001600160a01b037f00000000000000000000000000000000000000000000000000000000000000001690635dd8f6aa90602401602060405180830381865afa158015610393573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906103b79190610cb2565b6001600160a01b0316146103de57604051632adfdd0560e21b815260040160405180910390fd5b813660005b82811015610827578585828181106103fd576103fd610c9c565b905060200281019061040f9190610ccf565b915060006104206040840184610cef565b905090503660005b828110156105f35761043d6040860186610cef565b8281811061044d5761044d610c9c565b604002919091019250506001600160e01b038235111561048057604051634966bf4b60e01b815260040160405180910390fd5b63ffffffff602083013511156104a957604051633bbf530360e01b815260040160405180910390fd5b80158015906104ec57506104c06040860186610cef565b6104cb600184610d40565b8181106104da576104da610c9c565b90506040020160200135826020013511155b1561050a5760405163d33e7dc560e01b815260040160405180910390fd5b8135156105eb5760008b8152602081815260408083208d84529091528120908a8a8781811061053b5761053b610c9c565b905060200281019061054d9190610ccf565b61055b906020810190610d67565b6001600160a01b03166001600160a01b0316815260200190815260200160002060008a8a8781811061058f5761058f610c9c565b90506020028101906105a19190610ccf565b6105b2906040810190602001610d67565b6001600160a01b0316815260208082019290925260400160009081208054600181018255908252908290209184013560e01b8435179101555b600101610428565b5060006106036060860186610cef565b905090503660005b828110156107db576106206060880188610cef565b8281811061063057610630610c9c565b604002919091019250506001600160e01b038235111561066357604051630ee68a2560e41b815260040160405180910390fd5b63ffffffff6020830135111561068f5760405160016221181f60e11b0319815260040160405180910390fd5b80158015906106d257506106a66060880188610cef565b6106b1600184610d40565b8181106106c0576106c0610c9c565b90506040020160200135826020013511155b156106f0576040516377827f8160e01b815260040160405180910390fd5b8135156107d35760008d81526001602090815260408083208f84529091528120908c8c8981811061072357610723610c9c565b90506020028101906107359190610ccf565b610743906020810190610d67565b6001600160a01b03166001600160a01b0316815260200190815260200160002060008c8c8981811061077757610777610c9c565b90506020028101906107899190610ccf565b61079a906040810190602001610d67565b6001600160a01b0316815260208082019290925260400160009081208054600181018255908252908290209184013560e01b8435179101555b60010161060b565b508b8b7f47b77e92dfe8d78eade5a1159cd1f4a33a5215f683ed03d825851720ccf90450883360405161080f929190610e0e565b60405180910390a35050600190920191506103e39050565b5050505050505050565b60008481526020818152604080832086845282528083206001600160a01b038087168552908352818420908516845282528083208054825181850281018501909352808352606094938301828280156108a957602002820191906000526020600020905b815481526020019060010190808311610895575b50508351939450839250505067ffffffffffffffff8111156108cd576108cd610ea5565b60405190808252806020026020018201604052801561091257816020015b60408051808201909152600080825260208201528152602001906001900390816108eb5790505b5092506000805b828110156109845783818151811061093357610933610c9c565b602002602001015191506040518060400160405280836001600160e01b0316815260200160e084901c81525085828151811061097157610971610c9c565b6020908102919091010152600101610919565b50505050949350505050565b600084815260016020908152604080832086845282528083206001600160a01b03808716855290835281842090851684528252808320805482518185028101850190935280835260609493830182828015610a0a57602002820191906000526020600020905b8154815260200190600101908083116109f6575b50508351939450839250505067ffffffffffffffff811115610a2e57610a2e610ea5565b604051908082528060200260200182016040528015610a7357816020015b6040805180820190915260008082526020820152815260200190600190039081610a4c5790505b5092506000805b8281101561098457838181518110610a9457610a94610c9c565b602002602001015191506040518060400160405280836001600160e01b0316815260200160e084901c815250858281518110610ad257610ad2610c9c565b6020908102919091010152600101610a7a565b600060208284031215610af757600080fd5b81356001600160e01b031981168114610b0f57600080fd5b9392505050565b6001600160a01b0381168114610b2b57600080fd5b50565b600080600080600060a08688031215610b4657600080fd5b85359450602086013593506040860135610b5f81610b16565b92506060860135610b6f81610b16565b949793965091946080013592915050565b60008060008060608587031215610b9657600080fd5b8435935060208501359250604085013567ffffffffffffffff80821115610bbc57600080fd5b818701915087601f830112610bd057600080fd5b813581811115610bdf57600080fd5b8860208260051b8501011115610bf457600080fd5b95989497505060200194505050565b60008060008060808587031215610c1957600080fd5b84359350602085013592506040850135610c3281610b16565b91506060850135610c4281610b16565b939692955090935050565b602080825282518282018190526000919060409081850190868401855b82811015610c8f57815180518552860151868501529284019290850190600101610c6a565b5091979650505050505050565b634e487b7160e01b600052603260045260246000fd5b600060208284031215610cc457600080fd5b8151610b0f81610b16565b60008235607e19833603018112610ce557600080fd5b9190910192915050565b6000808335601e19843603018112610d0657600080fd5b83018035915067ffffffffffffffff821115610d2157600080fd5b6020019150600681901b3603821315610d3957600080fd5b9250929050565b81810381811115610d6157634e487b7160e01b600052601160045260246000fd5b92915050565b600060208284031215610d7957600080fd5b8135610b0f81610b16565b6000808335601e19843603018112610d9b57600080fd5b830160208101925035905067ffffffffffffffff811115610dbb57600080fd5b8060061b3603821315610d3957600080fd5b8183526000602080850194508260005b85811015610e035781358752828201358388015260409687019690910190600101610ddd565b509495945050505050565b6040815260008335610e1f81610b16565b6001600160a01b039081166040840152602085013590610e3e82610b16565b8082166060850152610e536040870187610d84565b9250608080860152610e6960c086018483610dcd565b925050610e796060870187610d84565b858403603f190160a0870152610e90848284610dcd565b94505050808516602085015250509392505050565b634e487b7160e01b600052604160045260246000fdfea2646970667358221220b41efe55f87e0e156c25f6dd631378e65a39e161acb0cd160bee6d403fb729ca64736f6c63430008170033",
+			"deployedBytecode": "0x608060405234801561001057600080fd5b506004361061007d5760003560e01c80638ca53ccd1161005b5780638ca53ccd1461011b578063971e46771461012e57806399195fde14610143578063c8668bfd1461016357600080fd5b806301ffc9a71461008257806329ed16cd146100bb57806388bc2ef3146100dc575b600080fd5b6100a6610090366004610ae5565b6001600160e01b0319166301ffc9a760e01b1490565b60405190151581526020015b60405180910390f35b6100ce6100c9366004610b2e565b610176565b6040519081526020016100b2565b6101037f000000000000000000000000db72998f9ffec87e51158e81a8fd49627eb412e881565b6040516001600160a01b0390911681526020016100b2565b6100ce610129366004610b2e565b610258565b61014161013c366004610b80565b61032a565b005b610156610151366004610c03565b610831565b6040516100b29190610c4d565b610156610171366004610c03565b610990565b600085815260016020908152604080832087845282528083206001600160a01b03808816855290835281842090861684528252808320805482518185028101850190935280835284938301828280156101ee57602002820191906000526020600020905b8154815260200190600101908083116101da575b505050505090506000815190506000805b8281101561024a5783818151811061021957610219610c9c565b6020026020010151915060e082901c860361024257506001600160e01b0316925061024f915050565b6001016101ff565b505050505b95945050505050565b60008581526020818152604080832087845282528083206001600160a01b03808816855290835281842090861684528252808320805482518185028101850190935280835284938301828280156102ce57602002820191906000526020600020905b8154815260200190600101908083116102ba575b505050505090506000815190506000805b8281101561024a578381815181106102f9576102f9610c9c565b6020026020010151915060e082901c860361032257506001600160e01b0316925061024f915050565b6001016102df565b604051632eec7b5560e11b815260048101859052849033906001600160a01b037f000000000000000000000000db72998f9ffec87e51158e81a8fd49627eb412e81690635dd8f6aa90602401602060405180830381865afa158015610393573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906103b79190610cb2565b6001600160a01b0316146103de57604051632adfdd0560e21b815260040160405180910390fd5b813660005b82811015610827578585828181106103fd576103fd610c9c565b905060200281019061040f9190610ccf565b915060006104206040840184610cef565b905090503660005b828110156105f35761043d6040860186610cef565b8281811061044d5761044d610c9c565b604002919091019250506001600160e01b038235111561048057604051634966bf4b60e01b815260040160405180910390fd5b63ffffffff602083013511156104a957604051633bbf530360e01b815260040160405180910390fd5b80158015906104ec57506104c06040860186610cef565b6104cb600184610d40565b8181106104da576104da610c9c565b90506040020160200135826020013511155b1561050a5760405163d33e7dc560e01b815260040160405180910390fd5b8135156105eb5760008b8152602081815260408083208d84529091528120908a8a8781811061053b5761053b610c9c565b905060200281019061054d9190610ccf565b61055b906020810190610d67565b6001600160a01b03166001600160a01b0316815260200190815260200160002060008a8a8781811061058f5761058f610c9c565b90506020028101906105a19190610ccf565b6105b2906040810190602001610d67565b6001600160a01b0316815260208082019290925260400160009081208054600181018255908252908290209184013560e01b8435179101555b600101610428565b5060006106036060860186610cef565b905090503660005b828110156107db576106206060880188610cef565b8281811061063057610630610c9c565b604002919091019250506001600160e01b038235111561066357604051630ee68a2560e41b815260040160405180910390fd5b63ffffffff6020830135111561068f5760405160016221181f60e11b0319815260040160405180910390fd5b80158015906106d257506106a66060880188610cef565b6106b1600184610d40565b8181106106c0576106c0610c9c565b90506040020160200135826020013511155b156106f0576040516377827f8160e01b815260040160405180910390fd5b8135156107d35760008d81526001602090815260408083208f84529091528120908c8c8981811061072357610723610c9c565b90506020028101906107359190610ccf565b610743906020810190610d67565b6001600160a01b03166001600160a01b0316815260200190815260200160002060008c8c8981811061077757610777610c9c565b90506020028101906107899190610ccf565b61079a906040810190602001610d67565b6001600160a01b0316815260208082019290925260400160009081208054600181018255908252908290209184013560e01b8435179101555b60010161060b565b508b8b7f47b77e92dfe8d78eade5a1159cd1f4a33a5215f683ed03d825851720ccf90450883360405161080f929190610e0e565b60405180910390a35050600190920191506103e39050565b5050505050505050565b60008481526020818152604080832086845282528083206001600160a01b038087168552908352818420908516845282528083208054825181850281018501909352808352606094938301828280156108a957602002820191906000526020600020905b815481526020019060010190808311610895575b50508351939450839250505067ffffffffffffffff8111156108cd576108cd610ea5565b60405190808252806020026020018201604052801561091257816020015b60408051808201909152600080825260208201528152602001906001900390816108eb5790505b5092506000805b828110156109845783818151811061093357610933610c9c565b602002602001015191506040518060400160405280836001600160e01b0316815260200160e084901c81525085828151811061097157610971610c9c565b6020908102919091010152600101610919565b50505050949350505050565b600084815260016020908152604080832086845282528083206001600160a01b03808716855290835281842090851684528252808320805482518185028101850190935280835260609493830182828015610a0a57602002820191906000526020600020905b8154815260200190600101908083116109f6575b50508351939450839250505067ffffffffffffffff811115610a2e57610a2e610ea5565b604051908082528060200260200182016040528015610a7357816020015b6040805180820190915260008082526020820152815260200190600190039081610a4c5790505b5092506000805b8281101561098457838181518110610a9457610a94610c9c565b602002602001015191506040518060400160405280836001600160e01b0316815260200160e084901c815250858281518110610ad257610ad2610c9c565b6020908102919091010152600101610a7a565b600060208284031215610af757600080fd5b81356001600160e01b031981168114610b0f57600080fd5b9392505050565b6001600160a01b0381168114610b2b57600080fd5b50565b600080600080600060a08688031215610b4657600080fd5b85359450602086013593506040860135610b5f81610b16565b92506060860135610b6f81610b16565b949793965091946080013592915050565b60008060008060608587031215610b9657600080fd5b8435935060208501359250604085013567ffffffffffffffff80821115610bbc57600080fd5b818701915087601f830112610bd057600080fd5b813581811115610bdf57600080fd5b8860208260051b8501011115610bf457600080fd5b95989497505060200194505050565b60008060008060808587031215610c1957600080fd5b84359350602085013592506040850135610c3281610b16565b91506060850135610c4281610b16565b939692955090935050565b602080825282518282018190526000919060409081850190868401855b82811015610c8f57815180518552860151868501529284019290850190600101610c6a565b5091979650505050505050565b634e487b7160e01b600052603260045260246000fd5b600060208284031215610cc457600080fd5b8151610b0f81610b16565b60008235607e19833603018112610ce557600080fd5b9190910192915050565b6000808335601e19843603018112610d0657600080fd5b83018035915067ffffffffffffffff821115610d2157600080fd5b6020019150600681901b3603821315610d3957600080fd5b9250929050565b81810381811115610d6157634e487b7160e01b600052601160045260246000fd5b92915050565b600060208284031215610d7957600080fd5b8135610b0f81610b16565b6000808335601e19843603018112610d9b57600080fd5b830160208101925035905067ffffffffffffffff811115610dbb57600080fd5b8060061b3603821315610d3957600080fd5b8183526000602080850194508260005b85811015610e035781358752828201358388015260409687019690910190600101610ddd565b509495945050505050565b6040815260008335610e1f81610b16565b6001600160a01b039081166040840152602085013590610e3e82610b16565b8082166060850152610e536040870187610d84565b9250608080860152610e6960c086018483610dcd565b925050610e796060870187610d84565b858403603f190160a0870152610e90848284610dcd565b94505050808516602085015250509392505050565b634e487b7160e01b600052604160045260246000fdfea2646970667358221220b41efe55f87e0e156c25f6dd631378e65a39e161acb0cd160bee6d403fb729ca64736f6c63430008170033",
+			"devdoc": {
+				"kind": "dev",
+				"methods": {
+					"constructor": {
+						"params": {
+							"directory": "A contract storing directories of terminals and controllers for each project."
+						}
+					},
+					"payoutLimitOf(uint256,uint256,address,address,uint256)": {
+						"details": "The fixed point amount returned will have the same number of decimals as the specified terminal.",
+						"params": {
+							"currency": "The currency the payout limit is denominated in.",
+							"projectId": "The ID of the project to get the payout limit of.",
+							"rulesetId": "The ID of the ruleset the payout limit applies to.",
+							"terminal": "The terminal the payout limit applies to.",
+							"token": "The token the payout limit applies to."
+						},
+						"returns": {
+							"payoutLimit": "The payout limit, as a fixed point number with the same number of decimals as the provided terminal."
+						}
+					},
+					"payoutLimitsOf(uint256,uint256,address,address)": {
+						"details": "The fixed point `amount`s of the returned structs will have the same number of decimals as the specified terminal.",
+						"params": {
+							"projectId": "The ID of the project to get the payout limits of.",
+							"rulesetId": "The ID of the ruleset the payout limits apply to.",
+							"terminal": "The terminal the payout limits apply to.",
+							"token": "The token the payout limits apply to."
+						},
+						"returns": {
+							"payoutLimits": "The payout limits."
+						}
+					},
+					"setFundAccessLimitsFor(uint256,uint256,(address,address,(uint256,uint256)[],(uint256,uint256)[])[])": {
+						"details": "Only a project's current controller can set its fund access limits.Payout limits and surplus allowances must be specified in strictly increasing order (by currency) to prevent duplicates.",
+						"params": {
+							"fundAccessLimitGroup": "An array containing payout limits and surplus allowances for each payment terminal. Amounts are fixed point numbers using the same number of decimals as the accompanying terminal.",
+							"projectId": "The ID of the project whose fund access limits are being set.",
+							"rulesetId": "The ID of the ruleset that the limits will apply within."
+						}
+					},
+					"supportsInterface(bytes4)": {
+						"details": "See {IERC165-supportsInterface}."
+					},
+					"surplusAllowanceOf(uint256,uint256,address,address,uint256)": {
+						"details": "The fixed point amount returned will have the same number of decimals as the specified terminal.",
+						"params": {
+							"currency": "The currency that the surplus allowance is denominated in.",
+							"projectId": "The ID of the project to get the surplus allowance of.",
+							"rulesetId": "The ID of the ruleset the surplus allowance applies to.",
+							"terminal": "The terminal the surplus allowance applies to.",
+							"token": "The token the surplus allowance applies to."
+						},
+						"returns": {
+							"surplusAllowance": "The surplus allowance, as a fixed point number with the same number of decimals as the provided terminal."
+						}
+					},
+					"surplusAllowancesOf(uint256,uint256,address,address)": {
+						"details": "The number of decimals in the returned fixed point amount is the same as that of the specified terminal.",
+						"params": {
+							"projectId": "The ID of the project to get the surplus allowances of.",
+							"rulesetId": "The ID of the ruleset the surplus allowances applies to.",
+							"terminal": "The terminal the surplus allowances applies to.",
+							"token": "The token the surplus allowances applies to."
+						},
+						"returns": {
+							"surplusAllowances": "The surplus allowances."
+						}
+					}
+				},
+				"version": 1
+			},
+			"userdoc": {
+				"kind": "user",
+				"methods": {
+					"DIRECTORY()": {
+						"notice": "The directory of terminals and controllers for projects."
+					},
+					"payoutLimitOf(uint256,uint256,address,address,uint256)": {
+						"notice": "A project's payout limit for a specific currency and a given ruleset, terminal, and token."
+					},
+					"payoutLimitsOf(uint256,uint256,address,address)": {
+						"notice": "A project's payout limits for a given ruleset, terminal, and token.The total value of `token`s that a project can pay out from the terminal during the ruleset is dictated by a list of payout limits. Each payout limit is in terms of its own amount and currency."
+					},
+					"setFundAccessLimitsFor(uint256,uint256,(address,address,(uint256,uint256)[],(uint256,uint256)[])[])": {
+						"notice": "Sets limits for the amount of funds a project can access from its terminals during a ruleset."
+					},
+					"surplusAllowanceOf(uint256,uint256,address,address,uint256)": {
+						"notice": "A project's surplus allowance for a specific currency and a given ruleset, terminal, and token."
+					},
+					"surplusAllowancesOf(uint256,uint256,address,address)": {
+						"notice": "A project's surplus allowances for a given ruleset, terminal, and token.The total value of `token`s that a project can pay out from its surplus in a terminal during the ruleset is dictated by a list of surplus allowances. Each surplus allowance is in terms of its own amount and currency."
+					}
+				},
+				"version": 1
+			},
+			"gitCommit": "23e7dfead2a66e76f5e7c501a807ff78b09b92c3",
+			"sourceName": "src/JBFundAccessLimits.sol",
+			"chainId": "80001",
+			"linkReferences": {},
+			"deployedLinkReferences": {}
+		},
+		{
+			"_format": "sphinx-sol-ct-artifact-1",
+			"merkleRoot": "0x9e0e602421b8af18b231044c4a9fcd3210b88a991260bd2d68511776273418b9",
+			"contractName": "JBFundAccessLimits",
+			"address": "0xF8eD3763480CA957316974BAB8FE4258d4fD0A17",
+			"abi": [
+				{
+					"type": "constructor",
+					"inputs": [
+						{
+							"name": "directory",
+							"type": "address",
+							"internalType": "contract IJBDirectory"
+						}
+					],
+					"stateMutability": "nonpayable"
+				},
+				{
+					"type": "function",
+					"name": "DIRECTORY",
+					"inputs": [],
+					"outputs": [
+						{
+							"name": "",
+							"type": "address",
+							"internalType": "contract IJBDirectory"
+						}
+					],
+					"stateMutability": "view"
+				},
+				{
+					"type": "function",
+					"name": "payoutLimitOf",
+					"inputs": [
+						{
+							"name": "projectId",
+							"type": "uint256",
+							"internalType": "uint256"
+						},
+						{
+							"name": "rulesetId",
+							"type": "uint256",
+							"internalType": "uint256"
+						},
+						{
+							"name": "terminal",
+							"type": "address",
+							"internalType": "address"
+						},
+						{
+							"name": "token",
+							"type": "address",
+							"internalType": "address"
+						},
+						{
+							"name": "currency",
+							"type": "uint256",
+							"internalType": "uint256"
+						}
+					],
+					"outputs": [
+						{
+							"name": "payoutLimit",
+							"type": "uint256",
+							"internalType": "uint256"
+						}
+					],
+					"stateMutability": "view"
+				},
+				{
+					"type": "function",
+					"name": "payoutLimitsOf",
+					"inputs": [
+						{
+							"name": "projectId",
+							"type": "uint256",
+							"internalType": "uint256"
+						},
+						{
+							"name": "rulesetId",
+							"type": "uint256",
+							"internalType": "uint256"
+						},
+						{
+							"name": "terminal",
+							"type": "address",
+							"internalType": "address"
+						},
+						{
+							"name": "token",
+							"type": "address",
+							"internalType": "address"
+						}
+					],
+					"outputs": [
+						{
+							"name": "payoutLimits",
+							"type": "tuple[]",
+							"internalType": "struct JBCurrencyAmount[]",
+							"components": [
+								{
+									"name": "amount",
+									"type": "uint256",
+									"internalType": "uint256"
+								},
+								{
+									"name": "currency",
+									"type": "uint256",
+									"internalType": "uint256"
+								}
+							]
+						}
+					],
+					"stateMutability": "view"
+				},
+				{
+					"type": "function",
+					"name": "setFundAccessLimitsFor",
+					"inputs": [
+						{
+							"name": "projectId",
+							"type": "uint256",
+							"internalType": "uint256"
+						},
+						{
+							"name": "rulesetId",
+							"type": "uint256",
+							"internalType": "uint256"
+						},
+						{
+							"name": "fundAccessLimitGroup",
+							"type": "tuple[]",
+							"internalType": "struct JBFundAccessLimitGroup[]",
+							"components": [
+								{
+									"name": "terminal",
+									"type": "address",
+									"internalType": "address"
+								},
+								{
+									"name": "token",
+									"type": "address",
+									"internalType": "address"
+								},
+								{
+									"name": "payoutLimits",
+									"type": "tuple[]",
+									"internalType": "struct JBCurrencyAmount[]",
+									"components": [
+										{
+											"name": "amount",
+											"type": "uint256",
+											"internalType": "uint256"
+										},
+										{
+											"name": "currency",
+											"type": "uint256",
+											"internalType": "uint256"
+										}
+									]
+								},
+								{
+									"name": "surplusAllowances",
+									"type": "tuple[]",
+									"internalType": "struct JBCurrencyAmount[]",
+									"components": [
+										{
+											"name": "amount",
+											"type": "uint256",
+											"internalType": "uint256"
+										},
+										{
+											"name": "currency",
+											"type": "uint256",
+											"internalType": "uint256"
+										}
+									]
+								}
+							]
+						}
+					],
+					"outputs": [],
+					"stateMutability": "nonpayable"
+				},
+				{
+					"type": "function",
+					"name": "supportsInterface",
+					"inputs": [
+						{
+							"name": "interfaceId",
+							"type": "bytes4",
+							"internalType": "bytes4"
+						}
+					],
+					"outputs": [
+						{
+							"name": "",
+							"type": "bool",
+							"internalType": "bool"
+						}
+					],
+					"stateMutability": "view"
+				},
+				{
+					"type": "function",
+					"name": "surplusAllowanceOf",
+					"inputs": [
+						{
+							"name": "projectId",
+							"type": "uint256",
+							"internalType": "uint256"
+						},
+						{
+							"name": "rulesetId",
+							"type": "uint256",
+							"internalType": "uint256"
+						},
+						{
+							"name": "terminal",
+							"type": "address",
+							"internalType": "address"
+						},
+						{
+							"name": "token",
+							"type": "address",
+							"internalType": "address"
+						},
+						{
+							"name": "currency",
+							"type": "uint256",
+							"internalType": "uint256"
+						}
+					],
+					"outputs": [
+						{
+							"name": "surplusAllowance",
+							"type": "uint256",
+							"internalType": "uint256"
+						}
+					],
+					"stateMutability": "view"
+				},
+				{
+					"type": "function",
+					"name": "surplusAllowancesOf",
+					"inputs": [
+						{
+							"name": "projectId",
+							"type": "uint256",
+							"internalType": "uint256"
+						},
+						{
+							"name": "rulesetId",
+							"type": "uint256",
+							"internalType": "uint256"
+						},
+						{
+							"name": "terminal",
+							"type": "address",
+							"internalType": "address"
+						},
+						{
+							"name": "token",
+							"type": "address",
+							"internalType": "address"
+						}
+					],
+					"outputs": [
+						{
+							"name": "surplusAllowances",
+							"type": "tuple[]",
+							"internalType": "struct JBCurrencyAmount[]",
+							"components": [
+								{
+									"name": "amount",
+									"type": "uint256",
+									"internalType": "uint256"
+								},
+								{
+									"name": "currency",
+									"type": "uint256",
+									"internalType": "uint256"
+								}
+							]
+						}
+					],
+					"stateMutability": "view"
+				},
+				{
+					"type": "event",
+					"name": "SetFundAccessLimits",
+					"inputs": [
+						{
+							"name": "rulesetId",
+							"type": "uint256",
+							"indexed": true,
+							"internalType": "uint256"
+						},
+						{
+							"name": "projectId",
+							"type": "uint256",
+							"indexed": true,
+							"internalType": "uint256"
+						},
+						{
+							"name": "limits",
+							"type": "tuple",
+							"indexed": false,
+							"internalType": "struct JBFundAccessLimitGroup",
+							"components": [
+								{
+									"name": "terminal",
+									"type": "address",
+									"internalType": "address"
+								},
+								{
+									"name": "token",
+									"type": "address",
+									"internalType": "address"
+								},
+								{
+									"name": "payoutLimits",
+									"type": "tuple[]",
+									"internalType": "struct JBCurrencyAmount[]",
+									"components": [
+										{
+											"name": "amount",
+											"type": "uint256",
+											"internalType": "uint256"
+										},
+										{
+											"name": "currency",
+											"type": "uint256",
+											"internalType": "uint256"
+										}
+									]
+								},
+								{
+									"name": "surplusAllowances",
+									"type": "tuple[]",
+									"internalType": "struct JBCurrencyAmount[]",
+									"components": [
+										{
+											"name": "amount",
+											"type": "uint256",
+											"internalType": "uint256"
+										},
+										{
+											"name": "currency",
+											"type": "uint256",
+											"internalType": "uint256"
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "caller",
+							"type": "address",
+							"indexed": false,
+							"internalType": "address"
+						}
+					],
+					"anonymous": false
+				},
+				{
+					"type": "error",
+					"name": "CONTROLLER_UNAUTHORIZED",
+					"inputs": []
+				},
+				{
+					"type": "error",
+					"name": "INVALID_PAYOUT_LIMIT",
+					"inputs": []
+				},
+				{
+					"type": "error",
+					"name": "INVALID_PAYOUT_LIMIT_CURRENCY",
+					"inputs": []
+				},
+				{
+					"type": "error",
+					"name": "INVALID_PAYOUT_LIMIT_CURRENCY_ORDERING",
+					"inputs": []
+				},
+				{
+					"type": "error",
+					"name": "INVALID_SURPLUS_ALLOWANCE",
+					"inputs": []
+				},
+				{
+					"type": "error",
+					"name": "INVALID_SURPLUS_ALLOWANCE_CURRENCY",
+					"inputs": []
+				},
+				{
+					"type": "error",
+					"name": "INVALID_SURPLUS_ALLOWANCE_CURRENCY_ORDERING",
+					"inputs": []
+				}
+			],
+			"solcInputHash": "72b97eca88a7a2645b499cd15964090b",
+			"receipt": {
+				"blockHash": "0xaf085176d4b71542660f7514f37184875f96c60590c0e638c7d2680d96f33a9c",
+				"blockNumber": 47249514,
+				"contractAddress": null,
+				"cumulativeGasUsed": "4511246",
+				"from": "0xC034550B542b83BA1De312b21d1C94a9a52B1595",
+				"gasPrice": "30000000015",
+				"gasUsed": "4511246",
+				"hash": "0xef45c7a428d7369c0ee1454dde09aab42e9f7e51ffb1ec6a8bd385e563b34131",
+				"index": 0,
+				"logs": [
+					{
+						"address": "0xB5E96127D417b1B3ef8438496a38A143167209c7",
+						"blockHash": "0xaf085176d4b71542660f7514f37184875f96c60590c0e638c7d2680d96f33a9c",
+						"blockNumber": 47249514,
+						"data": "0x0000000000000000000000000000000000000000000000000000000000000000",
+						"index": 0,
+						"topics": [
+							"0x572f161235911da04685a68c06adf558fc7e4a36909dca394650e0adc19cc93d",
+							"0x000000000000000000000000c034550b542b83ba1de312b21d1c94a9a52b1595",
+							"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c",
+							"0x687489219e02d64f6a71853d89c64748968238f3db06f70248ecd81221f4aa56"
+						],
+						"transactionHash": "0xef45c7a428d7369c0ee1454dde09aab42e9f7e51ffb1ec6a8bd385e563b34131",
+						"transactionIndex": 0
+					},
+					{
+						"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+						"blockHash": "0xaf085176d4b71542660f7514f37184875f96c60590c0e638c7d2680d96f33a9c",
+						"blockNumber": 47249514,
+						"data": "0x000000000000000000000000266b64c59e45cccaeea8d34758c495a0517139f0",
+						"index": 1,
+						"topics": [
+							"0x4db17dd5e4732fb6da34a148104a592783ca119a1e7bb8829eba6cbadef0b511"
+						],
+						"transactionHash": "0xef45c7a428d7369c0ee1454dde09aab42e9f7e51ffb1ec6a8bd385e563b34131",
+						"transactionIndex": 0
+					},
+					{
+						"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+						"blockHash": "0xaf085176d4b71542660f7514f37184875f96c60590c0e638c7d2680d96f33a9c",
+						"blockNumber": 47249514,
+						"data": "0x",
+						"index": 2,
+						"topics": [
+							"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
+							"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
+						],
+						"transactionHash": "0xef45c7a428d7369c0ee1454dde09aab42e9f7e51ffb1ec6a8bd385e563b34131",
+						"transactionIndex": 0
+					},
+					{
+						"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
+						"blockHash": "0xaf085176d4b71542660f7514f37184875f96c60590c0e638c7d2680d96f33a9c",
+						"blockNumber": 47249514,
+						"data": "0x0000000000000000000000000000000000000000000000000000000000000006",
+						"index": 3,
+						"topics": [
+							"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
+							"0x9e0e602421b8af18b231044c4a9fcd3210b88a991260bd2d68511776273418b9"
+						],
+						"transactionHash": "0xef45c7a428d7369c0ee1454dde09aab42e9f7e51ffb1ec6a8bd385e563b34131",
+						"transactionIndex": 0
+					},
+					{
+						"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+						"blockHash": "0xaf085176d4b71542660f7514f37184875f96c60590c0e638c7d2680d96f33a9c",
+						"blockNumber": 47249514,
+						"data": "0x000000000000000000000000f8ed3763480ca957316974bab8fe4258d4fd0a17",
+						"index": 4,
+						"topics": [
+							"0x4db17dd5e4732fb6da34a148104a592783ca119a1e7bb8829eba6cbadef0b511"
+						],
+						"transactionHash": "0xef45c7a428d7369c0ee1454dde09aab42e9f7e51ffb1ec6a8bd385e563b34131",
+						"transactionIndex": 0
+					},
+					{
+						"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+						"blockHash": "0xaf085176d4b71542660f7514f37184875f96c60590c0e638c7d2680d96f33a9c",
+						"blockNumber": 47249514,
+						"data": "0x",
+						"index": 5,
+						"topics": [
+							"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
+							"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
+						],
+						"transactionHash": "0xef45c7a428d7369c0ee1454dde09aab42e9f7e51ffb1ec6a8bd385e563b34131",
+						"transactionIndex": 0
+					},
+					{
+						"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
+						"blockHash": "0xaf085176d4b71542660f7514f37184875f96c60590c0e638c7d2680d96f33a9c",
+						"blockNumber": 47249514,
+						"data": "0x0000000000000000000000000000000000000000000000000000000000000007",
+						"index": 6,
+						"topics": [
+							"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
+							"0x9e0e602421b8af18b231044c4a9fcd3210b88a991260bd2d68511776273418b9"
+						],
+						"transactionHash": "0xef45c7a428d7369c0ee1454dde09aab42e9f7e51ffb1ec6a8bd385e563b34131",
+						"transactionIndex": 0
+					},
+					{
+						"address": "0x0000000000000000000000000000000000001010",
+						"blockHash": "0xaf085176d4b71542660f7514f37184875f96c60590c0e638c7d2680d96f33a9c",
+						"blockNumber": 47249514,
+						"data": "0x00000000000000000000000000000000000000000000000001e0d0a14bbb680000000000000000000000000000000000000000000000000019313bbdb9601a5c0000000000000000000000000000000000000000000007b68e85ad606434adeb00000000000000000000000000000000000000000000000017506b1c6da4b25c0000000000000000000000000000000000000000000007b690667e01aff015eb",
+						"index": 7,
+						"topics": [
+							"0x4dfe1bbbcf077ddc3e01291eea2d5c70c2b422b415d95645b9adcfd678cb1d63",
+							"0x0000000000000000000000000000000000000000000000000000000000001010",
+							"0x000000000000000000000000c034550b542b83ba1de312b21d1c94a9a52b1595",
+							"0x0000000000000000000000005082f249cdb2f2c1ee035e4f423c46ea2dab3ab1"
+						],
+						"transactionHash": "0xef45c7a428d7369c0ee1454dde09aab42e9f7e51ffb1ec6a8bd385e563b34131",
+						"transactionIndex": 0
+					}
+				],
+				"logsBloom": "0x0002000008001000000a000000080000000000000018000000000000024000000040008002000000000000000040000000008000000000000000000000000002000000000000200400000000020000800000000000000000000100000000000000000000000000000000000000000000000000100020000080000000000000000001000000000000000100000000800000000000040000000000804000000000204000000010000000000000000000020200000000000000000000000006004000000000000000200001000008000000000000000000000000100000000000000000000000000080000000000000000200000000000000000000000000100000",
+				"status": 1,
+				"to": "0xB5E96127D417b1B3ef8438496a38A143167209c7"
+			},
+			"metadata": "{\"compiler\":{\"version\":\"0.8.23+commit.f704f362\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"contract IJBDirectory\",\"name\":\"directory\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"CONTROLLER_UNAUTHORIZED\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"INVALID_PAYOUT_LIMIT\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"INVALID_PAYOUT_LIMIT_CURRENCY\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"INVALID_PAYOUT_LIMIT_CURRENCY_ORDERING\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"INVALID_SURPLUS_ALLOWANCE\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"INVALID_SURPLUS_ALLOWANCE_CURRENCY\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"INVALID_SURPLUS_ALLOWANCE_CURRENCY_ORDERING\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"rulesetId\",\"type\":\"uint256\",\"indexed\":true},{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\",\"indexed\":true},{\"internalType\":\"struct JBFundAccessLimitGroup\",\"name\":\"limits\",\"type\":\"tuple\",\"components\":[{\"internalType\":\"address\",\"name\":\"terminal\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"internalType\":\"struct JBCurrencyAmount[]\",\"name\":\"payoutLimits\",\"type\":\"tuple[]\",\"components\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"currency\",\"type\":\"uint256\"}]},{\"internalType\":\"struct JBCurrencyAmount[]\",\"name\":\"surplusAllowances\",\"type\":\"tuple[]\",\"components\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"currency\",\"type\":\"uint256\"}]}],\"indexed\":false},{\"internalType\":\"address\",\"name\":\"caller\",\"type\":\"address\",\"indexed\":false}],\"type\":\"event\",\"name\":\"SetFundAccessLimits\",\"anonymous\":false},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"DIRECTORY\",\"outputs\":[{\"internalType\":\"contract IJBDirectory\",\"name\":\"\",\"type\":\"address\"}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"rulesetId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"terminal\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"currency\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"payoutLimitOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"payoutLimit\",\"type\":\"uint256\"}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"rulesetId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"terminal\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"payoutLimitsOf\",\"outputs\":[{\"internalType\":\"struct JBCurrencyAmount[]\",\"name\":\"payoutLimits\",\"type\":\"tuple[]\",\"components\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"currency\",\"type\":\"uint256\"}]}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"rulesetId\",\"type\":\"uint256\"},{\"internalType\":\"struct JBFundAccessLimitGroup[]\",\"name\":\"fundAccessLimitGroup\",\"type\":\"tuple[]\",\"components\":[{\"internalType\":\"address\",\"name\":\"terminal\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"internalType\":\"struct JBCurrencyAmount[]\",\"name\":\"payoutLimits\",\"type\":\"tuple[]\",\"components\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"currency\",\"type\":\"uint256\"}]},{\"internalType\":\"struct JBCurrencyAmount[]\",\"name\":\"surplusAllowances\",\"type\":\"tuple[]\",\"components\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"currency\",\"type\":\"uint256\"}]}]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"setFundAccessLimitsFor\"},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceId\",\"type\":\"bytes4\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"rulesetId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"terminal\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"currency\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"surplusAllowanceOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"surplusAllowance\",\"type\":\"uint256\"}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"rulesetId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"terminal\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"surplusAllowancesOf\",\"outputs\":[{\"internalType\":\"struct JBCurrencyAmount[]\",\"name\":\"surplusAllowances\",\"type\":\"tuple[]\",\"components\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"currency\",\"type\":\"uint256\"}]}]}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"constructor\":{\"params\":{\"directory\":\"A contract storing directories of terminals and controllers for each project.\"}},\"payoutLimitOf(uint256,uint256,address,address,uint256)\":{\"details\":\"The fixed point amount returned will have the same number of decimals as the specified terminal.\",\"params\":{\"currency\":\"The currency the payout limit is denominated in.\",\"projectId\":\"The ID of the project to get the payout limit of.\",\"rulesetId\":\"The ID of the ruleset the payout limit applies to.\",\"terminal\":\"The terminal the payout limit applies to.\",\"token\":\"The token the payout limit applies to.\"},\"returns\":{\"payoutLimit\":\"The payout limit, as a fixed point number with the same number of decimals as the provided terminal.\"}},\"payoutLimitsOf(uint256,uint256,address,address)\":{\"details\":\"The fixed point `amount`s of the returned structs will have the same number of decimals as the specified terminal.\",\"params\":{\"projectId\":\"The ID of the project to get the payout limits of.\",\"rulesetId\":\"The ID of the ruleset the payout limits apply to.\",\"terminal\":\"The terminal the payout limits apply to.\",\"token\":\"The token the payout limits apply to.\"},\"returns\":{\"payoutLimits\":\"The payout limits.\"}},\"setFundAccessLimitsFor(uint256,uint256,(address,address,(uint256,uint256)[],(uint256,uint256)[])[])\":{\"details\":\"Only a project's current controller can set its fund access limits.Payout limits and surplus allowances must be specified in strictly increasing order (by currency) to prevent duplicates.\",\"params\":{\"fundAccessLimitGroup\":\"An array containing payout limits and surplus allowances for each payment terminal. Amounts are fixed point numbers using the same number of decimals as the accompanying terminal.\",\"projectId\":\"The ID of the project whose fund access limits are being set.\",\"rulesetId\":\"The ID of the ruleset that the limits will apply within.\"}},\"supportsInterface(bytes4)\":{\"details\":\"See {IERC165-supportsInterface}.\"},\"surplusAllowanceOf(uint256,uint256,address,address,uint256)\":{\"details\":\"The fixed point amount returned will have the same number of decimals as the specified terminal.\",\"params\":{\"currency\":\"The currency that the surplus allowance is denominated in.\",\"projectId\":\"The ID of the project to get the surplus allowance of.\",\"rulesetId\":\"The ID of the ruleset the surplus allowance applies to.\",\"terminal\":\"The terminal the surplus allowance applies to.\",\"token\":\"The token the surplus allowance applies to.\"},\"returns\":{\"surplusAllowance\":\"The surplus allowance, as a fixed point number with the same number of decimals as the provided terminal.\"}},\"surplusAllowancesOf(uint256,uint256,address,address)\":{\"details\":\"The number of decimals in the returned fixed point amount is the same as that of the specified terminal.\",\"params\":{\"projectId\":\"The ID of the project to get the surplus allowances of.\",\"rulesetId\":\"The ID of the ruleset the surplus allowances applies to.\",\"terminal\":\"The terminal the surplus allowances applies to.\",\"token\":\"The token the surplus allowances applies to.\"},\"returns\":{\"surplusAllowances\":\"The surplus allowances.\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"DIRECTORY()\":{\"notice\":\"The directory of terminals and controllers for projects.\"},\"payoutLimitOf(uint256,uint256,address,address,uint256)\":{\"notice\":\"A project's payout limit for a specific currency and a given ruleset, terminal, and token.\"},\"payoutLimitsOf(uint256,uint256,address,address)\":{\"notice\":\"A project's payout limits for a given ruleset, terminal, and token.The total value of `token`s that a project can pay out from the terminal during the ruleset is dictated by a list of payout limits. Each payout limit is in terms of its own amount and currency.\"},\"setFundAccessLimitsFor(uint256,uint256,(address,address,(uint256,uint256)[],(uint256,uint256)[])[])\":{\"notice\":\"Sets limits for the amount of funds a project can access from its terminals during a ruleset.\"},\"surplusAllowanceOf(uint256,uint256,address,address,uint256)\":{\"notice\":\"A project's surplus allowance for a specific currency and a given ruleset, terminal, and token.\"},\"surplusAllowancesOf(uint256,uint256,address,address)\":{\"notice\":\"A project's surplus allowances for a given ruleset, terminal, and token.The total value of `token`s that a project can pay out from its surplus in a terminal during the ruleset is dictated by a list of surplus allowances. Each surplus allowance is in terms of its own amount and currency.\"}},\"version\":1}},\"settings\":{\"remappings\":[\"@bananapus/=node_modules/@bananapus/\",\"@chainlink/=node_modules/@chainlink/\",\"@eth-optimism/=node_modules/@eth-optimism/\",\"@gnosis.pm/=node_modules/@gnosis.pm/\",\"@openzeppelin/=node_modules/@openzeppelin/\",\"@prb/=node_modules/@prb/\",\"@sphinx-labs/contracts/=lib/sphinx/packages/contracts/contracts/foundry/\",\"@uniswap/=node_modules/@uniswap/\",\"ds-test/=lib/forge-std/lib/ds-test/src/\",\"forge-std/=lib/forge-std/src/\",\"hardhat/=node_modules/hardhat/\",\"solmate/=node_modules/solmate/\",\"sphinx-forge-std/=node_modules/sphinx-forge-std/\",\"sphinx-solmate/=node_modules/sphinx-solmate/\",\"sphinx/=lib/sphinx/\"],\"optimizer\":{\"enabled\":true,\"runs\":200},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"compilationTarget\":{\"src/JBFundAccessLimits.sol\":\"JBFundAccessLimits\"},\"evmVersion\":\"paris\",\"libraries\":{}},\"sources\":{\"node_modules/@openzeppelin/contracts/token/ERC721/IERC721.sol\":{\"keccak256\":\"0x5ef46daa3b58ef2702279d514780316efaa952915ee1aa3396f041ee2982b0b4\",\"urls\":[\"bzz-raw://2f8f2a76e23b02fc69e8cd24c3cb47da6c7af3a2d6c3a382f8ac25c6e094ade7\",\"dweb:/ipfs/QmPV4ZS4tPVv4mTCf9ejyZ1ai57EEibDRj7mN2ARDCLV5n\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/utils/introspection/ERC165.sol\":{\"keccak256\":\"0x9e8778b14317ba9e256c30a76fd6c32b960af621987f56069e1e819c77c6a133\",\"urls\":[\"bzz-raw://1777404f1dcd0fac188e55a288724ec3c67b45288e49cc64723e95e702b49ab8\",\"dweb:/ipfs/QmZFdC626GButBApwDUvvTnUzdinevC3B24d7yyh57XkiA\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/utils/introspection/IERC165.sol\":{\"keccak256\":\"0x4296879f55019b23e135000eb36896057e7101fb7fb859c5ef690cf14643757b\",\"urls\":[\"bzz-raw://87b3541437c8c443ccd36795e56a338ed12855eec17f8da624511b8d1a7e14df\",\"dweb:/ipfs/QmeJQCtZrQjtJLr6u7ZHWeH3pBnjtLWzvRrKViAi7UZqxL\"],\"license\":\"MIT\"},\"src/JBFundAccessLimits.sol\":{\"keccak256\":\"0xf9217afc7b06699040803d425eb288703bd1e5f8e99edd17c8aed2abd6bc6b46\",\"urls\":[\"bzz-raw://e835efc129cb277c436005a73facb8797e3594cf607cfdd823c15449503a61cd\",\"dweb:/ipfs/QmYLKkFk99pGZD89XHvMXhvEk8DecgL6jf53RLnk8HMbQk\"],\"license\":\"MIT\"},\"src/abstract/JBControlled.sol\":{\"keccak256\":\"0xdbaab889d033617969b7e0b453564e8eb76acb54e65b22289fff6fac90599d64\",\"urls\":[\"bzz-raw://860d67885d8095d49694a5c6c933ff0ad048a3db72412412b04e6b14c0fc8c59\",\"dweb:/ipfs/QmRHV7RdjwbQHtjpUxhNgnWzzES5X9duVTUPtCnJYrvjjc\"],\"license\":\"MIT\"},\"src/interfaces/IJBControlled.sol\":{\"keccak256\":\"0x79fb8de7b3f809f1c3c7189f578b7331ec4dfe3350151d5b50240ecb3a2a907b\",\"urls\":[\"bzz-raw://45c82240dd4f0e9aec00d0d86f6b44bdda231db098ebdac17e922771b3e6f342\",\"dweb:/ipfs/QmPUvT8HZeVenrZDpP14HsZofaXPJjih8UAd35rTg3tU7E\"],\"license\":\"MIT\"},\"src/interfaces/IJBDirectory.sol\":{\"keccak256\":\"0xd15957cc32974cde4f9f194b92574df2ad8a7aeec049d947136ce3381f9145f6\",\"urls\":[\"bzz-raw://7543e5cbde75ff777b16067016ff9ac5e995752842f03662137eb4ef3fc3c868\",\"dweb:/ipfs/QmPJZAmqNKRcj1JQ4Kc9hExbMtPPzrRB5hZ787utCfBmXg\"],\"license\":\"MIT\"},\"src/interfaces/IJBFundAccessLimits.sol\":{\"keccak256\":\"0x2a2ece23837bedde2fddb728476e558bc37c644f641d397a8e08e8a1a85ea390\",\"urls\":[\"bzz-raw://f44187b5a720cdbe5af325331a5e351fc8504853836fb54b997c597949246726\",\"dweb:/ipfs/QmSKM2aMpnof458iCeui2Wkf7S8FfBRGs9zF3QG5DJLf7C\"],\"license\":\"MIT\"},\"src/interfaces/IJBPayHook.sol\":{\"keccak256\":\"0xe24aa2ca52f7a5f24f24ccae101cfc94d0f76705b2d23222f87c7852f8be4267\",\"urls\":[\"bzz-raw://6888140e9a7d4156fd22635654d5d08e21819af8b0356b5415f37b75083b3eb9\",\"dweb:/ipfs/QmbuwBNhar7rEbRhTJPiyo5PVsfaM5nqLow9NAkHhyvjV5\"],\"license\":\"MIT\"},\"src/interfaces/IJBProjects.sol\":{\"keccak256\":\"0x85539f72c5871c53a919edc7db78931155464e9e00fccd30079b17e75820ddb9\",\"urls\":[\"bzz-raw://505466dbfbdeec77f948ce065676897a5b4a74b70bb234c1053b893c4849f3a1\",\"dweb:/ipfs/QmYBpZQub3Mv19xsRWqvzgiQSBAp4UNaKcqWQ2wwH62H95\"],\"license\":\"MIT\"},\"src/interfaces/IJBTokenUriResolver.sol\":{\"keccak256\":\"0xfa5cb00dcd6085d1ef912d071fe73c63f9478a2cd0f9d8bddaf659b6af2d0967\",\"urls\":[\"bzz-raw://282e4e7c342d65f77cde0e9a08fcaf20ef5cf379c7a48b639842c0ffd0b2afb8\",\"dweb:/ipfs/QmbnN3PEQeZaXdPLT75V1J79kMg7KqSMru37RHrL3z8Yf2\"],\"license\":\"MIT\"},\"src/interfaces/terminal/IJBTerminal.sol\":{\"keccak256\":\"0x36f23bc27e56fa86d100281a75f5a6ce73f39f32e6a1667ce69f902da1d005ee\",\"urls\":[\"bzz-raw://e8ffa2e264fa12444799cb5706ca577034f3f8be9ff7a2f072981de6a61d706d\",\"dweb:/ipfs/QmR6gQDymvk8JQ77J8VxpFD1Hnxga4w7LLiRvAT3m4LG6T\"],\"license\":\"MIT\"},\"src/structs/JBAccountingContext.sol\":{\"keccak256\":\"0x2907ff54d1e903cc7e0390dd88c3975884702dc2673642aacbe22b66560b56de\",\"urls\":[\"bzz-raw://a66a5381ce877b32f0e0058ceeaf843e9b6b2bc8af666c0c9f4a9d01091da004\",\"dweb:/ipfs/QmQynCetUr37dBkS1YwDS8evxuXGiqanW6THmeUxXtim8w\"],\"license\":\"MIT\"},\"src/structs/JBAfterPayRecordedContext.sol\":{\"keccak256\":\"0xd26c3a774ff38be79064085970454fe2603a23a638c76270d5b1b3829206c3e8\",\"urls\":[\"bzz-raw://3b55dbe3bf1ef625b7ca04efab3de35406e6041d5b3d82c7265469c500e2b702\",\"dweb:/ipfs/QmUdBDo4Lt3mcsFcsXT2mqq3czFwZjQJFPLM89YA2VtD7k\"],\"license\":\"MIT\"},\"src/structs/JBCurrencyAmount.sol\":{\"keccak256\":\"0x12fe4b43f4824994624d4fe0abbd88c3fe7867fd637edb65c7f456dab27e2d6e\",\"urls\":[\"bzz-raw://8003a3e8f932cf891e86b827e67c9d31b0d34c2712e18c2bc333cfe5284ba6d5\",\"dweb:/ipfs/QmSoA6RsDcSnNzk6CB7KZtALkHmeSDAi2g6fg3TDmLDkWX\"],\"license\":\"MIT\"},\"src/structs/JBFundAccessLimitGroup.sol\":{\"keccak256\":\"0x9fdaa8d017b72da25f583700a444a86849df053f7fb8eac874ec5139bcf651e5\",\"urls\":[\"bzz-raw://c8e44c49ee444a98424a0dbeb6897a76a0bf00d88a613f62ac2012afdac754ee\",\"dweb:/ipfs/QmdYkAiRi5bXM1YYNkc7BiqimHSFodMGn1cjHR5hcpm4xH\"],\"license\":\"MIT\"},\"src/structs/JBTokenAmount.sol\":{\"keccak256\":\"0x5cf0626b73a596c1e2da17c89ae039a7c0374310b060d48568d3b6c11fbe6180\",\"urls\":[\"bzz-raw://63348b50be95e2995409394a17caffc563a646f0972650a1230bf864fbd3219b\",\"dweb:/ipfs/QmZXZpS3SbFD5nWaCauf6AqbEhLURv5qsKHpThBvQgDU6u\"],\"license\":\"MIT\"}},\"version\":1}",
+			"args": [
+				"0x6A6988E79a621Fc7Ea74D67a31E9cefCcC98e949"
+			],
+			"bytecode": "0x60a060405234801561001057600080fd5b50604051610f82380380610f8283398101604081905261002f91610040565b6001600160a01b0316608052610070565b60006020828403121561005257600080fd5b81516001600160a01b038116811461006957600080fd5b9392505050565b608051610ef16100916000396000818160e1015261034c0152610ef16000f3fe608060405234801561001057600080fd5b506004361061007d5760003560e01c80638ca53ccd1161005b5780638ca53ccd1461011b578063971e46771461012e57806399195fde14610143578063c8668bfd1461016357600080fd5b806301ffc9a71461008257806329ed16cd146100bb57806388bc2ef3146100dc575b600080fd5b6100a6610090366004610ae5565b6001600160e01b0319166301ffc9a760e01b1490565b60405190151581526020015b60405180910390f35b6100ce6100c9366004610b2e565b610176565b6040519081526020016100b2565b6101037f000000000000000000000000000000000000000000000000000000000000000081565b6040516001600160a01b0390911681526020016100b2565b6100ce610129366004610b2e565b610258565b61014161013c366004610b80565b61032a565b005b610156610151366004610c03565b610831565b6040516100b29190610c4d565b610156610171366004610c03565b610990565b600085815260016020908152604080832087845282528083206001600160a01b03808816855290835281842090861684528252808320805482518185028101850190935280835284938301828280156101ee57602002820191906000526020600020905b8154815260200190600101908083116101da575b505050505090506000815190506000805b8281101561024a5783818151811061021957610219610c9c565b6020026020010151915060e082901c860361024257506001600160e01b0316925061024f915050565b6001016101ff565b505050505b95945050505050565b60008581526020818152604080832087845282528083206001600160a01b03808816855290835281842090861684528252808320805482518185028101850190935280835284938301828280156102ce57602002820191906000526020600020905b8154815260200190600101908083116102ba575b505050505090506000815190506000805b8281101561024a578381815181106102f9576102f9610c9c565b6020026020010151915060e082901c860361032257506001600160e01b0316925061024f915050565b6001016102df565b604051632eec7b5560e11b815260048101859052849033906001600160a01b037f00000000000000000000000000000000000000000000000000000000000000001690635dd8f6aa90602401602060405180830381865afa158015610393573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906103b79190610cb2565b6001600160a01b0316146103de57604051632adfdd0560e21b815260040160405180910390fd5b813660005b82811015610827578585828181106103fd576103fd610c9c565b905060200281019061040f9190610ccf565b915060006104206040840184610cef565b905090503660005b828110156105f35761043d6040860186610cef565b8281811061044d5761044d610c9c565b604002919091019250506001600160e01b038235111561048057604051634966bf4b60e01b815260040160405180910390fd5b63ffffffff602083013511156104a957604051633bbf530360e01b815260040160405180910390fd5b80158015906104ec57506104c06040860186610cef565b6104cb600184610d40565b8181106104da576104da610c9c565b90506040020160200135826020013511155b1561050a5760405163d33e7dc560e01b815260040160405180910390fd5b8135156105eb5760008b8152602081815260408083208d84529091528120908a8a8781811061053b5761053b610c9c565b905060200281019061054d9190610ccf565b61055b906020810190610d67565b6001600160a01b03166001600160a01b0316815260200190815260200160002060008a8a8781811061058f5761058f610c9c565b90506020028101906105a19190610ccf565b6105b2906040810190602001610d67565b6001600160a01b0316815260208082019290925260400160009081208054600181018255908252908290209184013560e01b8435179101555b600101610428565b5060006106036060860186610cef565b905090503660005b828110156107db576106206060880188610cef565b8281811061063057610630610c9c565b604002919091019250506001600160e01b038235111561066357604051630ee68a2560e41b815260040160405180910390fd5b63ffffffff6020830135111561068f5760405160016221181f60e11b0319815260040160405180910390fd5b80158015906106d257506106a66060880188610cef565b6106b1600184610d40565b8181106106c0576106c0610c9c565b90506040020160200135826020013511155b156106f0576040516377827f8160e01b815260040160405180910390fd5b8135156107d35760008d81526001602090815260408083208f84529091528120908c8c8981811061072357610723610c9c565b90506020028101906107359190610ccf565b610743906020810190610d67565b6001600160a01b03166001600160a01b0316815260200190815260200160002060008c8c8981811061077757610777610c9c565b90506020028101906107899190610ccf565b61079a906040810190602001610d67565b6001600160a01b0316815260208082019290925260400160009081208054600181018255908252908290209184013560e01b8435179101555b60010161060b565b508b8b7f47b77e92dfe8d78eade5a1159cd1f4a33a5215f683ed03d825851720ccf90450883360405161080f929190610e0e565b60405180910390a35050600190920191506103e39050565b5050505050505050565b60008481526020818152604080832086845282528083206001600160a01b038087168552908352818420908516845282528083208054825181850281018501909352808352606094938301828280156108a957602002820191906000526020600020905b815481526020019060010190808311610895575b50508351939450839250505067ffffffffffffffff8111156108cd576108cd610ea5565b60405190808252806020026020018201604052801561091257816020015b60408051808201909152600080825260208201528152602001906001900390816108eb5790505b5092506000805b828110156109845783818151811061093357610933610c9c565b602002602001015191506040518060400160405280836001600160e01b0316815260200160e084901c81525085828151811061097157610971610c9c565b6020908102919091010152600101610919565b50505050949350505050565b600084815260016020908152604080832086845282528083206001600160a01b03808716855290835281842090851684528252808320805482518185028101850190935280835260609493830182828015610a0a57602002820191906000526020600020905b8154815260200190600101908083116109f6575b50508351939450839250505067ffffffffffffffff811115610a2e57610a2e610ea5565b604051908082528060200260200182016040528015610a7357816020015b6040805180820190915260008082526020820152815260200190600190039081610a4c5790505b5092506000805b8281101561098457838181518110610a9457610a94610c9c565b602002602001015191506040518060400160405280836001600160e01b0316815260200160e084901c815250858281518110610ad257610ad2610c9c565b6020908102919091010152600101610a7a565b600060208284031215610af757600080fd5b81356001600160e01b031981168114610b0f57600080fd5b9392505050565b6001600160a01b0381168114610b2b57600080fd5b50565b600080600080600060a08688031215610b4657600080fd5b85359450602086013593506040860135610b5f81610b16565b92506060860135610b6f81610b16565b949793965091946080013592915050565b60008060008060608587031215610b9657600080fd5b8435935060208501359250604085013567ffffffffffffffff80821115610bbc57600080fd5b818701915087601f830112610bd057600080fd5b813581811115610bdf57600080fd5b8860208260051b8501011115610bf457600080fd5b95989497505060200194505050565b60008060008060808587031215610c1957600080fd5b84359350602085013592506040850135610c3281610b16565b91506060850135610c4281610b16565b939692955090935050565b602080825282518282018190526000919060409081850190868401855b82811015610c8f57815180518552860151868501529284019290850190600101610c6a565b5091979650505050505050565b634e487b7160e01b600052603260045260246000fd5b600060208284031215610cc457600080fd5b8151610b0f81610b16565b60008235607e19833603018112610ce557600080fd5b9190910192915050565b6000808335601e19843603018112610d0657600080fd5b83018035915067ffffffffffffffff821115610d2157600080fd5b6020019150600681901b3603821315610d3957600080fd5b9250929050565b81810381811115610d6157634e487b7160e01b600052601160045260246000fd5b92915050565b600060208284031215610d7957600080fd5b8135610b0f81610b16565b6000808335601e19843603018112610d9b57600080fd5b830160208101925035905067ffffffffffffffff811115610dbb57600080fd5b8060061b3603821315610d3957600080fd5b8183526000602080850194508260005b85811015610e035781358752828201358388015260409687019690910190600101610ddd565b509495945050505050565b6040815260008335610e1f81610b16565b6001600160a01b039081166040840152602085013590610e3e82610b16565b8082166060850152610e536040870187610d84565b9250608080860152610e6960c086018483610dcd565b925050610e796060870187610d84565b858403603f190160a0870152610e90848284610dcd565b94505050808516602085015250509392505050565b634e487b7160e01b600052604160045260246000fdfea2646970667358221220b41efe55f87e0e156c25f6dd631378e65a39e161acb0cd160bee6d403fb729ca64736f6c63430008170033",
+			"deployedBytecode": "0x608060405234801561001057600080fd5b506004361061007d5760003560e01c80638ca53ccd1161005b5780638ca53ccd1461011b578063971e46771461012e57806399195fde14610143578063c8668bfd1461016357600080fd5b806301ffc9a71461008257806329ed16cd146100bb57806388bc2ef3146100dc575b600080fd5b6100a6610090366004610ae5565b6001600160e01b0319166301ffc9a760e01b1490565b60405190151581526020015b60405180910390f35b6100ce6100c9366004610b2e565b610176565b6040519081526020016100b2565b6101037f0000000000000000000000006a6988e79a621fc7ea74d67a31e9cefccc98e94981565b6040516001600160a01b0390911681526020016100b2565b6100ce610129366004610b2e565b610258565b61014161013c366004610b80565b61032a565b005b610156610151366004610c03565b610831565b6040516100b29190610c4d565b610156610171366004610c03565b610990565b600085815260016020908152604080832087845282528083206001600160a01b03808816855290835281842090861684528252808320805482518185028101850190935280835284938301828280156101ee57602002820191906000526020600020905b8154815260200190600101908083116101da575b505050505090506000815190506000805b8281101561024a5783818151811061021957610219610c9c565b6020026020010151915060e082901c860361024257506001600160e01b0316925061024f915050565b6001016101ff565b505050505b95945050505050565b60008581526020818152604080832087845282528083206001600160a01b03808816855290835281842090861684528252808320805482518185028101850190935280835284938301828280156102ce57602002820191906000526020600020905b8154815260200190600101908083116102ba575b505050505090506000815190506000805b8281101561024a578381815181106102f9576102f9610c9c565b6020026020010151915060e082901c860361032257506001600160e01b0316925061024f915050565b6001016102df565b604051632eec7b5560e11b815260048101859052849033906001600160a01b037f0000000000000000000000006a6988e79a621fc7ea74d67a31e9cefccc98e9491690635dd8f6aa90602401602060405180830381865afa158015610393573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906103b79190610cb2565b6001600160a01b0316146103de57604051632adfdd0560e21b815260040160405180910390fd5b813660005b82811015610827578585828181106103fd576103fd610c9c565b905060200281019061040f9190610ccf565b915060006104206040840184610cef565b905090503660005b828110156105f35761043d6040860186610cef565b8281811061044d5761044d610c9c565b604002919091019250506001600160e01b038235111561048057604051634966bf4b60e01b815260040160405180910390fd5b63ffffffff602083013511156104a957604051633bbf530360e01b815260040160405180910390fd5b80158015906104ec57506104c06040860186610cef565b6104cb600184610d40565b8181106104da576104da610c9c565b90506040020160200135826020013511155b1561050a5760405163d33e7dc560e01b815260040160405180910390fd5b8135156105eb5760008b8152602081815260408083208d84529091528120908a8a8781811061053b5761053b610c9c565b905060200281019061054d9190610ccf565b61055b906020810190610d67565b6001600160a01b03166001600160a01b0316815260200190815260200160002060008a8a8781811061058f5761058f610c9c565b90506020028101906105a19190610ccf565b6105b2906040810190602001610d67565b6001600160a01b0316815260208082019290925260400160009081208054600181018255908252908290209184013560e01b8435179101555b600101610428565b5060006106036060860186610cef565b905090503660005b828110156107db576106206060880188610cef565b8281811061063057610630610c9c565b604002919091019250506001600160e01b038235111561066357604051630ee68a2560e41b815260040160405180910390fd5b63ffffffff6020830135111561068f5760405160016221181f60e11b0319815260040160405180910390fd5b80158015906106d257506106a66060880188610cef565b6106b1600184610d40565b8181106106c0576106c0610c9c565b90506040020160200135826020013511155b156106f0576040516377827f8160e01b815260040160405180910390fd5b8135156107d35760008d81526001602090815260408083208f84529091528120908c8c8981811061072357610723610c9c565b90506020028101906107359190610ccf565b610743906020810190610d67565b6001600160a01b03166001600160a01b0316815260200190815260200160002060008c8c8981811061077757610777610c9c565b90506020028101906107899190610ccf565b61079a906040810190602001610d67565b6001600160a01b0316815260208082019290925260400160009081208054600181018255908252908290209184013560e01b8435179101555b60010161060b565b508b8b7f47b77e92dfe8d78eade5a1159cd1f4a33a5215f683ed03d825851720ccf90450883360405161080f929190610e0e565b60405180910390a35050600190920191506103e39050565b5050505050505050565b60008481526020818152604080832086845282528083206001600160a01b038087168552908352818420908516845282528083208054825181850281018501909352808352606094938301828280156108a957602002820191906000526020600020905b815481526020019060010190808311610895575b50508351939450839250505067ffffffffffffffff8111156108cd576108cd610ea5565b60405190808252806020026020018201604052801561091257816020015b60408051808201909152600080825260208201528152602001906001900390816108eb5790505b5092506000805b828110156109845783818151811061093357610933610c9c565b602002602001015191506040518060400160405280836001600160e01b0316815260200160e084901c81525085828151811061097157610971610c9c565b6020908102919091010152600101610919565b50505050949350505050565b600084815260016020908152604080832086845282528083206001600160a01b03808716855290835281842090851684528252808320805482518185028101850190935280835260609493830182828015610a0a57602002820191906000526020600020905b8154815260200190600101908083116109f6575b50508351939450839250505067ffffffffffffffff811115610a2e57610a2e610ea5565b604051908082528060200260200182016040528015610a7357816020015b6040805180820190915260008082526020820152815260200190600190039081610a4c5790505b5092506000805b8281101561098457838181518110610a9457610a94610c9c565b602002602001015191506040518060400160405280836001600160e01b0316815260200160e084901c815250858281518110610ad257610ad2610c9c565b6020908102919091010152600101610a7a565b600060208284031215610af757600080fd5b81356001600160e01b031981168114610b0f57600080fd5b9392505050565b6001600160a01b0381168114610b2b57600080fd5b50565b600080600080600060a08688031215610b4657600080fd5b85359450602086013593506040860135610b5f81610b16565b92506060860135610b6f81610b16565b949793965091946080013592915050565b60008060008060608587031215610b9657600080fd5b8435935060208501359250604085013567ffffffffffffffff80821115610bbc57600080fd5b818701915087601f830112610bd057600080fd5b813581811115610bdf57600080fd5b8860208260051b8501011115610bf457600080fd5b95989497505060200194505050565b60008060008060808587031215610c1957600080fd5b84359350602085013592506040850135610c3281610b16565b91506060850135610c4281610b16565b939692955090935050565b602080825282518282018190526000919060409081850190868401855b82811015610c8f57815180518552860151868501529284019290850190600101610c6a565b5091979650505050505050565b634e487b7160e01b600052603260045260246000fd5b600060208284031215610cc457600080fd5b8151610b0f81610b16565b60008235607e19833603018112610ce557600080fd5b9190910192915050565b6000808335601e19843603018112610d0657600080fd5b83018035915067ffffffffffffffff821115610d2157600080fd5b6020019150600681901b3603821315610d3957600080fd5b9250929050565b81810381811115610d6157634e487b7160e01b600052601160045260246000fd5b92915050565b600060208284031215610d7957600080fd5b8135610b0f81610b16565b6000808335601e19843603018112610d9b57600080fd5b830160208101925035905067ffffffffffffffff811115610dbb57600080fd5b8060061b3603821315610d3957600080fd5b8183526000602080850194508260005b85811015610e035781358752828201358388015260409687019690910190600101610ddd565b509495945050505050565b6040815260008335610e1f81610b16565b6001600160a01b039081166040840152602085013590610e3e82610b16565b8082166060850152610e536040870187610d84565b9250608080860152610e6960c086018483610dcd565b925050610e796060870187610d84565b858403603f190160a0870152610e90848284610dcd565b94505050808516602085015250509392505050565b634e487b7160e01b600052604160045260246000fdfea2646970667358221220b41efe55f87e0e156c25f6dd631378e65a39e161acb0cd160bee6d403fb729ca64736f6c63430008170033",
+			"devdoc": {
+				"kind": "dev",
+				"methods": {
+					"constructor": {
+						"params": {
+							"directory": "A contract storing directories of terminals and controllers for each project."
+						}
+					},
+					"payoutLimitOf(uint256,uint256,address,address,uint256)": {
+						"details": "The fixed point amount returned will have the same number of decimals as the specified terminal.",
+						"params": {
+							"currency": "The currency the payout limit is denominated in.",
+							"projectId": "The ID of the project to get the payout limit of.",
+							"rulesetId": "The ID of the ruleset the payout limit applies to.",
+							"terminal": "The terminal the payout limit applies to.",
+							"token": "The token the payout limit applies to."
+						},
+						"returns": {
+							"payoutLimit": "The payout limit, as a fixed point number with the same number of decimals as the provided terminal."
+						}
+					},
+					"payoutLimitsOf(uint256,uint256,address,address)": {
+						"details": "The fixed point `amount`s of the returned structs will have the same number of decimals as the specified terminal.",
+						"params": {
+							"projectId": "The ID of the project to get the payout limits of.",
+							"rulesetId": "The ID of the ruleset the payout limits apply to.",
+							"terminal": "The terminal the payout limits apply to.",
+							"token": "The token the payout limits apply to."
+						},
+						"returns": {
+							"payoutLimits": "The payout limits."
+						}
+					},
+					"setFundAccessLimitsFor(uint256,uint256,(address,address,(uint256,uint256)[],(uint256,uint256)[])[])": {
+						"details": "Only a project's current controller can set its fund access limits.Payout limits and surplus allowances must be specified in strictly increasing order (by currency) to prevent duplicates.",
+						"params": {
+							"fundAccessLimitGroup": "An array containing payout limits and surplus allowances for each payment terminal. Amounts are fixed point numbers using the same number of decimals as the accompanying terminal.",
+							"projectId": "The ID of the project whose fund access limits are being set.",
+							"rulesetId": "The ID of the ruleset that the limits will apply within."
+						}
+					},
+					"supportsInterface(bytes4)": {
+						"details": "See {IERC165-supportsInterface}."
+					},
+					"surplusAllowanceOf(uint256,uint256,address,address,uint256)": {
+						"details": "The fixed point amount returned will have the same number of decimals as the specified terminal.",
+						"params": {
+							"currency": "The currency that the surplus allowance is denominated in.",
+							"projectId": "The ID of the project to get the surplus allowance of.",
+							"rulesetId": "The ID of the ruleset the surplus allowance applies to.",
+							"terminal": "The terminal the surplus allowance applies to.",
+							"token": "The token the surplus allowance applies to."
+						},
+						"returns": {
+							"surplusAllowance": "The surplus allowance, as a fixed point number with the same number of decimals as the provided terminal."
+						}
+					},
+					"surplusAllowancesOf(uint256,uint256,address,address)": {
+						"details": "The number of decimals in the returned fixed point amount is the same as that of the specified terminal.",
+						"params": {
+							"projectId": "The ID of the project to get the surplus allowances of.",
+							"rulesetId": "The ID of the ruleset the surplus allowances applies to.",
+							"terminal": "The terminal the surplus allowances applies to.",
+							"token": "The token the surplus allowances applies to."
+						},
+						"returns": {
+							"surplusAllowances": "The surplus allowances."
+						}
+					}
+				},
+				"version": 1
+			},
+			"userdoc": {
+				"kind": "user",
+				"methods": {
+					"DIRECTORY()": {
+						"notice": "The directory of terminals and controllers for projects."
+					},
+					"payoutLimitOf(uint256,uint256,address,address,uint256)": {
+						"notice": "A project's payout limit for a specific currency and a given ruleset, terminal, and token."
+					},
+					"payoutLimitsOf(uint256,uint256,address,address)": {
+						"notice": "A project's payout limits for a given ruleset, terminal, and token.The total value of `token`s that a project can pay out from the terminal during the ruleset is dictated by a list of payout limits. Each payout limit is in terms of its own amount and currency."
+					},
+					"setFundAccessLimitsFor(uint256,uint256,(address,address,(uint256,uint256)[],(uint256,uint256)[])[])": {
+						"notice": "Sets limits for the amount of funds a project can access from its terminals during a ruleset."
+					},
+					"surplusAllowanceOf(uint256,uint256,address,address,uint256)": {
+						"notice": "A project's surplus allowance for a specific currency and a given ruleset, terminal, and token."
+					},
+					"surplusAllowancesOf(uint256,uint256,address,address)": {
+						"notice": "A project's surplus allowances for a given ruleset, terminal, and token.The total value of `token`s that a project can pay out from its surplus in a terminal during the ruleset is dictated by a list of surplus allowances. Each surplus allowance is in terms of its own amount and currency."
+					}
+				},
+				"version": 1
+			},
+			"gitCommit": "62158c420c722b49faeb8974b2a980f19906fb7a",
+			"sourceName": "src/JBFundAccessLimits.sol",
+			"chainId": "80001",
+			"linkReferences": {},
+			"deployedLinkReferences": {}
+		},
+		{
+			"_format": "sphinx-sol-ct-artifact-1",
+			"merkleRoot": "0xd585c33ce71711649e9771716c78530681c13a65cc62ef35805d17b1536fb647",
+			"contractName": "JBFundAccessLimits",
+			"address": "0x2ef536bf2B361B69BF21EB02cE8b11911869fa6c",
+			"abi": [
+				{
+					"type": "constructor",
+					"inputs": [
+						{
+							"name": "directory",
+							"type": "address",
+							"internalType": "contract IJBDirectory"
+						}
+					],
+					"stateMutability": "nonpayable"
+				},
+				{
+					"type": "function",
+					"name": "DIRECTORY",
+					"inputs": [],
+					"outputs": [
+						{
+							"name": "",
+							"type": "address",
+							"internalType": "contract IJBDirectory"
+						}
+					],
+					"stateMutability": "view"
+				},
+				{
+					"type": "function",
+					"name": "payoutLimitOf",
+					"inputs": [
+						{
+							"name": "projectId",
+							"type": "uint256",
+							"internalType": "uint256"
+						},
+						{
+							"name": "rulesetId",
+							"type": "uint256",
+							"internalType": "uint256"
+						},
+						{
+							"name": "terminal",
+							"type": "address",
+							"internalType": "address"
+						},
+						{
+							"name": "token",
+							"type": "address",
+							"internalType": "address"
+						},
+						{
+							"name": "currency",
+							"type": "uint256",
+							"internalType": "uint256"
+						}
+					],
+					"outputs": [
+						{
+							"name": "payoutLimit",
+							"type": "uint256",
+							"internalType": "uint256"
+						}
+					],
+					"stateMutability": "view"
+				},
+				{
+					"type": "function",
+					"name": "payoutLimitsOf",
+					"inputs": [
+						{
+							"name": "projectId",
+							"type": "uint256",
+							"internalType": "uint256"
+						},
+						{
+							"name": "rulesetId",
+							"type": "uint256",
+							"internalType": "uint256"
+						},
+						{
+							"name": "terminal",
+							"type": "address",
+							"internalType": "address"
+						},
+						{
+							"name": "token",
+							"type": "address",
+							"internalType": "address"
+						}
+					],
+					"outputs": [
+						{
+							"name": "payoutLimits",
+							"type": "tuple[]",
+							"internalType": "struct JBCurrencyAmount[]",
+							"components": [
+								{
+									"name": "amount",
+									"type": "uint256",
+									"internalType": "uint256"
+								},
+								{
+									"name": "currency",
+									"type": "uint256",
+									"internalType": "uint256"
+								}
+							]
+						}
+					],
+					"stateMutability": "view"
+				},
+				{
+					"type": "function",
+					"name": "setFundAccessLimitsFor",
+					"inputs": [
+						{
+							"name": "projectId",
+							"type": "uint256",
+							"internalType": "uint256"
+						},
+						{
+							"name": "rulesetId",
+							"type": "uint256",
+							"internalType": "uint256"
+						},
+						{
+							"name": "fundAccessLimitGroup",
+							"type": "tuple[]",
+							"internalType": "struct JBFundAccessLimitGroup[]",
+							"components": [
+								{
+									"name": "terminal",
+									"type": "address",
+									"internalType": "address"
+								},
+								{
+									"name": "token",
+									"type": "address",
+									"internalType": "address"
+								},
+								{
+									"name": "payoutLimits",
+									"type": "tuple[]",
+									"internalType": "struct JBCurrencyAmount[]",
+									"components": [
+										{
+											"name": "amount",
+											"type": "uint256",
+											"internalType": "uint256"
+										},
+										{
+											"name": "currency",
+											"type": "uint256",
+											"internalType": "uint256"
+										}
+									]
+								},
+								{
+									"name": "surplusAllowances",
+									"type": "tuple[]",
+									"internalType": "struct JBCurrencyAmount[]",
+									"components": [
+										{
+											"name": "amount",
+											"type": "uint256",
+											"internalType": "uint256"
+										},
+										{
+											"name": "currency",
+											"type": "uint256",
+											"internalType": "uint256"
+										}
+									]
+								}
+							]
+						}
+					],
+					"outputs": [],
+					"stateMutability": "nonpayable"
+				},
+				{
+					"type": "function",
+					"name": "supportsInterface",
+					"inputs": [
+						{
+							"name": "interfaceId",
+							"type": "bytes4",
+							"internalType": "bytes4"
+						}
+					],
+					"outputs": [
+						{
+							"name": "",
+							"type": "bool",
+							"internalType": "bool"
+						}
+					],
+					"stateMutability": "view"
+				},
+				{
+					"type": "function",
+					"name": "surplusAllowanceOf",
+					"inputs": [
+						{
+							"name": "projectId",
+							"type": "uint256",
+							"internalType": "uint256"
+						},
+						{
+							"name": "rulesetId",
+							"type": "uint256",
+							"internalType": "uint256"
+						},
+						{
+							"name": "terminal",
+							"type": "address",
+							"internalType": "address"
+						},
+						{
+							"name": "token",
+							"type": "address",
+							"internalType": "address"
+						},
+						{
+							"name": "currency",
+							"type": "uint256",
+							"internalType": "uint256"
+						}
+					],
+					"outputs": [
+						{
+							"name": "surplusAllowance",
+							"type": "uint256",
+							"internalType": "uint256"
+						}
+					],
+					"stateMutability": "view"
+				},
+				{
+					"type": "function",
+					"name": "surplusAllowancesOf",
+					"inputs": [
+						{
+							"name": "projectId",
+							"type": "uint256",
+							"internalType": "uint256"
+						},
+						{
+							"name": "rulesetId",
+							"type": "uint256",
+							"internalType": "uint256"
+						},
+						{
+							"name": "terminal",
+							"type": "address",
+							"internalType": "address"
+						},
+						{
+							"name": "token",
+							"type": "address",
+							"internalType": "address"
+						}
+					],
+					"outputs": [
+						{
+							"name": "surplusAllowances",
+							"type": "tuple[]",
+							"internalType": "struct JBCurrencyAmount[]",
+							"components": [
+								{
+									"name": "amount",
+									"type": "uint256",
+									"internalType": "uint256"
+								},
+								{
+									"name": "currency",
+									"type": "uint256",
+									"internalType": "uint256"
+								}
+							]
+						}
+					],
+					"stateMutability": "view"
+				},
+				{
+					"type": "event",
+					"name": "SetFundAccessLimits",
+					"inputs": [
+						{
+							"name": "rulesetId",
+							"type": "uint256",
+							"indexed": true,
+							"internalType": "uint256"
+						},
+						{
+							"name": "projectId",
+							"type": "uint256",
+							"indexed": true,
+							"internalType": "uint256"
+						},
+						{
+							"name": "limits",
+							"type": "tuple",
+							"indexed": false,
+							"internalType": "struct JBFundAccessLimitGroup",
+							"components": [
+								{
+									"name": "terminal",
+									"type": "address",
+									"internalType": "address"
+								},
+								{
+									"name": "token",
+									"type": "address",
+									"internalType": "address"
+								},
+								{
+									"name": "payoutLimits",
+									"type": "tuple[]",
+									"internalType": "struct JBCurrencyAmount[]",
+									"components": [
+										{
+											"name": "amount",
+											"type": "uint256",
+											"internalType": "uint256"
+										},
+										{
+											"name": "currency",
+											"type": "uint256",
+											"internalType": "uint256"
+										}
+									]
+								},
+								{
+									"name": "surplusAllowances",
+									"type": "tuple[]",
+									"internalType": "struct JBCurrencyAmount[]",
+									"components": [
+										{
+											"name": "amount",
+											"type": "uint256",
+											"internalType": "uint256"
+										},
+										{
+											"name": "currency",
+											"type": "uint256",
+											"internalType": "uint256"
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "caller",
+							"type": "address",
+							"indexed": false,
+							"internalType": "address"
+						}
+					],
+					"anonymous": false
+				},
+				{
+					"type": "error",
+					"name": "CONTROLLER_UNAUTHORIZED",
+					"inputs": []
+				},
+				{
+					"type": "error",
+					"name": "INVALID_PAYOUT_LIMIT",
+					"inputs": []
+				},
+				{
+					"type": "error",
+					"name": "INVALID_PAYOUT_LIMIT_CURRENCY",
+					"inputs": []
+				},
+				{
+					"type": "error",
+					"name": "INVALID_PAYOUT_LIMIT_CURRENCY_ORDERING",
+					"inputs": []
+				},
+				{
+					"type": "error",
+					"name": "INVALID_SURPLUS_ALLOWANCE",
+					"inputs": []
+				},
+				{
+					"type": "error",
+					"name": "INVALID_SURPLUS_ALLOWANCE_CURRENCY",
+					"inputs": []
+				},
+				{
+					"type": "error",
+					"name": "INVALID_SURPLUS_ALLOWANCE_CURRENCY_ORDERING",
+					"inputs": []
+				}
+			],
+			"solcInputHash": "9c8ada04ecb46a70149f6960114cde6f",
+			"receipt": {
+				"blockHash": "0x7d681871d45df6cbf1162b73360eaadcbca62cf0ac4eb180431e68eb80e63be8",
+				"blockNumber": 47798963,
+				"contractAddress": null,
+				"cumulativeGasUsed": "11055465",
+				"from": "0xC034550B542b83BA1De312b21d1C94a9a52B1595",
+				"gasPrice": "30000000015",
+				"gasUsed": "11055465",
+				"hash": "0xd71396168ff7ddf00bcb680b142d1f6a6262b8b93e89705a5dbac91475129569",
+				"index": 0,
+				"logs": [
+					{
+						"address": "0xB5E96127D417b1B3ef8438496a38A143167209c7",
+						"blockHash": "0x7d681871d45df6cbf1162b73360eaadcbca62cf0ac4eb180431e68eb80e63be8",
+						"blockNumber": 47798963,
+						"data": "0x0000000000000000000000000000000000000000000000000000000000000000",
+						"index": 0,
+						"topics": [
+							"0x572f161235911da04685a68c06adf558fc7e4a36909dca394650e0adc19cc93d",
+							"0x000000000000000000000000c034550b542b83ba1de312b21d1c94a9a52b1595",
+							"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c",
+							"0x4b42c2169859b8edfad120aae7e963ad6508bb512694defc6c842669effcbb93"
+						],
+						"transactionHash": "0xd71396168ff7ddf00bcb680b142d1f6a6262b8b93e89705a5dbac91475129569",
+						"transactionIndex": 0
+					},
+					{
+						"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+						"blockHash": "0x7d681871d45df6cbf1162b73360eaadcbca62cf0ac4eb180431e68eb80e63be8",
+						"blockNumber": 47798963,
+						"data": "0x000000000000000000000000953ab7f10efe861b21cfb9630768818a04742587",
+						"index": 1,
+						"topics": [
+							"0x4db17dd5e4732fb6da34a148104a592783ca119a1e7bb8829eba6cbadef0b511"
+						],
+						"transactionHash": "0xd71396168ff7ddf00bcb680b142d1f6a6262b8b93e89705a5dbac91475129569",
+						"transactionIndex": 0
+					},
+					{
+						"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+						"blockHash": "0x7d681871d45df6cbf1162b73360eaadcbca62cf0ac4eb180431e68eb80e63be8",
+						"blockNumber": 47798963,
+						"data": "0x",
+						"index": 2,
+						"topics": [
+							"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
+							"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
+						],
+						"transactionHash": "0xd71396168ff7ddf00bcb680b142d1f6a6262b8b93e89705a5dbac91475129569",
+						"transactionIndex": 0
+					},
+					{
+						"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
+						"blockHash": "0x7d681871d45df6cbf1162b73360eaadcbca62cf0ac4eb180431e68eb80e63be8",
+						"blockNumber": 47798963,
+						"data": "0x0000000000000000000000000000000000000000000000000000000000000001",
+						"index": 3,
+						"topics": [
+							"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
+							"0xd585c33ce71711649e9771716c78530681c13a65cc62ef35805d17b1536fb647"
+						],
+						"transactionHash": "0xd71396168ff7ddf00bcb680b142d1f6a6262b8b93e89705a5dbac91475129569",
+						"transactionIndex": 0
+					},
+					{
+						"address": "0xE9a6F248F9f8854E9f161c84c34F2589Ec362BE9",
+						"blockHash": "0x7d681871d45df6cbf1162b73360eaadcbca62cf0ac4eb180431e68eb80e63be8",
+						"blockNumber": 47798963,
+						"data": "0x",
+						"index": 4,
+						"topics": [
+							"0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+							"0x0000000000000000000000000000000000000000000000000000000000000000",
+							"0x0000000000000000000000001081b5aa9d9d4862a3da4d469433fb36ed80fa2a"
+						],
+						"transactionHash": "0xd71396168ff7ddf00bcb680b142d1f6a6262b8b93e89705a5dbac91475129569",
+						"transactionIndex": 0
+					},
+					{
+						"address": "0xE9a6F248F9f8854E9f161c84c34F2589Ec362BE9",
+						"blockHash": "0x7d681871d45df6cbf1162b73360eaadcbca62cf0ac4eb180431e68eb80e63be8",
+						"blockNumber": 47798963,
+						"data": "0x",
+						"index": 5,
+						"topics": [
+							"0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+							"0x0000000000000000000000000000000000000000000000000000000000000000",
+							"0x0000000000000000000000001081b5aa9d9d4862a3da4d469433fb36ed80fa2a",
+							"0x0000000000000000000000000000000000000000000000000000000000000001"
+						],
+						"transactionHash": "0xd71396168ff7ddf00bcb680b142d1f6a6262b8b93e89705a5dbac91475129569",
+						"transactionIndex": 0
+					},
+					{
+						"address": "0xE9a6F248F9f8854E9f161c84c34F2589Ec362BE9",
+						"blockHash": "0x7d681871d45df6cbf1162b73360eaadcbca62cf0ac4eb180431e68eb80e63be8",
+						"blockNumber": 47798963,
+						"data": "0x0000000000000000000000001081b5aa9d9d4862a3da4d469433fb36ed80fa2a",
+						"index": 6,
+						"topics": [
+							"0x365b3162cd780731fc55a794b59494d472bc2af701007f581843a70673814698",
+							"0x0000000000000000000000000000000000000000000000000000000000000001",
+							"0x0000000000000000000000001081b5aa9d9d4862a3da4d469433fb36ed80fa2a"
+						],
+						"transactionHash": "0xd71396168ff7ddf00bcb680b142d1f6a6262b8b93e89705a5dbac91475129569",
+						"transactionIndex": 0
+					},
+					{
+						"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+						"blockHash": "0x7d681871d45df6cbf1162b73360eaadcbca62cf0ac4eb180431e68eb80e63be8",
+						"blockNumber": 47798963,
+						"data": "0x000000000000000000000000e9a6f248f9f8854e9f161c84c34f2589ec362be9",
+						"index": 7,
+						"topics": [
+							"0x4db17dd5e4732fb6da34a148104a592783ca119a1e7bb8829eba6cbadef0b511"
+						],
+						"transactionHash": "0xd71396168ff7ddf00bcb680b142d1f6a6262b8b93e89705a5dbac91475129569",
+						"transactionIndex": 0
+					},
+					{
+						"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+						"blockHash": "0x7d681871d45df6cbf1162b73360eaadcbca62cf0ac4eb180431e68eb80e63be8",
+						"blockNumber": 47798963,
+						"data": "0x",
+						"index": 8,
+						"topics": [
+							"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
+							"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
+						],
+						"transactionHash": "0xd71396168ff7ddf00bcb680b142d1f6a6262b8b93e89705a5dbac91475129569",
+						"transactionIndex": 0
+					},
+					{
+						"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
+						"blockHash": "0x7d681871d45df6cbf1162b73360eaadcbca62cf0ac4eb180431e68eb80e63be8",
+						"blockNumber": 47798963,
+						"data": "0x0000000000000000000000000000000000000000000000000000000000000002",
+						"index": 9,
+						"topics": [
+							"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
+							"0xd585c33ce71711649e9771716c78530681c13a65cc62ef35805d17b1536fb647"
+						],
+						"transactionHash": "0xd71396168ff7ddf00bcb680b142d1f6a6262b8b93e89705a5dbac91475129569",
+						"transactionIndex": 0
+					},
+					{
+						"address": "0x71Ff91C8A27b436f7025C053c01A3F6AAE3Fc62E",
+						"blockHash": "0x7d681871d45df6cbf1162b73360eaadcbca62cf0ac4eb180431e68eb80e63be8",
+						"blockNumber": 47798963,
+						"data": "0x",
+						"index": 10,
+						"topics": [
+							"0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+							"0x0000000000000000000000000000000000000000000000000000000000000000",
+							"0x0000000000000000000000001081b5aa9d9d4862a3da4d469433fb36ed80fa2a"
+						],
+						"transactionHash": "0xd71396168ff7ddf00bcb680b142d1f6a6262b8b93e89705a5dbac91475129569",
+						"transactionIndex": 0
+					},
+					{
+						"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+						"blockHash": "0x7d681871d45df6cbf1162b73360eaadcbca62cf0ac4eb180431e68eb80e63be8",
+						"blockNumber": 47798963,
+						"data": "0x00000000000000000000000071ff91c8a27b436f7025c053c01a3f6aae3fc62e",
+						"index": 11,
+						"topics": [
+							"0x4db17dd5e4732fb6da34a148104a592783ca119a1e7bb8829eba6cbadef0b511"
+						],
+						"transactionHash": "0xd71396168ff7ddf00bcb680b142d1f6a6262b8b93e89705a5dbac91475129569",
+						"transactionIndex": 0
+					},
+					{
+						"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+						"blockHash": "0x7d681871d45df6cbf1162b73360eaadcbca62cf0ac4eb180431e68eb80e63be8",
+						"blockNumber": 47798963,
+						"data": "0x",
+						"index": 12,
+						"topics": [
+							"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
+							"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
+						],
+						"transactionHash": "0xd71396168ff7ddf00bcb680b142d1f6a6262b8b93e89705a5dbac91475129569",
+						"transactionIndex": 0
+					},
+					{
+						"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
+						"blockHash": "0x7d681871d45df6cbf1162b73360eaadcbca62cf0ac4eb180431e68eb80e63be8",
+						"blockNumber": 47798963,
+						"data": "0x0000000000000000000000000000000000000000000000000000000000000003",
+						"index": 13,
+						"topics": [
+							"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
+							"0xd585c33ce71711649e9771716c78530681c13a65cc62ef35805d17b1536fb647"
+						],
+						"transactionHash": "0xd71396168ff7ddf00bcb680b142d1f6a6262b8b93e89705a5dbac91475129569",
+						"transactionIndex": 0
+					},
+					{
+						"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+						"blockHash": "0x7d681871d45df6cbf1162b73360eaadcbca62cf0ac4eb180431e68eb80e63be8",
+						"blockNumber": 47798963,
+						"data": "0x000000000000000000000000c91586b6fe425d75c6b0f53daf9831811725bd2c",
+						"index": 14,
+						"topics": [
+							"0x4db17dd5e4732fb6da34a148104a592783ca119a1e7bb8829eba6cbadef0b511"
+						],
+						"transactionHash": "0xd71396168ff7ddf00bcb680b142d1f6a6262b8b93e89705a5dbac91475129569",
+						"transactionIndex": 0
+					},
+					{
+						"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+						"blockHash": "0x7d681871d45df6cbf1162b73360eaadcbca62cf0ac4eb180431e68eb80e63be8",
+						"blockNumber": 47798963,
+						"data": "0x",
+						"index": 15,
+						"topics": [
+							"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
+							"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
+						],
+						"transactionHash": "0xd71396168ff7ddf00bcb680b142d1f6a6262b8b93e89705a5dbac91475129569",
+						"transactionIndex": 0
+					},
+					{
+						"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
+						"blockHash": "0x7d681871d45df6cbf1162b73360eaadcbca62cf0ac4eb180431e68eb80e63be8",
+						"blockNumber": 47798963,
+						"data": "0x0000000000000000000000000000000000000000000000000000000000000004",
+						"index": 16,
+						"topics": [
+							"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
+							"0xd585c33ce71711649e9771716c78530681c13a65cc62ef35805d17b1536fb647"
+						],
+						"transactionHash": "0xd71396168ff7ddf00bcb680b142d1f6a6262b8b93e89705a5dbac91475129569",
+						"transactionIndex": 0
+					},
+					{
+						"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+						"blockHash": "0x7d681871d45df6cbf1162b73360eaadcbca62cf0ac4eb180431e68eb80e63be8",
+						"blockNumber": 47798963,
+						"data": "0x00000000000000000000000076c87701d0ad2c5c3b40c36617ceba566436a69f",
+						"index": 17,
+						"topics": [
+							"0x4db17dd5e4732fb6da34a148104a592783ca119a1e7bb8829eba6cbadef0b511"
+						],
+						"transactionHash": "0xd71396168ff7ddf00bcb680b142d1f6a6262b8b93e89705a5dbac91475129569",
+						"transactionIndex": 0
+					},
+					{
+						"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+						"blockHash": "0x7d681871d45df6cbf1162b73360eaadcbca62cf0ac4eb180431e68eb80e63be8",
+						"blockNumber": 47798963,
+						"data": "0x",
+						"index": 18,
+						"topics": [
+							"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
+							"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
+						],
+						"transactionHash": "0xd71396168ff7ddf00bcb680b142d1f6a6262b8b93e89705a5dbac91475129569",
+						"transactionIndex": 0
+					},
+					{
+						"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
+						"blockHash": "0x7d681871d45df6cbf1162b73360eaadcbca62cf0ac4eb180431e68eb80e63be8",
+						"blockNumber": 47798963,
+						"data": "0x0000000000000000000000000000000000000000000000000000000000000005",
+						"index": 19,
+						"topics": [
+							"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
+							"0xd585c33ce71711649e9771716c78530681c13a65cc62ef35805d17b1536fb647"
+						],
+						"transactionHash": "0xd71396168ff7ddf00bcb680b142d1f6a6262b8b93e89705a5dbac91475129569",
+						"transactionIndex": 0
+					},
+					{
+						"address": "0xF11c4f44Aa6775d580F751C0956a22105E46D66C",
+						"blockHash": "0x7d681871d45df6cbf1162b73360eaadcbca62cf0ac4eb180431e68eb80e63be8",
+						"blockNumber": 47798963,
+						"data": "0x",
+						"index": 20,
+						"topics": [
+							"0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+							"0x0000000000000000000000000000000000000000000000000000000000000000",
+							"0x000000000000000000000000f11c4f44aa6775d580f751c0956a22105e46d66c"
+						],
+						"transactionHash": "0xd71396168ff7ddf00bcb680b142d1f6a6262b8b93e89705a5dbac91475129569",
+						"transactionIndex": 0
+					},
+					{
+						"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+						"blockHash": "0x7d681871d45df6cbf1162b73360eaadcbca62cf0ac4eb180431e68eb80e63be8",
+						"blockNumber": 47798963,
+						"data": "0x000000000000000000000000f11c4f44aa6775d580f751c0956a22105e46d66c",
+						"index": 21,
+						"topics": [
+							"0x4db17dd5e4732fb6da34a148104a592783ca119a1e7bb8829eba6cbadef0b511"
+						],
+						"transactionHash": "0xd71396168ff7ddf00bcb680b142d1f6a6262b8b93e89705a5dbac91475129569",
+						"transactionIndex": 0
+					},
+					{
+						"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+						"blockHash": "0x7d681871d45df6cbf1162b73360eaadcbca62cf0ac4eb180431e68eb80e63be8",
+						"blockNumber": 47798963,
+						"data": "0x",
+						"index": 22,
+						"topics": [
+							"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
+							"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
+						],
+						"transactionHash": "0xd71396168ff7ddf00bcb680b142d1f6a6262b8b93e89705a5dbac91475129569",
+						"transactionIndex": 0
+					},
+					{
+						"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
+						"blockHash": "0x7d681871d45df6cbf1162b73360eaadcbca62cf0ac4eb180431e68eb80e63be8",
+						"blockNumber": 47798963,
+						"data": "0x0000000000000000000000000000000000000000000000000000000000000006",
+						"index": 23,
+						"topics": [
+							"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
+							"0xd585c33ce71711649e9771716c78530681c13a65cc62ef35805d17b1536fb647"
+						],
+						"transactionHash": "0xd71396168ff7ddf00bcb680b142d1f6a6262b8b93e89705a5dbac91475129569",
+						"transactionIndex": 0
+					},
+					{
+						"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+						"blockHash": "0x7d681871d45df6cbf1162b73360eaadcbca62cf0ac4eb180431e68eb80e63be8",
+						"blockNumber": 47798963,
+						"data": "0x000000000000000000000000f25dce432b7ed1ccd5f0a2481f980862e359a092",
+						"index": 24,
+						"topics": [
+							"0x4db17dd5e4732fb6da34a148104a592783ca119a1e7bb8829eba6cbadef0b511"
+						],
+						"transactionHash": "0xd71396168ff7ddf00bcb680b142d1f6a6262b8b93e89705a5dbac91475129569",
+						"transactionIndex": 0
+					},
+					{
+						"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+						"blockHash": "0x7d681871d45df6cbf1162b73360eaadcbca62cf0ac4eb180431e68eb80e63be8",
+						"blockNumber": 47798963,
+						"data": "0x",
+						"index": 25,
+						"topics": [
+							"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
+							"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
+						],
+						"transactionHash": "0xd71396168ff7ddf00bcb680b142d1f6a6262b8b93e89705a5dbac91475129569",
+						"transactionIndex": 0
+					},
+					{
+						"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
+						"blockHash": "0x7d681871d45df6cbf1162b73360eaadcbca62cf0ac4eb180431e68eb80e63be8",
+						"blockNumber": 47798963,
+						"data": "0x0000000000000000000000000000000000000000000000000000000000000007",
+						"index": 26,
+						"topics": [
+							"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
+							"0xd585c33ce71711649e9771716c78530681c13a65cc62ef35805d17b1536fb647"
+						],
+						"transactionHash": "0xd71396168ff7ddf00bcb680b142d1f6a6262b8b93e89705a5dbac91475129569",
+						"transactionIndex": 0
+					},
+					{
+						"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+						"blockHash": "0x7d681871d45df6cbf1162b73360eaadcbca62cf0ac4eb180431e68eb80e63be8",
+						"blockNumber": 47798963,
+						"data": "0x0000000000000000000000002ef536bf2b361b69bf21eb02ce8b11911869fa6c",
+						"index": 27,
+						"topics": [
+							"0x4db17dd5e4732fb6da34a148104a592783ca119a1e7bb8829eba6cbadef0b511"
+						],
+						"transactionHash": "0xd71396168ff7ddf00bcb680b142d1f6a6262b8b93e89705a5dbac91475129569",
+						"transactionIndex": 0
+					},
+					{
+						"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+						"blockHash": "0x7d681871d45df6cbf1162b73360eaadcbca62cf0ac4eb180431e68eb80e63be8",
+						"blockNumber": 47798963,
+						"data": "0x",
+						"index": 28,
+						"topics": [
+							"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
+							"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
+						],
+						"transactionHash": "0xd71396168ff7ddf00bcb680b142d1f6a6262b8b93e89705a5dbac91475129569",
+						"transactionIndex": 0
+					},
+					{
+						"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
+						"blockHash": "0x7d681871d45df6cbf1162b73360eaadcbca62cf0ac4eb180431e68eb80e63be8",
+						"blockNumber": 47798963,
+						"data": "0x0000000000000000000000000000000000000000000000000000000000000008",
+						"index": 29,
+						"topics": [
+							"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
+							"0xd585c33ce71711649e9771716c78530681c13a65cc62ef35805d17b1536fb647"
+						],
+						"transactionHash": "0xd71396168ff7ddf00bcb680b142d1f6a6262b8b93e89705a5dbac91475129569",
+						"transactionIndex": 0
+					},
+					{
+						"address": "0x0000000000000000000000000000000000001010",
+						"blockHash": "0x7d681871d45df6cbf1162b73360eaadcbca62cf0ac4eb180431e68eb80e63be8",
+						"blockNumber": 47798963,
+						"data": "0x000000000000000000000000000000000000000000000000049a4e9af48d8c00000000000000000000000000000000000000000000000000129ca8dde96b899800000000000000000000000000000000000000000000247290dce2187cee24020000000000000000000000000000000000000000000000000e025a42f4ddfd98000000000000000000000000000000000000000000002472957730b3717bb002",
+						"index": 30,
+						"topics": [
+							"0x4dfe1bbbcf077ddc3e01291eea2d5c70c2b422b415d95645b9adcfd678cb1d63",
+							"0x0000000000000000000000000000000000000000000000000000000000001010",
+							"0x000000000000000000000000c034550b542b83ba1de312b21d1c94a9a52b1595",
+							"0x000000000000000000000000c26880a0af2ea0c7e8130e6ec47af756465452e8"
+						],
+						"transactionHash": "0xd71396168ff7ddf00bcb680b142d1f6a6262b8b93e89705a5dbac91475129569",
+						"transactionIndex": 0
+					}
+				],
+				"logsBloom": "0x0080000008001002000800000008020000000004000800000080000000400000006000800000000100000000004002000000800000000000000000000004000000000010000020042000000a020000800001000000040000000300000000000000000000020000000000000000000800000000101020000090020010000200400001000800000000000100000000000000000000000000000000804000000000204000000010000020000000000000020201000000000000000000000006004000000002000000200001000008000000010100020000000020100000000060000000000000000004000000000040080200000000804000000000000000100000",
+				"status": 1,
+				"to": "0xB5E96127D417b1B3ef8438496a38A143167209c7"
+			},
+			"metadata": "{\"compiler\":{\"version\":\"0.8.23+commit.f704f362\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"contract IJBDirectory\",\"name\":\"directory\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"CONTROLLER_UNAUTHORIZED\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"INVALID_PAYOUT_LIMIT\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"INVALID_PAYOUT_LIMIT_CURRENCY\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"INVALID_PAYOUT_LIMIT_CURRENCY_ORDERING\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"INVALID_SURPLUS_ALLOWANCE\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"INVALID_SURPLUS_ALLOWANCE_CURRENCY\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"INVALID_SURPLUS_ALLOWANCE_CURRENCY_ORDERING\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"rulesetId\",\"type\":\"uint256\",\"indexed\":true},{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\",\"indexed\":true},{\"internalType\":\"struct JBFundAccessLimitGroup\",\"name\":\"limits\",\"type\":\"tuple\",\"components\":[{\"internalType\":\"address\",\"name\":\"terminal\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"internalType\":\"struct JBCurrencyAmount[]\",\"name\":\"payoutLimits\",\"type\":\"tuple[]\",\"components\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"currency\",\"type\":\"uint256\"}]},{\"internalType\":\"struct JBCurrencyAmount[]\",\"name\":\"surplusAllowances\",\"type\":\"tuple[]\",\"components\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"currency\",\"type\":\"uint256\"}]}],\"indexed\":false},{\"internalType\":\"address\",\"name\":\"caller\",\"type\":\"address\",\"indexed\":false}],\"type\":\"event\",\"name\":\"SetFundAccessLimits\",\"anonymous\":false},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"DIRECTORY\",\"outputs\":[{\"internalType\":\"contract IJBDirectory\",\"name\":\"\",\"type\":\"address\"}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"rulesetId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"terminal\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"currency\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"payoutLimitOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"payoutLimit\",\"type\":\"uint256\"}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"rulesetId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"terminal\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"payoutLimitsOf\",\"outputs\":[{\"internalType\":\"struct JBCurrencyAmount[]\",\"name\":\"payoutLimits\",\"type\":\"tuple[]\",\"components\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"currency\",\"type\":\"uint256\"}]}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"rulesetId\",\"type\":\"uint256\"},{\"internalType\":\"struct JBFundAccessLimitGroup[]\",\"name\":\"fundAccessLimitGroup\",\"type\":\"tuple[]\",\"components\":[{\"internalType\":\"address\",\"name\":\"terminal\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"internalType\":\"struct JBCurrencyAmount[]\",\"name\":\"payoutLimits\",\"type\":\"tuple[]\",\"components\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"currency\",\"type\":\"uint256\"}]},{\"internalType\":\"struct JBCurrencyAmount[]\",\"name\":\"surplusAllowances\",\"type\":\"tuple[]\",\"components\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"currency\",\"type\":\"uint256\"}]}]}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"setFundAccessLimitsFor\"},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceId\",\"type\":\"bytes4\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"rulesetId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"terminal\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"currency\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"surplusAllowanceOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"surplusAllowance\",\"type\":\"uint256\"}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"rulesetId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"terminal\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"surplusAllowancesOf\",\"outputs\":[{\"internalType\":\"struct JBCurrencyAmount[]\",\"name\":\"surplusAllowances\",\"type\":\"tuple[]\",\"components\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"currency\",\"type\":\"uint256\"}]}]}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"constructor\":{\"params\":{\"directory\":\"A contract storing the terminals and the controller used by each project.\"}},\"payoutLimitOf(uint256,uint256,address,address,uint256)\":{\"details\":\"The fixed point return amount will use the same number of decimals as the `terminal`.\",\"params\":{\"currency\":\"The currency the payout limit is denominated in.\",\"projectId\":\"The project's ID.\",\"rulesetId\":\"The ruleset's ID.\",\"terminal\":\"The terminal the payout limit applies to.\",\"token\":\"The token the payout limit applies to.\"},\"returns\":{\"payoutLimit\":\"The payout limit, as a fixed point number with the same number of decimals as the provided terminal.\"}},\"payoutLimitsOf(uint256,uint256,address,address)\":{\"details\":\"The fixed point `amount`s returned will use the same number of decimals as the `terminal`.\",\"params\":{\"projectId\":\"The project's ID.\",\"rulesetId\":\"The ruleset's ID.\",\"terminal\":\"The terminal the payout limits apply to.\",\"token\":\"The token the payout limits apply to.\"},\"returns\":{\"payoutLimits\":\"The payout limits.\"}},\"setFundAccessLimitsFor(uint256,uint256,(address,address,(uint256,uint256)[],(uint256,uint256)[])[])\":{\"details\":\"Only a project's controller can set its fund access limits.Payout limits and surplus allowances must be specified in strictly increasing order (by currency) to prevent duplicates.\",\"params\":{\"fundAccessLimitGroup\":\"An array containing payout limits and surplus allowances for each payment terminal. Amounts are fixed point numbers using the same number of decimals as the associated terminal.\",\"projectId\":\"The ID of the project whose fund access limits are being set.\",\"rulesetId\":\"The ID of the ruleset that the limits will apply within.\"}},\"supportsInterface(bytes4)\":{\"details\":\"See {IERC165-supportsInterface}.\"},\"surplusAllowanceOf(uint256,uint256,address,address,uint256)\":{\"details\":\"The fixed point return amount will use the same number of decimals as the `terminal`.\",\"params\":{\"currency\":\"The currency that the surplus allowance is denominated in.\",\"projectId\":\"The project's ID.\",\"rulesetId\":\"The ruleset's ID.\",\"terminal\":\"The terminal the surplus allowance applies to.\",\"token\":\"The token the surplus allowance applies to.\"},\"returns\":{\"surplusAllowance\":\"The surplus allowance, as a fixed point number with the same number of decimals as the provided terminal.\"}},\"surplusAllowancesOf(uint256,uint256,address,address)\":{\"details\":\"The fixed point `amount`s returned will use the same number of decimals as the `terminal`.\",\"params\":{\"projectId\":\"The project's ID.\",\"rulesetId\":\"The ruleset's ID.\",\"terminal\":\"The terminal the surplus allowances apply to.\",\"token\":\"The token the surplus allowances apply to.\"},\"returns\":{\"surplusAllowances\":\"The surplus allowances.\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"DIRECTORY()\":{\"notice\":\"The directory of terminals and controllers for projects.\"},\"payoutLimitOf(uint256,uint256,address,address,uint256)\":{\"notice\":\"A project's payout limit for a given ruleset, terminal, token, and currency.\"},\"payoutLimitsOf(uint256,uint256,address,address)\":{\"notice\":\"A project's payout limits for a given ruleset, terminal, and token.The total value of `token`s that a project can pay out from the terminal during the ruleset is dictated by a list of payout limits. Each payout limit is a fixed-point amount in terms of a currency.\"},\"setFundAccessLimitsFor(uint256,uint256,(address,address,(uint256,uint256)[],(uint256,uint256)[])[])\":{\"notice\":\"Sets limits on the amount of funds a project can access from its terminals during a ruleset.\"},\"surplusAllowanceOf(uint256,uint256,address,address,uint256)\":{\"notice\":\"A project's surplus allowance for a given ruleset, terminal, token, and currency.\"},\"surplusAllowancesOf(uint256,uint256,address,address)\":{\"notice\":\"A project's surplus allowances for a given ruleset, terminal, and token.The total value of `token`s that a project can pay out from its surplus in a terminal during the ruleset is dictated by a list of surplus allowances. Each surplus allowance is a fixed-point amount in terms of a currency.\"}},\"version\":1}},\"settings\":{\"remappings\":[\"@bananapus/=node_modules/@bananapus/\",\"@chainlink/=node_modules/@chainlink/\",\"@eth-optimism/=node_modules/@eth-optimism/\",\"@gnosis.pm/=node_modules/@gnosis.pm/\",\"@openzeppelin/=node_modules/@openzeppelin/\",\"@prb/=node_modules/@prb/\",\"@sphinx-labs/contracts/=lib/sphinx/packages/contracts/contracts/foundry/\",\"@uniswap/=node_modules/@uniswap/\",\"ds-test/=lib/forge-std/lib/ds-test/src/\",\"forge-std/=lib/forge-std/src/\",\"hardhat/=node_modules/hardhat/\",\"solmate/=node_modules/solmate/\",\"sphinx-forge-std/=node_modules/sphinx-forge-std/\",\"sphinx-solmate/=node_modules/sphinx-solmate/\",\"sphinx/=lib/sphinx/\"],\"optimizer\":{\"enabled\":true,\"runs\":200},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"compilationTarget\":{\"src/JBFundAccessLimits.sol\":\"JBFundAccessLimits\"},\"evmVersion\":\"paris\",\"libraries\":{}},\"sources\":{\"node_modules/@openzeppelin/contracts/token/ERC721/IERC721.sol\":{\"keccak256\":\"0x5ef46daa3b58ef2702279d514780316efaa952915ee1aa3396f041ee2982b0b4\",\"urls\":[\"bzz-raw://2f8f2a76e23b02fc69e8cd24c3cb47da6c7af3a2d6c3a382f8ac25c6e094ade7\",\"dweb:/ipfs/QmPV4ZS4tPVv4mTCf9ejyZ1ai57EEibDRj7mN2ARDCLV5n\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/utils/introspection/ERC165.sol\":{\"keccak256\":\"0x9e8778b14317ba9e256c30a76fd6c32b960af621987f56069e1e819c77c6a133\",\"urls\":[\"bzz-raw://1777404f1dcd0fac188e55a288724ec3c67b45288e49cc64723e95e702b49ab8\",\"dweb:/ipfs/QmZFdC626GButBApwDUvvTnUzdinevC3B24d7yyh57XkiA\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/utils/introspection/IERC165.sol\":{\"keccak256\":\"0x4296879f55019b23e135000eb36896057e7101fb7fb859c5ef690cf14643757b\",\"urls\":[\"bzz-raw://87b3541437c8c443ccd36795e56a338ed12855eec17f8da624511b8d1a7e14df\",\"dweb:/ipfs/QmeJQCtZrQjtJLr6u7ZHWeH3pBnjtLWzvRrKViAi7UZqxL\"],\"license\":\"MIT\"},\"src/JBFundAccessLimits.sol\":{\"keccak256\":\"0xd9b0758eccdf0b77fbcbe39549b2cebdbfaa0784f0e0648d6d0401e4e3130144\",\"urls\":[\"bzz-raw://05a21a3429f0c40b0c332a0bfe5f91693063e55e05f29b8f4519b61304ca18b8\",\"dweb:/ipfs/QmQpEDox3k63QDTDDbr6vhMS6m4UEwkALTshEUCAeKH52P\"],\"license\":\"MIT\"},\"src/abstract/JBControlled.sol\":{\"keccak256\":\"0xdbaab889d033617969b7e0b453564e8eb76acb54e65b22289fff6fac90599d64\",\"urls\":[\"bzz-raw://860d67885d8095d49694a5c6c933ff0ad048a3db72412412b04e6b14c0fc8c59\",\"dweb:/ipfs/QmRHV7RdjwbQHtjpUxhNgnWzzES5X9duVTUPtCnJYrvjjc\"],\"license\":\"MIT\"},\"src/interfaces/IJBControlled.sol\":{\"keccak256\":\"0x79fb8de7b3f809f1c3c7189f578b7331ec4dfe3350151d5b50240ecb3a2a907b\",\"urls\":[\"bzz-raw://45c82240dd4f0e9aec00d0d86f6b44bdda231db098ebdac17e922771b3e6f342\",\"dweb:/ipfs/QmPUvT8HZeVenrZDpP14HsZofaXPJjih8UAd35rTg3tU7E\"],\"license\":\"MIT\"},\"src/interfaces/IJBDirectory.sol\":{\"keccak256\":\"0x9cc380844aef60078ee47a61861e55a29c4a8c947efd556ebd36e6909f7b9d62\",\"urls\":[\"bzz-raw://9f5190ec8b6683d9781ee6e9eedcc91294753242748875d4a06349077e4cbaaf\",\"dweb:/ipfs/QmTQrPuXT9TCA4txwrperMeXSGvGxP8iokUK47f62F388i\"],\"license\":\"MIT\"},\"src/interfaces/IJBFundAccessLimits.sol\":{\"keccak256\":\"0x284cdb8cefd672f9d83216d73a7754149d061b573a33c62911f23635f3bcd54a\",\"urls\":[\"bzz-raw://e393e679d7f547884496737fc4eb87395d014217461a28dd6aac8e8f0cefd313\",\"dweb:/ipfs/QmRv9JFm4ajJqoVdDbQrFiVwNRzAkTcNNAAgn6K5RvDg6f\"],\"license\":\"MIT\"},\"src/interfaces/IJBPayHook.sol\":{\"keccak256\":\"0x9438866782c652c2942f4d114e35f393cd3c8b0334abce8387eed90bca35e8b2\",\"urls\":[\"bzz-raw://cfd99daf57213f92325aad7d7d16e98476d38e870470e95ba01e3ae3cdecc95d\",\"dweb:/ipfs/QmUKKAVGf7ki8BHksr99tFcRW8APveeB5tNH63ctTbbCW8\"],\"license\":\"MIT\"},\"src/interfaces/IJBProjects.sol\":{\"keccak256\":\"0x735c2fb8f1fa827f054ee77f7a0ae4b312656217acb75b624d2c8fd9dc40151b\",\"urls\":[\"bzz-raw://ee7fc92299a8633a80693ae63ab494dcd125f1789487a54a39dc0e5696e5996f\",\"dweb:/ipfs/QmX7YJD4pS2XhgQb7p3JbBAXynT7YGPXcZe92BiWWRrsCL\"],\"license\":\"MIT\"},\"src/interfaces/IJBTerminal.sol\":{\"keccak256\":\"0x19dc9bf8cbdc8f13ee5da9dc3a87047eacb94a3fc19740a286c1f0bad2cc39ca\",\"urls\":[\"bzz-raw://0b05ae6fda9a85672508232fd992b8a5f5ffd8096622eeb12c8a7b3317eb3867\",\"dweb:/ipfs/QmNh9Quj37BXYGdTdcCD1Q58PchRsE5TLbEZep56qS3MpV\"],\"license\":\"MIT\"},\"src/interfaces/IJBTokenUriResolver.sol\":{\"keccak256\":\"0xfa5cb00dcd6085d1ef912d071fe73c63f9478a2cd0f9d8bddaf659b6af2d0967\",\"urls\":[\"bzz-raw://282e4e7c342d65f77cde0e9a08fcaf20ef5cf379c7a48b639842c0ffd0b2afb8\",\"dweb:/ipfs/QmbnN3PEQeZaXdPLT75V1J79kMg7KqSMru37RHrL3z8Yf2\"],\"license\":\"MIT\"},\"src/structs/JBAccountingContext.sol\":{\"keccak256\":\"0x2907ff54d1e903cc7e0390dd88c3975884702dc2673642aacbe22b66560b56de\",\"urls\":[\"bzz-raw://a66a5381ce877b32f0e0058ceeaf843e9b6b2bc8af666c0c9f4a9d01091da004\",\"dweb:/ipfs/QmQynCetUr37dBkS1YwDS8evxuXGiqanW6THmeUxXtim8w\"],\"license\":\"MIT\"},\"src/structs/JBAfterPayRecordedContext.sol\":{\"keccak256\":\"0xd26c3a774ff38be79064085970454fe2603a23a638c76270d5b1b3829206c3e8\",\"urls\":[\"bzz-raw://3b55dbe3bf1ef625b7ca04efab3de35406e6041d5b3d82c7265469c500e2b702\",\"dweb:/ipfs/QmUdBDo4Lt3mcsFcsXT2mqq3czFwZjQJFPLM89YA2VtD7k\"],\"license\":\"MIT\"},\"src/structs/JBCurrencyAmount.sol\":{\"keccak256\":\"0x12fe4b43f4824994624d4fe0abbd88c3fe7867fd637edb65c7f456dab27e2d6e\",\"urls\":[\"bzz-raw://8003a3e8f932cf891e86b827e67c9d31b0d34c2712e18c2bc333cfe5284ba6d5\",\"dweb:/ipfs/QmSoA6RsDcSnNzk6CB7KZtALkHmeSDAi2g6fg3TDmLDkWX\"],\"license\":\"MIT\"},\"src/structs/JBFundAccessLimitGroup.sol\":{\"keccak256\":\"0x9fdaa8d017b72da25f583700a444a86849df053f7fb8eac874ec5139bcf651e5\",\"urls\":[\"bzz-raw://c8e44c49ee444a98424a0dbeb6897a76a0bf00d88a613f62ac2012afdac754ee\",\"dweb:/ipfs/QmdYkAiRi5bXM1YYNkc7BiqimHSFodMGn1cjHR5hcpm4xH\"],\"license\":\"MIT\"},\"src/structs/JBTokenAmount.sol\":{\"keccak256\":\"0x5cf0626b73a596c1e2da17c89ae039a7c0374310b060d48568d3b6c11fbe6180\",\"urls\":[\"bzz-raw://63348b50be95e2995409394a17caffc563a646f0972650a1230bf864fbd3219b\",\"dweb:/ipfs/QmZXZpS3SbFD5nWaCauf6AqbEhLURv5qsKHpThBvQgDU6u\"],\"license\":\"MIT\"}},\"version\":1}",
+			"args": [
+				"0x71Ff91C8A27b436f7025C053c01A3F6AAE3Fc62E"
+			],
+			"bytecode": "0x60a060405234801561001057600080fd5b50604051610f82380380610f8283398101604081905261002f91610040565b6001600160a01b0316608052610070565b60006020828403121561005257600080fd5b81516001600160a01b038116811461006957600080fd5b9392505050565b608051610ef16100916000396000818160e1015261034c0152610ef16000f3fe608060405234801561001057600080fd5b506004361061007d5760003560e01c80638ca53ccd1161005b5780638ca53ccd1461011b578063971e46771461012e57806399195fde14610143578063c8668bfd1461016357600080fd5b806301ffc9a71461008257806329ed16cd146100bb57806388bc2ef3146100dc575b600080fd5b6100a6610090366004610ae5565b6001600160e01b0319166301ffc9a760e01b1490565b60405190151581526020015b60405180910390f35b6100ce6100c9366004610b2e565b610176565b6040519081526020016100b2565b6101037f000000000000000000000000000000000000000000000000000000000000000081565b6040516001600160a01b0390911681526020016100b2565b6100ce610129366004610b2e565b610258565b61014161013c366004610b80565b61032a565b005b610156610151366004610c03565b610831565b6040516100b29190610c4d565b610156610171366004610c03565b610990565b600085815260016020908152604080832087845282528083206001600160a01b03808816855290835281842090861684528252808320805482518185028101850190935280835284938301828280156101ee57602002820191906000526020600020905b8154815260200190600101908083116101da575b505050505090506000815190506000805b8281101561024a5783818151811061021957610219610c9c565b6020026020010151915060e082901c860361024257506001600160e01b0316925061024f915050565b6001016101ff565b505050505b95945050505050565b60008581526020818152604080832087845282528083206001600160a01b03808816855290835281842090861684528252808320805482518185028101850190935280835284938301828280156102ce57602002820191906000526020600020905b8154815260200190600101908083116102ba575b505050505090506000815190506000805b8281101561024a578381815181106102f9576102f9610c9c565b6020026020010151915060e082901c860361032257506001600160e01b0316925061024f915050565b6001016102df565b604051632eec7b5560e11b815260048101859052849033906001600160a01b037f00000000000000000000000000000000000000000000000000000000000000001690635dd8f6aa90602401602060405180830381865afa158015610393573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906103b79190610cb2565b6001600160a01b0316146103de57604051632adfdd0560e21b815260040160405180910390fd5b813660005b82811015610827578585828181106103fd576103fd610c9c565b905060200281019061040f9190610ccf565b915060006104206040840184610cef565b905090503660005b828110156105f35761043d6040860186610cef565b8281811061044d5761044d610c9c565b604002919091019250506001600160e01b038235111561048057604051634966bf4b60e01b815260040160405180910390fd5b63ffffffff602083013511156104a957604051633bbf530360e01b815260040160405180910390fd5b80158015906104ec57506104c06040860186610cef565b6104cb600184610d40565b8181106104da576104da610c9c565b90506040020160200135826020013511155b1561050a5760405163d33e7dc560e01b815260040160405180910390fd5b8135156105eb5760008b8152602081815260408083208d84529091528120908a8a8781811061053b5761053b610c9c565b905060200281019061054d9190610ccf565b61055b906020810190610d67565b6001600160a01b03166001600160a01b0316815260200190815260200160002060008a8a8781811061058f5761058f610c9c565b90506020028101906105a19190610ccf565b6105b2906040810190602001610d67565b6001600160a01b0316815260208082019290925260400160009081208054600181018255908252908290209184013560e01b8435179101555b600101610428565b5060006106036060860186610cef565b905090503660005b828110156107db576106206060880188610cef565b8281811061063057610630610c9c565b604002919091019250506001600160e01b038235111561066357604051630ee68a2560e41b815260040160405180910390fd5b63ffffffff6020830135111561068f5760405160016221181f60e11b0319815260040160405180910390fd5b80158015906106d257506106a66060880188610cef565b6106b1600184610d40565b8181106106c0576106c0610c9c565b90506040020160200135826020013511155b156106f0576040516377827f8160e01b815260040160405180910390fd5b8135156107d35760008d81526001602090815260408083208f84529091528120908c8c8981811061072357610723610c9c565b90506020028101906107359190610ccf565b610743906020810190610d67565b6001600160a01b03166001600160a01b0316815260200190815260200160002060008c8c8981811061077757610777610c9c565b90506020028101906107899190610ccf565b61079a906040810190602001610d67565b6001600160a01b0316815260208082019290925260400160009081208054600181018255908252908290209184013560e01b8435179101555b60010161060b565b508b8b7f47b77e92dfe8d78eade5a1159cd1f4a33a5215f683ed03d825851720ccf90450883360405161080f929190610e0e565b60405180910390a35050600190920191506103e39050565b5050505050505050565b60008481526020818152604080832086845282528083206001600160a01b038087168552908352818420908516845282528083208054825181850281018501909352808352606094938301828280156108a957602002820191906000526020600020905b815481526020019060010190808311610895575b50508351939450839250505067ffffffffffffffff8111156108cd576108cd610ea5565b60405190808252806020026020018201604052801561091257816020015b60408051808201909152600080825260208201528152602001906001900390816108eb5790505b5092506000805b828110156109845783818151811061093357610933610c9c565b602002602001015191506040518060400160405280836001600160e01b0316815260200160e084901c81525085828151811061097157610971610c9c565b6020908102919091010152600101610919565b50505050949350505050565b600084815260016020908152604080832086845282528083206001600160a01b03808716855290835281842090851684528252808320805482518185028101850190935280835260609493830182828015610a0a57602002820191906000526020600020905b8154815260200190600101908083116109f6575b50508351939450839250505067ffffffffffffffff811115610a2e57610a2e610ea5565b604051908082528060200260200182016040528015610a7357816020015b6040805180820190915260008082526020820152815260200190600190039081610a4c5790505b5092506000805b8281101561098457838181518110610a9457610a94610c9c565b602002602001015191506040518060400160405280836001600160e01b0316815260200160e084901c815250858281518110610ad257610ad2610c9c565b6020908102919091010152600101610a7a565b600060208284031215610af757600080fd5b81356001600160e01b031981168114610b0f57600080fd5b9392505050565b6001600160a01b0381168114610b2b57600080fd5b50565b600080600080600060a08688031215610b4657600080fd5b85359450602086013593506040860135610b5f81610b16565b92506060860135610b6f81610b16565b949793965091946080013592915050565b60008060008060608587031215610b9657600080fd5b8435935060208501359250604085013567ffffffffffffffff80821115610bbc57600080fd5b818701915087601f830112610bd057600080fd5b813581811115610bdf57600080fd5b8860208260051b8501011115610bf457600080fd5b95989497505060200194505050565b60008060008060808587031215610c1957600080fd5b84359350602085013592506040850135610c3281610b16565b91506060850135610c4281610b16565b939692955090935050565b602080825282518282018190526000919060409081850190868401855b82811015610c8f57815180518552860151868501529284019290850190600101610c6a565b5091979650505050505050565b634e487b7160e01b600052603260045260246000fd5b600060208284031215610cc457600080fd5b8151610b0f81610b16565b60008235607e19833603018112610ce557600080fd5b9190910192915050565b6000808335601e19843603018112610d0657600080fd5b83018035915067ffffffffffffffff821115610d2157600080fd5b6020019150600681901b3603821315610d3957600080fd5b9250929050565b81810381811115610d6157634e487b7160e01b600052601160045260246000fd5b92915050565b600060208284031215610d7957600080fd5b8135610b0f81610b16565b6000808335601e19843603018112610d9b57600080fd5b830160208101925035905067ffffffffffffffff811115610dbb57600080fd5b8060061b3603821315610d3957600080fd5b8183526000602080850194508260005b85811015610e035781358752828201358388015260409687019690910190600101610ddd565b509495945050505050565b6040815260008335610e1f81610b16565b6001600160a01b039081166040840152602085013590610e3e82610b16565b8082166060850152610e536040870187610d84565b9250608080860152610e6960c086018483610dcd565b925050610e796060870187610d84565b858403603f190160a0870152610e90848284610dcd565b94505050808516602085015250509392505050565b634e487b7160e01b600052604160045260246000fdfea264697066735822122033ed0a1fdb0e31f2401f8cbb83ef4d2dd96e8a99ebff8f7492bb61b1012013d564736f6c63430008170033",
+			"deployedBytecode": "0x608060405234801561001057600080fd5b506004361061007d5760003560e01c80638ca53ccd1161005b5780638ca53ccd1461011b578063971e46771461012e57806399195fde14610143578063c8668bfd1461016357600080fd5b806301ffc9a71461008257806329ed16cd146100bb57806388bc2ef3146100dc575b600080fd5b6100a6610090366004610ae5565b6001600160e01b0319166301ffc9a760e01b1490565b60405190151581526020015b60405180910390f35b6100ce6100c9366004610b2e565b610176565b6040519081526020016100b2565b6101037f00000000000000000000000071ff91c8a27b436f7025c053c01a3f6aae3fc62e81565b6040516001600160a01b0390911681526020016100b2565b6100ce610129366004610b2e565b610258565b61014161013c366004610b80565b61032a565b005b610156610151366004610c03565b610831565b6040516100b29190610c4d565b610156610171366004610c03565b610990565b600085815260016020908152604080832087845282528083206001600160a01b03808816855290835281842090861684528252808320805482518185028101850190935280835284938301828280156101ee57602002820191906000526020600020905b8154815260200190600101908083116101da575b505050505090506000815190506000805b8281101561024a5783818151811061021957610219610c9c565b6020026020010151915060e082901c860361024257506001600160e01b0316925061024f915050565b6001016101ff565b505050505b95945050505050565b60008581526020818152604080832087845282528083206001600160a01b03808816855290835281842090861684528252808320805482518185028101850190935280835284938301828280156102ce57602002820191906000526020600020905b8154815260200190600101908083116102ba575b505050505090506000815190506000805b8281101561024a578381815181106102f9576102f9610c9c565b6020026020010151915060e082901c860361032257506001600160e01b0316925061024f915050565b6001016102df565b604051632eec7b5560e11b815260048101859052849033906001600160a01b037f00000000000000000000000071ff91c8a27b436f7025c053c01a3f6aae3fc62e1690635dd8f6aa90602401602060405180830381865afa158015610393573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906103b79190610cb2565b6001600160a01b0316146103de57604051632adfdd0560e21b815260040160405180910390fd5b813660005b82811015610827578585828181106103fd576103fd610c9c565b905060200281019061040f9190610ccf565b915060006104206040840184610cef565b905090503660005b828110156105f35761043d6040860186610cef565b8281811061044d5761044d610c9c565b604002919091019250506001600160e01b038235111561048057604051634966bf4b60e01b815260040160405180910390fd5b63ffffffff602083013511156104a957604051633bbf530360e01b815260040160405180910390fd5b80158015906104ec57506104c06040860186610cef565b6104cb600184610d40565b8181106104da576104da610c9c565b90506040020160200135826020013511155b1561050a5760405163d33e7dc560e01b815260040160405180910390fd5b8135156105eb5760008b8152602081815260408083208d84529091528120908a8a8781811061053b5761053b610c9c565b905060200281019061054d9190610ccf565b61055b906020810190610d67565b6001600160a01b03166001600160a01b0316815260200190815260200160002060008a8a8781811061058f5761058f610c9c565b90506020028101906105a19190610ccf565b6105b2906040810190602001610d67565b6001600160a01b0316815260208082019290925260400160009081208054600181018255908252908290209184013560e01b8435179101555b600101610428565b5060006106036060860186610cef565b905090503660005b828110156107db576106206060880188610cef565b8281811061063057610630610c9c565b604002919091019250506001600160e01b038235111561066357604051630ee68a2560e41b815260040160405180910390fd5b63ffffffff6020830135111561068f5760405160016221181f60e11b0319815260040160405180910390fd5b80158015906106d257506106a66060880188610cef565b6106b1600184610d40565b8181106106c0576106c0610c9c565b90506040020160200135826020013511155b156106f0576040516377827f8160e01b815260040160405180910390fd5b8135156107d35760008d81526001602090815260408083208f84529091528120908c8c8981811061072357610723610c9c565b90506020028101906107359190610ccf565b610743906020810190610d67565b6001600160a01b03166001600160a01b0316815260200190815260200160002060008c8c8981811061077757610777610c9c565b90506020028101906107899190610ccf565b61079a906040810190602001610d67565b6001600160a01b0316815260208082019290925260400160009081208054600181018255908252908290209184013560e01b8435179101555b60010161060b565b508b8b7f47b77e92dfe8d78eade5a1159cd1f4a33a5215f683ed03d825851720ccf90450883360405161080f929190610e0e565b60405180910390a35050600190920191506103e39050565b5050505050505050565b60008481526020818152604080832086845282528083206001600160a01b038087168552908352818420908516845282528083208054825181850281018501909352808352606094938301828280156108a957602002820191906000526020600020905b815481526020019060010190808311610895575b50508351939450839250505067ffffffffffffffff8111156108cd576108cd610ea5565b60405190808252806020026020018201604052801561091257816020015b60408051808201909152600080825260208201528152602001906001900390816108eb5790505b5092506000805b828110156109845783818151811061093357610933610c9c565b602002602001015191506040518060400160405280836001600160e01b0316815260200160e084901c81525085828151811061097157610971610c9c565b6020908102919091010152600101610919565b50505050949350505050565b600084815260016020908152604080832086845282528083206001600160a01b03808716855290835281842090851684528252808320805482518185028101850190935280835260609493830182828015610a0a57602002820191906000526020600020905b8154815260200190600101908083116109f6575b50508351939450839250505067ffffffffffffffff811115610a2e57610a2e610ea5565b604051908082528060200260200182016040528015610a7357816020015b6040805180820190915260008082526020820152815260200190600190039081610a4c5790505b5092506000805b8281101561098457838181518110610a9457610a94610c9c565b602002602001015191506040518060400160405280836001600160e01b0316815260200160e084901c815250858281518110610ad257610ad2610c9c565b6020908102919091010152600101610a7a565b600060208284031215610af757600080fd5b81356001600160e01b031981168114610b0f57600080fd5b9392505050565b6001600160a01b0381168114610b2b57600080fd5b50565b600080600080600060a08688031215610b4657600080fd5b85359450602086013593506040860135610b5f81610b16565b92506060860135610b6f81610b16565b949793965091946080013592915050565b60008060008060608587031215610b9657600080fd5b8435935060208501359250604085013567ffffffffffffffff80821115610bbc57600080fd5b818701915087601f830112610bd057600080fd5b813581811115610bdf57600080fd5b8860208260051b8501011115610bf457600080fd5b95989497505060200194505050565b60008060008060808587031215610c1957600080fd5b84359350602085013592506040850135610c3281610b16565b91506060850135610c4281610b16565b939692955090935050565b602080825282518282018190526000919060409081850190868401855b82811015610c8f57815180518552860151868501529284019290850190600101610c6a565b5091979650505050505050565b634e487b7160e01b600052603260045260246000fd5b600060208284031215610cc457600080fd5b8151610b0f81610b16565b60008235607e19833603018112610ce557600080fd5b9190910192915050565b6000808335601e19843603018112610d0657600080fd5b83018035915067ffffffffffffffff821115610d2157600080fd5b6020019150600681901b3603821315610d3957600080fd5b9250929050565b81810381811115610d6157634e487b7160e01b600052601160045260246000fd5b92915050565b600060208284031215610d7957600080fd5b8135610b0f81610b16565b6000808335601e19843603018112610d9b57600080fd5b830160208101925035905067ffffffffffffffff811115610dbb57600080fd5b8060061b3603821315610d3957600080fd5b8183526000602080850194508260005b85811015610e035781358752828201358388015260409687019690910190600101610ddd565b509495945050505050565b6040815260008335610e1f81610b16565b6001600160a01b039081166040840152602085013590610e3e82610b16565b8082166060850152610e536040870187610d84565b9250608080860152610e6960c086018483610dcd565b925050610e796060870187610d84565b858403603f190160a0870152610e90848284610dcd565b94505050808516602085015250509392505050565b634e487b7160e01b600052604160045260246000fdfea264697066735822122033ed0a1fdb0e31f2401f8cbb83ef4d2dd96e8a99ebff8f7492bb61b1012013d564736f6c63430008170033",
+			"devdoc": {
+				"kind": "dev",
+				"methods": {
+					"constructor": {
+						"params": {
+							"directory": "A contract storing the terminals and the controller used by each project."
+						}
+					},
+					"payoutLimitOf(uint256,uint256,address,address,uint256)": {
+						"details": "The fixed point return amount will use the same number of decimals as the `terminal`.",
+						"params": {
+							"currency": "The currency the payout limit is denominated in.",
+							"projectId": "The project's ID.",
+							"rulesetId": "The ruleset's ID.",
+							"terminal": "The terminal the payout limit applies to.",
+							"token": "The token the payout limit applies to."
+						},
+						"returns": {
+							"payoutLimit": "The payout limit, as a fixed point number with the same number of decimals as the provided terminal."
+						}
+					},
+					"payoutLimitsOf(uint256,uint256,address,address)": {
+						"details": "The fixed point `amount`s returned will use the same number of decimals as the `terminal`.",
+						"params": {
+							"projectId": "The project's ID.",
+							"rulesetId": "The ruleset's ID.",
+							"terminal": "The terminal the payout limits apply to.",
+							"token": "The token the payout limits apply to."
+						},
+						"returns": {
+							"payoutLimits": "The payout limits."
+						}
+					},
+					"setFundAccessLimitsFor(uint256,uint256,(address,address,(uint256,uint256)[],(uint256,uint256)[])[])": {
+						"details": "Only a project's controller can set its fund access limits.Payout limits and surplus allowances must be specified in strictly increasing order (by currency) to prevent duplicates.",
+						"params": {
+							"fundAccessLimitGroup": "An array containing payout limits and surplus allowances for each payment terminal. Amounts are fixed point numbers using the same number of decimals as the associated terminal.",
+							"projectId": "The ID of the project whose fund access limits are being set.",
+							"rulesetId": "The ID of the ruleset that the limits will apply within."
+						}
+					},
+					"supportsInterface(bytes4)": {
+						"details": "See {IERC165-supportsInterface}."
+					},
+					"surplusAllowanceOf(uint256,uint256,address,address,uint256)": {
+						"details": "The fixed point return amount will use the same number of decimals as the `terminal`.",
+						"params": {
+							"currency": "The currency that the surplus allowance is denominated in.",
+							"projectId": "The project's ID.",
+							"rulesetId": "The ruleset's ID.",
+							"terminal": "The terminal the surplus allowance applies to.",
+							"token": "The token the surplus allowance applies to."
+						},
+						"returns": {
+							"surplusAllowance": "The surplus allowance, as a fixed point number with the same number of decimals as the provided terminal."
+						}
+					},
+					"surplusAllowancesOf(uint256,uint256,address,address)": {
+						"details": "The fixed point `amount`s returned will use the same number of decimals as the `terminal`.",
+						"params": {
+							"projectId": "The project's ID.",
+							"rulesetId": "The ruleset's ID.",
+							"terminal": "The terminal the surplus allowances apply to.",
+							"token": "The token the surplus allowances apply to."
+						},
+						"returns": {
+							"surplusAllowances": "The surplus allowances."
+						}
+					}
+				},
+				"version": 1
+			},
+			"userdoc": {
+				"kind": "user",
+				"methods": {
+					"DIRECTORY()": {
+						"notice": "The directory of terminals and controllers for projects."
+					},
+					"payoutLimitOf(uint256,uint256,address,address,uint256)": {
+						"notice": "A project's payout limit for a given ruleset, terminal, token, and currency."
+					},
+					"payoutLimitsOf(uint256,uint256,address,address)": {
+						"notice": "A project's payout limits for a given ruleset, terminal, and token.The total value of `token`s that a project can pay out from the terminal during the ruleset is dictated by a list of payout limits. Each payout limit is a fixed-point amount in terms of a currency."
+					},
+					"setFundAccessLimitsFor(uint256,uint256,(address,address,(uint256,uint256)[],(uint256,uint256)[])[])": {
+						"notice": "Sets limits on the amount of funds a project can access from its terminals during a ruleset."
+					},
+					"surplusAllowanceOf(uint256,uint256,address,address,uint256)": {
+						"notice": "A project's surplus allowance for a given ruleset, terminal, token, and currency."
+					},
+					"surplusAllowancesOf(uint256,uint256,address,address)": {
+						"notice": "A project's surplus allowances for a given ruleset, terminal, and token.The total value of `token`s that a project can pay out from its surplus in a terminal during the ruleset is dictated by a list of surplus allowances. Each surplus allowance is a fixed-point amount in terms of a currency."
+					}
+				},
+				"version": 1
+			},
+			"gitCommit": "810aab8b9c3a0626e80bb9e6b819daaf6dcfee82",
+			"sourceName": "src/JBFundAccessLimits.sol",
+			"chainId": "80001",
+			"linkReferences": {},
+			"deployedLinkReferences": {}
 		}
 	]
 }
