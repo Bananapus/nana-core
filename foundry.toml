@@ -18,10 +18,12 @@ ethereum ="${RPC_ETHEREUM_MAINNET}"
 optimism = "${RPC_OPTIMISM_MAINNET}"
 polygon = "${RPC_POLYGON_MUMBAI}"
 arbitrum = "${RPC_ARBITRUM_MAINNET}"
+base = "${RPC_BASE_MAINNET}"
 arbitrum_sepolia = "${RPC_ARBITRUM_SEPOLIA}"
 ethereum_sepolia ="${RPC_ETHEREUM_SEPOLIA}"
 optimism_sepolia = "${RPC_OPTIMISM_SEPOLIA}"
 polygon_mumbai = "${RPC_POLYGON_MUMBAI}"
+base_sepolia = "${RPC_BASE_SEPOLIA}"
 
 [profile.fork] # run via FOUNDRY_PROFILE=fork foundry test
 fs_permissions = [{ access = "read", path = "./deployments/mainnet" }] # Get the deployment addresses for forking
