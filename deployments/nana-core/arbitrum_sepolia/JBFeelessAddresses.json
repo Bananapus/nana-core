@@ -1,0 +1,309 @@
+{
+	"_format": "sphinx-sol-ct-artifact-1",
+	"merkleRoot": "0xeb76efeb8f97c5cb80ab72b380ea5b356ede5f4abbf2a0c560104f8a80b45857",
+	"contractName": "JBFeelessAddresses",
+	"address": "0x6c8352F6Cc457021cD537C2a6D0D4e7f1Ed29e1E",
+	"abi": [
+		{
+			"type": "constructor",
+			"inputs": [
+				{
+					"name": "owner",
+					"type": "address",
+					"internalType": "address"
+				}
+			],
+			"stateMutability": "nonpayable"
+		},
+		{
+			"type": "function",
+			"name": "isFeeless",
+			"inputs": [
+				{
+					"name": "addr",
+					"type": "address",
+					"internalType": "address"
+				}
+			],
+			"outputs": [
+				{
+					"name": "",
+					"type": "bool",
+					"internalType": "bool"
+				}
+			],
+			"stateMutability": "view"
+		},
+		{
+			"type": "function",
+			"name": "owner",
+			"inputs": [],
+			"outputs": [
+				{
+					"name": "",
+					"type": "address",
+					"internalType": "address"
+				}
+			],
+			"stateMutability": "view"
+		},
+		{
+			"type": "function",
+			"name": "renounceOwnership",
+			"inputs": [],
+			"outputs": [],
+			"stateMutability": "nonpayable"
+		},
+		{
+			"type": "function",
+			"name": "setFeelessAddress",
+			"inputs": [
+				{
+					"name": "addr",
+					"type": "address",
+					"internalType": "address"
+				},
+				{
+					"name": "flag",
+					"type": "bool",
+					"internalType": "bool"
+				}
+			],
+			"outputs": [],
+			"stateMutability": "nonpayable"
+		},
+		{
+			"type": "function",
+			"name": "supportsInterface",
+			"inputs": [
+				{
+					"name": "interfaceId",
+					"type": "bytes4",
+					"internalType": "bytes4"
+				}
+			],
+			"outputs": [
+				{
+					"name": "",
+					"type": "bool",
+					"internalType": "bool"
+				}
+			],
+			"stateMutability": "view"
+		},
+		{
+			"type": "function",
+			"name": "transferOwnership",
+			"inputs": [
+				{
+					"name": "newOwner",
+					"type": "address",
+					"internalType": "address"
+				}
+			],
+			"outputs": [],
+			"stateMutability": "nonpayable"
+		},
+		{
+			"type": "event",
+			"name": "OwnershipTransferred",
+			"inputs": [
+				{
+					"name": "previousOwner",
+					"type": "address",
+					"indexed": true,
+					"internalType": "address"
+				},
+				{
+					"name": "newOwner",
+					"type": "address",
+					"indexed": true,
+					"internalType": "address"
+				}
+			],
+			"anonymous": false
+		},
+		{
+			"type": "event",
+			"name": "SetFeelessAddress",
+			"inputs": [
+				{
+					"name": "account",
+					"type": "address",
+					"indexed": true,
+					"internalType": "address"
+				},
+				{
+					"name": "isFeeless",
+					"type": "bool",
+					"indexed": true,
+					"internalType": "bool"
+				},
+				{
+					"name": "caller",
+					"type": "address",
+					"indexed": false,
+					"internalType": "address"
+				}
+			],
+			"anonymous": false
+		},
+		{
+			"type": "error",
+			"name": "OwnableInvalidOwner",
+			"inputs": [
+				{
+					"name": "owner",
+					"type": "address",
+					"internalType": "address"
+				}
+			]
+		},
+		{
+			"type": "error",
+			"name": "OwnableUnauthorizedAccount",
+			"inputs": [
+				{
+					"name": "account",
+					"type": "address",
+					"internalType": "address"
+				}
+			]
+		}
+	],
+	"solcInputHash": "5d4c706d93c97620ff427d8d75b46099",
+	"receipt": {
+		"blockHash": "0x78c2535ef21fe26b6363c8de8e0e87d94fc4d2a250e9fdcce18973c87662f373",
+		"blockNumber": 36129377,
+		"contractAddress": null,
+		"cumulativeGasUsed": "470205",
+		"from": "0xC034550B542b83BA1De312b21d1C94a9a52B1595",
+		"gasPrice": "650040000",
+		"gasUsed": "345377",
+		"hash": "0x766459ff823f9e5ec1f6b1d7a8a51e615705d9ee4ce82212d823da235874c2df",
+		"index": 2,
+		"logs": [
+			{
+				"address": "0xB5E96127D417b1B3ef8438496a38A143167209c7",
+				"blockHash": "0x78c2535ef21fe26b6363c8de8e0e87d94fc4d2a250e9fdcce18973c87662f373",
+				"blockNumber": 36129377,
+				"data": "0x0000000000000000000000000000000000000000000000000000000000000000",
+				"index": 3,
+				"topics": [
+					"0x572f161235911da04685a68c06adf558fc7e4a36909dca394650e0adc19cc93d",
+					"0x000000000000000000000000c034550b542b83ba1de312b21d1c94a9a52b1595",
+					"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c",
+					"0x8f10b4ca22708c9a4458753025234dea1d479e0790a99e0408869f234157f453"
+				],
+				"transactionHash": "0x766459ff823f9e5ec1f6b1d7a8a51e615705d9ee4ce82212d823da235874c2df",
+				"transactionIndex": 2
+			},
+			{
+				"address": "0x6c8352F6Cc457021cD537C2a6D0D4e7f1Ed29e1E",
+				"blockHash": "0x78c2535ef21fe26b6363c8de8e0e87d94fc4d2a250e9fdcce18973c87662f373",
+				"blockNumber": 36129377,
+				"data": "0x",
+				"index": 4,
+				"topics": [
+					"0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+					"0x0000000000000000000000000000000000000000000000000000000000000000",
+					"0x0000000000000000000000001081b5aa9d9d4862a3da4d469433fb36ed80fa2a"
+				],
+				"transactionHash": "0x766459ff823f9e5ec1f6b1d7a8a51e615705d9ee4ce82212d823da235874c2df",
+				"transactionIndex": 2
+			},
+			{
+				"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+				"blockHash": "0x78c2535ef21fe26b6363c8de8e0e87d94fc4d2a250e9fdcce18973c87662f373",
+				"blockNumber": 36129377,
+				"data": "0x",
+				"index": 5,
+				"topics": [
+					"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
+					"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
+				],
+				"transactionHash": "0x766459ff823f9e5ec1f6b1d7a8a51e615705d9ee4ce82212d823da235874c2df",
+				"transactionIndex": 2
+			},
+			{
+				"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
+				"blockHash": "0x78c2535ef21fe26b6363c8de8e0e87d94fc4d2a250e9fdcce18973c87662f373",
+				"blockNumber": 36129377,
+				"data": "0x000000000000000000000000000000000000000000000000000000000000000b",
+				"index": 6,
+				"topics": [
+					"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
+					"0xeb76efeb8f97c5cb80ab72b380ea5b356ede5f4abbf2a0c560104f8a80b45857"
+				],
+				"transactionHash": "0x766459ff823f9e5ec1f6b1d7a8a51e615705d9ee4ce82212d823da235874c2df",
+				"transactionIndex": 2
+			}
+		],
+		"logsBloom": "0x00000000080010000008000000080000000000000008000000800000004000000060008200000000000000000040000000400000000000000000000000000000000000000000200400000000000002000401000100000000000200000000000000000000020000000000000000000800000000100000000000000000000000400001000000000000000100000000000000000000000000000000800020000000004000000010000000000000000000020200000000000000000000000006000000800000000800200000000008000000000000000000000000000000000020000000000080000004000000000000000200000000000000000000000000000000",
+		"status": 1,
+		"to": "0xB5E96127D417b1B3ef8438496a38A143167209c7"
+	},
+	"metadata": "{\"compiler\":{\"version\":\"0.8.23+commit.f704f362\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"type\":\"error\",\"name\":\"OwnableInvalidOwner\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"type\":\"error\",\"name\":\"OwnableUnauthorizedAccount\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\",\"indexed\":true},{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\",\"indexed\":true}],\"type\":\"event\",\"name\":\"OwnershipTransferred\",\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\",\"indexed\":true},{\"internalType\":\"bool\",\"name\":\"isFeeless\",\"type\":\"bool\",\"indexed\":true},{\"internalType\":\"address\",\"name\":\"caller\",\"type\":\"address\",\"indexed\":false}],\"type\":\"event\",\"name\":\"SetFeelessAddress\",\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"isFeeless\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}]},{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"renounceOwnership\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"},{\"internalType\":\"bool\",\"name\":\"flag\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"setFeelessAddress\"},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceId\",\"type\":\"bytes4\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"transferOwnership\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"constructor\":{\"params\":{\"owner\":\"This contract's owner.\"}},\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"renounceOwnership()\":{\"details\":\"Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner.\"},\"setFeelessAddress(address,bool)\":{\"details\":\"Can only be called by this contract's owner.\",\"params\":{\"addr\":\"The address to set as feeless or not feeless.\",\"flag\":\"Whether the address should be feeless (`true`) or not feeless (`false`).\"}},\"supportsInterface(bytes4)\":{\"details\":\"See {IERC165-supportsInterface}.\",\"params\":{\"interfaceId\":\"The ID of the interface to check for adherence to.\"},\"returns\":{\"_0\":\"A flag indicating if the provided interface ID is supported.\"}},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"isFeeless(address)\":{\"notice\":\"Check if the specified address is feeless.\"},\"setFeelessAddress(address,bool)\":{\"notice\":\"Sets whether an address is feeless.\"},\"supportsInterface(bytes4)\":{\"notice\":\"Indicates whether this contract adheres to the specified interface.\"}},\"version\":1}},\"settings\":{\"remappings\":[\"@bananapus/=node_modules/@bananapus/\",\"@chainlink/=node_modules/@chainlink/\",\"@eth-optimism/=node_modules/@eth-optimism/\",\"@openzeppelin/=node_modules/@openzeppelin/\",\"@prb/=node_modules/@prb/\",\"@scroll-tech/=node_modules/@scroll-tech/\",\"@sphinx-labs/contracts/=lib/sphinx/packages/contracts/contracts/foundry/\",\"@uniswap/=node_modules/@uniswap/\",\"ds-test/=lib/forge-std/lib/ds-test/src/\",\"forge-std/=lib/forge-std/src/\",\"hardhat/=node_modules/hardhat/\",\"solmate/=node_modules/solmate/\",\"sphinx/=lib/sphinx/\"],\"optimizer\":{\"enabled\":true,\"runs\":200},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"compilationTarget\":{\"src/JBFeelessAddresses.sol\":\"JBFeelessAddresses\"},\"evmVersion\":\"paris\",\"libraries\":{}},\"sources\":{\"node_modules/@openzeppelin/contracts/access/Ownable.sol\":{\"keccak256\":\"0xff6d0bb2e285473e5311d9d3caacb525ae3538a80758c10649a4d61029b017bb\",\"urls\":[\"bzz-raw://8ed324d3920bb545059d66ab97d43e43ee85fd3bd52e03e401f020afb0b120f6\",\"dweb:/ipfs/QmfEckWLmZkDDcoWrkEvMWhms66xwTLff9DDhegYpvHo1a\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/utils/Context.sol\":{\"keccak256\":\"0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2\",\"urls\":[\"bzz-raw://6a708e8a5bdb1011c2c381c9a5cfd8a9a956d7d0a9dc1bd8bcdaf52f76ef2f12\",\"dweb:/ipfs/Qmax9WHBnVsZP46ZxEMNRQpLQnrdE4dK8LehML1Py8FowF\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/utils/introspection/IERC165.sol\":{\"keccak256\":\"0x4296879f55019b23e135000eb36896057e7101fb7fb859c5ef690cf14643757b\",\"urls\":[\"bzz-raw://87b3541437c8c443ccd36795e56a338ed12855eec17f8da624511b8d1a7e14df\",\"dweb:/ipfs/QmeJQCtZrQjtJLr6u7ZHWeH3pBnjtLWzvRrKViAi7UZqxL\"],\"license\":\"MIT\"},\"src/JBFeelessAddresses.sol\":{\"keccak256\":\"0x00b46f877cad27509a076b838df5e148c69be177281e3a38515c532a18c9da6d\",\"urls\":[\"bzz-raw://6e25442db43f3b04015ec62ab805a7ab44574bbfd032bf165759b4c325757bca\",\"dweb:/ipfs/QmavES8KgSnobBzSrEKTjbmvjAsUvk4d6GG1LXEeqB8eNp\"],\"license\":\"MIT\"},\"src/interfaces/IJBFeelessAddresses.sol\":{\"keccak256\":\"0xe5df42cfa71c5fa41b905c122de5825df13c2aab2f9cc4cf4bafa331dd69c27e\",\"urls\":[\"bzz-raw://3773bf3b42cc57d1e4086147e52135ff1dbff4309c45ca0398f821dfaa071563\",\"dweb:/ipfs/QmXUEJssHaxYKfV33tMZGf81JTR5a5yxEVshzNus84xLuT\"],\"license\":\"MIT\"}},\"version\":1}",
+	"args": [
+		"0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A"
+	],
+	"bytecode": "0x608060405234801561001057600080fd5b5060405161045038038061045083398101604081905261002f916100be565b806001600160a01b03811661005e57604051631e4fbdf760e01b81526000600482015260240160405180910390fd5b6100678161006e565b50506100ee565b600080546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b6000602082840312156100d057600080fd5b81516001600160a01b03811681146100e757600080fd5b9392505050565b610353806100fd6000396000f3fe608060405234801561001057600080fd5b50600436106100625760003560e01c806301ffc9a714610067578063715018a61461008f5780637258002c146100995780638da5cb5b146100ac578063ae74a1b5146100c7578063f2fde38b146100ea575b600080fd5b61007a610075366004610279565b6100fd565b60405190151581526020015b60405180910390f35b610097610134565b005b6100976100a73660046102c6565b610148565b6000546040516001600160a01b039091168152602001610086565b61007a6100d5366004610302565b60016020526000908152604090205460ff1681565b6100976100f8366004610302565b6101b9565b60006001600160e01b0319821663dc2ca19960e01b148061012e57506001600160e01b031982166301ffc9a760e01b145b92915050565b61013c6101fc565b6101466000610229565b565b6101506101fc565b6001600160a01b0382166000818152600160205260409020805460ff1916831515908117909155907fa2653e25a502c023a5830d0de847ef6f458387865b1f4f575d7594f9f2c0d71e336040516001600160a01b03909116815260200160405180910390a35050565b6101c16101fc565b6001600160a01b0381166101f057604051631e4fbdf760e01b8152600060048201526024015b60405180910390fd5b6101f981610229565b50565b6000546001600160a01b031633146101465760405163118cdaa760e01b81523360048201526024016101e7565b600080546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b60006020828403121561028b57600080fd5b81356001600160e01b0319811681146102a357600080fd5b9392505050565b80356001600160a01b03811681146102c157600080fd5b919050565b600080604083850312156102d957600080fd5b6102e2836102aa565b9150602083013580151581146102f757600080fd5b809150509250929050565b60006020828403121561031457600080fd5b6102a3826102aa56fea26469706673582212205a7c3fbfc1c5424816fdd58fb61c09f87cecd7163328bdb854cabc41c9313cd664736f6c63430008170033",
+	"deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100625760003560e01c806301ffc9a714610067578063715018a61461008f5780637258002c146100995780638da5cb5b146100ac578063ae74a1b5146100c7578063f2fde38b146100ea575b600080fd5b61007a610075366004610279565b6100fd565b60405190151581526020015b60405180910390f35b610097610134565b005b6100976100a73660046102c6565b610148565b6000546040516001600160a01b039091168152602001610086565b61007a6100d5366004610302565b60016020526000908152604090205460ff1681565b6100976100f8366004610302565b6101b9565b60006001600160e01b0319821663dc2ca19960e01b148061012e57506001600160e01b031982166301ffc9a760e01b145b92915050565b61013c6101fc565b6101466000610229565b565b6101506101fc565b6001600160a01b0382166000818152600160205260409020805460ff1916831515908117909155907fa2653e25a502c023a5830d0de847ef6f458387865b1f4f575d7594f9f2c0d71e336040516001600160a01b03909116815260200160405180910390a35050565b6101c16101fc565b6001600160a01b0381166101f057604051631e4fbdf760e01b8152600060048201526024015b60405180910390fd5b6101f981610229565b50565b6000546001600160a01b031633146101465760405163118cdaa760e01b81523360048201526024016101e7565b600080546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b60006020828403121561028b57600080fd5b81356001600160e01b0319811681146102a357600080fd5b9392505050565b80356001600160a01b03811681146102c157600080fd5b919050565b600080604083850312156102d957600080fd5b6102e2836102aa565b9150602083013580151581146102f757600080fd5b809150509250929050565b60006020828403121561031457600080fd5b6102a3826102aa56fea26469706673582212205a7c3fbfc1c5424816fdd58fb61c09f87cecd7163328bdb854cabc41c9313cd664736f6c63430008170033",
+	"devdoc": {
+		"kind": "dev",
+		"methods": {
+			"constructor": {
+				"params": {
+					"owner": "This contract's owner."
+				}
+			},
+			"owner()": {
+				"details": "Returns the address of the current owner."
+			},
+			"renounceOwnership()": {
+				"details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner."
+			},
+			"setFeelessAddress(address,bool)": {
+				"details": "Can only be called by this contract's owner.",
+				"params": {
+					"addr": "The address to set as feeless or not feeless.",
+					"flag": "Whether the address should be feeless (`true`) or not feeless (`false`)."
+				}
+			},
+			"supportsInterface(bytes4)": {
+				"details": "See {IERC165-supportsInterface}.",
+				"params": {
+					"interfaceId": "The ID of the interface to check for adherence to."
+				},
+				"returns": {
+					"_0": "A flag indicating if the provided interface ID is supported."
+				}
+			},
+			"transferOwnership(address)": {
+				"details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+			}
+		},
+		"version": 1
+	},
+	"userdoc": {
+		"kind": "user",
+		"methods": {
+			"isFeeless(address)": {
+				"notice": "Check if the specified address is feeless."
+			},
+			"setFeelessAddress(address,bool)": {
+				"notice": "Sets whether an address is feeless."
+			},
+			"supportsInterface(bytes4)": {
+				"notice": "Indicates whether this contract adheres to the specified interface."
+			}
+		},
+		"version": 1
+	},
+	"gitCommit": "8e6924651d1e8038d6c2982d6d0c09a070b141a7",
+	"sourceName": "src/JBFeelessAddresses.sol",
+	"chainId": "421614",
+	"linkReferences": {},
+	"deployedLinkReferences": {},
+	"history": []
+}

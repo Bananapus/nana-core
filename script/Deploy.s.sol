@@ -32,6 +32,9 @@ contract Deploy is Script, Sphinx {
 
     /// @notice The address that will own the fee-project.
     address private FEE_PROJECT_OWNER;
+   
+    /// @notice The nonce that gets used across all chains to sync deployment addresses and allow for new deployments of the same bytecode.
+    uint256 private CORE_DEPLOYMENT_NONCE = 0;
 
     function configureSphinx() public override {
         // TODO: Update to contain JB Emergency Developers
@@ -39,8 +42,8 @@ contract Deploy is Script, Sphinx {
         sphinxConfig.orgId = "cltepuu9u0003j58rjtbd0hvu";
         sphinxConfig.projectName = "nana-core";
         sphinxConfig.threshold = 1;
-        sphinxConfig.mainnets = ["ethereum", "optimism", "polygon", "arbitrum"];
-        sphinxConfig.testnets = ["ethereum_sepolia", "optimism_sepolia", "polygon_mumbai", "arbitrum_sepolia"];
+        sphinxConfig.mainnets = ["ethereum", "optimism", "base", "arbitrum"];
+        sphinxConfig.testnets = ["ethereum_sepolia", "optimism_sepolia", "base_sepolia", "arbitrum_sepolia"];
     }
 
     /// @notice Deploys the protocol.
@@ -55,38 +58,39 @@ contract Deploy is Script, Sphinx {
     }
 
     function deploy() public sphinx {
+        bytes32 _coreDeploymentSalt = keccak256(abi.encode(CORE_DEPLOYMENT_NONCE));
         address _safe = safeAddress();
 
-        JBPermissions permissions = new JBPermissions();
-        JBProjects projects = new JBProjects(_safe, _safe);
-        JBDirectory directory = new JBDirectory(permissions, projects, _safe);
-        JBSplits splits = new JBSplits(directory);
-        JBRulesets rulesets = new JBRulesets(directory);
+        JBPermissions permissions = new JBPermissions{salt: _coreDeploymentSalt}();
+        JBProjects projects = new JBProjects{salt: _coreDeploymentSalt}(_safe, _safe);
+        JBDirectory directory = new JBDirectory{salt: _coreDeploymentSalt}(permissions, projects, _safe);
+        JBSplits splits = new JBSplits{salt: _coreDeploymentSalt}(directory);
+        JBRulesets rulesets = new JBRulesets{salt: _coreDeploymentSalt}(directory);
         directory.setIsAllowedToSetFirstController(
             address(
-                new JBController({
+                new JBController{salt: _coreDeploymentSalt}({
                     permissions: permissions,
                     projects: projects,
                     directory: directory,
                     rulesets: rulesets,
-                    tokens: new JBTokens(directory, new JBERC20()),
+                    tokens: new JBTokens{salt: _coreDeploymentSalt}(directory, new JBERC20{salt: _coreDeploymentSalt}()),
                     splits: splits,
-                    fundAccessLimits: new JBFundAccessLimits(directory),
+                    fundAccessLimits: new JBFundAccessLimits{salt: _coreDeploymentSalt}(directory),
                     trustedForwarder: TRUSTED_FORWARDER
                 })
             ),
             true
         );
 
-        JBFeelessAddresses feeless = new JBFeelessAddresses(_safe);
-        JBPrices prices = new JBPrices(permissions, projects, _safe);
+        JBFeelessAddresses feeless = new JBFeelessAddresses{salt: _coreDeploymentSalt}(_safe);
+        JBPrices prices = new JBPrices{salt: _coreDeploymentSalt}(permissions, projects, _safe);
 
-        new JBMultiTerminal({
+        new JBMultiTerminal{salt: _coreDeploymentSalt}({
             permissions: permissions,
             projects: projects,
             directory: directory,
             splits: splits,
-            store: new JBTerminalStore({directory: directory, rulesets: rulesets, prices: prices}),
+            store: new JBTerminalStore{salt: _coreDeploymentSalt}({directory: directory, rulesets: rulesets, prices: prices}),
             feelessAddresses: feeless,
             permit2: _PERMIT2,
             trustedForwarder: TRUSTED_FORWARDER
