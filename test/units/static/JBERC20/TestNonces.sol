@@ -4,7 +4,6 @@ pragma solidity 0.8.23;
 import {JBERC20Setup} from "./JBERC20Setup.sol";
 
 contract TestNonces_Local is JBERC20Setup {
-
     function setUp() public {
         super.erc20Setup();
     }
