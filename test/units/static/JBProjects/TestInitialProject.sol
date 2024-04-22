@@ -10,11 +10,10 @@ contract TestInitialProject_Local is JBTest {
     function setUp() public {}
 
     function test_WhenInitialOwnerDNEQZeroAddress() external {
-        // It will create a project 
+        // It will create a project
 
         vm.expectEmit();
         emit IJBProjects.Create(1, _owner, address(this));
         _projects = new JBProjects(_owner, _owner);
     }
-
 }
