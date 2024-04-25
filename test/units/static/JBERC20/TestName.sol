@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.23;
 
+import /* {*} from */ "../../../helpers/TestBaseWorkflow.sol";
 import {JBERC20Setup} from "./JBERC20Setup.sol";
-import {IERC20Metadata} from "@openzeppelin/contracts/token/ERC20/Extensions/IERC20Metadata.sol";
 
 contract TestName_Local is JBERC20Setup {
     IERC20Metadata _token;
