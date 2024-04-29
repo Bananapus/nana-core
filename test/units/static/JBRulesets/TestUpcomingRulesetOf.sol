@@ -440,8 +440,7 @@ contract TestUpcomingRulesetOf_Local is JBRulesetsSetup {
     }
 
     // Not sure how to reach the last line of this function..
-    // "return _simulateCycledRulesetBasedOn({projectId: projectId, baseRuleset: ruleset, allowMidRuleset: false});"
-    /* function test_baseRulesetDurationDNEQZero() external {
+    function test_baseRulesetDurationDNEQZero() external {
         // it will simulate a ruleset basedOn
 
         uint256 ogTimestamp = block.timestamp;
@@ -490,21 +489,7 @@ contract TestUpcomingRulesetOf_Local is JBRulesetsSetup {
 
         // mock call to hook duration
         mockExpect(
-    address(_mockApprovalHook), abi.encodeCall(IJBRulesetApprovalHook.DURATION, ()), abi.encode(_hookDuration)
-        );
-
-        // Setup: expect ruleset event (RulesetQueued) is emitted
-        vm.expectEmit();
-        emit IJBRulesets.RulesetQueued(
-            block.timestamp + 1, // incremented by one since queued in the same block and we cant have duplicate ids
-            _projectId,
-            _duration,
-            _weight,
-            _decayRate,
-            _mockApprovalHook,
-            _packedWithApprovalHook,
-            block.timestamp + 10 days,
-            address(this)
+            address(_mockApprovalHook), abi.encodeCall(IJBRulesetApprovalHook.DURATION, ()), abi.encode(_hookDuration)
         );
 
         // Send: Call from this contract as it's been mock authorized above.
@@ -515,22 +500,19 @@ contract TestUpcomingRulesetOf_Local is JBRulesetsSetup {
             decayRate: _decayRate,
             approvalHook: _mockApprovalHook,
             metadata: _packedWithApprovalHook,
-            mustStartAtOrAfter: block.timestamp + 10 days
+            mustStartAtOrAfter: 0
         });
 
-        vm.warp(block.timestamp + 11 days);
+        vm.warp(block.timestamp + 3 days);
 
         // mock call to hook approvalStatusOf
         mockExpect(
             address(_mockApprovalHook),
-            abi.encodeCall(
-                IJBRulesetApprovalHook.approvalStatusOf, (_projectId, ogTimestamp + 1, ogTimestamp + 12 days)
-            ),
-            abi.encode(JBApprovalStatus.ApprovalExpected)
+            abi.encodeCall(IJBRulesetApprovalHook.approvalStatusOf, (_projectId, ogTimestamp + 1, ogTimestamp + 3 days)),
+            abi.encode(JBApprovalStatus.Failed)
         );
 
         JBRuleset memory _upcoming = _rulesets.upcomingRulesetOf(_projectId);
-        assertEq(_upcoming.duration, _duration); // original duration
         assertEq(_upcoming.id, ogTimestamp); // original id
-    } */
+    }
 }
