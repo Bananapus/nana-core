@@ -27,7 +27,6 @@ contract JBRulesets is JBControlled, IJBRulesets {
     error INVALID_RULESET_DURATION();
     error INVALID_RULESET_END_TIME();
     error INVALID_WEIGHT();
-    error BLOCK_ALREADY_CONTAINS_RULESET();
 
     //*********************************************************************//
     // ------------------------- internal constants ----------------------- //
@@ -553,12 +552,6 @@ contract JBRulesets is JBControlled, IJBRulesets {
                 )
         ) {
             baseRuleset = _getStructFor(projectId, baseRuleset.basedOnId);
-        }
-
-        // The specified `rulesetId` can't be the same as the base ruleset's ID.
-        // slither-disable-next-line incorrect-equality
-        if (baseRuleset.id == rulesetId) {
-            revert BLOCK_ALREADY_CONTAINS_RULESET();
         }
 
         // The time when the duration of the base ruleset's approval hook has finished.
