@@ -1,0 +1,8 @@
+TestPrimaryTerminalOf_Local
+├── when there are no terminals supporting the input token
+│   └── it will return the zero address
+└── when there is at least one supporting terminal
+    ├── given there are multiple terminals with proper accountingContextForTokenOf
+    │   └── it will check each terminals accountingContextForTokenOf and return the first
+    └── given there are multiple terminals but none with the proper accountingContextForTokenOf
+        └── it will return the zero address

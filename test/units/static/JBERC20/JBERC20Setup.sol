@@ -7,17 +7,14 @@ import /* {*} from */ "../../../helpers/TestBaseWorkflow.sol";
 Contract that deploys a target contract with other mock contracts to satisfy the constructor.
 Tests relative to this contract will be dependent on mock calls/emits and stdStorage.
 */
-contract JBTokensSetup is JBTest {
-    // Mocks
-    IJBDirectory public directory = IJBDirectory(makeAddr("directory"));
-    IJBToken public jbToken;
+contract JBERC20Setup is JBTest {
+    address _owner = makeAddr("owner");
 
     // Target Contract
-    IJBTokens public _tokens;
+    IJBToken public _erc20;
 
-    function tokensSetup() public virtual {
+    function erc20Setup() public virtual {
         // Instantiate the contract being tested
-        jbToken = new JBERC20();
-        _tokens = new JBTokens(directory, jbToken);
+        _erc20 = new JBERC20();
     }
 }

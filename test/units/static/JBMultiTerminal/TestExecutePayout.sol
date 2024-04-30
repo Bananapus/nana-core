@@ -172,16 +172,6 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
 
         uint256 taxedAmount = JBFees.feeAmountIn(_defaultAmount, _fee);
 
-        // Create the context to send to the split hook.
-        JBSplitHookContext memory context = JBSplitHookContext({
-            token: _usdc,
-            amount: _defaultAmount - taxedAmount, // It will call with taxed amount
-            decimals: 0,
-            projectId: _noProject,
-            groupId: uint256(uint160(_usdc)),
-            split: _splitMemory
-        });
-
         // mock call to usdc transfer
         mockExpect(
             address(_usdc),
@@ -220,18 +210,6 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
             hook: IJBSplitHook(address(0))
         });
 
-        uint256 taxedAmount = JBFees.feeAmountIn(_defaultAmount, _fee);
-
-        // Create the context to send to the split hook.
-        JBSplitHookContext memory context = JBSplitHookContext({
-            token: _native,
-            amount: _defaultAmount - taxedAmount, // It will call with taxed amount
-            decimals: 0,
-            projectId: _projectId,
-            groupId: uint256(uint160(_native)),
-            split: _splitMemory
-        });
-
         vm.expectRevert(bytes("404_2"));
         vm.prank(address(_terminal));
         _terminal.executePayout({
@@ -260,19 +238,6 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
             beneficiary: _noBene,
             lockedUntil: _lockedUntil,
             hook: IJBSplitHook(address(0))
-        });
-
-        uint256 taxedAmount = JBFees.feeAmountIn(_defaultAmount, _fee);
-        uint256 amountAfterTax = _defaultAmount - taxedAmount;
-
-        // Create the context to send to the split hook.
-        JBSplitHookContext memory context = JBSplitHookContext({
-            token: _usdc,
-            amount: amountAfterTax, // It will call with taxed amount
-            decimals: 0,
-            projectId: _projectId,
-            groupId: uint256(uint160(_usdc)),
-            split: _splitMemory
         });
 
         // mock call to JBTerminalStore recordAddedBalanceFor
@@ -323,16 +288,6 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
         uint256 taxedAmount = JBFees.feeAmountIn(_defaultAmount, _fee);
         uint256 amountAfterTax = _defaultAmount - taxedAmount;
 
-        // Create the context to send to the split hook.
-        JBSplitHookContext memory context = JBSplitHookContext({
-            token: _usdc,
-            amount: amountAfterTax, // It will call with taxed amount
-            decimals: 0,
-            projectId: _projectId,
-            groupId: uint256(uint160(_usdc)),
-            split: _splitMemory
-        });
-
         // mock call for SafeERC20s allowance check
         mockExpect(
             _usdc, abi.encodeCall(IERC20.allowance, (address(_terminal), address(_mockSecondTerminal))), abi.encode(0)
@@ -378,19 +333,6 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
             beneficiary: _noBene,
             lockedUntil: _lockedUntil,
             hook: IJBSplitHook(address(0))
-        });
-
-        uint256 taxedAmount = JBFees.feeAmountIn(_defaultAmount, _fee);
-        uint256 amountAfterTax = _defaultAmount - taxedAmount;
-
-        // Create the context to send to the split hook.
-        JBSplitHookContext memory context = JBSplitHookContext({
-            token: _usdc,
-            amount: amountAfterTax, // It will call with taxed amount
-            decimals: 0,
-            projectId: _projectId,
-            groupId: uint256(uint160(_usdc)),
-            split: _splitMemory
         });
 
         // needed for next mock call returns
@@ -459,16 +401,6 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
         uint256 taxedAmount = JBFees.feeAmountIn(_defaultAmount, _fee);
         uint256 amountAfterTax = _defaultAmount - taxedAmount;
 
-        // Create the context to send to the split hook.
-        JBSplitHookContext memory context = JBSplitHookContext({
-            token: _usdc,
-            amount: amountAfterTax, // It will call with taxed amount
-            decimals: 0,
-            projectId: _projectId,
-            groupId: uint256(uint160(_usdc)),
-            split: _splitMemory
-        });
-
         // mock call for SafeERC20s allowance check
         mockExpect(
             _usdc, abi.encodeCall(IERC20.allowance, (address(_terminal), address(_mockSecondTerminal))), abi.encode(0)
@@ -514,16 +446,6 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
             hook: IJBSplitHook(address(0))
         });
 
-        // Create the context to send to the split hook.
-        JBSplitHookContext memory context = JBSplitHookContext({
-            token: _usdc,
-            amount: _defaultAmount,
-            decimals: 0,
-            projectId: _noProject,
-            groupId: uint256(uint160(_usdc)),
-            split: _splitMemory
-        });
-
         // mock call to usdc transfer
         mockExpect(address(_usdc), abi.encodeCall(IERC20.transfer, (address(_bene), _defaultAmount)), abi.encode(true));
 
@@ -561,16 +483,6 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
         uint256 taxedAmount = JBFees.feeAmountIn(_defaultAmount, _fee);
         uint256 amountAfterTax = _defaultAmount - taxedAmount;
 
-        // Create the context to send to the split hook.
-        JBSplitHookContext memory context = JBSplitHookContext({
-            token: _usdc,
-            amount: amountAfterTax,
-            decimals: 0,
-            projectId: _noProject,
-            groupId: uint256(uint160(_usdc)),
-            split: _splitMemory
-        });
-
         // mock call to usdc transfer
         mockExpect(address(_usdc), abi.encodeCall(IERC20.transfer, (address(_bene), amountAfterTax)), abi.encode(true));
 
@@ -606,16 +518,6 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
         uint256 taxedAmount = JBFees.feeAmountIn(_defaultAmount, _fee);
         uint256 amountAfterTax = _defaultAmount - taxedAmount;
 
-        // Create the context to send to the split hook.
-        JBSplitHookContext memory context = JBSplitHookContext({
-            token: _usdc,
-            amount: amountAfterTax,
-            decimals: 0,
-            projectId: _noProject,
-            groupId: uint256(uint160(_usdc)),
-            split: _splitMemory
-        });
-
         // mock call to usdc transfer
         mockExpect(address(_usdc), abi.encodeCall(IERC20.transfer, (address(this), amountAfterTax)), abi.encode(true));
 
@@ -641,19 +543,6 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
             beneficiary: _noBene,
             lockedUntil: _lockedUntil,
             hook: IJBSplitHook(address(0))
-        });
-
-        uint256 taxedAmount = JBFees.feeAmountIn(_defaultAmount, _fee);
-        uint256 amountAfterTax = _defaultAmount - taxedAmount;
-
-        // Create the context to send to the split hook.
-        JBSplitHookContext memory context = JBSplitHookContext({
-            token: _usdc,
-            amount: amountAfterTax,
-            decimals: 0,
-            projectId: _noProject,
-            groupId: uint256(uint160(_usdc)),
-            split: _splitMemory
         });
 
         vm.expectRevert();

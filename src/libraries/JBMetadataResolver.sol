@@ -256,29 +256,29 @@ library JBMetadataResolver {
 
     /**
      * @notice Returns an unique id following a suggested format
-     *         (`xor(address(this), functionality name)` where functionality name is a string
+     *         (`xor(address(this), purpose name)` where purpose name is a string
      *         giving context to the id (Permit2, quoteForSwap, etc)
      *
-     * @param functionality   A string describing the functionality associated with the id
+     * @param purpose   A string describing the purpose associated with the id
      *
      * @return id       The resulting id
      */
-    function getId(string memory functionality) internal view returns (bytes4) {
-        return getId(functionality, address(this));
+    function getId(string memory purpose) internal view returns (bytes4) {
+        return getId(purpose, address(this));
     }
 
     /**
      * @notice Returns an unique id following a suggested format
-     *         (`xor(address(this), functionality name)` where functionality name is a string
+     *         (`xor(address(this), purpose name)` where purpose name is a string
      *         giving context to the id (Permit2, quoteForSwap, etc)
      *
-     * @param functionality   A string describing the functionality associated with the id
+     * @param purpose   A string describing the purpose associated with the id
      * @param target          The target which will use the metadata
      *
      * @return id       The resulting id
      */
-    function getId(string memory functionality, address target) internal pure returns (bytes4) {
-        return bytes4(bytes20(target) ^ bytes20(keccak256(bytes(functionality))));
+    function getId(string memory purpose, address target) internal pure returns (bytes4) {
+        return bytes4(bytes20(target) ^ bytes20(keccak256(bytes(purpose))));
     }
 
     /// @notice Slice bytes from a start index to an end index.

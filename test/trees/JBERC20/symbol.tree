@@ -1,0 +1,5 @@
+TestSymbol_Local
+├── When a symbol is set
+│   └── it will return a non-empty string
+└── When a symbol is not set
+    └── it will return an empty string

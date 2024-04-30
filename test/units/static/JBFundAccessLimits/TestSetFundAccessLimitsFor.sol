@@ -210,6 +210,34 @@ contract TestSetFundAccessLimitsFor_Local is JBFundAccessSetup {
         _fundAccess.setFundAccessLimitsFor(_projectId, _ruleset, _fundAccessLimitGroup);
     }
 
+    function test_GivenSurplusAllowanceCurrencyGTUint32Max() external whenCallerIsControllerOfProject {
+        // it will revert INVALID_SURPLUS_ALLOWANCE_CURRENCY
+
+        // Fund Access config
+        JBFundAccessLimitGroup[] memory _fundAccessLimitGroup = new JBFundAccessLimitGroup[](2);
+        {
+            // Specify a payout limit.
+            JBCurrencyAmount[] memory _payoutLimits = new JBCurrencyAmount[](1);
+            _payoutLimits[0] = JBCurrencyAmount({amount: _validLimit, currency: _validCurrency});
+
+            // Specify a surplus allowance.
+            JBCurrencyAmount[] memory _surplusAllowances = new JBCurrencyAmount[](2);
+            _surplusAllowances[0] = JBCurrencyAmount({amount: _validLimit, currency: type(uint32).max});
+
+            _surplusAllowances[1] = JBCurrencyAmount({amount: _validLimit, currency: _invalidCurrency});
+
+            _fundAccessLimitGroup[0] = JBFundAccessLimitGroup({
+                terminal: address(_terminal),
+                token: JBConstants.NATIVE_TOKEN,
+                payoutLimits: _payoutLimits,
+                surplusAllowances: _surplusAllowances
+            });
+        }
+
+        vm.expectRevert(abi.encodeWithSignature("INVALID_SURPLUS_ALLOWANCE_CURRENCY()"));
+        _fundAccess.setFundAccessLimitsFor(_projectId, _ruleset, _fundAccessLimitGroup);
+    }
+
     function test_GivenValidConfig() external whenCallerIsControllerOfProject {
         // it will set packed properties and emit SetFundAccessLimits
 
@@ -226,6 +254,44 @@ contract TestSetFundAccessLimitsFor_Local is JBFundAccessSetup {
 
             // Specify a surplus allowance.
             JBCurrencyAmount[] memory _surplusAllowances = new JBCurrencyAmount[](0);
+
+            _fundAccessLimitGroup[0] = JBFundAccessLimitGroup({
+                terminal: address(_terminal),
+                token: JBConstants.NATIVE_TOKEN,
+                payoutLimits: _payoutLimits,
+                surplusAllowances: _surplusAllowances
+            });
+
+            _fundAccessLimitGroup[1] = JBFundAccessLimitGroup({
+                terminal: address(_terminal2),
+                token: JBConstants.NATIVE_TOKEN,
+                payoutLimits: _payoutLimits,
+                surplusAllowances: _surplusAllowances
+            });
+        }
+
+        vm.expectEmit();
+        emit IJBFundAccessLimits.SetFundAccessLimits(_ruleset, _projectId, _fundAccessLimitGroup[0], address(this));
+
+        vm.expectEmit();
+        emit IJBFundAccessLimits.SetFundAccessLimits(_ruleset, _projectId, _fundAccessLimitGroup[1], address(this));
+
+        _fundAccess.setFundAccessLimitsFor(_projectId, _ruleset, _fundAccessLimitGroup);
+    }
+
+    function test_GivenValidConfigWithLimitsZero() external whenCallerIsControllerOfProject {
+        // it will set packed properties and emit SetFundAccessLimits
+
+        // Fund Access config
+        JBFundAccessLimitGroup[] memory _fundAccessLimitGroup = new JBFundAccessLimitGroup[](2);
+        {
+            // Specify a payout limit.
+            JBCurrencyAmount[] memory _payoutLimits = new JBCurrencyAmount[](1);
+            _payoutLimits[0] = JBCurrencyAmount({amount: 0, currency: uint32(uint160(JBConstants.NATIVE_TOKEN))});
+
+            // Specify a surplus allowance.
+            JBCurrencyAmount[] memory _surplusAllowances = new JBCurrencyAmount[](1);
+            _surplusAllowances[0] = JBCurrencyAmount({amount: 0, currency: type(uint32).max});
 
             _fundAccessLimitGroup[0] = JBFundAccessLimitGroup({
                 terminal: address(_terminal),

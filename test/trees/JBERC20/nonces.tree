@@ -1,0 +1,5 @@
+TestNonces_Local
+├── When a user has not called permit
+│   └── it will return zero
+└── When a user has called permit
+    └── it will return a nonce GT zero

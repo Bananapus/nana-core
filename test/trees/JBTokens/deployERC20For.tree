@@ -1,0 +1,12 @@
+TestDeployERC20For_Local
+├── when bytes length EQ zero
+│   └── it will revert EMPTY_NAME
+├── when symbol length EQ zero
+│   └── it will revert EMPTY_SYMBOL
+├── when project already has a configured token
+│   └── it will revert PROJECT_ALREADY_HAS_TOKEN
+└── when happy path
+    ├── given a salt is provided
+    │   └── it will create and initialize a deterministic clone based on the msgsender and salt
+    └── given a salt is not provided
+        └── it will clone and initialize a indeterministically generated clone

@@ -352,4 +352,66 @@ contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
         assertEq(_current[0].lockedUntil, block.timestamp + 100);
         assertEq(_current[1].lockedUntil, block.timestamp + 200);
     }
+
+    function test_GivenOverwritingExistingLockedSplitWithReorderedGroup() external whenCallerIsController {
+        // it will overwrite
+
+        // data for call
+        JBSplitGroup[] memory _splitsGroup = new JBSplitGroup[](1);
+        JBSplit[] memory _splitsArray = new JBSplit[](1);
+
+        // Set up a payout split recipient.
+        _splitsArray[0] = JBSplit({
+            preferAddToBalance: false,
+            percent: JBConstants.SPLITS_TOTAL_PERCENT / 2,
+            projectId: _projectId,
+            beneficiary: _bene,
+            lockedUntil: block.timestamp + 100,
+            hook: IJBSplitHook(address(0))
+        });
+
+        // outer structure
+        _splitsGroup[0] = JBSplitGroup({groupId: 0, splits: _splitsArray});
+
+        vm.expectEmit();
+        emit IJBSplits.SetSplit(_projectId, block.timestamp, 0, _splitsArray[0], address(this));
+
+        _splits.setSplitGroupsOf(_projectId, _rulesetId, _splitsGroup);
+
+        // Second or "reconfig" call
+        JBSplitGroup[] memory _secondSplitsGroup = new JBSplitGroup[](1);
+        JBSplit[] memory _secondSplitsArray = new JBSplit[](2);
+
+        // Re-Set up a payout split recipient.
+        _secondSplitsArray[1] = JBSplit({
+            preferAddToBalance: false,
+            percent: JBConstants.SPLITS_TOTAL_PERCENT / 2,
+            projectId: _projectId,
+            beneficiary: _bene,
+            lockedUntil: block.timestamp + 100,
+            hook: IJBSplitHook(address(0))
+        });
+
+        _secondSplitsArray[0] = JBSplit({
+            preferAddToBalance: false,
+            percent: JBConstants.SPLITS_TOTAL_PERCENT / 2,
+            projectId: _projectId,
+            beneficiary: _bene,
+            lockedUntil: 0,
+            hook: IJBSplitHook(address(0))
+        });
+
+        // outer structure
+        _secondSplitsGroup[0] = JBSplitGroup({groupId: 0, splits: _secondSplitsArray});
+
+        vm.expectEmit();
+        emit IJBSplits.SetSplit(_projectId, block.timestamp, 0, _secondSplitsArray[0], address(this));
+        emit IJBSplits.SetSplit(_projectId, block.timestamp, 0, _secondSplitsArray[1], address(this));
+
+        _splits.setSplitGroupsOf(_projectId, block.timestamp, _secondSplitsGroup);
+
+        JBSplit[] memory _current = _splits.splitsOf(_projectId, block.timestamp, 0);
+
+        assertEq(_current[0].preferAddToBalance, false);
+    }
 }
