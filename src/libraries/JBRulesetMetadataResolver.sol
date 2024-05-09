@@ -14,15 +14,6 @@ library JBRulesetMetadataResolver {
         return uint256(uint16(ruleset.metadata >> 20));
     }
 
-    function setRedemptionRateTo(JBRuleset memory ruleset, uint256 value) internal pure returns (JBRuleset memory) {
-        // redemption rate in bits 20-35 (16 bits).
-        // redemption rate is a number 0-10000.
-        JBRulesetMetadata memory adjustedMetadata = expandMetadata(ruleset);
-        adjustedMetadata.redemptionRate = value;
-        ruleset.metadata = packRulesetMetadata(adjustedMetadata);
-        return ruleset;
-    }
-
     function baseCurrency(JBRuleset memory ruleset) internal pure returns (uint256) {
         // Currency is a number 0-4294967296.
         return uint256(uint32(ruleset.metadata >> 36));
