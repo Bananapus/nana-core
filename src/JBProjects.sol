@@ -57,13 +57,7 @@ contract JBProjects is ERC721, Ownable, IJBProjects {
     /// @param owner The owner of the contract who can set metadata.
     /// @param feeProjectOwner The address that will receive the fee-project. If `address(0)` the fee-project will not
     /// be minted.
-    constructor(
-        address owner,
-        address feeProjectOwner
-    )
-        ERC721("Juicebox Projects", "JUICEBOX")
-        Ownable(owner)
-    {
+    constructor(address owner, address feeProjectOwner) ERC721("Juicebox Projects", "JUICEBOX") Ownable(owner) {
         if (feeProjectOwner != address(0)) {
             createFor(feeProjectOwner);
         }
