@@ -14,7 +14,7 @@ contract JBERC20Inheritance_Local is JBERC20, TestBaseWorkflow {
 
         _update(address(0), address(100), _max + 1);
     }
-    
+
     // This test checks that voting power gets accounted for.
     function test_votesUpdateOnTransfer() public {
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
@@ -63,20 +63,20 @@ contract JBERC20Inheritance_Local is JBERC20, TestBaseWorkflow {
             terminalConfigurations: _terminalConfigurations,
             memo: ""
         });
-        
+
         // Configure a token.
         vm.prank(_projectOwner);
         IJBToken _token = jbController().deployERC20For(projectId, "TestToken", "TEST", bytes32(0));
-        
+
         // Have the user delegate to themselves.
         vm.prank(_recipient);
         ERC20Votes(address(_token)).delegate(_recipient);
 
-        // Mint tokens to the user, check that the balance is correct. 
+        // Mint tokens to the user, check that the balance is correct.
         vm.startPrank(_projectOwner);
-        jbController().mintTokensOf(projectId, _amount, _recipient, "", false);  
+        jbController().mintTokensOf(projectId, _amount, _recipient, "", false);
         assertEq(_token.balanceOf(_recipient), _amount);
-        
+
         // Assert that the user received the voting power as expected.
         assertEq(ERC20Votes(address(_token)).getVotes(_recipient), _amount);
     }
