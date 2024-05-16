@@ -116,6 +116,8 @@ library JBMetadataResolver {
         // There is something in the table offset, but not a valid entry - avoid overwriting
         if (originalMetadata.length < RESERVED_SIZE + ID_SIZE + 1) revert METADATA_TOO_SHORT();
 
+        if (dataToAdd.length < 32) revert DATA_NOT_PADDED();
+
         // Get the first data offset - upcast to avoid overflow (same for other offset)...
         uint256 firstOffset = uint8(originalMetadata[RESERVED_SIZE + ID_SIZE]);
 
