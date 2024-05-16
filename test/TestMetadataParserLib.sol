@@ -8,7 +8,7 @@ import /* {*} from */ "./helpers/TestBaseWorkflow.sol";
  *
  * @dev    These are a mixed collection of unit and integration tests.
  */
-contract JBDelegateMetadataLib_Test is Test {
+contract JBDelegateMetadataLib_Test_Local is Test {
     MetadataResolverHelper parser;
 
     /**
@@ -379,6 +379,23 @@ contract JBDelegateMetadataLib_Test is Test {
 
         // Below should revert.
         vm.expectRevert(abi.encodeWithSignature("LENGTH_MISMATCH()"));
+        parser.createMetadata(_ids, _datas);
+    }
+
+    /**
+     * @notice Test creating and parsing metadata of incorrect length.
+     */
+    function test_create__unpadded() external {
+        bytes4[] memory _ids = new bytes4[](1);
+        bytes[] memory _datas = new bytes[](1);
+
+        uint8 something = uint8(1);
+        bytes memory shortData = abi.encodePacked(something);
+
+        _ids[0] = bytes4(uint32(1));
+        _datas[0] = shortData;
+
+        vm.expectRevert(abi.encodeWithSignature("DATA_NOT_PADDED()"));
         parser.createMetadata(_ids, _datas);
     }
 }
