@@ -230,7 +230,7 @@ library JBMetadataResolver {
             _offset += _datas[_i].length / JBMetadataResolver.WORD_SIZE;
 
             // Overflowing a bytes1?
-            if (_offset > 2 ** 8) revert METADATA_TOO_LONG();
+            if (_offset > 255) revert METADATA_TOO_LONG();
         }
 
         // Pad the table to a multiple of 32B
