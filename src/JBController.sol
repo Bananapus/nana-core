@@ -63,6 +63,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     error NO_RESERVED_TOKENS();
     error RULESETS_ALREADY_LAUNCHED();
     error ZERO_TOKENS_TO_MINT();
+    error RULESET_OWNER_MINTING_DISABLED();
 
     //*********************************************************************//
     // --------------- public immutable stored properties ---------------- //
@@ -651,6 +652,13 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
             projectId: projectId,
             permissionId: JBPermissionIds.SET_TOKEN
         });
+
+        // Fetch the current ruleset to check it's rules.
+        JBRuleset memory ruleset = RULESETS.currentOf(projectId);
+        JBRulesetMetadata memory metadata = ruleset.expandMetadata();
+
+        // If owner minting is disabled for the ruleset, the owner cannot change the token.
+        if (!metadata.allowOwnerMinting) revert RULESET_OWNER_MINTING_DISABLED();
 
         TOKENS.setTokenFor(projectId, token);
     }
