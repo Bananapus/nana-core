@@ -6,6 +6,7 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
 import {JBPermissioned} from "./abstract/JBPermissioned.sol";
+import {IJBController} from "./interfaces/IJBController.sol";
 import {IJBDirectory} from "./interfaces/IJBDirectory.sol";
 import {IJBDirectoryAccessControl} from "./interfaces/IJBDirectoryAccessControl.sol";
 import {IJBPermissions} from "./interfaces/IJBPermissions.sol";
@@ -168,7 +169,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
         if (PROJECTS.count() < projectId) revert INVALID_PROJECT_ID_IN_DIRECTORY();
 
         // Keep a reference to the current controller.
-        IERC165 currentController = controllerOf[projectId];
+        IJBController currentController = IJBController(address(controllerOf[projectId]));
 
         // Get a reference to a flag indicating whether the project is allowed to set its controller.
         // Setting the controller is allowed if the project doesn't have a controller,
@@ -182,6 +183,12 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
         // If setting the controller is not allowed, revert.
         if (!allowSetController) {
             revert SET_CONTROLLER_NOT_ALLOWED();
+        }
+
+        // Mint any pending reserved tokens before migrating.
+        if (address(currentController) != address(0) && currentController.pendingReservedTokenBalanceOf(projectId) != 0)
+        {
+            currentController.sendReservedTokensToSplitsOf(projectId);
         }
 
         // Set the new controller.
