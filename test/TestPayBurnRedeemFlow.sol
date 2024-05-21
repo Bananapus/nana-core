@@ -31,6 +31,7 @@ contract TestPayBurnRedeemFlow_Local is TestBaseWorkflow {
             pausePay: false,
             pauseCreditTransfers: false,
             allowOwnerMinting: false,
+            allowSetCustomToken: true,
             allowTerminalMigration: false,
             allowSetTerminals: false,
             allowControllerMigration: false,

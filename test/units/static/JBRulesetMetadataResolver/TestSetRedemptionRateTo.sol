@@ -18,6 +18,7 @@ contract TestSetRedemptionRateTo_Local is JBTest {
             pausePay: false,
             pauseCreditTransfers: false,
             allowOwnerMinting: false,
+            allowSetCustomToken: false,
             allowTerminalMigration: false,
             allowSetTerminals: false,
             allowControllerMigration: false,
@@ -70,6 +71,7 @@ contract TestSetRedemptionRateTo_Local is JBTest {
             pausePay: false,
             pauseCreditTransfers: false,
             allowOwnerMinting: false,
+            allowSetCustomToken: false,
             allowTerminalMigration: false,
             allowSetTerminals: true, // testing this
             allowControllerMigration: false,
@@ -84,8 +86,8 @@ contract TestSetRedemptionRateTo_Local is JBTest {
 
         uint256 _packed = _rulesMetadata.packRulesetMetadata();
 
-        uint256 _allowSetTerminals = uint256(uint16(_packed >> 72) & 1);
-        uint256 _allowSetController = uint256(uint16(_packed >> 74) & 1);
+        uint256 _allowSetTerminals = uint256(uint16(_packed >> 73) & 1);
+        uint256 _allowSetController = uint256(uint16(_packed >> 75) & 1);
         assertEq(_allowSetTerminals, 1);
         assertEq(_allowSetController, 1);
     }

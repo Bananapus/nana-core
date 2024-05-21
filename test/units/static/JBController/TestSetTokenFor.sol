@@ -33,7 +33,8 @@ contract TestSetTokenFor_Local is JBControllerSetup {
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
-            allowOwnerMinting: true, // Allows authorized to set a token or mint tokens
+            allowOwnerMinting: true,
+            allowSetCustomToken: true, // Allows authorized to set a token or mint tokens
             allowTerminalMigration: false,
             allowSetTerminals: false,
             allowControllerMigration: false,

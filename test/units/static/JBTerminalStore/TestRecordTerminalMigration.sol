@@ -39,7 +39,8 @@ contract TestRecordTerminalMigration_Local is JBTerminalStoreSetup {
             pausePay: false,
             pauseCreditTransfers: false,
             allowOwnerMinting: false,
-            allowTerminalMigration: true,
+            allowSetCustomToken: false,
+            allowTerminalMigration: false,
             allowSetTerminals: false,
             allowControllerMigration: false,
             allowSetController: false,
@@ -88,6 +89,7 @@ contract TestRecordTerminalMigration_Local is JBTerminalStoreSetup {
             pausePay: false,
             pauseCreditTransfers: false,
             allowOwnerMinting: false,
+            allowSetCustomToken: false,
             // not allowed
             allowTerminalMigration: false,
             allowSetTerminals: false,
