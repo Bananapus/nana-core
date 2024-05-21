@@ -21,12 +21,12 @@ contract TestRulesetViews_Local is JBControllerSetup {
         packed |= 8000 << 20;
         packed |= 1 << 36;
         packed |= 1 << 69;
-        packed |= 1 << 71;
         packed |= 1 << 72;
-        packed |= 1 << 74;
-        packed |= 1 << 76;
-        packed |= uint256(uint160(address(0x1234567890123456789012345678901234567890))) << 79;
-        packed |= 65_535 << 239;
+        packed |= 1 << 73;
+        packed |= 1 << 75;
+        packed |= 1 << 77;
+        packed |= uint256(uint160(address(0x1234567890123456789012345678901234567890))) << 80;
+        packed |= 65_535 << 240;
 
         return packed;
     }

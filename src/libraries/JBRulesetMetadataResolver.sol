@@ -81,7 +81,7 @@ library JBRulesetMetadataResolver {
     }
 
     function metadata(JBRuleset memory ruleset) internal pure returns (uint256) {
-        return uint256(uint16(ruleset.metadata >> 239));
+        return uint256(uint16(ruleset.metadata >> 240));
     }
 
     /// @notice Pack the funding cycle metadata.
@@ -104,28 +104,28 @@ library JBRulesetMetadataResolver {
         if (rulesetMetadata.pauseCreditTransfers) packed |= 1 << 69;
         // allow discretionary minting in bit 70.
         if (rulesetMetadata.allowOwnerMinting) packed |= 1 << 70;
-        // allow token to be modified
+        // allow a custom token to be set in bit 71.
         if (rulesetMetadata.allowSetCustomToken) packed |=1 << 71;
-        // allow terminal migration in bit 71.
+        // allow terminal migration in bit 72.
         if (rulesetMetadata.allowTerminalMigration) packed |= 1 << 72;
-        // allow set terminals in bit 72.
+        // allow set terminals in bit 73.
         if (rulesetMetadata.allowSetTerminals) packed |= 1 << 73;
-        // allow controller migration in bit 73.
+        // allow controller migration in bit 74.
         if (rulesetMetadata.allowControllerMigration) packed |= 1 << 74;
-        // allow set controller in bit 74.
+        // allow set controller in bit 75.
         if (rulesetMetadata.allowSetController) packed |= 1 << 75;
-        // hold fees in bit 75.
+        // hold fees in bit 76.
         if (rulesetMetadata.holdFees) packed |= 1 << 76;
-        // useTotalSurplusForRedemptions in bit 76.
+        // useTotalSurplusForRedemptions in bit 77.
         if (rulesetMetadata.useTotalSurplusForRedemptions) packed |= 1 << 77;
-        // use pay data source in bit 77.
+        // use pay data source in bit 78.
         if (rulesetMetadata.useDataHookForPay) packed |= 1 << 78;
-        // use redeem data source in bit 78.
+        // use redeem data source in bit 79.
         if (rulesetMetadata.useDataHookForRedeem) packed |= 1 << 79;
-        // data source address in bits 79-238.
+        // data source address in bits 80-239.
         packed |= uint256(uint160(address(rulesetMetadata.dataHook))) << 80;
-        // metadata in bits 239-254 (16 bits).
-        packed |= rulesetMetadata.metadata << 239;
+        // metadata in bits 240-255 (16 bits).
+        packed |= rulesetMetadata.metadata << 240;
     }
 
     /// @notice Expand the funding cycle metadata.

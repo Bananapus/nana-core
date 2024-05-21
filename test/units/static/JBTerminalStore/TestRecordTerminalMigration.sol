@@ -40,7 +40,7 @@ contract TestRecordTerminalMigration_Local is JBTerminalStoreSetup {
             pauseCreditTransfers: false,
             allowOwnerMinting: false,
             allowSetCustomToken: false,
-            allowTerminalMigration: false,
+            allowTerminalMigration: true,
             allowSetTerminals: false,
             allowControllerMigration: false,
             allowSetController: false,
