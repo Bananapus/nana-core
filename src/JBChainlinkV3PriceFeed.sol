@@ -27,6 +27,13 @@ contract JBChainlinkV3PriceFeed is IJBPriceFeed {
     AggregatorV3Interface public immutable FEED;
 
     //*********************************************************************//
+    // --------------------- public stored properties -------------------- //
+    //*********************************************************************//
+
+    /// @notice How many blocks old a Chainlink price update is allowed to be before considered "stale".
+    uint256 public immutable THRESHOLD;
+
+    //*********************************************************************//
     // ------------------------- external views -------------------------- //
     //*********************************************************************//
 
@@ -40,6 +47,8 @@ contract JBChainlinkV3PriceFeed is IJBPriceFeed {
 
         // Make sure the price isn't stale.
         if (answeredInRound < roundId) revert STALE_PRICE();
+
+        if (block.timestamp - updatedAt > THRESHOLD) revert STALE_PRICE();
 
         // Make sure the round is finished.
         if (updatedAt == 0) revert INCOMPLETE_ROUND();
@@ -59,7 +68,9 @@ contract JBChainlinkV3PriceFeed is IJBPriceFeed {
     //*********************************************************************//
 
     /// @param feed The Chainlink feed to report prices from.
-    constructor(AggregatorV3Interface feed) {
+    /// @param threshold How many blocks old a price update may be.
+    constructor(AggregatorV3Interface feed, uint256 threshold) {
         FEED = feed;
+        THRESHOLD = threshold;
     }
 }
