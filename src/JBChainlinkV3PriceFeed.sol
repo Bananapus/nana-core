@@ -45,6 +45,7 @@ contract JBChainlinkV3PriceFeed is IJBPriceFeed {
         // slither-disable-next-line unused-return
         (, int256 price,, uint256 updatedAt,) = FEED.latestRoundData();
 
+        // Make sure the price's update threshold is met.
         if (block.timestamp - updatedAt > THRESHOLD) revert STALE_PRICE();
 
         // Make sure the round is finished.
