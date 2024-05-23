@@ -4,40 +4,27 @@ pragma solidity 0.8.23;
 import {AggregatorV2V3Interface} from "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV2V3Interface.sol";
 import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
 
-import {IJBPriceFeed} from "./interfaces/IJBPriceFeed.sol";
-import {JBFixedPointNumber} from "./libraries/JBFixedPointNumber.sol";
+import {JBChainlinkV3PriceFeed} from "./JBChainlinkV3PriceFeed.sol";
 
 /// @notice An `IJBPriceFeed` implementation that reports prices from a Chainlink `AggregatorV3Interface`.
-contract JBChainlinkV3PriceFeed is IJBPriceFeed {
-    // A library that provides utility for fixed point numbers.
-    using JBFixedPointNumber for uint256;
+contract JBChainlinkV3L2PriceFeed is JBChainlinkV3PriceFeed {
 
     //*********************************************************************//
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
 
-    error STALE_PRICE();
-    error INCOMPLETE_ROUND();
-    error NEGATIVE_PRICE();
     error SEQUENCER_DOWN_OR_RESTARTING();
 
     //*********************************************************************//
     // ---------------- public stored immutable properties --------------- //
     //*********************************************************************//
 
-    /// @notice The Chainlink feed that prices are reported from.
-    AggregatorV3Interface public immutable FEED;
+    /// @notice The Chainlink sequencer feed that prices are reported from.
     AggregatorV2V3Interface public immutable SEQUENCER_FEED;
 
-    //*********************************************************************//
-    // --------------------- public stored properties -------------------- //
-    //*********************************************************************//
-
-    /// @notice How many blocks old a Chainlink price update is allowed to be before considered "stale".
-    uint256 public immutable THRESHOLD;
 
     /// @notice How long the sequencer must be re-active in order to return a price.
-    uint256 private immutable GRACE_PERIOD_TIME;
+    uint256 public immutable GRACE_PERIOD_TIME;
 
     //*********************************************************************//
     // ------------------------- external views -------------------------- //
@@ -46,28 +33,11 @@ contract JBChainlinkV3PriceFeed is IJBPriceFeed {
     /// @notice Gets the current price (per 1 unit) from the feed.
     /// @param decimals The number of decimals the return value should use.
     /// @return The current unit price from the feed, as a fixed point number with the specified number of decimals.
-    function currentUnitPrice(uint256 decimals) external view override returns (uint256) {
+    function currentUnitPrice(uint256 decimals) public view override returns (uint256) {
         // Check the sequencer status
         if (!isSequencerActive()) revert SEQUENCER_DOWN_OR_RESTARTING();
 
-        // Get the latest round information from the feed.
-        // slither-disable-next-line unused-return
-        (, int256 price,, uint256 updatedAt,) = FEED.latestRoundData();
-
-        // Ensure the price is not stale.
-        if (block.timestamp - updatedAt > THRESHOLD) revert STALE_PRICE();
-
-        // Make sure the round is finished.
-        if (updatedAt == 0) revert INCOMPLETE_ROUND();
-
-        // Make sure the price is positive.
-        if (price < 0) revert NEGATIVE_PRICE();
-
-        // Get a reference to the number of decimals the feed uses.
-        uint256 feedDecimals = FEED.decimals();
-
-        // Return the price, adjusted to the specified number of decimals.
-        return uint256(price).adjustDecimals({decimals: feedDecimals, targetDecimals: decimals});
+        return super.currentUnitPrice(decimals);
     }
 
     /// @notice Fetches sequencer status and uptime returning a "safe-to-use" status.
@@ -86,18 +56,16 @@ contract JBChainlinkV3PriceFeed is IJBPriceFeed {
     //*********************************************************************//
 
     /// @param feed The Chainlink feed to report prices from.
-    /// @param sequencerFeed The Chainlink feed to report sequencer status.
     /// @param threshold How many blocks old a price update may be.
+    /// @param sequencerFeed The Chainlink feed to report sequencer status.
     /// @param gracePeriod How long the sequencer should have been re-active before returning prices.
     constructor(
         AggregatorV3Interface feed,
-        AggregatorV2V3Interface sequencerFeed,
         uint256 threshold,
+        AggregatorV2V3Interface sequencerFeed,
         uint256 gracePeriod
-    ) {
-        FEED = feed;
+    ) JBChainlinkV3PriceFeed(feed, threshold) {
         SEQUENCER_FEED = sequencerFeed;
-        THRESHOLD = threshold;
         GRACE_PERIOD_TIME = gracePeriod;
     }
 }
