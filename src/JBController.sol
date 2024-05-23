@@ -653,12 +653,11 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
             permissionId: JBPermissionIds.SET_TOKEN
         });
 
-        // Fetch the current ruleset to check it's rules.
+        // Get a reference to the current ruleset.
         JBRuleset memory ruleset = RULESETS.currentOf(projectId);
-        JBRulesetMetadata memory metadata = ruleset.expandMetadata();
 
         // If owner minting is disabled for the ruleset, the owner cannot change the token.
-        if (ruleset.id != 0 && !metadata.allowSetCustomToken) revert RULESET_SET_TOKEN_DISABLED();
+        if (!ruleset.allowSetCustomToken()) revert RULESET_SET_TOKEN_DISABLED();
 
         TOKENS.setTokenFor(projectId, token);
     }
