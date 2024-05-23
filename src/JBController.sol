@@ -656,6 +656,9 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         // Get a reference to the current ruleset.
         JBRuleset memory ruleset = RULESETS.currentOf(projectId);
 
+        // If there's no current ruleset, get a reference to the upcoming one.
+        if (ruleset.id == 0) ruleset = RULESETS.upcomingOf(projectId);
+
         // If owner minting is disabled for the ruleset, the owner cannot change the token.
         if (!ruleset.allowSetCustomToken()) revert RULESET_SET_TOKEN_DISABLED();
 
