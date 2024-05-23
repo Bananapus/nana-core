@@ -34,21 +34,13 @@ contract JBChainlinkV3SequencerPriceFeed is JBChainlinkV3PriceFeed {
     /// @param decimals The number of decimals the return value should use.
     /// @return The current unit price from the feed, as a fixed point number with the specified number of decimals.
     function currentUnitPrice(uint256 decimals) public view override returns (uint256) {
-        // Check the sequencer status
-        if (!isSequencerActive()) revert SEQUENCER_DOWN_OR_RESTARTING();
-
-        return super.currentUnitPrice(decimals);
-    }
-
-    /// @notice Fetches sequencer status and uptime returning a "safe-to-use" status.
-    /// @return "safe-to-use" status as t/f
-    function isSequencerActive() internal view returns (bool) {
-        // Fetch status
+        // Fetch sequencer status.
         (, int256 answer, uint256 startedAt,,) = SEQUENCER_FEED.latestRoundData();
 
-        if (block.timestamp - startedAt <= GRACE_PERIOD_TIME || answer == 1) return false;
+        // If the grace period has passed and the answer isn't 1, the sequencer is active.
+        if (block.timestamp - startedAt > GRACE_PERIOD_TIME && answer != 1) revert SEQUENCER_DOWN_OR_RESTARTING();
 
-        return true;
+        return super.currentUnitPrice(decimals);
     }
 
     //*********************************************************************//
