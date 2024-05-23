@@ -6,8 +6,8 @@ import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/shared/interf
 
 import {JBChainlinkV3PriceFeed} from "./JBChainlinkV3PriceFeed.sol";
 
-/// @notice An `IJBPriceFeed` implementation that reports prices from a Chainlink `AggregatorV3Interface`.
-contract JBChainlinkV3L2PriceFeed is JBChainlinkV3PriceFeed {
+/// @notice An `IJBPriceFeed` implementation that reports prices from a Chainlink `AggregatorV3Interface` from optimistic sequencers.
+contract JBChainlinkV3SequencerPriceFeed is JBChainlinkV3PriceFeed {
 
     //*********************************************************************//
     // --------------------------- custom errors ------------------------- //
