@@ -37,8 +37,10 @@ contract JBChainlinkV3SequencerPriceFeed is JBChainlinkV3PriceFeed {
         // Fetch sequencer status.
         (, int256 answer, uint256 startedAt,,) = SEQUENCER_FEED.latestRoundData();
 
-        // If the grace period has passed and the answer isn't 1, the sequencer is active.
-        if (block.timestamp - startedAt > GRACE_PERIOD_TIME && answer != 1) revert SEQUENCER_DOWN_OR_RESTARTING();
+        // block.timestamp is now (time since up) - when the sequencer last started 
+        // if time since up <= grace period then the sequencer is "unsafe"
+        // answer 1 == sequencer is down https://docs.chain.link/data-feeds/l2-sequencer-feeds
+        if (block.timestamp - startedAt <= GRACE_PERIOD_TIME || answer == 1) revert SEQUENCER_DOWN_OR_RESTARTING();
 
         return super.currentUnitPrice(decimals);
     }
