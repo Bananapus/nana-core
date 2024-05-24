@@ -12,7 +12,7 @@ contract TestSetTokenFor_Local is JBControllerSetup {
         super.controllerSetup();
     }
 
-    function test_WhenCallerIsPermissioned() external {
+    function test_WhenCallerIsPermissionedAndCurrentRuleset() external {
         // it will set token
 
         // mock ownerOf call to auth this contract (caller)
@@ -63,6 +63,77 @@ contract TestSetTokenFor_Local is JBControllerSetup {
 
         bytes memory _currentRulesetCall = abi.encodeCall(IJBRulesets.currentOf, (1));
         mockExpect(address(rulesets), _currentRulesetCall, abi.encode(ruleset));
+
+        _controller.setTokenFor(_projectId, _token);
+    }
+
+    function test_WhenCallerIsPermissionedAndNoCurrentRulesetButUpcomingCompatible() external {
+        // it will set token
+
+        // mock ownerOf call to auth this contract (caller)
+        bytes memory _ownerOfCall = abi.encodeCall(IERC721.ownerOf, (_projectId));
+        bytes memory _ownerOfReturn = abi.encode(address(this));
+        mockExpect(address(projects), _ownerOfCall, _ownerOfReturn);
+
+        // mock call to JBTokens
+        bytes memory _tokensCall = abi.encodeCall(IJBTokens.setTokenFor, (_projectId, _token));
+        mockExpect(address(tokens), _tokensCall, "");
+
+        // mock call to JBRulesets
+
+        // setup: return data
+        JBRulesetMetadata memory _metadata = JBRulesetMetadata({
+            reservedRate: JBConstants.MAX_RESERVED_RATE / 2, //50%
+            redemptionRate: JBConstants.MAX_REDEMPTION_RATE / 2, //50%
+            baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
+            pausePay: false,
+            pauseCreditTransfers: false,
+            allowOwnerMinting: true,
+            allowSetCustomToken: true, // Allows authorized to set a token or mint tokens
+            allowTerminalMigration: false,
+            allowSetTerminals: false,
+            allowControllerMigration: false,
+            allowSetController: false,
+            holdFees: false,
+            useTotalSurplusForRedemptions: true,
+            useDataHookForPay: false,
+            useDataHookForRedeem: false,
+            dataHook: address(0),
+            metadata: 0
+        });
+
+        uint256 _packedMetadata = JBRulesetMetadataResolver.packRulesetMetadata(_metadata);
+
+        JBRuleset memory ruleset = JBRuleset({
+            cycleNumber: 0,
+            id: 0,
+            basedOnId: 0,
+            start: 0,
+            duration: 0,
+            weight: 0,
+            decayRate: 0,
+            approvalHook: IJBRulesetApprovalHook(address(0)),
+            metadata: 0
+        });
+
+        JBRuleset memory upcoming = JBRuleset({
+            cycleNumber: 1,
+            id: block.timestamp,
+            basedOnId: 0,
+            start: block.timestamp,
+            duration: 8000,
+            weight: 5000,
+            decayRate: 0,
+            approvalHook: IJBRulesetApprovalHook(address(0)),
+            metadata: _packedMetadata
+        });
+
+        // Will check the current ruleset
+        bytes memory _currentRulesetCall = abi.encodeCall(IJBRulesets.currentOf, (1));
+        mockExpect(address(rulesets), _currentRulesetCall, abi.encode(ruleset));
+
+        // Will check the upcoming ruleset
+        mockExpect(address(rulesets), abi.encodeCall(IJBRulesets.upcomingRulesetOf, (1)), abi.encode(upcoming));
 
         _controller.setTokenFor(_projectId, _token);
     }
