@@ -67,6 +67,58 @@ contract TestSetTokenFor_Local is JBControllerSetup {
         _controller.setTokenFor(_projectId, _token);
     }
 
+    function test_WhenCallerIsPermissionedAndAllowSetTokensEQFalse() external {
+        // it will set token
+
+        // mock ownerOf call to auth this contract (caller)
+        bytes memory _ownerOfCall = abi.encodeCall(IERC721.ownerOf, (_projectId));
+        bytes memory _ownerOfReturn = abi.encode(address(this));
+        mockExpect(address(projects), _ownerOfCall, _ownerOfReturn);
+
+        // mock call to JBRulesets
+
+        // setup: return data
+        JBRulesetMetadata memory _metadata = JBRulesetMetadata({
+            reservedRate: JBConstants.MAX_RESERVED_RATE / 2, //50%
+            redemptionRate: JBConstants.MAX_REDEMPTION_RATE / 2, //50%
+            baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
+            pausePay: false,
+            pauseCreditTransfers: false,
+            allowOwnerMinting: true,
+            allowSetCustomToken: false, // Allows authorized to set a token or mint tokens
+            allowTerminalMigration: false,
+            allowSetTerminals: false,
+            allowControllerMigration: false,
+            allowSetController: false,
+            holdFees: false,
+            useTotalSurplusForRedemptions: true,
+            useDataHookForPay: false,
+            useDataHookForRedeem: false,
+            dataHook: address(0),
+            metadata: 0
+        });
+
+        uint256 _packedMetadata = JBRulesetMetadataResolver.packRulesetMetadata(_metadata);
+
+        JBRuleset memory ruleset = JBRuleset({
+            cycleNumber: 1,
+            id: block.timestamp,
+            basedOnId: 0,
+            start: block.timestamp,
+            duration: 8000,
+            weight: 5000,
+            decayRate: 0,
+            approvalHook: IJBRulesetApprovalHook(address(0)),
+            metadata: _packedMetadata
+        });
+
+        bytes memory _currentRulesetCall = abi.encodeCall(IJBRulesets.currentOf, (1));
+        mockExpect(address(rulesets), _currentRulesetCall, abi.encode(ruleset));
+
+        vm.expectRevert(abi.encodeWithSignature("RULESET_SET_TOKEN_DISABLED()"));
+        _controller.setTokenFor(_projectId, _token);
+    }
+
     function test_WhenCallerIsNotPermissioned() external {
         // it will revert UNAUTHORIZED
 

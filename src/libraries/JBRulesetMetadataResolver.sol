@@ -105,7 +105,7 @@ library JBRulesetMetadataResolver {
         // allow discretionary minting in bit 70.
         if (rulesetMetadata.allowOwnerMinting) packed |= 1 << 70;
         // allow a custom token to be set in bit 71.
-        if (rulesetMetadata.allowSetCustomToken) packed |=1 << 71;
+        if (rulesetMetadata.allowSetCustomToken) packed |= 1 << 71;
         // allow terminal migration in bit 72.
         if (rulesetMetadata.allowTerminalMigration) packed |= 1 << 72;
         // allow set terminals in bit 73.
