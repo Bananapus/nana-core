@@ -188,4 +188,113 @@ contract TestLaunchRulesetsFor_Local is JBControllerSetup {
 
         _controller.launchRulesetsFor(_projectId, _rulesetConfigs, _terminalConfigs, "");
     }
+
+    function test_GivenCallerOnlyHasQueuePermission() external {
+        // it should revert
+
+        // mock ownerOf call
+        bytes memory _ownerOfCall = abi.encodeCall(IERC721.ownerOf, (1));
+        bytes memory _ownerData = abi.encode(address(1));
+
+        mockExpect(address(projects), _ownerOfCall, _ownerData);
+
+        // mock permission call
+        bytes memory _call =
+            abi.encodeCall(IJBPermissions.hasPermission, (address(this), address(1), 1, JBPermissionIds.QUEUE_RULESETS));
+        mockExpect(address(permissions), _call, abi.encode(true));
+
+        // SET_TERMINALS
+        bytes memory _call3 =
+            abi.encodeCall(IJBPermissions.hasPermission, (address(this), address(1), 1, JBPermissionIds.SET_TERMINALS));
+        mockExpect(address(permissions), _call3, abi.encode(false));
+
+        // mock permission call #2 (checks for root priv)
+        bytes memory _call4 =
+            abi.encodeCall(IJBPermissions.hasPermission, (address(this), address(1), 0, JBPermissionIds.SET_TERMINALS));
+        mockExpect(address(permissions), _call4, abi.encode(false));
+
+        // it should revert
+        JBTerminalConfig[] memory _terminalConfigs = new JBTerminalConfig[](0);
+        JBRulesetConfig[] memory _rulesetConfigs = new JBRulesetConfig[](1);
+
+        vm.expectRevert(abi.encodeWithSignature("UNAUTHORIZED()"));
+
+        _controller.launchRulesetsFor(1, _rulesetConfigs, _terminalConfigs, "");
+    }
+
+    function test_GivenNonOwnerHasBothPermissions() external {
+        // it will launch rulesets
+
+        // mock ownerOf call
+        bytes memory _ownerOfCall = abi.encodeCall(IERC721.ownerOf, (1));
+        bytes memory _ownerData = abi.encode(address(1));
+
+        mockExpect(address(projects), _ownerOfCall, _ownerData);
+
+        // mock permission call
+        bytes memory _call =
+            abi.encodeCall(IJBPermissions.hasPermission, (address(this), address(1), 1, JBPermissionIds.QUEUE_RULESETS));
+        mockExpect(address(permissions), _call, abi.encode(true));
+
+        // SET_TERMINALS
+        bytes memory _call3 =
+            abi.encodeCall(IJBPermissions.hasPermission, (address(this), address(1), 1, JBPermissionIds.SET_TERMINALS));
+        mockExpect(address(permissions), _call3, abi.encode(true));
+
+        // setup: needed for the call chain
+        JBTerminalConfig[] memory _terminalConfigs;
+        JBRulesetConfig[] memory _rulesetConfigs;
+        uint256 _ts = block.timestamp;
+        uint256 _projectId = 1;
+        (_terminalConfigs, _rulesetConfigs) = genRuleset();
+
+        // inlined to avoid stack2deep
+        mockExpect(address(rulesets), abi.encodeCall(IJBRulesets.latestRulesetIdOf, (_projectId)), abi.encode(0));
+        mockExpect(
+            address(directory),
+            abi.encodeCall(IJBDirectory.setControllerOf, (_projectId, IERC165(address(_controller)))),
+            ""
+        );
+
+        // mock call to rulesets queueFor
+        // setup: return data
+        JBRuleset memory data = JBRuleset({
+            cycleNumber: 1,
+            id: _ts,
+            basedOnId: 0,
+            start: _ts,
+            duration: 0,
+            weight: 0,
+            decayRate: 0,
+            approvalHook: IJBRulesetApprovalHook(address(0)),
+            metadata: 0
+        });
+
+        // Mock call to rulesets queueFor
+        bytes memory _queueForCall = abi.encodeCall(
+            IJBRulesets.queueFor,
+            (_projectId, 0, 0, 0, _rulesetConfigs[0].approvalHook, 75_557_867_929_215_080_413_313, 0)
+        );
+        bytes memory _queueReturn = abi.encode(data);
+        mockExpect(address(rulesets), _queueForCall, _queueReturn);
+
+        // Mock call to splits setSplitGroupsOf
+        bytes memory _setSplitsCall =
+            abi.encodeCall(IJBSplits.setSplitGroupsOf, (_projectId, _ts, _rulesetConfigs[0].splitGroups));
+        bytes memory _splitsReturn = "";
+        mockExpect(address(splits), _setSplitsCall, _splitsReturn);
+
+        // Mock call to fundaccesslimits setFundAccessLimitsFor
+        bytes memory _fundAccessCall = abi.encodeCall(
+            IJBFundAccessLimits.setFundAccessLimitsFor, (_projectId, _ts, _rulesetConfigs[0].fundAccessLimitGroups)
+        );
+        bytes memory _accessReturn = "";
+        mockExpect(address(fundAccessLimits), _fundAccessCall, _accessReturn);
+
+        // event as expected
+        vm.expectEmit();
+        emit IJBController.LaunchRulesets(_ts, 1, "", address(this));
+
+        _controller.launchRulesetsFor(1, _rulesetConfigs, _terminalConfigs, "");
+    }
 }
