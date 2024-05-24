@@ -40,7 +40,7 @@ contract JBChainlinkV3PriceFeed is IJBPriceFeed {
     /// @notice Gets the current price (per 1 unit) from the feed.
     /// @param decimals The number of decimals the return value should use.
     /// @return The current unit price from the feed, as a fixed point number with the specified number of decimals.
-    function currentUnitPrice(uint256 decimals) public override view virtual returns (uint256) {
+    function currentUnitPrice(uint256 decimals) public view virtual override returns (uint256) {
         // Get the latest round information from the feed.
         // slither-disable-next-line unused-return
         (, int256 price,, uint256 updatedAt,) = FEED.latestRoundData();

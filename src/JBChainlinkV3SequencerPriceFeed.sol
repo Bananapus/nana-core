@@ -6,9 +6,9 @@ import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/shared/interf
 
 import {JBChainlinkV3PriceFeed} from "./JBChainlinkV3PriceFeed.sol";
 
-/// @notice An `IJBPriceFeed` implementation that reports prices from a Chainlink `AggregatorV3Interface` from optimistic sequencers.
+/// @notice An `IJBPriceFeed` implementation that reports prices from a Chainlink `AggregatorV3Interface` from
+/// optimistic sequencers.
 contract JBChainlinkV3SequencerPriceFeed is JBChainlinkV3PriceFeed {
-
     //*********************************************************************//
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
@@ -21,7 +21,6 @@ contract JBChainlinkV3SequencerPriceFeed is JBChainlinkV3PriceFeed {
 
     /// @notice The Chainlink sequencer feed that prices are reported from.
     AggregatorV2V3Interface public immutable SEQUENCER_FEED;
-
 
     /// @notice How long the sequencer must be re-active in order to return a price.
     uint256 public immutable GRACE_PERIOD_TIME;
@@ -37,9 +36,7 @@ contract JBChainlinkV3SequencerPriceFeed is JBChainlinkV3PriceFeed {
         // Fetch sequencer status.
         (, int256 answer, uint256 startedAt,,) = SEQUENCER_FEED.latestRoundData();
 
-        // block.timestamp is now (time since up) - when the sequencer last started 
-        // if time since up <= grace period then the sequencer is "unsafe"
-        // answer 1 == sequencer is down https://docs.chain.link/data-feeds/l2-sequencer-feeds
+        // Revert if sequencer has too recently restarted or is currently down.
         if (block.timestamp - startedAt <= GRACE_PERIOD_TIME || answer == 1) revert SEQUENCER_DOWN_OR_RESTARTING();
 
         return super.currentUnitPrice(decimals);
@@ -58,7 +55,9 @@ contract JBChainlinkV3SequencerPriceFeed is JBChainlinkV3PriceFeed {
         uint256 threshold,
         AggregatorV2V3Interface sequencerFeed,
         uint256 gracePeriod
-    ) JBChainlinkV3PriceFeed(feed, threshold) {
+    )
+        JBChainlinkV3PriceFeed(feed, threshold)
+    {
         SEQUENCER_FEED = sequencerFeed;
         GRACE_PERIOD_TIME = gracePeriod;
     }
