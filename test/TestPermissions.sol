@@ -3,7 +3,7 @@ pragma solidity ^0.8.6;
 
 import /* {*} from */ "./helpers/TestBaseWorkflow.sol";
 
-contract TestPermissions_Local is TestBaseWorkflow {
+contract TestPermissions_Local is TestBaseWorkflow, JBTest {
     IJBController private _controller;
     JBRulesetMetadata private _metadata;
     IJBTerminal private _terminal;
@@ -177,10 +177,31 @@ contract TestPermissions_Local is TestBaseWorkflow {
         );
     }
 
-    /* function testBasicAccessSetup() public {
-        vm.prank(address(_projectOwner));
-        bool _check = _permissions.hasPermission(address(_projectOwner), address(_projectOwner), 0, 2);
+    function testBasicAccessSetup() public {
+        address zeroOwner = makeAddr("zeroOwner");
+        address token = address(usdcToken());
 
+        // Pack up our permission data.
+        JBPermissionsData[] memory permData = new JBPermissionsData[](1);
+        uint256[] memory permIds = new uint256[](1);
+        permIds[0] = 1;
+
+        permData[0] = JBPermissionsData({operator: address(this), projectId: _projectZero, permissionIds: permIds});
+
+        // Set em.
+        vm.prank(zeroOwner);
+        _permissions.setPermissionsFor(zeroOwner, permData[0]);
+
+        // Should be true given root check
+        bool _check = _permissions.hasPermission(address(this), zeroOwner, _projectZero, 2);
         assertEq(_check, true);
-    } */
+
+        // Will revert attempting to set another projects token
+        vm.expectRevert(abi.encodeWithSignature("UNAUTHORIZED()"));
+        _controller.setTokenFor(2, IJBToken(token));
+
+        // Will succeed when setting the correct projects token
+        mockExpect(token, abi.encodeCall(MockERC20.decimals, ()), abi.encode(18));
+        _controller.setTokenFor(1, IJBToken(token));
+    }
 }

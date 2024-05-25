@@ -55,7 +55,13 @@ contract JBPermissions is IJBPermissions {
     {
         if (permissionId > 255) revert PERMISSION_ID_OUT_OF_BOUNDS();
 
-        return (((permissionsOf[operator][account][projectId] >> permissionId) & 1) == 1);
+        // Always return true if operator has root permission.
+        if (((permissionsOf[operator][account][projectId] >> 1) & 1) == 1) {
+            return true;
+        } else {
+            // Otherwise return the t/f flag of the specified id.
+            return (((permissionsOf[operator][account][projectId] >> permissionId) & 1) == 1);
+        }
     }
 
     /// @notice Check if an operator has all of the specified permissions for a specific address and project ID.
