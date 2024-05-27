@@ -135,7 +135,7 @@ contract TestRulesetViews_Local is JBControllerSetup {
         assertEq(rulesetsArray[0].weight, queuedRulesets[0].ruleset.weight);
     }
 
-    function test_upcomingRulesetOf() external {
+    function test_upcomingOf() external {
         // setup: return data
         JBRuleset memory data = JBRuleset({
             cycleNumber: 1,
@@ -150,7 +150,7 @@ contract TestRulesetViews_Local is JBControllerSetup {
         });
 
         // setup: mock call
-        bytes memory _encodedCall = abi.encodeCall(IJBRulesets.upcomingRulesetOf, (1));
+        bytes memory _encodedCall = abi.encodeCall(IJBRulesets.upcomingOf, (1));
         bytes memory _willReturn = abi.encode(data, JBApprovalStatus.Empty);
 
         mockExpect(address(rulesets), _encodedCall, _willReturn);

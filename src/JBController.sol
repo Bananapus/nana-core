@@ -209,7 +209,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         override
         returns (JBRuleset memory ruleset, JBRulesetMetadata memory metadata)
     {
-        ruleset = RULESETS.upcomingRulesetOf(projectId);
+        ruleset = RULESETS.upcomingOf(projectId);
         metadata = ruleset.expandMetadata();
     }
 
