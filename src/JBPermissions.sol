@@ -107,8 +107,8 @@ contract JBPermissions is IJBPermissions {
         // Enforce permissions.
         if (
             msg.sender != account
-                && !hasPermission(msg.sender, account, permissionsData.projectId, JBPermissionIds.ROOT)
-                && !hasPermission(msg.sender, account, 0, JBPermissionIds.ROOT)
+                && !hasPermission(msg.sender, account, permissionsData.projectId, JBPermissionIds.SET_PERMISSIONS)
+                && !hasPermission(msg.sender, account, 0, JBPermissionIds.SET_PERMISSIONS)
         ) revert UNAUTHORIZED();
 
         // Pack the permission IDs into a uint256.
