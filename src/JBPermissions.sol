@@ -56,7 +56,9 @@ contract JBPermissions is IJBPermissions {
         returns (bool)
     {
         // If the ROOT permission is set and should be included, return true.
-        if (includeRoot && ((permissionsOf[operator][account][projectId] >> JBPermissionIds.ROOT) & 1) == 1) return true;
+        if (includeRoot && ((permissionsOf[operator][account][projectId] >> JBPermissionIds.ROOT) & 1) == 1) {
+            return true;
+        }
 
         // Indexes above 255 don't exist and are therefor false.
         if (permissionId > 255) return false;
@@ -85,14 +87,16 @@ contract JBPermissions is IJBPermissions {
         returns (bool)
     {
         // If the ROOT permission is set and should be included, return true.
-        if (includeRoot && ((permissionsOf[operator][account][projectId] >> JBPermissionIds.ROOT) & 1) == 1) return true;
+        if (includeRoot && ((permissionsOf[operator][account][projectId] >> JBPermissionIds.ROOT) & 1) == 1) {
+            return true;
+        }
 
         // Keep a reference to the permission being iterated on.
         uint256 permissionId;
 
         // Keep a reference to the permission item being checked.
         uint256 operatorAccountProjectPermissions = permissionsOf[operator][account][projectId];
-        
+
         for (uint256 i; i < permissionIds.length; i++) {
             // Set the permission being iterated on.
             permissionId = permissionIds[i];
@@ -117,8 +121,20 @@ contract JBPermissions is IJBPermissions {
         // Enforce permissions.
         if (
             msg.sender != account
-                && !hasPermission(msg.sender, account, permissionsData.projectId, JBPermissionIds.SET_PERMISSIONS)
-                && !hasPermission(msg.sender, account, 0, JBPermissionIds.SET_PERMISSIONS)
+                && !hasPermission({
+                    operator: msg.sender,
+                    account: account,
+                    projectId: permissionsData.projectId,
+                    permissionId: JBPermissionIds.SET_PERMISSIONS,
+                    includeRoot: true
+                })
+                && !hasPermission({
+                    operator: msg.sender,
+                    account: account,
+                    projectId: 0,
+                    permissionId: JBPermissionIds.SET_PERMISSIONS,
+                    includeRoot: true
+                })
         ) revert UNAUTHORIZED();
 
         // Pack the permission IDs into a uint256.
