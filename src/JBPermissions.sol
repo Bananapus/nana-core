@@ -55,10 +55,11 @@ contract JBPermissions is IJBPermissions {
         override
         returns (bool)
     {
-        if (permissionId > 255) revert PERMISSION_ID_OUT_OF_BOUNDS();
-
         // If the ROOT permission is set and should be included, return true.
         if (includeRoot && ((permissionsOf[operator][account][projectId] >> JBPermissionIds.ROOT) & 1) == 1) return true;
+
+        // Indexes above 255 don't exist and are therefor false.
+        if (permissionId > 255) return false;
 
         // Otherwise return the t/f flag of the specified id.
         return (((permissionsOf[operator][account][projectId] >> permissionId) & 1) == 1);
@@ -83,22 +84,21 @@ contract JBPermissions is IJBPermissions {
         override
         returns (bool)
     {
+        // If the ROOT permission is set and should be included, return true.
+        if (includeRoot && ((permissionsOf[operator][account][projectId] >> JBPermissionIds.ROOT) & 1) == 1) return true;
+
         // Keep a reference to the permission being iterated on.
         uint256 permissionId;
 
         // Keep a reference to the permission item being checked.
         uint256 operatorAccountProjectPermissions = permissionsOf[operator][account][projectId];
-
-        // If the ROOT permission is set and should be included, return true.
-        if (includeRoot && ((permissionsOf[operator][account][projectId] >> JBPermissionIds.ROOT) & 1) == 1) return true;
         
         for (uint256 i; i < permissionIds.length; i++) {
             // Set the permission being iterated on.
             permissionId = permissionIds[i];
 
-            if (permissionId > 255) revert PERMISSION_ID_OUT_OF_BOUNDS();
-
-            if (((operatorAccountProjectPermissions >> permissionId) & 1) == 0) {
+            // Indexes above 255 don't exist and are therefor false.
+            if (permissionId > 255 || ((operatorAccountProjectPermissions >> permissionId) & 1) == 0) {
                 return false;
             }
         }
