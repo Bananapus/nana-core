@@ -41,12 +41,14 @@ contract JBPermissions is IJBPermissions {
     /// @param account The account being operated on behalf of.
     /// @param projectId The project ID that the operator has permission to operate under. 0 represents all projects.
     /// @param permissionId The permission ID to check for.
+    /// @param includeRoot A flag indicating if the ROOT permission should default the return value to true
     /// @return A flag indicating whether the operator has the specified permission.
     function hasPermission(
         address operator,
         address account,
         uint256 projectId,
-        uint256 permissionId
+        uint256 permissionId,
+        bool includeRoot
     )
         public
         view
@@ -54,6 +56,9 @@ contract JBPermissions is IJBPermissions {
         returns (bool)
     {
         if (permissionId > 255) revert PERMISSION_ID_OUT_OF_BOUNDS();
+
+        // If the ROOT permission is set and should be included, return true.
+        if (includeRoot && ((permissionsOf[operator][account][projectId] >> JBPermissionIds.ROOT) & 1) == 1) return true;
 
         // Otherwise return the t/f flag of the specified id.
         return (((permissionsOf[operator][account][projectId] >> permissionId) & 1) == 1);
@@ -64,12 +69,14 @@ contract JBPermissions is IJBPermissions {
     /// @param account The account being operated on behalf of.
     /// @param projectId The project ID that the operator has permission to operate under. 0 represents all projects.
     /// @param permissionIds An array of permission IDs to check for.
+    /// @param includeRoot A flag indicating if the ROOT permission should default the return value to true
     /// @return A flag indicating whether the operator has all specified permissions.
     function hasPermissions(
         address operator,
         address account,
         uint256 projectId,
-        uint256[] calldata permissionIds
+        uint256[] calldata permissionIds,
+        bool includeRoot
     )
         external
         view
@@ -82,6 +89,9 @@ contract JBPermissions is IJBPermissions {
         // Keep a reference to the permission item being checked.
         uint256 operatorAccountProjectPermissions = permissionsOf[operator][account][projectId];
 
+        // If the ROOT permission is set and should be included, return true.
+        if (includeRoot && ((permissionsOf[operator][account][projectId] >> JBPermissionIds.ROOT) & 1) == 1) return true;
+        
         for (uint256 i; i < permissionIds.length; i++) {
             // Set the permission being iterated on.
             permissionId = permissionIds[i];

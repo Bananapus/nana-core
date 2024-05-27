@@ -43,8 +43,6 @@ abstract contract JBPermissioned is Context, IJBPermissioned {
         if (
             sender != account && !PERMISSIONS.hasPermission(sender, account, projectId, permissionId)
                 && !PERMISSIONS.hasPermission(sender, account, 0, permissionId)
-                && !PERMISSIONS.hasPermission(sender, account, projectId, JBPermissionIds.ROOT)
-                && !PERMISSIONS.hasPermission(sender, account, 0, JBPermissionIds.ROOT)
         ) revert UNAUTHORIZED();
     }
 

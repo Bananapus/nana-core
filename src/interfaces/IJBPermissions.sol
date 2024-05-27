@@ -19,7 +19,8 @@ interface IJBPermissions {
         address operator,
         address account,
         uint256 projectId,
-        uint256 permissionId
+        uint256 permissionId,
+        bool includeRoot
     )
         external
         view
@@ -29,7 +30,8 @@ interface IJBPermissions {
         address operator,
         address account,
         uint256 projectId,
-        uint256[] calldata permissionIds
+        uint256[] calldata permissionIds,
+        bool includeRoot
     )
         external
         view
