@@ -69,10 +69,16 @@ contract JBPermissions is IJBPermissions {
         if (
             includeRoot
                 && (
-                    ((permissionsOf[operator][account][projectId] >> JBPermissionIds.ROOT) & 1) == 1
+                    _includesPermission({
+                        permissions: permissionsOf[operator][account][projectId],
+                        permissionId: JBPermissionIds.ROOT
+                    })
                         || (
                             includeWildcardProjectId
-                                && ((permissionsOf[operator][account][WILDCARD_PROJECT_ID] >> JBPermissionIds.ROOT) & 1) == 1
+                                && _includesPermission({
+                                    permissions: permissionsOf[operator][account][WILDCARD_PROJECT_ID],
+                                    permissionId: JBPermissionIds.ROOT
+                                })
                         )
                 )
         ) {
@@ -83,10 +89,16 @@ contract JBPermissions is IJBPermissions {
         if (permissionId > 255) return false;
 
         // Otherwise return the t/f flag of the specified id.
-        return ((permissionsOf[operator][account][projectId] >> permissionId) & 1) == 1
+        return _includesPermission({
+            permissions: permissionsOf[operator][account][projectId],
+            permissionId: permissionId
+        })
             || (
                 includeWildcardProjectId
-                    && ((permissionsOf[operator][account][WILDCARD_PROJECT_ID] >> permissionId) & 1) == 1
+                    && _includesPermission({
+                        permissions: permissionsOf[operator][account][WILDCARD_PROJECT_ID],
+                        permissionId: permissionId
+                    })
             );
     }
 
@@ -116,10 +128,16 @@ contract JBPermissions is IJBPermissions {
         if (
             includeRoot
                 && (
-                    ((permissionsOf[operator][account][projectId] >> JBPermissionIds.ROOT) & 1) == 1
+                    _includesPermission({
+                        permissions: permissionsOf[operator][account][projectId],
+                        permissionId: JBPermissionIds.ROOT
+                    })
                         || (
                             includeWildcardProjectId
-                                && ((permissionsOf[operator][account][WILDCARD_PROJECT_ID] >> JBPermissionIds.ROOT) & 1) == 1
+                                && _includesPermission({
+                                    permissions: permissionsOf[operator][account][WILDCARD_PROJECT_ID],
+                                    permissionId: JBPermissionIds.ROOT
+                                })
                         )
                 )
         ) {
@@ -143,8 +161,13 @@ contract JBPermissions is IJBPermissions {
             // Indexes above 255 don't exist and are therefor false.
             if (
                 permissionId > 255
-                    || (((operatorAccountProjectPermissions >> permissionId) & 1) == 0)
-                        && ((operatorAccountWildcardProjectPermissions >> permissionId) & 1) == 0
+                    || (
+                        !_includesPermission({permissions: operatorAccountProjectPermissions, permissionId: permissionId})
+                            && !_includesPermission({
+                                permissions: operatorAccountWildcardProjectPermissions,
+                                permissionId: permissionId
+                            })
+                    )
             ) {
                 return false;
             }
@@ -169,7 +192,7 @@ contract JBPermissions is IJBPermissions {
         if (
             msg.sender != account
                 && (
-                    ((packed >> JBPermissionsIds.ROOT) & 1) == 1
+                    _includesPermission(packed, JBPermissionIds.ROOT)
                         || !hasPermission({
                             operator: msg.sender,
                             account: account,
@@ -214,5 +237,13 @@ contract JBPermissions is IJBPermissions {
             // Turn on the bit at the ID.
             packed |= 1 << permissionId;
         }
+    }
+
+    /// @notice Checks if a permission is included in a packed permissions data.
+    /// @param permissions The packed permissions to check.
+    /// @param permissionId The ID of the permission to check for.
+    /// @return A flag indicating whether the permission is included.
+    function _includesPermission(uint256 permissions, uint256 permissionId) internal pure returns (bool) {
+        return ((permissions >> permissionId) & 1) == 1;
     }
 }
