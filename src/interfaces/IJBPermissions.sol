@@ -13,6 +13,8 @@ interface IJBPermissions {
         address caller
     );
 
+    function WILDCARD_PROJECT_ID() external view returns (uint256);
+
     function permissionsOf(address operator, address account, uint256 projectId) external view returns (uint256);
 
     function hasPermission(
