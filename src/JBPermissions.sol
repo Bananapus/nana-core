@@ -118,27 +118,30 @@ contract JBPermissions is IJBPermissions {
     /// @param account The account setting its operators' permissions.
     /// @param permissionsData The data which specifies the permissions the operator is being given.
     function setPermissionsFor(address account, JBPermissionsData calldata permissionsData) external override {
-        // Enforce permissions.
-        if (
-            msg.sender != account
-                && !hasPermission({
-                    operator: msg.sender,
-                    account: account,
-                    projectId: permissionsData.projectId,
-                    permissionId: JBPermissionIds.SET_PERMISSIONS,
-                    includeRoot: true
-                })
-                && !hasPermission({
-                    operator: msg.sender,
-                    account: account,
-                    projectId: 0,
-                    permissionId: JBPermissionIds.SET_PERMISSIONS,
-                    includeRoot: true
-                })
-        ) revert UNAUTHORIZED();
-
         // Pack the permission IDs into a uint256.
         uint256 packed = _packedPermissions(permissionsData.permissionIds);
+
+        // Enforce permissions. ROOT operators are allowed to set permissions so long as they are not setting another
+        // ROOT permission.
+        if (
+            msg.sender != account && ((packed >> JBPermissionsIds.ROOT) & 1) == 1
+                || (
+                    !hasPermission({
+                        operator: msg.sender,
+                        account: account,
+                        projectId: permissionsData.projectId,
+                        permissionId: JBPermissionIds.ROOT,
+                        includeRoot: true
+                    })
+                        && !hasPermission({
+                            operator: msg.sender,
+                            account: account,
+                            projectId: 0,
+                            permissionId: JBPermissionIds.ROOT,
+                            includeRoot: true
+                        })
+                )
+        ) revert UNAUTHORIZED();
 
         // Store the new value.
         permissionsOf[permissionsData.operator][account][permissionsData.projectId] = packed;
