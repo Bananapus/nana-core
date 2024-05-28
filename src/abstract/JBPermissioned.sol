@@ -47,14 +47,8 @@ abstract contract JBPermissioned is Context, IJBPermissioned {
                     account: account,
                     projectId: projectId,
                     permissionId: permissionId,
-                    includeRoot: true
-                })
-                && !PERMISSIONS.hasPermission({
-                    operator: sender,
-                    account: account,
-                    projectId: 0,
-                    permissionId: permissionId,
-                    includeRoot: true
+                    includeRoot: true,
+                    includeWildcardProjectId: true
                 })
         ) revert UNAUTHORIZED();
     }

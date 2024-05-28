@@ -41,14 +41,16 @@ contract JBPermissions is IJBPermissions {
     /// @param account The account being operated on behalf of.
     /// @param projectId The project ID that the operator has permission to operate under. 0 represents all projects.
     /// @param permissionId The permission ID to check for.
-    /// @param includeRoot A flag indicating if the ROOT permission should default the return value to true
+    /// @param includeRoot A flag indicating if the ROOT permission should default the return value to true.
+    /// @param includeWildcardProjectId A flag indicating if the wildcard project ID should default the return value to true.
     /// @return A flag indicating whether the operator has the specified permission.
     function hasPermission(
         address operator,
         address account,
         uint256 projectId,
         uint256 permissionId,
-        bool includeRoot
+        bool includeRoot,
+        bool includeWildcardProjectId
     )
         public
         view
@@ -56,7 +58,15 @@ contract JBPermissions is IJBPermissions {
         returns (bool)
     {
         // If the ROOT permission is set and should be included, return true.
-        if (includeRoot && ((permissionsOf[operator][account][projectId] >> JBPermissionIds.ROOT) & 1) == 1) {
+        if (
+            includeRoot
+                && (
+                    ((permissionsOf[operator][account][projectId] >> JBPermissionIds.ROOT) & 1) == 1
+                        || (
+                            includeWildcardProjectId && ((permissionsOf[operator][account][0] >> JBPermissionIds.ROOT) & 1) == 1
+                        )
+                )
+        ) {
             return true;
         }
 
@@ -64,7 +74,8 @@ contract JBPermissions is IJBPermissions {
         if (permissionId > 255) return false;
 
         // Otherwise return the t/f flag of the specified id.
-        return (((permissionsOf[operator][account][projectId] >> permissionId) & 1) == 1);
+        return ((permissionsOf[operator][account][projectId] >> permissionId) & 1) == 1
+            || (includeWildcardProjectId && ((permissionsOf[operator][account][0] >> permissionId) & 1) == 1);
     }
 
     /// @notice Check if an operator has all of the specified permissions for a specific address and project ID.
@@ -72,14 +83,17 @@ contract JBPermissions is IJBPermissions {
     /// @param account The account being operated on behalf of.
     /// @param projectId The project ID that the operator has permission to operate under. 0 represents all projects.
     /// @param permissionIds An array of permission IDs to check for.
-    /// @param includeRoot A flag indicating if the ROOT permission should default the return value to true
+    /// @param includeRoot A flag indicating if the ROOT permission should default the return value to true.
+    /// @param includeWildcardProjectId A flag indicating if the wildcard project ID should default the return value to
+    /// true
     /// @return A flag indicating whether the operator has all specified permissions.
     function hasPermissions(
         address operator,
         address account,
         uint256 projectId,
         uint256[] calldata permissionIds,
-        bool includeRoot
+        bool includeRoot,
+        bool includeWildcardProjectId
     )
         external
         view
@@ -87,7 +101,15 @@ contract JBPermissions is IJBPermissions {
         returns (bool)
     {
         // If the ROOT permission is set and should be included, return true.
-        if (includeRoot && ((permissionsOf[operator][account][projectId] >> JBPermissionIds.ROOT) & 1) == 1) {
+        if (
+            includeRoot
+                && (
+                    ((permissionsOf[operator][account][projectId] >> JBPermissionIds.ROOT) & 1) == 1
+                        || (
+                            includeWildcardProjectId && ((permissionsOf[operator][account][0] >> JBPermissionIds.ROOT) & 1) == 1
+                        )
+                )
+        ) {
             return true;
         }
 
@@ -97,12 +119,20 @@ contract JBPermissions is IJBPermissions {
         // Keep a reference to the permission item being checked.
         uint256 operatorAccountProjectPermissions = permissionsOf[operator][account][projectId];
 
+        // Keep a reference to the wildcard project permissions.
+        uint256 operatorAccountWildcardProjectPermissions =
+            includeWildcardProjectId ? permissionsOf[operator][account][0] : 0;
+
         for (uint256 i; i < permissionIds.length; i++) {
             // Set the permission being iterated on.
             permissionId = permissionIds[i];
 
             // Indexes above 255 don't exist and are therefor false.
-            if (permissionId > 255 || ((operatorAccountProjectPermissions >> permissionId) & 1) == 0) {
+            if (
+                permissionId > 255
+                    || (((operatorAccountProjectPermissions >> permissionId) & 1) == 0)
+                        && ((operatorAccountWildcardProjectPermissions >> permissionId) & 1) == 0
+            ) {
                 return false;
             }
         }
@@ -131,15 +161,9 @@ contract JBPermissions is IJBPermissions {
                         account: account,
                         projectId: permissionsData.projectId,
                         permissionId: JBPermissionIds.ROOT,
-                        includeRoot: true
+                        includeRoot: true,
+                        includeWildcardProjectId: true
                     })
-                        && !hasPermission({
-                            operator: msg.sender,
-                            account: account,
-                            projectId: 0,
-                            permissionId: JBPermissionIds.ROOT,
-                            includeRoot: true
-                        })
                 )
         ) revert UNAUTHORIZED();
 

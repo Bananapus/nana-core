@@ -20,7 +20,8 @@ interface IJBPermissions {
         address account,
         uint256 projectId,
         uint256 permissionId,
-        bool includeRoot
+        bool includeRoot,
+        bool includeWildcardProjectId
     )
         external
         view
@@ -31,7 +32,8 @@ interface IJBPermissions {
         address account,
         uint256 projectId,
         uint256[] calldata permissionIds,
-        bool includeRoot
+        bool includeRoot,
+        bool includeWildcardProjectId
     )
         external
         view
