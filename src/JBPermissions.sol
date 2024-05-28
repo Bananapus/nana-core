@@ -167,16 +167,17 @@ contract JBPermissions is IJBPermissions {
         // Enforce permissions. ROOT operators are allowed to set permissions so long as they are not setting another
         // ROOT permission.
         if (
-            msg.sender != account && ((packed >> JBPermissionsIds.ROOT) & 1) == 1
-                || (
-                    !hasPermission({
-                        operator: msg.sender,
-                        account: account,
-                        projectId: permissionsData.projectId,
-                        permissionId: JBPermissionIds.ROOT,
-                        includeRoot: true,
-                        includeWildcardProjectId: true
-                    })
+            msg.sender != account
+                && (
+                    ((packed >> JBPermissionsIds.ROOT) & 1) == 1
+                        || !hasPermission({
+                            operator: msg.sender,
+                            account: account,
+                            projectId: permissionsData.projectId,
+                            permissionId: JBPermissionIds.ROOT,
+                            includeRoot: true,
+                            includeWildcardProjectId: true
+                        })
                 )
         ) revert UNAUTHORIZED();
 
