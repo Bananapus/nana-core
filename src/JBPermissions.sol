@@ -192,7 +192,7 @@ contract JBPermissions is IJBPermissions {
         if (
             msg.sender != account
                 && (
-                    _includesPermission(packed, JBPermissionIds.ROOT)
+                    _includesPermission({permissions: packed, permissionId: JBPermissionIds.ROOT})
                         || !hasPermission({
                             operator: msg.sender,
                             account: account,
