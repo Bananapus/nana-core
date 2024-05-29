@@ -52,7 +52,7 @@ contract JBChainlinkV3PriceFeed is IJBPriceFeed {
         if (updatedAt == 0) revert INCOMPLETE_ROUND();
 
         // Make sure the price is positive.
-        if (price < 0) revert NEGATIVE_PRICE();
+        if (price <= 0) revert NEGATIVE_PRICE();
 
         // Get a reference to the number of decimals the feed uses.
         uint256 feedDecimals = FEED.decimals();
