@@ -127,7 +127,7 @@ contract TestPermissions_Local is TestBaseWorkflow, JBTest {
             _permissions.setPermissionsFor(_projectOwner, permData[0]);
 
             // Verify.
-            bool _check = _permissions.hasPermission(address(0), _projectOwner, _projectOne, permIds[i]);
+            bool _check = _permissions.hasPermission(address(0), _projectOwner, _projectOne, permIds[i], true, true);
             assertEq(_check, true);
         }
     }
@@ -173,7 +173,8 @@ contract TestPermissions_Local is TestBaseWorkflow, JBTest {
         );
 
         assertEq(
-            _permissions.hasPermissions(_operator, _account, _projectId, _check_permissions), _shouldHavePermissions
+            _permissions.hasPermissions(_operator, _account, _projectId, _check_permissions, false, false),
+            _shouldHavePermissions
         );
     }
 
@@ -193,7 +194,7 @@ contract TestPermissions_Local is TestBaseWorkflow, JBTest {
         _permissions.setPermissionsFor(zeroOwner, permData[0]);
 
         // Should be true given root check
-        bool _check = _permissions.hasPermission(address(this), zeroOwner, _projectZero, 2);
+        bool _check = _permissions.hasPermission(address(this), zeroOwner, _projectZero, 2, true, true);
         assertEq(_check, true);
 
         // Will revert attempting to set another projects token

@@ -17,7 +17,7 @@ contract TestHasPermissions_Local is JBPermissionsSetup {
     function test_WhenAnyPermissionIdGt255() external {
         // it will revert with PERMISSION_ID_OUT_OF_BOUNDS
         vm.expectRevert(abi.encodeWithSignature("PERMISSION_ID_OUT_OF_BOUNDS()"));
-        _permissions.hasPermissions(_op, _account, _projectId, _permissionsArray);
+        _permissions.hasPermissions(_op, _account, _projectId, _permissionsArray, true, true);
     }
 
     modifier whenAllPermissionIdsLt255() {
@@ -37,7 +37,7 @@ contract TestHasPermissions_Local is JBPermissionsSetup {
         // Set storage
         vm.store(address(_permissions), slot, bytes32(permissions));
 
-        bool hasAll = _permissions.hasPermissions(_op, _account, _projectId, _permissionsArray);
+        bool hasAll = _permissions.hasPermissions(_op, _account, _projectId, _permissionsArray, false, true);
         assertEq(hasAll, false);
     }
 
@@ -55,7 +55,7 @@ contract TestHasPermissions_Local is JBPermissionsSetup {
         // Set storage
         vm.store(address(_permissions), slot, bytes32(permissions));
 
-        bool hasAll = _permissions.hasPermissions(_op, _account, _projectId, _permissionsArray);
+        bool hasAll = _permissions.hasPermissions(_op, _account, _projectId, _permissionsArray, true, true);
         assertEq(hasAll, true);
     }
 }

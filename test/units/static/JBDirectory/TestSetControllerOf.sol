@@ -67,18 +67,12 @@ contract TestSetControllerOf_Local is JBDirectorySetup {
         mockExpect(address(projects), _ownerOfCall, _ownerData);
 
         // mock first permissions call
-        bytes memory _permissionsCall =
-            abi.encodeCall(IJBPermissions.hasPermission, (address(this), address(1), 1, JBPermissionIds.SET_CONTROLLER));
+        bytes memory _permissionsCall = abi.encodeCall(
+            IJBPermissions.hasPermission, (address(this), address(1), 1, JBPermissionIds.SET_CONTROLLER, true, true)
+        );
         bytes memory _permissionsReturned = abi.encode(false);
 
         mockExpect(address(permissions), _permissionsCall, _permissionsReturned);
-
-        // mock second permissions call
-        bytes memory _permissionsCall2 =
-            abi.encodeCall(IJBPermissions.hasPermission, (address(this), address(1), 0, JBPermissionIds.SET_CONTROLLER));
-        bytes memory _permissionsReturned2 = abi.encode(false);
-
-        mockExpect(address(permissions), _permissionsCall2, _permissionsReturned2);
 
         vm.expectRevert(abi.encodeWithSignature("UNAUTHORIZED()"));
         _directory.setControllerOf(1, IERC165(address(this)));

@@ -45,7 +45,8 @@ contract TestAddPriceFeedFor_Local is JBPricesSetup {
 
         // mock hasPermissions call
         bytes memory permissionsCall = abi.encodeCall(
-            IJBPermissions.hasPermission, (address(this), _projectOneOwner, _projectId, JBPermissionIds.ADD_PRICE_FEED)
+            IJBPermissions.hasPermission,
+            (address(this), _projectOneOwner, _projectId, JBPermissionIds.ADD_PRICE_FEED, true, true)
         );
         bytes memory returned2 = abi.encode(true);
 
