@@ -157,7 +157,7 @@ contract JBPermissions is IJBPermissions {
         for (uint256 i; i < permissionIds.length; i++) {
             // Set the permission being iterated on.
             permissionId = permissionIds[i];
-            
+
             // Indexes above 255 don't exist
             if (permissionId > 255) revert PERMISSION_ID_OUT_OF_BOUNDS();
 
