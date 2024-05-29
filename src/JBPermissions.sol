@@ -65,6 +65,9 @@ contract JBPermissions is IJBPermissions {
         override
         returns (bool)
     {
+        // Indexes above 255 don't exist
+        if (permissionId > 255) revert PERMISSION_ID_OUT_OF_BOUNDS();
+
         // If the ROOT permission is set and should be included, return true.
         if (
             includeRoot
@@ -84,9 +87,6 @@ contract JBPermissions is IJBPermissions {
         ) {
             return true;
         }
-
-        // Indexes above 255 don't exist and are therefor false.
-        if (permissionId > 255) return false;
 
         // Otherwise return the t/f flag of the specified id.
         return _includesPermission({
@@ -157,17 +157,14 @@ contract JBPermissions is IJBPermissions {
         for (uint256 i; i < permissionIds.length; i++) {
             // Set the permission being iterated on.
             permissionId = permissionIds[i];
+            
+            // Indexes above 255 don't exist
+            if (permissionId > 255) revert PERMISSION_ID_OUT_OF_BOUNDS();
 
-            // Indexes above 255 don't exist and are therefor false.
+            // Check each permissionId
             if (
-                permissionId > 255
-                    || (
-                        !_includesPermission({permissions: operatorAccountProjectPermissions, permissionId: permissionId})
-                            && !_includesPermission({
-                                permissions: operatorAccountWildcardProjectPermissions,
-                                permissionId: permissionId
-                            })
-                    )
+                !_includesPermission({permissions: operatorAccountProjectPermissions, permissionId: permissionId})
+                    && !_includesPermission({permissions: operatorAccountWildcardProjectPermissions, permissionId: permissionId})
             ) {
                 return false;
             }
