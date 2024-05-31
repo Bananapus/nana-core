@@ -133,7 +133,7 @@ contract TestSetTokenFor_Local is JBControllerSetup {
         mockExpect(address(rulesets), _currentRulesetCall, abi.encode(ruleset));
 
         // Will check the upcoming ruleset
-        mockExpect(address(rulesets), abi.encodeCall(IJBRulesets.upcomingRulesetOf, (1)), abi.encode(upcoming));
+        mockExpect(address(rulesets), abi.encodeCall(IJBRulesets.upcomingOf, (1)), abi.encode(upcoming));
 
         _controller.setTokenFor(_projectId, _token);
     }
