@@ -14,7 +14,6 @@ import {JBTerminalConfig} from "./../structs/JBTerminalConfig.sol";
 import {IJBDirectory} from "./IJBDirectory.sol";
 import {IJBDirectoryAccessControl} from "./IJBDirectoryAccessControl.sol";
 import {IJBFundAccessLimits} from "./IJBFundAccessLimits.sol";
-import {IJBMigratable} from "./IJBMigratable.sol";
 import {IJBProjects} from "./IJBProjects.sol";
 import {IJBProjectUriRegistry} from "./IJBProjectUriRegistry.sol";
 import {IJBRulesets} from "./IJBRulesets.sol";
@@ -66,8 +65,6 @@ interface IJBController is IERC165, IJBProjectUriRegistry, IJBDirectoryAccessCon
     event ReservedDistributionReverted(
         uint256 indexed projectId, JBSplit split, uint256 amount, bytes reason, address caller
     );
-
-    event MigrateController(uint256 indexed projectId, IJBMigratable to, address caller);
 
     event PrepMigration(uint256 indexed projectId, address from, address caller);
 
@@ -171,8 +168,6 @@ interface IJBController is IERC165, IJBProjectUriRegistry, IJBDirectoryAccessCon
     function burnTokensOf(address holder, uint256 projectId, uint256 tokenCount, string calldata memo) external;
 
     function sendReservedTokensToSplitsOf(uint256 projectId) external returns (uint256);
-
-    function migrateController(uint256 projectId, IJBMigratable to) external;
 
     function setSplitGroupsOf(uint256 projectId, uint256 rulesetId, JBSplitGroup[] calldata splitGroups) external;
 

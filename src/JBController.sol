@@ -536,21 +536,9 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     /// `MIGRATE_CONTROLLER`.
     /// @param projectId The ID of the project to migrate.
     /// @param to The controller to migrate the project to.
-    function migrateController(uint256 projectId, IJBMigratable to) external virtual override {
-        // Enforce permissions.
-        _requirePermissionFrom({
-            account: PROJECTS.ownerOf(projectId),
-            projectId: projectId,
-            permissionId: JBPermissionIds.MIGRATE_CONTROLLER
-        });
-
-        // Get a reference to the project's ruleset.
-        JBRuleset memory ruleset = RULESETS.currentOf(projectId);
-
-        // Migration must be allowed.
-        if (!ruleset.allowControllerMigration()) {
-            revert CONTROLLER_MIGRATION_NOT_ALLOWED();
-        }
+    function migrate(uint256 projectId, IERC165 to) external virtual override {
+        // Make sure this is being called by the directory.
+        if (msg.sender != address(DIRECTORY)) revert UNAUTHORIZED();
 
         // Mint any pending reserved tokens before migrating.
         if (pendingReservedTokenBalanceOf[projectId] != 0) {
@@ -558,9 +546,11 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         }
 
         // Prepare the new controller to receive the project.
-        to.receiveMigrationFrom(IERC165(this), projectId);
+        if (to.supportsInterface(type(IJBMigratable).interfaceId)) {
+            IJBMigratable(address(to)).receiveMigrationFrom(IERC165(this), projectId);
+        }
 
-        emit MigrateController(projectId, to, _msgSender());
+        emit Migrate(projectId, to, msg.sender);
     }
 
     /// @notice Set a project's metadata URI.

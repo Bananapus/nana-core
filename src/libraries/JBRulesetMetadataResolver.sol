@@ -47,12 +47,12 @@ library JBRulesetMetadataResolver {
     function allowSetTerminals(JBRuleset memory ruleset) internal pure returns (bool) {
         return ((ruleset.metadata >> 72) & 1) == 1;
     }
-
-    function allowControllerMigration(JBRuleset memory ruleset) internal pure returns (bool) {
+    
+    function allowSetController(JBRuleset memory ruleset) internal pure returns (bool) {
         return ((ruleset.metadata >> 73) & 1) == 1;
     }
 
-    function allowSetController(JBRuleset memory ruleset) internal pure returns (bool) {
+    function ensurePrivilegedPayoutDistribution(JBRuleset memory ruleset) internal pure returns (bool) {
         return ((ruleset.metadata >> 74) & 1) == 1;
     }
 
@@ -104,10 +104,10 @@ library JBRulesetMetadataResolver {
         if (rulesetMetadata.allowTerminalMigration) packed |= 1 << 71;
         // allow set terminals in bit 72.
         if (rulesetMetadata.allowSetTerminals) packed |= 1 << 72;
-        // allow controller migration in bit 73.
-        if (rulesetMetadata.allowControllerMigration) packed |= 1 << 73;
-        // allow set controller in bit 74.
-        if (rulesetMetadata.allowSetController) packed |= 1 << 74;
+        // allow set controller in bit 73.
+        if (rulesetMetadata.allowSetController) packed |= 1 << 73;
+        // ensure privileged payout distribution in bit 74.
+        if (rulesetMetadata.ensurePrivilegedPayoutDistribution) packed |= 1 << 74;
         // hold fees in bit 75.
         if (rulesetMetadata.holdFees) packed |= 1 << 75;
         // useTotalSurplusForRedemptions in bit 76.
@@ -135,8 +135,8 @@ library JBRulesetMetadataResolver {
             allowOwnerMinting(ruleset),
             allowTerminalMigration(ruleset),
             allowSetTerminals(ruleset),
-            allowControllerMigration(ruleset),
             allowSetController(ruleset),
+            ensurePrivilegedPayoutDistribution(ruleset),
             holdFees(ruleset),
             useTotalSurplusForRedemptions(ruleset),
             useDataHookForPay(ruleset),
