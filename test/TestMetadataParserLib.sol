@@ -101,13 +101,14 @@ contract JBDelegateMetadataLib_Test_Local is Test {
 
         if (_numberOfIds == 220) vm.expectRevert(abi.encodeWithSignature("METADATA_TOO_LONG()"));
         bytes memory _metadata = parser.createMetadata(_ids, _datas);
+        if (_numberOfIds < 220) {
+            for (uint256 _i; _i < _ids.length; _i++) {
+                (bool _found, bytes memory _dataParsed) = parser.getDataFor(_ids[_i], _metadata);
+                uint256 _data = abi.decode(_dataParsed, (uint256));
 
-        for (uint256 _i; _i < _ids.length; _i++) {
-            (bool _found, bytes memory _dataParsed) = parser.getDataFor(_ids[_i], _metadata);
-            uint256 _data = abi.decode(_dataParsed, (uint256));
-
-            assertTrue(_found);
-            assertEq(_data, type(uint256).max - _i);
+                assertTrue(_found);
+                assertEq(_data, type(uint256).max - _i);
+            }
         }
     }
 
