@@ -28,6 +28,7 @@ contract TestTokenFlow_Local is TestBaseWorkflow {
             pausePay: false,
             pauseCreditTransfers: false,
             allowOwnerMinting: true,
+            allowSetCustomToken: true,
             allowTerminalMigration: false,
             allowSetTerminals: false,
             allowControllerMigration: false,

@@ -8,7 +8,7 @@ import /* {*} from */ "./helpers/TestBaseWorkflow.sol";
  *
  * @dev    These are a mixed collection of unit and integration tests.
  */
-contract JBDelegateMetadataLib_Test is Test {
+contract JBDelegateMetadataLib_Test_Local is Test {
     MetadataResolverHelper parser;
 
     /**
@@ -88,7 +88,7 @@ contract JBDelegateMetadataLib_Test is Test {
      * @notice Test creating and parsing `uint`-only metadata.
      */
     function test_createAndParse_uint(uint256 _numberOfIds) external {
-        // Maximum 220 hooks with 1 word data (offset overflow if more).
+        // Maximum 219 hooks with 1 word data (offset overflow if more).
         _numberOfIds = bound(_numberOfIds, 1, 220);
 
         bytes4[] memory _ids = new bytes4[](_numberOfIds);
@@ -99,6 +99,7 @@ contract JBDelegateMetadataLib_Test is Test {
             _datas[_i] = abi.encode(type(uint256).max - _i);
         }
 
+        if (_numberOfIds == 220) vm.expectRevert(abi.encodeWithSignature("METADATA_TOO_LONG()"));
         bytes memory _metadata = parser.createMetadata(_ids, _datas);
 
         for (uint256 _i; _i < _ids.length; _i++) {
@@ -379,6 +380,23 @@ contract JBDelegateMetadataLib_Test is Test {
 
         // Below should revert.
         vm.expectRevert(abi.encodeWithSignature("LENGTH_MISMATCH()"));
+        parser.createMetadata(_ids, _datas);
+    }
+
+    /**
+     * @notice Test creating and parsing metadata of incorrect length.
+     */
+    function test_create__unpadded() external {
+        bytes4[] memory _ids = new bytes4[](1);
+        bytes[] memory _datas = new bytes[](1);
+
+        uint8 something = uint8(1);
+        bytes memory shortData = abi.encodePacked(something);
+
+        _ids[0] = bytes4(uint32(1));
+        _datas[0] = shortData;
+
+        vm.expectRevert(abi.encodeWithSignature("DATA_NOT_PADDED()"));
         parser.createMetadata(_ids, _datas);
     }
 }
