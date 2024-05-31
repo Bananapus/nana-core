@@ -20,7 +20,7 @@ contract TestClaimTokensFor_Local is JBControllerSetup {
 
         // it will call permissions
         bytes memory _permCall = abi.encodeCall(
-            IJBPermissions.hasPermission, (address(this), _holder, _projectId, JBPermissionIds.CLAIM_TOKENS)
+            IJBPermissions.hasPermission, (address(this), _holder, _projectId, JBPermissionIds.CLAIM_TOKENS, true, true)
         );
         bytes memory _permReturn = abi.encode(true);
         mockExpect(address(permissions), _permCall, _permReturn);
@@ -40,17 +40,10 @@ contract TestClaimTokensFor_Local is JBControllerSetup {
 
         // it will call permissions
         bytes memory _permCall = abi.encodeCall(
-            IJBPermissions.hasPermission, (address(this), _holder, _projectId, JBPermissionIds.CLAIM_TOKENS)
+            IJBPermissions.hasPermission, (address(this), _holder, _projectId, JBPermissionIds.CLAIM_TOKENS, true, true)
         );
         bytes memory _permReturn = abi.encode(false);
         mockExpect(address(permissions), _permCall, _permReturn);
-
-        // it will call permissions again to check root permission
-        bytes memory _permCall2 = abi.encodeCall(
-            IJBPermissions.hasPermission, (address(this), _holder, _rootId, JBPermissionIds.CLAIM_TOKENS)
-        );
-        bytes memory _permReturn2 = abi.encode(false);
-        mockExpect(address(permissions), _permCall2, _permReturn2);
 
         // will revert
         vm.expectRevert(abi.encodeWithSignature("UNAUTHORIZED()"));

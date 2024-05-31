@@ -34,16 +34,7 @@ contract TestRedeemTokensOf_Local is JBMultiTerminalSetup {
             address(permissions),
             abi.encodeCall(
                 IJBPermissions.hasPermission,
-                (address(_bene), address(_holder), _projectId, JBPermissionIds.REDEEM_TOKENS)
-            ),
-            abi.encode(false)
-        );
-
-        // mock call to JBPermissions hasPermission
-        mockExpect(
-            address(permissions),
-            abi.encodeCall(
-                IJBPermissions.hasPermission, (address(_bene), address(_holder), 0, JBPermissionIds.REDEEM_TOKENS)
+                (address(_bene), address(_holder), _projectId, JBPermissionIds.REDEEM_TOKENS, true, true)
             ),
             abi.encode(false)
         );
@@ -61,7 +52,7 @@ contract TestRedeemTokensOf_Local is JBMultiTerminalSetup {
             address(permissions),
             abi.encodeCall(
                 IJBPermissions.hasPermission,
-                (address(_bene), address(_holder), _projectId, JBPermissionIds.REDEEM_TOKENS)
+                (address(_bene), address(_holder), _projectId, JBPermissionIds.REDEEM_TOKENS, true, true)
             ),
             abi.encode(true)
         );
