@@ -48,8 +48,10 @@ contract JBPermissions is IJBPermissions {
     /// @param account The account being operated on behalf of.
     /// @param projectId The project ID that the operator has permission to operate under. 0 represents all projects.
     /// @param permissionId The permission ID to check for.
-    /// @param includeRoot A flag indicating if the return value should default to true if the operator has the ROOT permission.
-    /// @param includeWildcardProjectId A flag indicating if the return value should return true if the operator has the specified permission on the wildcard project ID.
+    /// @param includeRoot A flag indicating if the return value should default to true if the operator has the ROOT
+    /// permission.
+    /// @param includeWildcardProjectId A flag indicating if the return value should return true if the operator has the
+    /// specified permission on the wildcard project ID.
     /// true.
     /// @return A flag indicating whether the operator has the specified permission.
     function hasPermission(
@@ -107,8 +109,10 @@ contract JBPermissions is IJBPermissions {
     /// @param account The account being operated on behalf of.
     /// @param projectId The project ID that the operator has permission to operate under. 0 represents all projects.
     /// @param permissionIds An array of permission IDs to check for.
-    /// @param includeRoot A flag indicating if the return value should default to true if the operator has the ROOT permission.
-    /// @param includeWildcardProjectId A flag indicating if the return value should return true if the operator has the specified permission on the wildcard project ID.
+    /// @param includeRoot A flag indicating if the return value should default to true if the operator has the ROOT
+    /// permission.
+    /// @param includeWildcardProjectId A flag indicating if the return value should return true if the operator has the
+    /// specified permission on the wildcard project ID.
     /// @return A flag indicating whether the operator has all specified permissions.
     function hasPermissions(
         address operator,
