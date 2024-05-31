@@ -38,7 +38,7 @@ interface IJBRulesets {
         view
         returns (JBRuleset[] memory rulesets);
 
-    function upcomingRulesetOf(uint256 projectId) external view returns (JBRuleset memory ruleset);
+    function upcomingOf(uint256 projectId) external view returns (JBRuleset memory ruleset);
 
     function currentOf(uint256 projectId) external view returns (JBRuleset memory ruleset);
 
