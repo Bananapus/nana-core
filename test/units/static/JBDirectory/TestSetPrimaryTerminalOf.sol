@@ -52,19 +52,12 @@ contract TestSetPrimaryTerminalOf_Local is JBDirectorySetup {
 
         // mock first permissions call
         bytes memory _permissionsCall = abi.encodeCall(
-            IJBPermissions.hasPermission, (address(this), address(1), 1, JBPermissionIds.SET_PRIMARY_TERMINAL)
+            IJBPermissions.hasPermission,
+            (address(this), address(1), 1, JBPermissionIds.SET_PRIMARY_TERMINAL, true, true)
         );
         bytes memory _permissionsReturned = abi.encode(false);
 
         mockExpect(address(permissions), _permissionsCall, _permissionsReturned);
-
-        // mock second permissions call
-        bytes memory _permissionsCall2 = abi.encodeCall(
-            IJBPermissions.hasPermission, (address(this), address(1), 0, JBPermissionIds.SET_PRIMARY_TERMINAL)
-        );
-        bytes memory _permissionsReturned2 = abi.encode(false);
-
-        mockExpect(address(permissions), _permissionsCall2, _permissionsReturned2);
 
         vm.expectRevert(abi.encodeWithSignature("UNAUTHORIZED()"));
         _directory.setPrimaryTerminalOf(1, _token, _terminalToAdd);

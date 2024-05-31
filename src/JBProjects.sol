@@ -3,7 +3,6 @@ pragma solidity 0.8.23;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import {ERC721Votes} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Votes.sol";
 import {EIP712} from "@openzeppelin/contracts/utils/cryptography/EIP712.sol";
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
@@ -12,7 +11,7 @@ import {IJBTokenUriResolver} from "./interfaces/IJBTokenUriResolver.sol";
 
 /// @notice Stores project ownership and metadata.
 /// @dev Projects are represented as ERC-721s.
-contract JBProjects is ERC721Votes, Ownable, IJBProjects {
+contract JBProjects is ERC721, Ownable, IJBProjects {
     //*********************************************************************//
     // --------------------- public stored properties -------------------- //
     //*********************************************************************//
@@ -58,14 +57,7 @@ contract JBProjects is ERC721Votes, Ownable, IJBProjects {
     /// @param owner The owner of the contract who can set metadata.
     /// @param feeProjectOwner The address that will receive the fee-project. If `address(0)` the fee-project will not
     /// be minted.
-    constructor(
-        address owner,
-        address feeProjectOwner
-    )
-        ERC721("Juicebox Projects", "JUICEBOX")
-        EIP712("Juicebox Projects", "1")
-        Ownable(owner)
-    {
+    constructor(address owner, address feeProjectOwner) ERC721("Juicebox Projects", "JUICEBOX") Ownable(owner) {
         if (feeProjectOwner != address(0)) {
             createFor(feeProjectOwner);
         }

@@ -184,7 +184,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
     /// @dev If an upcoming ruleset is not found for the project, returns an empty ruleset with all properties set to 0.
     /// @param projectId The ID of the project to get the upcoming ruleset of.
     /// @return ruleset The struct for the project's upcoming ruleset.
-    function upcomingRulesetOf(uint256 projectId) external view override returns (JBRuleset memory ruleset) {
+    function upcomingOf(uint256 projectId) external view override returns (JBRuleset memory ruleset) {
         // If the project does not have a latest ruleset, return an empty struct.
         // slither-disable-next-line incorrect-equality
         if (latestRulesetIdOf[projectId] == 0) return _getStructFor(0, 0);
