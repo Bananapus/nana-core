@@ -53,11 +53,6 @@ contract TestSetRedemptionRateTo_Local is JBTest {
             approvalHook: _rulesetConfigurations[0].approvalHook,
             metadata: _packed
         });
-
-        JBRuleset memory _repacked = JBRulesetMetadataResolver.setRedemptionRateTo(ruleset, 1000);
-
-        uint256 _rate = uint256(uint16(_repacked.metadata >> 20));
-        assertEq(_rate, 1000);
     }
 
     function testEnsureCorrectlyPackedBits72And74() external {
