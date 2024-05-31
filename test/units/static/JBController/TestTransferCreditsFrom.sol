@@ -38,6 +38,7 @@ contract TestTransferCreditsFrom_Local is JBControllerSetup {
             pausePay: false,
             pauseCreditTransfers: false,
             allowOwnerMinting: false,
+            allowSetCustomToken: false,
             allowTerminalMigration: false,
             allowSetTerminals: false,
             allowControllerMigration: false,
@@ -91,6 +92,7 @@ contract TestTransferCreditsFrom_Local is JBControllerSetup {
             // will revert in this case
             pauseCreditTransfers: true,
             allowOwnerMinting: false,
+            allowSetCustomToken: false,
             allowTerminalMigration: false,
             allowSetTerminals: false,
             allowControllerMigration: false,

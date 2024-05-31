@@ -31,44 +31,48 @@ library JBRulesetMetadataResolver {
         return ((ruleset.metadata >> 70) & 1) == 1;
     }
 
-    function allowTerminalMigration(JBRuleset memory ruleset) internal pure returns (bool) {
+    function allowSetCustomToken(JBRuleset memory ruleset) internal pure returns (bool) {
         return ((ruleset.metadata >> 71) & 1) == 1;
     }
 
-    function allowSetTerminals(JBRuleset memory ruleset) internal pure returns (bool) {
+    function allowTerminalMigration(JBRuleset memory ruleset) internal pure returns (bool) {
         return ((ruleset.metadata >> 72) & 1) == 1;
     }
 
-    function allowControllerMigration(JBRuleset memory ruleset) internal pure returns (bool) {
+    function allowSetTerminals(JBRuleset memory ruleset) internal pure returns (bool) {
         return ((ruleset.metadata >> 73) & 1) == 1;
     }
 
-    function allowSetController(JBRuleset memory ruleset) internal pure returns (bool) {
+    function allowControllerMigration(JBRuleset memory ruleset) internal pure returns (bool) {
         return ((ruleset.metadata >> 74) & 1) == 1;
     }
 
-    function holdFees(JBRuleset memory ruleset) internal pure returns (bool) {
+    function allowSetController(JBRuleset memory ruleset) internal pure returns (bool) {
         return ((ruleset.metadata >> 75) & 1) == 1;
     }
 
-    function useTotalSurplusForRedemptions(JBRuleset memory ruleset) internal pure returns (bool) {
+    function holdFees(JBRuleset memory ruleset) internal pure returns (bool) {
         return ((ruleset.metadata >> 76) & 1) == 1;
     }
 
-    function useDataHookForPay(JBRuleset memory ruleset) internal pure returns (bool) {
-        return (ruleset.metadata >> 77) & 1 == 1;
+    function useTotalSurplusForRedemptions(JBRuleset memory ruleset) internal pure returns (bool) {
+        return ((ruleset.metadata >> 77) & 1) == 1;
     }
 
-    function useDataHookForRedeem(JBRuleset memory ruleset) internal pure returns (bool) {
+    function useDataHookForPay(JBRuleset memory ruleset) internal pure returns (bool) {
         return (ruleset.metadata >> 78) & 1 == 1;
     }
 
+    function useDataHookForRedeem(JBRuleset memory ruleset) internal pure returns (bool) {
+        return (ruleset.metadata >> 79) & 1 == 1;
+    }
+
     function dataHook(JBRuleset memory ruleset) internal pure returns (address) {
-        return address(uint160(ruleset.metadata >> 79));
+        return address(uint160(ruleset.metadata >> 80));
     }
 
     function metadata(JBRuleset memory ruleset) internal pure returns (uint256) {
-        return uint256(uint16(ruleset.metadata >> 239));
+        return uint256(uint16(ruleset.metadata >> 240));
     }
 
     /// @notice Pack the funding cycle metadata.
@@ -91,26 +95,28 @@ library JBRulesetMetadataResolver {
         if (rulesetMetadata.pauseCreditTransfers) packed |= 1 << 69;
         // allow discretionary minting in bit 70.
         if (rulesetMetadata.allowOwnerMinting) packed |= 1 << 70;
-        // allow terminal migration in bit 71.
-        if (rulesetMetadata.allowTerminalMigration) packed |= 1 << 71;
-        // allow set terminals in bit 72.
-        if (rulesetMetadata.allowSetTerminals) packed |= 1 << 72;
-        // allow controller migration in bit 73.
-        if (rulesetMetadata.allowControllerMigration) packed |= 1 << 73;
-        // allow set controller in bit 74.
-        if (rulesetMetadata.allowSetController) packed |= 1 << 74;
-        // hold fees in bit 75.
-        if (rulesetMetadata.holdFees) packed |= 1 << 75;
-        // useTotalSurplusForRedemptions in bit 76.
-        if (rulesetMetadata.useTotalSurplusForRedemptions) packed |= 1 << 76;
-        // use pay data source in bit 77.
-        if (rulesetMetadata.useDataHookForPay) packed |= 1 << 77;
-        // use redeem data source in bit 78.
-        if (rulesetMetadata.useDataHookForRedeem) packed |= 1 << 78;
-        // data source address in bits 79-238.
-        packed |= uint256(uint160(address(rulesetMetadata.dataHook))) << 79;
-        // metadata in bits 239-254 (16 bits).
-        packed |= rulesetMetadata.metadata << 239;
+        // allow a custom token to be set in bit 71.
+        if (rulesetMetadata.allowSetCustomToken) packed |= 1 << 71;
+        // allow terminal migration in bit 72.
+        if (rulesetMetadata.allowTerminalMigration) packed |= 1 << 72;
+        // allow set terminals in bit 73.
+        if (rulesetMetadata.allowSetTerminals) packed |= 1 << 73;
+        // allow controller migration in bit 74.
+        if (rulesetMetadata.allowControllerMigration) packed |= 1 << 74;
+        // allow set controller in bit 75.
+        if (rulesetMetadata.allowSetController) packed |= 1 << 75;
+        // hold fees in bit 76.
+        if (rulesetMetadata.holdFees) packed |= 1 << 76;
+        // useTotalSurplusForRedemptions in bit 77.
+        if (rulesetMetadata.useTotalSurplusForRedemptions) packed |= 1 << 77;
+        // use pay data source in bit 78.
+        if (rulesetMetadata.useDataHookForPay) packed |= 1 << 78;
+        // use redeem data source in bit 79.
+        if (rulesetMetadata.useDataHookForRedeem) packed |= 1 << 79;
+        // data source address in bits 80-239.
+        packed |= uint256(uint160(address(rulesetMetadata.dataHook))) << 80;
+        // metadata in bits 240-255 (16 bits).
+        packed |= rulesetMetadata.metadata << 240;
     }
 
     /// @notice Expand the funding cycle metadata.
@@ -124,6 +130,7 @@ library JBRulesetMetadataResolver {
             pausePay(ruleset),
             pauseCreditTransfers(ruleset),
             allowOwnerMinting(ruleset),
+            allowSetCustomToken(ruleset),
             allowTerminalMigration(ruleset),
             allowSetTerminals(ruleset),
             allowControllerMigration(ruleset),
