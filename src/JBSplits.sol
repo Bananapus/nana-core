@@ -24,7 +24,7 @@ contract JBSplits is JBControlled, IJBSplits {
     // ------------------------- public constants ------------------------ //
     //*********************************************************************//
 
-    /// @notice the ID of the ruleset that will be checked if nothing was found in the provided rulesetId.
+    /// @notice The ID of the ruleset that will be checked if nothing was found in the provided rulesetId.
     uint256 public constant override FALLBACK_RULESET_ID = 0;
 
     //*********************************************************************//

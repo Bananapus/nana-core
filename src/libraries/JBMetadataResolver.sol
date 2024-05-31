@@ -25,6 +25,7 @@ pragma solidity ^0.8.17;
  *            +-----------------------+
  */
 library JBMetadataResolver {
+    error DATA_NOT_PADDED();
     error LENGTH_MISMATCH();
     error METADATA_TOO_LONG();
     error METADATA_TOO_SHORT();
@@ -114,6 +115,9 @@ library JBMetadataResolver {
 
         // There is something in the table offset, but not a valid entry - avoid overwriting
         if (originalMetadata.length < RESERVED_SIZE + ID_SIZE + 1) revert METADATA_TOO_SHORT();
+
+        // Make sure the data is padded to 32 bytes.
+        if (dataToAdd.length < 32) revert DATA_NOT_PADDED();
 
         // Get the first data offset - upcast to avoid overflow (same for other offset)...
         uint256 firstOffset = uint8(originalMetadata[RESERVED_SIZE + ID_SIZE]);
@@ -226,11 +230,13 @@ library JBMetadataResolver {
         // For each id, add it to the lookup table with the next free offset, then increment the offset by the data
         // length (rounded up)
         for (uint256 _i; _i < _ids.length; ++_i) {
+            if (_datas[_i].length < 32) revert DATA_NOT_PADDED();
+
             metadata = abi.encodePacked(metadata, _ids[_i], bytes1(uint8(_offset)));
             _offset += _datas[_i].length / JBMetadataResolver.WORD_SIZE;
 
             // Overflowing a bytes1?
-            if (_offset > 2 ** 8) revert METADATA_TOO_LONG();
+            if (_offset > 255) revert METADATA_TOO_LONG();
         }
 
         // Pad the table to a multiple of 32B

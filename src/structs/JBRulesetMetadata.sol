@@ -33,6 +33,7 @@ struct JBRulesetMetadata {
     bool pausePay;
     bool pauseCreditTransfers;
     bool allowOwnerMinting;
+    bool allowSetCustomToken;
     bool allowTerminalMigration;
     bool allowSetTerminals;
     bool allowControllerMigration;
