@@ -197,18 +197,13 @@ contract TestLaunchRulesetsFor_Local is JBControllerSetup {
 
         // mock permission call
         bytes memory _call =
-            abi.encodeCall(IJBPermissions.hasPermission, (address(this), address(1), 1, JBPermissionIds.QUEUE_RULESETS));
+            abi.encodeCall(IJBPermissions.hasPermission, (address(this), address(1), 1, JBPermissionIds.QUEUE_RULESETS, true, true));
         mockExpect(address(permissions), _call, abi.encode(true));
 
         // SET_TERMINALS
         bytes memory _call3 =
-            abi.encodeCall(IJBPermissions.hasPermission, (address(this), address(1), 1, JBPermissionIds.SET_TERMINALS));
+            abi.encodeCall(IJBPermissions.hasPermission, (address(this), address(1), 1, JBPermissionIds.SET_TERMINALS, true, true));
         mockExpect(address(permissions), _call3, abi.encode(false));
-
-        // mock permission call #2 (checks for root priv)
-        bytes memory _call4 =
-            abi.encodeCall(IJBPermissions.hasPermission, (address(this), address(1), 0, JBPermissionIds.SET_TERMINALS));
-        mockExpect(address(permissions), _call4, abi.encode(false));
 
         // it should revert
         JBTerminalConfig[] memory _terminalConfigs = new JBTerminalConfig[](0);
@@ -230,12 +225,12 @@ contract TestLaunchRulesetsFor_Local is JBControllerSetup {
 
         // mock permission call
         bytes memory _call =
-            abi.encodeCall(IJBPermissions.hasPermission, (address(this), address(1), 1, JBPermissionIds.QUEUE_RULESETS));
+            abi.encodeCall(IJBPermissions.hasPermission, (address(this), address(1), 1, JBPermissionIds.QUEUE_RULESETS, true, true));
         mockExpect(address(permissions), _call, abi.encode(true));
 
         // SET_TERMINALS
         bytes memory _call3 =
-            abi.encodeCall(IJBPermissions.hasPermission, (address(this), address(1), 1, JBPermissionIds.SET_TERMINALS));
+            abi.encodeCall(IJBPermissions.hasPermission, (address(this), address(1), 1, JBPermissionIds.SET_TERMINALS, true, true));
         mockExpect(address(permissions), _call3, abi.encode(true));
 
         // setup: needed for the call chain

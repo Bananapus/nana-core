@@ -28,7 +28,7 @@ contract TestPermissions_Local is TestBaseWorkflow, JBTest {
             pausePay: false,
             pauseCreditTransfers: false,
             allowOwnerMinting: false,
-            allowSetCustomToken: false,
+            allowSetCustomToken: true,
             allowTerminalMigration: false,
             allowSetTerminals: false,
             allowControllerMigration: false,
