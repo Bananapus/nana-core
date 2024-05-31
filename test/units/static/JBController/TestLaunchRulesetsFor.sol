@@ -196,13 +196,15 @@ contract TestLaunchRulesetsFor_Local is JBControllerSetup {
         mockExpect(address(projects), _ownerOfCall, _ownerData);
 
         // mock permission call
-        bytes memory _call =
-            abi.encodeCall(IJBPermissions.hasPermission, (address(this), address(1), 1, JBPermissionIds.QUEUE_RULESETS, true, true));
+        bytes memory _call = abi.encodeCall(
+            IJBPermissions.hasPermission, (address(this), address(1), 1, JBPermissionIds.QUEUE_RULESETS, true, true)
+        );
         mockExpect(address(permissions), _call, abi.encode(true));
 
         // SET_TERMINALS
-        bytes memory _call3 =
-            abi.encodeCall(IJBPermissions.hasPermission, (address(this), address(1), 1, JBPermissionIds.SET_TERMINALS, true, true));
+        bytes memory _call3 = abi.encodeCall(
+            IJBPermissions.hasPermission, (address(this), address(1), 1, JBPermissionIds.SET_TERMINALS, true, true)
+        );
         mockExpect(address(permissions), _call3, abi.encode(false));
 
         // it should revert
@@ -224,13 +226,15 @@ contract TestLaunchRulesetsFor_Local is JBControllerSetup {
         mockExpect(address(projects), _ownerOfCall, _ownerData);
 
         // mock permission call
-        bytes memory _call =
-            abi.encodeCall(IJBPermissions.hasPermission, (address(this), address(1), 1, JBPermissionIds.QUEUE_RULESETS, true, true));
+        bytes memory _call = abi.encodeCall(
+            IJBPermissions.hasPermission, (address(this), address(1), 1, JBPermissionIds.QUEUE_RULESETS, true, true)
+        );
         mockExpect(address(permissions), _call, abi.encode(true));
 
         // SET_TERMINALS
-        bytes memory _call3 =
-            abi.encodeCall(IJBPermissions.hasPermission, (address(this), address(1), 1, JBPermissionIds.SET_TERMINALS, true, true));
+        bytes memory _call3 = abi.encodeCall(
+            IJBPermissions.hasPermission, (address(this), address(1), 1, JBPermissionIds.SET_TERMINALS, true, true)
+        );
         mockExpect(address(permissions), _call3, abi.encode(true));
 
         // setup: needed for the call chain
