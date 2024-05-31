@@ -349,6 +349,13 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
             permissionId: JBPermissionIds.QUEUE_RULESETS
         });
 
+        // Enforce permissions.
+        _requirePermissionFrom({
+            account: PROJECTS.ownerOf(projectId),
+            projectId: projectId,
+            permissionId: JBPermissionIds.SET_TERMINALS
+        });
+
         // If the project has already had rulesets, use `queueRulesetsOf(...)` instead.
         if (RULESETS.latestRulesetIdOf(projectId) > 0) {
             revert RULESETS_ALREADY_LAUNCHED();
