@@ -50,6 +50,7 @@ contract TestPermit2Terminal_Local is TestBaseWorkflow {
             pausePay: false,
             pauseCreditTransfers: false,
             allowOwnerMinting: true,
+            allowSetCustomToken: true,
             allowTerminalMigration: false,
             allowSetTerminals: false,
             allowControllerMigration: false,
@@ -142,7 +143,7 @@ contract TestPermit2Terminal_Local is TestBaseWorkflow {
         bytes4[] memory _ids = new bytes4[](1);
         bytes[] memory _datas = new bytes[](1);
         _datas[0] = abi.encode(permitData);
-        _ids[0] = bytes4(bytes20(address(_terminal)));
+        _ids[0] = _helper.getId("permit2", address(_terminal));
 
         // Setup: use the metadata library to encode.
         bytes memory _packedData = _helper.createMetadata(_ids, _datas);
@@ -208,7 +209,7 @@ contract TestPermit2Terminal_Local is TestBaseWorkflow {
         bytes4[] memory _ids = new bytes4[](1);
         bytes[] memory _datas = new bytes[](1);
         _datas[0] = abi.encode(permitData);
-        _ids[0] = bytes4(bytes20((address(_terminal))));
+        _ids[0] = _helper.getId("permit2", address(_terminal));
 
         // Setup: use the metadata library to encode.
         bytes memory _packedData = _helper.createMetadata(_ids, _datas);

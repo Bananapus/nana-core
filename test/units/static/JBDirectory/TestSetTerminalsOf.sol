@@ -81,18 +81,12 @@ contract TestSetTerminalsOf_Local is JBDirectorySetup {
         mockExpect(address(projects), _ownerOfCall, _ownerData);
 
         // mock first permissions call
-        bytes memory _permissionsCall =
-            abi.encodeCall(IJBPermissions.hasPermission, (address(this), address(1), 1, JBPermissionIds.SET_TERMINALS));
+        bytes memory _permissionsCall = abi.encodeCall(
+            IJBPermissions.hasPermission, (address(this), address(1), 1, JBPermissionIds.SET_TERMINALS, true, true)
+        );
         bytes memory _permissionsReturned = abi.encode(false);
 
         mockExpect(address(permissions), _permissionsCall, _permissionsReturned);
-
-        // mock second permissions call
-        bytes memory _permissionsCall2 =
-            abi.encodeCall(IJBPermissions.hasPermission, (address(this), address(1), 0, JBPermissionIds.SET_TERMINALS));
-        bytes memory _permissionsReturned2 = abi.encode(false);
-
-        mockExpect(address(permissions), _permissionsCall2, _permissionsReturned2);
 
         // needed for the call
         IJBTerminal[] memory _terminals = new IJBTerminal[](1);

@@ -21,12 +21,12 @@ contract TestRulesetViews_Local is JBControllerSetup {
         packed |= 8000 << 20;
         packed |= 1 << 36;
         packed |= 1 << 69;
-        packed |= 1 << 71;
         packed |= 1 << 72;
-        packed |= 1 << 74;
-        packed |= 1 << 76;
-        packed |= uint256(uint160(address(0x1234567890123456789012345678901234567890))) << 79;
-        packed |= 65_535 << 239;
+        packed |= 1 << 73;
+        packed |= 1 << 75;
+        packed |= 1 << 77;
+        packed |= uint256(uint160(address(0x1234567890123456789012345678901234567890))) << 80;
+        packed |= 65_535 << 240;
 
         return packed;
     }
@@ -135,7 +135,7 @@ contract TestRulesetViews_Local is JBControllerSetup {
         assertEq(rulesetsArray[0].weight, queuedRulesets[0].ruleset.weight);
     }
 
-    function test_upcomingRulesetOf() external {
+    function test_upcomingOf() external {
         // setup: return data
         JBRuleset memory data = JBRuleset({
             cycleNumber: 1,
@@ -150,7 +150,7 @@ contract TestRulesetViews_Local is JBControllerSetup {
         });
 
         // setup: mock call
-        bytes memory _encodedCall = abi.encodeCall(IJBRulesets.upcomingRulesetOf, (1));
+        bytes memory _encodedCall = abi.encodeCall(IJBRulesets.upcomingOf, (1));
         bytes memory _willReturn = abi.encode(data, JBApprovalStatus.Empty);
 
         mockExpect(address(rulesets), _encodedCall, _willReturn);

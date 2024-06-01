@@ -30,6 +30,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
             pausePay: false,
             pauseCreditTransfers: false,
             allowOwnerMinting: false,
+            allowSetCustomToken: false,
             allowTerminalMigration: false,
             allowSetTerminals: false,
             allowControllerMigration: false,
@@ -81,6 +82,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
             pausePay: false,
             pauseCreditTransfers: false,
             allowOwnerMinting: false,
+            allowSetCustomToken: false,
             allowTerminalMigration: false,
             allowSetTerminals: false,
             allowControllerMigration: false,
@@ -191,6 +193,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
             pausePay: false,
             pauseCreditTransfers: false,
             allowOwnerMinting: false,
+            allowSetCustomToken: false,
             allowTerminalMigration: false,
             allowSetTerminals: false,
             allowControllerMigration: false,
@@ -264,16 +267,6 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
         // mock call to JBTokens mintFor
         bytes memory _tokensMintCall = abi.encodeCall(IJBTokens.mintFor, (_beneficiary, _projectId, _tokenCount));
         mockExpect(address(tokens), _tokensMintCall, "");
-
-        // split hook data
-        JBSplitHookContext memory _context = JBSplitHookContext({
-            token: address(_token),
-            amount: _tokenCount,
-            decimals: _decimals,
-            projectId: 0,
-            groupId: 1,
-            split: _splits[0]
-        });
 
         vm.expectEmit();
         emit IJBController.SendReservedTokensToSplit(

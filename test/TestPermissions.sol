@@ -3,7 +3,7 @@ pragma solidity ^0.8.6;
 
 import /* {*} from */ "./helpers/TestBaseWorkflow.sol";
 
-contract TestPermissions_Local is TestBaseWorkflow {
+contract TestPermissions_Local is TestBaseWorkflow, JBTest {
     IJBController private _controller;
     JBRulesetMetadata private _metadata;
     IJBTerminal private _terminal;
@@ -28,6 +28,7 @@ contract TestPermissions_Local is TestBaseWorkflow {
             pausePay: false,
             pauseCreditTransfers: false,
             allowOwnerMinting: false,
+            allowSetCustomToken: true,
             allowTerminalMigration: false,
             allowSetTerminals: false,
             allowControllerMigration: false,
@@ -127,7 +128,7 @@ contract TestPermissions_Local is TestBaseWorkflow {
             _permissions.setPermissionsFor(_projectOwner, permData[0]);
 
             // Verify.
-            bool _check = _permissions.hasPermission(address(0), _projectOwner, _projectOne, permIds[i]);
+            bool _check = _permissions.hasPermission(address(0), _projectOwner, _projectOne, permIds[i], true, true);
             assertEq(_check, true);
         }
     }
@@ -173,14 +174,86 @@ contract TestPermissions_Local is TestBaseWorkflow {
         );
 
         assertEq(
-            _permissions.hasPermissions(_operator, _account, _projectId, _check_permissions), _shouldHavePermissions
+            _permissions.hasPermissions(_operator, _account, _projectId, _check_permissions, false, false),
+            _shouldHavePermissions
         );
     }
 
-    /* function testBasicAccessSetup() public {
-        vm.prank(address(_projectOwner));
-        bool _check = _permissions.hasPermission(address(_projectOwner), address(_projectOwner), 0, 2);
+    function testBasicAccessSetup() public {
+        address zeroOwner = makeAddr("zeroOwner");
+        address token = address(usdcToken());
 
+        // Pack up our permission data.
+        JBPermissionsData[] memory permData = new JBPermissionsData[](1);
+        uint256[] memory permIds = new uint256[](1);
+        permIds[0] = 1;
+
+        permData[0] = JBPermissionsData({operator: address(this), projectId: _projectZero, permissionIds: permIds});
+
+        // Set em.
+        vm.prank(zeroOwner);
+        _permissions.setPermissionsFor(zeroOwner, permData[0]);
+
+        // Should be true given root check
+        bool _check = _permissions.hasPermission(address(this), zeroOwner, _projectZero, 2, true, true);
         assertEq(_check, true);
-    } */
+
+        // Will revert attempting to set another projects token
+        vm.expectRevert(abi.encodeWithSignature("UNAUTHORIZED()"));
+        _controller.setTokenFor(2, IJBToken(token));
+
+        // Will succeed when setting the correct projects token
+        mockExpect(token, abi.encodeCall(MockERC20.decimals, ()), abi.encode(18));
+        _controller.setTokenFor(1, IJBToken(token));
+    }
+
+    function testCannotForwardRoot() public {
+        address zeroOwner = makeAddr("zeroOwner");
+
+        // Pack up our permission data.
+        JBPermissionsData[] memory permData = new JBPermissionsData[](1);
+        uint256[] memory permIds = new uint256[](1);
+        permIds[0] = 1;
+
+        permData[0] = JBPermissionsData({operator: address(this), projectId: _projectZero, permissionIds: permIds});
+
+        // Set em.
+        vm.prank(zeroOwner);
+        _permissions.setPermissionsFor(zeroOwner, permData[0]);
+
+        // Should be true given root check
+        bool _check = _permissions.hasPermission(address(this), zeroOwner, _projectZero, 2, true, true);
+        assertEq(_check, true);
+
+        // Pack up our non-root permission data.
+        JBPermissionsData[] memory permData2 = new JBPermissionsData[](1);
+        uint256[] memory permIds2 = new uint256[](1);
+        permIds2[0] = 2;
+
+        permData2[0] = JBPermissionsData({operator: address(0), projectId: _projectZero, permissionIds: permIds2});
+
+        // Should be able to forward other permissions
+        // Note that this contract is now authorized to do so above- address(this)
+
+        // in emit
+        uint256 packed;
+
+        vm.expectEmit();
+        emit IJBPermissions.OperatorPermissionsSet(
+            permData2[0].operator,
+            zeroOwner,
+            permData2[0].projectId,
+            permData2[0].permissionIds,
+            packed |= 1 << 2,
+            address(this)
+        );
+        _permissions.setPermissionsFor(zeroOwner, permData2[0]);
+
+        // Change the permission being set back to root
+        permData2[0] = JBPermissionsData({operator: address(0), projectId: _projectZero, permissionIds: permIds});
+
+        // Shouldn't be able to forward root
+        vm.expectRevert(abi.encodeWithSignature("UNAUTHORIZED()"));
+        _permissions.setPermissionsFor(zeroOwner, permData2[0]);
+    }
 }

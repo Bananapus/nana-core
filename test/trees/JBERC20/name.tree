@@ -1,0 +1,5 @@
+TestName_Local
+├── When a name is set
+│   └── it will return the name
+└── When a name is not set
+    └── it will return an empty string

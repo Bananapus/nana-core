@@ -399,8 +399,6 @@ contract TestPay_Local is JBMultiTerminalSetup {
             metadata: 0
         });
 
-        uint256 _mintAmount = 1e9;
-
         // mock call to JBTerminalStore recordPaymentFrom
         mockExpect(
             address(store),

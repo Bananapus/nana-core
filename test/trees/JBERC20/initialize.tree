@@ -1,0 +1,7 @@
+TestInitialize_Local
+├── when a name is already set
+│   └── it will revert
+├── when name_ EQ nothing
+│   └── it will revert
+└── when name is valid and not already set
+    └── it will set the name and symbol and transfer ownership

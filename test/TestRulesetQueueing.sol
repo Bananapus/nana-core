@@ -33,6 +33,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
             pausePay: false,
             pauseCreditTransfers: false,
             allowOwnerMinting: false,
+            allowSetCustomToken: false,
             allowTerminalMigration: false,
             allowSetTerminals: false,
             allowControllerMigration: false,
@@ -240,7 +241,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         vm.warp(_ruleset.start + _ruleset.duration - 1);
 
         // Make sure the queued ruleset is the second one queued.
-        JBRuleset memory queuedRuleset = jbRulesets().upcomingRulesetOf(projectId);
+        JBRuleset memory queuedRuleset = jbRulesets().upcomingOf(projectId);
         assertEq(queuedRuleset.cycleNumber, 3);
         assertEq(queuedRuleset.id, secondRulesetId);
         assertEq(queuedRuleset.weight, _weightSecondQueued);
@@ -276,7 +277,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         // Keep a reference to the initial, current, and queued rulesets.
         JBRuleset memory initialRuleset = jbRulesets().currentOf(projectId);
         JBRuleset memory currentRuleset = initialRuleset;
-        JBRuleset memory upcomingRuleset = jbRulesets().upcomingRulesetOf(projectId);
+        JBRuleset memory upcomingRuleset = jbRulesets().upcomingOf(projectId);
 
         for (uint256 i = 0; i < _RULESET_DURATION_DAYS + 1; i++) {
             // If the deadline is less than the ruleset's duration, make sure the current ruleset's weight is linearly
@@ -302,7 +303,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
 
             // Get a reference to the current and upcoming rulesets.
             currentRuleset = jbRulesets().currentOf(projectId);
-            upcomingRuleset = jbRulesets().upcomingRulesetOf(projectId);
+            upcomingRuleset = jbRulesets().upcomingOf(projectId);
 
             // Get a list of queued rulesets
             JBRuleset[] memory rulesetsOf = jbRulesets().rulesetsOf(projectId, 0, 1);
@@ -327,7 +328,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
                 assertEq(currentRuleset.weight, _config[0].weight);
 
                 // Make the upcoming is the cycled over version of current.
-                upcomingRuleset = jbRulesets().upcomingRulesetOf(projectId);
+                upcomingRuleset = jbRulesets().upcomingOf(projectId);
                 assertEq(upcomingRuleset.weight, _config[0].weight);
             }
             // If the deadline duration is across many rulesets.
@@ -527,7 +528,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         _controller.queueRulesetsOf(projectId, _firstQueued, "");
 
         // Make sure the ruleset is queued.
-        JBRuleset memory _queued = jbRulesets().upcomingRulesetOf(projectId);
+        JBRuleset memory _queued = jbRulesets().upcomingOf(projectId);
         assertEq(_queued.cycleNumber, 2);
         assertEq(_queued.id, _initialRulesetId + 1);
         assertEq(_queued.weight, _weightFirstQueued);
@@ -557,7 +558,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         _controller.queueRulesetsOf(projectId, _secondQueued, "");
 
         // Make sure this latest queued ruleset implies a cycled over ruleset from ruleset #1.
-        JBRuleset memory _requeued = jbRulesets().upcomingRulesetOf(projectId);
+        JBRuleset memory _requeued = jbRulesets().upcomingOf(projectId);
         assertEq(_requeued.cycleNumber, 2);
         assertEq(_requeued.id, _initialRulesetId);
         assertEq(_requeued.weight, _weightInitial);
@@ -578,7 +579,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         assertEq(_initialIsCurrent.weight, _weightInitial);
 
         // Second queued ruleset that replaced our first queued ruleset.
-        JBRuleset memory _requeued2 = jbRulesets().upcomingRulesetOf(projectId);
+        JBRuleset memory _requeued2 = jbRulesets().upcomingOf(projectId);
         assertEq(_requeued2.cycleNumber, 3);
         assertEq(_requeued2.id, _initialRulesetId + 2);
         assertEq(_requeued2.weight, _weightSecondQueued);
@@ -637,7 +638,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         _controller.queueRulesetsOf(projectId, _firstQueued, "");
 
         // Get a reference to the queued cycle.
-        JBRuleset memory queuedToOverwrite = jbRulesets().upcomingRulesetOf(projectId);
+        JBRuleset memory queuedToOverwrite = jbRulesets().upcomingOf(projectId);
 
         assertEq(queuedToOverwrite.cycleNumber, 2);
         assertEq(queuedToOverwrite.id, _expectedRulesetId + 1);
@@ -660,7 +661,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         _controller.queueRulesetsOf(projectId, _secondQueued, "");
 
         // Make sure it's overwritten.
-        JBRuleset memory queued = jbRulesets().upcomingRulesetOf(projectId);
+        JBRuleset memory queued = jbRulesets().upcomingOf(projectId);
         assertEq(queued.cycleNumber, 2);
         assertEq(queued.id, _expectedRulesetId + 2);
         assertEq(queued.weight, _weightSecondQueued);
@@ -721,7 +722,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         assertEq(currentRuleset.weight, _weight);
 
         // get upcoming ruleset
-        JBRuleset memory upcomingRuleset = jbRulesets().upcomingRulesetOf(id);
+        JBRuleset memory upcomingRuleset = jbRulesets().upcomingOf(id);
 
         // check: upcoming ruleset should be 2nd queued
         assertEq(upcomingRuleset.weight, _weight + 100);

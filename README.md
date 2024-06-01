@@ -11,6 +11,10 @@ This repository contains the core protocol contracts for Bananapus' Juicebox v4.
     <li><a href="#develop">Develop</a></li>
     <li><a href="#scripts">Scripts</a></li>
     <li><a href="#deployments">Deployments</a></li>
+    <ul>
+      <li><a href="#with-sphinx">With Sphinx</a></li>
+      <li><a href="#without-sphinx">Without Sphinx</a></li>
+      </ul>
     <li><a href="#tips">Tips</a></li>
     </ul>
     <li><a href="#repository-layout">Repository Layout</a></li>
@@ -120,12 +124,38 @@ For convenience, several utility commands are available in `package.json`.
 
 ### Deployments
 
-`nana-core` is deployed using [Sphinx](https://github.com/sphinx-labs/sphinx), an automated smart contract deployment platform for Foundry. To run the deployment scripts, first install the npm `devDependencies` by running `npm install`. You'll also need to set up a `.env` file based on `.example.env`. Then run one of the following commands:
+#### With Sphinx
 
-| Command                   | Description         |
-| ------------------------- | ------------------- |
-| `npm run deploy:mainnets` | Deploy to mainnets. |
-| `npm run deploy:testnets` | Deploy to testnets. |
+`nana-core` manages deployments with [Sphinx](https://www.sphinx.dev). To run the deployment scripts, install the npm `devDependencies` with:
+
+```bash
+`npm ci --also=dev`
+```
+
+You'll also need to set up a `.env` file based on `.example.env`. Then run one of the following commands:
+
+| Command                   | Description                  |
+| ------------------------- | ---------------------------- |
+| `npm run deploy:mainnets` | Propose mainnet deployments. |
+| `npm run deploy:testnets` | Propose testnet deployments. |
+
+Your teammates can review and approve the proposed deployments in the Sphinx UI. Once approved, the deployments will be executed.
+
+#### Without Sphinx
+
+You can use the Sphinx CLI to run the deployment scripts without paying for Sphinx. First, install the npm `devDependencies` with:
+
+```bash
+`npm ci --also=dev`
+```
+
+You can deploy the contracts like so:
+
+```bash
+PRIVATE_KEY="0x123..." RPC_ETHEREUM_SEPOLIA="https://rpc.ankr.com/eth_sepolia" npx sphinx deploy script/Deploy.s.sol --network ethereum_sepolia
+```
+
+This example deploys `nana-core` to the Sepolia testnet using the specified private key. You can configure new networks in `foundry.toml`.
 
 ### Tips
 
@@ -147,7 +177,7 @@ The important source directories are:
 
 ```
 nana-core/
-├── script/ - Contains the forge deploy script.
+├── script/ - Contains the forge + sphinx deploy script.
 ├── src/ - The Solidity source code for the contracts. Top level contains implementation contracts.
 │   ├── abstract/ - Abstract utility contracts.
 │   ├── enums/ - Enums.

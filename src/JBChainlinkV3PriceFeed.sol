@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.23;
 
-import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
+import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
 
 import {IJBPriceFeed} from "./interfaces/IJBPriceFeed.sol";
 import {JBFixedPointNumber} from "./libraries/JBFixedPointNumber.sol";
@@ -27,25 +27,32 @@ contract JBChainlinkV3PriceFeed is IJBPriceFeed {
     AggregatorV3Interface public immutable FEED;
 
     //*********************************************************************//
+    // --------------------- public stored properties -------------------- //
+    //*********************************************************************//
+
+    /// @notice How many blocks old a Chainlink price update is allowed to be before considered "stale".
+    uint256 public immutable THRESHOLD;
+
+    //*********************************************************************//
     // ------------------------- external views -------------------------- //
     //*********************************************************************//
 
     /// @notice Gets the current price (per 1 unit) from the feed.
     /// @param decimals The number of decimals the return value should use.
     /// @return The current unit price from the feed, as a fixed point number with the specified number of decimals.
-    function currentUnitPrice(uint256 decimals) external view override returns (uint256) {
+    function currentUnitPrice(uint256 decimals) public view virtual override returns (uint256) {
         // Get the latest round information from the feed.
         // slither-disable-next-line unused-return
-        (uint80 roundId, int256 price,, uint256 updatedAt, uint80 answeredInRound) = FEED.latestRoundData();
+        (, int256 price,, uint256 updatedAt,) = FEED.latestRoundData();
 
-        // Make sure the price isn't stale.
-        if (answeredInRound < roundId) revert STALE_PRICE();
+        // Make sure the price's update threshold is met.
+        if (block.timestamp - updatedAt > THRESHOLD) revert STALE_PRICE();
 
         // Make sure the round is finished.
         if (updatedAt == 0) revert INCOMPLETE_ROUND();
 
         // Make sure the price is positive.
-        if (price < 0) revert NEGATIVE_PRICE();
+        if (price <= 0) revert NEGATIVE_PRICE();
 
         // Get a reference to the number of decimals the feed uses.
         uint256 feedDecimals = FEED.decimals();
@@ -59,7 +66,9 @@ contract JBChainlinkV3PriceFeed is IJBPriceFeed {
     //*********************************************************************//
 
     /// @param feed The Chainlink feed to report prices from.
-    constructor(AggregatorV3Interface feed) {
+    /// @param threshold How many blocks old a price update may be.
+    constructor(AggregatorV3Interface feed, uint256 threshold) {
         FEED = feed;
+        THRESHOLD = threshold;
     }
 }

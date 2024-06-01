@@ -26,17 +26,10 @@ contract TestBurnTokensOf_Local is JBControllerSetup {
 
         // it will call permissions after to first check permissions over the specific project
         bytes memory _permCall = abi.encodeCall(
-            IJBPermissions.hasPermission, (address(this), _holder, _projectId, JBPermissionIds.BURN_TOKENS)
+            IJBPermissions.hasPermission, (address(this), _holder, _projectId, JBPermissionIds.BURN_TOKENS, true, true)
         );
         bytes memory _permReturn = abi.encode(false);
         mockExpect(address(permissions), _permCall, _permReturn);
-
-        // it will call permissions again to check root permissions
-        bytes memory _permCall2 = abi.encodeCall(
-            IJBPermissions.hasPermission, (address(this), _holder, _rootProjectId, JBPermissionIds.BURN_TOKENS)
-        );
-        bytes memory _permReturn2 = abi.encode(false);
-        mockExpect(address(permissions), _permCall2, _permReturn2);
 
         vm.expectRevert(abi.encodeWithSignature("UNAUTHORIZED()"));
         _controller.burnTokensOf(_holder, _projectId, _validCount, _memo);
@@ -70,19 +63,12 @@ contract TestBurnTokensOf_Local is JBControllerSetup {
 
         // it will call permissions after to first check permissions over the specific project
         bytes memory _permCall = abi.encodeCall(
-            IJBPermissions.hasPermission, (address(this), _holder, _projectId, JBPermissionIds.BURN_TOKENS)
+            IJBPermissions.hasPermission, (address(this), _holder, _projectId, JBPermissionIds.BURN_TOKENS, true, true)
         );
-        bytes memory _permReturn = abi.encode(false);
+        bytes memory _permReturn = abi.encode(true);
         mockExpect(address(permissions), _permCall, _permReturn);
 
-        // it will call permissions again to check root permissions
-        bytes memory _permCall2 = abi.encodeCall(
-            IJBPermissions.hasPermission, (address(this), _holder, _rootProjectId, JBPermissionIds.BURN_TOKENS)
-        );
-        bytes memory _permReturn2 = abi.encode(true);
-        mockExpect(address(permissions), _permCall2, _permReturn2);
-
-        // since we spoofed root permissions it will call JBTokens to burn
+        // it will call JBTokens to burn
         bytes memory _burnFromCall = abi.encodeCall(IJBTokens.burnFrom, (_holder, _projectId, _validCount));
         bytes memory _burnFromReturn = "";
         mockExpect(address(tokens), _burnFromCall, _burnFromReturn);
@@ -102,17 +88,10 @@ contract TestBurnTokensOf_Local is JBControllerSetup {
 
         // it will call permissions after to first check permissions over the specific project
         bytes memory _permCall = abi.encodeCall(
-            IJBPermissions.hasPermission, (address(this), _holder, _projectId, JBPermissionIds.BURN_TOKENS)
+            IJBPermissions.hasPermission, (address(this), _holder, _projectId, JBPermissionIds.BURN_TOKENS, true, true)
         );
-        bytes memory _permReturn = abi.encode(false);
+        bytes memory _permReturn = abi.encode(true);
         mockExpect(address(permissions), _permCall, _permReturn);
-
-        // it will call permissions again to check root permissions
-        bytes memory _permCall2 = abi.encodeCall(
-            IJBPermissions.hasPermission, (address(this), _holder, _rootProjectId, JBPermissionIds.BURN_TOKENS)
-        );
-        bytes memory _permReturn2 = abi.encode(true);
-        mockExpect(address(permissions), _permCall2, _permReturn2);
 
         vm.expectRevert(abi.encodeWithSignature("NO_BURNABLE_TOKENS()"));
         _controller.burnTokensOf(_holder, _projectId, _invalidCount, _memo);

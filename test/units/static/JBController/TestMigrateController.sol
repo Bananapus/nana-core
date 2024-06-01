@@ -28,6 +28,7 @@ contract TestMigrateController_Local is JBControllerSetup {
             pausePay: false,
             pauseCreditTransfers: false,
             allowOwnerMinting: false,
+            allowSetCustomToken: false,
             allowTerminalMigration: false,
             allowSetTerminals: false,
             allowControllerMigration: true,
@@ -71,6 +72,7 @@ contract TestMigrateController_Local is JBControllerSetup {
             pausePay: false,
             pauseCreditTransfers: false,
             allowOwnerMinting: false,
+            allowSetCustomToken: false,
             allowTerminalMigration: false,
             allowSetTerminals: false,
             allowControllerMigration: false,
@@ -116,19 +118,11 @@ contract TestMigrateController_Local is JBControllerSetup {
 
         // mock first permissions call
         bytes memory _permissionsCall = abi.encodeCall(
-            IJBPermissions.hasPermission, (address(this), address(1), 1, JBPermissionIds.MIGRATE_CONTROLLER)
+            IJBPermissions.hasPermission, (address(this), address(1), 1, JBPermissionIds.MIGRATE_CONTROLLER, true, true)
         );
         bytes memory _permissionsReturned = abi.encode(false);
 
         mockExpect(address(permissions), _permissionsCall, _permissionsReturned);
-
-        // mock second permissions call
-        bytes memory _permissionsCall2 = abi.encodeCall(
-            IJBPermissions.hasPermission, (address(this), address(1), 0, JBPermissionIds.MIGRATE_CONTROLLER)
-        );
-        bytes memory _permissionsReturned2 = abi.encode(false);
-
-        mockExpect(address(permissions), _permissionsCall2, _permissionsReturned2);
 
         vm.expectRevert(abi.encodeWithSignature("UNAUTHORIZED()"));
         _controller.migrateController(1, IJBMigratable(address(this)));
