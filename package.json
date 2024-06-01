@@ -18,7 +18,7 @@
     "artifacts": "source ./.env && npx sphinx artifacts --org-id 'cltepuu9u0003j58rjtbd0hvu' --project-name 'nana-core'"
   },
   "dependencies": {
-    "@bananapus/permission-ids": "^0.0.7",
+    "@bananapus/permission-ids": "^0.0.8",
     "@chainlink/contracts": "^1.1.0",
     "@openzeppelin/contracts": "^5.0.2",
     "@prb/math": "^4.0.2",

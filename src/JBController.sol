@@ -540,8 +540,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     }
 
     /// @notice Migrate a project from this controller to another one.
-    /// @dev Can only be called by the project's owner or an address with the owner's permission to
-    /// `MIGRATE_CONTROLLER`.
+    /// @dev Can only be called by the directory.
     /// @param projectId The ID of the project to migrate.
     /// @param to The controller to migrate the project to.
     function migrate(uint256 projectId, IERC165 to) external virtual override {
