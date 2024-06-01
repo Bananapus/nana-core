@@ -15,7 +15,7 @@ pragma solidity ^0.8.0;
 /// ruleset.
 /// @custom:member allowSetTerminals A flag indicating if a project's terminals can be added or removed.
 /// @custom:member allowSetController A flag indicating if a project's controller can be changed.
-/// @custom:member ensurePrivilegedPayoutDistribution A flag indicating if privileged payout distribution should be
+/// @custom:member ownerMustSendPayouts A flag indicating if privileged payout distribution should be
 /// enforced, otherwise payouts can be distributed by anyone.
 /// @custom:member holdFees A flag indicating if fees should be held during this ruleset.
 /// @custom:member useTotalSurplusForRedemptions A flag indicating if redemptions should use the project's balance held
@@ -37,7 +37,7 @@ struct JBRulesetMetadata {
     bool allowTerminalMigration;
     bool allowSetTerminals;
     bool allowSetController;
-    bool ensurePrivilegedPayoutDistribution;
+    bool ownerMustSendPayouts;
     bool holdFees;
     bool useTotalSurplusForRedemptions;
     bool useDataHookForPay;

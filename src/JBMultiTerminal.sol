@@ -1154,12 +1154,12 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         });
 
         // If the ruleset requires privileged payout distribution, ensure the caller has the permission.
-        if (ruleset.ensurePrivilegedPayoutDistribution()) {
+        if (ruleset.ownerMustSendPayouts()) {
             // Enforce permissions.
             _requirePermissionFrom({
                 account: PROJECTS.ownerOf(projectId),
                 projectId: projectId,
-                permissionId: JBPermissionIds.PRIVILEGED_PAYOUT_DISTRIBUTION
+                permissionId: JBPermissionIds.SEND_PAYOUTS
             });
         }
 

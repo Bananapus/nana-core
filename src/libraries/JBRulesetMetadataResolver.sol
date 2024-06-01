@@ -47,7 +47,7 @@ library JBRulesetMetadataResolver {
         return ((ruleset.metadata >> 74) & 1) == 1;
     }
 
-    function ensurePrivilegedPayoutDistribution(JBRuleset memory ruleset) internal pure returns (bool) {
+    function ownerMustSendPayouts(JBRuleset memory ruleset) internal pure returns (bool) {
         return ((ruleset.metadata >> 75) & 1) == 1;
     }
 
@@ -104,7 +104,7 @@ library JBRulesetMetadataResolver {
         // allow set controller in bit 74.
         if (rulesetMetadata.allowSetController) packed |= 1 << 74;
         // allow controller migration in bit 75.
-        if (rulesetMetadata.ensurePrivilegedPayoutDistribution) packed |= 1 << 75;
+        if (rulesetMetadata.ownerMustSendPayouts) packed |= 1 << 75;
         // hold fees in bit 76.
         if (rulesetMetadata.holdFees) packed |= 1 << 76;
         // useTotalSurplusForRedemptions in bit 77.
@@ -134,7 +134,7 @@ library JBRulesetMetadataResolver {
             allowTerminalMigration(ruleset),
             allowSetTerminals(ruleset),
             allowSetController(ruleset),
-            ensurePrivilegedPayoutDistribution(ruleset),
+            ownerMustSendPayouts(ruleset),
             holdFees(ruleset),
             useTotalSurplusForRedemptions(ruleset),
             useDataHookForPay(ruleset),
