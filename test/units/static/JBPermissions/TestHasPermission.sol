@@ -18,7 +18,7 @@ contract TestHasPermissions_Local is JBPermissionsSetup {
         // it will revert with PERMISSION_ID_OUT_OF_BOUNDS
 
         vm.expectRevert(abi.encodeWithSignature("PERMISSION_ID_OUT_OF_BOUNDS()"));
-        _permissions.hasPermission(_op, _account, _projectId, _permission);
+        _permissions.hasPermission(_op, _account, _projectId, _permission, true, true);
     }
 
     modifier whenPermissionIdLt255() {
@@ -38,13 +38,13 @@ contract TestHasPermissions_Local is JBPermissionsSetup {
         // Set storage
         vm.store(address(_permissions), slot, bytes32(permissions));
 
-        bool has = _permissions.hasPermission(_op, _account, _projectId, 1);
+        bool has = _permissions.hasPermission(_op, _account, _projectId, 1, true, true);
         assertEq(has, true);
     }
 
     function test_GivenOperatorDoesntHavePermissionForAccountOfProject() external whenPermissionIdLt255 {
         // it will return false
-        bool has = _permissions.hasPermission(_op, _account, _projectId, 1);
+        bool has = _permissions.hasPermission(_op, _account, _projectId, 1, true, true);
         assertEq(has, false);
     }
 }

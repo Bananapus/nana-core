@@ -27,7 +27,8 @@ contract TestMigrateBalanceOf_Local is JBMultiTerminalSetup {
         mockExpect(
             address(permissions),
             abi.encodeCall(
-                IJBPermissions.hasPermission, (address(this), address(0), _projectId, JBPermissionIds.MIGRATE_TERMINAL)
+                IJBPermissions.hasPermission,
+                (address(this), address(0), _projectId, JBPermissionIds.MIGRATE_TERMINAL, true, true)
             ),
             abi.encode(true)
         );
@@ -45,16 +46,8 @@ contract TestMigrateBalanceOf_Local is JBMultiTerminalSetup {
         mockExpect(
             address(permissions),
             abi.encodeCall(
-                IJBPermissions.hasPermission, (address(this), address(0), _projectId, JBPermissionIds.MIGRATE_TERMINAL)
-            ),
-            abi.encode(false)
-        );
-
-        // mock second call to JBPermissions hasPermission
-        mockExpect(
-            address(permissions),
-            abi.encodeCall(
-                IJBPermissions.hasPermission, (address(this), address(0), 0, JBPermissionIds.MIGRATE_TERMINAL)
+                IJBPermissions.hasPermission,
+                (address(this), address(0), _projectId, JBPermissionIds.MIGRATE_TERMINAL, true, true)
             ),
             abi.encode(false)
         );

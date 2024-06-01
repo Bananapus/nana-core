@@ -851,7 +851,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             }
 
             // Set the allowance to `spend` tokens for the user.
-            PERMIT2.permit({
+            try PERMIT2.permit({
                 owner: _msgSender(),
                 permitSingle: IAllowanceTransfer.PermitSingle({
                     details: IAllowanceTransfer.PermitDetails({
@@ -864,7 +864,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                     sigDeadline: allowance.sigDeadline
                 }),
                 signature: allowance.signature
-            });
+            }) {} catch (bytes memory) {}
         }
 
         // Get a reference to the balance before receiving tokens.

@@ -1,4 +1,4 @@
-TestUpcomingRulesetOf_Local
+TestUpcomingOf_Local
 ├── when latest ruleset Id EQ zero
 │   └── it will return an empty ruleset
 ├── when upcoming ruleset Id DNEQ zero

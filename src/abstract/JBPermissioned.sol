@@ -41,8 +41,15 @@ abstract contract JBPermissioned is Context, IJBPermissioned {
     function _requirePermissionFrom(address account, uint256 projectId, uint256 permissionId) internal view {
         address sender = _msgSender();
         if (
-            sender != account && !PERMISSIONS.hasPermission(sender, account, projectId, permissionId)
-                && !PERMISSIONS.hasPermission(sender, account, 0, permissionId)
+            sender != account
+                && !PERMISSIONS.hasPermission({
+                    operator: sender,
+                    account: account,
+                    projectId: projectId,
+                    permissionId: permissionId,
+                    includeRoot: true,
+                    includeWildcardProjectId: true
+                })
         ) revert UNAUTHORIZED();
     }
 

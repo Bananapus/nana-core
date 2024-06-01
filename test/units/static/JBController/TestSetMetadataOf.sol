@@ -33,19 +33,12 @@ contract TestSetMetadataOf_Local is JBControllerSetup {
 
         // mock first permissions call
         bytes memory _permissionsCall = abi.encodeCall(
-            IJBPermissions.hasPermission, (address(this), address(1), 1, JBPermissionIds.SET_PROJECT_METADATA)
+            IJBPermissions.hasPermission,
+            (address(this), address(1), 1, JBPermissionIds.SET_PROJECT_METADATA, true, true)
         );
         bytes memory _permissionsReturned = abi.encode(false);
 
         mockExpect(address(permissions), _permissionsCall, _permissionsReturned);
-
-        // mock second permissions call
-        bytes memory _permissionsCall2 = abi.encodeCall(
-            IJBPermissions.hasPermission, (address(this), address(1), 0, JBPermissionIds.SET_PROJECT_METADATA)
-        );
-        bytes memory _permissionsReturned2 = abi.encode(false);
-
-        mockExpect(address(permissions), _permissionsCall2, _permissionsReturned2);
 
         vm.expectRevert(abi.encodeWithSignature("UNAUTHORIZED()"));
         _controller.setUriOf(1, "Not Juicay");
