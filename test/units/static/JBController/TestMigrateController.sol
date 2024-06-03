@@ -108,7 +108,7 @@ contract TestMigrateController_Local is JBControllerSetup {
         _;
     }
 
-    function test_Revert_When_CallerDoesNotHave_MIGRATE_CONTROLLER_Permission() external {
+    function test_Revert_When_CallerDoesNotHave_SET_CONTROLLER_Permission() external {
         // it should revert
         // mock ownerOf call
         bytes memory _ownerOfCall = abi.encodeCall(IERC721.ownerOf, (1));
@@ -118,7 +118,7 @@ contract TestMigrateController_Local is JBControllerSetup {
 
         // mock first permissions call
         bytes memory _permissionsCall = abi.encodeCall(
-            IJBPermissions.hasPermission, (address(this), address(1), 1, JBPermissionIds.MIGRATE_CONTROLLER, true, true)
+            IJBPermissions.hasPermission, (address(this), address(1), 1, JBPermissionIds.SET_CONTROLLER, true, true)
         );
         bytes memory _permissionsReturned = abi.encode(false);
 
