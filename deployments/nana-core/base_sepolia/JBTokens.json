@@ -1,8 +1,8 @@
 {
 	"_format": "sphinx-sol-ct-artifact-1",
-	"merkleRoot": "0x1c031ac0217a16bc8b880bc3a6e637a3fb319bf6343a8af2f9d37587d2ef9836",
+	"merkleRoot": "0x11830f0fb7ad6b482466bf66cc24181095df70d9395bc2c496d5a5bd11e611a7",
 	"contractName": "JBTokens",
-	"address": "0x4207C2a3491D2f3AE33609588DDFEBEb8EEbcB6E",
+	"address": "0x4B91b0593302D5f033F0FDcEf7D82E2ff57e2467",
 	"abi": [
 		{
 			"type": "constructor",
@@ -618,382 +618,422 @@
 			"inputs": []
 		}
 	],
-	"solcInputHash": "5d7a79485a8a4fd8d39819ca7cc29822",
+	"solcInputHash": "d72d671cb704a380777b1be08dd807eb",
 	"receipt": {
-		"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
-		"blockNumber": 9448374,
+		"blockHash": "0x6690f410d7d4a9d63374c68c617de2b99074ad17ba6dec28f5d366cd608c2d42",
+		"blockNumber": 10840090,
 		"contractAddress": null,
-		"cumulativeGasUsed": "17649010",
+		"cumulativeGasUsed": "16617561",
 		"from": "0xC034550B542b83BA1De312b21d1C94a9a52B1595",
-		"gasPrice": "1000301",
-		"gasUsed": "16721305",
-		"hash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+		"gasPrice": "1000252",
+		"gasUsed": "16430725",
+		"hash": "0xff64c0e1046520bc26247e8dd06b73ae87fedcad3b2cfd155e9d66cc0b8d8a5a",
 		"index": 3,
 		"logs": [
 			{
 				"address": "0xB5E96127D417b1B3ef8438496a38A143167209c7",
-				"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
-				"blockNumber": 9448374,
+				"blockHash": "0x6690f410d7d4a9d63374c68c617de2b99074ad17ba6dec28f5d366cd608c2d42",
+				"blockNumber": 10840090,
 				"data": "0x0000000000000000000000000000000000000000000000000000000000000000",
-				"index": 5,
+				"index": 2,
 				"topics": [
 					"0x572f161235911da04685a68c06adf558fc7e4a36909dca394650e0adc19cc93d",
 					"0x000000000000000000000000c034550b542b83ba1de312b21d1c94a9a52b1595",
 					"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c",
-					"0x4dcf9ac2aa500342c4d7da9a3c6b86ef4cef982d7ded18c3e35c7138cc54e528"
+					"0x5834debc7c4916f7d5b26862868a69d5b55a6ee3695be7949d826f47cc404024"
 				],
-				"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+				"transactionHash": "0xff64c0e1046520bc26247e8dd06b73ae87fedcad3b2cfd155e9d66cc0b8d8a5a",
 				"transactionIndex": 3
 			},
 			{
 				"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
-				"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
-				"blockNumber": 9448374,
+				"blockHash": "0x6690f410d7d4a9d63374c68c617de2b99074ad17ba6dec28f5d366cd608c2d42",
+				"blockNumber": 10840090,
 				"data": "0x",
-				"index": 6,
+				"index": 3,
 				"topics": [
 					"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
 					"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
 				],
-				"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+				"transactionHash": "0xff64c0e1046520bc26247e8dd06b73ae87fedcad3b2cfd155e9d66cc0b8d8a5a",
 				"transactionIndex": 3
 			},
 			{
 				"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
-				"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
-				"blockNumber": 9448374,
+				"blockHash": "0x6690f410d7d4a9d63374c68c617de2b99074ad17ba6dec28f5d366cd608c2d42",
+				"blockNumber": 10840090,
 				"data": "0x0000000000000000000000000000000000000000000000000000000000000001",
-				"index": 7,
+				"index": 4,
 				"topics": [
 					"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
-					"0x1c031ac0217a16bc8b880bc3a6e637a3fb319bf6343a8af2f9d37587d2ef9836"
+					"0x11830f0fb7ad6b482466bf66cc24181095df70d9395bc2c496d5a5bd11e611a7"
 				],
-				"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+				"transactionHash": "0xff64c0e1046520bc26247e8dd06b73ae87fedcad3b2cfd155e9d66cc0b8d8a5a",
 				"transactionIndex": 3
 			},
 			{
-				"address": "0x2ca466eB84DD69A99E25d10BBbdA6e1B3c562c49",
-				"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
-				"blockNumber": 9448374,
+				"address": "0xC99C2fCc0dC51dd0dAd1fd7B58236bB4d73bAaa8",
+				"blockHash": "0x6690f410d7d4a9d63374c68c617de2b99074ad17ba6dec28f5d366cd608c2d42",
+				"blockNumber": 10840090,
 				"data": "0x",
-				"index": 8,
+				"index": 5,
 				"topics": [
 					"0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
 					"0x0000000000000000000000000000000000000000000000000000000000000000",
 					"0x0000000000000000000000001081b5aa9d9d4862a3da4d469433fb36ed80fa2a"
 				],
-				"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+				"transactionHash": "0xff64c0e1046520bc26247e8dd06b73ae87fedcad3b2cfd155e9d66cc0b8d8a5a",
 				"transactionIndex": 3
 			},
 			{
-				"address": "0x2ca466eB84DD69A99E25d10BBbdA6e1B3c562c49",
-				"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
-				"blockNumber": 9448374,
+				"address": "0xC99C2fCc0dC51dd0dAd1fd7B58236bB4d73bAaa8",
+				"blockHash": "0x6690f410d7d4a9d63374c68c617de2b99074ad17ba6dec28f5d366cd608c2d42",
+				"blockNumber": 10840090,
 				"data": "0x",
-				"index": 9,
+				"index": 6,
 				"topics": [
 					"0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
 					"0x0000000000000000000000000000000000000000000000000000000000000000",
 					"0x0000000000000000000000001081b5aa9d9d4862a3da4d469433fb36ed80fa2a",
 					"0x0000000000000000000000000000000000000000000000000000000000000001"
 				],
-				"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+				"transactionHash": "0xff64c0e1046520bc26247e8dd06b73ae87fedcad3b2cfd155e9d66cc0b8d8a5a",
 				"transactionIndex": 3
 			},
 			{
-				"address": "0x2ca466eB84DD69A99E25d10BBbdA6e1B3c562c49",
-				"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
-				"blockNumber": 9448374,
+				"address": "0xC99C2fCc0dC51dd0dAd1fd7B58236bB4d73bAaa8",
+				"blockHash": "0x6690f410d7d4a9d63374c68c617de2b99074ad17ba6dec28f5d366cd608c2d42",
+				"blockNumber": 10840090,
 				"data": "0x0000000000000000000000004e59b44847b379578588920ca78fbf26c0b4956c",
-				"index": 10,
+				"index": 7,
 				"topics": [
 					"0x365b3162cd780731fc55a794b59494d472bc2af701007f581843a70673814698",
 					"0x0000000000000000000000000000000000000000000000000000000000000001",
 					"0x0000000000000000000000001081b5aa9d9d4862a3da4d469433fb36ed80fa2a"
 				],
-				"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+				"transactionHash": "0xff64c0e1046520bc26247e8dd06b73ae87fedcad3b2cfd155e9d66cc0b8d8a5a",
 				"transactionIndex": 3
 			},
 			{
 				"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
-				"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
-				"blockNumber": 9448374,
+				"blockHash": "0x6690f410d7d4a9d63374c68c617de2b99074ad17ba6dec28f5d366cd608c2d42",
+				"blockNumber": 10840090,
+				"data": "0x",
+				"index": 8,
+				"topics": [
+					"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
+					"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
+				],
+				"transactionHash": "0xff64c0e1046520bc26247e8dd06b73ae87fedcad3b2cfd155e9d66cc0b8d8a5a",
+				"transactionIndex": 3
+			},
+			{
+				"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
+				"blockHash": "0x6690f410d7d4a9d63374c68c617de2b99074ad17ba6dec28f5d366cd608c2d42",
+				"blockNumber": 10840090,
+				"data": "0x0000000000000000000000000000000000000000000000000000000000000002",
+				"index": 9,
+				"topics": [
+					"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
+					"0x11830f0fb7ad6b482466bf66cc24181095df70d9395bc2c496d5a5bd11e611a7"
+				],
+				"transactionHash": "0xff64c0e1046520bc26247e8dd06b73ae87fedcad3b2cfd155e9d66cc0b8d8a5a",
+				"transactionIndex": 3
+			},
+			{
+				"address": "0xc9cb7a0BAB7569b5B6De26A679D107D4D412B349",
+				"blockHash": "0x6690f410d7d4a9d63374c68c617de2b99074ad17ba6dec28f5d366cd608c2d42",
+				"blockNumber": 10840090,
+				"data": "0x",
+				"index": 10,
+				"topics": [
+					"0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+					"0x0000000000000000000000000000000000000000000000000000000000000000",
+					"0x0000000000000000000000001081b5aa9d9d4862a3da4d469433fb36ed80fa2a"
+				],
+				"transactionHash": "0xff64c0e1046520bc26247e8dd06b73ae87fedcad3b2cfd155e9d66cc0b8d8a5a",
+				"transactionIndex": 3
+			},
+			{
+				"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+				"blockHash": "0x6690f410d7d4a9d63374c68c617de2b99074ad17ba6dec28f5d366cd608c2d42",
+				"blockNumber": 10840090,
 				"data": "0x",
 				"index": 11,
 				"topics": [
 					"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
 					"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
 				],
-				"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+				"transactionHash": "0xff64c0e1046520bc26247e8dd06b73ae87fedcad3b2cfd155e9d66cc0b8d8a5a",
 				"transactionIndex": 3
 			},
 			{
 				"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
-				"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
-				"blockNumber": 9448374,
-				"data": "0x0000000000000000000000000000000000000000000000000000000000000002",
+				"blockHash": "0x6690f410d7d4a9d63374c68c617de2b99074ad17ba6dec28f5d366cd608c2d42",
+				"blockNumber": 10840090,
+				"data": "0x0000000000000000000000000000000000000000000000000000000000000003",
 				"index": 12,
 				"topics": [
 					"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
-					"0x1c031ac0217a16bc8b880bc3a6e637a3fb319bf6343a8af2f9d37587d2ef9836"
+					"0x11830f0fb7ad6b482466bf66cc24181095df70d9395bc2c496d5a5bd11e611a7"
 				],
-				"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+				"transactionHash": "0xff64c0e1046520bc26247e8dd06b73ae87fedcad3b2cfd155e9d66cc0b8d8a5a",
 				"transactionIndex": 3
 			},
 			{
-				"address": "0xCd7112aE7c3b2505F0795c1ba965e5694c25d696",
-				"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
-				"blockNumber": 9448374,
+				"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+				"blockHash": "0x6690f410d7d4a9d63374c68c617de2b99074ad17ba6dec28f5d366cd608c2d42",
+				"blockNumber": 10840090,
 				"data": "0x",
 				"index": 13,
 				"topics": [
-					"0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
-					"0x0000000000000000000000000000000000000000000000000000000000000000",
-					"0x0000000000000000000000001081b5aa9d9d4862a3da4d469433fb36ed80fa2a"
+					"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
+					"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
 				],
-				"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+				"transactionHash": "0xff64c0e1046520bc26247e8dd06b73ae87fedcad3b2cfd155e9d66cc0b8d8a5a",
 				"transactionIndex": 3
 			},
 			{
-				"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
-				"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
-				"blockNumber": 9448374,
-				"data": "0x",
+				"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
+				"blockHash": "0x6690f410d7d4a9d63374c68c617de2b99074ad17ba6dec28f5d366cd608c2d42",
+				"blockNumber": 10840090,
+				"data": "0x0000000000000000000000000000000000000000000000000000000000000004",
 				"index": 14,
 				"topics": [
-					"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
-					"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
+					"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
+					"0x11830f0fb7ad6b482466bf66cc24181095df70d9395bc2c496d5a5bd11e611a7"
 				],
-				"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+				"transactionHash": "0xff64c0e1046520bc26247e8dd06b73ae87fedcad3b2cfd155e9d66cc0b8d8a5a",
 				"transactionIndex": 3
 			},
 			{
-				"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
-				"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
-				"blockNumber": 9448374,
-				"data": "0x0000000000000000000000000000000000000000000000000000000000000003",
+				"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+				"blockHash": "0x6690f410d7d4a9d63374c68c617de2b99074ad17ba6dec28f5d366cd608c2d42",
+				"blockNumber": 10840090,
+				"data": "0x",
 				"index": 15,
 				"topics": [
-					"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
-					"0x1c031ac0217a16bc8b880bc3a6e637a3fb319bf6343a8af2f9d37587d2ef9836"
-				],
-				"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
-				"transactionIndex": 3
-			},
-			{
-				"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
-				"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
-				"blockNumber": 9448374,
-				"data": "0x",
-				"index": 16,
-				"topics": [
 					"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
 					"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
 				],
-				"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+				"transactionHash": "0xff64c0e1046520bc26247e8dd06b73ae87fedcad3b2cfd155e9d66cc0b8d8a5a",
 				"transactionIndex": 3
 			},
 			{
 				"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
-				"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
-				"blockNumber": 9448374,
-				"data": "0x0000000000000000000000000000000000000000000000000000000000000004",
-				"index": 17,
+				"blockHash": "0x6690f410d7d4a9d63374c68c617de2b99074ad17ba6dec28f5d366cd608c2d42",
+				"blockNumber": 10840090,
+				"data": "0x0000000000000000000000000000000000000000000000000000000000000005",
+				"index": 16,
 				"topics": [
 					"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
-					"0x1c031ac0217a16bc8b880bc3a6e637a3fb319bf6343a8af2f9d37587d2ef9836"
+					"0x11830f0fb7ad6b482466bf66cc24181095df70d9395bc2c496d5a5bd11e611a7"
 				],
-				"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+				"transactionHash": "0xff64c0e1046520bc26247e8dd06b73ae87fedcad3b2cfd155e9d66cc0b8d8a5a",
+				"transactionIndex": 3
+			},
+			{
+				"address": "0x139dB16d4Ecc256cF0DaeD2705671165e1878047",
+				"blockHash": "0x6690f410d7d4a9d63374c68c617de2b99074ad17ba6dec28f5d366cd608c2d42",
+				"blockNumber": 10840090,
+				"data": "0x",
+				"index": 17,
+				"topics": [
+					"0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+					"0x0000000000000000000000000000000000000000000000000000000000000000",
+					"0x000000000000000000000000139db16d4ecc256cf0daed2705671165e1878047"
+				],
+				"transactionHash": "0xff64c0e1046520bc26247e8dd06b73ae87fedcad3b2cfd155e9d66cc0b8d8a5a",
 				"transactionIndex": 3
 			},
 			{
 				"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
-				"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
-				"blockNumber": 9448374,
+				"blockHash": "0x6690f410d7d4a9d63374c68c617de2b99074ad17ba6dec28f5d366cd608c2d42",
+				"blockNumber": 10840090,
 				"data": "0x",
 				"index": 18,
 				"topics": [
 					"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
 					"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
 				],
-				"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+				"transactionHash": "0xff64c0e1046520bc26247e8dd06b73ae87fedcad3b2cfd155e9d66cc0b8d8a5a",
 				"transactionIndex": 3
 			},
 			{
 				"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
-				"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
-				"blockNumber": 9448374,
-				"data": "0x0000000000000000000000000000000000000000000000000000000000000005",
+				"blockHash": "0x6690f410d7d4a9d63374c68c617de2b99074ad17ba6dec28f5d366cd608c2d42",
+				"blockNumber": 10840090,
+				"data": "0x0000000000000000000000000000000000000000000000000000000000000006",
 				"index": 19,
 				"topics": [
 					"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
-					"0x1c031ac0217a16bc8b880bc3a6e637a3fb319bf6343a8af2f9d37587d2ef9836"
+					"0x11830f0fb7ad6b482466bf66cc24181095df70d9395bc2c496d5a5bd11e611a7"
 				],
-				"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+				"transactionHash": "0xff64c0e1046520bc26247e8dd06b73ae87fedcad3b2cfd155e9d66cc0b8d8a5a",
 				"transactionIndex": 3
 			},
 			{
-				"address": "0xf8febDbCC8ACfb46BfB59e7695F77d8eA653a69d",
-				"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
-				"blockNumber": 9448374,
+				"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+				"blockHash": "0x6690f410d7d4a9d63374c68c617de2b99074ad17ba6dec28f5d366cd608c2d42",
+				"blockNumber": 10840090,
 				"data": "0x",
 				"index": 20,
 				"topics": [
-					"0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
-					"0x0000000000000000000000000000000000000000000000000000000000000000",
-					"0x000000000000000000000000f8febdbcc8acfb46bfb59e7695f77d8ea653a69d"
+					"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
+					"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
 				],
-				"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+				"transactionHash": "0xff64c0e1046520bc26247e8dd06b73ae87fedcad3b2cfd155e9d66cc0b8d8a5a",
 				"transactionIndex": 3
 			},
 			{
-				"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
-				"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
-				"blockNumber": 9448374,
-				"data": "0x",
+				"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
+				"blockHash": "0x6690f410d7d4a9d63374c68c617de2b99074ad17ba6dec28f5d366cd608c2d42",
+				"blockNumber": 10840090,
+				"data": "0x0000000000000000000000000000000000000000000000000000000000000007",
 				"index": 21,
 				"topics": [
-					"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
-					"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
+					"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
+					"0x11830f0fb7ad6b482466bf66cc24181095df70d9395bc2c496d5a5bd11e611a7"
 				],
-				"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+				"transactionHash": "0xff64c0e1046520bc26247e8dd06b73ae87fedcad3b2cfd155e9d66cc0b8d8a5a",
 				"transactionIndex": 3
 			},
 			{
-				"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
-				"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
-				"blockNumber": 9448374,
-				"data": "0x0000000000000000000000000000000000000000000000000000000000000006",
+				"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+				"blockHash": "0x6690f410d7d4a9d63374c68c617de2b99074ad17ba6dec28f5d366cd608c2d42",
+				"blockNumber": 10840090,
+				"data": "0x",
 				"index": 22,
 				"topics": [
-					"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
-					"0x1c031ac0217a16bc8b880bc3a6e637a3fb319bf6343a8af2f9d37587d2ef9836"
+					"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
+					"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
 				],
-				"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+				"transactionHash": "0xff64c0e1046520bc26247e8dd06b73ae87fedcad3b2cfd155e9d66cc0b8d8a5a",
 				"transactionIndex": 3
 			},
 			{
-				"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
-				"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
-				"blockNumber": 9448374,
-				"data": "0x",
+				"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
+				"blockHash": "0x6690f410d7d4a9d63374c68c617de2b99074ad17ba6dec28f5d366cd608c2d42",
+				"blockNumber": 10840090,
+				"data": "0x0000000000000000000000000000000000000000000000000000000000000008",
 				"index": 23,
 				"topics": [
-					"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
-					"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
+					"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
+					"0x11830f0fb7ad6b482466bf66cc24181095df70d9395bc2c496d5a5bd11e611a7"
 				],
-				"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+				"transactionHash": "0xff64c0e1046520bc26247e8dd06b73ae87fedcad3b2cfd155e9d66cc0b8d8a5a",
 				"transactionIndex": 3
 			},
 			{
-				"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
-				"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
-				"blockNumber": 9448374,
-				"data": "0x0000000000000000000000000000000000000000000000000000000000000007",
+				"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+				"blockHash": "0x6690f410d7d4a9d63374c68c617de2b99074ad17ba6dec28f5d366cd608c2d42",
+				"blockNumber": 10840090,
+				"data": "0x",
 				"index": 24,
 				"topics": [
-					"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
-					"0x1c031ac0217a16bc8b880bc3a6e637a3fb319bf6343a8af2f9d37587d2ef9836"
-				],
-				"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
-				"transactionIndex": 3
-			},
-			{
-				"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
-				"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
-				"blockNumber": 9448374,
-				"data": "0x",
-				"index": 25,
-				"topics": [
 					"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
 					"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
 				],
-				"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+				"transactionHash": "0xff64c0e1046520bc26247e8dd06b73ae87fedcad3b2cfd155e9d66cc0b8d8a5a",
 				"transactionIndex": 3
 			},
 			{
 				"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
-				"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
-				"blockNumber": 9448374,
-				"data": "0x0000000000000000000000000000000000000000000000000000000000000008",
-				"index": 26,
+				"blockHash": "0x6690f410d7d4a9d63374c68c617de2b99074ad17ba6dec28f5d366cd608c2d42",
+				"blockNumber": 10840090,
+				"data": "0x0000000000000000000000000000000000000000000000000000000000000009",
+				"index": 25,
 				"topics": [
 					"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
-					"0x1c031ac0217a16bc8b880bc3a6e637a3fb319bf6343a8af2f9d37587d2ef9836"
+					"0x11830f0fb7ad6b482466bf66cc24181095df70d9395bc2c496d5a5bd11e611a7"
 				],
-				"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+				"transactionHash": "0xff64c0e1046520bc26247e8dd06b73ae87fedcad3b2cfd155e9d66cc0b8d8a5a",
+				"transactionIndex": 3
+			},
+			{
+				"address": "0xc9cb7a0BAB7569b5B6De26A679D107D4D412B349",
+				"blockHash": "0x6690f410d7d4a9d63374c68c617de2b99074ad17ba6dec28f5d366cd608c2d42",
+				"blockNumber": 10840090,
+				"data": "0x0000000000000000000000001081b5aa9d9d4862a3da4d469433fb36ed80fa2a",
+				"index": 26,
+				"topics": [
+					"0x11207664cc48b0fa81c8674795f1d8f642960f38d5d2d305ad813093bed85fab",
+					"0x0000000000000000000000009c7993bff32dfd4e96f5c24d7ab3f9c93c303704",
+					"0x0000000000000000000000000000000000000000000000000000000000000001"
+				],
+				"transactionHash": "0xff64c0e1046520bc26247e8dd06b73ae87fedcad3b2cfd155e9d66cc0b8d8a5a",
 				"transactionIndex": 3
 			},
 			{
 				"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
-				"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
-				"blockNumber": 9448374,
+				"blockHash": "0x6690f410d7d4a9d63374c68c617de2b99074ad17ba6dec28f5d366cd608c2d42",
+				"blockNumber": 10840090,
 				"data": "0x",
 				"index": 27,
 				"topics": [
 					"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
 					"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
 				],
-				"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+				"transactionHash": "0xff64c0e1046520bc26247e8dd06b73ae87fedcad3b2cfd155e9d66cc0b8d8a5a",
 				"transactionIndex": 3
 			},
 			{
 				"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
-				"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
-				"blockNumber": 9448374,
-				"data": "0x0000000000000000000000000000000000000000000000000000000000000009",
+				"blockHash": "0x6690f410d7d4a9d63374c68c617de2b99074ad17ba6dec28f5d366cd608c2d42",
+				"blockNumber": 10840090,
+				"data": "0x000000000000000000000000000000000000000000000000000000000000000a",
 				"index": 28,
 				"topics": [
 					"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
-					"0x1c031ac0217a16bc8b880bc3a6e637a3fb319bf6343a8af2f9d37587d2ef9836"
+					"0x11830f0fb7ad6b482466bf66cc24181095df70d9395bc2c496d5a5bd11e611a7"
 				],
-				"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+				"transactionHash": "0xff64c0e1046520bc26247e8dd06b73ae87fedcad3b2cfd155e9d66cc0b8d8a5a",
 				"transactionIndex": 3
 			},
 			{
-				"address": "0xCd7112aE7c3b2505F0795c1ba965e5694c25d696",
-				"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
-				"blockNumber": 9448374,
-				"data": "0x0000000000000000000000001081b5aa9d9d4862a3da4d469433fb36ed80fa2a",
+				"address": "0x327Ef1062d1FA11F0aEC12fF6788FCE19A9cB1c3",
+				"blockHash": "0x6690f410d7d4a9d63374c68c617de2b99074ad17ba6dec28f5d366cd608c2d42",
+				"blockNumber": 10840090,
+				"data": "0x",
 				"index": 29,
 				"topics": [
-					"0x11207664cc48b0fa81c8674795f1d8f642960f38d5d2d305ad813093bed85fab",
-					"0x000000000000000000000000ff7e1c600b8af88de885a7c68c3e737401082423",
-					"0x0000000000000000000000000000000000000000000000000000000000000001"
+					"0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+					"0x0000000000000000000000000000000000000000000000000000000000000000",
+					"0x0000000000000000000000001081b5aa9d9d4862a3da4d469433fb36ed80fa2a"
 				],
-				"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+				"transactionHash": "0xff64c0e1046520bc26247e8dd06b73ae87fedcad3b2cfd155e9d66cc0b8d8a5a",
 				"transactionIndex": 3
 			},
 			{
 				"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
-				"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
-				"blockNumber": 9448374,
+				"blockHash": "0x6690f410d7d4a9d63374c68c617de2b99074ad17ba6dec28f5d366cd608c2d42",
+				"blockNumber": 10840090,
 				"data": "0x",
 				"index": 30,
 				"topics": [
 					"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
 					"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
 				],
-				"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+				"transactionHash": "0xff64c0e1046520bc26247e8dd06b73ae87fedcad3b2cfd155e9d66cc0b8d8a5a",
 				"transactionIndex": 3
 			},
 			{
 				"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
-				"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
-				"blockNumber": 9448374,
-				"data": "0x000000000000000000000000000000000000000000000000000000000000000a",
+				"blockHash": "0x6690f410d7d4a9d63374c68c617de2b99074ad17ba6dec28f5d366cd608c2d42",
+				"blockNumber": 10840090,
+				"data": "0x000000000000000000000000000000000000000000000000000000000000000b",
 				"index": 31,
 				"topics": [
 					"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
-					"0x1c031ac0217a16bc8b880bc3a6e637a3fb319bf6343a8af2f9d37587d2ef9836"
+					"0x11830f0fb7ad6b482466bf66cc24181095df70d9395bc2c496d5a5bd11e611a7"
 				],
-				"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+				"transactionHash": "0xff64c0e1046520bc26247e8dd06b73ae87fedcad3b2cfd155e9d66cc0b8d8a5a",
 				"transactionIndex": 3
 			},
 			{
-				"address": "0x5F4b3b392930cB3D4bd836c7b3B1fa66d971b578",
-				"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
-				"blockNumber": 9448374,
+				"address": "0x07D3580527E19B110b79dE420310c49F1E3Cba91",
+				"blockHash": "0x6690f410d7d4a9d63374c68c617de2b99074ad17ba6dec28f5d366cd608c2d42",
+				"blockNumber": 10840090,
 				"data": "0x",
 				"index": 32,
 				"topics": [
@@ -1001,47 +1041,47 @@
 					"0x0000000000000000000000000000000000000000000000000000000000000000",
 					"0x0000000000000000000000001081b5aa9d9d4862a3da4d469433fb36ed80fa2a"
 				],
-				"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+				"transactionHash": "0xff64c0e1046520bc26247e8dd06b73ae87fedcad3b2cfd155e9d66cc0b8d8a5a",
 				"transactionIndex": 3
 			},
 			{
 				"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
-				"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
-				"blockNumber": 9448374,
+				"blockHash": "0x6690f410d7d4a9d63374c68c617de2b99074ad17ba6dec28f5d366cd608c2d42",
+				"blockNumber": 10840090,
 				"data": "0x",
 				"index": 33,
 				"topics": [
 					"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
 					"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
 				],
-				"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+				"transactionHash": "0xff64c0e1046520bc26247e8dd06b73ae87fedcad3b2cfd155e9d66cc0b8d8a5a",
 				"transactionIndex": 3
 			},
 			{
 				"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
-				"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
-				"blockNumber": 9448374,
-				"data": "0x000000000000000000000000000000000000000000000000000000000000000b",
+				"blockHash": "0x6690f410d7d4a9d63374c68c617de2b99074ad17ba6dec28f5d366cd608c2d42",
+				"blockNumber": 10840090,
+				"data": "0x000000000000000000000000000000000000000000000000000000000000000c",
 				"index": 34,
 				"topics": [
 					"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
-					"0x1c031ac0217a16bc8b880bc3a6e637a3fb319bf6343a8af2f9d37587d2ef9836"
+					"0x11830f0fb7ad6b482466bf66cc24181095df70d9395bc2c496d5a5bd11e611a7"
 				],
-				"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+				"transactionHash": "0xff64c0e1046520bc26247e8dd06b73ae87fedcad3b2cfd155e9d66cc0b8d8a5a",
 				"transactionIndex": 3
 			}
 		],
-		"logsBloom": "0x00000000080010000008000000080200000000000008000000800000004080000060008000000000000000000040400000000000000000000000000002040000000000100000200c800000080102000000010000000c0000000200080000000000020000020000000000000000000800080000100000000000000010000020400001800200000000000180000000000000000000000000400000800000020020004000000010000000000000000000020200400008080000010080000006000000000002000000200000000008000000010000000000040000000000000060000000000000000004000000000000000200000000000000000040100000000000",
+		"logsBloom": "0x00000000080010000008000001080208000000000008000080800000004000080060008000000000000080000040200000000000000000000000000000040000210000100400200400000098000000000001000000040000000200000000000200000000020000000020000000080800000000100000400000000010000000400001000000000000000100000000000000000000000000000000800000400020004000040014000000000000000000020200400000000000000010000006000000000002000000200000000008000000010000800020040000000080000060000020000000000004000000000000040200000000000002000040000000000000",
 		"status": 1,
 		"to": "0xB5E96127D417b1B3ef8438496a38A143167209c7"
 	},
 	"metadata": "{\"compiler\":{\"version\":\"0.8.23+commit.f704f362\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"contract IJBDirectory\",\"name\":\"directory\",\"type\":\"address\"},{\"internalType\":\"contract IJBToken\",\"name\":\"token\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"CONTROLLER_UNAUTHORIZED\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"EMPTY_NAME\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"EMPTY_SYMBOL\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"EMPTY_TOKEN\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"ERC1167FailedCreateClone\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"INSUFFICIENT_CREDITS\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"INSUFFICIENT_FUNDS\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"OVERFLOW_ALERT\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"PROJECT_ALREADY_HAS_TOKEN\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"RECIPIENT_ZERO_ADDRESS\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"TOKENS_MUST_HAVE_18_DECIMALS\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"TOKEN_ALREADY_SET\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"TOKEN_NOT_FOUND\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"holder\",\"type\":\"address\",\"indexed\":true},{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\",\"indexed\":true},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\",\"indexed\":false},{\"internalType\":\"uint256\",\"name\":\"initialCreditBalance\",\"type\":\"uint256\",\"indexed\":false},{\"internalType\":\"uint256\",\"name\":\"initialTokenBalance\",\"type\":\"uint256\",\"indexed\":false},{\"internalType\":\"address\",\"name\":\"caller\",\"type\":\"address\",\"indexed\":false}],\"type\":\"event\",\"name\":\"Burn\",\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"holder\",\"type\":\"address\",\"indexed\":true},{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\",\"indexed\":true},{\"internalType\":\"uint256\",\"name\":\"initialCreditBalance\",\"type\":\"uint256\",\"indexed\":false},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\",\"indexed\":false},{\"internalType\":\"address\",\"name\":\"beneficiary\",\"type\":\"address\",\"indexed\":false},{\"internalType\":\"address\",\"name\":\"caller\",\"type\":\"address\",\"indexed\":false}],\"type\":\"event\",\"name\":\"ClaimTokens\",\"anonymous\":false},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\",\"indexed\":true},{\"internalType\":\"contract IJBToken\",\"name\":\"token\",\"type\":\"address\",\"indexed\":true},{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\",\"indexed\":false},{\"internalType\":\"string\",\"name\":\"symbol\",\"type\":\"string\",\"indexed\":false},{\"internalType\":\"bytes32\",\"name\":\"salt\",\"type\":\"bytes32\",\"indexed\":false},{\"internalType\":\"address\",\"name\":\"caller\",\"type\":\"address\",\"indexed\":false}],\"type\":\"event\",\"name\":\"DeployERC20\",\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"holder\",\"type\":\"address\",\"indexed\":true},{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\",\"indexed\":true},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\",\"indexed\":false},{\"internalType\":\"bool\",\"name\":\"tokensWereClaimed\",\"type\":\"bool\",\"indexed\":false},{\"internalType\":\"address\",\"name\":\"caller\",\"type\":\"address\",\"indexed\":false}],\"type\":\"event\",\"name\":\"Mint\",\"anonymous\":false},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\",\"indexed\":true},{\"internalType\":\"contract IJBToken\",\"name\":\"newToken\",\"type\":\"address\",\"indexed\":true},{\"internalType\":\"address\",\"name\":\"caller\",\"type\":\"address\",\"indexed\":false}],\"type\":\"event\",\"name\":\"SetToken\",\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"holder\",\"type\":\"address\",\"indexed\":true},{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\",\"indexed\":true},{\"internalType\":\"address\",\"name\":\"recipient\",\"type\":\"address\",\"indexed\":true},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\",\"indexed\":false},{\"internalType\":\"address\",\"name\":\"caller\",\"type\":\"address\",\"indexed\":false}],\"type\":\"event\",\"name\":\"TransferCredits\",\"anonymous\":false},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"DIRECTORY\",\"outputs\":[{\"internalType\":\"contract IJBDirectory\",\"name\":\"\",\"type\":\"address\"}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"TOKEN\",\"outputs\":[{\"internalType\":\"contract IJBToken\",\"name\":\"\",\"type\":\"address\"}]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"holder\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"burnFrom\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"holder\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"beneficiary\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"claimTokensFor\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"holder\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"creditBalanceOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"symbol\",\"type\":\"string\"},{\"internalType\":\"bytes32\",\"name\":\"salt\",\"type\":\"bytes32\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"deployERC20For\",\"outputs\":[{\"internalType\":\"contract IJBToken\",\"name\":\"token\",\"type\":\"address\"}]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"holder\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"mintFor\"},{\"inputs\":[{\"internalType\":\"contract IJBToken\",\"name\":\"token\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"projectIdOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"},{\"internalType\":\"contract IJBToken\",\"name\":\"token\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"setTokenFor\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"tokenOf\",\"outputs\":[{\"internalType\":\"contract IJBToken\",\"name\":\"\",\"type\":\"address\"}]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"holder\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"totalBalanceOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"balance\",\"type\":\"uint256\"}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"totalCreditSupplyOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"totalSupplyOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"totalSupply\",\"type\":\"uint256\"}]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"holder\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"recipient\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"transferCreditsFrom\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"burnFrom(address,uint256,uint256)\":{\"details\":\"Credits are burned first, then tokens are burned.Only a project's current controller can burn its tokens.\",\"params\":{\"amount\":\"The amount of tokens to burn.\",\"holder\":\"The address that owns the tokens which are being burned.\",\"projectId\":\"The ID of the project to the burned tokens belong to.\"}},\"claimTokensFor(address,uint256,uint256,address)\":{\"details\":\"Only a project's controller can claim that project's tokens.\",\"params\":{\"amount\":\"The amount of tokens to claim.\",\"beneficiary\":\"The account into which the claimed tokens will go.\",\"holder\":\"The owner of the credits being redeemed.\",\"projectId\":\"The ID of the project whose tokens are being claimed.\"}},\"constructor\":{\"params\":{\"directory\":\"A contract storing directories of terminals and controllers for each project.\",\"token\":\"The implementation of the token contract that project can deploy.\"}},\"deployERC20For(uint256,string,string,bytes32)\":{\"details\":\"Deploys a project's ERC-20 token contract.Only a project's controller can deploy its token.\",\"params\":{\"name\":\"The ERC-20's name.\",\"projectId\":\"The ID of the project to deploy an ERC-20 token for.\",\"symbol\":\"The ERC-20's symbol.\"},\"returns\":{\"token\":\"The address of the token that was deployed.\"}},\"mintFor(address,uint256,uint256)\":{\"details\":\"Only a project's current controller can mint its tokens.\",\"params\":{\"amount\":\"The amount of tokens to mint.\",\"holder\":\"The address receiving the new tokens.\",\"projectId\":\"The ID of the project to which the tokens belong.\"}},\"setTokenFor(uint256,address)\":{\"details\":\"Only a project's controller can set its token.\",\"params\":{\"projectId\":\"The ID of the project to set the token of.\",\"token\":\"The new token's address.\"}},\"totalBalanceOf(address,uint256)\":{\"params\":{\"holder\":\"The holder to get a balance for.\",\"projectId\":\"The project to get the `_holder`s balance for.\"},\"returns\":{\"balance\":\"The combined token and token credit balance of the `_holder\"}},\"totalSupplyOf(uint256)\":{\"params\":{\"projectId\":\"The ID of the project to get the total supply of.\"},\"returns\":{\"totalSupply\":\"The total supply of the project's tokens and token credits.\"}},\"transferCreditsFrom(address,uint256,address,uint256)\":{\"details\":\"Only a project's controller can transfer credits for that project.\",\"params\":{\"amount\":\"The amount of credits to transfer.\",\"holder\":\"The address to transfer credits from.\",\"projectId\":\"The ID of the project whose credits are being transferred.\",\"recipient\":\"The recipient of the credits.\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"DIRECTORY()\":{\"notice\":\"The directory of terminals and controllers for projects.\"},\"burnFrom(address,uint256,uint256)\":{\"notice\":\"Burns (destroys) credits or tokens.\"},\"claimTokensFor(address,uint256,uint256,address)\":{\"notice\":\"Redeem credits to claim tokens into a holder's wallet.\"},\"creditBalanceOf(address,uint256)\":{\"notice\":\"Each holder's credit balance for each project.\"},\"deployERC20For(uint256,string,string,bytes32)\":{\"notice\":\"Deploys an ERC-20 token for a project. It will be used when claiming tokens.\"},\"mintFor(address,uint256,uint256)\":{\"notice\":\"Mint (create) new tokens or credits.\"},\"projectIdOf(address)\":{\"notice\":\"Each token's project.\"},\"setTokenFor(uint256,address)\":{\"notice\":\"Set a project's token if not already set.\"},\"tokenOf(uint256)\":{\"notice\":\"Each project's attached token contract.\"},\"totalBalanceOf(address,uint256)\":{\"notice\":\"The total balance a holder has for a specified project, including both tokens and token credits.\"},\"totalCreditSupplyOf(uint256)\":{\"notice\":\"The total supply of credits for each project.\"},\"totalSupplyOf(uint256)\":{\"notice\":\"The total supply for a specific project, including both tokens and token credits.\"},\"transferCreditsFrom(address,uint256,address,uint256)\":{\"notice\":\"Allows a holder to transfer credits to another account.\"}},\"version\":1}},\"settings\":{\"remappings\":[\"@bananapus/=node_modules/@bananapus/\",\"@chainlink/=node_modules/@chainlink/\",\"@eth-optimism/=node_modules/@eth-optimism/\",\"@openzeppelin/=node_modules/@openzeppelin/\",\"@prb/=node_modules/@prb/\",\"@scroll-tech/=node_modules/@scroll-tech/\",\"@sphinx-labs/contracts/=lib/sphinx/packages/contracts/contracts/foundry/\",\"@uniswap/=node_modules/@uniswap/\",\"ds-test/=lib/forge-std/lib/ds-test/src/\",\"forge-std/=lib/forge-std/src/\",\"hardhat/=node_modules/hardhat/\",\"solmate/=node_modules/solmate/\",\"sphinx/=lib/sphinx/\"],\"optimizer\":{\"enabled\":true,\"runs\":200},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"compilationTarget\":{\"src/JBTokens.sol\":\"JBTokens\"},\"evmVersion\":\"paris\",\"libraries\":{}},\"sources\":{\"node_modules/@openzeppelin/contracts/access/Ownable.sol\":{\"keccak256\":\"0xff6d0bb2e285473e5311d9d3caacb525ae3538a80758c10649a4d61029b017bb\",\"urls\":[\"bzz-raw://8ed324d3920bb545059d66ab97d43e43ee85fd3bd52e03e401f020afb0b120f6\",\"dweb:/ipfs/QmfEckWLmZkDDcoWrkEvMWhms66xwTLff9DDhegYpvHo1a\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/governance/utils/IVotes.sol\":{\"keccak256\":\"0x5e2b397ae88fd5c68e4f6762eb9f65f65c36702eb57796495f471d024ce70947\",\"urls\":[\"bzz-raw://348fc8e291d54314bb22437b532f443d5dbfb80c8cc9591567c1af6554ccf856\",\"dweb:/ipfs/QmP8ZTyitZinxcpwAHeYHhwj7u21zPpKXSiww38V74sXC2\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/governance/utils/Votes.sol\":{\"keccak256\":\"0xb8f69828d41b3594afd7a8c6393565901c205d8b5baf5bd2e42dbac637172979\",\"urls\":[\"bzz-raw://c790253821191ac46b2050d87df820d4209871f90c616381e2c2c00ff3eaac34\",\"dweb:/ipfs/QmcPETTyuZBzDRL39JNXj3SBMdx3Y9o4fPQLSZ27py5Jim\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/interfaces/IERC5267.sol\":{\"keccak256\":\"0x92aa1df62dc3d33f1656d63bede0923e0df0b706ad4137c8b10b0a8fe549fd92\",\"urls\":[\"bzz-raw://c5c0f29195ad64cbe556da8e257dac8f05f78c53f90323c0d2accf8e6922d33a\",\"dweb:/ipfs/QmQ61TED8uaCZwcbh8KkgRSsCav7x7HbcGHwHts3U4DmUP\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/interfaces/IERC5805.sol\":{\"keccak256\":\"0x4b9b89f91adbb7d3574f85394754cfb08c5b4eafca8a7061e2094a019ab8f818\",\"urls\":[\"bzz-raw://7373d5dbb8eb2381aa0883a456fac89283fcaf52f42fa805d4188f270716742a\",\"dweb:/ipfs/QmVnZDmT4ABvNhRJMaQnbCzsCA8HpyHPVaxi4fCi92LFv2\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/interfaces/IERC6372.sol\":{\"keccak256\":\"0xeb2857b7dafb7e0d8526dbfe794e6c047df2851c9e6ee91dc4a55f3c34af5d33\",\"urls\":[\"bzz-raw://49bf13f6c2a38a9bcc7b852d4e2b9cebb4068b832642cce61069cdb5f06bb2fb\",\"dweb:/ipfs/QmdKAJVE7rR2kENCZnEM1yKswrGii7WuE9gZpsQvnXJhwn\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/interfaces/draft-IERC6093.sol\":{\"keccak256\":\"0x60c65f701957fdd6faea1acb0bb45825791d473693ed9ecb34726fdfaa849dd7\",\"urls\":[\"bzz-raw://ea290300e0efc4d901244949dc4d877fd46e6c5e43dc2b26620e8efab3ab803f\",\"dweb:/ipfs/QmcLLJppxKeJWqHxE2CUkcfhuRTgHSn8J4kijcLa5MYhSt\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/proxy/Clones.sol\":{\"keccak256\":\"0xd18408af8a91bedb3d56343eeb9b30eb852e6dea93a5e2d5c6db9ca4cb905155\",\"urls\":[\"bzz-raw://061475b7302a732dc598907790f407417551c2b13e89daa57b3698489ef5484b\",\"dweb:/ipfs/QmdX5qmk3VSniSErFuD4aVawQxUi2MuUbP7spPcHddPfcX\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/token/ERC20/ERC20.sol\":{\"keccak256\":\"0xc3e1fa9d1987f8d349dfb4d6fe93bf2ca014b52ba335cfac30bfe71e357e6f80\",\"urls\":[\"bzz-raw://c5703ccdeb7b1d685e375ed719117e9edf2ab4bc544f24f23b0d50ec82257229\",\"dweb:/ipfs/QmTdwkbQq7owpCiyuzE7eh5LrD2ddrBCZ5WHVsWPi1RrTS\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol\":{\"keccak256\":\"0xc6a8ff0ea489379b61faa647490411b80102578440ab9d84e9a957cc12164e70\",\"urls\":[\"bzz-raw://0ea104e577e63faea3b69c415637e99e755dcbf64c5833d7140c35a714d6d90c\",\"dweb:/ipfs/Qmau6x4Ns9XdyynRCNNp3RhLqijJjFm7z5fyZazfYFGYdq\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol\":{\"keccak256\":\"0xc858a86a35701004d89022a5e98819aac46ccbdc4072fc9dd43928a676b1a2ee\",\"urls\":[\"bzz-raw://18acebb483c512c0eaafcb437f09c839972c3f0d36f0201ea7baa2926b987dd2\",\"dweb:/ipfs/Qmd9bf2noaDSYDtf6FMSzKu7LPhuf91jsVNmcoCuTCuGic\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol\":{\"keccak256\":\"0x2a650f6e593cfe5ff2e514a17ea7f593ee70cefa1888066bc983a6308acff4b1\",\"urls\":[\"bzz-raw://9a3477b9665a4b6d19f86bf2cfbfa8c08ba41193f15e68c0d75c0cab7e1fc753\",\"dweb:/ipfs/QmbcurrTatN1PBmkCWdrED8zhAqx5ah9Qp6uR8YwkKWA8V\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol\":{\"keccak256\":\"0xaa761817f6cd7892fcf158b3c776b34551cde36f48ff9703d53898bc45a94ea2\",\"urls\":[\"bzz-raw://0ad7c8d4d08938c8dfc43d75a148863fb324b80cf53e0a36f7e5a4ac29008850\",\"dweb:/ipfs/QmcrhfPgVNf5mkdhQvy1pMv51TFokD3Y4Wa5WZhFqVh8UV\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/token/ERC20/extensions/IERC20Permit.sol\":{\"keccak256\":\"0x6008dabfe393240d73d7dd7688033f72740d570aa422254d29a7dce8568f3aff\",\"urls\":[\"bzz-raw://f5196ec75139918c6c7bb4251b36395e668f1fa6d206beba7e7520e74913940d\",\"dweb:/ipfs/QmSyqjksXxmm2mCG6qRd1yuwLykypkSVBbnBnGqJRcuJMi\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/token/ERC721/IERC721.sol\":{\"keccak256\":\"0x5ef46daa3b58ef2702279d514780316efaa952915ee1aa3396f041ee2982b0b4\",\"urls\":[\"bzz-raw://2f8f2a76e23b02fc69e8cd24c3cb47da6c7af3a2d6c3a382f8ac25c6e094ade7\",\"dweb:/ipfs/QmPV4ZS4tPVv4mTCf9ejyZ1ai57EEibDRj7mN2ARDCLV5n\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/utils/Context.sol\":{\"keccak256\":\"0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2\",\"urls\":[\"bzz-raw://6a708e8a5bdb1011c2c381c9a5cfd8a9a956d7d0a9dc1bd8bcdaf52f76ef2f12\",\"dweb:/ipfs/Qmax9WHBnVsZP46ZxEMNRQpLQnrdE4dK8LehML1Py8FowF\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/utils/Nonces.sol\":{\"keccak256\":\"0x0082767004fca261c332e9ad100868327a863a88ef724e844857128845ab350f\",\"urls\":[\"bzz-raw://132dce9686a54e025eb5ba5d2e48208f847a1ec3e60a3e527766d7bf53fb7f9e\",\"dweb:/ipfs/QmXn1a2nUZMpu2z6S88UoTfMVtY2YNh86iGrzJDYmMkKeZ\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/utils/ShortStrings.sol\":{\"keccak256\":\"0x18a7171df639a934592915a520ecb97c5bbc9675a1105607aac8a94e72bf62c6\",\"urls\":[\"bzz-raw://7478e1f13da69a2867ccd883001d836b75620362e743f196376d63ed0c422a1c\",\"dweb:/ipfs/QmWywcQ9TNfwtoqAxbn25d8C5VrV12PrPS9UjtGe6pL2BA\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/utils/StorageSlot.sol\":{\"keccak256\":\"0x32ba59b4b7299237c8ba56319110989d7978a039faf754793064e967e5894418\",\"urls\":[\"bzz-raw://1ae50c8b562427df610cc4540c9bf104acca7ef8e2dcae567ae7e52272281e9c\",\"dweb:/ipfs/QmTHiadFCSJUPpRjNegc5SahmeU8bAoY8i9Aq6tVscbcKR\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/utils/Strings.sol\":{\"keccak256\":\"0x55f102ea785d8399c0e58d1108e2d289506dde18abc6db1b7f68c1f9f9bc5792\",\"urls\":[\"bzz-raw://6e52e0a7765c943ef14e5bcf11e46e6139fa044be564881378349236bf2e3453\",\"dweb:/ipfs/QmZEeeXoFPW47amyP35gfzomF9DixqqTEPwzBakv6cZw6i\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/utils/cryptography/ECDSA.sol\":{\"keccak256\":\"0xeed0a08b0b091f528356cbc7245891a4c748682d4f6a18055e8e6ca77d12a6cf\",\"urls\":[\"bzz-raw://ba80ba06c8e6be852847e4c5f4492cef801feb6558ae09ed705ff2e04ea8b13c\",\"dweb:/ipfs/QmXRJDv3xHLVQCVXg1ZvR35QS9sij5y9NDWYzMfUfAdTHF\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/utils/cryptography/EIP712.sol\":{\"keccak256\":\"0x999f705a027ed6dc2d4e0df2cc4a509852c6bfd11de1c8161bf88832d0503fd0\",\"urls\":[\"bzz-raw://0798def67258d9a3cc20b2b4da7ebf351a5cefe0abfdd665d2d81f8e32f89b21\",\"dweb:/ipfs/QmPEvJosnPfzHNjKvCv2D3891mA2Ww8eUwkqrxBjuYdHCt\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/utils/cryptography/MessageHashUtils.sol\":{\"keccak256\":\"0xba333517a3add42cd35fe877656fc3dfcc9de53baa4f3aabbd6d12a92e4ea435\",\"urls\":[\"bzz-raw://2ceacff44c0fdc81e48e0e0b1db87a2076d3c1fb497341de077bf1da9f6b406c\",\"dweb:/ipfs/QmRUo1muMRAewxrKQ7TkXUtknyRoR57AyEkoPpiuZQ8FzX\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/utils/introspection/IERC165.sol\":{\"keccak256\":\"0x4296879f55019b23e135000eb36896057e7101fb7fb859c5ef690cf14643757b\",\"urls\":[\"bzz-raw://87b3541437c8c443ccd36795e56a338ed12855eec17f8da624511b8d1a7e14df\",\"dweb:/ipfs/QmeJQCtZrQjtJLr6u7ZHWeH3pBnjtLWzvRrKViAi7UZqxL\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/utils/math/Math.sol\":{\"keccak256\":\"0x005ec64c6313f0555d59e278f9a7a5ab2db5bdc72a027f255a37c327af1ec02d\",\"urls\":[\"bzz-raw://4ece9f0b9c8daca08c76b6b5405a6446b6f73b3a15fab7ff56e296cbd4a2c875\",\"dweb:/ipfs/QmQyRpyPRL5SQuAgj6SHmbir3foX65FJjbVTTQrA2EFg6L\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/utils/math/SafeCast.sol\":{\"keccak256\":\"0xe19a4d5f31d2861e7344e8e535e2feafb913d806d3e2b5fe7782741a2a7094fe\",\"urls\":[\"bzz-raw://4aed79c0fa6f0546ed02f2f683e8f77f0fd2ed7eb34d8bbf3d373c9a6d95b13c\",\"dweb:/ipfs/QmWqVz6UAVqmnWU5pqYPt1o6iDEZyPaBraAA3rKfTTSfYj\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/utils/math/SignedMath.sol\":{\"keccak256\":\"0x5f7e4076e175393767754387c962926577f1660dd9b810187b9002407656be72\",\"urls\":[\"bzz-raw://7d533a1c97cd43a57cd9c465f7ee8dd0e39ae93a8fb8ff8e5303a356b081cdcc\",\"dweb:/ipfs/QmVBEei6aTnvYNZp2CHYVNKyZS4q1KkjANfY39WVXZXVoT\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/utils/structs/Checkpoints.sol\":{\"keccak256\":\"0xbdc5e074d7dd6678f67e92b1a51a20226801a407b0e1af3da367c5d1ff4519ad\",\"urls\":[\"bzz-raw://a36cca6b22fff3db16fc789ff6c60eea71d4b156065d4d0c83a0bc5e91a77a8b\",\"dweb:/ipfs/QmYN3exd5AemxjBrN8XMB1p5LbbE16uC3sjbYjwi8AjcGR\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/utils/types/Time.sol\":{\"keccak256\":\"0xc7755af115020049e4140f224f9ee88d7e1799ffb0646f37bf0df24bf6213f58\",\"urls\":[\"bzz-raw://7f09bf94d5274334ec021f61a04659db303f31e60460e14b709c9bf187740111\",\"dweb:/ipfs/QmNvgomZYUwFAt4cZbPWAiTeSZQreGehY9BK5xyVJsUttb\"],\"license\":\"MIT\"},\"src/JBERC20.sol\":{\"keccak256\":\"0x4ca0ae4f2037c64217db9bf2376f27d129e9edd3810cc0ee31b5867d44d1ec67\",\"urls\":[\"bzz-raw://a3ba32cf40e165040459aa8c8462e22bdf0b1b3fb15f45c1f312751781c8f1fb\",\"dweb:/ipfs/QmYYPFZwwGweNSRTW1W2ibBWqWmwVsRFSrdjsQyHANpTK9\"],\"license\":\"MIT\"},\"src/JBTokens.sol\":{\"keccak256\":\"0x906be405fe172ecd471f543a837d7c8751b4a3f21710cb48c8b9bddda938d17a\",\"urls\":[\"bzz-raw://e136a1e79dce6b90e87727be3d77d6924d0c7badb294763b0e4ff502c6b4473a\",\"dweb:/ipfs/QmefJLEm1Ua3KwCTijFz9wThU19TXCv5WoifPHuuW5L3SZ\"],\"license\":\"MIT\"},\"src/abstract/JBControlled.sol\":{\"keccak256\":\"0xdbaab889d033617969b7e0b453564e8eb76acb54e65b22289fff6fac90599d64\",\"urls\":[\"bzz-raw://860d67885d8095d49694a5c6c933ff0ad048a3db72412412b04e6b14c0fc8c59\",\"dweb:/ipfs/QmRHV7RdjwbQHtjpUxhNgnWzzES5X9duVTUPtCnJYrvjjc\"],\"license\":\"MIT\"},\"src/interfaces/IJBControlled.sol\":{\"keccak256\":\"0x79fb8de7b3f809f1c3c7189f578b7331ec4dfe3350151d5b50240ecb3a2a907b\",\"urls\":[\"bzz-raw://45c82240dd4f0e9aec00d0d86f6b44bdda231db098ebdac17e922771b3e6f342\",\"dweb:/ipfs/QmPUvT8HZeVenrZDpP14HsZofaXPJjih8UAd35rTg3tU7E\"],\"license\":\"MIT\"},\"src/interfaces/IJBDirectory.sol\":{\"keccak256\":\"0x9cc380844aef60078ee47a61861e55a29c4a8c947efd556ebd36e6909f7b9d62\",\"urls\":[\"bzz-raw://9f5190ec8b6683d9781ee6e9eedcc91294753242748875d4a06349077e4cbaaf\",\"dweb:/ipfs/QmTQrPuXT9TCA4txwrperMeXSGvGxP8iokUK47f62F388i\"],\"license\":\"MIT\"},\"src/interfaces/IJBPayHook.sol\":{\"keccak256\":\"0x9438866782c652c2942f4d114e35f393cd3c8b0334abce8387eed90bca35e8b2\",\"urls\":[\"bzz-raw://cfd99daf57213f92325aad7d7d16e98476d38e870470e95ba01e3ae3cdecc95d\",\"dweb:/ipfs/QmUKKAVGf7ki8BHksr99tFcRW8APveeB5tNH63ctTbbCW8\"],\"license\":\"MIT\"},\"src/interfaces/IJBProjects.sol\":{\"keccak256\":\"0x735c2fb8f1fa827f054ee77f7a0ae4b312656217acb75b624d2c8fd9dc40151b\",\"urls\":[\"bzz-raw://ee7fc92299a8633a80693ae63ab494dcd125f1789487a54a39dc0e5696e5996f\",\"dweb:/ipfs/QmX7YJD4pS2XhgQb7p3JbBAXynT7YGPXcZe92BiWWRrsCL\"],\"license\":\"MIT\"},\"src/interfaces/IJBTerminal.sol\":{\"keccak256\":\"0x19dc9bf8cbdc8f13ee5da9dc3a87047eacb94a3fc19740a286c1f0bad2cc39ca\",\"urls\":[\"bzz-raw://0b05ae6fda9a85672508232fd992b8a5f5ffd8096622eeb12c8a7b3317eb3867\",\"dweb:/ipfs/QmNh9Quj37BXYGdTdcCD1Q58PchRsE5TLbEZep56qS3MpV\"],\"license\":\"MIT\"},\"src/interfaces/IJBToken.sol\":{\"keccak256\":\"0x71b1f9c3a0edd41910f77396e0be2c65596571176d53eb87e887c3c0da56c0fb\",\"urls\":[\"bzz-raw://6e956f0582f4525e83d845ee9b4a89959abc4f821414f6accbbee5b38960482d\",\"dweb:/ipfs/QmbSvjgmCgnfVmcCTGu8XwrV1Rufsf3M8hB8unFq6fTMdH\"],\"license\":\"MIT\"},\"src/interfaces/IJBTokenUriResolver.sol\":{\"keccak256\":\"0xfa5cb00dcd6085d1ef912d071fe73c63f9478a2cd0f9d8bddaf659b6af2d0967\",\"urls\":[\"bzz-raw://282e4e7c342d65f77cde0e9a08fcaf20ef5cf379c7a48b639842c0ffd0b2afb8\",\"dweb:/ipfs/QmbnN3PEQeZaXdPLT75V1J79kMg7KqSMru37RHrL3z8Yf2\"],\"license\":\"MIT\"},\"src/interfaces/IJBTokens.sol\":{\"keccak256\":\"0x6fd67af915dd541d9547c8297aa9ae269690e4ee23531db43f021bcacec6076f\",\"urls\":[\"bzz-raw://2e5e11954e9ab2319fffccb6563f3db400b8f7760d4ffe2165048a02c9c37fa6\",\"dweb:/ipfs/QmbDXtV83dK8EfiTjsTRf55R2XqPZzDKcjtYbW8sxQ5CFm\"],\"license\":\"MIT\"},\"src/structs/JBAccountingContext.sol\":{\"keccak256\":\"0x2907ff54d1e903cc7e0390dd88c3975884702dc2673642aacbe22b66560b56de\",\"urls\":[\"bzz-raw://a66a5381ce877b32f0e0058ceeaf843e9b6b2bc8af666c0c9f4a9d01091da004\",\"dweb:/ipfs/QmQynCetUr37dBkS1YwDS8evxuXGiqanW6THmeUxXtim8w\"],\"license\":\"MIT\"},\"src/structs/JBAfterPayRecordedContext.sol\":{\"keccak256\":\"0xd26c3a774ff38be79064085970454fe2603a23a638c76270d5b1b3829206c3e8\",\"urls\":[\"bzz-raw://3b55dbe3bf1ef625b7ca04efab3de35406e6041d5b3d82c7265469c500e2b702\",\"dweb:/ipfs/QmUdBDo4Lt3mcsFcsXT2mqq3czFwZjQJFPLM89YA2VtD7k\"],\"license\":\"MIT\"},\"src/structs/JBTokenAmount.sol\":{\"keccak256\":\"0x5cf0626b73a596c1e2da17c89ae039a7c0374310b060d48568d3b6c11fbe6180\",\"urls\":[\"bzz-raw://63348b50be95e2995409394a17caffc563a646f0972650a1230bf864fbd3219b\",\"dweb:/ipfs/QmZXZpS3SbFD5nWaCauf6AqbEhLURv5qsKHpThBvQgDU6u\"],\"license\":\"MIT\"}},\"version\":1}",
 	"args": [
-		"0xCd7112aE7c3b2505F0795c1ba965e5694c25d696",
-		"0xf8febDbCC8ACfb46BfB59e7695F77d8eA653a69d"
+		"0xc9cb7a0BAB7569b5B6De26A679D107D4D412B349",
+		"0x139dB16d4Ecc256cF0DaeD2705671165e1878047"
 	],
 	"bytecode": "0x60c060405234801561001057600080fd5b506040516200178b3803806200178b83398101604081905261003191610060565b6001600160a01b039182166080521660a05261009a565b6001600160a01b038116811461005d57600080fd5b50565b6000806040838503121561007357600080fd5b825161007e81610048565b602084015190925061008f81610048565b809150509250929050565b60805160a051611693620000f8600039600081816101ad015281816108f2015261093a0152600081816101e7015281816102b8015281816105a7015281816107ca01528181610bc101528181610df90152610fcf01526116936000f3fe608060405234801561001057600080fd5b50600436106100ea5760003560e01c8063878003b81161008c578063b1e6d2a111610066578063b1e6d2a11461021c578063c6c116bd1461022f578063ea78803f1461025a578063f12b64a51461028357600080fd5b8063878003b8146101cf57806388bc2ef3146101e2578063aab68bdb1461020957600080fd5b806358178191116100c8578063581781911461014a57806366d542161461017557806375b0d9cd1461019557806382bfefc8146101a857600080fd5b80630f85421b146100ef578063124d91e514610122578063303f5dfa14610137575b600080fd5b61010f6100fd3660046112e7565b60016020526000908152604090205481565b6040519081526020015b60405180910390f35b61013561013036600461130b565b610296565b005b610135610145366004611340565b610585565b61015d6101583660046113d3565b6107a5565b6040516001600160a01b039091168152602001610119565b61010f610183366004611455565b60026020526000908152604090205481565b61010f6101a3366004611455565b610a4d565b61015d7f000000000000000000000000000000000000000000000000000000000000000081565b61010f6101dd36600461146e565b610aeb565b61015d7f000000000000000000000000000000000000000000000000000000000000000081565b61013561021736600461130b565b610b9f565b61013561022a36600461149a565b610dd7565b61010f61023d36600461146e565b600360209081526000928352604080842090915290825290205481565b61015d610268366004611455565b6000602081905290815260409020546001600160a01b031681565b6101356102913660046114e2565b610fad565b604051632eec7b5560e11b815260048101839052829033906001600160a01b037f00000000000000000000000000000000000000000000000000000000000000001690635dd8f6aa90602401602060405180830381865afa1580156102ff573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906103239190611512565b6001600160a01b03161461034a57604051632adfdd0560e21b815260040160405180910390fd5b600083815260208181526040808320546001600160a01b038881168552600384528285208886529093529083205491169182156103f0576040516370a0823160e01b81526001600160a01b0388811660048301528416906370a0823190602401602060405180830381865afa1580156103c7573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906103eb919061152f565b6103f3565b60005b90506103ff828261155e565b85111561041f57604051631cf2628760e31b815260040160405180910390fd5b6000811561043c57858310610435576000610439565b8286035b90505b8086038682146104bd576001600160a01b03891660009081526003602090815260408083208b8452909152902054610475908290611571565b6001600160a01b038a1660009081526003602090815260408083208c84528252808320939093556002905220546104ad908290611571565b6000898152600260205260409020555b811561052657604051632770a7eb60e21b81526001600160a01b038a8116600483015260248201849052861690639dc29fac90604401600060405180830381600087803b15801561050d57600080fd5b505af1158015610521573d6000803e3d6000fd5b505050505b604080518881526020810186905290810184905233606082015288906001600160a01b038b16907fa6a919b3314fbbdb84c4a64d62f381f104d0c1747b789163262d2fcfeec292689060800160405180910390a3505050505050505050565b604051632eec7b5560e11b815260048101849052839033906001600160a01b037f00000000000000000000000000000000000000000000000000000000000000001690635dd8f6aa90602401602060405180830381865afa1580156105ee573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906106129190611512565b6001600160a01b03161461063957604051632adfdd0560e21b815260040160405180910390fd5b6000848152602081905260409020546001600160a01b03168061066f576040516339e231e760e11b815260040160405180910390fd5b6001600160a01b0386166000908152600360209081526040808320888452909152902054848110156106b45760405163db446d8360e01b815260040160405180910390fd5b6001600160a01b0387811660009081526003602090815260408083208a84528252808320898603905560029091529081902080548890039055516340c10f1960e01b8152858216600482015260248101879052908316906340c10f1990604401600060405180830381600087803b15801561072e57600080fd5b505af1158015610742573d6000803e3d6000fd5b505060408051848152602081018990526001600160a01b038881168284015233606083015291518a9450918b1692507fde5600808a2321d39207ba773327f7a932a4b0b019107fb5a95618006cd0ff00919081900360800190a350505050505050565b604051632eec7b5560e11b815260048101879052600090879033906001600160a01b037f00000000000000000000000000000000000000000000000000000000000000001690635dd8f6aa90602401602060405180830381865afa158015610811573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906108359190611512565b6001600160a01b03161461085c57604051632adfdd0560e21b815260040160405180910390fd5b600086900361087e576040516392bf449d60e01b815260040160405180910390fd5b60008490036108a05760405163571431a760e01b815260040160405180910390fd5b6000888152602081905260409020546001600160a01b0316156108d6576040516329518c2b60e21b815260040160405180910390fd5b82156109355760408051336020820152908101849052610930907f000000000000000000000000000000000000000000000000000000000000000090606001604051602081830303815290604052805190602001206111e9565b61095e565b61095e7f000000000000000000000000000000000000000000000000000000000000000061125d565b60008981526020818152604080832080546001600160a01b0319166001600160a01b0386169081179091558084526001909252918290208b905590516303bf912560e11b81529193509063077f224a906109c4908a908a908a908a9030906004016115ad565b600060405180830381600087803b1580156109de57600080fd5b505af11580156109f2573d6000803e3d6000fd5b50505050816001600160a01b0316887fb4510654a5884cae50948507300dc482833ed1446cef375e064bef00b6b4ba4e898989898933604051610a3a969594939291906115ef565b60405180910390a3509695505050505050565b60008181526002602090815260408083205491839052909120546001600160a01b03168015610ae557806001600160a01b03166318160ddd6040518163ffffffff1660e01b8152600401602060405180830381865afa158015610ab4573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610ad8919061152f565b610ae2908361155e565b91505b50919050565b6001600160a01b03808316600090815260036020908152604080832085845282528083205491839052909120549091168015610b98576040516370a0823160e01b81526001600160a01b0385811660048301528216906370a0823190602401602060405180830381865afa158015610b67573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610b8b919061152f565b610b95908361155e565b91505b5092915050565b604051632eec7b5560e11b815260048101839052829033906001600160a01b037f00000000000000000000000000000000000000000000000000000000000000001690635dd8f6aa90602401602060405180830381865afa158015610c08573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610c2c9190611512565b6001600160a01b031614610c5357604051632adfdd0560e21b815260040160405180910390fd5b6000838152602081905260409020546001600160a01b03168015801590610cdb576040516340c10f1960e01b81526001600160a01b038781166004830152602482018690528316906340c10f1990604401600060405180830381600087803b158015610cbe57600080fd5b505af1158015610cd2573d6000803e3d6000fd5b50505050610d52565b6001600160a01b0386166000908152600360209081526040808320888452909152902054610d0a90859061155e565b6001600160a01b0387166000908152600360209081526040808320898452825280832093909355600290522054610d4290859061155e565b6000868152600260205260409020555b6001600160d01b03610d6386610a4d565b1115610d8257604051633062f38960e11b815260040160405180910390fd5b6040805185815282151560208201523381830152905186916001600160a01b038916917f0153be209252ccc3b70df14d55d2cc93fa5a74e263b163d9a1caf45152fd0e869181900360600190a3505050505050565b604051632eec7b5560e11b815260048101849052839033906001600160a01b037f00000000000000000000000000000000000000000000000000000000000000001690635dd8f6aa90602401602060405180830381865afa158015610e40573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610e649190611512565b6001600160a01b031614610e8b57604051632adfdd0560e21b815260040160405180910390fd5b6001600160a01b038316610eb25760405163c6587bab60e01b815260040160405180910390fd5b6001600160a01b038516600090815260036020908152604080832087845290915290205480831115610ef75760405163db446d8360e01b815260040160405180910390fd5b6001600160a01b0380871660009081526003602081815260408084208a855282528084208887039055938816835290815282822088835290522054610f3d90849061155e565b6001600160a01b0385811660008181526003602090815260408083208b84528252918290209490945580518781523394810194909452909288928a16917f6d86dde1e9f07a2ad1e0f3e611b7bb8343d629126c5ca73f1a5951177d87143f910160405180910390a4505050505050565b604051632eec7b5560e11b815260048101839052829033906001600160a01b037f00000000000000000000000000000000000000000000000000000000000000001690635dd8f6aa90602401602060405180830381865afa158015611016573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061103a9190611512565b6001600160a01b03161461106157604051632adfdd0560e21b815260040160405180910390fd5b6001600160a01b038216611088576040516324679e7b60e01b815260040160405180910390fd5b6000838152602081905260409020546001600160a01b0316156110be5760405163934c465560e01b815260040160405180910390fd5b6001600160a01b038216600090815260016020526040902054156110f55760405163934c465560e01b815260040160405180910390fd5b816001600160a01b031663313ce5676040518163ffffffff1660e01b8152600401602060405180830381865afa158015611133573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190611157919061163a565b60ff1660121461117a57604051632b70e32560e21b815260040160405180910390fd5b60008381526020818152604080832080546001600160a01b0319166001600160a01b03871690811790915580845260018352928190208690555133815285917f768e177d7f9dac714049e6d43d9ac533cf0c6cc23cddcfe642bfd7a18bee3772910160405180910390a3505050565b6000763d602d80600a3d3981f3363d3d373d3d3d363d730000008360601b60e81c176000526e5af43d82803e903d91602b57fd5bf38360781b1760205281603760096000f590506001600160a01b038116611257576040516330be1a3d60e21b815260040160405180910390fd5b92915050565b6000763d602d80600a3d3981f3363d3d373d3d3d363d730000008260601b60e81c176000526e5af43d82803e903d91602b57fd5bf38260781b17602052603760096000f090506001600160a01b0381166112ca576040516330be1a3d60e21b815260040160405180910390fd5b919050565b6001600160a01b03811681146112e457600080fd5b50565b6000602082840312156112f957600080fd5b8135611304816112cf565b9392505050565b60008060006060848603121561132057600080fd5b833561132b816112cf565b95602085013595506040909401359392505050565b6000806000806080858703121561135657600080fd5b8435611361816112cf565b93506020850135925060408501359150606085013561137f816112cf565b939692955090935050565b60008083601f84011261139c57600080fd5b50813567ffffffffffffffff8111156113b457600080fd5b6020830191508360208285010111156113cc57600080fd5b9250929050565b600080600080600080608087890312156113ec57600080fd5b86359550602087013567ffffffffffffffff8082111561140b57600080fd5b6114178a838b0161138a565b9097509550604089013591508082111561143057600080fd5b5061143d89828a0161138a565b979a9699509497949695606090950135949350505050565b60006020828403121561146757600080fd5b5035919050565b6000806040838503121561148157600080fd5b823561148c816112cf565b946020939093013593505050565b600080600080608085870312156114b057600080fd5b84356114bb816112cf565b93506020850135925060408501356114d2816112cf565b9396929550929360600135925050565b600080604083850312156114f557600080fd5b823591506020830135611507816112cf565b809150509250929050565b60006020828403121561152457600080fd5b8151611304816112cf565b60006020828403121561154157600080fd5b5051919050565b634e487b7160e01b600052601160045260246000fd5b8082018082111561125757611257611548565b8181038181111561125757611257611548565b81835281816020850137506000828201602090810191909152601f909101601f19169091010190565b6060815260006115c1606083018789611584565b82810360208401526115d4818688611584565b91505060018060a01b03831660408301529695505050505050565b60808152600061160360808301888a611584565b8281036020840152611616818789611584565b604084019590955250506001600160a01b0391909116606090910152949350505050565b60006020828403121561164c57600080fd5b815160ff8116811461130457600080fdfea264697066735822122038aacaa9b4f561bd16b11029b3cd258890a8f510b70c687d8a89393ce385dbb364736f6c63430008170033",
-	"deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100ea5760003560e01c8063878003b81161008c578063b1e6d2a111610066578063b1e6d2a11461021c578063c6c116bd1461022f578063ea78803f1461025a578063f12b64a51461028357600080fd5b8063878003b8146101cf57806388bc2ef3146101e2578063aab68bdb1461020957600080fd5b806358178191116100c8578063581781911461014a57806366d542161461017557806375b0d9cd1461019557806382bfefc8146101a857600080fd5b80630f85421b146100ef578063124d91e514610122578063303f5dfa14610137575b600080fd5b61010f6100fd3660046112e7565b60016020526000908152604090205481565b6040519081526020015b60405180910390f35b61013561013036600461130b565b610296565b005b610135610145366004611340565b610585565b61015d6101583660046113d3565b6107a5565b6040516001600160a01b039091168152602001610119565b61010f610183366004611455565b60026020526000908152604090205481565b61010f6101a3366004611455565b610a4d565b61015d7f000000000000000000000000f8febdbcc8acfb46bfb59e7695f77d8ea653a69d81565b61010f6101dd36600461146e565b610aeb565b61015d7f000000000000000000000000cd7112ae7c3b2505f0795c1ba965e5694c25d69681565b61013561021736600461130b565b610b9f565b61013561022a36600461149a565b610dd7565b61010f61023d36600461146e565b600360209081526000928352604080842090915290825290205481565b61015d610268366004611455565b6000602081905290815260409020546001600160a01b031681565b6101356102913660046114e2565b610fad565b604051632eec7b5560e11b815260048101839052829033906001600160a01b037f000000000000000000000000cd7112ae7c3b2505f0795c1ba965e5694c25d6961690635dd8f6aa90602401602060405180830381865afa1580156102ff573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906103239190611512565b6001600160a01b03161461034a57604051632adfdd0560e21b815260040160405180910390fd5b600083815260208181526040808320546001600160a01b038881168552600384528285208886529093529083205491169182156103f0576040516370a0823160e01b81526001600160a01b0388811660048301528416906370a0823190602401602060405180830381865afa1580156103c7573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906103eb919061152f565b6103f3565b60005b90506103ff828261155e565b85111561041f57604051631cf2628760e31b815260040160405180910390fd5b6000811561043c57858310610435576000610439565b8286035b90505b8086038682146104bd576001600160a01b03891660009081526003602090815260408083208b8452909152902054610475908290611571565b6001600160a01b038a1660009081526003602090815260408083208c84528252808320939093556002905220546104ad908290611571565b6000898152600260205260409020555b811561052657604051632770a7eb60e21b81526001600160a01b038a8116600483015260248201849052861690639dc29fac90604401600060405180830381600087803b15801561050d57600080fd5b505af1158015610521573d6000803e3d6000fd5b505050505b604080518881526020810186905290810184905233606082015288906001600160a01b038b16907fa6a919b3314fbbdb84c4a64d62f381f104d0c1747b789163262d2fcfeec292689060800160405180910390a3505050505050505050565b604051632eec7b5560e11b815260048101849052839033906001600160a01b037f000000000000000000000000cd7112ae7c3b2505f0795c1ba965e5694c25d6961690635dd8f6aa90602401602060405180830381865afa1580156105ee573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906106129190611512565b6001600160a01b03161461063957604051632adfdd0560e21b815260040160405180910390fd5b6000848152602081905260409020546001600160a01b03168061066f576040516339e231e760e11b815260040160405180910390fd5b6001600160a01b0386166000908152600360209081526040808320888452909152902054848110156106b45760405163db446d8360e01b815260040160405180910390fd5b6001600160a01b0387811660009081526003602090815260408083208a84528252808320898603905560029091529081902080548890039055516340c10f1960e01b8152858216600482015260248101879052908316906340c10f1990604401600060405180830381600087803b15801561072e57600080fd5b505af1158015610742573d6000803e3d6000fd5b505060408051848152602081018990526001600160a01b038881168284015233606083015291518a9450918b1692507fde5600808a2321d39207ba773327f7a932a4b0b019107fb5a95618006cd0ff00919081900360800190a350505050505050565b604051632eec7b5560e11b815260048101879052600090879033906001600160a01b037f000000000000000000000000cd7112ae7c3b2505f0795c1ba965e5694c25d6961690635dd8f6aa90602401602060405180830381865afa158015610811573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906108359190611512565b6001600160a01b03161461085c57604051632adfdd0560e21b815260040160405180910390fd5b600086900361087e576040516392bf449d60e01b815260040160405180910390fd5b60008490036108a05760405163571431a760e01b815260040160405180910390fd5b6000888152602081905260409020546001600160a01b0316156108d6576040516329518c2b60e21b815260040160405180910390fd5b82156109355760408051336020820152908101849052610930907f000000000000000000000000f8febdbcc8acfb46bfb59e7695f77d8ea653a69d90606001604051602081830303815290604052805190602001206111e9565b61095e565b61095e7f000000000000000000000000f8febdbcc8acfb46bfb59e7695f77d8ea653a69d61125d565b60008981526020818152604080832080546001600160a01b0319166001600160a01b0386169081179091558084526001909252918290208b905590516303bf912560e11b81529193509063077f224a906109c4908a908a908a908a9030906004016115ad565b600060405180830381600087803b1580156109de57600080fd5b505af11580156109f2573d6000803e3d6000fd5b50505050816001600160a01b0316887fb4510654a5884cae50948507300dc482833ed1446cef375e064bef00b6b4ba4e898989898933604051610a3a969594939291906115ef565b60405180910390a3509695505050505050565b60008181526002602090815260408083205491839052909120546001600160a01b03168015610ae557806001600160a01b03166318160ddd6040518163ffffffff1660e01b8152600401602060405180830381865afa158015610ab4573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610ad8919061152f565b610ae2908361155e565b91505b50919050565b6001600160a01b03808316600090815260036020908152604080832085845282528083205491839052909120549091168015610b98576040516370a0823160e01b81526001600160a01b0385811660048301528216906370a0823190602401602060405180830381865afa158015610b67573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610b8b919061152f565b610b95908361155e565b91505b5092915050565b604051632eec7b5560e11b815260048101839052829033906001600160a01b037f000000000000000000000000cd7112ae7c3b2505f0795c1ba965e5694c25d6961690635dd8f6aa90602401602060405180830381865afa158015610c08573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610c2c9190611512565b6001600160a01b031614610c5357604051632adfdd0560e21b815260040160405180910390fd5b6000838152602081905260409020546001600160a01b03168015801590610cdb576040516340c10f1960e01b81526001600160a01b038781166004830152602482018690528316906340c10f1990604401600060405180830381600087803b158015610cbe57600080fd5b505af1158015610cd2573d6000803e3d6000fd5b50505050610d52565b6001600160a01b0386166000908152600360209081526040808320888452909152902054610d0a90859061155e565b6001600160a01b0387166000908152600360209081526040808320898452825280832093909355600290522054610d4290859061155e565b6000868152600260205260409020555b6001600160d01b03610d6386610a4d565b1115610d8257604051633062f38960e11b815260040160405180910390fd5b6040805185815282151560208201523381830152905186916001600160a01b038916917f0153be209252ccc3b70df14d55d2cc93fa5a74e263b163d9a1caf45152fd0e869181900360600190a3505050505050565b604051632eec7b5560e11b815260048101849052839033906001600160a01b037f000000000000000000000000cd7112ae7c3b2505f0795c1ba965e5694c25d6961690635dd8f6aa90602401602060405180830381865afa158015610e40573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610e649190611512565b6001600160a01b031614610e8b57604051632adfdd0560e21b815260040160405180910390fd5b6001600160a01b038316610eb25760405163c6587bab60e01b815260040160405180910390fd5b6001600160a01b038516600090815260036020908152604080832087845290915290205480831115610ef75760405163db446d8360e01b815260040160405180910390fd5b6001600160a01b0380871660009081526003602081815260408084208a855282528084208887039055938816835290815282822088835290522054610f3d90849061155e565b6001600160a01b0385811660008181526003602090815260408083208b84528252918290209490945580518781523394810194909452909288928a16917f6d86dde1e9f07a2ad1e0f3e611b7bb8343d629126c5ca73f1a5951177d87143f910160405180910390a4505050505050565b604051632eec7b5560e11b815260048101839052829033906001600160a01b037f000000000000000000000000cd7112ae7c3b2505f0795c1ba965e5694c25d6961690635dd8f6aa90602401602060405180830381865afa158015611016573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061103a9190611512565b6001600160a01b03161461106157604051632adfdd0560e21b815260040160405180910390fd5b6001600160a01b038216611088576040516324679e7b60e01b815260040160405180910390fd5b6000838152602081905260409020546001600160a01b0316156110be5760405163934c465560e01b815260040160405180910390fd5b6001600160a01b038216600090815260016020526040902054156110f55760405163934c465560e01b815260040160405180910390fd5b816001600160a01b031663313ce5676040518163ffffffff1660e01b8152600401602060405180830381865afa158015611133573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190611157919061163a565b60ff1660121461117a57604051632b70e32560e21b815260040160405180910390fd5b60008381526020818152604080832080546001600160a01b0319166001600160a01b03871690811790915580845260018352928190208690555133815285917f768e177d7f9dac714049e6d43d9ac533cf0c6cc23cddcfe642bfd7a18bee3772910160405180910390a3505050565b6000763d602d80600a3d3981f3363d3d373d3d3d363d730000008360601b60e81c176000526e5af43d82803e903d91602b57fd5bf38360781b1760205281603760096000f590506001600160a01b038116611257576040516330be1a3d60e21b815260040160405180910390fd5b92915050565b6000763d602d80600a3d3981f3363d3d373d3d3d363d730000008260601b60e81c176000526e5af43d82803e903d91602b57fd5bf38260781b17602052603760096000f090506001600160a01b0381166112ca576040516330be1a3d60e21b815260040160405180910390fd5b919050565b6001600160a01b03811681146112e457600080fd5b50565b6000602082840312156112f957600080fd5b8135611304816112cf565b9392505050565b60008060006060848603121561132057600080fd5b833561132b816112cf565b95602085013595506040909401359392505050565b6000806000806080858703121561135657600080fd5b8435611361816112cf565b93506020850135925060408501359150606085013561137f816112cf565b939692955090935050565b60008083601f84011261139c57600080fd5b50813567ffffffffffffffff8111156113b457600080fd5b6020830191508360208285010111156113cc57600080fd5b9250929050565b600080600080600080608087890312156113ec57600080fd5b86359550602087013567ffffffffffffffff8082111561140b57600080fd5b6114178a838b0161138a565b9097509550604089013591508082111561143057600080fd5b5061143d89828a0161138a565b979a9699509497949695606090950135949350505050565b60006020828403121561146757600080fd5b5035919050565b6000806040838503121561148157600080fd5b823561148c816112cf565b946020939093013593505050565b600080600080608085870312156114b057600080fd5b84356114bb816112cf565b93506020850135925060408501356114d2816112cf565b9396929550929360600135925050565b600080604083850312156114f557600080fd5b823591506020830135611507816112cf565b809150509250929050565b60006020828403121561152457600080fd5b8151611304816112cf565b60006020828403121561154157600080fd5b5051919050565b634e487b7160e01b600052601160045260246000fd5b8082018082111561125757611257611548565b8181038181111561125757611257611548565b81835281816020850137506000828201602090810191909152601f909101601f19169091010190565b6060815260006115c1606083018789611584565b82810360208401526115d4818688611584565b91505060018060a01b03831660408301529695505050505050565b60808152600061160360808301888a611584565b8281036020840152611616818789611584565b604084019590955250506001600160a01b0391909116606090910152949350505050565b60006020828403121561164c57600080fd5b815160ff8116811461130457600080fdfea264697066735822122038aacaa9b4f561bd16b11029b3cd258890a8f510b70c687d8a89393ce385dbb364736f6c63430008170033",
+	"deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100ea5760003560e01c8063878003b81161008c578063b1e6d2a111610066578063b1e6d2a11461021c578063c6c116bd1461022f578063ea78803f1461025a578063f12b64a51461028357600080fd5b8063878003b8146101cf57806388bc2ef3146101e2578063aab68bdb1461020957600080fd5b806358178191116100c8578063581781911461014a57806366d542161461017557806375b0d9cd1461019557806382bfefc8146101a857600080fd5b80630f85421b146100ef578063124d91e514610122578063303f5dfa14610137575b600080fd5b61010f6100fd3660046112e7565b60016020526000908152604090205481565b6040519081526020015b60405180910390f35b61013561013036600461130b565b610296565b005b610135610145366004611340565b610585565b61015d6101583660046113d3565b6107a5565b6040516001600160a01b039091168152602001610119565b61010f610183366004611455565b60026020526000908152604090205481565b61010f6101a3366004611455565b610a4d565b61015d7f000000000000000000000000139db16d4ecc256cf0daed2705671165e187804781565b61010f6101dd36600461146e565b610aeb565b61015d7f000000000000000000000000c9cb7a0bab7569b5b6de26a679d107d4d412b34981565b61013561021736600461130b565b610b9f565b61013561022a36600461149a565b610dd7565b61010f61023d36600461146e565b600360209081526000928352604080842090915290825290205481565b61015d610268366004611455565b6000602081905290815260409020546001600160a01b031681565b6101356102913660046114e2565b610fad565b604051632eec7b5560e11b815260048101839052829033906001600160a01b037f000000000000000000000000c9cb7a0bab7569b5b6de26a679d107d4d412b3491690635dd8f6aa90602401602060405180830381865afa1580156102ff573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906103239190611512565b6001600160a01b03161461034a57604051632adfdd0560e21b815260040160405180910390fd5b600083815260208181526040808320546001600160a01b038881168552600384528285208886529093529083205491169182156103f0576040516370a0823160e01b81526001600160a01b0388811660048301528416906370a0823190602401602060405180830381865afa1580156103c7573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906103eb919061152f565b6103f3565b60005b90506103ff828261155e565b85111561041f57604051631cf2628760e31b815260040160405180910390fd5b6000811561043c57858310610435576000610439565b8286035b90505b8086038682146104bd576001600160a01b03891660009081526003602090815260408083208b8452909152902054610475908290611571565b6001600160a01b038a1660009081526003602090815260408083208c84528252808320939093556002905220546104ad908290611571565b6000898152600260205260409020555b811561052657604051632770a7eb60e21b81526001600160a01b038a8116600483015260248201849052861690639dc29fac90604401600060405180830381600087803b15801561050d57600080fd5b505af1158015610521573d6000803e3d6000fd5b505050505b604080518881526020810186905290810184905233606082015288906001600160a01b038b16907fa6a919b3314fbbdb84c4a64d62f381f104d0c1747b789163262d2fcfeec292689060800160405180910390a3505050505050505050565b604051632eec7b5560e11b815260048101849052839033906001600160a01b037f000000000000000000000000c9cb7a0bab7569b5b6de26a679d107d4d412b3491690635dd8f6aa90602401602060405180830381865afa1580156105ee573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906106129190611512565b6001600160a01b03161461063957604051632adfdd0560e21b815260040160405180910390fd5b6000848152602081905260409020546001600160a01b03168061066f576040516339e231e760e11b815260040160405180910390fd5b6001600160a01b0386166000908152600360209081526040808320888452909152902054848110156106b45760405163db446d8360e01b815260040160405180910390fd5b6001600160a01b0387811660009081526003602090815260408083208a84528252808320898603905560029091529081902080548890039055516340c10f1960e01b8152858216600482015260248101879052908316906340c10f1990604401600060405180830381600087803b15801561072e57600080fd5b505af1158015610742573d6000803e3d6000fd5b505060408051848152602081018990526001600160a01b038881168284015233606083015291518a9450918b1692507fde5600808a2321d39207ba773327f7a932a4b0b019107fb5a95618006cd0ff00919081900360800190a350505050505050565b604051632eec7b5560e11b815260048101879052600090879033906001600160a01b037f000000000000000000000000c9cb7a0bab7569b5b6de26a679d107d4d412b3491690635dd8f6aa90602401602060405180830381865afa158015610811573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906108359190611512565b6001600160a01b03161461085c57604051632adfdd0560e21b815260040160405180910390fd5b600086900361087e576040516392bf449d60e01b815260040160405180910390fd5b60008490036108a05760405163571431a760e01b815260040160405180910390fd5b6000888152602081905260409020546001600160a01b0316156108d6576040516329518c2b60e21b815260040160405180910390fd5b82156109355760408051336020820152908101849052610930907f000000000000000000000000139db16d4ecc256cf0daed2705671165e187804790606001604051602081830303815290604052805190602001206111e9565b61095e565b61095e7f000000000000000000000000139db16d4ecc256cf0daed2705671165e187804761125d565b60008981526020818152604080832080546001600160a01b0319166001600160a01b0386169081179091558084526001909252918290208b905590516303bf912560e11b81529193509063077f224a906109c4908a908a908a908a9030906004016115ad565b600060405180830381600087803b1580156109de57600080fd5b505af11580156109f2573d6000803e3d6000fd5b50505050816001600160a01b0316887fb4510654a5884cae50948507300dc482833ed1446cef375e064bef00b6b4ba4e898989898933604051610a3a969594939291906115ef565b60405180910390a3509695505050505050565b60008181526002602090815260408083205491839052909120546001600160a01b03168015610ae557806001600160a01b03166318160ddd6040518163ffffffff1660e01b8152600401602060405180830381865afa158015610ab4573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610ad8919061152f565b610ae2908361155e565b91505b50919050565b6001600160a01b03808316600090815260036020908152604080832085845282528083205491839052909120549091168015610b98576040516370a0823160e01b81526001600160a01b0385811660048301528216906370a0823190602401602060405180830381865afa158015610b67573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610b8b919061152f565b610b95908361155e565b91505b5092915050565b604051632eec7b5560e11b815260048101839052829033906001600160a01b037f000000000000000000000000c9cb7a0bab7569b5b6de26a679d107d4d412b3491690635dd8f6aa90602401602060405180830381865afa158015610c08573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610c2c9190611512565b6001600160a01b031614610c5357604051632adfdd0560e21b815260040160405180910390fd5b6000838152602081905260409020546001600160a01b03168015801590610cdb576040516340c10f1960e01b81526001600160a01b038781166004830152602482018690528316906340c10f1990604401600060405180830381600087803b158015610cbe57600080fd5b505af1158015610cd2573d6000803e3d6000fd5b50505050610d52565b6001600160a01b0386166000908152600360209081526040808320888452909152902054610d0a90859061155e565b6001600160a01b0387166000908152600360209081526040808320898452825280832093909355600290522054610d4290859061155e565b6000868152600260205260409020555b6001600160d01b03610d6386610a4d565b1115610d8257604051633062f38960e11b815260040160405180910390fd5b6040805185815282151560208201523381830152905186916001600160a01b038916917f0153be209252ccc3b70df14d55d2cc93fa5a74e263b163d9a1caf45152fd0e869181900360600190a3505050505050565b604051632eec7b5560e11b815260048101849052839033906001600160a01b037f000000000000000000000000c9cb7a0bab7569b5b6de26a679d107d4d412b3491690635dd8f6aa90602401602060405180830381865afa158015610e40573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610e649190611512565b6001600160a01b031614610e8b57604051632adfdd0560e21b815260040160405180910390fd5b6001600160a01b038316610eb25760405163c6587bab60e01b815260040160405180910390fd5b6001600160a01b038516600090815260036020908152604080832087845290915290205480831115610ef75760405163db446d8360e01b815260040160405180910390fd5b6001600160a01b0380871660009081526003602081815260408084208a855282528084208887039055938816835290815282822088835290522054610f3d90849061155e565b6001600160a01b0385811660008181526003602090815260408083208b84528252918290209490945580518781523394810194909452909288928a16917f6d86dde1e9f07a2ad1e0f3e611b7bb8343d629126c5ca73f1a5951177d87143f910160405180910390a4505050505050565b604051632eec7b5560e11b815260048101839052829033906001600160a01b037f000000000000000000000000c9cb7a0bab7569b5b6de26a679d107d4d412b3491690635dd8f6aa90602401602060405180830381865afa158015611016573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061103a9190611512565b6001600160a01b03161461106157604051632adfdd0560e21b815260040160405180910390fd5b6001600160a01b038216611088576040516324679e7b60e01b815260040160405180910390fd5b6000838152602081905260409020546001600160a01b0316156110be5760405163934c465560e01b815260040160405180910390fd5b6001600160a01b038216600090815260016020526040902054156110f55760405163934c465560e01b815260040160405180910390fd5b816001600160a01b031663313ce5676040518163ffffffff1660e01b8152600401602060405180830381865afa158015611133573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190611157919061163a565b60ff1660121461117a57604051632b70e32560e21b815260040160405180910390fd5b60008381526020818152604080832080546001600160a01b0319166001600160a01b03871690811790915580845260018352928190208690555133815285917f768e177d7f9dac714049e6d43d9ac533cf0c6cc23cddcfe642bfd7a18bee3772910160405180910390a3505050565b6000763d602d80600a3d3981f3363d3d373d3d3d363d730000008360601b60e81c176000526e5af43d82803e903d91602b57fd5bf38360781b1760205281603760096000f590506001600160a01b038116611257576040516330be1a3d60e21b815260040160405180910390fd5b92915050565b6000763d602d80600a3d3981f3363d3d373d3d3d363d730000008260601b60e81c176000526e5af43d82803e903d91602b57fd5bf38260781b17602052603760096000f090506001600160a01b0381166112ca576040516330be1a3d60e21b815260040160405180910390fd5b919050565b6001600160a01b03811681146112e457600080fd5b50565b6000602082840312156112f957600080fd5b8135611304816112cf565b9392505050565b60008060006060848603121561132057600080fd5b833561132b816112cf565b95602085013595506040909401359392505050565b6000806000806080858703121561135657600080fd5b8435611361816112cf565b93506020850135925060408501359150606085013561137f816112cf565b939692955090935050565b60008083601f84011261139c57600080fd5b50813567ffffffffffffffff8111156113b457600080fd5b6020830191508360208285010111156113cc57600080fd5b9250929050565b600080600080600080608087890312156113ec57600080fd5b86359550602087013567ffffffffffffffff8082111561140b57600080fd5b6114178a838b0161138a565b9097509550604089013591508082111561143057600080fd5b5061143d89828a0161138a565b979a9699509497949695606090950135949350505050565b60006020828403121561146757600080fd5b5035919050565b6000806040838503121561148157600080fd5b823561148c816112cf565b946020939093013593505050565b600080600080608085870312156114b057600080fd5b84356114bb816112cf565b93506020850135925060408501356114d2816112cf565b9396929550929360600135925050565b600080604083850312156114f557600080fd5b823591506020830135611507816112cf565b809150509250929050565b60006020828403121561152457600080fd5b8151611304816112cf565b60006020828403121561154157600080fd5b5051919050565b634e487b7160e01b600052601160045260246000fd5b8082018082111561125757611257611548565b8181038181111561125757611257611548565b81835281816020850137506000828201602090810191909152601f909101601f19169091010190565b6060815260006115c1606083018789611584565b82810360208401526115d4818688611584565b91505060018060a01b03831660408301529695505050505050565b60808152600061160360808301888a611584565b8281036020840152611616818789611584565b604084019590955250506001600160a01b0391909116606090910152949350505050565b60006020828403121561164c57600080fd5b815160ff8116811461130457600080fdfea264697066735822122038aacaa9b4f561bd16b11029b3cd258890a8f510b70c687d8a89393ce385dbb364736f6c63430008170033",
 	"devdoc": {
 		"kind": "dev",
 		"methods": {
@@ -1168,7 +1208,7 @@
 		},
 		"version": 1
 	},
-	"gitCommit": "cfb1d4cd4e79bed840a9c8fcd17a0f397da3e3bf",
+	"gitCommit": "bc6005ccb14408c1b996cf6facda0642da82e682",
 	"sourceName": "src/JBTokens.sol",
 	"chainId": "84532",
 	"linkReferences": {},
@@ -2345,6 +2385,1182 @@
 				"version": 1
 			},
 			"gitCommit": "8e6924651d1e8038d6c2982d6d0c09a070b141a7",
+			"sourceName": "src/JBTokens.sol",
+			"chainId": "84532",
+			"linkReferences": {},
+			"deployedLinkReferences": {}
+		},
+		{
+			"_format": "sphinx-sol-ct-artifact-1",
+			"merkleRoot": "0x1c031ac0217a16bc8b880bc3a6e637a3fb319bf6343a8af2f9d37587d2ef9836",
+			"contractName": "JBTokens",
+			"address": "0x4207C2a3491D2f3AE33609588DDFEBEb8EEbcB6E",
+			"abi": [
+				{
+					"type": "constructor",
+					"inputs": [
+						{
+							"name": "directory",
+							"type": "address",
+							"internalType": "contract IJBDirectory"
+						},
+						{
+							"name": "token",
+							"type": "address",
+							"internalType": "contract IJBToken"
+						}
+					],
+					"stateMutability": "nonpayable"
+				},
+				{
+					"type": "function",
+					"name": "DIRECTORY",
+					"inputs": [],
+					"outputs": [
+						{
+							"name": "",
+							"type": "address",
+							"internalType": "contract IJBDirectory"
+						}
+					],
+					"stateMutability": "view"
+				},
+				{
+					"type": "function",
+					"name": "TOKEN",
+					"inputs": [],
+					"outputs": [
+						{
+							"name": "",
+							"type": "address",
+							"internalType": "contract IJBToken"
+						}
+					],
+					"stateMutability": "view"
+				},
+				{
+					"type": "function",
+					"name": "burnFrom",
+					"inputs": [
+						{
+							"name": "holder",
+							"type": "address",
+							"internalType": "address"
+						},
+						{
+							"name": "projectId",
+							"type": "uint256",
+							"internalType": "uint256"
+						},
+						{
+							"name": "amount",
+							"type": "uint256",
+							"internalType": "uint256"
+						}
+					],
+					"outputs": [],
+					"stateMutability": "nonpayable"
+				},
+				{
+					"type": "function",
+					"name": "claimTokensFor",
+					"inputs": [
+						{
+							"name": "holder",
+							"type": "address",
+							"internalType": "address"
+						},
+						{
+							"name": "projectId",
+							"type": "uint256",
+							"internalType": "uint256"
+						},
+						{
+							"name": "amount",
+							"type": "uint256",
+							"internalType": "uint256"
+						},
+						{
+							"name": "beneficiary",
+							"type": "address",
+							"internalType": "address"
+						}
+					],
+					"outputs": [],
+					"stateMutability": "nonpayable"
+				},
+				{
+					"type": "function",
+					"name": "creditBalanceOf",
+					"inputs": [
+						{
+							"name": "holder",
+							"type": "address",
+							"internalType": "address"
+						},
+						{
+							"name": "projectId",
+							"type": "uint256",
+							"internalType": "uint256"
+						}
+					],
+					"outputs": [
+						{
+							"name": "",
+							"type": "uint256",
+							"internalType": "uint256"
+						}
+					],
+					"stateMutability": "view"
+				},
+				{
+					"type": "function",
+					"name": "deployERC20For",
+					"inputs": [
+						{
+							"name": "projectId",
+							"type": "uint256",
+							"internalType": "uint256"
+						},
+						{
+							"name": "name",
+							"type": "string",
+							"internalType": "string"
+						},
+						{
+							"name": "symbol",
+							"type": "string",
+							"internalType": "string"
+						},
+						{
+							"name": "salt",
+							"type": "bytes32",
+							"internalType": "bytes32"
+						}
+					],
+					"outputs": [
+						{
+							"name": "token",
+							"type": "address",
+							"internalType": "contract IJBToken"
+						}
+					],
+					"stateMutability": "nonpayable"
+				},
+				{
+					"type": "function",
+					"name": "mintFor",
+					"inputs": [
+						{
+							"name": "holder",
+							"type": "address",
+							"internalType": "address"
+						},
+						{
+							"name": "projectId",
+							"type": "uint256",
+							"internalType": "uint256"
+						},
+						{
+							"name": "amount",
+							"type": "uint256",
+							"internalType": "uint256"
+						}
+					],
+					"outputs": [],
+					"stateMutability": "nonpayable"
+				},
+				{
+					"type": "function",
+					"name": "projectIdOf",
+					"inputs": [
+						{
+							"name": "token",
+							"type": "address",
+							"internalType": "contract IJBToken"
+						}
+					],
+					"outputs": [
+						{
+							"name": "",
+							"type": "uint256",
+							"internalType": "uint256"
+						}
+					],
+					"stateMutability": "view"
+				},
+				{
+					"type": "function",
+					"name": "setTokenFor",
+					"inputs": [
+						{
+							"name": "projectId",
+							"type": "uint256",
+							"internalType": "uint256"
+						},
+						{
+							"name": "token",
+							"type": "address",
+							"internalType": "contract IJBToken"
+						}
+					],
+					"outputs": [],
+					"stateMutability": "nonpayable"
+				},
+				{
+					"type": "function",
+					"name": "tokenOf",
+					"inputs": [
+						{
+							"name": "projectId",
+							"type": "uint256",
+							"internalType": "uint256"
+						}
+					],
+					"outputs": [
+						{
+							"name": "",
+							"type": "address",
+							"internalType": "contract IJBToken"
+						}
+					],
+					"stateMutability": "view"
+				},
+				{
+					"type": "function",
+					"name": "totalBalanceOf",
+					"inputs": [
+						{
+							"name": "holder",
+							"type": "address",
+							"internalType": "address"
+						},
+						{
+							"name": "projectId",
+							"type": "uint256",
+							"internalType": "uint256"
+						}
+					],
+					"outputs": [
+						{
+							"name": "balance",
+							"type": "uint256",
+							"internalType": "uint256"
+						}
+					],
+					"stateMutability": "view"
+				},
+				{
+					"type": "function",
+					"name": "totalCreditSupplyOf",
+					"inputs": [
+						{
+							"name": "projectId",
+							"type": "uint256",
+							"internalType": "uint256"
+						}
+					],
+					"outputs": [
+						{
+							"name": "",
+							"type": "uint256",
+							"internalType": "uint256"
+						}
+					],
+					"stateMutability": "view"
+				},
+				{
+					"type": "function",
+					"name": "totalSupplyOf",
+					"inputs": [
+						{
+							"name": "projectId",
+							"type": "uint256",
+							"internalType": "uint256"
+						}
+					],
+					"outputs": [
+						{
+							"name": "totalSupply",
+							"type": "uint256",
+							"internalType": "uint256"
+						}
+					],
+					"stateMutability": "view"
+				},
+				{
+					"type": "function",
+					"name": "transferCreditsFrom",
+					"inputs": [
+						{
+							"name": "holder",
+							"type": "address",
+							"internalType": "address"
+						},
+						{
+							"name": "projectId",
+							"type": "uint256",
+							"internalType": "uint256"
+						},
+						{
+							"name": "recipient",
+							"type": "address",
+							"internalType": "address"
+						},
+						{
+							"name": "amount",
+							"type": "uint256",
+							"internalType": "uint256"
+						}
+					],
+					"outputs": [],
+					"stateMutability": "nonpayable"
+				},
+				{
+					"type": "event",
+					"name": "Burn",
+					"inputs": [
+						{
+							"name": "holder",
+							"type": "address",
+							"indexed": true,
+							"internalType": "address"
+						},
+						{
+							"name": "projectId",
+							"type": "uint256",
+							"indexed": true,
+							"internalType": "uint256"
+						},
+						{
+							"name": "amount",
+							"type": "uint256",
+							"indexed": false,
+							"internalType": "uint256"
+						},
+						{
+							"name": "initialCreditBalance",
+							"type": "uint256",
+							"indexed": false,
+							"internalType": "uint256"
+						},
+						{
+							"name": "initialTokenBalance",
+							"type": "uint256",
+							"indexed": false,
+							"internalType": "uint256"
+						},
+						{
+							"name": "caller",
+							"type": "address",
+							"indexed": false,
+							"internalType": "address"
+						}
+					],
+					"anonymous": false
+				},
+				{
+					"type": "event",
+					"name": "ClaimTokens",
+					"inputs": [
+						{
+							"name": "holder",
+							"type": "address",
+							"indexed": true,
+							"internalType": "address"
+						},
+						{
+							"name": "projectId",
+							"type": "uint256",
+							"indexed": true,
+							"internalType": "uint256"
+						},
+						{
+							"name": "initialCreditBalance",
+							"type": "uint256",
+							"indexed": false,
+							"internalType": "uint256"
+						},
+						{
+							"name": "amount",
+							"type": "uint256",
+							"indexed": false,
+							"internalType": "uint256"
+						},
+						{
+							"name": "beneficiary",
+							"type": "address",
+							"indexed": false,
+							"internalType": "address"
+						},
+						{
+							"name": "caller",
+							"type": "address",
+							"indexed": false,
+							"internalType": "address"
+						}
+					],
+					"anonymous": false
+				},
+				{
+					"type": "event",
+					"name": "DeployERC20",
+					"inputs": [
+						{
+							"name": "projectId",
+							"type": "uint256",
+							"indexed": true,
+							"internalType": "uint256"
+						},
+						{
+							"name": "token",
+							"type": "address",
+							"indexed": true,
+							"internalType": "contract IJBToken"
+						},
+						{
+							"name": "name",
+							"type": "string",
+							"indexed": false,
+							"internalType": "string"
+						},
+						{
+							"name": "symbol",
+							"type": "string",
+							"indexed": false,
+							"internalType": "string"
+						},
+						{
+							"name": "salt",
+							"type": "bytes32",
+							"indexed": false,
+							"internalType": "bytes32"
+						},
+						{
+							"name": "caller",
+							"type": "address",
+							"indexed": false,
+							"internalType": "address"
+						}
+					],
+					"anonymous": false
+				},
+				{
+					"type": "event",
+					"name": "Mint",
+					"inputs": [
+						{
+							"name": "holder",
+							"type": "address",
+							"indexed": true,
+							"internalType": "address"
+						},
+						{
+							"name": "projectId",
+							"type": "uint256",
+							"indexed": true,
+							"internalType": "uint256"
+						},
+						{
+							"name": "amount",
+							"type": "uint256",
+							"indexed": false,
+							"internalType": "uint256"
+						},
+						{
+							"name": "tokensWereClaimed",
+							"type": "bool",
+							"indexed": false,
+							"internalType": "bool"
+						},
+						{
+							"name": "caller",
+							"type": "address",
+							"indexed": false,
+							"internalType": "address"
+						}
+					],
+					"anonymous": false
+				},
+				{
+					"type": "event",
+					"name": "SetToken",
+					"inputs": [
+						{
+							"name": "projectId",
+							"type": "uint256",
+							"indexed": true,
+							"internalType": "uint256"
+						},
+						{
+							"name": "newToken",
+							"type": "address",
+							"indexed": true,
+							"internalType": "contract IJBToken"
+						},
+						{
+							"name": "caller",
+							"type": "address",
+							"indexed": false,
+							"internalType": "address"
+						}
+					],
+					"anonymous": false
+				},
+				{
+					"type": "event",
+					"name": "TransferCredits",
+					"inputs": [
+						{
+							"name": "holder",
+							"type": "address",
+							"indexed": true,
+							"internalType": "address"
+						},
+						{
+							"name": "projectId",
+							"type": "uint256",
+							"indexed": true,
+							"internalType": "uint256"
+						},
+						{
+							"name": "recipient",
+							"type": "address",
+							"indexed": true,
+							"internalType": "address"
+						},
+						{
+							"name": "amount",
+							"type": "uint256",
+							"indexed": false,
+							"internalType": "uint256"
+						},
+						{
+							"name": "caller",
+							"type": "address",
+							"indexed": false,
+							"internalType": "address"
+						}
+					],
+					"anonymous": false
+				},
+				{
+					"type": "error",
+					"name": "CONTROLLER_UNAUTHORIZED",
+					"inputs": []
+				},
+				{
+					"type": "error",
+					"name": "EMPTY_NAME",
+					"inputs": []
+				},
+				{
+					"type": "error",
+					"name": "EMPTY_SYMBOL",
+					"inputs": []
+				},
+				{
+					"type": "error",
+					"name": "EMPTY_TOKEN",
+					"inputs": []
+				},
+				{
+					"type": "error",
+					"name": "ERC1167FailedCreateClone",
+					"inputs": []
+				},
+				{
+					"type": "error",
+					"name": "INSUFFICIENT_CREDITS",
+					"inputs": []
+				},
+				{
+					"type": "error",
+					"name": "INSUFFICIENT_FUNDS",
+					"inputs": []
+				},
+				{
+					"type": "error",
+					"name": "OVERFLOW_ALERT",
+					"inputs": []
+				},
+				{
+					"type": "error",
+					"name": "PROJECT_ALREADY_HAS_TOKEN",
+					"inputs": []
+				},
+				{
+					"type": "error",
+					"name": "RECIPIENT_ZERO_ADDRESS",
+					"inputs": []
+				},
+				{
+					"type": "error",
+					"name": "TOKENS_MUST_HAVE_18_DECIMALS",
+					"inputs": []
+				},
+				{
+					"type": "error",
+					"name": "TOKEN_ALREADY_SET",
+					"inputs": []
+				},
+				{
+					"type": "error",
+					"name": "TOKEN_NOT_FOUND",
+					"inputs": []
+				}
+			],
+			"solcInputHash": "5d7a79485a8a4fd8d39819ca7cc29822",
+			"receipt": {
+				"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
+				"blockNumber": 9448374,
+				"contractAddress": null,
+				"cumulativeGasUsed": "17649010",
+				"from": "0xC034550B542b83BA1De312b21d1C94a9a52B1595",
+				"gasPrice": "1000301",
+				"gasUsed": "16721305",
+				"hash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+				"index": 3,
+				"logs": [
+					{
+						"address": "0xB5E96127D417b1B3ef8438496a38A143167209c7",
+						"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
+						"blockNumber": 9448374,
+						"data": "0x0000000000000000000000000000000000000000000000000000000000000000",
+						"index": 5,
+						"topics": [
+							"0x572f161235911da04685a68c06adf558fc7e4a36909dca394650e0adc19cc93d",
+							"0x000000000000000000000000c034550b542b83ba1de312b21d1c94a9a52b1595",
+							"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c",
+							"0x4dcf9ac2aa500342c4d7da9a3c6b86ef4cef982d7ded18c3e35c7138cc54e528"
+						],
+						"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+						"transactionIndex": 3
+					},
+					{
+						"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+						"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
+						"blockNumber": 9448374,
+						"data": "0x",
+						"index": 6,
+						"topics": [
+							"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
+							"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
+						],
+						"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+						"transactionIndex": 3
+					},
+					{
+						"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
+						"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
+						"blockNumber": 9448374,
+						"data": "0x0000000000000000000000000000000000000000000000000000000000000001",
+						"index": 7,
+						"topics": [
+							"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
+							"0x1c031ac0217a16bc8b880bc3a6e637a3fb319bf6343a8af2f9d37587d2ef9836"
+						],
+						"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+						"transactionIndex": 3
+					},
+					{
+						"address": "0x2ca466eB84DD69A99E25d10BBbdA6e1B3c562c49",
+						"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
+						"blockNumber": 9448374,
+						"data": "0x",
+						"index": 8,
+						"topics": [
+							"0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+							"0x0000000000000000000000000000000000000000000000000000000000000000",
+							"0x0000000000000000000000001081b5aa9d9d4862a3da4d469433fb36ed80fa2a"
+						],
+						"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+						"transactionIndex": 3
+					},
+					{
+						"address": "0x2ca466eB84DD69A99E25d10BBbdA6e1B3c562c49",
+						"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
+						"blockNumber": 9448374,
+						"data": "0x",
+						"index": 9,
+						"topics": [
+							"0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+							"0x0000000000000000000000000000000000000000000000000000000000000000",
+							"0x0000000000000000000000001081b5aa9d9d4862a3da4d469433fb36ed80fa2a",
+							"0x0000000000000000000000000000000000000000000000000000000000000001"
+						],
+						"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+						"transactionIndex": 3
+					},
+					{
+						"address": "0x2ca466eB84DD69A99E25d10BBbdA6e1B3c562c49",
+						"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
+						"blockNumber": 9448374,
+						"data": "0x0000000000000000000000004e59b44847b379578588920ca78fbf26c0b4956c",
+						"index": 10,
+						"topics": [
+							"0x365b3162cd780731fc55a794b59494d472bc2af701007f581843a70673814698",
+							"0x0000000000000000000000000000000000000000000000000000000000000001",
+							"0x0000000000000000000000001081b5aa9d9d4862a3da4d469433fb36ed80fa2a"
+						],
+						"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+						"transactionIndex": 3
+					},
+					{
+						"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+						"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
+						"blockNumber": 9448374,
+						"data": "0x",
+						"index": 11,
+						"topics": [
+							"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
+							"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
+						],
+						"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+						"transactionIndex": 3
+					},
+					{
+						"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
+						"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
+						"blockNumber": 9448374,
+						"data": "0x0000000000000000000000000000000000000000000000000000000000000002",
+						"index": 12,
+						"topics": [
+							"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
+							"0x1c031ac0217a16bc8b880bc3a6e637a3fb319bf6343a8af2f9d37587d2ef9836"
+						],
+						"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+						"transactionIndex": 3
+					},
+					{
+						"address": "0xCd7112aE7c3b2505F0795c1ba965e5694c25d696",
+						"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
+						"blockNumber": 9448374,
+						"data": "0x",
+						"index": 13,
+						"topics": [
+							"0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+							"0x0000000000000000000000000000000000000000000000000000000000000000",
+							"0x0000000000000000000000001081b5aa9d9d4862a3da4d469433fb36ed80fa2a"
+						],
+						"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+						"transactionIndex": 3
+					},
+					{
+						"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+						"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
+						"blockNumber": 9448374,
+						"data": "0x",
+						"index": 14,
+						"topics": [
+							"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
+							"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
+						],
+						"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+						"transactionIndex": 3
+					},
+					{
+						"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
+						"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
+						"blockNumber": 9448374,
+						"data": "0x0000000000000000000000000000000000000000000000000000000000000003",
+						"index": 15,
+						"topics": [
+							"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
+							"0x1c031ac0217a16bc8b880bc3a6e637a3fb319bf6343a8af2f9d37587d2ef9836"
+						],
+						"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+						"transactionIndex": 3
+					},
+					{
+						"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+						"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
+						"blockNumber": 9448374,
+						"data": "0x",
+						"index": 16,
+						"topics": [
+							"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
+							"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
+						],
+						"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+						"transactionIndex": 3
+					},
+					{
+						"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
+						"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
+						"blockNumber": 9448374,
+						"data": "0x0000000000000000000000000000000000000000000000000000000000000004",
+						"index": 17,
+						"topics": [
+							"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
+							"0x1c031ac0217a16bc8b880bc3a6e637a3fb319bf6343a8af2f9d37587d2ef9836"
+						],
+						"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+						"transactionIndex": 3
+					},
+					{
+						"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+						"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
+						"blockNumber": 9448374,
+						"data": "0x",
+						"index": 18,
+						"topics": [
+							"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
+							"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
+						],
+						"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+						"transactionIndex": 3
+					},
+					{
+						"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
+						"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
+						"blockNumber": 9448374,
+						"data": "0x0000000000000000000000000000000000000000000000000000000000000005",
+						"index": 19,
+						"topics": [
+							"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
+							"0x1c031ac0217a16bc8b880bc3a6e637a3fb319bf6343a8af2f9d37587d2ef9836"
+						],
+						"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+						"transactionIndex": 3
+					},
+					{
+						"address": "0xf8febDbCC8ACfb46BfB59e7695F77d8eA653a69d",
+						"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
+						"blockNumber": 9448374,
+						"data": "0x",
+						"index": 20,
+						"topics": [
+							"0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+							"0x0000000000000000000000000000000000000000000000000000000000000000",
+							"0x000000000000000000000000f8febdbcc8acfb46bfb59e7695f77d8ea653a69d"
+						],
+						"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+						"transactionIndex": 3
+					},
+					{
+						"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+						"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
+						"blockNumber": 9448374,
+						"data": "0x",
+						"index": 21,
+						"topics": [
+							"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
+							"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
+						],
+						"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+						"transactionIndex": 3
+					},
+					{
+						"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
+						"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
+						"blockNumber": 9448374,
+						"data": "0x0000000000000000000000000000000000000000000000000000000000000006",
+						"index": 22,
+						"topics": [
+							"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
+							"0x1c031ac0217a16bc8b880bc3a6e637a3fb319bf6343a8af2f9d37587d2ef9836"
+						],
+						"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+						"transactionIndex": 3
+					},
+					{
+						"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+						"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
+						"blockNumber": 9448374,
+						"data": "0x",
+						"index": 23,
+						"topics": [
+							"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
+							"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
+						],
+						"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+						"transactionIndex": 3
+					},
+					{
+						"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
+						"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
+						"blockNumber": 9448374,
+						"data": "0x0000000000000000000000000000000000000000000000000000000000000007",
+						"index": 24,
+						"topics": [
+							"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
+							"0x1c031ac0217a16bc8b880bc3a6e637a3fb319bf6343a8af2f9d37587d2ef9836"
+						],
+						"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+						"transactionIndex": 3
+					},
+					{
+						"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+						"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
+						"blockNumber": 9448374,
+						"data": "0x",
+						"index": 25,
+						"topics": [
+							"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
+							"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
+						],
+						"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+						"transactionIndex": 3
+					},
+					{
+						"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
+						"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
+						"blockNumber": 9448374,
+						"data": "0x0000000000000000000000000000000000000000000000000000000000000008",
+						"index": 26,
+						"topics": [
+							"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
+							"0x1c031ac0217a16bc8b880bc3a6e637a3fb319bf6343a8af2f9d37587d2ef9836"
+						],
+						"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+						"transactionIndex": 3
+					},
+					{
+						"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+						"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
+						"blockNumber": 9448374,
+						"data": "0x",
+						"index": 27,
+						"topics": [
+							"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
+							"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
+						],
+						"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+						"transactionIndex": 3
+					},
+					{
+						"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
+						"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
+						"blockNumber": 9448374,
+						"data": "0x0000000000000000000000000000000000000000000000000000000000000009",
+						"index": 28,
+						"topics": [
+							"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
+							"0x1c031ac0217a16bc8b880bc3a6e637a3fb319bf6343a8af2f9d37587d2ef9836"
+						],
+						"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+						"transactionIndex": 3
+					},
+					{
+						"address": "0xCd7112aE7c3b2505F0795c1ba965e5694c25d696",
+						"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
+						"blockNumber": 9448374,
+						"data": "0x0000000000000000000000001081b5aa9d9d4862a3da4d469433fb36ed80fa2a",
+						"index": 29,
+						"topics": [
+							"0x11207664cc48b0fa81c8674795f1d8f642960f38d5d2d305ad813093bed85fab",
+							"0x000000000000000000000000ff7e1c600b8af88de885a7c68c3e737401082423",
+							"0x0000000000000000000000000000000000000000000000000000000000000001"
+						],
+						"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+						"transactionIndex": 3
+					},
+					{
+						"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+						"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
+						"blockNumber": 9448374,
+						"data": "0x",
+						"index": 30,
+						"topics": [
+							"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
+							"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
+						],
+						"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+						"transactionIndex": 3
+					},
+					{
+						"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
+						"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
+						"blockNumber": 9448374,
+						"data": "0x000000000000000000000000000000000000000000000000000000000000000a",
+						"index": 31,
+						"topics": [
+							"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
+							"0x1c031ac0217a16bc8b880bc3a6e637a3fb319bf6343a8af2f9d37587d2ef9836"
+						],
+						"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+						"transactionIndex": 3
+					},
+					{
+						"address": "0x5F4b3b392930cB3D4bd836c7b3B1fa66d971b578",
+						"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
+						"blockNumber": 9448374,
+						"data": "0x",
+						"index": 32,
+						"topics": [
+							"0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+							"0x0000000000000000000000000000000000000000000000000000000000000000",
+							"0x0000000000000000000000001081b5aa9d9d4862a3da4d469433fb36ed80fa2a"
+						],
+						"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+						"transactionIndex": 3
+					},
+					{
+						"address": "0x1081B5AA9D9d4862A3dA4d469433FB36Ed80FA2A",
+						"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
+						"blockNumber": 9448374,
+						"data": "0x",
+						"index": 33,
+						"topics": [
+							"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
+							"0x000000000000000000000000ef1be3c049809cace5bc203bbe4ec1ab284bf75c"
+						],
+						"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+						"transactionIndex": 3
+					},
+					{
+						"address": "0xEf1Be3C049809caCe5Bc203BBe4Ec1Ab284bF75c",
+						"blockHash": "0xc01f8604f35bbee4a0c1f7d9d158cf6d2e3673144169aba24aafc3e7ae71408f",
+						"blockNumber": 9448374,
+						"data": "0x000000000000000000000000000000000000000000000000000000000000000b",
+						"index": 34,
+						"topics": [
+							"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
+							"0x1c031ac0217a16bc8b880bc3a6e637a3fb319bf6343a8af2f9d37587d2ef9836"
+						],
+						"transactionHash": "0x42ea93e05a4c5a808fd251f2c936a30257722cb40ffbeb3bd5802b65651c5794",
+						"transactionIndex": 3
+					}
+				],
+				"logsBloom": "0x00000000080010000008000000080200000000000008000000800000004080000060008000000000000000000040400000000000000000000000000002040000000000100000200c800000080102000000010000000c0000000200080000000000020000020000000000000000000800080000100000000000000010000020400001800200000000000180000000000000000000000000400000800000020020004000000010000000000000000000020200400008080000010080000006000000000002000000200000000008000000010000000000040000000000000060000000000000000004000000000000000200000000000000000040100000000000",
+				"status": 1,
+				"to": "0xB5E96127D417b1B3ef8438496a38A143167209c7"
+			},
+			"metadata": "{\"compiler\":{\"version\":\"0.8.23+commit.f704f362\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"contract IJBDirectory\",\"name\":\"directory\",\"type\":\"address\"},{\"internalType\":\"contract IJBToken\",\"name\":\"token\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"CONTROLLER_UNAUTHORIZED\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"EMPTY_NAME\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"EMPTY_SYMBOL\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"EMPTY_TOKEN\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"ERC1167FailedCreateClone\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"INSUFFICIENT_CREDITS\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"INSUFFICIENT_FUNDS\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"OVERFLOW_ALERT\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"PROJECT_ALREADY_HAS_TOKEN\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"RECIPIENT_ZERO_ADDRESS\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"TOKENS_MUST_HAVE_18_DECIMALS\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"TOKEN_ALREADY_SET\"},{\"inputs\":[],\"type\":\"error\",\"name\":\"TOKEN_NOT_FOUND\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"holder\",\"type\":\"address\",\"indexed\":true},{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\",\"indexed\":true},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\",\"indexed\":false},{\"internalType\":\"uint256\",\"name\":\"initialCreditBalance\",\"type\":\"uint256\",\"indexed\":false},{\"internalType\":\"uint256\",\"name\":\"initialTokenBalance\",\"type\":\"uint256\",\"indexed\":false},{\"internalType\":\"address\",\"name\":\"caller\",\"type\":\"address\",\"indexed\":false}],\"type\":\"event\",\"name\":\"Burn\",\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"holder\",\"type\":\"address\",\"indexed\":true},{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\",\"indexed\":true},{\"internalType\":\"uint256\",\"name\":\"initialCreditBalance\",\"type\":\"uint256\",\"indexed\":false},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\",\"indexed\":false},{\"internalType\":\"address\",\"name\":\"beneficiary\",\"type\":\"address\",\"indexed\":false},{\"internalType\":\"address\",\"name\":\"caller\",\"type\":\"address\",\"indexed\":false}],\"type\":\"event\",\"name\":\"ClaimTokens\",\"anonymous\":false},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\",\"indexed\":true},{\"internalType\":\"contract IJBToken\",\"name\":\"token\",\"type\":\"address\",\"indexed\":true},{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\",\"indexed\":false},{\"internalType\":\"string\",\"name\":\"symbol\",\"type\":\"string\",\"indexed\":false},{\"internalType\":\"bytes32\",\"name\":\"salt\",\"type\":\"bytes32\",\"indexed\":false},{\"internalType\":\"address\",\"name\":\"caller\",\"type\":\"address\",\"indexed\":false}],\"type\":\"event\",\"name\":\"DeployERC20\",\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"holder\",\"type\":\"address\",\"indexed\":true},{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\",\"indexed\":true},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\",\"indexed\":false},{\"internalType\":\"bool\",\"name\":\"tokensWereClaimed\",\"type\":\"bool\",\"indexed\":false},{\"internalType\":\"address\",\"name\":\"caller\",\"type\":\"address\",\"indexed\":false}],\"type\":\"event\",\"name\":\"Mint\",\"anonymous\":false},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\",\"indexed\":true},{\"internalType\":\"contract IJBToken\",\"name\":\"newToken\",\"type\":\"address\",\"indexed\":true},{\"internalType\":\"address\",\"name\":\"caller\",\"type\":\"address\",\"indexed\":false}],\"type\":\"event\",\"name\":\"SetToken\",\"anonymous\":false},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"holder\",\"type\":\"address\",\"indexed\":true},{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\",\"indexed\":true},{\"internalType\":\"address\",\"name\":\"recipient\",\"type\":\"address\",\"indexed\":true},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\",\"indexed\":false},{\"internalType\":\"address\",\"name\":\"caller\",\"type\":\"address\",\"indexed\":false}],\"type\":\"event\",\"name\":\"TransferCredits\",\"anonymous\":false},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"DIRECTORY\",\"outputs\":[{\"internalType\":\"contract IJBDirectory\",\"name\":\"\",\"type\":\"address\"}]},{\"inputs\":[],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"TOKEN\",\"outputs\":[{\"internalType\":\"contract IJBToken\",\"name\":\"\",\"type\":\"address\"}]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"holder\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"burnFrom\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"holder\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"beneficiary\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"claimTokensFor\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"holder\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"creditBalanceOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"symbol\",\"type\":\"string\"},{\"internalType\":\"bytes32\",\"name\":\"salt\",\"type\":\"bytes32\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"deployERC20For\",\"outputs\":[{\"internalType\":\"contract IJBToken\",\"name\":\"token\",\"type\":\"address\"}]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"holder\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"mintFor\"},{\"inputs\":[{\"internalType\":\"contract IJBToken\",\"name\":\"token\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"projectIdOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"},{\"internalType\":\"contract IJBToken\",\"name\":\"token\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"setTokenFor\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"tokenOf\",\"outputs\":[{\"internalType\":\"contract IJBToken\",\"name\":\"\",\"type\":\"address\"}]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"holder\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"totalBalanceOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"balance\",\"type\":\"uint256\"}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"totalCreditSupplyOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}]},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\",\"name\":\"totalSupplyOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"totalSupply\",\"type\":\"uint256\"}]},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"holder\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"recipient\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\",\"name\":\"transferCreditsFrom\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"burnFrom(address,uint256,uint256)\":{\"details\":\"Credits are burned first, then tokens are burned.Only a project's current controller can burn its tokens.\",\"params\":{\"amount\":\"The amount of tokens to burn.\",\"holder\":\"The address that owns the tokens which are being burned.\",\"projectId\":\"The ID of the project to the burned tokens belong to.\"}},\"claimTokensFor(address,uint256,uint256,address)\":{\"details\":\"Only a project's controller can claim that project's tokens.\",\"params\":{\"amount\":\"The amount of tokens to claim.\",\"beneficiary\":\"The account into which the claimed tokens will go.\",\"holder\":\"The owner of the credits being redeemed.\",\"projectId\":\"The ID of the project whose tokens are being claimed.\"}},\"constructor\":{\"params\":{\"directory\":\"A contract storing directories of terminals and controllers for each project.\",\"token\":\"The implementation of the token contract that project can deploy.\"}},\"deployERC20For(uint256,string,string,bytes32)\":{\"details\":\"Deploys a project's ERC-20 token contract.Only a project's controller can deploy its token.\",\"params\":{\"name\":\"The ERC-20's name.\",\"projectId\":\"The ID of the project to deploy an ERC-20 token for.\",\"symbol\":\"The ERC-20's symbol.\"},\"returns\":{\"token\":\"The address of the token that was deployed.\"}},\"mintFor(address,uint256,uint256)\":{\"details\":\"Only a project's current controller can mint its tokens.\",\"params\":{\"amount\":\"The amount of tokens to mint.\",\"holder\":\"The address receiving the new tokens.\",\"projectId\":\"The ID of the project to which the tokens belong.\"}},\"setTokenFor(uint256,address)\":{\"details\":\"Only a project's controller can set its token.\",\"params\":{\"projectId\":\"The ID of the project to set the token of.\",\"token\":\"The new token's address.\"}},\"totalBalanceOf(address,uint256)\":{\"params\":{\"holder\":\"The holder to get a balance for.\",\"projectId\":\"The project to get the `_holder`s balance for.\"},\"returns\":{\"balance\":\"The combined token and token credit balance of the `_holder\"}},\"totalSupplyOf(uint256)\":{\"params\":{\"projectId\":\"The ID of the project to get the total supply of.\"},\"returns\":{\"totalSupply\":\"The total supply of the project's tokens and token credits.\"}},\"transferCreditsFrom(address,uint256,address,uint256)\":{\"details\":\"Only a project's controller can transfer credits for that project.\",\"params\":{\"amount\":\"The amount of credits to transfer.\",\"holder\":\"The address to transfer credits from.\",\"projectId\":\"The ID of the project whose credits are being transferred.\",\"recipient\":\"The recipient of the credits.\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"DIRECTORY()\":{\"notice\":\"The directory of terminals and controllers for projects.\"},\"burnFrom(address,uint256,uint256)\":{\"notice\":\"Burns (destroys) credits or tokens.\"},\"claimTokensFor(address,uint256,uint256,address)\":{\"notice\":\"Redeem credits to claim tokens into a holder's wallet.\"},\"creditBalanceOf(address,uint256)\":{\"notice\":\"Each holder's credit balance for each project.\"},\"deployERC20For(uint256,string,string,bytes32)\":{\"notice\":\"Deploys an ERC-20 token for a project. It will be used when claiming tokens.\"},\"mintFor(address,uint256,uint256)\":{\"notice\":\"Mint (create) new tokens or credits.\"},\"projectIdOf(address)\":{\"notice\":\"Each token's project.\"},\"setTokenFor(uint256,address)\":{\"notice\":\"Set a project's token if not already set.\"},\"tokenOf(uint256)\":{\"notice\":\"Each project's attached token contract.\"},\"totalBalanceOf(address,uint256)\":{\"notice\":\"The total balance a holder has for a specified project, including both tokens and token credits.\"},\"totalCreditSupplyOf(uint256)\":{\"notice\":\"The total supply of credits for each project.\"},\"totalSupplyOf(uint256)\":{\"notice\":\"The total supply for a specific project, including both tokens and token credits.\"},\"transferCreditsFrom(address,uint256,address,uint256)\":{\"notice\":\"Allows a holder to transfer credits to another account.\"}},\"version\":1}},\"settings\":{\"remappings\":[\"@bananapus/=node_modules/@bananapus/\",\"@chainlink/=node_modules/@chainlink/\",\"@eth-optimism/=node_modules/@eth-optimism/\",\"@openzeppelin/=node_modules/@openzeppelin/\",\"@prb/=node_modules/@prb/\",\"@scroll-tech/=node_modules/@scroll-tech/\",\"@sphinx-labs/contracts/=lib/sphinx/packages/contracts/contracts/foundry/\",\"@uniswap/=node_modules/@uniswap/\",\"ds-test/=lib/forge-std/lib/ds-test/src/\",\"forge-std/=lib/forge-std/src/\",\"hardhat/=node_modules/hardhat/\",\"solmate/=node_modules/solmate/\",\"sphinx/=lib/sphinx/\"],\"optimizer\":{\"enabled\":true,\"runs\":200},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"compilationTarget\":{\"src/JBTokens.sol\":\"JBTokens\"},\"evmVersion\":\"paris\",\"libraries\":{}},\"sources\":{\"node_modules/@openzeppelin/contracts/access/Ownable.sol\":{\"keccak256\":\"0xff6d0bb2e285473e5311d9d3caacb525ae3538a80758c10649a4d61029b017bb\",\"urls\":[\"bzz-raw://8ed324d3920bb545059d66ab97d43e43ee85fd3bd52e03e401f020afb0b120f6\",\"dweb:/ipfs/QmfEckWLmZkDDcoWrkEvMWhms66xwTLff9DDhegYpvHo1a\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/governance/utils/IVotes.sol\":{\"keccak256\":\"0x5e2b397ae88fd5c68e4f6762eb9f65f65c36702eb57796495f471d024ce70947\",\"urls\":[\"bzz-raw://348fc8e291d54314bb22437b532f443d5dbfb80c8cc9591567c1af6554ccf856\",\"dweb:/ipfs/QmP8ZTyitZinxcpwAHeYHhwj7u21zPpKXSiww38V74sXC2\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/governance/utils/Votes.sol\":{\"keccak256\":\"0xb8f69828d41b3594afd7a8c6393565901c205d8b5baf5bd2e42dbac637172979\",\"urls\":[\"bzz-raw://c790253821191ac46b2050d87df820d4209871f90c616381e2c2c00ff3eaac34\",\"dweb:/ipfs/QmcPETTyuZBzDRL39JNXj3SBMdx3Y9o4fPQLSZ27py5Jim\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/interfaces/IERC5267.sol\":{\"keccak256\":\"0x92aa1df62dc3d33f1656d63bede0923e0df0b706ad4137c8b10b0a8fe549fd92\",\"urls\":[\"bzz-raw://c5c0f29195ad64cbe556da8e257dac8f05f78c53f90323c0d2accf8e6922d33a\",\"dweb:/ipfs/QmQ61TED8uaCZwcbh8KkgRSsCav7x7HbcGHwHts3U4DmUP\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/interfaces/IERC5805.sol\":{\"keccak256\":\"0x4b9b89f91adbb7d3574f85394754cfb08c5b4eafca8a7061e2094a019ab8f818\",\"urls\":[\"bzz-raw://7373d5dbb8eb2381aa0883a456fac89283fcaf52f42fa805d4188f270716742a\",\"dweb:/ipfs/QmVnZDmT4ABvNhRJMaQnbCzsCA8HpyHPVaxi4fCi92LFv2\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/interfaces/IERC6372.sol\":{\"keccak256\":\"0xeb2857b7dafb7e0d8526dbfe794e6c047df2851c9e6ee91dc4a55f3c34af5d33\",\"urls\":[\"bzz-raw://49bf13f6c2a38a9bcc7b852d4e2b9cebb4068b832642cce61069cdb5f06bb2fb\",\"dweb:/ipfs/QmdKAJVE7rR2kENCZnEM1yKswrGii7WuE9gZpsQvnXJhwn\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/interfaces/draft-IERC6093.sol\":{\"keccak256\":\"0x60c65f701957fdd6faea1acb0bb45825791d473693ed9ecb34726fdfaa849dd7\",\"urls\":[\"bzz-raw://ea290300e0efc4d901244949dc4d877fd46e6c5e43dc2b26620e8efab3ab803f\",\"dweb:/ipfs/QmcLLJppxKeJWqHxE2CUkcfhuRTgHSn8J4kijcLa5MYhSt\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/proxy/Clones.sol\":{\"keccak256\":\"0xd18408af8a91bedb3d56343eeb9b30eb852e6dea93a5e2d5c6db9ca4cb905155\",\"urls\":[\"bzz-raw://061475b7302a732dc598907790f407417551c2b13e89daa57b3698489ef5484b\",\"dweb:/ipfs/QmdX5qmk3VSniSErFuD4aVawQxUi2MuUbP7spPcHddPfcX\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/token/ERC20/ERC20.sol\":{\"keccak256\":\"0xc3e1fa9d1987f8d349dfb4d6fe93bf2ca014b52ba335cfac30bfe71e357e6f80\",\"urls\":[\"bzz-raw://c5703ccdeb7b1d685e375ed719117e9edf2ab4bc544f24f23b0d50ec82257229\",\"dweb:/ipfs/QmTdwkbQq7owpCiyuzE7eh5LrD2ddrBCZ5WHVsWPi1RrTS\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol\":{\"keccak256\":\"0xc6a8ff0ea489379b61faa647490411b80102578440ab9d84e9a957cc12164e70\",\"urls\":[\"bzz-raw://0ea104e577e63faea3b69c415637e99e755dcbf64c5833d7140c35a714d6d90c\",\"dweb:/ipfs/Qmau6x4Ns9XdyynRCNNp3RhLqijJjFm7z5fyZazfYFGYdq\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol\":{\"keccak256\":\"0xc858a86a35701004d89022a5e98819aac46ccbdc4072fc9dd43928a676b1a2ee\",\"urls\":[\"bzz-raw://18acebb483c512c0eaafcb437f09c839972c3f0d36f0201ea7baa2926b987dd2\",\"dweb:/ipfs/Qmd9bf2noaDSYDtf6FMSzKu7LPhuf91jsVNmcoCuTCuGic\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol\":{\"keccak256\":\"0x2a650f6e593cfe5ff2e514a17ea7f593ee70cefa1888066bc983a6308acff4b1\",\"urls\":[\"bzz-raw://9a3477b9665a4b6d19f86bf2cfbfa8c08ba41193f15e68c0d75c0cab7e1fc753\",\"dweb:/ipfs/QmbcurrTatN1PBmkCWdrED8zhAqx5ah9Qp6uR8YwkKWA8V\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol\":{\"keccak256\":\"0xaa761817f6cd7892fcf158b3c776b34551cde36f48ff9703d53898bc45a94ea2\",\"urls\":[\"bzz-raw://0ad7c8d4d08938c8dfc43d75a148863fb324b80cf53e0a36f7e5a4ac29008850\",\"dweb:/ipfs/QmcrhfPgVNf5mkdhQvy1pMv51TFokD3Y4Wa5WZhFqVh8UV\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/token/ERC20/extensions/IERC20Permit.sol\":{\"keccak256\":\"0x6008dabfe393240d73d7dd7688033f72740d570aa422254d29a7dce8568f3aff\",\"urls\":[\"bzz-raw://f5196ec75139918c6c7bb4251b36395e668f1fa6d206beba7e7520e74913940d\",\"dweb:/ipfs/QmSyqjksXxmm2mCG6qRd1yuwLykypkSVBbnBnGqJRcuJMi\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/token/ERC721/IERC721.sol\":{\"keccak256\":\"0x5ef46daa3b58ef2702279d514780316efaa952915ee1aa3396f041ee2982b0b4\",\"urls\":[\"bzz-raw://2f8f2a76e23b02fc69e8cd24c3cb47da6c7af3a2d6c3a382f8ac25c6e094ade7\",\"dweb:/ipfs/QmPV4ZS4tPVv4mTCf9ejyZ1ai57EEibDRj7mN2ARDCLV5n\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/utils/Context.sol\":{\"keccak256\":\"0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2\",\"urls\":[\"bzz-raw://6a708e8a5bdb1011c2c381c9a5cfd8a9a956d7d0a9dc1bd8bcdaf52f76ef2f12\",\"dweb:/ipfs/Qmax9WHBnVsZP46ZxEMNRQpLQnrdE4dK8LehML1Py8FowF\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/utils/Nonces.sol\":{\"keccak256\":\"0x0082767004fca261c332e9ad100868327a863a88ef724e844857128845ab350f\",\"urls\":[\"bzz-raw://132dce9686a54e025eb5ba5d2e48208f847a1ec3e60a3e527766d7bf53fb7f9e\",\"dweb:/ipfs/QmXn1a2nUZMpu2z6S88UoTfMVtY2YNh86iGrzJDYmMkKeZ\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/utils/ShortStrings.sol\":{\"keccak256\":\"0x18a7171df639a934592915a520ecb97c5bbc9675a1105607aac8a94e72bf62c6\",\"urls\":[\"bzz-raw://7478e1f13da69a2867ccd883001d836b75620362e743f196376d63ed0c422a1c\",\"dweb:/ipfs/QmWywcQ9TNfwtoqAxbn25d8C5VrV12PrPS9UjtGe6pL2BA\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/utils/StorageSlot.sol\":{\"keccak256\":\"0x32ba59b4b7299237c8ba56319110989d7978a039faf754793064e967e5894418\",\"urls\":[\"bzz-raw://1ae50c8b562427df610cc4540c9bf104acca7ef8e2dcae567ae7e52272281e9c\",\"dweb:/ipfs/QmTHiadFCSJUPpRjNegc5SahmeU8bAoY8i9Aq6tVscbcKR\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/utils/Strings.sol\":{\"keccak256\":\"0x55f102ea785d8399c0e58d1108e2d289506dde18abc6db1b7f68c1f9f9bc5792\",\"urls\":[\"bzz-raw://6e52e0a7765c943ef14e5bcf11e46e6139fa044be564881378349236bf2e3453\",\"dweb:/ipfs/QmZEeeXoFPW47amyP35gfzomF9DixqqTEPwzBakv6cZw6i\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/utils/cryptography/ECDSA.sol\":{\"keccak256\":\"0xeed0a08b0b091f528356cbc7245891a4c748682d4f6a18055e8e6ca77d12a6cf\",\"urls\":[\"bzz-raw://ba80ba06c8e6be852847e4c5f4492cef801feb6558ae09ed705ff2e04ea8b13c\",\"dweb:/ipfs/QmXRJDv3xHLVQCVXg1ZvR35QS9sij5y9NDWYzMfUfAdTHF\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/utils/cryptography/EIP712.sol\":{\"keccak256\":\"0x999f705a027ed6dc2d4e0df2cc4a509852c6bfd11de1c8161bf88832d0503fd0\",\"urls\":[\"bzz-raw://0798def67258d9a3cc20b2b4da7ebf351a5cefe0abfdd665d2d81f8e32f89b21\",\"dweb:/ipfs/QmPEvJosnPfzHNjKvCv2D3891mA2Ww8eUwkqrxBjuYdHCt\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/utils/cryptography/MessageHashUtils.sol\":{\"keccak256\":\"0xba333517a3add42cd35fe877656fc3dfcc9de53baa4f3aabbd6d12a92e4ea435\",\"urls\":[\"bzz-raw://2ceacff44c0fdc81e48e0e0b1db87a2076d3c1fb497341de077bf1da9f6b406c\",\"dweb:/ipfs/QmRUo1muMRAewxrKQ7TkXUtknyRoR57AyEkoPpiuZQ8FzX\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/utils/introspection/IERC165.sol\":{\"keccak256\":\"0x4296879f55019b23e135000eb36896057e7101fb7fb859c5ef690cf14643757b\",\"urls\":[\"bzz-raw://87b3541437c8c443ccd36795e56a338ed12855eec17f8da624511b8d1a7e14df\",\"dweb:/ipfs/QmeJQCtZrQjtJLr6u7ZHWeH3pBnjtLWzvRrKViAi7UZqxL\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/utils/math/Math.sol\":{\"keccak256\":\"0x005ec64c6313f0555d59e278f9a7a5ab2db5bdc72a027f255a37c327af1ec02d\",\"urls\":[\"bzz-raw://4ece9f0b9c8daca08c76b6b5405a6446b6f73b3a15fab7ff56e296cbd4a2c875\",\"dweb:/ipfs/QmQyRpyPRL5SQuAgj6SHmbir3foX65FJjbVTTQrA2EFg6L\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/utils/math/SafeCast.sol\":{\"keccak256\":\"0xe19a4d5f31d2861e7344e8e535e2feafb913d806d3e2b5fe7782741a2a7094fe\",\"urls\":[\"bzz-raw://4aed79c0fa6f0546ed02f2f683e8f77f0fd2ed7eb34d8bbf3d373c9a6d95b13c\",\"dweb:/ipfs/QmWqVz6UAVqmnWU5pqYPt1o6iDEZyPaBraAA3rKfTTSfYj\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/utils/math/SignedMath.sol\":{\"keccak256\":\"0x5f7e4076e175393767754387c962926577f1660dd9b810187b9002407656be72\",\"urls\":[\"bzz-raw://7d533a1c97cd43a57cd9c465f7ee8dd0e39ae93a8fb8ff8e5303a356b081cdcc\",\"dweb:/ipfs/QmVBEei6aTnvYNZp2CHYVNKyZS4q1KkjANfY39WVXZXVoT\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/utils/structs/Checkpoints.sol\":{\"keccak256\":\"0xbdc5e074d7dd6678f67e92b1a51a20226801a407b0e1af3da367c5d1ff4519ad\",\"urls\":[\"bzz-raw://a36cca6b22fff3db16fc789ff6c60eea71d4b156065d4d0c83a0bc5e91a77a8b\",\"dweb:/ipfs/QmYN3exd5AemxjBrN8XMB1p5LbbE16uC3sjbYjwi8AjcGR\"],\"license\":\"MIT\"},\"node_modules/@openzeppelin/contracts/utils/types/Time.sol\":{\"keccak256\":\"0xc7755af115020049e4140f224f9ee88d7e1799ffb0646f37bf0df24bf6213f58\",\"urls\":[\"bzz-raw://7f09bf94d5274334ec021f61a04659db303f31e60460e14b709c9bf187740111\",\"dweb:/ipfs/QmNvgomZYUwFAt4cZbPWAiTeSZQreGehY9BK5xyVJsUttb\"],\"license\":\"MIT\"},\"src/JBERC20.sol\":{\"keccak256\":\"0x4ca0ae4f2037c64217db9bf2376f27d129e9edd3810cc0ee31b5867d44d1ec67\",\"urls\":[\"bzz-raw://a3ba32cf40e165040459aa8c8462e22bdf0b1b3fb15f45c1f312751781c8f1fb\",\"dweb:/ipfs/QmYYPFZwwGweNSRTW1W2ibBWqWmwVsRFSrdjsQyHANpTK9\"],\"license\":\"MIT\"},\"src/JBTokens.sol\":{\"keccak256\":\"0x906be405fe172ecd471f543a837d7c8751b4a3f21710cb48c8b9bddda938d17a\",\"urls\":[\"bzz-raw://e136a1e79dce6b90e87727be3d77d6924d0c7badb294763b0e4ff502c6b4473a\",\"dweb:/ipfs/QmefJLEm1Ua3KwCTijFz9wThU19TXCv5WoifPHuuW5L3SZ\"],\"license\":\"MIT\"},\"src/abstract/JBControlled.sol\":{\"keccak256\":\"0xdbaab889d033617969b7e0b453564e8eb76acb54e65b22289fff6fac90599d64\",\"urls\":[\"bzz-raw://860d67885d8095d49694a5c6c933ff0ad048a3db72412412b04e6b14c0fc8c59\",\"dweb:/ipfs/QmRHV7RdjwbQHtjpUxhNgnWzzES5X9duVTUPtCnJYrvjjc\"],\"license\":\"MIT\"},\"src/interfaces/IJBControlled.sol\":{\"keccak256\":\"0x79fb8de7b3f809f1c3c7189f578b7331ec4dfe3350151d5b50240ecb3a2a907b\",\"urls\":[\"bzz-raw://45c82240dd4f0e9aec00d0d86f6b44bdda231db098ebdac17e922771b3e6f342\",\"dweb:/ipfs/QmPUvT8HZeVenrZDpP14HsZofaXPJjih8UAd35rTg3tU7E\"],\"license\":\"MIT\"},\"src/interfaces/IJBDirectory.sol\":{\"keccak256\":\"0x9cc380844aef60078ee47a61861e55a29c4a8c947efd556ebd36e6909f7b9d62\",\"urls\":[\"bzz-raw://9f5190ec8b6683d9781ee6e9eedcc91294753242748875d4a06349077e4cbaaf\",\"dweb:/ipfs/QmTQrPuXT9TCA4txwrperMeXSGvGxP8iokUK47f62F388i\"],\"license\":\"MIT\"},\"src/interfaces/IJBPayHook.sol\":{\"keccak256\":\"0x9438866782c652c2942f4d114e35f393cd3c8b0334abce8387eed90bca35e8b2\",\"urls\":[\"bzz-raw://cfd99daf57213f92325aad7d7d16e98476d38e870470e95ba01e3ae3cdecc95d\",\"dweb:/ipfs/QmUKKAVGf7ki8BHksr99tFcRW8APveeB5tNH63ctTbbCW8\"],\"license\":\"MIT\"},\"src/interfaces/IJBProjects.sol\":{\"keccak256\":\"0x735c2fb8f1fa827f054ee77f7a0ae4b312656217acb75b624d2c8fd9dc40151b\",\"urls\":[\"bzz-raw://ee7fc92299a8633a80693ae63ab494dcd125f1789487a54a39dc0e5696e5996f\",\"dweb:/ipfs/QmX7YJD4pS2XhgQb7p3JbBAXynT7YGPXcZe92BiWWRrsCL\"],\"license\":\"MIT\"},\"src/interfaces/IJBTerminal.sol\":{\"keccak256\":\"0x19dc9bf8cbdc8f13ee5da9dc3a87047eacb94a3fc19740a286c1f0bad2cc39ca\",\"urls\":[\"bzz-raw://0b05ae6fda9a85672508232fd992b8a5f5ffd8096622eeb12c8a7b3317eb3867\",\"dweb:/ipfs/QmNh9Quj37BXYGdTdcCD1Q58PchRsE5TLbEZep56qS3MpV\"],\"license\":\"MIT\"},\"src/interfaces/IJBToken.sol\":{\"keccak256\":\"0x71b1f9c3a0edd41910f77396e0be2c65596571176d53eb87e887c3c0da56c0fb\",\"urls\":[\"bzz-raw://6e956f0582f4525e83d845ee9b4a89959abc4f821414f6accbbee5b38960482d\",\"dweb:/ipfs/QmbSvjgmCgnfVmcCTGu8XwrV1Rufsf3M8hB8unFq6fTMdH\"],\"license\":\"MIT\"},\"src/interfaces/IJBTokenUriResolver.sol\":{\"keccak256\":\"0xfa5cb00dcd6085d1ef912d071fe73c63f9478a2cd0f9d8bddaf659b6af2d0967\",\"urls\":[\"bzz-raw://282e4e7c342d65f77cde0e9a08fcaf20ef5cf379c7a48b639842c0ffd0b2afb8\",\"dweb:/ipfs/QmbnN3PEQeZaXdPLT75V1J79kMg7KqSMru37RHrL3z8Yf2\"],\"license\":\"MIT\"},\"src/interfaces/IJBTokens.sol\":{\"keccak256\":\"0x6fd67af915dd541d9547c8297aa9ae269690e4ee23531db43f021bcacec6076f\",\"urls\":[\"bzz-raw://2e5e11954e9ab2319fffccb6563f3db400b8f7760d4ffe2165048a02c9c37fa6\",\"dweb:/ipfs/QmbDXtV83dK8EfiTjsTRf55R2XqPZzDKcjtYbW8sxQ5CFm\"],\"license\":\"MIT\"},\"src/structs/JBAccountingContext.sol\":{\"keccak256\":\"0x2907ff54d1e903cc7e0390dd88c3975884702dc2673642aacbe22b66560b56de\",\"urls\":[\"bzz-raw://a66a5381ce877b32f0e0058ceeaf843e9b6b2bc8af666c0c9f4a9d01091da004\",\"dweb:/ipfs/QmQynCetUr37dBkS1YwDS8evxuXGiqanW6THmeUxXtim8w\"],\"license\":\"MIT\"},\"src/structs/JBAfterPayRecordedContext.sol\":{\"keccak256\":\"0xd26c3a774ff38be79064085970454fe2603a23a638c76270d5b1b3829206c3e8\",\"urls\":[\"bzz-raw://3b55dbe3bf1ef625b7ca04efab3de35406e6041d5b3d82c7265469c500e2b702\",\"dweb:/ipfs/QmUdBDo4Lt3mcsFcsXT2mqq3czFwZjQJFPLM89YA2VtD7k\"],\"license\":\"MIT\"},\"src/structs/JBTokenAmount.sol\":{\"keccak256\":\"0x5cf0626b73a596c1e2da17c89ae039a7c0374310b060d48568d3b6c11fbe6180\",\"urls\":[\"bzz-raw://63348b50be95e2995409394a17caffc563a646f0972650a1230bf864fbd3219b\",\"dweb:/ipfs/QmZXZpS3SbFD5nWaCauf6AqbEhLURv5qsKHpThBvQgDU6u\"],\"license\":\"MIT\"}},\"version\":1}",
+			"args": [
+				"0xCd7112aE7c3b2505F0795c1ba965e5694c25d696",
+				"0xf8febDbCC8ACfb46BfB59e7695F77d8eA653a69d"
+			],
+			"bytecode": "0x60c060405234801561001057600080fd5b506040516200178b3803806200178b83398101604081905261003191610060565b6001600160a01b039182166080521660a05261009a565b6001600160a01b038116811461005d57600080fd5b50565b6000806040838503121561007357600080fd5b825161007e81610048565b602084015190925061008f81610048565b809150509250929050565b60805160a051611693620000f8600039600081816101ad015281816108f2015261093a0152600081816101e7015281816102b8015281816105a7015281816107ca01528181610bc101528181610df90152610fcf01526116936000f3fe608060405234801561001057600080fd5b50600436106100ea5760003560e01c8063878003b81161008c578063b1e6d2a111610066578063b1e6d2a11461021c578063c6c116bd1461022f578063ea78803f1461025a578063f12b64a51461028357600080fd5b8063878003b8146101cf57806388bc2ef3146101e2578063aab68bdb1461020957600080fd5b806358178191116100c8578063581781911461014a57806366d542161461017557806375b0d9cd1461019557806382bfefc8146101a857600080fd5b80630f85421b146100ef578063124d91e514610122578063303f5dfa14610137575b600080fd5b61010f6100fd3660046112e7565b60016020526000908152604090205481565b6040519081526020015b60405180910390f35b61013561013036600461130b565b610296565b005b610135610145366004611340565b610585565b61015d6101583660046113d3565b6107a5565b6040516001600160a01b039091168152602001610119565b61010f610183366004611455565b60026020526000908152604090205481565b61010f6101a3366004611455565b610a4d565b61015d7f000000000000000000000000000000000000000000000000000000000000000081565b61010f6101dd36600461146e565b610aeb565b61015d7f000000000000000000000000000000000000000000000000000000000000000081565b61013561021736600461130b565b610b9f565b61013561022a36600461149a565b610dd7565b61010f61023d36600461146e565b600360209081526000928352604080842090915290825290205481565b61015d610268366004611455565b6000602081905290815260409020546001600160a01b031681565b6101356102913660046114e2565b610fad565b604051632eec7b5560e11b815260048101839052829033906001600160a01b037f00000000000000000000000000000000000000000000000000000000000000001690635dd8f6aa90602401602060405180830381865afa1580156102ff573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906103239190611512565b6001600160a01b03161461034a57604051632adfdd0560e21b815260040160405180910390fd5b600083815260208181526040808320546001600160a01b038881168552600384528285208886529093529083205491169182156103f0576040516370a0823160e01b81526001600160a01b0388811660048301528416906370a0823190602401602060405180830381865afa1580156103c7573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906103eb919061152f565b6103f3565b60005b90506103ff828261155e565b85111561041f57604051631cf2628760e31b815260040160405180910390fd5b6000811561043c57858310610435576000610439565b8286035b90505b8086038682146104bd576001600160a01b03891660009081526003602090815260408083208b8452909152902054610475908290611571565b6001600160a01b038a1660009081526003602090815260408083208c84528252808320939093556002905220546104ad908290611571565b6000898152600260205260409020555b811561052657604051632770a7eb60e21b81526001600160a01b038a8116600483015260248201849052861690639dc29fac90604401600060405180830381600087803b15801561050d57600080fd5b505af1158015610521573d6000803e3d6000fd5b505050505b604080518881526020810186905290810184905233606082015288906001600160a01b038b16907fa6a919b3314fbbdb84c4a64d62f381f104d0c1747b789163262d2fcfeec292689060800160405180910390a3505050505050505050565b604051632eec7b5560e11b815260048101849052839033906001600160a01b037f00000000000000000000000000000000000000000000000000000000000000001690635dd8f6aa90602401602060405180830381865afa1580156105ee573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906106129190611512565b6001600160a01b03161461063957604051632adfdd0560e21b815260040160405180910390fd5b6000848152602081905260409020546001600160a01b03168061066f576040516339e231e760e11b815260040160405180910390fd5b6001600160a01b0386166000908152600360209081526040808320888452909152902054848110156106b45760405163db446d8360e01b815260040160405180910390fd5b6001600160a01b0387811660009081526003602090815260408083208a84528252808320898603905560029091529081902080548890039055516340c10f1960e01b8152858216600482015260248101879052908316906340c10f1990604401600060405180830381600087803b15801561072e57600080fd5b505af1158015610742573d6000803e3d6000fd5b505060408051848152602081018990526001600160a01b038881168284015233606083015291518a9450918b1692507fde5600808a2321d39207ba773327f7a932a4b0b019107fb5a95618006cd0ff00919081900360800190a350505050505050565b604051632eec7b5560e11b815260048101879052600090879033906001600160a01b037f00000000000000000000000000000000000000000000000000000000000000001690635dd8f6aa90602401602060405180830381865afa158015610811573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906108359190611512565b6001600160a01b03161461085c57604051632adfdd0560e21b815260040160405180910390fd5b600086900361087e576040516392bf449d60e01b815260040160405180910390fd5b60008490036108a05760405163571431a760e01b815260040160405180910390fd5b6000888152602081905260409020546001600160a01b0316156108d6576040516329518c2b60e21b815260040160405180910390fd5b82156109355760408051336020820152908101849052610930907f000000000000000000000000000000000000000000000000000000000000000090606001604051602081830303815290604052805190602001206111e9565b61095e565b61095e7f000000000000000000000000000000000000000000000000000000000000000061125d565b60008981526020818152604080832080546001600160a01b0319166001600160a01b0386169081179091558084526001909252918290208b905590516303bf912560e11b81529193509063077f224a906109c4908a908a908a908a9030906004016115ad565b600060405180830381600087803b1580156109de57600080fd5b505af11580156109f2573d6000803e3d6000fd5b50505050816001600160a01b0316887fb4510654a5884cae50948507300dc482833ed1446cef375e064bef00b6b4ba4e898989898933604051610a3a969594939291906115ef565b60405180910390a3509695505050505050565b60008181526002602090815260408083205491839052909120546001600160a01b03168015610ae557806001600160a01b03166318160ddd6040518163ffffffff1660e01b8152600401602060405180830381865afa158015610ab4573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610ad8919061152f565b610ae2908361155e565b91505b50919050565b6001600160a01b03808316600090815260036020908152604080832085845282528083205491839052909120549091168015610b98576040516370a0823160e01b81526001600160a01b0385811660048301528216906370a0823190602401602060405180830381865afa158015610b67573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610b8b919061152f565b610b95908361155e565b91505b5092915050565b604051632eec7b5560e11b815260048101839052829033906001600160a01b037f00000000000000000000000000000000000000000000000000000000000000001690635dd8f6aa90602401602060405180830381865afa158015610c08573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610c2c9190611512565b6001600160a01b031614610c5357604051632adfdd0560e21b815260040160405180910390fd5b6000838152602081905260409020546001600160a01b03168015801590610cdb576040516340c10f1960e01b81526001600160a01b038781166004830152602482018690528316906340c10f1990604401600060405180830381600087803b158015610cbe57600080fd5b505af1158015610cd2573d6000803e3d6000fd5b50505050610d52565b6001600160a01b0386166000908152600360209081526040808320888452909152902054610d0a90859061155e565b6001600160a01b0387166000908152600360209081526040808320898452825280832093909355600290522054610d4290859061155e565b6000868152600260205260409020555b6001600160d01b03610d6386610a4d565b1115610d8257604051633062f38960e11b815260040160405180910390fd5b6040805185815282151560208201523381830152905186916001600160a01b038916917f0153be209252ccc3b70df14d55d2cc93fa5a74e263b163d9a1caf45152fd0e869181900360600190a3505050505050565b604051632eec7b5560e11b815260048101849052839033906001600160a01b037f00000000000000000000000000000000000000000000000000000000000000001690635dd8f6aa90602401602060405180830381865afa158015610e40573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610e649190611512565b6001600160a01b031614610e8b57604051632adfdd0560e21b815260040160405180910390fd5b6001600160a01b038316610eb25760405163c6587bab60e01b815260040160405180910390fd5b6001600160a01b038516600090815260036020908152604080832087845290915290205480831115610ef75760405163db446d8360e01b815260040160405180910390fd5b6001600160a01b0380871660009081526003602081815260408084208a855282528084208887039055938816835290815282822088835290522054610f3d90849061155e565b6001600160a01b0385811660008181526003602090815260408083208b84528252918290209490945580518781523394810194909452909288928a16917f6d86dde1e9f07a2ad1e0f3e611b7bb8343d629126c5ca73f1a5951177d87143f910160405180910390a4505050505050565b604051632eec7b5560e11b815260048101839052829033906001600160a01b037f00000000000000000000000000000000000000000000000000000000000000001690635dd8f6aa90602401602060405180830381865afa158015611016573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061103a9190611512565b6001600160a01b03161461106157604051632adfdd0560e21b815260040160405180910390fd5b6001600160a01b038216611088576040516324679e7b60e01b815260040160405180910390fd5b6000838152602081905260409020546001600160a01b0316156110be5760405163934c465560e01b815260040160405180910390fd5b6001600160a01b038216600090815260016020526040902054156110f55760405163934c465560e01b815260040160405180910390fd5b816001600160a01b031663313ce5676040518163ffffffff1660e01b8152600401602060405180830381865afa158015611133573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190611157919061163a565b60ff1660121461117a57604051632b70e32560e21b815260040160405180910390fd5b60008381526020818152604080832080546001600160a01b0319166001600160a01b03871690811790915580845260018352928190208690555133815285917f768e177d7f9dac714049e6d43d9ac533cf0c6cc23cddcfe642bfd7a18bee3772910160405180910390a3505050565b6000763d602d80600a3d3981f3363d3d373d3d3d363d730000008360601b60e81c176000526e5af43d82803e903d91602b57fd5bf38360781b1760205281603760096000f590506001600160a01b038116611257576040516330be1a3d60e21b815260040160405180910390fd5b92915050565b6000763d602d80600a3d3981f3363d3d373d3d3d363d730000008260601b60e81c176000526e5af43d82803e903d91602b57fd5bf38260781b17602052603760096000f090506001600160a01b0381166112ca576040516330be1a3d60e21b815260040160405180910390fd5b919050565b6001600160a01b03811681146112e457600080fd5b50565b6000602082840312156112f957600080fd5b8135611304816112cf565b9392505050565b60008060006060848603121561132057600080fd5b833561132b816112cf565b95602085013595506040909401359392505050565b6000806000806080858703121561135657600080fd5b8435611361816112cf565b93506020850135925060408501359150606085013561137f816112cf565b939692955090935050565b60008083601f84011261139c57600080fd5b50813567ffffffffffffffff8111156113b457600080fd5b6020830191508360208285010111156113cc57600080fd5b9250929050565b600080600080600080608087890312156113ec57600080fd5b86359550602087013567ffffffffffffffff8082111561140b57600080fd5b6114178a838b0161138a565b9097509550604089013591508082111561143057600080fd5b5061143d89828a0161138a565b979a9699509497949695606090950135949350505050565b60006020828403121561146757600080fd5b5035919050565b6000806040838503121561148157600080fd5b823561148c816112cf565b946020939093013593505050565b600080600080608085870312156114b057600080fd5b84356114bb816112cf565b93506020850135925060408501356114d2816112cf565b9396929550929360600135925050565b600080604083850312156114f557600080fd5b823591506020830135611507816112cf565b809150509250929050565b60006020828403121561152457600080fd5b8151611304816112cf565b60006020828403121561154157600080fd5b5051919050565b634e487b7160e01b600052601160045260246000fd5b8082018082111561125757611257611548565b8181038181111561125757611257611548565b81835281816020850137506000828201602090810191909152601f909101601f19169091010190565b6060815260006115c1606083018789611584565b82810360208401526115d4818688611584565b91505060018060a01b03831660408301529695505050505050565b60808152600061160360808301888a611584565b8281036020840152611616818789611584565b604084019590955250506001600160a01b0391909116606090910152949350505050565b60006020828403121561164c57600080fd5b815160ff8116811461130457600080fdfea264697066735822122038aacaa9b4f561bd16b11029b3cd258890a8f510b70c687d8a89393ce385dbb364736f6c63430008170033",
+			"deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100ea5760003560e01c8063878003b81161008c578063b1e6d2a111610066578063b1e6d2a11461021c578063c6c116bd1461022f578063ea78803f1461025a578063f12b64a51461028357600080fd5b8063878003b8146101cf57806388bc2ef3146101e2578063aab68bdb1461020957600080fd5b806358178191116100c8578063581781911461014a57806366d542161461017557806375b0d9cd1461019557806382bfefc8146101a857600080fd5b80630f85421b146100ef578063124d91e514610122578063303f5dfa14610137575b600080fd5b61010f6100fd3660046112e7565b60016020526000908152604090205481565b6040519081526020015b60405180910390f35b61013561013036600461130b565b610296565b005b610135610145366004611340565b610585565b61015d6101583660046113d3565b6107a5565b6040516001600160a01b039091168152602001610119565b61010f610183366004611455565b60026020526000908152604090205481565b61010f6101a3366004611455565b610a4d565b61015d7f000000000000000000000000f8febdbcc8acfb46bfb59e7695f77d8ea653a69d81565b61010f6101dd36600461146e565b610aeb565b61015d7f000000000000000000000000cd7112ae7c3b2505f0795c1ba965e5694c25d69681565b61013561021736600461130b565b610b9f565b61013561022a36600461149a565b610dd7565b61010f61023d36600461146e565b600360209081526000928352604080842090915290825290205481565b61015d610268366004611455565b6000602081905290815260409020546001600160a01b031681565b6101356102913660046114e2565b610fad565b604051632eec7b5560e11b815260048101839052829033906001600160a01b037f000000000000000000000000cd7112ae7c3b2505f0795c1ba965e5694c25d6961690635dd8f6aa90602401602060405180830381865afa1580156102ff573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906103239190611512565b6001600160a01b03161461034a57604051632adfdd0560e21b815260040160405180910390fd5b600083815260208181526040808320546001600160a01b038881168552600384528285208886529093529083205491169182156103f0576040516370a0823160e01b81526001600160a01b0388811660048301528416906370a0823190602401602060405180830381865afa1580156103c7573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906103eb919061152f565b6103f3565b60005b90506103ff828261155e565b85111561041f57604051631cf2628760e31b815260040160405180910390fd5b6000811561043c57858310610435576000610439565b8286035b90505b8086038682146104bd576001600160a01b03891660009081526003602090815260408083208b8452909152902054610475908290611571565b6001600160a01b038a1660009081526003602090815260408083208c84528252808320939093556002905220546104ad908290611571565b6000898152600260205260409020555b811561052657604051632770a7eb60e21b81526001600160a01b038a8116600483015260248201849052861690639dc29fac90604401600060405180830381600087803b15801561050d57600080fd5b505af1158015610521573d6000803e3d6000fd5b505050505b604080518881526020810186905290810184905233606082015288906001600160a01b038b16907fa6a919b3314fbbdb84c4a64d62f381f104d0c1747b789163262d2fcfeec292689060800160405180910390a3505050505050505050565b604051632eec7b5560e11b815260048101849052839033906001600160a01b037f000000000000000000000000cd7112ae7c3b2505f0795c1ba965e5694c25d6961690635dd8f6aa90602401602060405180830381865afa1580156105ee573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906106129190611512565b6001600160a01b03161461063957604051632adfdd0560e21b815260040160405180910390fd5b6000848152602081905260409020546001600160a01b03168061066f576040516339e231e760e11b815260040160405180910390fd5b6001600160a01b0386166000908152600360209081526040808320888452909152902054848110156106b45760405163db446d8360e01b815260040160405180910390fd5b6001600160a01b0387811660009081526003602090815260408083208a84528252808320898603905560029091529081902080548890039055516340c10f1960e01b8152858216600482015260248101879052908316906340c10f1990604401600060405180830381600087803b15801561072e57600080fd5b505af1158015610742573d6000803e3d6000fd5b505060408051848152602081018990526001600160a01b038881168284015233606083015291518a9450918b1692507fde5600808a2321d39207ba773327f7a932a4b0b019107fb5a95618006cd0ff00919081900360800190a350505050505050565b604051632eec7b5560e11b815260048101879052600090879033906001600160a01b037f000000000000000000000000cd7112ae7c3b2505f0795c1ba965e5694c25d6961690635dd8f6aa90602401602060405180830381865afa158015610811573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906108359190611512565b6001600160a01b03161461085c57604051632adfdd0560e21b815260040160405180910390fd5b600086900361087e576040516392bf449d60e01b815260040160405180910390fd5b60008490036108a05760405163571431a760e01b815260040160405180910390fd5b6000888152602081905260409020546001600160a01b0316156108d6576040516329518c2b60e21b815260040160405180910390fd5b82156109355760408051336020820152908101849052610930907f000000000000000000000000f8febdbcc8acfb46bfb59e7695f77d8ea653a69d90606001604051602081830303815290604052805190602001206111e9565b61095e565b61095e7f000000000000000000000000f8febdbcc8acfb46bfb59e7695f77d8ea653a69d61125d565b60008981526020818152604080832080546001600160a01b0319166001600160a01b0386169081179091558084526001909252918290208b905590516303bf912560e11b81529193509063077f224a906109c4908a908a908a908a9030906004016115ad565b600060405180830381600087803b1580156109de57600080fd5b505af11580156109f2573d6000803e3d6000fd5b50505050816001600160a01b0316887fb4510654a5884cae50948507300dc482833ed1446cef375e064bef00b6b4ba4e898989898933604051610a3a969594939291906115ef565b60405180910390a3509695505050505050565b60008181526002602090815260408083205491839052909120546001600160a01b03168015610ae557806001600160a01b03166318160ddd6040518163ffffffff1660e01b8152600401602060405180830381865afa158015610ab4573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610ad8919061152f565b610ae2908361155e565b91505b50919050565b6001600160a01b03808316600090815260036020908152604080832085845282528083205491839052909120549091168015610b98576040516370a0823160e01b81526001600160a01b0385811660048301528216906370a0823190602401602060405180830381865afa158015610b67573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610b8b919061152f565b610b95908361155e565b91505b5092915050565b604051632eec7b5560e11b815260048101839052829033906001600160a01b037f000000000000000000000000cd7112ae7c3b2505f0795c1ba965e5694c25d6961690635dd8f6aa90602401602060405180830381865afa158015610c08573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610c2c9190611512565b6001600160a01b031614610c5357604051632adfdd0560e21b815260040160405180910390fd5b6000838152602081905260409020546001600160a01b03168015801590610cdb576040516340c10f1960e01b81526001600160a01b038781166004830152602482018690528316906340c10f1990604401600060405180830381600087803b158015610cbe57600080fd5b505af1158015610cd2573d6000803e3d6000fd5b50505050610d52565b6001600160a01b0386166000908152600360209081526040808320888452909152902054610d0a90859061155e565b6001600160a01b0387166000908152600360209081526040808320898452825280832093909355600290522054610d4290859061155e565b6000868152600260205260409020555b6001600160d01b03610d6386610a4d565b1115610d8257604051633062f38960e11b815260040160405180910390fd5b6040805185815282151560208201523381830152905186916001600160a01b038916917f0153be209252ccc3b70df14d55d2cc93fa5a74e263b163d9a1caf45152fd0e869181900360600190a3505050505050565b604051632eec7b5560e11b815260048101849052839033906001600160a01b037f000000000000000000000000cd7112ae7c3b2505f0795c1ba965e5694c25d6961690635dd8f6aa90602401602060405180830381865afa158015610e40573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610e649190611512565b6001600160a01b031614610e8b57604051632adfdd0560e21b815260040160405180910390fd5b6001600160a01b038316610eb25760405163c6587bab60e01b815260040160405180910390fd5b6001600160a01b038516600090815260036020908152604080832087845290915290205480831115610ef75760405163db446d8360e01b815260040160405180910390fd5b6001600160a01b0380871660009081526003602081815260408084208a855282528084208887039055938816835290815282822088835290522054610f3d90849061155e565b6001600160a01b0385811660008181526003602090815260408083208b84528252918290209490945580518781523394810194909452909288928a16917f6d86dde1e9f07a2ad1e0f3e611b7bb8343d629126c5ca73f1a5951177d87143f910160405180910390a4505050505050565b604051632eec7b5560e11b815260048101839052829033906001600160a01b037f000000000000000000000000cd7112ae7c3b2505f0795c1ba965e5694c25d6961690635dd8f6aa90602401602060405180830381865afa158015611016573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061103a9190611512565b6001600160a01b03161461106157604051632adfdd0560e21b815260040160405180910390fd5b6001600160a01b038216611088576040516324679e7b60e01b815260040160405180910390fd5b6000838152602081905260409020546001600160a01b0316156110be5760405163934c465560e01b815260040160405180910390fd5b6001600160a01b038216600090815260016020526040902054156110f55760405163934c465560e01b815260040160405180910390fd5b816001600160a01b031663313ce5676040518163ffffffff1660e01b8152600401602060405180830381865afa158015611133573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190611157919061163a565b60ff1660121461117a57604051632b70e32560e21b815260040160405180910390fd5b60008381526020818152604080832080546001600160a01b0319166001600160a01b03871690811790915580845260018352928190208690555133815285917f768e177d7f9dac714049e6d43d9ac533cf0c6cc23cddcfe642bfd7a18bee3772910160405180910390a3505050565b6000763d602d80600a3d3981f3363d3d373d3d3d363d730000008360601b60e81c176000526e5af43d82803e903d91602b57fd5bf38360781b1760205281603760096000f590506001600160a01b038116611257576040516330be1a3d60e21b815260040160405180910390fd5b92915050565b6000763d602d80600a3d3981f3363d3d373d3d3d363d730000008260601b60e81c176000526e5af43d82803e903d91602b57fd5bf38260781b17602052603760096000f090506001600160a01b0381166112ca576040516330be1a3d60e21b815260040160405180910390fd5b919050565b6001600160a01b03811681146112e457600080fd5b50565b6000602082840312156112f957600080fd5b8135611304816112cf565b9392505050565b60008060006060848603121561132057600080fd5b833561132b816112cf565b95602085013595506040909401359392505050565b6000806000806080858703121561135657600080fd5b8435611361816112cf565b93506020850135925060408501359150606085013561137f816112cf565b939692955090935050565b60008083601f84011261139c57600080fd5b50813567ffffffffffffffff8111156113b457600080fd5b6020830191508360208285010111156113cc57600080fd5b9250929050565b600080600080600080608087890312156113ec57600080fd5b86359550602087013567ffffffffffffffff8082111561140b57600080fd5b6114178a838b0161138a565b9097509550604089013591508082111561143057600080fd5b5061143d89828a0161138a565b979a9699509497949695606090950135949350505050565b60006020828403121561146757600080fd5b5035919050565b6000806040838503121561148157600080fd5b823561148c816112cf565b946020939093013593505050565b600080600080608085870312156114b057600080fd5b84356114bb816112cf565b93506020850135925060408501356114d2816112cf565b9396929550929360600135925050565b600080604083850312156114f557600080fd5b823591506020830135611507816112cf565b809150509250929050565b60006020828403121561152457600080fd5b8151611304816112cf565b60006020828403121561154157600080fd5b5051919050565b634e487b7160e01b600052601160045260246000fd5b8082018082111561125757611257611548565b8181038181111561125757611257611548565b81835281816020850137506000828201602090810191909152601f909101601f19169091010190565b6060815260006115c1606083018789611584565b82810360208401526115d4818688611584565b91505060018060a01b03831660408301529695505050505050565b60808152600061160360808301888a611584565b8281036020840152611616818789611584565b604084019590955250506001600160a01b0391909116606090910152949350505050565b60006020828403121561164c57600080fd5b815160ff8116811461130457600080fdfea264697066735822122038aacaa9b4f561bd16b11029b3cd258890a8f510b70c687d8a89393ce385dbb364736f6c63430008170033",
+			"devdoc": {
+				"kind": "dev",
+				"methods": {
+					"burnFrom(address,uint256,uint256)": {
+						"details": "Credits are burned first, then tokens are burned.Only a project's current controller can burn its tokens.",
+						"params": {
+							"amount": "The amount of tokens to burn.",
+							"holder": "The address that owns the tokens which are being burned.",
+							"projectId": "The ID of the project to the burned tokens belong to."
+						}
+					},
+					"claimTokensFor(address,uint256,uint256,address)": {
+						"details": "Only a project's controller can claim that project's tokens.",
+						"params": {
+							"amount": "The amount of tokens to claim.",
+							"beneficiary": "The account into which the claimed tokens will go.",
+							"holder": "The owner of the credits being redeemed.",
+							"projectId": "The ID of the project whose tokens are being claimed."
+						}
+					},
+					"constructor": {
+						"params": {
+							"directory": "A contract storing directories of terminals and controllers for each project.",
+							"token": "The implementation of the token contract that project can deploy."
+						}
+					},
+					"deployERC20For(uint256,string,string,bytes32)": {
+						"details": "Deploys a project's ERC-20 token contract.Only a project's controller can deploy its token.",
+						"params": {
+							"name": "The ERC-20's name.",
+							"projectId": "The ID of the project to deploy an ERC-20 token for.",
+							"symbol": "The ERC-20's symbol."
+						},
+						"returns": {
+							"token": "The address of the token that was deployed."
+						}
+					},
+					"mintFor(address,uint256,uint256)": {
+						"details": "Only a project's current controller can mint its tokens.",
+						"params": {
+							"amount": "The amount of tokens to mint.",
+							"holder": "The address receiving the new tokens.",
+							"projectId": "The ID of the project to which the tokens belong."
+						}
+					},
+					"setTokenFor(uint256,address)": {
+						"details": "Only a project's controller can set its token.",
+						"params": {
+							"projectId": "The ID of the project to set the token of.",
+							"token": "The new token's address."
+						}
+					},
+					"totalBalanceOf(address,uint256)": {
+						"params": {
+							"holder": "The holder to get a balance for.",
+							"projectId": "The project to get the `_holder`s balance for."
+						},
+						"returns": {
+							"balance": "The combined token and token credit balance of the `_holder"
+						}
+					},
+					"totalSupplyOf(uint256)": {
+						"params": {
+							"projectId": "The ID of the project to get the total supply of."
+						},
+						"returns": {
+							"totalSupply": "The total supply of the project's tokens and token credits."
+						}
+					},
+					"transferCreditsFrom(address,uint256,address,uint256)": {
+						"details": "Only a project's controller can transfer credits for that project.",
+						"params": {
+							"amount": "The amount of credits to transfer.",
+							"holder": "The address to transfer credits from.",
+							"projectId": "The ID of the project whose credits are being transferred.",
+							"recipient": "The recipient of the credits."
+						}
+					}
+				},
+				"version": 1
+			},
+			"userdoc": {
+				"kind": "user",
+				"methods": {
+					"DIRECTORY()": {
+						"notice": "The directory of terminals and controllers for projects."
+					},
+					"burnFrom(address,uint256,uint256)": {
+						"notice": "Burns (destroys) credits or tokens."
+					},
+					"claimTokensFor(address,uint256,uint256,address)": {
+						"notice": "Redeem credits to claim tokens into a holder's wallet."
+					},
+					"creditBalanceOf(address,uint256)": {
+						"notice": "Each holder's credit balance for each project."
+					},
+					"deployERC20For(uint256,string,string,bytes32)": {
+						"notice": "Deploys an ERC-20 token for a project. It will be used when claiming tokens."
+					},
+					"mintFor(address,uint256,uint256)": {
+						"notice": "Mint (create) new tokens or credits."
+					},
+					"projectIdOf(address)": {
+						"notice": "Each token's project."
+					},
+					"setTokenFor(uint256,address)": {
+						"notice": "Set a project's token if not already set."
+					},
+					"tokenOf(uint256)": {
+						"notice": "Each project's attached token contract."
+					},
+					"totalBalanceOf(address,uint256)": {
+						"notice": "The total balance a holder has for a specified project, including both tokens and token credits."
+					},
+					"totalCreditSupplyOf(uint256)": {
+						"notice": "The total supply of credits for each project."
+					},
+					"totalSupplyOf(uint256)": {
+						"notice": "The total supply for a specific project, including both tokens and token credits."
+					},
+					"transferCreditsFrom(address,uint256,address,uint256)": {
+						"notice": "Allows a holder to transfer credits to another account."
+					}
+				},
+				"version": 1
+			},
+			"gitCommit": "cfb1d4cd4e79bed840a9c8fcd17a0f397da3e3bf",
 			"sourceName": "src/JBTokens.sol",
 			"chainId": "84532",
 			"linkReferences": {},
