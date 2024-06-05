@@ -24,7 +24,7 @@ interface IJBRulesets {
 
     function getRulesetOf(uint256 projectId, uint256 rulesetId) external view returns (JBRuleset memory);
 
-    function latestQueuedRulesetOf(uint256 projectId)
+    function latestQueuedOf(uint256 projectId)
         external
         view
         returns (JBRuleset memory ruleset, JBApprovalStatus approvalStatus);

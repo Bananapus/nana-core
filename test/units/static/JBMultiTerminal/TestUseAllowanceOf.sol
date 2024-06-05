@@ -16,7 +16,7 @@ contract TestUseAllowanceOf_Local is JBMultiTerminalSetup {
     } */
 
     function test_WhenAmountPaidOutLTMinTokensPaidOut() external {
-        // it will revert INADEQUATE_PAYOUT_AMOUNT
+        // it will revert UNDER_MIN_TOKENS_PAID_OUT
 
         // mock owner call
         mockExpect(address(projects), abi.encodeCall(IERC721.ownerOf, (_projectId)), abi.encode(address(this)));
@@ -48,7 +48,7 @@ contract TestUseAllowanceOf_Local is JBMultiTerminalSetup {
             address(feelessAddresses), abi.encodeCall(IJBFeelessAddresses.isFeeless, (address(this))), abi.encode(true)
         );
 
-        vm.expectRevert(abi.encodeWithSignature("INADEQUATE_PAYOUT_AMOUNT()"));
+        vm.expectRevert(abi.encodeWithSignature("UNDER_MIN_TOKENS_PAID_OUT()"));
         _terminal.useAllowanceOf(_projectId, address(0), 0, 0, 1, payable(address(this)), "");
     }
 

@@ -61,7 +61,7 @@ contract TestRedeemTokensOf_Local is JBMultiTerminalSetup {
     }
 
     function test_GivenRedeemCountLTMinTokensReclaimed() external whenCallerHasPermission {
-        // it will revert INADEQUATE_RECLAIM_AMOUNT
+        // it will revert UNDER_MIN_TOKENS_RECLAIMED
 
         uint256 reclaimAmount = 1e9;
         JBRedeemHookSpecification[] memory hookSpecifications = new JBRedeemHookSpecification[](0);
@@ -152,7 +152,7 @@ contract TestRedeemTokensOf_Local is JBMultiTerminalSetup {
 
         // mock feeless address check
         mockExpect(address(feelessAddresses), abi.encodeCall(IJBFeelessAddresses.isFeeless, (_bene)), abi.encode(true));
-        vm.expectRevert(abi.encodeWithSignature("INADEQUATE_RECLAIM_AMOUNT()"));
+        vm.expectRevert(abi.encodeWithSignature("UNDER_MIN_TOKENS_RECLAIMED()"));
         _terminal.redeemTokensOf(_holder, _projectId, _mockToken, _defaultAmount, 1e18, _bene, ""); // minReclaimAmount
             // = 1e18 but only 1e19 reclaimed
     }

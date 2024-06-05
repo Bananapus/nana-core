@@ -2,7 +2,7 @@ TestUseAllowanceOf_Local
 ├── when caller does not have permission
 │   └── it will revert UNAUTHORIZED
 ├── when amountPaidOut LT minTokensPaidOut
-│   └── it will revert INADEQUATE_PAYOUT_AMOUNT
+│   └── it will revert UNDER_MIN_TOKENS_PAID_OUT
 ├── when msgSender EQ feeless
 │   └── it will not incur fees
 ├── when msgSender DNEQ feeless

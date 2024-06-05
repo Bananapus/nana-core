@@ -136,13 +136,13 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     /// @return ruleset The struct for the project's latest queued ruleset.
     /// @return metadata The ruleset's metadata.
     /// @return approvalStatus The ruleset's approval status.
-    function latestQueuedRulesetOf(uint256 projectId)
+    function latestQueuedOf(uint256 projectId)
         external
         view
         override
         returns (JBRuleset memory ruleset, JBRulesetMetadata memory metadata, JBApprovalStatus approvalStatus)
     {
-        (ruleset, approvalStatus) = RULESETS.latestQueuedRulesetOf(projectId);
+        (ruleset, approvalStatus) = RULESETS.latestQueuedOf(projectId);
         metadata = ruleset.expandMetadata();
     }
 

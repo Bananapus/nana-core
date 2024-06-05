@@ -1,6 +1,6 @@
 TestPayoutsOf_Local
 ├── when amountPaidOut lt minTokensPaidOut
-│   └── it will revert INADEQUATE_PAYOUT_AMOUNT
+│   └── it will revert UNDER_MIN_TOKENS_PAID_OUT
 ├── when a split hook is configured
 │   ├── given the split hook is feeless
 │   │   └── it will not process a fee

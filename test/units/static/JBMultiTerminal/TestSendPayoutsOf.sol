@@ -13,7 +13,7 @@ contract TestPayoutsOf_Local is JBMultiTerminalSetup {
     }
 
     function test_WhenAmountPaidOutLtMinTokensPaidOut() external {
-        // it will revert INADEQUATE_PAYOUT_AMOUNT
+        // it will revert UNDER_MIN_TOKENS_PAID_OUT
 
         // needed for terminal store mock call
         JBRuleset memory returnedRuleset = JBRuleset({
@@ -57,7 +57,7 @@ contract TestPayoutsOf_Local is JBMultiTerminalSetup {
             abi.encode(address(_terminal))
         );
 
-        vm.expectRevert(abi.encodeWithSignature("INADEQUATE_PAYOUT_AMOUNT()"));
+        vm.expectRevert(abi.encodeWithSignature("UNDER_MIN_TOKENS_PAID_OUT()"));
         _terminal.sendPayoutsOf(_projectId, address(0), 0, 0, 1);
     }
 

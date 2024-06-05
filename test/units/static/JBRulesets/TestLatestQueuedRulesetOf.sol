@@ -118,7 +118,7 @@ contract TestLatestQueuedRulesetOf_Local is JBRulesetsSetup {
         // it will return JBApprovalStatus.Empty
 
         (JBRuleset memory _latestRuleset, JBApprovalStatus _latestApprovalStatus) =
-            _rulesets.latestQueuedRulesetOf(_projectId);
+            _rulesets.latestQueuedOf(_projectId);
         assertEq(uint256(_latestApprovalStatus), 0);
         assertEq(_latestRuleset.id, block.timestamp);
     }
@@ -169,7 +169,7 @@ contract TestLatestQueuedRulesetOf_Local is JBRulesetsSetup {
         );
 
         (JBRuleset memory _latestRuleset, JBApprovalStatus _latestApprovalStatus) =
-            _rulesets.latestQueuedRulesetOf(_projectId);
+            _rulesets.latestQueuedOf(_projectId);
         assertEq(uint256(_latestApprovalStatus), 3); // 3 = enum ApprovalExpected of the basedOn ruleset
         assertEq(_latestRuleset.id, block.timestamp + 1); // second queued ruleset
     }
@@ -235,7 +235,7 @@ contract TestLatestQueuedRulesetOf_Local is JBRulesetsSetup {
         });
 
         (JBRuleset memory _latestRuleset, JBApprovalStatus _latestApprovalStatus) =
-            _rulesets.latestQueuedRulesetOf(_projectId);
+            _rulesets.latestQueuedOf(_projectId);
         assertEq(uint256(_latestApprovalStatus), 0); // 0 = enum Empty of the basedOn ruleset
         assertEq(_latestRuleset.id, block.timestamp + 1); // second queued ruleset
     }
@@ -244,7 +244,7 @@ contract TestLatestQueuedRulesetOf_Local is JBRulesetsSetup {
         // it will return empty ruleset and JBApprovalStatus.Empty
 
         (JBRuleset memory _latestRuleset, JBApprovalStatus _latestApprovalStatus) =
-            _rulesets.latestQueuedRulesetOf(_projectId);
+            _rulesets.latestQueuedOf(_projectId);
         assertEq(uint256(_latestApprovalStatus), 0); // 0 = enum Empty of the basedOn ruleset
         assertEq(_latestRuleset.id, 0); // second queued ruleset
     }
