@@ -30,7 +30,8 @@ contract JBPermissions is IJBPermissions {
     /// @dev An account can give an operator permissions that only pertain to a specific project ID.
     /// @dev There is no project with a ID of 0 – this ID is a wildcard which gives an operator permissions pertaining
     /// to *all* project IDs on an account's behalf. Use this with caution.
-    /// @dev Permissions are stored in a packed `uint256`. Each of the first 255 bits can represent the on/off state of a permission. Applications can specify the significance of each permission ID.
+    /// @dev Permissions are stored in a packed `uint256`. Each of the first 255 bits can represent the on/off state of
+    /// a permission. Applications can specify the significance of each permission ID.
     /// @custom:param operator The address of the operator.
     /// @custom:param account The address of the account being operated on behalf of.
     /// @custom:param projectId The project ID the permissions are scoped to. An ID of 0 grants permissions across all

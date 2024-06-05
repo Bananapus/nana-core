@@ -74,7 +74,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     //*********************************************************************//
 
     /// @notice This terminal's fee (as a fraction out of `JBConstants.MAX_FEE`).
-    /// @dev Fees are charged on payouts to addresses and surplus allowance usage, as well as redemptions while the redemption rate is less than 100%.
+    /// @dev Fees are charged on payouts to addresses and surplus allowance usage, as well as redemptions while the
+    /// redemption rate is less than 100%.
     uint256 public constant override FEE = 25; // 2.5%
 
     //*********************************************************************//

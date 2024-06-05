@@ -2,7 +2,8 @@
 pragma solidity ^0.8.0;
 
 /// @custom:member amount The amount of the currency.
-/// @custom:member currency The currency. By convention, this is `uint32(uint160(tokenAddress))` for tokens, or a constant ID from e.g. `JBCurrencyIds` for other currencies.
+/// @custom:member currency The currency. By convention, this is `uint32(uint160(tokenAddress))` for tokens, or a
+/// constant ID from e.g. `JBCurrencyIds` for other currencies.
 struct JBCurrencyAmount {
     uint256 amount;
     uint256 currency;

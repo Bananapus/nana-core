@@ -347,17 +347,24 @@ contract JBRulesets is JBControlled, IJBRulesets {
     /// @dev Only a project's current controller can queue its rulesets.
     /// @param projectId The ID of the project to queue the ruleset for.
     /// @param duration The number of seconds the ruleset lasts for, after which a new ruleset starts.
-    /// - A `duration` of 0 means this ruleset will remain active until the project owner queues a new ruleset. That new ruleset will start immediately.
-    /// - A ruleset with a non-zero `duration` applies until the duration ends – any newly queued rulesets will be *queued* to take effect afterwards.
-    /// - If a duration ends and no new rulesets are queued, the ruleset rolls over to a new ruleset with the same rules (except for a new `start` timestamp and a decayed `weight`).
-    /// @param weight A fixed point number with 18 decimals that contracts can use to base arbitrary calculations on. Payment terminals generally use this to determine how many tokens should be minted when the project is paid.
+    /// - A `duration` of 0 means this ruleset will remain active until the project owner queues a new ruleset. That new
+    /// ruleset will start immediately.
+    /// - A ruleset with a non-zero `duration` applies until the duration ends – any newly queued rulesets will be
+    /// *queued* to take effect afterwards.
+    /// - If a duration ends and no new rulesets are queued, the ruleset rolls over to a new ruleset with the same rules
+    /// (except for a new `start` timestamp and a decayed `weight`).
+    /// @param weight A fixed point number with 18 decimals that contracts can use to base arbitrary calculations on.
+    /// Payment terminals generally use this to determine how many tokens should be minted when the project is paid.
     /// @param decayRate A fraction (out of `JBConstants.MAX_DECAY_RATE`) to reduce the next ruleset's `weight` by.
     /// - If a ruleset specifies a non-zero `weight`, the `decayRate` does not apply.
     /// - If the `decayRate` is 0, the `weight` stays the same.
-    /// - If the `decayRate` is 10% of `JBConstants.MAX_DECAY_RATE`, next ruleset's `weight` will be 90% of the current one.
-    /// @param approvalHook A contract which dictates whether a proposed ruleset should be accepted or rejected. It can be used to constrain a project owner's ability to change ruleset parameters over time.
+    /// - If the `decayRate` is 10% of `JBConstants.MAX_DECAY_RATE`, next ruleset's `weight` will be 90% of the current
+    /// one.
+    /// @param approvalHook A contract which dictates whether a proposed ruleset should be accepted or rejected. It can
+    /// be used to constrain a project owner's ability to change ruleset parameters over time.
     /// @param metadata Arbitrary extra data to associate with this ruleset. This metadata is not used by `JBRulesets`.
-    /// @param mustStartAtOrAfter The earliest time the ruleset can start. The ruleset cannot start before this timestamp.
+    /// @param mustStartAtOrAfter The earliest time the ruleset can start. The ruleset cannot start before this
+    /// timestamp.
     /// @return The struct of the new ruleset.
     function queueFor(
         uint256 projectId,
