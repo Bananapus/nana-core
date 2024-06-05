@@ -83,7 +83,7 @@ contract TestRulesetViews_Local is JBControllerSetup {
 
         // send
         (JBRuleset memory ruleset, JBRulesetMetadata memory metadata, JBApprovalStatus approvalStatus) =
-            _controller.latestQueuedOf(1);
+            _controller.latestQueuedRulesetOf(1);
 
         // check: return makes sense
         assertEq(data.duration, ruleset.duration);
