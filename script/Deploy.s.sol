@@ -35,14 +35,11 @@ contract Deploy is Script, Sphinx {
 
     /// @notice The nonce that gets used across all chains to sync deployment addresses and allow for new deployments of
     /// the same bytecode.
-    uint256 private CORE_DEPLOYMENT_NONCE = 1;
+    uint256 private CORE_DEPLOYMENT_NONCE = 2;
 
     function configureSphinx() public override {
         // TODO: Update to contain JB Emergency Developers
-        sphinxConfig.owners = [0x26416423d530b1931A2a7a6b7D435Fac65eED27d];
-        sphinxConfig.orgId = "cltepuu9u0003j58rjtbd0hvu";
         sphinxConfig.projectName = "nana-core";
-        sphinxConfig.threshold = 1;
         sphinxConfig.mainnets = ["ethereum", "optimism", "base", "arbitrum"];
         sphinxConfig.testnets = ["ethereum_sepolia", "optimism_sepolia", "base_sepolia", "arbitrum_sepolia"];
     }
