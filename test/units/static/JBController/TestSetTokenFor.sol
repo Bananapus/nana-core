@@ -37,7 +37,7 @@ contract TestSetTokenFor_Local is JBControllerSetup {
             allowSetCustomToken: true, // Allows authorized to set a token or mint tokens
             allowTerminalMigration: false,
             allowSetTerminals: false,
-            allowControllerMigration: false,
+            ownerMustSendPayouts: false,
             allowSetController: false,
             holdFees: false,
             useTotalSurplusForRedemptions: true,
@@ -92,7 +92,7 @@ contract TestSetTokenFor_Local is JBControllerSetup {
             allowSetCustomToken: true, // Allows authorized to set a token or mint tokens
             allowTerminalMigration: false,
             allowSetTerminals: false,
-            allowControllerMigration: false,
+            ownerMustSendPayouts: false,
             allowSetController: false,
             holdFees: false,
             useTotalSurplusForRedemptions: true,
@@ -159,7 +159,7 @@ contract TestSetTokenFor_Local is JBControllerSetup {
             allowSetCustomToken: false, // Allows authorized to set a token or mint tokens
             allowTerminalMigration: false,
             allowSetTerminals: false,
-            allowControllerMigration: false,
+            ownerMustSendPayouts: false,
             allowSetController: false,
             holdFees: false,
             useTotalSurplusForRedemptions: true,

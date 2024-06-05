@@ -88,7 +88,7 @@ contract TestMetaTx_Local is TestBaseWorkflow {
             allowSetCustomToken: true,
             allowTerminalMigration: false,
             allowSetTerminals: false,
-            allowControllerMigration: false,
+            ownerMustSendPayouts: false,
             allowSetController: false,
             holdFees: false,
             useTotalSurplusForRedemptions: false,

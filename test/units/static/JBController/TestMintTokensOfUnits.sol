@@ -32,7 +32,7 @@ contract TestMintTokensOfUnits_Local is JBControllerSetup {
             allowSetCustomToken: false,
             allowTerminalMigration: false,
             allowSetTerminals: false,
-            allowControllerMigration: false,
+            ownerMustSendPayouts: false,
             allowSetController: false,
             holdFees: false,
             useTotalSurplusForRedemptions: true,

@@ -30,7 +30,7 @@ contract TestGetRulesetOf_Local is JBRulesetsSetup {
             allowSetCustomToken: false,
             allowTerminalMigration: false,
             allowSetTerminals: false,
-            allowControllerMigration: false,
+            ownerMustSendPayouts: false,
             allowSetController: false,
             holdFees: false,
             useTotalSurplusForRedemptions: false,

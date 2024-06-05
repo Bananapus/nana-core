@@ -35,7 +35,7 @@ contract TestRecordPayoutFor_Local is JBTerminalStoreSetup {
             allowSetCustomToken: false,
             allowTerminalMigration: false,
             allowSetTerminals: false,
-            allowControllerMigration: false,
+            ownerMustSendPayouts: false,
             allowSetController: false,
             holdFees: false,
             useTotalSurplusForRedemptions: false,
