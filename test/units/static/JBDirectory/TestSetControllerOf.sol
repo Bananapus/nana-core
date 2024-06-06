@@ -113,4 +113,41 @@ contract TestSetControllerOf_Local is JBDirectorySetup {
 
         _directory.setControllerOf(1, IERC165(address(this)));
     }
+
+    function test_GivenCurrentControllerIsSetAndMigrating() external givenProjectExists {
+        address _bumController = makeAddr("bum");
+
+        stdstore.target(address(_directory)).sig("controllerOf(uint256)").with_key(1).depth(0).checked_write(
+            _bumController
+        );
+
+        // mock ownerOf call
+        bytes memory _ownerOfCall = abi.encodeCall(IERC721.ownerOf, (1));
+        bytes memory _ownerData = abi.encode(address(this));
+
+        mockExpect(address(projects), _ownerOfCall, _ownerData);
+
+        // Mock call to bum controller setControllerAllowed
+        mockExpect(
+            _bumController, abi.encodeCall(IJBDirectoryAccessControl.setControllerAllowed, (1)), abi.encode(true)
+        );
+
+        // Mock call to it's interface support
+        mockExpect(
+            _bumController,
+            abi.encodeCall(IERC165.supportsInterface, (type(IJBDirectoryAccessControl).interfaceId)),
+            abi.encode(true)
+        );
+        mockExpect(
+            _bumController,
+            abi.encodeCall(IERC165.supportsInterface, (type(IJBMigratable).interfaceId)),
+            abi.encode(true)
+        );
+
+        // it should set controllerOf and emit SetController
+        vm.expectEmit();
+        emit IJBDirectory.SetController(1, IERC165(address(this)), address(this));
+
+        _directory.setControllerOf(1, IERC165(address(this)));
+    }
 }

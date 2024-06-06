@@ -31,8 +31,8 @@ contract TestMigrateController_Local is JBControllerSetup {
             allowSetCustomToken: false,
             allowTerminalMigration: false,
             allowSetTerminals: false,
-            allowControllerMigration: true,
-            allowSetController: false,
+            ownerMustSendPayouts: false,
+            allowSetController: true,
             holdFees: false,
             useTotalSurplusForRedemptions: true,
             useDataHookForPay: false,
@@ -75,8 +75,8 @@ contract TestMigrateController_Local is JBControllerSetup {
             allowSetCustomToken: false,
             allowTerminalMigration: false,
             allowSetTerminals: false,
-            allowControllerMigration: false,
-            allowSetController: false,
+            ownerMustSendPayouts: false,
+            allowSetController: true,
             holdFees: false,
             useTotalSurplusForRedemptions: true,
             useDataHookForPay: false,
@@ -108,48 +108,42 @@ contract TestMigrateController_Local is JBControllerSetup {
         _;
     }
 
-    function test_Revert_When_CallerDoesNotHave_SET_CONTROLLER_Permission() external {
+    function test_Revert_When_Caller_Is_Not_Directory() external {
         // it should revert
-        // mock ownerOf call
-        bytes memory _ownerOfCall = abi.encodeCall(IERC721.ownerOf, (1));
-        bytes memory _ownerData = abi.encode(address(1));
-
-        mockExpect(address(projects), _ownerOfCall, _ownerData);
-
-        // mock first permissions call
-        bytes memory _permissionsCall = abi.encodeCall(
-            IJBPermissions.hasPermission, (address(this), address(1), 1, JBPermissionIds.SET_CONTROLLER, true, true)
-        );
-        bytes memory _permissionsReturned = abi.encode(false);
-
-        mockExpect(address(permissions), _permissionsCall, _permissionsReturned);
 
         vm.expectRevert(abi.encodeWithSignature("UNAUTHORIZED()"));
-        _controller.migrateController(1, IJBMigratable(address(this)));
+        IJBMigratable(address(_controller)).migrate(1, IJBMigratable(address(this)));
     }
 
-    function test_Revert_Given_MigrationIsNotAllowedByRuleset()
+    // Ruleset check happens in JBDirectory now and examples can be found in those units.
+    /* function test_Revert_Given_MigrationIsNotAllowedByRuleset()
         external
-        whenCallerHasPermission
-        migrationIsNotAllowedByRuleset
-    {
+    {   
         // it should revert
         vm.expectRevert(abi.encodeWithSignature("CONTROLLER_MIGRATION_NOT_ALLOWED()"));
-        _controller.migrateController(1, IJBMigratable(address(this)));
-    }
 
-    function test_GivenReservedTokenBalanceIsPending() external whenCallerHasPermission migrationIsAllowedByRuleset {
+        vm.prank(address(directory));
+        IJBMigratable(address(_controller)).migrate(1, IJBMigratable(address(this)));
+    } */
+
+    function test_GivenReservedTokenBalanceIsPending() external migrationIsAllowedByRuleset whenCallerHasPermission {
         // it should send reserved tokens to splits
         // set storage since we can't mock internal calls
-        stdstore.target(address(_controller)).sig("pendingReservedTokenBalanceOf(uint256)").with_key(uint256(1))
-            .checked_write(uint256(100));
+        stdstore.target(address(IJBMigratable(address(_controller)))).sig("pendingReservedTokenBalanceOf(uint256)")
+            .with_key(uint256(1)).checked_write(uint256(100));
 
         // receive migration call mock
-        bytes memory _encodedCall =
-            abi.encodeCall(IJBMigratable.receiveMigrationFrom, (IERC165(address(_controller)), 1));
+        bytes memory _encodedCall = abi.encodeCall(IJBMigratable.receiveMigrationFrom, (IERC165(_controller), 1));
         bytes memory _willReturn = "";
 
         mockExpect(address(this), _encodedCall, _willReturn);
+
+        // mock supports interface call
+        mockExpect(
+            address(this),
+            abi.encodeCall(IERC165.supportsInterface, (type(IJBMigratable).interfaceId)),
+            abi.encode(true)
+        );
 
         // mock splitsOf call
         JBSplit[] memory splitsArray = new JBSplit[](1);
@@ -179,12 +173,13 @@ contract TestMigrateController_Local is JBControllerSetup {
 
         // event as expected
         vm.expectEmit();
-        emit IJBController.SendReservedTokensToSplit(1, block.timestamp, 1, splitsArray[0], 50, address(this));
+        emit IJBController.SendReservedTokensToSplit(1, block.timestamp, 1, splitsArray[0], 50, address(directory));
 
-        _controller.migrateController(1, IJBMigratable(address(this)));
+        vm.prank(address(directory));
+        IJBMigratable(address(_controller)).migrate(1, IJBMigratable(address(this)));
     }
 
-    function test_GivenNoReservedTokenBalanceIsPending() external whenCallerHasPermission migrationIsAllowedByRuleset {
+    function test_GivenNoReservedTokenBalanceIsPending() external {
         // it should prepare new controller for migration
         // it should emit MigrateController event
 
@@ -195,10 +190,18 @@ contract TestMigrateController_Local is JBControllerSetup {
 
         mockExpect(address(this), _encodedCall, _willReturn);
 
+        // mock supports interface call
+        mockExpect(
+            address(this),
+            abi.encodeCall(IERC165.supportsInterface, (type(IJBMigratable).interfaceId)),
+            abi.encode(true)
+        );
+
         // event as expected
         vm.expectEmit();
-        emit IJBController.MigrateController(1, IJBMigratable(address(this)), address(this));
+        emit IJBMigratable.Migrate(1, IJBMigratable(address(this)), address(directory));
 
-        _controller.migrateController(1, IJBMigratable(address(this)));
+        vm.prank(address(directory));
+        IJBMigratable(address(_controller)).migrate(1, IJBMigratable(address(this)));
     }
 }

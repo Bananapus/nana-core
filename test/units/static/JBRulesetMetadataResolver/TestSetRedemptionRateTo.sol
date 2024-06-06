@@ -32,7 +32,7 @@ contract TestSetRedemptionRateTo_Local is JBTest {
             allowSetCustomToken: true,
             allowTerminalMigration: true,
             allowSetTerminals: true,
-            allowControllerMigration: true,
+            ownerMustSendPayouts: true,
             allowSetController: true,
             holdFees: true,
             useTotalSurplusForRedemptions: true,

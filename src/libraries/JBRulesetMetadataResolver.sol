@@ -43,11 +43,11 @@ library JBRulesetMetadataResolver {
         return ((ruleset.metadata >> 73) & 1) == 1;
     }
 
-    function allowControllerMigration(JBRuleset memory ruleset) internal pure returns (bool) {
+    function allowSetController(JBRuleset memory ruleset) internal pure returns (bool) {
         return ((ruleset.metadata >> 74) & 1) == 1;
     }
 
-    function allowSetController(JBRuleset memory ruleset) internal pure returns (bool) {
+    function ownerMustSendPayouts(JBRuleset memory ruleset) internal pure returns (bool) {
         return ((ruleset.metadata >> 75) & 1) == 1;
     }
 
@@ -101,10 +101,10 @@ library JBRulesetMetadataResolver {
         if (rulesetMetadata.allowTerminalMigration) packed |= 1 << 72;
         // allow set terminals in bit 73.
         if (rulesetMetadata.allowSetTerminals) packed |= 1 << 73;
-        // allow controller migration in bit 74.
-        if (rulesetMetadata.allowControllerMigration) packed |= 1 << 74;
-        // allow set controller in bit 75.
-        if (rulesetMetadata.allowSetController) packed |= 1 << 75;
+        // allow set controller in bit 74.
+        if (rulesetMetadata.allowSetController) packed |= 1 << 74;
+        // allow controller migration in bit 75.
+        if (rulesetMetadata.ownerMustSendPayouts) packed |= 1 << 75;
         // hold fees in bit 76.
         if (rulesetMetadata.holdFees) packed |= 1 << 76;
         // useTotalSurplusForRedemptions in bit 77.
@@ -133,8 +133,8 @@ library JBRulesetMetadataResolver {
             allowSetCustomToken(ruleset),
             allowTerminalMigration(ruleset),
             allowSetTerminals(ruleset),
-            allowControllerMigration(ruleset),
             allowSetController(ruleset),
+            ownerMustSendPayouts(ruleset),
             holdFees(ruleset),
             useTotalSurplusForRedemptions(ruleset),
             useDataHookForPay(ruleset),

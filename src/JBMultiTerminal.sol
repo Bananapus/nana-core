@@ -1153,6 +1153,16 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             currency: currency
         });
 
+        // If the ruleset requires privileged payout distribution, ensure the caller has the permission.
+        if (ruleset.ownerMustSendPayouts()) {
+            // Enforce permissions.
+            _requirePermissionFrom({
+                account: PROJECTS.ownerOf(projectId),
+                projectId: projectId,
+                permissionId: JBPermissionIds.SEND_PAYOUTS
+            });
+        }
+
         // Get a reference to the project's owner.
         // The owner will receive tokens minted by paying the platform fee and receive any leftover funds not sent to
         // payout splits.

@@ -42,7 +42,7 @@ contract TestRecordTerminalMigration_Local is JBTerminalStoreSetup {
             allowSetCustomToken: false,
             allowTerminalMigration: true,
             allowSetTerminals: false,
-            allowControllerMigration: false,
+            ownerMustSendPayouts: false,
             allowSetController: false,
             holdFees: false,
             useTotalSurplusForRedemptions: false,
@@ -93,7 +93,7 @@ contract TestRecordTerminalMigration_Local is JBTerminalStoreSetup {
             // not allowed
             allowTerminalMigration: false,
             allowSetTerminals: false,
-            allowControllerMigration: false,
+            ownerMustSendPayouts: false,
             allowSetController: false,
             holdFees: false,
             useTotalSurplusForRedemptions: false,

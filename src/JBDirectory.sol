@@ -8,6 +8,7 @@ import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import {JBPermissioned} from "./abstract/JBPermissioned.sol";
 import {IJBDirectory} from "./interfaces/IJBDirectory.sol";
 import {IJBDirectoryAccessControl} from "./interfaces/IJBDirectoryAccessControl.sol";
+import {IJBMigratable} from "./interfaces/IJBMigratable.sol";
 import {IJBPermissions} from "./interfaces/IJBPermissions.sol";
 import {IJBTerminal} from "./interfaces/IJBTerminal.sol";
 import {IJBProjects} from "./interfaces/IJBProjects.sol";
@@ -182,6 +183,14 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
         // If setting the controller is not allowed, revert.
         if (!allowSetController) {
             revert SET_CONTROLLER_NOT_ALLOWED();
+        }
+
+        // Migrate if needed.
+        if (
+            address(currentController) != address(0)
+                && currentController.supportsInterface(type(IJBMigratable).interfaceId)
+        ) {
+            IJBMigratable(address(currentController)).migrate(projectId, controller);
         }
 
         // Set the new controller.
