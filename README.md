@@ -310,6 +310,8 @@ The sum of a ruleset's payout limits is the maximum amount of funds a project ca
 
 Splits are stored slightly differently from the project's other rules, and can be changed by the project's owner at any time (independently of the ruleset) with [`JBController.setSplitGroupsOf(…)`](https://github.com/Bananapus/nana-core/blob/main/src/JBController.sol#L593) unless they are locked – splits have an optional `lockedUntil` timestamp which prevents them from being changed until that time has passed.
 
+By convention, a split group's `groupId` for a given `tokenAddress` is `uint256(uint160(tokenAddress))` – the only exception to this is the reserved token split, [which has a `groupId` of 1](https://github.com/Bananapus/nana-core/blob/main/src/libraries/JBSplitGroupIds.sol).
+
 Payout limits reset at the start of each ruleset – projects can use rulesets as a regular cadence for recurring payouts. If payouts are not sent out during a ruleset, the funds stay in the project's terminals.
 
 Funds in excess of the payout limits are "surplus funds". Surplus funds stay in the terminals, serving as a runway for payouts in future rulesets. If the project has redemptions enabled, token holders can redeem their tokens to reclaim some of the surplus funds.
@@ -483,69 +485,110 @@ His `rulesetConfigurations` array only contains a single ruleset, and looks like
 ```js
 [
   {
-    "mustStartAtOrAfter": 1, // Jeff's ruleset takes effect immediately.
-    "duration": 604_800, // The ruleset lasts for a week (which is 604,800 seconds).
-    "weight": 100_000_000_000_000_000_000, // The ruleset mints 100 tokens (with 18 decimals) per unit of payment.
-    "decayRate": 100_000_000, // The weight decays by 10% each cycle. Calculated out of `JBConstants.MAX_DECAY_RATE` (1e9).
-    "approvalHook": "0x123…", // This is the address of the `JBDeadline` approval hook with a 24 hour duration (86,400 seconds).
-    "metadata": {
-      "reservedRate": 3_000, // Jeff reserves 30% of the tokens minted while this ruleset is active. Calculated out of `JBConstants.MAX_RESERVED_RATE` (1e4).
-      "redemptionRate": 10_000, // Jeff allows 1:1 redemptions for the tokens minted while this ruleset is active. Calculated out of `JBConstants.MAX_REDEMPTION_RATE` (1e4).
-      "baseCurrency": "0x000000000000000000000000000000000000EEEe", // Jeff uses `JBConstants.NATIVE_TOKEN` (ETH) as the base currency.
-      "pausePay": false, // Jeff allows payments to the project.
-      "pauseCreditTransfers": false, // Jeff allows payers to transfer their credits.
-      "allowOwnerMinting": false, // Jeff doesn't allow the Bingle multisig to mint credits/tokens on demand.
-      /* Jeff doesn't allow the Bingle multisig to migrate or set terminals or controllers during the ruleset. */
-      "allowTerminalMigration": false,
-      "allowSetTerminals": false,
-      "allowControllerMigration": false,
-      "allowSetController": false,
-      "holdFees": false, // Jeff pays fees when they're incurred.
-      "useTotalSurplusForRedemptions": true, // Bingle credit/token holders can redeem from the project's total surplus across all terminals, and not just the local terminal surplus.
-      /* The Bingle project doesn't use a data hook for payments or redemptions. */
-      "useDataHookForPay": false,
-      "useDataHookForRedeem": false,
-      "dataHook": "0x0000000000000000000000000000000000000000",
-      "metadata": 0 // This ruleset doesn't need any metadata.
+    // Jeff's ruleset takes effect immediately.
+    mustStartAtOrAfter: 1,
+    // The ruleset lasts for a week (which is 604,800 seconds).
+    duration: 604_800,
+    // The ruleset mints 100 tokens (with 18 decimals) per unit of payment.
+    weight: 100_000_000_000_000_000_000,
+    // The weight decays by 10% each cycle. Calculated out of `JBConstants.MAX_DECAY_RATE` (1e9).
+    decayRate: 100_000_000,
+    // This is the address of the `JBDeadline` approval hook with a 24 hour duration (86,400 seconds).
+    approvalHook: "0x123…",
+    metadata: {
+      // Jeff reserves 30% of the tokens minted while this ruleset is active.
+      // Calculated out of `JBConstants.MAX_RESERVED_RATE` (1e4).
+      reservedRate: 3_000,
+      // Jeff allows 1:1 redemptions for the tokens minted while this ruleset is active.
+      // Calculated out of `JBConstants.MAX_REDEMPTION_RATE` (1e4).
+      redemptionRate: 10_000,
+      // Jeff uses `JBConstants.NATIVE_TOKEN` (ETH) as the base currency.
+      // By convention, token currencies are represented by `uint32(uint160(tokenAddress))`.
+      baseCurrency: uint32(
+        uint160("0x000000000000000000000000000000000000EEEe")
+      ),
+      // Jeff allows payments to the project.
+      pausePay: false,
+      // Jeff allows payers to transfer their credits.
+      pauseCreditTransfers: false,
+      // Jeff doesn't allow the Bingle multisig to mint credits/tokens on demand.
+      allowOwnerMinting: false,
+      // Jeff doesn't allow the Bingle multisig to migrate or set terminals or controllers during the ruleset.
+      allowTerminalMigration: false,
+      allowSetTerminals: false,
+      allowControllerMigration: false,
+      allowSetController: false,
+      // Jeff pays fees when they're incurred.
+      holdFees: false,
+      // Bingle credit/token holders can redeem from the project's total surplus across all terminals,
+      // and not just the local terminal surplus.
+      useTotalSurplusForRedemptions: true,
+      // The Bingle project doesn't use a data hook for payments or redemptions.
+      useDataHookForPay: false,
+      useDataHookForRedeem: false,
+      dataHook: "0x0000000000000000000000000000000000000000",
+      // This ruleset doesn't need any metadata.
+      metadata: 0,
     },
-    "splitGroups": [
+    splitGroups: [
       {
-        1, // This splitGroupId comes from `JBSplitGroupIds.RESERVED_TOKENS`. This group is for reserved tokens.
-        [
+        // This ID comes from `JBSplitGroupIds.RESERVED_TOKENS`. This group is for reserved tokens.
+        // By convention, *payout* split groups use `uint256(uint160(tokenAddress))` as a `groupId`.
+        groupId: 1,
+        splits: [
           {
-            "preferAddToBalance": false, // Typically used for payouts to projects. If true, it uses `addToBalanceOf(…)`. If false, it will `pay(…)` the project.
-            "percent": 250_000_000, // 25% of `JBConstants.SPLITS_TOTAL_PERCENT` (1e9).
-            "projectId": 5, // This split is paid to project #5, which helps Bingle with marketing.
-            "beneficiary": "0x456…", // Any tokens minted by this split's payment go to Jeff's friend (with wallet 0x456…).
-            "lockedUntil": 0, // This split can be changed by the Bingle multisig at any time.
-            "hook": "0x0000000000000000000000000000000000000000" // This split doesn't use a split hook.
+            // Typically used for payouts to projects. If true, it uses `addToBalanceOf(…)`.
+            // If false, it will `pay(…)` the project.
+            preferAddToBalance: false,
+            // 25% of `JBConstants.SPLITS_TOTAL_PERCENT` (1e9).
+            percent: 250_000_000,
+            // This split is paid to project #5, which helps Bingle with marketing.
+            projectId: 5,
+            // Any tokens minted by this split's payment go to Jeff's friend (with wallet 0x456…).
+            beneficiary: "0x456…",
+            // This split can be changed by the Bingle multisig at any time.
+            lockedUntil: 0,
+            // This split doesn't use a split hook.
+            hook: "0x0000000000000000000000000000000000000000",
           },
           {
-            "preferAddToBalance": false,
-            "percent": 300_000_000, // 30% of `JBConstants.SPLITS_TOTAL_PERCENT` (1e9).
-            "projectId": 0, // This split is paid directly to the `beneficiary` address, not a project.
-            "beneficiary": "0x456…", // This is Jeff's friend, who helped him set up the project.
-            "lockedUntil": 0, // This split can be changed by the Bingle multisig at any time.
-            "hook": "0x0000000000000000000000000000000000000000" // This split doesn't use a split hook.
-          }
-        ]
-      }
+            preferAddToBalance: false,
+            // 30% of `JBConstants.SPLITS_TOTAL_PERCENT` (1e9).
+            percent: 300_000_000,
+            // This split is paid directly to the `beneficiary` address, not a project.
+            projectId: 0,
+            // This is Jeff's friend, who helped him set up the project.
+            beneficiary: "0x456…",
+            // This split can be changed by the Bingle multisig at any time.
+            lockedUntil: 0,
+            // This split doesn't use a split hook.
+            hook: "0x0000000000000000000000000000000000000000",
+          },
+        ],
+      },
     ],
-    "fundAccessLimitGroups": [
-    	{
-    	  "terminal": "0x789…", // This is the address of `JBMultiTerminal`, which the Bingle project uses to manage payouts.
-    	  "token": "0x000000000000000000000000000000000000EEEe", // These limits determine how much ETH (`JBConstants.NATIVE_TOKEN`) can be paid out from the terminal.
-    	  "payoutLimits": [
-            {
-              "amount": 1_000_000_000_000_000_000, // 1 (with 18 decimals).
-	      "currency": 0 // ETH (see `JBCurrencyIds`).
-            },
-	  ],
-    	  "surplusAllowances": [] // Jeff doesn't allow any surplus allowance usage.
-    	}
-    ]
-  }
-]
+    fundAccessLimitGroups: [
+      {
+        // This is the address of `JBMultiTerminal`, which the Bingle project uses to manage payouts.
+        terminal: "0x789…",
+        // These limits determine how much ETH (`JBConstants.NATIVE_TOKEN`) can be paid out from the terminal.
+        token: "0x000000000000000000000000000000000000EEEe",
+        payoutLimits: [
+          {
+            // 1 (with 18 decimals).
+            amount: 1_000_000_000_000_000_000,
+            // Jeff uses `JBConstants.NATIVE_TOKEN` (ETH) as the payout currency.
+            // By convention, token currencies are represented by `uint32(uint160(tokenAddress))`.
+            currency: uint32(
+              uint160("0x000000000000000000000000000000000000EEEe")
+            ),
+          },
+        ],
+        surplusAllowances: [], // Jeff doesn't allow any surplus allowance usage.
+      },
+    ],
+  },
+];
 ```
 
 Some things to note:
@@ -589,7 +632,7 @@ Stacy wants to support Bingle and get $BING tokens, so she decides to pay Jeff's
 | `beneficiary`       | `0x379…` (`stacy.eth`)                       | Stacy wants to receive the tokens minted by her payment.                                                                                               |
 | `minReturnedTokens` | `70000000000000000000`                       | Stacy expects to receive 70 tokens (with 18 decimals).                                                                                                 |
 | `memo`              | `"Bingle rocks."`                            | This memo is included in the event emitted by the payment.                                                                                             |
-| `metadata`          | `0x00`                                       | Metadata can be used to control custom features in hooks or terminals, but there's no need here.                                                       |
+| `metadata`          | `0x`                                         | Metadata can be used to control custom features in hooks or terminals, but there's no need here.                                                       |
 
 Since Stacy is paying with the native token (ETH), she has to include 1 ETH as her transaction's `msg.value`. Stacy expects to receive 70 tokens because:
 

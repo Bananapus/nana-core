@@ -60,8 +60,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     //*********************************************************************//
 
     error ACCOUNTING_CONTEXT_ALREADY_SET();
-    error INADEQUATE_PAYOUT_AMOUNT();
-    error INADEQUATE_RECLAIM_AMOUNT();
+    error UNDER_MIN_TOKENS_PAID_OUT();
+    error UNDER_MIN_TOKENS_RECLAIMED();
     error UNDER_MIN_RETURNED_TOKENS();
     error NO_MSG_VALUE_ALLOWED();
     error OVERFLOW_ALERT();
@@ -74,8 +74,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     //*********************************************************************//
 
     /// @notice This terminal's fee (as a fraction out of `JBConstants.MAX_FEE`).
-    /// @dev Fees are charged on payouts to addresses, surplus allowance usage, and redemptions if the redemption rate
-    /// is less than 100%.
+    /// @dev Fees are charged on payouts to addresses and surplus allowance usage, as well as redemptions while the
+    /// redemption rate is less than 100%.
     uint256 public constant override FEE = 25; // 2.5%
 
     //*********************************************************************//
@@ -372,7 +372,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         reclaimAmount = _redeemTokensOf(holder, projectId, tokenToReclaim, redeemCount, beneficiary, metadata);
 
         // The amount being reclaimed must be at least as much as was expected.
-        if (reclaimAmount < minTokensReclaimed) revert INADEQUATE_RECLAIM_AMOUNT();
+        if (reclaimAmount < minTokensReclaimed) revert UNDER_MIN_TOKENS_RECLAIMED();
     }
 
     /// @notice Sends payouts to a project's current payout split group, according to its ruleset, up to its current
@@ -409,7 +409,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         amountPaidOut = _sendPayoutsOf(projectId, token, amount, currency);
 
         // The amount being paid out must be at least as much as was expected.
-        if (amountPaidOut < minTokensPaidOut) revert INADEQUATE_PAYOUT_AMOUNT();
+        if (amountPaidOut < minTokensPaidOut) revert UNDER_MIN_TOKENS_PAID_OUT();
     }
 
     /// @notice Allows a project to pay out funds from its surplus up to the current surplus allowance.
@@ -453,7 +453,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         amountPaidOut = _useAllowanceOf(projectId, token, amount, currency, beneficiary, memo);
 
         // The amount being withdrawn must be at least as much as was expected.
-        if (amountPaidOut < minTokensPaidOut) revert INADEQUATE_PAYOUT_AMOUNT();
+        if (amountPaidOut < minTokensPaidOut) revert UNDER_MIN_TOKENS_PAID_OUT();
     }
 
     /// @notice Migrate a project's funds and operations to a new terminal that accepts the same token type.

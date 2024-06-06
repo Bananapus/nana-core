@@ -61,7 +61,7 @@ contract TestRulesetViews_Local is JBControllerSetup {
         assertEq(metadata.reservedRate, data.expandMetadata().reservedRate);
     }
 
-    function test_latestQueuedRulesetOf() external {
+    function test_latestQueuedOf() external {
         // setup: return data
         JBRuleset memory data = JBRuleset({
             cycleNumber: 1,
@@ -76,7 +76,7 @@ contract TestRulesetViews_Local is JBControllerSetup {
         });
 
         // setup: mock call
-        bytes memory _encodedCall = abi.encodeCall(IJBRulesets.latestQueuedRulesetOf, (1));
+        bytes memory _encodedCall = abi.encodeCall(IJBRulesets.latestQueuedOf, (1));
         bytes memory _willReturn = abi.encode(data, JBApprovalStatus.Empty);
 
         mockExpect(address(rulesets), _encodedCall, _willReturn);

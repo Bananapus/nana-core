@@ -100,7 +100,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
     /// @param projectId The ID of the project to get the latest queued ruleset of.
     /// @return ruleset The project's latest queued ruleset's struct.
     /// @return approvalStatus The approval hook's status for the ruleset.
-    function latestQueuedRulesetOf(uint256 projectId)
+    function latestQueuedOf(uint256 projectId)
         external
         view
         override
@@ -345,27 +345,23 @@ contract JBRulesets is JBControlled, IJBRulesets {
 
     /// @notice Queues the upcoming approvable ruleset for the specified project.
     /// @dev Only a project's current controller can queue its rulesets.
-    /// @param projectId The ID of the project the ruleset is being queued for.
-    /// @param duration The number of seconds the ruleset lasts for, after which a new ruleset will start. A
-    /// duration of 0 means that the ruleset will stay active until the project owner explicitly issues a
-    /// reconfiguration,
-    /// at which point a new ruleset will immediately start with the updated properties. If the duration is greater than
-    /// 0,
-    /// a project owner cannot make changes to a ruleset's parameters while it is active – any proposed changes will
-    /// apply
-    /// to the subsequent ruleset. If no changes are proposed, a ruleset rolls over to another one with the same
-    /// properties
-    /// but new `start` timestamp and a decayed `weight`.
-    /// @param weight A fixed point number with 18 decimals that contracts can use to base arbitrary calculations
-    /// on. For example, payment terminals can use this to determine how many tokens should be minted when a payment is
-    /// received.
-    /// @param decayRate A percent by how much the `weight` of the subsequent ruleset should be reduced, if the
-    /// project owner hasn't queued the subsequent ruleset with an explicit `weight`. If it's 0, each ruleset will have
-    /// equal weight. If the number is 90%, the next ruleset will have a 10% smaller weight. This weight is out of
-    /// `JBConstants.MAX_DECAY_RATE`.
-    /// @param approvalHook An address of a contract that says whether a proposed ruleset should be accepted or
-    /// rejected. It
-    /// can be used to create rules around how a project owner can change ruleset parameters over time.
+    /// @param projectId The ID of the project to queue the ruleset for.
+    /// @param duration The number of seconds the ruleset lasts for, after which a new ruleset starts.
+    /// - A `duration` of 0 means this ruleset will remain active until the project owner queues a new ruleset. That new
+    /// ruleset will start immediately.
+    /// - A ruleset with a non-zero `duration` applies until the duration ends – any newly queued rulesets will be
+    /// *queued* to take effect afterwards.
+    /// - If a duration ends and no new rulesets are queued, the ruleset rolls over to a new ruleset with the same rules
+    /// (except for a new `start` timestamp and a decayed `weight`).
+    /// @param weight A fixed point number with 18 decimals that contracts can use to base arbitrary calculations on.
+    /// Payment terminals generally use this to determine how many tokens should be minted when the project is paid.
+    /// @param decayRate A fraction (out of `JBConstants.MAX_DECAY_RATE`) to reduce the next ruleset's `weight` by.
+    /// - If a ruleset specifies a non-zero `weight`, the `decayRate` does not apply.
+    /// - If the `decayRate` is 0, the `weight` stays the same.
+    /// - If the `decayRate` is 10% of `JBConstants.MAX_DECAY_RATE`, next ruleset's `weight` will be 90% of the current
+    /// one.
+    /// @param approvalHook A contract which dictates whether a proposed ruleset should be accepted or rejected. It can
+    /// be used to constrain a project owner's ability to change ruleset parameters over time.
     /// @param metadata Arbitrary extra data to associate with this ruleset. This metadata is not used by `JBRulesets`.
     /// @param mustStartAtOrAfter The earliest time the ruleset can start. The ruleset cannot start before this
     /// timestamp.
@@ -555,7 +551,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
         }
 
         // The time when the duration of the base ruleset's approval hook has finished.
-        // If the provided ruleset has no approval hook, return the current timestamp.
+        // If the provided ruleset has no approval hook, return 0 (no constraint on start time).
         uint256 timestampAfterApprovalHook = baseRuleset.approvalHook == IJBRulesetApprovalHook(address(0))
             ? 0
             : rulesetId + baseRuleset.approvalHook.DURATION();

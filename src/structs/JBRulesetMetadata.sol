@@ -5,7 +5,8 @@ pragma solidity ^0.8.0;
 /// `JBConstants.MAX_RESERVED_RATE`.
 /// @custom:member redemptionRate The redemption rate of the ruleset. This number is a percentage calculated out of
 /// `JBConstants.MAX_REDEMPTION_RATE`.
-/// @custom:member baseCurrency The currency on which to base the ruleset's weight.
+/// @custom:member baseCurrency The currency on which to base the ruleset's weight. By convention, this is
+/// `uint32(uint160(tokenAddress))` for tokens, or a constant ID from e.g. `JBCurrencyIds` for other currencies.
 /// @custom:member pausePay A flag indicating if the pay functionality should be paused during the ruleset.
 /// @custom:member pauseCreditTransfers A flag indicating if the project token transfer functionality should be paused
 /// during the funding cycle.
