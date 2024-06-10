@@ -65,32 +65,36 @@ library CoreDeploymentLib {
         view
         returns (CoreDeployment memory deployment)
     {
-        deployment.permissions = JBPermissions(_getDeploymentAddress(path, "nana-core", network_name, "JBPermissions"));
+        deployment.permissions =
+            JBPermissions(_getDeploymentAddress(path, "nana-core-testnet", network_name, "JBPermissions"));
 
-        deployment.projects = JBProjects(_getDeploymentAddress(path, "nana-core", network_name, "JBProjects"));
+        deployment.projects = JBProjects(_getDeploymentAddress(path, "nana-core-testnet", network_name, "JBProjects"));
 
-        deployment.directory = JBDirectory(_getDeploymentAddress(path, "nana-core", network_name, "JBDirectory"));
+        deployment.directory =
+            JBDirectory(_getDeploymentAddress(path, "nana-core-testnet", network_name, "JBDirectory"));
 
-        deployment.splits = JBSplits(_getDeploymentAddress(path, "nana-core", network_name, "JBSplits"));
+        deployment.splits = JBSplits(_getDeploymentAddress(path, "nana-core-testnet", network_name, "JBSplits"));
 
-        deployment.rulesets = JBRulesets(_getDeploymentAddress(path, "nana-core", network_name, "JBRulesets"));
+        deployment.rulesets = JBRulesets(_getDeploymentAddress(path, "nana-core-testnet", network_name, "JBRulesets"));
 
-        deployment.controller = JBController(_getDeploymentAddress(path, "nana-core", network_name, "JBController"));
+        deployment.controller =
+            JBController(_getDeploymentAddress(path, "nana-core-testnet", network_name, "JBController"));
 
-        deployment.terminal = JBMultiTerminal(_getDeploymentAddress(path, "nana-core", network_name, "JBMultiTerminal"));
+        deployment.terminal =
+            JBMultiTerminal(_getDeploymentAddress(path, "nana-core-testnet", network_name, "JBMultiTerminal"));
 
         deployment.terminalStore =
-            JBTerminalStore(_getDeploymentAddress(path, "nana-core", network_name, "JBTerminalStore"));
+            JBTerminalStore(_getDeploymentAddress(path, "nana-core-testnet", network_name, "JBTerminalStore"));
 
-        deployment.prices = JBPrices(_getDeploymentAddress(path, "nana-core", network_name, "JBPrices"));
+        deployment.prices = JBPrices(_getDeploymentAddress(path, "nana-core-testnet", network_name, "JBPrices"));
 
         deployment.feeless =
-            JBFeelessAddresses(_getDeploymentAddress(path, "nana-core", network_name, "JBFeelessAddresses"));
+            JBFeelessAddresses(_getDeploymentAddress(path, "nana-core-testnet", network_name, "JBFeelessAddresses"));
 
         deployment.fundAccess =
-            JBFundAccessLimits(_getDeploymentAddress(path, "nana-core", network_name, "JBFundAccessLimits"));
+            JBFundAccessLimits(_getDeploymentAddress(path, "nana-core-testnet", network_name, "JBFundAccessLimits"));
 
-        deployment.tokens = JBTokens(_getDeploymentAddress(path, "nana-core", network_name, "JBTokens"));
+        deployment.tokens = JBTokens(_getDeploymentAddress(path, "nana-core-testnet", network_name, "JBTokens"));
     }
 
     /// @notice Get the address of a contract that was deployed by the Deploy script.
