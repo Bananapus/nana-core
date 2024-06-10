@@ -110,6 +110,21 @@
         "threshold": "1",
         "saltNonce": "10"
       }
+    },
+    "nana-core-testnet": {
+      "projectId": "clx9g9hr900000cma2wyj2tg1",
+      "projectName": "nana-core-testnet",
+      "defaultSafe": {
+        "safeName": "nana-core-testnet",
+        "owners": [
+          "0x8063549C1b5163931283e76785cF11e56DFdDC3a",
+          "0x7f75Ee000C7178D68Be4cb50243fC438F967e263",
+          "0x52b76eA545f4779620A666493e885CE20Fda9037",
+          "0xA7B609Ef5367aE505956aE6422B8fCB3Ec0a487E"
+        ],
+        "threshold": "1",
+        "saltNonce": "0"
+      }
     }
   }
 }
