@@ -13,6 +13,7 @@ import {IJBTerminal} from "./interfaces/IJBTerminal.sol";
 import {IJBTerminalStore} from "./interfaces/IJBTerminalStore.sol";
 import {JBConstants} from "./libraries/JBConstants.sol";
 import {JBFixedPointNumber} from "./libraries/JBFixedPointNumber.sol";
+import {JBRedemptionFormula} from "./libraries/JBRedemptionFormula.sol";
 import {JBRulesetMetadataResolver} from "./libraries/JBRulesetMetadataResolver.sol";
 import {JBAccountingContext} from "./structs/JBAccountingContext.sol";
 import {JBBeforePayRecordedContext} from "./structs/JBBeforePayRecordedContext.sol";
@@ -220,7 +221,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
         if (tokenCount > totalSupply) return 0;
 
         // Return the reclaimable surplus amount.
-        return _reclaimableSurplusFrom({
+        return JBRedemptionFormula.reclaimableSurplusFrom({
             surplus: currentSurplus,
             tokenCount: tokenCount,
             totalSupply: totalSupply,
@@ -258,7 +259,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
         JBRuleset memory ruleset = RULESETS.currentOf(projectId);
 
         // Return the reclaimable surplus amount.
-        return _reclaimableSurplusFrom({
+        return JBRedemptionFormula.reclaimableSurplusFrom({
             surplus: surplus,
             tokenCount: tokenCount,
             totalSupply: totalSupply,
@@ -464,6 +465,16 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
         // Can't redeem more tokens that are in the supply.
         if (redeemCount > totalSupply) revert INSUFFICIENT_TOKENS();
 
+        if (currentSurplus != 0) {
+            // Calculate reclaim amount using the current surplus amount.
+            reclaimAmount = JBRedemptionFormula.reclaimableSurplusFrom({
+                surplus: currentSurplus,
+                tokenCount: redeemCount,
+                totalSupply: totalSupply,
+                redemptionRate: redemptionRate
+            });
+        }
+
         // If the ruleset has a data hook which is enabled for redemptions, use it to derive a claim amount and memo.
         if (ruleset.useDataHookForRedeem() && ruleset.dataHook() != address(0)) {
             // Create the redeem context that'll be sent to the data hook.
@@ -480,28 +491,17 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
                     decimals: accountingContext.decimals,
                     currency: accountingContext.currency
                 }),
+                reclaimAmount: reclaimAmount,
                 useTotalSurplus: ruleset.useTotalSurplusForRedemptions(),
                 redemptionRate: ruleset.redemptionRate(),
                 metadata: metadata
             });
 
-            (redemptionRate, redeemCount, totalSupply, hookSpecifications) =
+            (reclaimAmount, hookSpecifications) =
                 IJBRulesetDataHook(ruleset.dataHook()).beforeRedeemRecordedWith(context);
-        } else {
-            redemptionRate = ruleset.redemptionRate();
-        }
+        } 
 
-        if (currentSurplus != 0) {
-            // Calculate reclaim amount using the current surplus amount.
-            reclaimAmount = _reclaimableSurplusFrom({
-                surplus: currentSurplus,
-                tokenCount: redeemCount,
-                totalSupply: totalSupply,
-                redemptionRate: redemptionRate
-            });
-        }
-
-        // Keep a reference to the amount that should be subtracted from the project's balance.
+        // Keep a reference to the amount that should be added to the project's balance.
         uint256 balanceDiff = reclaimAmount;
 
         // Ensure that the specifications have valid amounts.
@@ -734,46 +734,6 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     //*********************************************************************//
     // --------------------- internal helper functions ------------------- //
     //*********************************************************************//
-
-    /// @notice The amount of surplus which is available for reclaiming via redemption given the number of tokens being
-    /// redeemed, the total supply, the current surplus, and the current ruleset.
-    /// @param surplus The surplus amount to make the calculation with.
-    /// @param tokenCount The number of tokens to make the calculation with, as a fixed point number with 18 decimals.
-    /// @param totalSupply The total supply of tokens to make the calculation with, as a fixed point number with 18
-    /// decimals.
-    /// @param redemptionRate The redemption rate with which the reclaimable surplus is being calculated.
-    /// @return The amount of surplus tokens that can be reclaimed.
-    function _reclaimableSurplusFrom(
-        uint256 surplus,
-        uint256 tokenCount,
-        uint256 totalSupply,
-        uint256 redemptionRate
-    )
-        internal
-        pure
-        returns (uint256)
-    {
-        // If the redemption rate is 0, nothing is claimable.
-        if (redemptionRate == 0) return 0;
-
-        // If the amount being redeemed is the total supply, return the rest of the surplus.
-        if (tokenCount == totalSupply) return surplus;
-
-        // Get a reference to the linear proportion.
-        uint256 base = mulDiv(surplus, tokenCount, totalSupply);
-
-        // These conditions are all part of the same curve. Edge conditions are separated because fewer operation are
-        // necessary.
-        if (redemptionRate == JBConstants.MAX_REDEMPTION_RATE) {
-            return base;
-        }
-
-        return mulDiv(
-            base,
-            redemptionRate + mulDiv(tokenCount, JBConstants.MAX_REDEMPTION_RATE - redemptionRate, totalSupply),
-            JBConstants.MAX_REDEMPTION_RATE
-        );
-    }
 
     /// @notice Gets a project's surplus amount in a terminal as measured by a given ruleset, across multiple accounting
     /// contexts.
