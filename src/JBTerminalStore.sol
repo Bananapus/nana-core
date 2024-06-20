@@ -497,9 +497,11 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
                 metadata: metadata
             });
 
-            (reclaimAmount, hookSpecifications) =
+            (redemptionRate, reclaimAmount, hookSpecifications) =
                 IJBRulesetDataHook(ruleset.dataHook()).beforeRedeemRecordedWith(context);
-        } 
+        } else {
+            redemptionRate = ruleset.redemptionRate();
+        }
 
         // Keep a reference to the amount that should be added to the project's balance.
         uint256 balanceDiff = reclaimAmount;
