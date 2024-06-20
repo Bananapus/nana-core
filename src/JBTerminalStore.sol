@@ -465,16 +465,6 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
         // Can't redeem more tokens that are in the supply.
         if (redeemCount > totalSupply) revert INSUFFICIENT_TOKENS();
 
-        if (currentSurplus != 0) {
-            // Calculate reclaim amount using the current surplus amount.
-            reclaimAmount = JBRedemptionFormula.reclaimableSurplusFrom({
-                surplus: currentSurplus,
-                tokenCount: redeemCount,
-                totalSupply: totalSupply,
-                redemptionRate: ruleset.redemptionRate()
-            });
-        }
-
         // If the ruleset has a data hook which is enabled for redemptions, use it to derive a claim amount and memo.
         if (ruleset.useDataHookForRedeem() && ruleset.dataHook() != address(0)) {
             // Create the redeem context that'll be sent to the data hook.
@@ -491,17 +481,27 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
                     decimals: accountingContext.decimals,
                     currency: accountingContext.currency
                 }),
-                reclaimAmount: reclaimAmount,
                 useTotalSurplus: ruleset.useTotalSurplusForRedemptions(),
                 redemptionRate: ruleset.redemptionRate(),
                 metadata: metadata
             });
 
-            (redemptionRate, reclaimAmount, hookSpecifications) =
+            (redemptionRate, redeemCount, totalSupply, hookSpecifications) =
                 IJBRulesetDataHook(ruleset.dataHook()).beforeRedeemRecordedWith(context);
         } else {
             redemptionRate = ruleset.redemptionRate();
         }
+
+        if (currentSurplus != 0) {
+            // Calculate reclaim amount using the current surplus amount.
+            reclaimAmount = JBRedemptionFormula.reclaimableSurplusFrom({
+                surplus: currentSurplus,
+                tokenCount: redeemCount,
+                totalSupply: totalSupply,
+                redemptionRate: redemptionRate
+            });
+        }
+
 
         // Keep a reference to the amount that should be added to the project's balance.
         uint256 balanceDiff = reclaimAmount;
