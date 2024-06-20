@@ -471,7 +471,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
                 surplus: currentSurplus,
                 tokenCount: redeemCount,
                 totalSupply: totalSupply,
-                redemptionRate: redemptionRate
+                redemptionRate: ruleset.redemptionRate()
             });
         }
 
