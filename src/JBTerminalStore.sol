@@ -502,7 +502,6 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
             });
         }
 
-
         // Keep a reference to the amount that should be added to the project's balance.
         uint256 balanceDiff = reclaimAmount;
 
