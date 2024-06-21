@@ -38,7 +38,9 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
             allowTerminalMigration: false,
             allowSetTerminals: false,
             ownerMustSendPayouts: false,
-            allowSetController: false,
+                        allowSetController: false,
+            allowAddAccountingContext: false,
+            allowAddPriceFeed: false,
             holdFees: false,
             useTotalSurplusForRedemptions: false,
             useDataHookForPay: false,
@@ -112,7 +114,7 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
             projectId: _projectId,
             pricingCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             unitCurrency: uint32(uint160(address(usdcToken()))),
-            priceFeed: _priceFeedNativeUsd
+            feed: _priceFeedNativeUsd
         });
 
         vm.stopPrank();
@@ -539,7 +541,7 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
             projectId: _projectId,
             pricingCurrency: _nativeCurrency,
             unitCurrency: uint32(uint160(address(usdcToken()))),
-            priceFeed: _priceFeedNativeUsd
+            feed: _priceFeedNativeUsd
         });
 
         // Make sure the beneficiary has a balance of project tokens.

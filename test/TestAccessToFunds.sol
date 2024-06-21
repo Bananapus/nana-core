@@ -57,7 +57,9 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             allowTerminalMigration: false,
             allowSetTerminals: false,
             ownerMustSendPayouts: false,
-            allowSetController: false,
+                        allowSetController: false,
+            allowAddAccountingContext: false,
+            allowAddPriceFeed: false,
             holdFees: false,
             useTotalSurplusForRedemptions: true,
             useDataHookForPay: false,
@@ -1140,7 +1142,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                 projectId: 0,
                 pricingCurrency: uint32(uint160(address(_usdcToken))),
                 unitCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
-                priceFeed: _priceFeedNativeUsd
+                feed: _priceFeedNativeUsd
             });
 
             vm.stopPrank();
@@ -1747,7 +1749,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                 projectId: 0,
                 pricingCurrency: uint32(uint160(address(_usdcToken))),
                 unitCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
-                priceFeed: _priceFeedNativeUsd
+                feed: _priceFeedNativeUsd
             });
 
             vm.stopPrank();

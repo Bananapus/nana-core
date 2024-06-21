@@ -57,14 +57,13 @@ contract Deploy is Script, Sphinx {
 
     function deploy() public sphinx {
         bytes32 _coreDeploymentSalt = keccak256(abi.encode(CORE_DEPLOYMENT_NONCE));
-        address _safe = safeAddress();
 
         JBPermissions permissions = new JBPermissions{salt: _coreDeploymentSalt}();
-        JBProjects projects = new JBProjects{salt: _coreDeploymentSalt}(_safe, _safe);
-        JBDirectory directory = new JBDirectory{salt: _coreDeploymentSalt}(permissions, projects, _safe);
+        JBProjects projects = new JBProjects{salt: _coreDeploymentSalt}(safeAddress(), safeAddress());
+        JBDirectory directory = new JBDirectory{salt: _coreDeploymentSalt}(permissions, projects, safeAddress());
         JBSplits splits = new JBSplits{salt: _coreDeploymentSalt}(directory);
         JBRulesets rulesets = new JBRulesets{salt: _coreDeploymentSalt}(directory);
-        JBPrices prices = new JBPrices{salt: _coreDeploymentSalt}(permissions, projects, directory, rulesets, _safe);
+        JBPrices prices = new JBPrices{salt: _coreDeploymentSalt}(permissions, projects, directory, rulesets, safeAddress());
 
         directory.setIsAllowedToSetFirstController(
             address(
@@ -83,7 +82,7 @@ contract Deploy is Script, Sphinx {
             true
         );
 
-        JBFeelessAddresses feeless = new JBFeelessAddresses{salt: _coreDeploymentSalt}(_safe);
+        JBFeelessAddresses feeless = new JBFeelessAddresses{salt: _coreDeploymentSalt}(safeAddress());
 
         new JBMultiTerminal{salt: _coreDeploymentSalt}({
             permissions: permissions,
@@ -97,7 +96,7 @@ contract Deploy is Script, Sphinx {
         });
 
         // If the manager is not the deployer we transfer all ownership to it.
-        if (MANAGER != _safe && MANAGER != address(0)) {
+        if (MANAGER != safeAddress() && MANAGER != address(0)) {
             directory.transferOwnership(MANAGER);
             feeless.transferOwnership(MANAGER);
             prices.transferOwnership(MANAGER);
@@ -105,8 +104,8 @@ contract Deploy is Script, Sphinx {
         }
 
         // Transfer ownership to the fee project owner.
-        if (FEE_PROJECT_OWNER != _safe && FEE_PROJECT_OWNER != address(0)) {
-            projects.safeTransferFrom(_safe, FEE_PROJECT_OWNER, 1);
+        if (FEE_PROJECT_OWNER != safeAddress() && FEE_PROJECT_OWNER != address(0)) {
+            projects.safeTransferFrom(safeAddress(), FEE_PROJECT_OWNER, 1);
         }
     }
 }

@@ -34,6 +34,8 @@ contract TestSetRedemptionRateTo_Local is JBTest {
             allowSetTerminals: true,
             ownerMustSendPayouts: true,
             allowSetController: true,
+            allowAddAccountingContext: true,
+            allowAddPriceFeed: true,
             holdFees: true,
             useTotalSurplusForRedemptions: true,
             useDataHookForPay: true,
