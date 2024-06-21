@@ -12,15 +12,10 @@ import {IJBPermissions} from "./interfaces/IJBPermissions.sol";
 import {IJBPriceFeed} from "./interfaces/IJBPriceFeed.sol";
 import {IJBPrices} from "./interfaces/IJBPrices.sol";
 import {IJBProjects} from "./interfaces/IJBProjects.sol";
-import {IJBRulesets} from "./interfaces/IJBRulesets.sol";
-import {JBRulesetMetadataResolver} from "./libraries/JBRulesetMetadataResolver.sol";
-import {JBRuleset} from "./structs/JBRuleset.sol";
 
 /// @notice Manages and normalizes price feeds. Price feeds are contracts which return the "pricing currency" cost of 1
 /// "unit currency".
 contract JBPrices is JBControlled, JBPermissioned, Ownable, IJBPrices {
-    // A library that parses the packed ruleset metadata into a friendlier format.
-    using JBRulesetMetadataResolver for JBRuleset;
 
     //*********************************************************************//
     // --------------------------- custom errors ------------------------- //
@@ -44,9 +39,6 @@ contract JBPrices is JBControlled, JBPermissioned, Ownable, IJBPrices {
 
     /// @notice Mints ERC-721s that represent project ownership and transfers.
     IJBProjects public immutable override PROJECTS;
-
-    /// @notice The contract storing and managing project rulesets.
-    IJBRulesets public immutable override RULESETS;
 
     //*********************************************************************//
     // --------------------- public stored properties -------------------- //
@@ -124,13 +116,11 @@ contract JBPrices is JBControlled, JBPermissioned, Ownable, IJBPrices {
     /// @param permissions A contract storing permissions.
     /// @param projects A contract which mints ERC-721s that represent project ownership and transfers.
     /// @param directory A contract storing directories of terminals and controllers for each project.
-    /// @param rulesets A contract storing and managing project rulesets.
     /// @param owner The address that will own the contract.
     constructor(
         IJBPermissions permissions,
         IJBProjects projects,
         IJBDirectory directory,
-        IJBRulesets rulesets,
         address owner
     )
         JBControlled(directory)
@@ -138,7 +128,6 @@ contract JBPrices is JBControlled, JBPermissioned, Ownable, IJBPrices {
         Ownable(owner)
     {
         PROJECTS = projects;
-        RULESETS = rulesets;
     }
 
     //*********************************************************************//
@@ -168,12 +157,6 @@ contract JBPrices is JBControlled, JBPermissioned, Ownable, IJBPrices {
         if (projectId != DEFAULT_PROJECT_ID || msg.sender != owner()) {
             // Make sure only the project's controller can make this call.
             _onlyControllerOf(projectId);
-
-            // Get current ruleset. make sure it's allowed.
-            JBRuleset memory ruleset = RULESETS.currentOf(projectId);
-
-            // Make sure adding a price feed is allowed.
-            if (!ruleset.allowAddPriceFeed()) revert ADDING_PRICE_FEED_NOT_ALLOWED();
         }
 
         // Make sure the currencies aren't 0.

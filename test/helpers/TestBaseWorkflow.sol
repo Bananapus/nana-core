@@ -210,7 +210,7 @@ contract TestBaseWorkflow is Test, DeployPermit2 {
         _jbErc20 = new JBERC20();
         _jbTokens = new JBTokens(_jbDirectory, _jbErc20);
         _jbRulesets = new JBRulesets(_jbDirectory);
-        _jbPrices = new JBPrices(_jbPermissions, _jbProjects, _jbDirectory, _jbRulesets, _multisig);
+        _jbPrices = new JBPrices(_jbPermissions, _jbProjects, _jbDirectory, _multisig);
         _jbSplits = new JBSplits(_jbDirectory);
         _jbFundAccessLimits = new JBFundAccessLimits(_jbDirectory);
         _jbFeelessAddresses = new JBFeelessAddresses(_multisig);
@@ -242,7 +242,6 @@ contract TestBaseWorkflow is Test, DeployPermit2 {
         _jbMultiTerminal = new JBMultiTerminal(
             _jbPermissions,
             _jbProjects,
-            _jbDirectory,
             _jbSplits,
             _jbTerminalStore,
             _jbFeelessAddresses,
@@ -253,7 +252,6 @@ contract TestBaseWorkflow is Test, DeployPermit2 {
         _jbMultiTerminal2 = new JBMultiTerminal(
             _jbPermissions,
             _jbProjects,
-            _jbDirectory,
             _jbSplits,
             _jbTerminalStore,
             _jbFeelessAddresses,

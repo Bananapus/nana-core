@@ -53,7 +53,8 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     //*********************************************************************//
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
-
+    
+    error ADDING_PRICE_FEED_NOT_ALLOWED();
     error CREDIT_TRANSFERS_PAUSED();
     error RULESETS_ARRAY_EMPTY();
     error INVALID_BASE_CURRENCY();
@@ -740,6 +741,11 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
             projectId: projectId,
             permissionId: JBPermissionIds.ADD_PRICE_FEED
         });
+
+        JBRuleset memory ruleset = RULESETS.currentOf(projectId);
+
+        // Make sure adding a price feed is allowed.
+        if (!ruleset.allowAddPriceFeed()) revert ADDING_PRICE_FEED_NOT_ALLOWED();
 
         PRICES.addPriceFeedFor(projectId, pricingCurrency, unitCurrency, feed);
     }

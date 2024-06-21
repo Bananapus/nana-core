@@ -25,7 +25,7 @@ contract JBMultiTerminalSetup is JBTest {
     function multiTerminalSetup() public virtual {
         // Instantiate the contract being tested
         _terminal = new JBMultiTerminal(
-            permissions, projects, directory, splits, store, feelessAddresses, permit2, trustedForwarder
+            permissions, projects, splits, store, feelessAddresses, permit2, trustedForwarder
         );
 
         _metadataHelper = new MetadataResolverHelper();
