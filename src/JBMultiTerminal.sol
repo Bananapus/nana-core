@@ -25,6 +25,7 @@ import {IJBPermitTerminal} from "./interfaces/IJBPermitTerminal.sol";
 import {IJBPermissions} from "./interfaces/IJBPermissions.sol";
 import {IJBProjects} from "./interfaces/IJBProjects.sol";
 import {IJBRedeemTerminal} from "./interfaces/IJBRedeemTerminal.sol";
+import {IJBRulesets} from "./interfaces/IJBRulesets.sol";
 import {IJBSplitHook} from "./interfaces/IJBSplitHook.sol";
 import {IJBSplits} from "./interfaces/IJBSplits.sol";
 import {IJBTerminal} from "./interfaces/IJBTerminal.sol";
@@ -106,6 +107,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
     /// @notice The contract that stores addresses that shouldn't incur fees when being paid towards or from.
     IJBFeelessAddresses public immutable override FEELESS_ADDRESSES;
+
+    IJBRulesets public immutable override RULESETS;
 
     /// @notice The permit2 utility.
     IPermit2 public immutable override PERMIT2;
@@ -232,7 +235,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
     /// @param permissions A contract storing permissions.
     /// @param projects A contract which mints ERC-721s that represent project ownership and transfers.
-    /// @param directory A contract storing directories of terminals and controllers for each project.
     /// @param splits A contract that stores splits for each project.
     /// @param store A contract that stores the terminal's data.
     /// @param feelessAddresses A contract that stores addresses that shouldn't incur fees when being paid towards or
@@ -242,7 +244,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     constructor(
         IJBPermissions permissions,
         IJBProjects projects,
-        IJBDirectory directory,
         IJBSplits splits,
         IJBTerminalStore store,
         IJBFeelessAddresses feelessAddresses,
@@ -253,8 +254,9 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         ERC2771Context(trustedForwarder)
     {
         PROJECTS = projects;
-        DIRECTORY = directory;
+        DIRECTORY = store.DIRECTORY();
         SPLITS = splits;
+        RULESETS = store.RULESETS();
         STORE = store;
         FEELESS_ADDRESSES = feelessAddresses;
         PERMIT2 = permit2;
@@ -546,7 +548,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         });
 
         // Get a reference to the project's current ruleset.
-        JBRuleset memory ruleset = STORE.RULESETS().currentOf(projectId);
+        JBRuleset memory ruleset = RULESETS.currentOf(projectId);
 
         // If the ruleset requires privileged payout distribution, ensure the caller has the permission.
         if (!ruleset.allowAddAccountingContext()) revert ADDING_ACCOUNTING_CONTEXT_NOT_ALLOWED();

@@ -87,7 +87,6 @@ contract Deploy is Script, Sphinx {
         new JBMultiTerminal{salt: _coreDeploymentSalt}({
             permissions: permissions,
             projects: projects,
-            directory: directory,
             splits: splits,
             store: new JBTerminalStore{salt: _coreDeploymentSalt}({directory: directory, rulesets: rulesets, prices: prices}),
             feelessAddresses: feeless,
