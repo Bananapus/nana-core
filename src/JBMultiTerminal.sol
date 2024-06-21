@@ -551,8 +551,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // Get a reference to the project's current ruleset.
         JBRuleset memory ruleset = RULESETS.currentOf(projectId);
 
-        // If the ruleset requires privileged payout distribution, ensure the caller has the permission.
-        if (!ruleset.allowAddAccountingContext()) revert ADDING_ACCOUNTING_CONTEXT_NOT_ALLOWED();
+        // Make sure that if there's a ruleset, it allows adding accounting contexts.
+        if (ruleset.id != 0 && !ruleset.allowAddAccountingContext()) revert ADDING_ACCOUNTING_CONTEXT_NOT_ALLOWED();
 
         // Keep a reference to the number of accounting contexts to add.
         uint256 numberOfAccountingContexts = tokens.length;
