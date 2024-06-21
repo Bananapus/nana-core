@@ -108,6 +108,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @notice The contract that stores addresses that shouldn't incur fees when being paid towards or from.
     IJBFeelessAddresses public immutable override FEELESS_ADDRESSES;
 
+    /// @notice The contract storing and managing project rulesets.
     IJBRulesets public immutable override RULESETS;
 
     /// @notice The permit2 utility.
@@ -611,12 +612,16 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             _beforeTransferTo({to: address(feeTerminal), token: token, amount: amount});
         }
 
+        // Send the projectId in the metadata.
+        bytes memory metadata = bytes(abi.encodePacked(projectId));
+
         _efficientPay({
             terminal: feeTerminal,
             projectId: _FEE_BENEFICIARY_PROJECT_ID,
             token: token,
             amount: amount,
-            beneficiary: beneficiary
+            beneficiary: beneficiary,
+            metadata: metadata
         });
     }
 
@@ -735,7 +740,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                     projectId: split.projectId,
                     token: token,
                     amount: netPayoutAmount,
-                    beneficiary: beneficiary
+                    beneficiary: beneficiary,
+                    metadata: metadata
                 });
             }
         } else {
@@ -1209,7 +1215,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     {
         // Keep a reference to the ruleset.
         JBRuleset memory ruleset;
-    
+
         // Record the use of the allowance.
         (ruleset, amountPaidOut) = STORE.recordUsedAllowanceOf({
             projectId: projectId,
@@ -1697,17 +1703,25 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
         emit ReturnHeldFees(projectId, token, amount, returnedFees, leftoverAmount, _msgSender());
     }
-    
-    /// @notice Pay a project either by calling this terminal's internal pay function or by calling the recipient terminal's pay function.
+
+    /// @notice Pay a project either by calling this terminal's internal pay function or by calling the recipient
+    /// terminal's pay function.
     /// @param terminal The terminal on which the project is expecting to receive payments.
     /// @param projectId The ID of the project being paid.
     /// @param token The token being paid in.
-    /// @param amount The amount being paid, as a fixed point number with the amount of decimals that the terminal's accounting context specifies.
+    /// @param amount The amount being paid, as a fixed point number with the amount of decimals that the terminal's
+    /// accounting context specifies.
     /// @param beneficiary The address to receive any platform tokens minted.
-    function _efficientPay(IJBTerminal terminal, uint256 projectId, address token, uint256 amount, address beneficiary) internal{
-        // Send the projectId in the metadata.
-        bytes memory metadata = bytes(abi.encodePacked(projectId));
-
+    function _efficientPay(
+        IJBTerminal terminal,
+        uint256 projectId,
+        address token,
+        uint256 amount,
+        address beneficiary,
+        bytes memory metadata
+    )
+        internal
+    {
         if (terminal == IJBTerminal(address(this))) {
             _pay({
                 projectId: projectId,
