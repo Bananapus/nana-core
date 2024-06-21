@@ -611,52 +611,13 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             _beforeTransferTo({to: address(feeTerminal), token: token, amount: amount});
         }
 
-        // Send the projectId in the metadata.
-        bytes memory metadata = bytes(abi.encodePacked(projectId));
-
-        // // Keep a reference to the amount that'll be paid in.
-        // uint256 payValue = _payValueOf(token, amount);
-
-        // // Send the fee.
-        // // If this terminal's token is ETH, send it in msg.value.
-        // // slither-disable-next-line unused-return
-        // feeTerminal.pay{value: payValue}({
-        //     projectId: _FEE_BENEFICIARY_PROJECT_ID,
-        //     token: token,
-        //     amount: amount,
-        //     beneficiary: beneficiary,
-        //     minReturnedTokens: 0,
-        //     memo: "",
-        //     metadata: metadata
-        // });
-        // Call the internal method of the same terminal is being used.
-        if (feeTerminal == IJBTerminal(address(this))) {
-            _pay({
-                projectId: _FEE_BENEFICIARY_PROJECT_ID,
-                token: token,
-                amount: amount,
-                payer: address(this),
-                beneficiary: beneficiary,
-                memo: "",
-                metadata: metadata
-            });
-        } else {
-            // Keep a reference to the amount that'll be paid in.
-            uint256 payValue = _payValueOf(token, amount);
-
-            // Send the fee.
-            // If this terminal's token is ETH, send it in msg.value.
-            // slither-disable-next-line unused-return
-            feeTerminal.pay{value: payValue}({
-                projectId: _FEE_BENEFICIARY_PROJECT_ID,
-                token: token,
-                amount: amount,
-                beneficiary: beneficiary,
-                minReturnedTokens: 0,
-                memo: "",
-                metadata: metadata
-            });
-        }
+        _efficientPay({
+            terminal: feeTerminal,
+            projectId: _FEE_BENEFICIARY_PROJECT_ID,
+            token: token,
+            amount: amount,
+            beneficiary: beneficiary
+        });
     }
 
     /// @notice Executes a payout to a split.
@@ -737,37 +698,44 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
             // Add to balance if preferred.
             if (split.preferAddToBalance) {
-                // Get a reference to the amount being added to balance through `msg.value`.
-                uint256 payValue = _payValueOf(token, netPayoutAmount);
+                // Call the internal method if this terminal is being used.
+                if (terminal == IJBTerminal(address(this))) {
+                    _addToBalanceOf({
+                        projectId: split.projectId,
+                        token: token,
+                        amount: netPayoutAmount,
+                        shouldReturnHeldFees: false,
+                        memo: "",
+                        metadata: metadata
+                    });
+                } else {
+                    // Get a reference to the amount being added to balance through `msg.value`.
+                    uint256 payValue = token == JBConstants.NATIVE_TOKEN ? netPayoutAmount : 0;
 
-                // Add to balance.
-                // If this terminal's token is the native token, send it in `msg.value`.
-                terminal.addToBalanceOf{value: payValue}({
-                    projectId: split.projectId,
-                    token: token,
-                    amount: netPayoutAmount,
-                    shouldReturnHeldFees: false,
-                    memo: "",
-                    metadata: metadata
-                });
+                    // Add to balance.
+                    // If this terminal's token is the native token, send it in `msg.value`.
+                    terminal.addToBalanceOf{value: payValue}({
+                        projectId: split.projectId,
+                        token: token,
+                        amount: netPayoutAmount,
+                        shouldReturnHeldFees: false,
+                        memo: "",
+                        metadata: metadata
+                    });
+                }
             } else {
                 // Keep a reference to the beneficiary of the payment.
                 address beneficiary = split.beneficiary != address(0) ? split.beneficiary : originalMessageSender;
 
-                // Keep a reference to the amount being paid through `msg.value`.
-                uint256 payValue = _payValueOf(token, netPayoutAmount);
-
                 // Make the payment.
                 // If this terminal's token is the native token, send it in `msg.value`.
                 // slither-disable-next-line unused-return
-                terminal.pay{value: payValue}({
+                _efficientPay({
+                    terminal: terminal,
                     projectId: split.projectId,
                     token: token,
                     amount: netPayoutAmount,
-                    beneficiary: beneficiary,
-                    minReturnedTokens: 0,
-                    memo: "",
-                    metadata: metadata
+                    beneficiary: beneficiary
                 });
             }
         } else {
@@ -1241,7 +1209,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     {
         // Keep a reference to the ruleset.
         JBRuleset memory ruleset;
-
+    
         // Record the use of the allowance.
         (ruleset, amountPaidOut) = STORE.recordUsedAllowanceOf({
             projectId: projectId,
@@ -1728,6 +1696,45 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         }
 
         emit ReturnHeldFees(projectId, token, amount, returnedFees, leftoverAmount, _msgSender());
+    }
+    
+    /// @notice Pay a project either by calling this terminal's internal pay function or by calling the recipient terminal's pay function.
+    /// @param terminal The terminal on which the project is expecting to receive payments.
+    /// @param projectId The ID of the project being paid.
+    /// @param token The token being paid in.
+    /// @param amount The amount being paid, as a fixed point number with the amount of decimals that the terminal's accounting context specifies.
+    /// @param beneficiary The address to receive any platform tokens minted.
+    function _efficientPay(IJBTerminal terminal, uint256 projectId, address token, uint256 amount, address beneficiary) internal{
+        // Send the projectId in the metadata.
+        bytes memory metadata = bytes(abi.encodePacked(projectId));
+
+        if (terminal == IJBTerminal(address(this))) {
+            _pay({
+                projectId: projectId,
+                token: token,
+                amount: amount,
+                payer: address(this),
+                beneficiary: beneficiary,
+                memo: "",
+                metadata: metadata
+            });
+        } else {
+            // Keep a reference to the amount that'll be paid in.
+            uint256 payValue = _payValueOf(token, amount);
+
+            // Send the fee.
+            // If this terminal's token is ETH, send it in msg.value.
+            // slither-disable-next-line unused-return
+            terminal.pay{value: payValue}({
+                projectId: projectId,
+                token: token,
+                amount: amount,
+                beneficiary: beneficiary,
+                minReturnedTokens: 0,
+                memo: "",
+                metadata: metadata
+            });
+        }
     }
 
     /// @notice Transfers tokens.
