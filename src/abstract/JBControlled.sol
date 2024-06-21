@@ -39,7 +39,7 @@ abstract contract JBControlled is IJBControlled {
     }
 
     /// @notice Only allows the controller of the specified project to proceed.
-    function _onlyControllerOf(uint256 projectId) view internal {
+    function _onlyControllerOf(uint256 projectId) internal view {
         if (address(DIRECTORY.controllerOf(projectId)) != msg.sender) {
             revert CONTROLLER_UNAUTHORIZED();
         }

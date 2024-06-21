@@ -32,7 +32,7 @@ contract TestPermissions_Local is TestBaseWorkflow, JBTest {
             allowTerminalMigration: false,
             allowSetTerminals: false,
             ownerMustSendPayouts: false,
-                        allowSetController: false,
+            allowSetController: false,
             allowAddAccountingContext: false,
             allowAddPriceFeed: false,
             holdFees: false,

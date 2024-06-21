@@ -614,21 +614,49 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // Send the projectId in the metadata.
         bytes memory metadata = bytes(abi.encodePacked(projectId));
 
-        // Keep a reference to the amount that'll be paid in.
-        uint256 payValue = _payValueOf(token, amount);
+        // // Keep a reference to the amount that'll be paid in.
+        // uint256 payValue = _payValueOf(token, amount);
 
-        // Send the fee.
-        // If this terminal's token is ETH, send it in msg.value.
-        // slither-disable-next-line unused-return
-        feeTerminal.pay{value: payValue}({
-            projectId: _FEE_BENEFICIARY_PROJECT_ID,
-            token: token,
-            amount: amount,
-            beneficiary: beneficiary,
-            minReturnedTokens: 0,
-            memo: "",
-            metadata: metadata
-        });
+        // // Send the fee.
+        // // If this terminal's token is ETH, send it in msg.value.
+        // // slither-disable-next-line unused-return
+        // feeTerminal.pay{value: payValue}({
+        //     projectId: _FEE_BENEFICIARY_PROJECT_ID,
+        //     token: token,
+        //     amount: amount,
+        //     beneficiary: beneficiary,
+        //     minReturnedTokens: 0,
+        //     memo: "",
+        //     metadata: metadata
+        // });
+        // Call the internal method of the same terminal is being used.
+        if (feeTerminal == IJBTerminal(address(this))) {
+            _pay({
+                projectId: _FEE_BENEFICIARY_PROJECT_ID,
+                token: token,
+                amount: amount,
+                payer: address(this),
+                beneficiary: beneficiary,
+                memo: "",
+                metadata: metadata
+            });
+        } else {
+            // Keep a reference to the amount that'll be paid in.
+            uint256 payValue = _payValueOf(token, amount);
+
+            // Send the fee.
+            // If this terminal's token is ETH, send it in msg.value.
+            // slither-disable-next-line unused-return
+            feeTerminal.pay{value: payValue}({
+                projectId: _FEE_BENEFICIARY_PROJECT_ID,
+                token: token,
+                amount: amount,
+                beneficiary: beneficiary,
+                minReturnedTokens: 0,
+                memo: "",
+                metadata: metadata
+            });
+        }
     }
 
     /// @notice Executes a payout to a split.
@@ -830,21 +858,21 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                 revert PERMIT_ALLOWANCE_NOT_ENOUGH();
             }
 
-            // Set the allowance to `spend` tokens for the user.
-            try PERMIT2.permit({
-                owner: _msgSender(),
-                permitSingle: IAllowanceTransfer.PermitSingle({
-                    details: IAllowanceTransfer.PermitDetails({
-                        token: token,
-                        amount: allowance.amount,
-                        expiration: allowance.expiration,
-                        nonce: allowance.nonce
-                    }),
-                    spender: address(this),
-                    sigDeadline: allowance.sigDeadline
+            // Keep a reference to the permit rules.
+            IAllowanceTransfer.PermitSingle memory permitSingle = IAllowanceTransfer.PermitSingle({
+                details: IAllowanceTransfer.PermitDetails({
+                    token: token,
+                    amount: allowance.amount,
+                    expiration: allowance.expiration,
+                    nonce: allowance.nonce
                 }),
-                signature: allowance.signature
-            }) {} catch (bytes memory) {}
+                spender: address(this),
+                sigDeadline: allowance.sigDeadline
+            });
+
+            // Set the allowance to `spend` tokens for the user.
+            try PERMIT2.permit({owner: _msgSender(), permitSingle: permitSingle, signature: allowance.signature}) {}
+                catch (bytes memory) {}
         }
 
         // Get a reference to the balance before receiving tokens.

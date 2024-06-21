@@ -53,7 +53,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     //*********************************************************************//
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
-    
+
     error ADDING_PRICE_FEED_NOT_ALLOWED();
     error CREDIT_TRANSFERS_PAUSED();
     error RULESETS_ARRAY_EMPTY();

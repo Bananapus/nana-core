@@ -35,7 +35,7 @@ contract TestRulesetWeightCaching_Local is TestBaseWorkflow {
             allowTerminalMigration: false,
             allowSetTerminals: false,
             ownerMustSendPayouts: false,
-                        allowSetController: false,
+            allowSetController: false,
             allowAddAccountingContext: false,
             allowAddPriceFeed: false,
             holdFees: false,
