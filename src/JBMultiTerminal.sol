@@ -60,6 +60,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     //*********************************************************************//
 
     error ACCOUNTING_CONTEXT_ALREADY_SET();
+    error ADDING_ACCOUNTING_CONTEXT_NOT_ALLOWED();
     error UNDER_MIN_TOKENS_PAID_OUT();
     error UNDER_MIN_TOKENS_RECLAIMED();
     error UNDER_MIN_RETURNED_TOKENS();
@@ -535,6 +536,12 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             permissionId: JBPermissionIds.ADD_ACCOUNTING_CONTEXTS,
             alsoGrantAccessIf: _msgSender() == address(DIRECTORY.controllerOf(projectId))
         });
+
+        // Get a reference to the project's current ruleset.
+        JBRuleset memory ruleset = STORE.RULESETS().currentOf(projectId);
+
+        // If the ruleset requires privileged payout distribution, ensure the caller has the permission.
+        if (!ruleset.allowAddAccountingContext()) revert ADDING_ACCOUNTING_CONTEXT_NOT_ALLOWED();
 
         // Keep a reference to the number of accounting contexts to add.
         uint256 numberOfAccountingContexts = tokens.length;

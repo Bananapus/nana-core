@@ -64,6 +64,8 @@ contract Deploy is Script, Sphinx {
         JBDirectory directory = new JBDirectory{salt: _coreDeploymentSalt}(permissions, projects, _safe);
         JBSplits splits = new JBSplits{salt: _coreDeploymentSalt}(directory);
         JBRulesets rulesets = new JBRulesets{salt: _coreDeploymentSalt}(directory);
+        JBPrices prices = new JBPrices{salt: _coreDeploymentSalt}(permissions, projects, directory, rulesets, _safe);
+
         directory.setIsAllowedToSetFirstController(
             address(
                 new JBController{salt: _coreDeploymentSalt}({
@@ -74,6 +76,7 @@ contract Deploy is Script, Sphinx {
                     tokens: new JBTokens{salt: _coreDeploymentSalt}(directory, new JBERC20{salt: _coreDeploymentSalt}()),
                     splits: splits,
                     fundAccessLimits: new JBFundAccessLimits{salt: _coreDeploymentSalt}(directory),
+                    prices: prices,
                     trustedForwarder: TRUSTED_FORWARDER
                 })
             ),
@@ -81,7 +84,6 @@ contract Deploy is Script, Sphinx {
         );
 
         JBFeelessAddresses feeless = new JBFeelessAddresses{salt: _coreDeploymentSalt}(_safe);
-        JBPrices prices = new JBPrices{salt: _coreDeploymentSalt}(permissions, projects, _safe);
 
         new JBMultiTerminal{salt: _coreDeploymentSalt}({
             permissions: permissions,

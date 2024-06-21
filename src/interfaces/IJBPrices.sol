@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import {IJBPriceFeed} from "./IJBPriceFeed.sol";
 import {IJBProjects} from "./IJBProjects.sol";
+import {IJBRulesets} from "./IJBRulesets.sol";
 
 interface IJBPrices {
     event AddPriceFeed(
@@ -12,6 +13,8 @@ interface IJBPrices {
     function DEFAULT_PROJECT_ID() external view returns (uint256);
 
     function PROJECTS() external view returns (IJBProjects);
+
+    function RULESETS() external view returns (IJBRulesets);
 
     function priceFeedFor(
         uint256 projectId,
@@ -36,7 +39,7 @@ interface IJBPrices {
         uint256 projectId,
         uint256 pricingCurrency,
         uint256 unitCurrency,
-        IJBPriceFeed priceFeed
+        IJBPriceFeed feed
     )
         external;
 }

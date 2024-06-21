@@ -18,6 +18,8 @@ import {IJBFundAccessLimits} from "./interfaces/IJBFundAccessLimits.sol";
 import {IJBMigratable} from "./interfaces/IJBMigratable.sol";
 import {IJBPermissioned} from "./interfaces/IJBPermissioned.sol";
 import {IJBPermissions} from "./interfaces/IJBPermissions.sol";
+import {IJBPriceFeed} from "./interfaces/IJBPriceFeed.sol";
+import {IJBPrices} from "./interfaces/IJBPrices.sol";
 import {IJBProjects} from "./interfaces/IJBProjects.sol";
 import {IJBProjectUriRegistry} from "./interfaces/IJBProjectUriRegistry.sol";
 import {IJBRulesets} from "./interfaces/IJBRulesets.sol";
@@ -86,6 +88,9 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
 
     /// @notice A contract that stores fund access limits for each project.
     IJBFundAccessLimits public immutable override FUND_ACCESS_LIMITS;
+
+    /// @notice A contract that stores prices for each project.
+    IJBPrices public immutable override PRICES;
 
     //*********************************************************************//
     // --------------------- public stored properties -------------------- //
@@ -253,6 +258,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     /// @param tokens A contract that manages token minting and burning.
     /// @param splits A contract that stores splits for each project.
     /// @param fundAccessLimits A contract that stores fund access limits for each project.
+    /// @param prices A contract that stores prices for each project.
     constructor(
         IJBPermissions permissions,
         IJBProjects projects,
@@ -261,6 +267,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         IJBTokens tokens,
         IJBSplits splits,
         IJBFundAccessLimits fundAccessLimits,
+        IJBPrices prices,
         address trustedForwarder
     )
         JBPermissioned(permissions)
@@ -272,6 +279,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         TOKENS = tokens;
         SPLITS = splits;
         FUND_ACCESS_LIMITS = fundAccessLimits;
+        PRICES = prices;
     }
 
     //*********************************************************************//
@@ -709,6 +717,31 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         if (ruleset.pauseCreditTransfers()) revert CREDIT_TRANSFERS_PAUSED();
 
         TOKENS.transferCreditsFrom(holder, projectId, recipient, amount);
+    }
+
+    /// @notice Add a price feed to a project.
+    /// @dev Can only be called by the project's owner or an address with the owner's permission to `ADD_PRICE_FEED`.
+    /// @param projectId The ID of the project having a feed added.
+    /// @param pricingCurrency The currency the feed's resulting price is in terms of.
+    /// @param unitCurrency The currency being priced by the feed.
+    /// @param feed The price feed being added.
+    function addPriceFeed(
+        uint256 projectId,
+        uint256 pricingCurrency,
+        uint256 unitCurrency,
+        IJBPriceFeed feed
+    )
+        external
+        override
+    {
+        // Enforce permissions.
+        _requirePermissionFrom({
+            account: PROJECTS.ownerOf(projectId),
+            projectId: projectId,
+            permissionId: JBPermissionIds.ADD_PRICE_FEED
+        });
+
+        PRICES.addPriceFeedFor(projectId, pricingCurrency, unitCurrency, feed);
     }
 
     /// @notice When a project receives reserved tokens, if it has a terminal for the token, this is used to pay the

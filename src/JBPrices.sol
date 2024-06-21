@@ -5,18 +5,28 @@ import {JBPermissionIds} from "@bananapus/permission-ids/src/JBPermissionIds.sol
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {mulDiv} from "@prb/math/src/Common.sol";
 
+import {JBControlled} from "./abstract/JBControlled.sol";
 import {JBPermissioned} from "./abstract/JBPermissioned.sol";
+import {IJBDirectory} from "./interfaces/IJBDirectory.sol";
 import {IJBPermissions} from "./interfaces/IJBPermissions.sol";
 import {IJBPriceFeed} from "./interfaces/IJBPriceFeed.sol";
 import {IJBPrices} from "./interfaces/IJBPrices.sol";
 import {IJBProjects} from "./interfaces/IJBProjects.sol";
+import {IJBRulesets} from "./interfaces/IJBRulesets.sol";
+import {JBRulesetMetadataResolver} from "./libraries/JBRulesetMetadataResolver.sol";
+import {JBRuleset} from "./structs/JBRuleset.sol";
 
 /// @notice Manages and normalizes price feeds. Price feeds are contracts which return the "pricing currency" cost of 1
 /// "unit currency".
-contract JBPrices is JBPermissioned, Ownable, IJBPrices {
+contract JBPrices is JBControlled, JBPermissioned, Ownable, IJBPrices {
+    // A library that parses the packed ruleset metadata into a friendlier format.
+    using JBRulesetMetadataResolver for JBRuleset;
+
     //*********************************************************************//
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
+
+    error ADDING_PRICE_FEED_NOT_ALLOWED();
     error INVALID_CURRENCY();
     error PRICE_FEED_ALREADY_EXISTS();
     error PRICE_FEED_NOT_FOUND();
@@ -34,6 +44,9 @@ contract JBPrices is JBPermissioned, Ownable, IJBPrices {
 
     /// @notice Mints ERC-721s that represent project ownership and transfers.
     IJBProjects public immutable override PROJECTS;
+
+    /// @notice The contract storing and managing project rulesets.
+    IJBRulesets public immutable override RULESETS;
 
     //*********************************************************************//
     // --------------------- public stored properties -------------------- //
@@ -110,16 +123,22 @@ contract JBPrices is JBPermissioned, Ownable, IJBPrices {
 
     /// @param permissions A contract storing permissions.
     /// @param projects A contract which mints ERC-721s that represent project ownership and transfers.
+    /// @param directory A contract storing directories of terminals and controllers for each project.
+    /// @param rulesets A contract storing and managing project rulesets.
     /// @param owner The address that will own the contract.
     constructor(
         IJBPermissions permissions,
         IJBProjects projects,
+        IJBDirectory directory,
+        IJBRulesets rulesets,
         address owner
     )
+        JBControlled(directory)
         JBPermissioned(permissions)
         Ownable(owner)
     {
         PROJECTS = projects;
+        RULESETS = rulesets;
     }
 
     //*********************************************************************//
@@ -128,6 +147,8 @@ contract JBPrices is JBPermissioned, Ownable, IJBPrices {
 
     /// @notice Add a price feed for the `unitCurrency`, priced in terms of the `pricingCurrency`.
     /// @dev Existing feeds can't be modified. Neither can feeds that have already been set as defaults (project ID 0).
+    /// @param projectId The ID of the project having a feed added. Leave 0 to add a default feed as this contract's
+    /// owner.
     /// @param pricingCurrency The currency the feed's resulting price is in terms of.
     /// @param unitCurrency The currency being priced by the feed.
     /// @param feed The price feed being added.
@@ -145,11 +166,14 @@ contract JBPrices is JBPermissioned, Ownable, IJBPrices {
         // Otherwise, only a project's owner or an operator with the `ADD_PRICE_FEED` permission from that owner can add
         // a feed for a project.
         if (projectId != DEFAULT_PROJECT_ID || msg.sender != owner()) {
-            _requirePermissionFrom({
-                account: PROJECTS.ownerOf(projectId),
-                projectId: projectId,
-                permissionId: JBPermissionIds.ADD_PRICE_FEED
-            });
+            // Make sure only the project's controller can make this call.
+            _onlyControllerOf(projectId);
+
+            // Get current ruleset. make sure it's allowed.
+            JBRuleset memory ruleset = RULESETS.currentOf(projectId);
+
+            // Make sure adding a price feed is allowed.
+            if (!ruleset.allowAddPriceFeed()) revert ADDING_PRICE_FEED_NOT_ALLOWED();
         }
 
         // Make sure the currencies aren't 0.
