@@ -684,15 +684,15 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
         // If there's a split hook set, transfer to its `process` function.
         if (split.hook != IJBSplitHook(address(0))) {
+            // Make sure that the address supports the split hook interface.
+            if (!split.hook.supportsInterface(type(IJBSplitHook).interfaceId)) {
+                revert("SPLIT_HOOK_INVALID");
+            }
+
             // This payout is eligible for a fee since the funds are leaving this contract and the split hook isn't a
             // feeless address.
             if (!_isFeeless(address(split.hook))) {
                 netPayoutAmount -= JBFees.feeAmountIn(amount, FEE);
-            }
-
-            // Make sure that the address supports the split hook interface.
-            if (!split.hook.supportsInterface(type(IJBSplitHook).interfaceId)) {
-                revert("SPLIT_HOOK_INVALID");
             }
 
             // Create the context to send to the split hook.
