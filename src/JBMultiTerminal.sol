@@ -663,7 +663,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                 token: token,
                 amount: netPayoutAmount,
                 decimals: _accountingContextForTokenOf[projectId][token].decimals,
-                projectId: projectId,
+                projectId: uint56(projectId),
                 groupId: uint256(uint160(token)),
                 split: split
             });
@@ -920,7 +920,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             JBAccountingContext memory context = _accountingContextForTokenOf[projectId][token];
 
             // Bundle the amount info into a `JBTokenAmount` struct.
-            tokenAmount = JBTokenAmount(token, amount, context.decimals, context.currency);
+            tokenAmount =
+                JBTokenAmount({token: token, decimals: context.decimals, currency: context.currency, amount: amount});
         }
 
         // Record the payment.
@@ -1085,9 +1086,12 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                 ruleset: ruleset,
                 redemptionRate: redemptionRate,
                 beneficiary: beneficiary,
-                beneficiaryReclaimAmount: JBTokenAmount(
-                    tokenToReclaim, reclaimAmount, accountingContext.decimals, accountingContext.currency
-                ),
+                beneficiaryReclaimAmount: JBTokenAmount({
+                    token: tokenToReclaim,
+                    decimals: accountingContext.decimals,
+                    currency: accountingContext.currency,
+                    amount: reclaimAmount
+                }),
                 specifications: hookSpecifications,
                 metadata: metadata
             });
@@ -1394,7 +1398,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // Keep a reference to payment context for the pay hooks.
         JBAfterPayRecordedContext memory context = JBAfterPayRecordedContext({
             payer: payer,
-            projectId: projectId,
+            projectId: uint56(projectId),
             rulesetId: ruleset.id,
             amount: tokenAmount,
             forwardedAmount: tokenAmount,
@@ -1469,12 +1473,12 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // Keep a reference to redemption context for the redeem hooks.
         JBAfterRedeemRecordedContext memory context = JBAfterRedeemRecordedContext({
             holder: holder,
-            projectId: projectId,
+            projectId: uint56(projectId),
             rulesetId: ruleset.id,
             redeemCount: redeemCount,
             reclaimedAmount: beneficiaryReclaimAmount,
             forwardedAmount: beneficiaryReclaimAmount,
-            redemptionRate: redemptionRate,
+            redemptionRate: uint16(redemptionRate),
             beneficiary: beneficiary,
             hookMetadata: "",
             redeemerMetadata: metadata
@@ -1557,7 +1561,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                 JBFee({
                     amount: amount,
                     beneficiary: beneficiary,
-                    unlockTimestamp: block.timestamp + _FEE_HOLDING_SECONDS
+                    unlockTimestamp: uint48(block.timestamp + _FEE_HOLDING_SECONDS)
                 })
             );
 

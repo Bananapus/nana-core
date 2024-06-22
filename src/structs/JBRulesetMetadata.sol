@@ -28,9 +28,9 @@ pragma solidity ^0.8.0;
 /// @custom:member dataHook The data hook to use during this ruleset.
 /// @custom:member metadata Metadata of the metadata, up to uint8 in size.
 struct JBRulesetMetadata {
-    uint256 reservedRate;
-    uint256 redemptionRate;
-    uint256 baseCurrency;
+    uint16 reservedRate;
+    uint16 redemptionRate;
+    uint32 baseCurrency;
     bool pausePay;
     bool pauseCreditTransfers;
     bool allowOwnerMinting;
@@ -44,5 +44,5 @@ struct JBRulesetMetadata {
     bool useDataHookForPay;
     bool useDataHookForRedeem;
     address dataHook;
-    uint256 metadata;
+    uint8 metadata;
 }

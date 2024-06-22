@@ -9,7 +9,7 @@ contract TestPayBurnRedeemFlow_Local is TestBaseWorkflow {
     IJBController private _controller;
     IJBMultiTerminal private _terminal;
     JBTokens private _tokens;
-    uint256 private _weight;
+    uint112 private _weight;
     JBRulesetMetadata _metadata;
     uint256 private _projectId;
     address private _projectOwner;
@@ -83,7 +83,7 @@ contract TestPayBurnRedeemFlow_Local is TestBaseWorkflow {
     }
 
     function testFuzzPayBurnRedeemFlow(
-        uint96 _nativePayAmount,
+        uint112 _nativePayAmount,
         uint256 _burnTokenAmount,
         uint256 _redeemTokenAmount
     )
@@ -93,6 +93,9 @@ contract TestPayBurnRedeemFlow_Local is TestBaseWorkflow {
         vm.prank(_projectOwner);
         _controller.deployERC20For(_projectId, "TestName", "TestSymbol", bytes32(0));
 
+        address someRandomUser = vm.addr(1);
+        vm.prank(someRandomUser);
+        vm.deal(someRandomUser, _nativePayAmount);
         // Make a payment.
         _terminal.pay{value: _nativePayAmount}({
             projectId: _projectId,

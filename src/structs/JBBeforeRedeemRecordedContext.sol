@@ -20,12 +20,12 @@ import {JBTokenAmount} from "./JBTokenAmount.sol";
 struct JBBeforeRedeemRecordedContext {
     address terminal;
     address holder;
-    uint256 projectId;
-    uint256 rulesetId;
+    uint56 projectId;
+    uint48 rulesetId;
     uint256 redeemCount;
     uint256 totalSupply;
     JBTokenAmount surplus;
     bool useTotalSurplus;
-    uint256 redemptionRate;
+    uint16 redemptionRate;
     bytes metadata;
 }

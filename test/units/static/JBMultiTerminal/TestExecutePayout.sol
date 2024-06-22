@@ -5,9 +5,9 @@ import /* {*} from */ "../../../helpers/TestBaseWorkflow.sol";
 import {JBMultiTerminalSetup} from "./JBMultiTerminalSetup.sol";
 
 contract TestExecutePayout_Local is JBMultiTerminalSetup {
-    uint256 _projectId = 1;
-    uint256 _noProject = 0;
-    uint256 _lockedUntil = 0;
+    uint56 _projectId = 1;
+    uint56 _noProject = 0;
+    uint48 _lockedUntil = 0;
     uint256 _defaultAmount = 1e18;
     uint256 _fee = 25;
     address _hook = makeAddr("splithook");
@@ -301,7 +301,7 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
             _mockSecondTerminal,
             abi.encodeCall(
                 IJBTerminal.addToBalanceOf,
-                (_projectId, _usdc, amountAfterTax, false, "", bytes(abi.encodePacked(_projectId)))
+                (_projectId, _usdc, amountAfterTax, false, "", bytes(abi.encodePacked(uint256(_projectId))))
             ),
             ""
         );
@@ -336,7 +336,7 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
         });
 
         // needed for next mock call returns
-        JBTokenAmount memory tokenAmount = JBTokenAmount(_usdc, _defaultAmount, 0, 0);
+        JBTokenAmount memory tokenAmount = JBTokenAmount(_usdc, 0, 0, _defaultAmount);
         JBPayHookSpecification[] memory hookSpecifications = new JBPayHookSpecification[](0);
         JBRuleset memory returnedRuleset = JBRuleset({
             cycleNumber: 1,
@@ -355,7 +355,13 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
             address(store),
             abi.encodeCall(
                 IJBTerminalStore.recordPaymentFrom,
-                (address(_terminal), tokenAmount, _projectId, address(this), bytes(abi.encodePacked(_projectId)))
+                (
+                    address(_terminal),
+                    tokenAmount,
+                    _projectId,
+                    address(this),
+                    bytes(abi.encodePacked(uint256(_projectId)))
+                )
             ),
             abi.encode(returnedRuleset, 0, hookSpecifications)
         );
@@ -414,7 +420,7 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
             _mockSecondTerminal,
             abi.encodeCall(
                 IJBTerminal.pay,
-                (_projectId, _usdc, amountAfterTax, address(this), 0, "", bytes(abi.encodePacked(_projectId)))
+                (_projectId, _usdc, amountAfterTax, address(this), 0, "", bytes(abi.encodePacked(uint256(_projectId))))
             ),
             abi.encode(1e18)
         );

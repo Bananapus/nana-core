@@ -5,10 +5,10 @@ import /* {*} from */ "../../../helpers/TestBaseWorkflow.sol";
 import {JBMultiTerminalSetup} from "./JBMultiTerminalSetup.sol";
 
 contract TestRedeemTokensOf_Local is JBMultiTerminalSetup {
-    uint256 _projectId = 1;
+    uint56 _projectId = 1;
     uint256 _defaultAmount = 1e18;
-    uint256 _maxRedemptionRate = JBConstants.MAX_REDEMPTION_RATE;
-    uint256 _halfRedemptionRate = JBConstants.MAX_REDEMPTION_RATE / 2;
+    uint16 _maxRedemptionRate = JBConstants.MAX_REDEMPTION_RATE;
+    uint16 _halfRedemptionRate = JBConstants.MAX_REDEMPTION_RATE / 2;
 
     address _holder = makeAddr("holder");
     address payable _bene = payable(makeAddr("beneficiary"));
@@ -319,8 +319,8 @@ contract TestRedeemTokensOf_Local is JBMultiTerminalSetup {
             abi.encode(true)
         );
 
-        JBTokenAmount memory reclaimedAmount = JBTokenAmount(address(_mockToken2), reclaimAmount, 0, 0);
-        JBTokenAmount memory forwardedAmount = JBTokenAmount(address(_mockToken2), _defaultAmount, 0, 0);
+        JBTokenAmount memory reclaimedAmount = JBTokenAmount(address(_mockToken2), 0, 0, reclaimAmount);
+        JBTokenAmount memory forwardedAmount = JBTokenAmount(address(_mockToken2), 0, 0, _defaultAmount);
 
         // needed for hook call
         JBAfterRedeemRecordedContext memory context = JBAfterRedeemRecordedContext({
@@ -423,9 +423,9 @@ contract TestRedeemTokensOf_Local is JBMultiTerminalSetup {
         uint256 hookTax = JBFees.feeAmountIn(_defaultAmount, 25);
         uint256 passedAfterTax = _defaultAmount - hookTax;
 
-        JBTokenAmount memory reclaimedAmount = JBTokenAmount(address(_mockToken2), reclaimAmount, 0, 0);
-        JBTokenAmount memory forwardedAmount = JBTokenAmount(address(_mockToken2), passedAfterTax, 0, 0);
-        JBTokenAmount memory feeRepayAmount = JBTokenAmount(address(_mockToken2), hookTax, 0, 0);
+        JBTokenAmount memory reclaimedAmount = JBTokenAmount(address(_mockToken2), 0, 0, reclaimAmount);
+        JBTokenAmount memory forwardedAmount = JBTokenAmount(address(_mockToken2), 0, 0, passedAfterTax);
+        JBTokenAmount memory feeRepayAmount = JBTokenAmount(address(_mockToken2), 0, 0, hookTax);
 
         // needed for hook call
         JBAfterRedeemRecordedContext memory context = JBAfterRedeemRecordedContext({
@@ -455,11 +455,10 @@ contract TestRedeemTokensOf_Local is JBMultiTerminalSetup {
             address(store),
             abi.encodeCall(
                 IJBTerminalStore.recordPaymentFrom,
-                (address(_terminal), feeRepayAmount, _projectId, _bene, bytes(abi.encodePacked(_projectId)))
+                (address(_terminal), feeRepayAmount, _projectId, _bene, bytes(abi.encodePacked(uint256(_projectId))))
             ),
             abi.encode(returnedRuleset, 0, paySpecs)
         );
-
         vm.expectEmit();
         emit IJBRedeemTerminal.HookAfterRecordRedeem(_mockHook, context, passedAfterTax, hookTax, address(_bene));
 

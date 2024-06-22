@@ -6,7 +6,7 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {MockPriceFeed} from "./mock/MockPriceFeed.sol";
 
 contract TestPermit2Terminal_Local is TestBaseWorkflow {
-    uint256 private constant _WEIGHT = 1000 * 10 ** 18;
+    uint112 private constant _WEIGHT = uint112(1000 * 10 ** 18);
 
     IJBController private _controller;
     IJBTerminal private _terminal;

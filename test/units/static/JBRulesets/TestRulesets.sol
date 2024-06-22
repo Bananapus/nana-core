@@ -15,10 +15,10 @@ contract TestJBRulesetsUnits_Local is JBTest {
     IJBRulesetApprovalHook private _mockApprovalHook = IJBRulesetApprovalHook(makeAddr("hook"));
     uint256 _packedMetadata;
     uint256 _packedWithApprovalHook;
-    uint256 _projectId = 1;
-    uint256 _duration = 3 days;
-    uint256 _weight = 0;
-    uint256 _decayRate = 450_000_000;
+    uint56 _projectId = 1;
+    uint32 _duration = 3 days;
+    uint112 _weight = 0;
+    uint32 _decayRate = 450_000_000;
     uint256 _mustStartAt = 0;
     uint256 _hookDuration = 1 days;
     IJBRulesetApprovalHook private _hook = IJBRulesetApprovalHook(address(0));
@@ -148,9 +148,9 @@ contract TestJBRulesetsUnits_Local is JBTest {
         // Reference queued attributes for sake of comparison.
         JBRuleset memory queued = JBRuleset({
             cycleNumber: 1,
-            id: block.timestamp,
+            id: uint48(block.timestamp),
             basedOnId: 0,
-            start: block.timestamp,
+            start: uint48(block.timestamp),
             duration: _duration,
             weight: _weight,
             decayRate: _decayRate,
@@ -203,9 +203,9 @@ contract TestJBRulesetsUnits_Local is JBTest {
         // Reference queued attributes for sake of comparison.
         JBRuleset memory queued = JBRuleset({
             cycleNumber: 1,
-            id: block.timestamp,
+            id: uint48(block.timestamp),
             basedOnId: 0,
-            start: block.timestamp - 1,
+            start: uint48(block.timestamp - 1),
             duration: _duration,
             weight: _weight,
             decayRate: _decayRate,
@@ -267,7 +267,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
     }
 
     function testQueueForInvalidWeight() public {
-        uint256 _invalidWeight = uint256(type(uint88).max) + 1;
+        uint256 _invalidWeight = uint256(type(uint112).max) + 1;
 
         // Setup: queueFor will call onlyControllerOf modifier -> Directory.controllerOf to see if caller has proper
         // permissions, encode & mock that.
@@ -311,7 +311,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
             vm.expectRevert(stdError.arithmeticError);
         }
 
-        if (_bigDuration + _bigStartAt > type(uint56).max) {
+        if (_bigDuration + _bigStartAt > type(uint48).max) {
             vm.expectRevert(abi.encodeWithSignature("INVALID_RULESET_END_TIME()"));
         }
 

@@ -12,8 +12,8 @@ contract TestFees_Local is TestBaseWorkflow {
     IJBMultiTerminal private _terminal2;
     IJBRulesets private _rulesets;
 
-    uint256 _nativePayAmount;
-    uint256 _nativeDistLimit;
+    uint224 _nativePayAmount;
+    uint224 _nativeDistLimit;
 
     uint256 private _projectId;
     address private _projectOwner;

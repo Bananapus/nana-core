@@ -31,10 +31,10 @@ import {JBSplitGroup} from "./JBSplitGroup.sol";
 /// number of decimals as the corresponding terminal. The `_payoutLimit` and `_surplusAllowance` parameters must fit in
 /// a `uint232`.
 struct JBRulesetConfig {
-    uint256 mustStartAtOrAfter;
-    uint256 duration;
-    uint256 weight;
-    uint256 decayRate;
+    uint48 mustStartAtOrAfter;
+    uint32 duration;
+    uint112 weight;
+    uint32 decayRate;
     IJBRulesetApprovalHook approvalHook;
     JBRulesetMetadata metadata;
     JBSplitGroup[] splitGroups;

@@ -10,8 +10,8 @@ contract TestPermissions_Local is TestBaseWorkflow, JBTest {
     IJBPermissions private _permissions;
 
     address private _projectOwner;
-    uint256 private _projectZero;
-    uint256 private _projectOne;
+    uint56 private _projectZero;
+    uint56 private _projectOne;
 
     function setUp() public override {
         super.setUp();
@@ -58,21 +58,25 @@ contract TestPermissions_Local is TestBaseWorkflow, JBTest {
         _tokensToAccept[0] = JBConstants.NATIVE_TOKEN;
         _terminalConfigurations[0] = JBTerminalConfig({terminal: _terminal, tokensToAccept: _tokensToAccept});
 
-        _projectZero = _controller.launchProjectFor({
-            owner: makeAddr("zeroOwner"),
-            projectUri: "myIPFSHash",
-            rulesetConfigurations: _rulesetConfig,
-            terminalConfigurations: _terminalConfigurations,
-            memo: ""
-        });
+        _projectZero = uint56(
+            _controller.launchProjectFor({
+                owner: makeAddr("zeroOwner"),
+                projectUri: "myIPFSHash",
+                rulesetConfigurations: _rulesetConfig,
+                terminalConfigurations: _terminalConfigurations,
+                memo: ""
+            })
+        );
 
-        _projectOne = _controller.launchProjectFor({
-            owner: _projectOwner,
-            projectUri: "myIPFSHash",
-            rulesetConfigurations: _rulesetConfig,
-            terminalConfigurations: _terminalConfigurations,
-            memo: ""
-        });
+        _projectOne = uint56(
+            _controller.launchProjectFor({
+                owner: _projectOwner,
+                projectUri: "myIPFSHash",
+                rulesetConfigurations: _rulesetConfig,
+                terminalConfigurations: _terminalConfigurations,
+                memo: ""
+            })
+        );
     }
 
     function testFailMostBasicAccess() public {
@@ -97,10 +101,10 @@ contract TestPermissions_Local is TestBaseWorkflow, JBTest {
         // Pack up our permission data.
         JBPermissionsData[] memory permData = new JBPermissionsData[](1);
 
-        uint256[] memory permIds = new uint256[](257);
+        uint8[] memory permIds = new uint8[](257);
 
         // Push an index higher than 255.
-        for (uint256 i; i < 257; i++) {
+        for (uint8 i; i < 257; i++) {
             permIds[i] = i;
 
             permData[0] = JBPermissionsData({operator: address(0), projectId: _projectOne, permissionIds: permIds});
@@ -115,11 +119,11 @@ contract TestPermissions_Local is TestBaseWorkflow, JBTest {
         // Pack up our permission data.
         JBPermissionsData[] memory permData = new JBPermissionsData[](1);
 
-        uint256[] memory permIds = new uint256[](256);
+        uint8[] memory permIds = new uint8[](256);
 
         // Push an index higher than 255.
         for (uint256 i; i < 256; i++) {
-            permIds[i] = i;
+            permIds[i] = uint8(i);
 
             permData[0] = JBPermissionsData({operator: address(0), projectId: _projectOne, permissionIds: permIds});
 
@@ -136,14 +140,14 @@ contract TestPermissions_Local is TestBaseWorkflow, JBTest {
     function testHasPermissions(
         address _account,
         address _operator,
-        uint256 _projectId,
+        uint56 _projectId,
         uint8[] memory _u8_check_permissions,
         uint8[] memory _u8_set_permissions
     )
         public
     {
         uint256[] memory _check_permissions = new uint256[](_u8_check_permissions.length);
-        uint256[] memory _set_permissions = new uint256[](_u8_set_permissions.length);
+        uint8[] memory _set_permissions = new uint8[](_u8_set_permissions.length);
 
         // Check if all the items in `check_permissions` also exist in `set_permissions`.
         bool _shouldHavePermissions = true;
@@ -152,7 +156,7 @@ contract TestPermissions_Local is TestBaseWorkflow, JBTest {
             _check_permissions[_i] = _u8_check_permissions[_i];
             for (uint256 _j; _j < _u8_set_permissions.length; _j++) {
                 // We update this lots of times unnecesarily but no need to optimize this.
-                _set_permissions[_j] = _u8_set_permissions[_j];
+                _set_permissions[_j] = _u8_set_permissions[_j % 256];
                 // If we find this item we break and mark the flag.
                 if (_u8_check_permissions[_i] == _u8_set_permissions[_j]) {
                     _exists = true;
@@ -185,7 +189,7 @@ contract TestPermissions_Local is TestBaseWorkflow, JBTest {
 
         // Pack up our permission data.
         JBPermissionsData[] memory permData = new JBPermissionsData[](1);
-        uint256[] memory permIds = new uint256[](1);
+        uint8[] memory permIds = new uint8[](1);
         permIds[0] = 1;
 
         permData[0] = JBPermissionsData({operator: address(this), projectId: _projectZero, permissionIds: permIds});
@@ -212,7 +216,7 @@ contract TestPermissions_Local is TestBaseWorkflow, JBTest {
 
         // Pack up our permission data.
         JBPermissionsData[] memory permData = new JBPermissionsData[](1);
-        uint256[] memory permIds = new uint256[](1);
+        uint8[] memory permIds = new uint8[](1);
         permIds[0] = 1;
 
         permData[0] = JBPermissionsData({operator: address(this), projectId: _projectZero, permissionIds: permIds});
@@ -227,7 +231,7 @@ contract TestPermissions_Local is TestBaseWorkflow, JBTest {
 
         // Pack up our non-root permission data.
         JBPermissionsData[] memory permData2 = new JBPermissionsData[](1);
-        uint256[] memory permIds2 = new uint256[](1);
+        uint8[] memory permIds2 = new uint8[](1);
         permIds2[0] = 2;
 
         permData2[0] = JBPermissionsData({operator: address(0), projectId: _projectZero, permissionIds: permIds2});

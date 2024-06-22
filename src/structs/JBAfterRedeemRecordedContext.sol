@@ -18,12 +18,12 @@ import {JBTokenAmount} from "./JBTokenAmount.sol";
 /// @custom:member redeemerMetadata Extra data specified by the redeemer, which is sent to the redeem hook.
 struct JBAfterRedeemRecordedContext {
     address holder;
-    uint256 projectId;
-    uint256 rulesetId;
+    uint56 projectId;
+    uint48 rulesetId;
     uint256 redeemCount;
     JBTokenAmount reclaimedAmount;
     JBTokenAmount forwardedAmount;
-    uint256 redemptionRate;
+    uint16 redemptionRate;
     address payable beneficiary;
     bytes hookMetadata;
     bytes redeemerMetadata;

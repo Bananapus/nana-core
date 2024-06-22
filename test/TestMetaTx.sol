@@ -6,7 +6,7 @@ import {ERC2771Forwarder} from "@openzeppelin/contracts/metatx/ERC2771Forwarder.
 import {ERC2771ForwarderMock, ForwardRequest} from "./mock/ERC2771ForwarderMock.sol";
 
 contract TestMetaTx_Local is TestBaseWorkflow {
-    uint256 private constant _WEIGHT = 1000 * 10 ** 18;
+    uint112 private constant _WEIGHT = 1000 * 10 ** 18;
 
     IJBController private _controller;
     IJBMultiTerminal private _terminal;

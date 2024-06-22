@@ -96,8 +96,8 @@ contract JBFundAccessLimits is JBControlled, IJBFundAccessLimits {
 
             // The limit amount is in bits 0-231. The currency is in bits 224-255.
             payoutLimits[i] = JBCurrencyAmount({
-                currency: packedPayoutLimitData >> 224,
-                amount: uint256(uint224(packedPayoutLimitData))
+                currency: uint32(packedPayoutLimitData >> 224),
+                amount: uint224(packedPayoutLimitData)
             });
         }
     }
@@ -185,8 +185,8 @@ contract JBFundAccessLimits is JBControlled, IJBFundAccessLimits {
 
             // The limit is in bits 0-223. The currency is in bits 224-255.
             surplusAllowances[i] = JBCurrencyAmount({
-                currency: packedSurplusAllowanceData >> 224,
-                amount: uint256(uint224(packedSurplusAllowanceData))
+                currency: uint32(packedSurplusAllowanceData >> 224),
+                amount: uint224(packedSurplusAllowanceData)
             });
         }
     }
@@ -304,7 +304,7 @@ contract JBFundAccessLimits is JBControlled, IJBFundAccessLimits {
                 // Set the payout limit if there is one.
                 if (payoutLimit.amount > 0) {
                     _packedPayoutLimitsDataOf[projectId][rulesetId][fundAccessLimitGroup[i].terminal][fundAccessLimitGroup[i]
-                        .token].push(payoutLimit.amount | (payoutLimit.currency << 224));
+                        .token].push(uint256(payoutLimit.amount) | (uint256(payoutLimit.currency) << 224));
                 }
             }
 
@@ -338,7 +338,7 @@ contract JBFundAccessLimits is JBControlled, IJBFundAccessLimits {
                 // Set the surplus allowance if there is one.
                 if (surplusAllowance.amount > 0) {
                     _packedSurplusAllowancesDataOf[projectId][rulesetId][fundAccessLimitGroup[i].terminal][fundAccessLimitGroup[i]
-                        .token].push(surplusAllowance.amount | (surplusAllowance.currency << 224));
+                        .token].push(uint256(surplusAllowance.amount) | (uint256(surplusAllowance.currency) << 224));
                 }
             }
 

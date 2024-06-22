@@ -8,12 +8,12 @@ contract TestSplits_Local is TestBaseWorkflow {
     JBRulesetMetadata private _metadata;
     IJBMultiTerminal private _terminal;
     IJBTokens private _tokens;
-    uint256 private _weight;
+    uint112 private _weight;
 
     address private _projectOwner;
     address payable private _splitsGuy;
     uint256 private _projectId;
-    uint256 _nativePayoutLimit = 4 ether;
+    uint224 _nativePayoutLimit = 4 ether;
 
     function setUp() public override {
         super.setUp();
@@ -194,7 +194,7 @@ contract TestSplits_Local is TestBaseWorkflow {
 
     function testReservedRateSplitTerminal_reverts() public {
         uint256 _amount = 100 ether;
-        uint256 _mockProjectId = 9_999_999;
+        uint56 _mockProjectId = 9_999_999;
         address _mockTerminal = address(88_888_888);
         JBSplit[] memory _reserveRateSplits = new JBSplit[](1);
 
@@ -285,8 +285,7 @@ contract TestSplits_Local is TestBaseWorkflow {
         assertEq(_token.balanceOf(_splitsGuy), _amount);
     }
 
-    function testFuzzedSplitParameters(uint256 _currencyId, uint256 _multiplier) public {
-        _currencyId = bound(_currencyId, 0, type(uint32).max);
+    function testFuzzedSplitParameters(uint32 _currencyId, uint256 _multiplier) public {
         _multiplier = bound(_multiplier, 2, JBConstants.SPLITS_TOTAL_PERCENT);
 
         // Instantiate split parameters.
@@ -296,7 +295,7 @@ contract TestSplits_Local is TestBaseWorkflow {
         // Set up a payout split recipient.
         _splits[0] = JBSplit({
             preferAddToBalance: false,
-            percent: JBConstants.SPLITS_TOTAL_PERCENT / _multiplier,
+            percent: uint32(JBConstants.SPLITS_TOTAL_PERCENT / _multiplier),
             projectId: 0,
             beneficiary: _splitsGuy,
             lockedUntil: 0,
@@ -306,7 +305,7 @@ contract TestSplits_Local is TestBaseWorkflow {
         // A dummy used to check that splits groups of "0" don't bypass payout limits.
         _splits[1] = JBSplit({
             preferAddToBalance: false,
-            percent: JBConstants.SPLITS_TOTAL_PERCENT / _multiplier,
+            percent: uint32(JBConstants.SPLITS_TOTAL_PERCENT / _multiplier),
             projectId: 0,
             beneficiary: _splitsGuy,
             lockedUntil: 0,

@@ -9,7 +9,7 @@ contract TestRedeem_Local is TestBaseWorkflow {
     IJBController private _controller;
     IJBMultiTerminal private _terminal;
     JBTokens private _tokens;
-    uint256 private _weight;
+    uint112 private _weight;
     JBRulesetMetadata _metadata;
     uint256 private _projectId;
     address private _projectOwner;
@@ -79,7 +79,7 @@ contract TestRedeem_Local is TestBaseWorkflow {
     }
 
     function testRedeem(uint256 _tokenAmountToRedeem) external {
-        uint96 _nativePayAmount = 10 ether;
+        uint112 _nativePayAmount = 10 ether;
 
         // Issue the project's tokens.
         vm.prank(_projectOwner);

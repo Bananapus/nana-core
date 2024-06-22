@@ -51,9 +51,9 @@ contract TestSetTokenFor_Local is JBControllerSetup {
 
         JBRuleset memory ruleset = JBRuleset({
             cycleNumber: 1,
-            id: block.timestamp,
+            id: uint48(block.timestamp),
             basedOnId: 0,
-            start: block.timestamp,
+            start: uint48(block.timestamp),
             duration: 8000,
             weight: 5000,
             decayRate: 0,
@@ -118,9 +118,9 @@ contract TestSetTokenFor_Local is JBControllerSetup {
 
         JBRuleset memory upcoming = JBRuleset({
             cycleNumber: 1,
-            id: block.timestamp,
+            id: uint48(block.timestamp),
             basedOnId: 0,
-            start: block.timestamp,
+            start: uint48(block.timestamp),
             duration: 8000,
             weight: 5000,
             decayRate: 0,
@@ -173,9 +173,9 @@ contract TestSetTokenFor_Local is JBControllerSetup {
 
         JBRuleset memory ruleset = JBRuleset({
             cycleNumber: 1,
-            id: block.timestamp,
+            id: uint48(block.timestamp),
             basedOnId: 0,
-            start: block.timestamp,
+            start: uint48(block.timestamp),
             duration: 8000,
             weight: 5000,
             decayRate: 0,

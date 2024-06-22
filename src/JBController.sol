@@ -54,7 +54,6 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
 
     error CREDIT_TRANSFERS_PAUSED();
     error RULESETS_ARRAY_EMPTY();
-    error INVALID_BASE_CURRENCY();
     error INVALID_REDEMPTION_RATE();
     error INVALID_RESERVED_RATE();
     error CONTROLLER_MIGRATION_NOT_ALLOWED();
@@ -867,7 +866,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
                             token: address(token),
                             amount: splitAmount,
                             decimals: 18, // Hard-coded in `JBTokens`.
-                            projectId: projectId,
+                            projectId: uint56(projectId),
                             groupId: groupId,
                             split: split
                         })
@@ -957,11 +956,6 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
             // Make sure its redemption rate is valid.
             if (rulesetConfig.metadata.redemptionRate > JBConstants.MAX_REDEMPTION_RATE) {
                 revert INVALID_REDEMPTION_RATE();
-            }
-
-            // Make sure its base currency is valid.
-            if (rulesetConfig.metadata.baseCurrency > type(uint32).max) {
-                revert INVALID_BASE_CURRENCY();
             }
 
             // Queue its ruleset.

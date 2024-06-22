@@ -57,9 +57,9 @@ contract TestTransferCreditsFrom_Local is JBControllerSetup {
         // mocked ruleset that allows credit transfer
         JBRuleset memory _returnedRuleset = JBRuleset({
             cycleNumber: 1,
-            id: block.timestamp,
+            id: uint48(block.timestamp),
             basedOnId: 0,
-            start: block.timestamp,
+            start: uint48(block.timestamp),
             duration: 100,
             weight: 1e18,
             decayRate: 0,
@@ -111,9 +111,9 @@ contract TestTransferCreditsFrom_Local is JBControllerSetup {
         // mocked ruleset that allows credit transfer
         JBRuleset memory _returnedRuleset = JBRuleset({
             cycleNumber: 1,
-            id: block.timestamp,
+            id: uint48(block.timestamp),
             basedOnId: 0,
-            start: block.timestamp,
+            start: uint48(block.timestamp),
             duration: 100,
             weight: 1e18,
             decayRate: 0,

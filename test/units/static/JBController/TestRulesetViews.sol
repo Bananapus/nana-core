@@ -37,9 +37,9 @@ contract TestRulesetViews_Local is JBControllerSetup {
         // setup: return data
         JBRuleset memory data = JBRuleset({
             cycleNumber: 1,
-            id: block.timestamp,
+            id: uint48(block.timestamp),
             basedOnId: 0,
-            start: block.timestamp,
+            start: uint48(block.timestamp),
             duration: 8000,
             weight: 5000,
             decayRate: 0,
@@ -65,9 +65,9 @@ contract TestRulesetViews_Local is JBControllerSetup {
         // setup: return data
         JBRuleset memory data = JBRuleset({
             cycleNumber: 1,
-            id: block.timestamp,
+            id: uint48(block.timestamp),
             basedOnId: 0,
-            start: block.timestamp,
+            start: uint48(block.timestamp),
             duration: 8000,
             weight: 5000,
             decayRate: 0,
@@ -95,9 +95,9 @@ contract TestRulesetViews_Local is JBControllerSetup {
         // setup: return data
         JBRuleset memory data = JBRuleset({
             cycleNumber: 1,
-            id: block.timestamp,
+            id: uint48(block.timestamp),
             basedOnId: 0,
-            start: block.timestamp,
+            start: uint48(block.timestamp),
             duration: 8000,
             weight: 100,
             decayRate: 0,
@@ -108,9 +108,9 @@ contract TestRulesetViews_Local is JBControllerSetup {
         // setup: return data
         JBRuleset memory data2 = JBRuleset({
             cycleNumber: 1,
-            id: block.timestamp,
+            id: uint48(block.timestamp),
             basedOnId: 0,
-            start: block.timestamp,
+            start: uint48(block.timestamp),
             duration: 8000,
             weight: 200,
             decayRate: 0,
@@ -139,9 +139,9 @@ contract TestRulesetViews_Local is JBControllerSetup {
         // setup: return data
         JBRuleset memory data = JBRuleset({
             cycleNumber: 1,
-            id: block.timestamp,
+            id: uint48(block.timestamp),
             basedOnId: 0,
-            start: block.timestamp,
+            start: uint48(block.timestamp),
             duration: 8000,
             weight: 5000,
             decayRate: 0,
@@ -167,9 +167,9 @@ contract TestRulesetViews_Local is JBControllerSetup {
         // setup: return data
         JBRuleset memory data = JBRuleset({
             cycleNumber: 1,
-            id: block.timestamp,
+            id: uint48(block.timestamp),
             basedOnId: 0,
-            start: block.timestamp,
+            start: uint48(block.timestamp),
             duration: 8000,
             weight: 5000,
             decayRate: 0,
@@ -194,9 +194,9 @@ contract TestRulesetViews_Local is JBControllerSetup {
         // setup: return data
         JBRuleset memory data = JBRuleset({
             cycleNumber: 1,
-            id: block.timestamp,
+            id: uint48(block.timestamp),
             basedOnId: 0,
-            start: block.timestamp,
+            start: uint48(block.timestamp),
             duration: 8000,
             weight: 5000,
             decayRate: 0,

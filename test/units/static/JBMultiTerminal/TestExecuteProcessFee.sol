@@ -77,7 +77,7 @@ contract TestExecuteProcessFee_Local is JBMultiTerminalSetup {
         // it will call internal _pay
 
         // needed for next mock call returns
-        JBTokenAmount memory tokenAmount = JBTokenAmount(_native, _defaultAmount, 0, 0);
+        JBTokenAmount memory tokenAmount = JBTokenAmount(_native, 0, 0, _defaultAmount);
         JBPayHookSpecification[] memory hookSpecifications = new JBPayHookSpecification[](0);
         JBRuleset memory returnedRuleset = JBRuleset({
             cycleNumber: 1,
@@ -138,7 +138,7 @@ contract TestExecuteProcessFee_Local is JBMultiTerminalSetup {
         // it will call external pay with zero msgvalue
 
         // needed for next mock call returns
-        JBTokenAmount memory tokenAmount = JBTokenAmount(_usdc, _defaultAmount, 0, 0);
+        JBTokenAmount memory tokenAmount = JBTokenAmount(_usdc, 0, 0, _defaultAmount);
         JBPayHookSpecification[] memory hookSpecifications = new JBPayHookSpecification[](0);
         JBRuleset memory returnedRuleset = JBRuleset({
             cycleNumber: 1,

@@ -46,9 +46,9 @@ contract TestMigrateController_Local is JBControllerSetup {
         // setup: return data
         JBRuleset memory data = JBRuleset({
             cycleNumber: 1,
-            id: block.timestamp,
+            id: uint48(block.timestamp),
             basedOnId: 0,
-            start: block.timestamp,
+            start: uint48(block.timestamp),
             duration: 0,
             weight: 0,
             decayRate: 0,
@@ -90,9 +90,9 @@ contract TestMigrateController_Local is JBControllerSetup {
         // setup: return data
         JBRuleset memory data = JBRuleset({
             cycleNumber: 1,
-            id: block.timestamp,
+            id: uint48(block.timestamp),
             basedOnId: 0,
-            start: block.timestamp,
+            start: uint48(block.timestamp),
             duration: 0,
             weight: 0,
             decayRate: 0,

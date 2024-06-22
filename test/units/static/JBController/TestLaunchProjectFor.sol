@@ -123,47 +123,6 @@ contract TestLaunchProjectFor_Local is JBControllerSetup {
         _controller.launchProjectFor(address(this), _metadata, _rulesetConfigurations, _terminals, _memo);
     }
 
-    function test_GivenRulesetHasInvalidBaseCurrency() external whenCalledDefault {
-        // it will revert INVALID_BASE_CURRENCY()
-
-        JBRulesetMetadata memory _rulesMetadata = JBRulesetMetadata({
-            reservedRate: JBConstants.MAX_RESERVED_RATE / 2,
-            redemptionRate: JBConstants.MAX_REDEMPTION_RATE / 2,
-            baseCurrency: uint256(uint256(type(uint32).max) + 1), // invalid
-            pausePay: false,
-            pauseCreditTransfers: false,
-            allowOwnerMinting: false,
-            allowSetCustomToken: false,
-            allowTerminalMigration: false,
-            allowSetTerminals: false,
-            ownerMustSendPayouts: false,
-            allowSetController: false,
-            holdFees: false,
-            useTotalSurplusForRedemptions: true,
-            useDataHookForPay: false,
-            useDataHookForRedeem: false,
-            dataHook: address(0),
-            metadata: 0
-        });
-
-        JBFundAccessLimitGroup[] memory _fundAccessLimitGroup = new JBFundAccessLimitGroup[](0);
-        JBTerminalConfig[] memory _terminals = new JBTerminalConfig[](0);
-
-        // Package up the ruleset configuration.
-        JBRulesetConfig[] memory _rulesetConfigurations = new JBRulesetConfig[](1);
-        _rulesetConfigurations[0].mustStartAtOrAfter = 0;
-        _rulesetConfigurations[0].duration = 0;
-        _rulesetConfigurations[0].weight = 1e18;
-        _rulesetConfigurations[0].decayRate = 0;
-        _rulesetConfigurations[0].approvalHook = IJBRulesetApprovalHook(address(0));
-        _rulesetConfigurations[0].metadata = _rulesMetadata;
-        _rulesetConfigurations[0].splitGroups = new JBSplitGroup[](0);
-        _rulesetConfigurations[0].fundAccessLimitGroups = _fundAccessLimitGroup;
-
-        vm.expectRevert(abi.encodeWithSignature("INVALID_BASE_CURRENCY()"));
-        _controller.launchProjectFor(address(this), _metadata, _rulesetConfigurations, _terminals, _memo);
-    }
-
     function test_GivenSplitsRulesetsAndFundAccessConstraintsAreConfigured() external whenCalledDefault {
         // it will set split groups, ruleset, fundAccessConstraints
 
@@ -220,10 +179,10 @@ contract TestLaunchProjectFor_Local is JBControllerSetup {
 
         // JBRulesets calldata
         JBRuleset memory returnedRuleset = JBRuleset({
-            cycleNumber: block.timestamp,
-            id: block.timestamp,
+            cycleNumber: uint48(block.timestamp),
+            id: uint48(block.timestamp),
             basedOnId: 0,
-            start: block.timestamp,
+            start: uint48(block.timestamp),
             duration: _rulesetConfigurations[0].duration,
             weight: _rulesetConfigurations[0].weight,
             decayRate: _rulesetConfigurations[0].decayRate,

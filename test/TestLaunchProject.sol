@@ -105,9 +105,9 @@ contract TestLaunchProject_Local is TestBaseWorkflow {
         // Reference queued attributes for sake of comparison.
         JBRuleset memory queued = JBRuleset({
             cycleNumber: 1,
-            id: block.timestamp,
+            id: uint48(block.timestamp),
             basedOnId: 0,
-            start: block.timestamp,
+            start: uint48(block.timestamp),
             duration: 0,
             weight: 0,
             decayRate: 0,
@@ -120,8 +120,7 @@ contract TestLaunchProject_Local is TestBaseWorkflow {
         assertEq(same, true);
     }
 
-    function testLaunchProjectFuzzWeight(uint256 _weight) public {
-        _weight = bound(_weight, 0, type(uint88).max);
+    function testLaunchProjectFuzzWeight(uint112 _weight) public {
         uint256 _projectId;
 
         // Package up ruleset configuration.
@@ -154,9 +153,9 @@ contract TestLaunchProject_Local is TestBaseWorkflow {
         // Reference queued attributes for sake of comparison.
         JBRuleset memory queued = JBRuleset({
             cycleNumber: 1,
-            id: block.timestamp,
+            id: uint48(block.timestamp),
             basedOnId: 0,
-            start: block.timestamp,
+            start: uint48(block.timestamp),
             duration: _rulesetConfig[0].duration,
             weight: _weight,
             decayRate: _rulesetConfig[0].decayRate,
@@ -167,68 +166,5 @@ contract TestLaunchProject_Local is TestBaseWorkflow {
         bool same = equals(queued, ruleset);
 
         assertEq(same, true);
-    }
-
-    function testLaunchOverweight(uint256 _weight) public {
-        _weight = bound(_weight, type(uint88).max, type(uint256).max);
-        uint256 _projectId;
-
-        // Package up ruleset configuration.
-        JBRulesetConfig[] memory _rulesetConfig = new JBRulesetConfig[](1);
-        _rulesetConfig[0].mustStartAtOrAfter = 0;
-        _rulesetConfig[0].duration = 14;
-        _rulesetConfig[0].weight = _weight;
-        _rulesetConfig[0].decayRate = 450_000_000;
-        _rulesetConfig[0].approvalHook = IJBRulesetApprovalHook(address(0));
-        _rulesetConfig[0].metadata = _metadata;
-        _rulesetConfig[0].splitGroups = new JBSplitGroup[](0);
-        _rulesetConfig[0].fundAccessLimitGroups = new JBFundAccessLimitGroup[](0);
-
-        // Package up terminal configuration.
-        JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
-        address[] memory _tokensToAccept = new address[](1);
-        _tokensToAccept[0] = JBConstants.NATIVE_TOKEN;
-        _terminalConfigurations[0] = JBTerminalConfig({terminal: _terminal, tokensToAccept: _tokensToAccept});
-
-        if (_weight > type(uint88).max) {
-            // `expectRevert` on the next call if weight overflowing.
-            vm.expectRevert(abi.encodeWithSignature("INVALID_WEIGHT()"));
-
-            _projectId = _controller.launchProjectFor({
-                owner: _projectOwner,
-                projectUri: "myIPFSHash",
-                rulesetConfigurations: _rulesetConfig,
-                terminalConfigurations: _terminalConfigurations,
-                memo: ""
-            });
-        } else {
-            _projectId = _controller.launchProjectFor({
-                owner: _projectOwner,
-                projectUri: "myIPFSHash",
-                rulesetConfigurations: _rulesetConfig,
-                terminalConfigurations: _terminalConfigurations,
-                memo: ""
-            });
-
-            // Reference for sake of comparison.
-            JBRuleset memory ruleset = _rulesets.currentOf(_projectId);
-
-            // Reference queued attributes for sake of comparison.
-            JBRuleset memory queued = JBRuleset({
-                cycleNumber: 1,
-                id: block.timestamp,
-                basedOnId: 0,
-                start: block.timestamp,
-                duration: _rulesetConfig[0].duration,
-                weight: _weight,
-                decayRate: _rulesetConfig[0].decayRate,
-                approvalHook: _rulesetConfig[0].approvalHook,
-                metadata: ruleset.metadata
-            });
-
-            bool same = equals(queued, ruleset);
-
-            assertEq(same, true);
-        }
     }
 }

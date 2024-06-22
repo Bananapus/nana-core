@@ -5,7 +5,7 @@ import /* {*} from */ "./helpers/TestBaseWorkflow.sol";
 
 contract TestMintTokensOf_Local is TestBaseWorkflow {
     uint8 private constant _WEIGHT_DECIMALS = 18;
-    uint256 private constant _WEIGHT = 1000 * 10 ** _WEIGHT_DECIMALS;
+    uint112 private constant _WEIGHT = uint112(1000 * 10 ** _WEIGHT_DECIMALS);
     address private constant _DATA_HOOK = address(bytes20(keccak256("datahook")));
 
     IJBController private _controller;
@@ -92,7 +92,7 @@ contract TestMintTokensOf_Local is TestBaseWorkflow {
 
         // Package up ruleset configuration that starts in the future.
         JBRulesetConfig[] memory _rulesetConfig = new JBRulesetConfig[](1);
-        _rulesetConfig[0].mustStartAtOrAfter = block.timestamp + 100;
+        _rulesetConfig[0].mustStartAtOrAfter = uint48(block.timestamp + 100);
         _rulesetConfig[0].duration = 0;
         _rulesetConfig[0].weight = _WEIGHT;
         _rulesetConfig[0].decayRate = 0;
