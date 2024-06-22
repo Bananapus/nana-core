@@ -46,16 +46,6 @@ import {JBSplit} from "./structs/JBSplit.sol";
 import {JBSplitHookContext} from "./structs/JBSplitHookContext.sol";
 import {JBTokenAmount} from "./structs/JBTokenAmount.sol";
 
-library AC {
-    function isValid(JBAccountingContext memory accountingContext) external view returns (bool) {
-        return (accountingContext.token == JBConstants.NATIVE_TOKEN && accountingContext.decimals != 18)
-            || (
-                IERC165(accountingContext.token).supportsInterface(type(IERC20Metadata).interfaceId)
-                    && accountingContext.decimals != IERC20Metadata(accountingContext.token).decimals()
-            );
-    }
-}
-
 /// @notice `JBMultiTerminal` manages native/ERC-20 payments, redemptions, and surplus allowance usage for any number of
 /// projects. Terminals are the entry point for operations involving inflows and outflows of funds.
 contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
@@ -247,7 +237,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     function _controllerOf(uint256 projectId) internal returns (IJBController) {
         return IJBController(address(DIRECTORY.controllerOf(projectId)));
     }
-    
+
     /// @notice Returns a flag indicating if interacting with an address should not incur fees.
     /// @param addr The address to check.
     /// @return A flag indicating if the address should not incur fees.
