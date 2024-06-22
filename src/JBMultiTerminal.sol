@@ -566,7 +566,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             account: PROJECTS.ownerOf(projectId),
             projectId: projectId,
             permissionId: JBPermissionIds.ADD_ACCOUNTING_CONTEXTS,
-            alsoGrantAccessIf: IJBController(_msgSender()) == _controllerOf(projectId)
+            alsoGrantAccessIf: _msgSender() == address(_controllerOf(projectId))
         });
 
         // Get a reference to the project's current ruleset.
