@@ -247,7 +247,10 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     function _controllerOf(uint256 projectId) internal returns (IJBController) {
         return IJBController(address(DIRECTORY.controllerOf(projectId)));
     }
-
+    
+    /// @notice Returns a flag indicating if interacting with an address should not incur fees.
+    /// @param addr The address to check.
+    /// @return A flag indicating if the address should not incur fees.
     function _isFeeless(address addr) internal view returns (bool) {
         return FEELESS_ADDRESSES.isFeeless(addr);
     }
@@ -644,7 +647,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         require(msg.sender == address(this));
 
         if (address(feeTerminal) == address(0)) {
-            revert("E1");
+            revert("FEE_TERMINAL_NOT_FOUND");
         }
 
         // Trigger any inherited pre-transfer logic if funds will be transferred.
@@ -699,7 +702,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
             // Make sure that the address supports the split hook interface.
             if (!split.hook.supportsInterface(type(IJBSplitHook).interfaceId)) {
-                revert("E2");
+                revert("SPLIT_HOOK_INVALID");
             }
 
             // Trigger any inherited pre-transfer logic.
@@ -726,7 +729,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             IJBTerminal terminal = DIRECTORY.primaryTerminalOf(split.projectId, token);
 
             // The project must have a terminal to send funds to.
-            if (terminal == IJBTerminal(address(0))) revert("E3");
+            if (terminal == IJBTerminal(address(0))) revert("RECIPIENT_PROJECT_TERMINAL_NOT_FOUND");
 
             // This payout is eligible for a fee if the funds are leaving this contract and the receiving terminal isn't
             // a feelss address.
