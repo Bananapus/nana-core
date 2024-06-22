@@ -694,6 +694,15 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             if (!split.hook.supportsInterface(type(IJBSplitHook).interfaceId)) {
                 revert("SPLIT_HOOK_INVALID");
             }
+                        // Create the context to send to the split hook.	
+            JBSplitHookContext memory context = JBSplitHookContext({	
+                token: token,	
+                amount: netPayoutAmount,	
+                decimals: _accountingContextForTokenOf[projectId][token].decimals,	
+                projectId: projectId,	
+                groupId: uint256(uint160(token)),	
+                split: split	
+            });
 
             // Trigger any inherited pre-transfer logic.
             _beforeTransferTo({to: address(split.hook), token: token, amount: netPayoutAmount});
@@ -702,16 +711,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             uint256 payValue = _payValueOf(token, netPayoutAmount);
 
             // If this terminal's token is the native token, send it in `msg.value`.
-            split.hook.processSplitWith{value: payValue}({
-                context: JBSplitHookContext({
-                    token: token,
-                    amount: netPayoutAmount,
-                    decimals: _accountingContextForTokenOf[projectId][token].decimals,
-                    projectId: projectId,
-                    groupId: uint256(uint160(token)),
-                    split: split
-                })
-            });
+            split.hook.processSplitWith{value: payValue}(context);
 
             // Otherwise, if a project is specified, make a payment to it.
         } else if (split.projectId != 0) {
