@@ -694,14 +694,15 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             if (!split.hook.supportsInterface(type(IJBSplitHook).interfaceId)) {
                 revert("SPLIT_HOOK_INVALID");
             }
-                        // Create the context to send to the split hook.	
-            JBSplitHookContext memory context = JBSplitHookContext({	
-                token: token,	
-                amount: netPayoutAmount,	
-                decimals: _accountingContextForTokenOf[projectId][token].decimals,	
-                projectId: projectId,	
-                groupId: uint256(uint160(token)),	
-                split: split	
+
+            // Create the context to send to the split hook.
+            JBSplitHookContext memory context = JBSplitHookContext({
+                token: token,
+                amount: netPayoutAmount,
+                decimals: _accountingContextForTokenOf[projectId][token].decimals,
+                projectId: projectId,
+                groupId: uint256(uint160(token)),
+                split: split
             });
 
             // Trigger any inherited pre-transfer logic.
