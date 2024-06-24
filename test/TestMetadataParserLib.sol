@@ -400,4 +400,28 @@ contract JBDelegateMetadataLib_Test_Local is Test {
         vm.expectRevert(abi.encodeWithSignature("DATA_NOT_PADDED()"));
         parser.createMetadata(_ids, _datas);
     }
+
+    /**
+     * @notice Test creating and parsing bytes only metadata.
+     */
+    function test_create_incorrect_data_length() external {
+        bytes4[] memory _ids = new bytes4[](10);
+        bytes[] memory _datas = new bytes[](10);
+
+        for (uint256 _i; _i < _ids.length; _i++) {
+            _ids[_i] = bytes4(uint32(_i + 1 * 1000));
+
+            _datas[_i] = abi.encodePacked(
+                bytes1(uint8(_i + 1)), uint32(69), bytes2(uint16(_i + 69)), bytes32(uint256(type(uint256).max))
+            );
+        }
+
+        // Ensure data length is not multiple of word size and is gt word size.
+        assertGt(_datas[0].length, 32);
+        assertGt(_datas[0].length % 32, 0);
+
+        // New revert to help integrators.
+        vm.expectRevert(abi.encodeWithSignature("DATA_NOT_PADDED()"));
+        bytes memory _metadata = parser.createMetadata(_ids, _datas);
+    }
 }

@@ -230,7 +230,9 @@ library JBMetadataResolver {
         // For each id, add it to the lookup table with the next free offset, then increment the offset by the data
         // length (rounded up)
         for (uint256 _i; _i < _ids.length; ++_i) {
-            if (_datas[_i].length < 32) revert DATA_NOT_PADDED();
+            if (_datas[_i].length < 32 || _datas[_i].length % JBMetadataResolver.WORD_SIZE != 0) {
+                revert DATA_NOT_PADDED();
+            }
 
             metadata = abi.encodePacked(metadata, _ids[_i], bytes1(uint8(_offset)));
             _offset += _datas[_i].length / JBMetadataResolver.WORD_SIZE;
