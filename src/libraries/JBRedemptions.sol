@@ -1,4 +1,3 @@
-
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
@@ -8,7 +7,8 @@ import {JBConstants} from "./JBConstants.sol";
 
 /// @notice Redemption calculations.
 library JBRedemptions {
-    /// @notice Returns the amount of surplus terminal tokens which can be reclaimed based on the total surplus, the number of tokens being redeemed, the total token supply, and the ruleset's redemption rate.
+    /// @notice Returns the amount of surplus terminal tokens which can be reclaimed based on the total surplus, the
+    /// number of tokens being redeemed, the total token supply, and the ruleset's redemption rate.
     /// @param surplus The total amount of surplus terminal tokens.
     /// @param tokensRedeemed The number of tokens being redeemed, as a fixed point number with 18 decimals.
     /// @param totalSupply The total token supply, as a fixed point number with 18 decimals.

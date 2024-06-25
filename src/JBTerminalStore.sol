@@ -170,16 +170,19 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
         return _currentTotalSurplusOf(projectId, decimals, currency);
     }
 
-    /// @notice Returns the number of surplus terminal tokens that would be reclaimed from a terminal by redeeming a given number of tokens, based on the total token supply and total surplus.
+    /// @notice Returns the number of surplus terminal tokens that would be reclaimed from a terminal by redeeming a
+    /// given number of tokens, based on the total token supply and total surplus.
     /// @dev The returned amount in terms of the specified `terminal`'s base currency.
-    /// @dev The returned amount is represented as a fixed point number with the same amount of decimals as the specified terminal.
+    /// @dev The returned amount is represented as a fixed point number with the same amount of decimals as the
+    /// specified terminal.
     /// @param terminal The terminal that would be redeemed from. If `useTotalSurplus` is true, this is ignored.
     /// @param projectId The ID of the project whose tokens would be redeemed.
     /// @param accountingContexts The accounting contexts of the surplus terminal tokens that would be reclaimed
     /// @param decimals The number of decimals to include in the resulting fixed point number.
     /// @param currency The currency that the resulting number will be in terms of.
     /// @param tokensRedeemed The number of tokens that would be redeemed, as a fixed point number with 18 decimals.
-    /// @param useTotalSurplus Whether the total surplus should be summed across all of the project's terminals. If false, only the `terminal`'s surplus is used.
+    /// @param useTotalSurplus Whether the total surplus should be summed across all of the project's terminals. If
+    /// false, only the `terminal`'s surplus is used.
     /// @return The amount of surplus terminal tokens that would be reclaimed by redeeming `tokensRedeemed` tokens.
     function currentReclaimableSurplusOf(
         address terminal,
@@ -199,7 +202,8 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
         JBRuleset memory ruleset = RULESETS.currentOf(projectId);
 
         // Get the current surplus amount.
-        // If `useTotalSurplus` is true, use the total surplus across all terminals. Otherwise, get the `terminal`'s surplus.
+        // If `useTotalSurplus` is true, use the total surplus across all terminals. Otherwise, get the `terminal`'s
+        // surplus.
         uint256 currentSurplus = useTotalSurplus
             ? _currentTotalSurplusOf(projectId, decimals, currency)
             : _surplusFrom(terminal, projectId, accountingContexts, ruleset, decimals, currency);
@@ -223,12 +227,15 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
         });
     }
 
-    /// @notice Returns the number of surplus terminal tokens that would be reclaimed by redeeming a given project's tokens based on its current ruleset and the given total project token supply and total terminal token surplus.
+    /// @notice Returns the number of surplus terminal tokens that would be reclaimed by redeeming a given project's
+    /// tokens based on its current ruleset and the given total project token supply and total terminal token surplus.
     /// @param projectId The ID of the project whose project tokens would be redeemed.
-    /// @param tokensRedeemed The number of project tokens that would be redeemed, as a fixed point number with 18 decimals.
+    /// @param tokensRedeemed The number of project tokens that would be redeemed, as a fixed point number with 18
+    /// decimals.
     /// @param totalSupply The total project token supply, as a fixed point number with 18 decimals.
     /// @param surplus The total terminal token surplus amount, as a fixed point number.
-    /// @return The number of surplus terminal tokens that would be reclaimed, as a fixed point number with the same number of decimals as the provided `surplus`.
+    /// @return The number of surplus terminal tokens that would be reclaimed, as a fixed point number with the same
+    /// number of decimals as the provided `surplus`.
     function currentReclaimableSurplusOf(
         uint256 projectId,
         uint256 tokensRedeemed,
