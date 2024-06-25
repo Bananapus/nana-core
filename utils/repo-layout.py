@@ -1,6 +1,6 @@
 import os
 
-ignored = [".git/", "node_modules/", ".env", "lib/", "broadcast/", "out/", "cache/"]
+ignored = [".git/", "node_modules/", ".env", "lib/", "broadcast/", "out/", "cache/", "deployments/"]
 
 def generate_diagram(path: str, prefix=""):
     contents = os.listdir(path)
