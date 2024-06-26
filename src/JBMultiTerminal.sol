@@ -921,7 +921,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
             // Bundle the amount info into a `JBTokenAmount` struct.
             tokenAmount =
-                JBTokenAmount({token: token, decimals: context.decimals, currency: context.currency, amount: amount});
+                JBTokenAmount({token: token, decimals: context.decimals, currency: context.currency, value: amount});
         }
 
         // Record the payment.
@@ -1090,7 +1090,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                     token: tokenToReclaim,
                     decimals: accountingContext.decimals,
                     currency: accountingContext.currency,
-                    amount: reclaimAmount
+                    value: reclaimAmount
                 }),
                 specifications: hookSpecifications,
                 metadata: metadata
