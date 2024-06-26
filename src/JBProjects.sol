@@ -55,11 +55,15 @@ contract JBProjects is ERC721, Ownable, IJBProjects {
     //*********************************************************************//
 
     /// @param owner The owner of the contract who can set metadata.
-    /// @param feeProjectOwner The address that will receive the fee-project. If `address(0)` the fee-project will not
-    /// be minted.
-    constructor(address owner, address feeProjectOwner) ERC721("Juicebox Projects", "JUICEBOX") Ownable(owner) {
-        if (feeProjectOwner != address(0)) {
-            createFor(feeProjectOwner);
+    /// @param autoProjectOwners The addresses that will receive the first auto-created projects. If emprt, no projects be created on deploy.
+    constructor(address owner, address[] memory autoProjectOwners) ERC721("Juicebox Projects", "JUICEBOX") Ownable(owner) {
+
+        // Keep a reference to the number of projects to auto create.
+        uint256 numberOfAutoProjectOwners = autoProjectOwners.length;
+
+        // Create the projects.
+        for (uint256 i; i < numberOfAutoProjectOwners; i++) {
+            createFor(autoProjectOwners[i]);
         }
     }
 
