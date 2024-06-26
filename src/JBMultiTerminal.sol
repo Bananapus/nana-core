@@ -62,6 +62,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     error ACCOUNTING_CONTEXT_ALREADY_SET();
     error ADDING_ACCOUNTING_CONTEXT_NOT_ALLOWED();
     error INVALID_ACCOUNTING_CONTEXT_DECIMALS();
+    error INVALID_ACCOUNTING_CONTEXT_CURRENCY();
     error UNDER_MIN_TOKENS_PAID_OUT();
     error UNDER_MIN_TOKENS_RECLAIMED();
     error UNDER_MIN_RETURNED_TOKENS();
@@ -509,7 +510,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         });
 
         // The terminal being migrated to must accept the same token as this terminal.
-        if (to.accountingContextForTokenOf(projectId, token).decimals == 0) {
+        if (to.accountingContextForTokenOf(projectId, token).currency == 0) {
             revert TERMINAL_TOKENS_INCOMPATIBLE();
         }
 
@@ -603,6 +604,9 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             ) {
                 revert INVALID_ACCOUNTING_CONTEXT_DECIMALS();
             }
+
+            // Make sure the currency is non-zero.
+            if (accountingContext.currency == 0) revert INVALID_ACCOUNTING_CONTEXT_CURRENCY();
 
             // Define the context from the config.
             storedAccountingContext.token = accountingContext.token;
