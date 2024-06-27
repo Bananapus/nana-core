@@ -235,7 +235,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @notice Returns the current controller of a project.
     /// @param projectId The ID of the project to get the controller of.
     /// @return controller The project's controller.
-    function _controllerOf(uint256 projectId) internal returns (IJBController) {
+    function _controllerOf(uint256 projectId) internal view returns (IJBController) {
         return IJBController(address(DIRECTORY.controllerOf(projectId)));
     }
 
@@ -594,15 +594,24 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             // Make sure the token accounting context isn't already set.
             if (storedAccountingContext.token != address(0)) revert ACCOUNTING_CONTEXT_ALREADY_SET();
 
-            // Make sure the decimals provided in the accounting context matches expectations if there are expectations.
-            if (
-                (accountingContext.token == JBConstants.NATIVE_TOKEN && accountingContext.decimals != 18)
-                    || (
-                        accountingContext.token != JBConstants.NATIVE_TOKEN
-                            && IERC165(accountingContext.token).supportsInterface(type(IERC20Metadata).interfaceId)
-                            && accountingContext.decimals != IERC20Metadata(accountingContext.token).decimals()
-                    )
-            ) {
+            // Keep track of a flag indiciating if we know the provided decimals are incorrect.
+            bool knownInvalidDecimals;
+
+            // Check if the token is the native token and has the correct decimals
+            if (accountingContext.token == JBConstants.NATIVE_TOKEN && accountingContext.decimals != 18) {
+                knownInvalidDecimals = true;
+            } else if (accountingContext.token != JBConstants.NATIVE_TOKEN) {
+                try IERC165(accountingContext.token).supportsInterface(type(IERC20Metadata).interfaceId) returns (bool doesSupport) {
+                    if (doesSupport && accountingContext.decimals != IERC20Metadata(accountingContext.token).decimals()) {
+                        knownInvalidDecimals = true;
+                    }
+                } catch {
+                    knownInvalidDecimals = false; 
+                }
+            }
+
+            // Make sure the decimals are correct.
+            if (knownInvalidDecimals) {
                 revert INVALID_ACCOUNTING_CONTEXT_DECIMALS();
             }
 
