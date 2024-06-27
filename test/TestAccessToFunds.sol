@@ -1756,7 +1756,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                 currency: uint32(uint160(JBConstants.NATIVE_TOKEN))
             });
 
-            JBAccountingContext[] memory _tokensToAccept3 = new JBAccountingContext[](0);
+            JBAccountingContext[] memory _tokensToAccept3 = new JBAccountingContext[](1);
             _tokensToAccept3[0] = JBAccountingContext({
                 token: address(_usdcToken),
                 decimals: 6,

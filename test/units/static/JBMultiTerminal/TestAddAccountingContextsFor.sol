@@ -27,6 +27,7 @@ contract TestAddAccountingContextsFor_Local is JBMultiTerminalSetup {
         mockExpect(
             address(directory), abi.encodeCall(IJBDirectory.controllerOf, (_projectId)), abi.encode(address(this))
         );
+
         _;
     }
 
@@ -58,18 +59,20 @@ contract TestAddAccountingContextsFor_Local is JBMultiTerminalSetup {
     function test_GivenHappyPathERC20() external whenCallerIsPermissioned {
         // it will set the context and emit SetAccountingContext
 
+        // TODO @nowonder i think this needs to expect a call to RULESET.currentOf. Others in this file too.
+
         // mock call to tokens decimals()
-        mockExpect(_usdc, abi.encodeCall(IERC20Metadata.decimals, ()), abi.encode(18));
+        mockExpect(_usdc, abi.encodeCall(IERC20Metadata.decimals, ()), abi.encode(6));
 
         // call params
         JBAccountingContext[] memory _tokens = new JBAccountingContext[](1);
-        _tokens[1] = JBAccountingContext({token: _usdc, decimals: 6, currency: uint32(uint160(_usdc))});
+        _tokens[0] = JBAccountingContext({token: _usdc, decimals: 6, currency: uint32(uint160(_usdc))});
 
         _terminal.addAccountingContextsFor(_projectId, _tokens);
 
         JBAccountingContext memory _storedContext = _terminal.accountingContextForTokenOf(_projectId, _usdc);
         assertEq(_storedContext.token, _usdc);
-        assertEq(_storedContext.decimals, 18);
+        assertEq(_storedContext.decimals, 6);
         assertEq(_storedContext.currency, uint32(uint160(_usdc)));
     }
 

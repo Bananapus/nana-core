@@ -61,7 +61,7 @@ contract TestMigrateBalanceOf_Local is JBMultiTerminalSetup {
 
         // for next mock
         JBAccountingContext memory _context =
-            JBAccountingContext({token: _usdc, decimals: 0, currency: uint32(_usdcCurrency)});
+            JBAccountingContext({token: _usdc, decimals: 0, currency: 0});
 
         // mock call to the destination terminals accountingContextFor
         mockExpect(

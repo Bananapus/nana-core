@@ -271,7 +271,7 @@ contract TestLaunchRulesetsFor_Local is JBControllerSetup {
         // Mock call to rulesets queueFor
         bytes memory _queueForCall = abi.encodeCall(
             IJBRulesets.queueFor,
-            (_projectId, 0, 0, 0, _rulesetConfigs[0].approvalHook, 151_115_731_655_129_403_832_449, 0)
+            (_projectId, 0, 0, 0, _rulesetConfigs[0].approvalHook, 642241845873572506056833, 0)
         );
         bytes memory _queueReturn = abi.encode(data);
         mockExpect(address(rulesets), _queueForCall, _queueReturn);
