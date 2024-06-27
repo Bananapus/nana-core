@@ -279,7 +279,7 @@ contract TestLaunchProjectFor_Local is JBControllerSetup {
         address[] memory _tokensAccepted = new address[](1);
         _tokensAccepted[0] = _token;
 
-        _terminals[0] = JBTerminalConfig({terminal: _terminal, tokensToAccept: _tokensAccepted});
+        _terminals[0] = JBTerminalConfig({terminal: _terminal, accountingContextsToAccept: _tokensAccepted});
 
         // mock call return data
         JBAccountingContext memory _returnedContext =

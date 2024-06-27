@@ -57,9 +57,10 @@ contract TestMintTokensOf_Local is TestBaseWorkflow {
         _rulesetConfig[0].fundAccessLimitGroups = new JBFundAccessLimitGroup[](0);
 
         JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
-        address[] memory _tokensToAccept = new address[](1);
+        JBAccountingContext[] memory _tokensToAccept = new JBAccountingContext[](1);
         _tokensToAccept[0] = JBConstants.NATIVE_TOKEN;
-        _terminalConfigurations[0] = JBTerminalConfig({terminal: _terminal, tokensToAccept: _tokensToAccept});
+        _terminalConfigurations[0] =
+            JBTerminalConfig({terminal: _terminal, accountingContextsToAccept: _tokensToAccept});
 
         _projectId = _controller.launchProjectFor({
             owner: _projectOwner,
@@ -106,9 +107,10 @@ contract TestMintTokensOf_Local is TestBaseWorkflow {
         _rulesetConfig[0].fundAccessLimitGroups = new JBFundAccessLimitGroup[](0);
 
         JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
-        address[] memory _tokensToAccept = new address[](1);
+        JBAccountingContext[] memory _tokensToAccept = new JBAccountingContext[](1);
         _tokensToAccept[0] = JBConstants.NATIVE_TOKEN;
-        _terminalConfigurations[0] = JBTerminalConfig({terminal: _terminal, tokensToAccept: _tokensToAccept});
+        _terminalConfigurations[0] =
+            JBTerminalConfig({terminal: _terminal, accountingContextsToAccept: _tokensToAccept});
 
         _projectId = _controller.launchProjectFor({
             owner: _projectOwner,

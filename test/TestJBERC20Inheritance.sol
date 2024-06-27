@@ -55,9 +55,10 @@ contract JBERC20Inheritance_Local is JBERC20, TestBaseWorkflow {
 
         // Package up terminal configuration.
         JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
-        address[] memory _tokensToAccept = new address[](1);
+        JBAccountingContext[] memory _tokensToAccept = new JBAccountingContext[](1);
         _tokensToAccept[0] = JBConstants.NATIVE_TOKEN;
-        _terminalConfigurations[0] = JBTerminalConfig({terminal: jbMultiTerminal(), tokensToAccept: _tokensToAccept});
+        _terminalConfigurations[0] =
+            JBTerminalConfig({terminal: jbMultiTerminal(), accountingContextsToAccept: _tokensToAccept});
 
         uint256 projectId = jbController().launchProjectFor({
             owner: _projectOwner,

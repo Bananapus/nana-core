@@ -80,7 +80,8 @@ contract TestPermit2Terminal_Local is TestBaseWorkflow {
         address[] memory _tokensToAccept = new address[](2);
         _tokensToAccept[0] = JBConstants.NATIVE_TOKEN;
         _tokensToAccept[1] = address(_usdc);
-        _terminalConfigurations[0] = JBTerminalConfig({terminal: _terminal, tokensToAccept: _tokensToAccept});
+        _terminalConfigurations[0] =
+            JBTerminalConfig({terminal: _terminal, accountingContextsToAccept: _tokensToAccept});
 
         // Create a first project to collect fees.
         _controller.launchProjectFor({

@@ -120,11 +120,13 @@ contract TestFees_Local is TestBaseWorkflow {
 
         JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](2);
 
-        address[] memory _tokensToAccept = new address[](1);
+        JBAccountingContext[] memory _tokensToAccept = new JBAccountingContext[](1);
         _tokensToAccept[0] = JBConstants.NATIVE_TOKEN;
 
-        _terminalConfigurations[0] = JBTerminalConfig({terminal: _terminal, tokensToAccept: _tokensToAccept});
-        _terminalConfigurations[1] = JBTerminalConfig({terminal: _terminal2, tokensToAccept: _tokensToAccept});
+        _terminalConfigurations[0] =
+            JBTerminalConfig({terminal: _terminal, accountingContextsToAccept: _tokensToAccept});
+        _terminalConfigurations[1] =
+            JBTerminalConfig({terminal: _terminal2, accountingContextsToAccept: _tokensToAccept});
 
         // Dummy project that receive fees.
         _controller.launchProjectFor({

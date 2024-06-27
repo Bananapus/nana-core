@@ -114,9 +114,15 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             _rulesetConfigurations[0].fundAccessLimitGroups = _fundAccessLimitGroup;
 
             JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
-            address[] memory _tokensToAccept = new address[](1);
-            _tokensToAccept[0] = JBConstants.NATIVE_TOKEN;
-            _terminalConfigurations[0] = JBTerminalConfig({terminal: _terminal, tokensToAccept: _tokensToAccept});
+            JBAccountingContext[] memory _tokensToAccept = new JBAccountingContext[](1);
+            _tokensToAccept[0] = JBAccountingContext({
+                token: JBConstants.NATIVE_TOKEN,
+                decimals: 18,
+                currency: uint32(uint160(JBConstants.NATIVE_TOKEN))
+            });
+
+            _terminalConfigurations[0] =
+                JBTerminalConfig({terminal: _terminal, accountingContextsToAccept: _tokensToAccept});
 
             // Create a first project to collect fees.
             _controller.launchProjectFor({
@@ -343,9 +349,14 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             _rulesetConfigurations[0].fundAccessLimitGroups = _fundAccessLimitGroup;
 
             JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
-            address[] memory _tokensToAccept = new address[](1);
-            _tokensToAccept[0] = JBConstants.NATIVE_TOKEN;
-            _terminalConfigurations[0] = JBTerminalConfig({terminal: _terminal, tokensToAccept: _tokensToAccept});
+            JBAccountingContext[] memory _tokensToAccept = new JBAccountingContext[](1);
+            _tokensToAccept[0] = JBAccountingContext({
+                token: JBConstants.NATIVE_TOKEN,
+                decimals: 18,
+                currency: uint32(uint160(JBConstants.NATIVE_TOKEN))
+            });
+            _terminalConfigurations[0] =
+                JBTerminalConfig({terminal: _terminal, accountingContextsToAccept: _tokensToAccept});
 
             // Create a project to collect fees.
             _controller.launchProjectFor({
@@ -596,9 +607,14 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
 
         {
             JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
-            address[] memory _tokensToAccept = new address[](1);
-            _tokensToAccept[0] = JBConstants.NATIVE_TOKEN;
-            _terminalConfigurations[0] = JBTerminalConfig({terminal: _terminal, tokensToAccept: _tokensToAccept});
+            JBAccountingContext[] memory _tokensToAccept = new JBAccountingContext[](1);
+            _tokensToAccept[0] = JBAccountingContext({
+                token: JBConstants.NATIVE_TOKEN,
+                decimals: 18,
+                currency: uint32(uint160(JBConstants.NATIVE_TOKEN))
+            });
+            _terminalConfigurations[0] =
+                JBTerminalConfig({terminal: _terminal, accountingContextsToAccept: _tokensToAccept});
 
             // Create a first project to collect fees.
             _controller.launchProjectFor({
@@ -854,9 +870,14 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             _rulesetConfigurations[0].fundAccessLimitGroups = _fundAccessLimitGroup;
 
             JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
-            address[] memory _tokensToAccept = new address[](1);
-            _tokensToAccept[0] = JBConstants.NATIVE_TOKEN;
-            _terminalConfigurations[0] = JBTerminalConfig({terminal: _terminal, tokensToAccept: _tokensToAccept});
+            JBAccountingContext[] memory _tokensToAccept = new JBAccountingContext[](1);
+            _tokensToAccept[0] = JBAccountingContext({
+                token: JBConstants.NATIVE_TOKEN,
+                decimals: 18,
+                currency: uint32(uint160(JBConstants.NATIVE_TOKEN))
+            });
+            _terminalConfigurations[0] =
+                JBTerminalConfig({terminal: _terminal, accountingContextsToAccept: _tokensToAccept});
 
             // Create the project to test.
             _projectId = _controller.launchProjectFor({
@@ -1108,10 +1129,19 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             _rulesetConfigurations[0].fundAccessLimitGroups = _fundAccessLimitGroup;
 
             JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
-            address[] memory _tokensToAccept = new address[](2);
-            _tokensToAccept[0] = JBConstants.NATIVE_TOKEN;
-            _tokensToAccept[1] = address(_usdcToken);
-            _terminalConfigurations[0] = JBTerminalConfig({terminal: _terminal, tokensToAccept: _tokensToAccept});
+            JBAccountingContext[] memory _tokensToAccept = new JBAccountingContext[](2);
+            _tokensToAccept[0] = JBAccountingContext({
+                token: JBConstants.NATIVE_TOKEN,
+                decimals: 18,
+                currency: uint32(uint160(JBConstants.NATIVE_TOKEN))
+            });
+            _tokensToAccept[1] = JBAccountingContext({
+                token: address(_usdcToken),
+                decimals: 6,
+                currency: uint32(uint160(address(_usdcToken)))
+            });
+            _terminalConfigurations[0] =
+                JBTerminalConfig({terminal: _terminal, accountingContextsToAccept: _tokensToAccept});
 
             // Create a first project to collect fees.
             _controller.launchProjectFor({
@@ -1707,18 +1737,39 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
 
             JBTerminalConfig[] memory _terminalConfigurations1 = new JBTerminalConfig[](1);
             JBTerminalConfig[] memory _terminalConfigurations2 = new JBTerminalConfig[](2);
-            address[] memory _tokensToAccept1 = new address[](2);
-            address[] memory _tokensToAccept2 = new address[](1);
-            address[] memory _tokensToAccept3 = new address[](1);
-            _tokensToAccept1[0] = JBConstants.NATIVE_TOKEN;
-            _tokensToAccept1[1] = address(_usdcToken);
-            _tokensToAccept2[0] = JBConstants.NATIVE_TOKEN;
-            _tokensToAccept3[0] = address(_usdcToken);
+            JBAccountingContext[] memory _tokensToAccept1 = new JBAccountingContext[](2);
+            _tokensToAccept1[0] = JBAccountingContext({
+                token: JBConstants.NATIVE_TOKEN,
+                decimals: 18,
+                currency: uint32(uint160(JBConstants.NATIVE_TOKEN))
+            });
+            _tokensToAccept1[1] = JBAccountingContext({
+                token: address(_usdcToken),
+                decimals: 6,
+                currency: uint32(uint160(address(_usdcToken)))
+            });
+
+            JBAccountingContext[] memory _tokensToAccept2 = new JBAccountingContext[](1);
+            _tokensToAccept2[0] = JBAccountingContext({
+                token: JBConstants.NATIVE_TOKEN,
+                decimals: 18,
+                currency: uint32(uint160(JBConstants.NATIVE_TOKEN))
+            });
+
+            JBAccountingContext[] memory _tokensToAccept3 = new JBAccountingContext[](0);
+            _tokensToAccept3[0] = JBAccountingContext({
+                token: address(_usdcToken),
+                decimals: 6,
+                currency: uint32(uint160(address(_usdcToken)))
+            });
 
             // Fee takes USDC and native token in same terminal.
-            _terminalConfigurations1[0] = JBTerminalConfig({terminal: _terminal, tokensToAccept: _tokensToAccept1});
-            _terminalConfigurations2[0] = JBTerminalConfig({terminal: _terminal, tokensToAccept: _tokensToAccept2});
-            _terminalConfigurations2[1] = JBTerminalConfig({terminal: _terminal2, tokensToAccept: _tokensToAccept3});
+            _terminalConfigurations1[0] =
+                JBTerminalConfig({terminal: _terminal, accountingContextsToAccept: _tokensToAccept1});
+            _terminalConfigurations2[0] =
+                JBTerminalConfig({terminal: _terminal, accountingContextsToAccept: _tokensToAccept2});
+            _terminalConfigurations2[1] =
+                JBTerminalConfig({terminal: _terminal2, accountingContextsToAccept: _tokensToAccept3});
 
             // Create a first project to collect fees.
             _controller.launchProjectFor({

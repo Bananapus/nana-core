@@ -87,7 +87,8 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
         address[] memory _tokensToAccept = new address[](2);
         _tokensToAccept[0] = JBConstants.NATIVE_TOKEN;
         _tokensToAccept[1] = address(usdcToken());
-        _terminalConfigurations[0] = JBTerminalConfig({terminal: __terminal, tokensToAccept: _tokensToAccept});
+        _terminalConfigurations[0] =
+            JBTerminalConfig({terminal: __terminal, accountingContextsToAccept: _tokensToAccept});
 
         // Dummy.
         _controller.launchProjectFor({
@@ -255,7 +256,8 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
         address[] memory _tokensToAccept = new address[](2);
         _tokensToAccept[0] = JBConstants.NATIVE_TOKEN;
         _tokensToAccept[1] = address(usdcToken());
-        _terminalConfigurations[0] = JBTerminalConfig({terminal: __terminal, tokensToAccept: _tokensToAccept});
+        _terminalConfigurations[0] =
+            JBTerminalConfig({terminal: __terminal, accountingContextsToAccept: _tokensToAccept});
 
         vm.prank(_projectOwner);
 
@@ -305,7 +307,8 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
         address[] memory _tokensToAccept = new address[](2);
         _tokensToAccept[0] = JBConstants.NATIVE_TOKEN;
         _tokensToAccept[1] = address(usdcToken());
-        _terminalConfigurations[0] = JBTerminalConfig({terminal: __terminal, tokensToAccept: _tokensToAccept});
+        _terminalConfigurations[0] =
+            JBTerminalConfig({terminal: __terminal, accountingContextsToAccept: _tokensToAccept});
 
         vm.prank(_projectOwner);
 
@@ -362,7 +365,8 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
         address[] memory _tokensToAccept = new address[](2);
         _tokensToAccept[0] = JBConstants.NATIVE_TOKEN;
         _tokensToAccept[1] = address(usdcToken());
-        _terminalConfigurations[0] = JBTerminalConfig({terminal: __terminal, tokensToAccept: _tokensToAccept});
+        _terminalConfigurations[0] =
+            JBTerminalConfig({terminal: __terminal, accountingContextsToAccept: _tokensToAccept});
 
         _controller.launchProjectFor({
             owner: _projectOwner,
@@ -410,7 +414,8 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
         address[] memory _tokensToAccept = new address[](2);
         _tokensToAccept[0] = JBConstants.NATIVE_TOKEN;
         _tokensToAccept[1] = address(usdcToken());
-        _terminalConfigurations[0] = JBTerminalConfig({terminal: __terminal, tokensToAccept: _tokensToAccept});
+        _terminalConfigurations[0] =
+            JBTerminalConfig({terminal: __terminal, accountingContextsToAccept: _tokensToAccept});
 
         // Dummy.
         _controller.launchProjectFor({
@@ -512,7 +517,8 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
         address[] memory _tokensToAccept = new address[](2);
         _tokensToAccept[0] = JBConstants.NATIVE_TOKEN;
         _tokensToAccept[1] = address(usdcToken());
-        _terminalConfigurations[0] = JBTerminalConfig({terminal: __terminal, tokensToAccept: _tokensToAccept});
+        _terminalConfigurations[0] =
+            JBTerminalConfig({terminal: __terminal, accountingContextsToAccept: _tokensToAccept});
 
         uint256 _projectId = _controller.launchProjectFor({
             owner: _projectOwner,

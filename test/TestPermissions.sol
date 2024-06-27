@@ -56,9 +56,10 @@ contract TestPermissions_Local is TestBaseWorkflow, JBTest {
 
         // Package up terminal configuration.
         JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
-        address[] memory _tokensToAccept = new address[](1);
+        JBAccountingContext[] memory _tokensToAccept = new JBAccountingContext[](1);
         _tokensToAccept[0] = JBConstants.NATIVE_TOKEN;
-        _terminalConfigurations[0] = JBTerminalConfig({terminal: _terminal, tokensToAccept: _tokensToAccept});
+        _terminalConfigurations[0] =
+            JBTerminalConfig({terminal: _terminal, accountingContextsToAccept: _tokensToAccept});
 
         _projectZero = _controller.launchProjectFor({
             owner: makeAddr("zeroOwner"),
