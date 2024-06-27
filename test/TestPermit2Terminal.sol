@@ -77,9 +77,17 @@ contract TestPermit2Terminal_Local is TestBaseWorkflow {
         _rulesetConfig[0].fundAccessLimitGroups = new JBFundAccessLimitGroup[](0);
 
         JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
-        address[] memory _tokensToAccept = new address[](2);
-        _tokensToAccept[0] = JBConstants.NATIVE_TOKEN;
-        _tokensToAccept[1] = address(_usdc);
+        JBAccountingContext[] memory _tokensToAccept = new JBAccountingContext[](2);
+        _tokensToAccept[0] = JBAccountingContext({
+            token: JBConstants.NATIVE_TOKEN,
+            decimals: 18,
+            currency: uint32(uint160(JBConstants.NATIVE_TOKEN))
+        });
+        _tokensToAccept[1] = JBAccountingContext({
+            token: address(usdcToken()),
+            decimals: 6,
+            currency: uint32(uint160(address(usdcToken())))
+        });
         _terminalConfigurations[0] =
             JBTerminalConfig({terminal: _terminal, accountingContextsToAccept: _tokensToAccept});
 
