@@ -50,7 +50,7 @@ contract TestAddAccountingContextsFor_Local is JBMultiTerminalSetup {
 
         // call params
         JBAccountingContext[] memory _tokens = new JBAccountingContext[](1);
-        _tokens[1] = JBAccountingContext({token: _usdc, decimals: 6, currency: uint32(uint160(_usdc))});
+        _tokens[0] = JBAccountingContext({token: _usdc, decimals: 6, currency: uint32(uint160(_usdc))});
 
         vm.expectRevert(abi.encodeWithSignature("ACCOUNTING_CONTEXT_ALREADY_SET()"));
         _terminal.addAccountingContextsFor(_projectId, _tokens);
@@ -79,7 +79,7 @@ contract TestAddAccountingContextsFor_Local is JBMultiTerminalSetup {
     function test_GivenHappyPathNative() external whenCallerIsPermissioned {
         // call params
         JBAccountingContext[] memory _tokens = new JBAccountingContext[](1);
-        _tokens[1] = JBAccountingContext({
+        _tokens[0] = JBAccountingContext({
             token: JBConstants.NATIVE_TOKEN,
             decimals: 18,
             currency: uint32(uint160(JBConstants.NATIVE_TOKEN))
@@ -109,7 +109,7 @@ contract TestAddAccountingContextsFor_Local is JBMultiTerminalSetup {
 
         // call params
         JBAccountingContext[] memory _tokens = new JBAccountingContext[](1);
-        _tokens[1] = JBAccountingContext({
+        _tokens[0] = JBAccountingContext({
             token: JBConstants.NATIVE_TOKEN,
             decimals: 18,
             currency: uint32(uint160(JBConstants.NATIVE_TOKEN))
