@@ -16,6 +16,8 @@ contract TestAccountingContextsFor_Local is JBMultiTerminalSetup {
     function test_WhenAccountingContextsAreSet() external {
         // it will return contexts
 
+        // TODO @nowonder i think we need to expect a call to RULESET.currentOf
+
         // mock call to JBProjects ownerOf(_projectId)
         bytes memory _projectsCall = abi.encodeCall(IERC721.ownerOf, (_projectId));
         bytes memory _projectsCallReturn = abi.encode(address(this));
@@ -32,7 +34,7 @@ contract TestAccountingContextsFor_Local is JBMultiTerminalSetup {
         // call params
 
         JBAccountingContext[] memory _tokens = new JBAccountingContext[](1);
-        _tokens[1] = JBAccountingContext({token: _usdc, decimals: 6, currency: uint32(uint160(_usdc))});
+        _tokens[0] = JBAccountingContext({token: _usdc, decimals: 6, currency: uint32(uint160(_usdc))});
 
         _terminal.addAccountingContextsFor(_projectId, _tokens);
 
