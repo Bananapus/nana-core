@@ -30,8 +30,9 @@ contract TestAccountingContextsFor_Local is JBMultiTerminalSetup {
         mockExpect(_usdc, abi.encodeCall(IERC20Metadata.decimals, ()), abi.encode(6));
 
         // call params
-        address[] memory _tokens = new address[](1);
-        _tokens[0] = _usdc;
+
+        JBAccountingContext[] memory _tokens = new JBAccountingContext[](1);
+        _tokens[1] = JBAccountingContext({token: _usdc, decimals: 6, currency: uint32(uint160(_usdc))});
 
         _terminal.addAccountingContextsFor(_projectId, _tokens);
 

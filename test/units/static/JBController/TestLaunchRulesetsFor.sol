@@ -54,7 +54,7 @@ contract TestLaunchRulesetsFor_Local is JBControllerSetup {
             allowSetTerminals: false,
             ownerMustSendPayouts: false,
             allowSetController: false,
-            allowAddAccountingContext: false,
+            allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
             useTotalSurplusForRedemptions: true,

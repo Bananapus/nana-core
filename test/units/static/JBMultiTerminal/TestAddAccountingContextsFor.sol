@@ -47,8 +47,9 @@ contract TestAddAccountingContextsFor_Local is JBMultiTerminalSetup {
         JBAccountingContext memory _storedContext = _terminal.accountingContextForTokenOf(_projectId, _usdc);
         assertEq(_storedContext.token, _usdc);
 
-        address[] memory _tokens = new address[](1);
-        _tokens[0] = _usdc;
+        // call params
+        JBAccountingContext[] memory _tokens = new JBAccountingContext[](1);
+        _tokens[1] = JBAccountingContext({token: _usdc, decimals: 6, currency: uint32(uint160(_usdc))});
 
         vm.expectRevert(abi.encodeWithSignature("ACCOUNTING_CONTEXT_ALREADY_SET()"));
         _terminal.addAccountingContextsFor(_projectId, _tokens);
@@ -61,8 +62,8 @@ contract TestAddAccountingContextsFor_Local is JBMultiTerminalSetup {
         mockExpect(_usdc, abi.encodeCall(IERC20Metadata.decimals, ()), abi.encode(18));
 
         // call params
-        address[] memory _tokens = new address[](1);
-        _tokens[0] = _usdc;
+        JBAccountingContext[] memory _tokens = new JBAccountingContext[](1);
+        _tokens[1] = JBAccountingContext({token: _usdc, decimals: 6, currency: uint32(uint160(_usdc))});
 
         _terminal.addAccountingContextsFor(_projectId, _tokens);
 
@@ -74,8 +75,12 @@ contract TestAddAccountingContextsFor_Local is JBMultiTerminalSetup {
 
     function test_GivenHappyPathNative() external whenCallerIsPermissioned {
         // call params
-        address[] memory _tokens = new address[](1);
-        _tokens[0] = JBConstants.NATIVE_TOKEN;
+        JBAccountingContext[] memory _tokens = new JBAccountingContext[](1);
+        _tokens[1] = JBAccountingContext({
+            token: JBConstants.NATIVE_TOKEN,
+            decimals: 18,
+            currency: uint32(uint160(JBConstants.NATIVE_TOKEN))
+        });
 
         _terminal.addAccountingContextsFor(_projectId, _tokens);
 
@@ -100,8 +105,12 @@ contract TestAddAccountingContextsFor_Local is JBMultiTerminalSetup {
         );
 
         // call params
-        address[] memory _tokens = new address[](1);
-        _tokens[0] = JBConstants.NATIVE_TOKEN;
+        JBAccountingContext[] memory _tokens = new JBAccountingContext[](1);
+        _tokens[1] = JBAccountingContext({
+            token: JBConstants.NATIVE_TOKEN,
+            decimals: 18,
+            currency: uint32(uint160(JBConstants.NATIVE_TOKEN))
+        });
 
         _terminal.addAccountingContextsFor(_projectId, _tokens);
 

@@ -36,8 +36,12 @@ contract TestPay_Local is JBMultiTerminalSetup {
             address(directory), abi.encodeCall(IJBDirectory.controllerOf, (_projectId)), abi.encode(address(this))
         );
 
-        address[] memory _tokens = new address[](1);
-        _tokens[0] = _native;
+        JBAccountingContext[] memory _tokens = new JBAccountingContext[](1);
+        _tokens[1] = JBAccountingContext({
+            token: JBConstants.NATIVE_TOKEN,
+            decimals: 18,
+            currency: uint32(uint160(JBConstants.NATIVE_TOKEN))
+        });
 
         _terminal.addAccountingContextsFor(_projectId, _tokens);
 
@@ -56,8 +60,12 @@ contract TestPay_Local is JBMultiTerminalSetup {
         // mock call to token decimals
         mockExpect(address(_mockToken), abi.encodeCall(IERC20Metadata.decimals, ()), abi.encode(6));
 
-        address[] memory _tokens = new address[](1);
-        _tokens[0] = address(_mockToken);
+        JBAccountingContext[] memory _tokens = new JBAccountingContext[](1);
+        _tokens[1] = JBAccountingContext({
+            token: address(_mockToken),
+            decimals: 6,
+            currency: uint32(uint160(address(_mockToken)))
+        });
 
         _terminal.addAccountingContextsFor(_projectId, _tokens);
 

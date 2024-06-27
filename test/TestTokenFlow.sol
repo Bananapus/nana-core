@@ -33,7 +33,7 @@ contract TestTokenFlow_Local is TestBaseWorkflow {
             allowSetTerminals: false,
             ownerMustSendPayouts: false,
             allowSetController: false,
-            allowAddAccountingContext: false,
+            allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
             useTotalSurplusForRedemptions: false,

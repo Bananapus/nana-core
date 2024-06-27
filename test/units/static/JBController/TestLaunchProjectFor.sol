@@ -56,7 +56,7 @@ contract TestLaunchProjectFor_Local is JBControllerSetup {
             allowSetTerminals: false,
             ownerMustSendPayouts: false,
             allowSetController: false,
-            allowAddAccountingContext: false,
+            allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
             useTotalSurplusForRedemptions: true,
@@ -99,7 +99,7 @@ contract TestLaunchProjectFor_Local is JBControllerSetup {
             allowSetTerminals: false,
             ownerMustSendPayouts: false,
             allowSetController: false,
-            allowAddAccountingContext: false,
+            allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
             useTotalSurplusForRedemptions: true,
@@ -142,7 +142,7 @@ contract TestLaunchProjectFor_Local is JBControllerSetup {
             allowSetTerminals: false,
             ownerMustSendPayouts: false,
             allowSetController: false,
-            allowAddAccountingContext: false,
+            allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
             useTotalSurplusForRedemptions: true,
@@ -185,7 +185,7 @@ contract TestLaunchProjectFor_Local is JBControllerSetup {
             allowSetTerminals: false,
             ownerMustSendPayouts: false,
             allowSetController: false,
-            allowAddAccountingContext: false,
+            allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
             useTotalSurplusForRedemptions: true,
@@ -276,17 +276,21 @@ contract TestLaunchProjectFor_Local is JBControllerSetup {
 
         JBRulesetConfig[] memory _rulesets = new JBRulesetConfig[](0);
         JBTerminalConfig[] memory _terminals = new JBTerminalConfig[](1);
-        address[] memory _tokensAccepted = new address[](1);
-        _tokensAccepted[0] = _token;
+        JBAccountingContext[] memory _tokensToAccept = new JBAccountingContext[](1);
+        _tokensToAccept[0] = JBAccountingContext({
+            token: JBConstants.NATIVE_TOKEN,
+            decimals: 18,
+            currency: uint32(uint160(JBConstants.NATIVE_TOKEN))
+        });
 
-        _terminals[0] = JBTerminalConfig({terminal: _terminal, accountingContextsToAccept: _tokensAccepted});
+        _terminals[0] = JBTerminalConfig({terminal: _terminal, accountingContextsToAccept: _tokensToAccept});
 
         // mock call return data
         JBAccountingContext memory _returnedContext =
             JBAccountingContext({token: _token, decimals: 18, currency: uint32(uint160(JBConstants.NATIVE_TOKEN))});
 
         // mock call to the terminal addAccountingContextsFor()
-        bytes memory addCall = abi.encodeCall(IJBTerminal.addAccountingContextsFor, (1, _tokensAccepted));
+        bytes memory addCall = abi.encodeCall(IJBTerminal.addAccountingContextsFor, (1, _tokensToAccept));
         bytes memory addReturned = abi.encode(_returnedContext);
 
         mockExpect(address(_terminal), addCall, addReturned);
