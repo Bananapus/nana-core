@@ -598,7 +598,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             if (
                 (accountingContext.token == JBConstants.NATIVE_TOKEN && accountingContext.decimals != 18)
                     || (
-                        accountingContext.token != JBConstants.NATIVE_TOKEN && IERC165(accountingContext.token).supportsInterface(type(IERC20Metadata).interfaceId)
+                        accountingContext.token != JBConstants.NATIVE_TOKEN
+                            && IERC165(accountingContext.token).supportsInterface(type(IERC20Metadata).interfaceId)
                             && accountingContext.decimals != IERC20Metadata(accountingContext.token).decimals()
                     )
             ) {
