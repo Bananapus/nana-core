@@ -16,8 +16,6 @@ contract TestAccountingContextsFor_Local is JBMultiTerminalSetup {
     function test_WhenAccountingContextsAreSet() external {
         // it will return contexts
 
-        // TODO @nowonder i think we need to expect a call to RULESET.currentOf
-
         // mock call to JBProjects ownerOf(_projectId)
         bytes memory _projectsCall = abi.encodeCall(IERC721.ownerOf, (_projectId));
         bytes memory _projectsCallReturn = abi.encode(address(this));
@@ -31,8 +29,29 @@ contract TestAccountingContextsFor_Local is JBMultiTerminalSetup {
         // mock call to tokens decimals()
         mockExpect(_usdc, abi.encodeCall(IERC20Metadata.decimals, ()), abi.encode(6));
 
-        // call params
+        // mock call to rulesets currentOf returning 0 to bypass ruleset checking
 
+        // setup: return data
+        JBRuleset memory ruleset = JBRuleset({
+            cycleNumber: 1,
+            id: 0,
+            basedOnId: 0,
+            start: 0,
+            duration: 0,
+            weight: 0,
+            decayRate: 0,
+            approvalHook: IJBRulesetApprovalHook(address(0)),
+            metadata: 0
+        });
+
+        mockExpect(address(rulesets), abi.encodeCall(IJBRulesets.currentOf, (_projectId)), abi.encode(ruleset));
+
+        // mock supports interface call
+        mockExpect(
+            _usdc, abi.encodeCall(IERC165.supportsInterface, (type(IERC20Metadata).interfaceId)), abi.encode(true)
+        );
+
+        // call params
         JBAccountingContext[] memory _tokens = new JBAccountingContext[](1);
         _tokens[0] = JBAccountingContext({token: _usdc, decimals: 6, currency: uint32(uint160(_usdc))});
 

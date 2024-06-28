@@ -37,6 +37,11 @@ contract TestAddPriceFeedFor_Local is JBPricesSetup {
     }
 
     modifier whenProjectIsNotDefaultAndHasPermissions() {
+        // mock controllerOf call
+        mockExpect(
+            address(directory), abi.encodeCall(IJBDirectory.controllerOf, (_projectId)), abi.encode(address(this))
+        );
+
         // mock ownerOf call
         bytes memory projectsOwnerCall = abi.encodeCall(IERC721.ownerOf, (_projectId));
         bytes memory returned = abi.encode(_projectOneOwner);

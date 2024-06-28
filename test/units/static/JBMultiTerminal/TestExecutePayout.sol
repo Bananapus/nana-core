@@ -140,9 +140,6 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
             abi.encode(false)
         );
 
-        // mock call to FeelessAddresses isFeeless
-        mockExpect(address(feelessAddresses), abi.encodeCall(IJBFeelessAddresses.isFeeless, (_hook)), abi.encode(false));
-
         vm.expectRevert(bytes("SPLIT_HOOK_INVALID"));
         _terminal.executePayout({
             split: _split,

@@ -43,6 +43,21 @@ contract TestPay_Local is JBMultiTerminalSetup {
             currency: uint32(uint160(JBConstants.NATIVE_TOKEN))
         });
 
+        // setup: return data
+        JBRuleset memory returnedRuleset = JBRuleset({
+            cycleNumber: 1,
+            id: 0,
+            basedOnId: 0,
+            start: 0,
+            duration: 0,
+            weight: 0,
+            decayRate: 0,
+            approvalHook: IJBRulesetApprovalHook(address(0)),
+            metadata: 0
+        });
+
+        mockExpect(address(rulesets), abi.encodeCall(IJBRulesets.currentOf, (_projectId)), abi.encode(returnedRuleset));
+
         _terminal.addAccountingContextsFor(_projectId, _tokens);
 
         _;
@@ -59,6 +74,13 @@ contract TestPay_Local is JBMultiTerminalSetup {
 
         // TODO @nowonder may also wanna mock the supportsInterface bit
 
+        // mock supports interface call
+        mockExpect(
+            address(_mockToken),
+            abi.encodeCall(IERC165.supportsInterface, (type(IERC20Metadata).interfaceId)),
+            abi.encode(true)
+        );
+
         // mock call to token decimals
         mockExpect(address(_mockToken), abi.encodeCall(IERC20Metadata.decimals, ()), abi.encode(6));
 
@@ -68,6 +90,21 @@ contract TestPay_Local is JBMultiTerminalSetup {
             decimals: 6,
             currency: uint32(uint160(address(_mockToken)))
         });
+
+        // setup: return data
+        JBRuleset memory ruleset = JBRuleset({
+            cycleNumber: 1,
+            id: 0,
+            basedOnId: 0,
+            start: 0,
+            duration: 0,
+            weight: 0,
+            decayRate: 0,
+            approvalHook: IJBRulesetApprovalHook(address(0)),
+            metadata: 0
+        });
+
+        mockExpect(address(rulesets), abi.encodeCall(IJBRulesets.currentOf, (_projectId)), abi.encode(ruleset));
 
         _terminal.addAccountingContextsFor(_projectId, _tokens);
 
