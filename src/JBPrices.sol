@@ -24,6 +24,7 @@ contract JBPrices is JBControlled, JBPermissioned, Ownable, IJBPrices {
     error INVALID_CURRENCY();
     error PRICE_FEED_ALREADY_EXISTS();
     error PRICE_FEED_NOT_FOUND();
+    error ONLY_OWNER();
 
     //*********************************************************************//
     // ------------------------- public constants ------------------------ //
@@ -149,13 +150,12 @@ contract JBPrices is JBControlled, JBPermissioned, Ownable, IJBPrices {
         external
         override
     {
-        // If the message sender is this contract's owner and the `projectId` being set for is the default (0), no
-        // permissions necessary.
-        // Otherwise, only a project's owner or an operator with the `ADD_PRICE_FEED` permission from that owner can add
-        // a feed for a project.
-        if (projectId != DEFAULT_PROJECT_ID || msg.sender != owner()) {
-            // Make sure only the project's controller can make this call.
+        // Ensure only a (non-default) project's owner or an operator with the `ADD_PRICE_FEED` permission from that
+        if (projectId != DEFAULT_PROJECT_ID) {
             _onlyControllerOf(projectId);
+        // Ensure only owner of this contract may set default-project price feeds
+        } else if (projectId == DEFAULT_PROJECT_ID && msg.sender != owner()) {
+            revert ONLY_OWNER();
         }
 
         // Make sure the currencies aren't 0.
