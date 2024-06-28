@@ -56,7 +56,7 @@ contract TestPermit2Terminal_Local is TestBaseWorkflow {
             ownerMustSendPayouts: false,
             allowSetController: false,
             allowAddAccountingContext: true,
-            allowAddPriceFeed: false,
+            allowAddPriceFeed: true,
             holdFees: false,
             useTotalSurplusForRedemptions: false,
             useDataHookForPay: false,
@@ -112,7 +112,7 @@ contract TestPermit2Terminal_Local is TestBaseWorkflow {
         MockPriceFeed _priceFeedNativeUsd = new MockPriceFeed(_nativePricePerUsd, 18);
         vm.label(address(_priceFeedNativeUsd), "Mock Price Feed Native-USD");
 
-        _prices.addPriceFeedFor({
+        _controller.addPriceFeed({
             projectId: _projectId,
             pricingCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             unitCurrency: uint32(uint160(address(usdcToken()))),

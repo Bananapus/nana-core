@@ -548,7 +548,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     function processHeldFeesOf(uint256 projectId, address token) external virtual override {
         _processHeldFeesOf({projectId: projectId, token: token, forced: false});
     }
-    
+
     /// @notice Adds accounting contexts for a project to this terminal so the project can begin accepting the tokens in
     /// those contexts.
     /// @dev Only a project's owner, an operator with the `ADD_ACCOUNTING_CONTEXTS` permission from that owner, or a
@@ -601,8 +601,11 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             if (accountingContext.token == JBConstants.NATIVE_TOKEN && accountingContext.decimals != 18) {
                 knownInvalidDecimals = true;
             } else if (accountingContext.token != JBConstants.NATIVE_TOKEN) {
-                try IERC165(accountingContext.token).supportsInterface(type(IERC20Metadata).interfaceId) returns (bool doesSupport) {
-                    if (doesSupport && accountingContext.decimals != IERC20Metadata(accountingContext.token).decimals()) {
+                try IERC165(accountingContext.token).supportsInterface(type(IERC20Metadata).interfaceId) returns (
+                    bool doesSupport
+                ) {
+                    if (doesSupport && accountingContext.decimals != IERC20Metadata(accountingContext.token).decimals())
+                    {
                         knownInvalidDecimals = true;
                     }
                 } catch {}

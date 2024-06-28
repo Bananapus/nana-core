@@ -59,7 +59,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             ownerMustSendPayouts: false,
             allowSetController: false,
             allowAddAccountingContext: true,
-            allowAddPriceFeed: false,
+            allowAddPriceFeed: true,
             holdFees: false,
             useTotalSurplusForRedemptions: true,
             useDataHookForPay: false,
@@ -1145,7 +1145,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
 
             // Create a first project to collect fees.
             _controller.launchProjectFor({
-                owner: address(420), // Random.
+                owner: _projectOwner, // Random.
                 projectUri: "whatever",
                 rulesetConfigurations: _rulesetConfigurations, // Use the same ruleset configurations.
                 terminalConfigurations: _terminalConfigurations, // Set terminals to receive fees.
@@ -1168,8 +1168,15 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             MockPriceFeed _priceFeedNativeUsd = new MockPriceFeed(_USD_PRICE_PER_NATIVE, _PRICE_FEED_DECIMALS);
             vm.label(address(_priceFeedNativeUsd), "Mock Price Feed Native-USDC");
 
-            _prices.addPriceFeedFor({
-                projectId: 0,
+            _controller.addPriceFeed({
+                projectId: 1,
+                pricingCurrency: uint32(uint160(address(_usdcToken))),
+                unitCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
+                feed: _priceFeedNativeUsd
+            });
+
+            _controller.addPriceFeed({
+                projectId: 2,
                 pricingCurrency: uint32(uint160(address(_usdcToken))),
                 unitCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
                 feed: _priceFeedNativeUsd
@@ -1773,7 +1780,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
 
             // Create a first project to collect fees.
             _controller.launchProjectFor({
-                owner: address(420), // Random.
+                owner: _projectOwner, // Random.
                 projectUri: "whatever",
                 rulesetConfigurations: _rulesetConfigurations, // Use the same ruleset configurations.
                 terminalConfigurations: _terminalConfigurations1, // Set terminals to receive fees.
@@ -1796,8 +1803,15 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             MockPriceFeed _priceFeedNativeUsd = new MockPriceFeed(_USD_PRICE_PER_NATIVE, _PRICE_FEED_DECIMALS);
             vm.label(address(_priceFeedNativeUsd), "Mock Price Feed Native-USDC");
 
-            _prices.addPriceFeedFor({
-                projectId: 0,
+            _controller.addPriceFeed({
+                projectId: 1,
+                pricingCurrency: uint32(uint160(address(_usdcToken))),
+                unitCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
+                feed: _priceFeedNativeUsd
+            });
+
+            _controller.addPriceFeed({
+                projectId: 2,
                 pricingCurrency: uint32(uint160(address(_usdcToken))),
                 unitCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
                 feed: _priceFeedNativeUsd
