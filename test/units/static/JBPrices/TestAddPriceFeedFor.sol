@@ -33,7 +33,11 @@ contract TestAddPriceFeedFor_Local is JBPricesSetup {
     function test_WhenProjectIdIsTheDEFAULT_PROJECT_IDAndMsgSenderIsNotTheOwnerOfProjectZero() external {
         // it should revert ONLY_OWNER()
 
-        vm.expectRevert(abi.encodeWithSignature("ONLY_OWNER()"));
+        // encode custom error
+        bytes4 selector = bytes4(keccak256("OwnableUnauthorizedAccount(address)"));
+        bytes memory expectedError = abi.encodeWithSelector(selector, address(this));
+
+        vm.expectRevert(expectedError);
         _prices.addPriceFeedFor(DEFAULT_PROJECT_ID, _pricingCurrency, _unitCurrency, _feed);
     }
 
