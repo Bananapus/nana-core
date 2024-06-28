@@ -72,8 +72,6 @@ contract TestPay_Local is JBMultiTerminalSetup {
             address(directory), abi.encodeCall(IJBDirectory.controllerOf, (_projectId)), abi.encode(address(this))
         );
 
-        // TODO @nowonder may also wanna mock the supportsInterface bit
-
         // mock supports interface call
         mockExpect(
             address(_mockToken),
