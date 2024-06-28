@@ -722,12 +722,12 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         TOKENS.transferCreditsFrom(holder, projectId, recipient, amount);
     }
 
-    /// @notice Add a price feed to a project.
+    /// @notice Add a price feed for a project.
     /// @dev Can only be called by the project's owner or an address with the owner's permission to `ADD_PRICE_FEED`.
-    /// @param projectId The ID of the project having a feed added.
-    /// @param pricingCurrency The currency the feed's resulting price is in terms of.
+    /// @param projectId The ID of the project to add the feed for.
+    /// @param pricingCurrency The currency the feed's output price is in terms of.
     /// @param unitCurrency The currency being priced by the feed.
-    /// @param feed The price feed being added.
+    /// @param feed The address of the price feed to add.
     function addPriceFeed(
         uint256 projectId,
         uint256 pricingCurrency,
@@ -746,7 +746,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
 
         JBRuleset memory ruleset = RULESETS.currentOf(projectId);
 
-        // Make sure adding a price feed is allowed.
+        // Make sure the project's ruleset allows adding price feeds.
         if (!ruleset.allowAddPriceFeed()) revert ADDING_PRICE_FEED_NOT_ALLOWED();
 
         PRICES.addPriceFeedFor(projectId, pricingCurrency, unitCurrency, feed);
