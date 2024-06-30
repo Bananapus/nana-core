@@ -36,8 +36,27 @@ contract TestPay_Local is JBMultiTerminalSetup {
             address(directory), abi.encodeCall(IJBDirectory.controllerOf, (_projectId)), abi.encode(address(this))
         );
 
-        address[] memory _tokens = new address[](1);
-        _tokens[0] = _native;
+        JBAccountingContext[] memory _tokens = new JBAccountingContext[](1);
+        _tokens[0] = JBAccountingContext({
+            token: JBConstants.NATIVE_TOKEN,
+            decimals: 18,
+            currency: uint32(uint160(JBConstants.NATIVE_TOKEN))
+        });
+
+        // setup: return data
+        JBRuleset memory returnedRuleset = JBRuleset({
+            cycleNumber: 1,
+            id: 0,
+            basedOnId: 0,
+            start: 0,
+            duration: 0,
+            weight: 0,
+            decayRate: 0,
+            approvalHook: IJBRulesetApprovalHook(address(0)),
+            metadata: 0
+        });
+
+        mockExpect(address(rulesets), abi.encodeCall(IJBRulesets.currentOf, (_projectId)), abi.encode(returnedRuleset));
 
         _terminal.addAccountingContextsFor(_projectId, _tokens);
 
@@ -53,11 +72,37 @@ contract TestPay_Local is JBMultiTerminalSetup {
             address(directory), abi.encodeCall(IJBDirectory.controllerOf, (_projectId)), abi.encode(address(this))
         );
 
+        // mock supports interface call
+        mockExpect(
+            address(_mockToken),
+            abi.encodeCall(IERC165.supportsInterface, (type(IERC20Metadata).interfaceId)),
+            abi.encode(true)
+        );
+
         // mock call to token decimals
         mockExpect(address(_mockToken), abi.encodeCall(IERC20Metadata.decimals, ()), abi.encode(6));
 
-        address[] memory _tokens = new address[](1);
-        _tokens[0] = address(_mockToken);
+        JBAccountingContext[] memory _tokens = new JBAccountingContext[](1);
+        _tokens[0] = JBAccountingContext({
+            token: address(_mockToken),
+            decimals: 6,
+            currency: uint32(uint160(address(_mockToken)))
+        });
+
+        // setup: return data
+        JBRuleset memory ruleset = JBRuleset({
+            cycleNumber: 1,
+            id: 0,
+            basedOnId: 0,
+            start: 0,
+            duration: 0,
+            weight: 0,
+            decayRate: 0,
+            approvalHook: IJBRulesetApprovalHook(address(0)),
+            metadata: 0
+        });
+
+        mockExpect(address(rulesets), abi.encodeCall(IJBRulesets.currentOf, (_projectId)), abi.encode(ruleset));
 
         _terminal.addAccountingContextsFor(_projectId, _tokens);
 

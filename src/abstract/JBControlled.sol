@@ -18,9 +18,7 @@ abstract contract JBControlled is IJBControlled {
     /// @notice Only allows the controller of the specified project to proceed.
     /// @param projectId The ID of the project.
     modifier onlyControllerOf(uint256 projectId) {
-        if (address(DIRECTORY.controllerOf(projectId)) != msg.sender) {
-            revert CONTROLLER_UNAUTHORIZED();
-        }
+        _onlyControllerOf(projectId);
         _;
     }
 
@@ -38,5 +36,12 @@ abstract contract JBControlled is IJBControlled {
     /// @param directory A contract storing directories of terminals and controllers for each project.
     constructor(IJBDirectory directory) {
         DIRECTORY = directory;
+    }
+
+    /// @notice Only allows the controller of the specified project to proceed.
+    function _onlyControllerOf(uint256 projectId) internal view {
+        if (address(DIRECTORY.controllerOf(projectId)) != msg.sender) {
+            revert CONTROLLER_UNAUTHORIZED();
+        }
     }
 }

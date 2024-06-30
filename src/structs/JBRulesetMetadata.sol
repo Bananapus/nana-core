@@ -16,6 +16,10 @@ pragma solidity ^0.8.0;
 /// ruleset.
 /// @custom:member allowSetTerminals A flag indicating if a project's terminals can be added or removed.
 /// @custom:member allowSetController A flag indicating if a project's controller can be changed.
+/// @custom:member allowAddAccountingContext A flag indicating if a project can add new accounting contexts for its
+/// terminals to use.
+/// @custom:member allowAddPriceFeed A flag indicating if a project can add new price feeds to calculate exchange rates
+/// between its tokens.
 /// @custom:member ownerMustSendPayouts A flag indicating if privileged payout distribution should be
 /// enforced, otherwise payouts can be distributed by anyone.
 /// @custom:member holdFees A flag indicating if fees should be held during this ruleset.
@@ -26,7 +30,7 @@ pragma solidity ^0.8.0;
 /// @custom:member useDataHookForRedeem A flag indicating if the data hook should be used for redeem transactions during
 /// this ruleset.
 /// @custom:member dataHook The data hook to use during this ruleset.
-/// @custom:member metadata Metadata of the metadata, up to uint8 in size.
+/// @custom:member metadata Metadata of the metadata, up to uint16 in size though only the first 14 bits can be used.
 struct JBRulesetMetadata {
     uint16 reservedRate;
     uint16 redemptionRate;
@@ -38,11 +42,13 @@ struct JBRulesetMetadata {
     bool allowTerminalMigration;
     bool allowSetTerminals;
     bool allowSetController;
+    bool allowAddAccountingContext;
+    bool allowAddPriceFeed;
     bool ownerMustSendPayouts;
     bool holdFees;
     bool useTotalSurplusForRedemptions;
     bool useDataHookForPay;
     bool useDataHookForRedeem;
     address dataHook;
-    uint8 metadata;
+    uint16 metadata;
 }

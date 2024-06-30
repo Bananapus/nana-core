@@ -55,6 +55,8 @@ contract TestPermit2Terminal_Local is TestBaseWorkflow {
             allowSetTerminals: false,
             ownerMustSendPayouts: false,
             allowSetController: false,
+            allowAddAccountingContext: true,
+            allowAddPriceFeed: true,
             holdFees: false,
             useTotalSurplusForRedemptions: false,
             useDataHookForPay: false,
@@ -75,10 +77,19 @@ contract TestPermit2Terminal_Local is TestBaseWorkflow {
         _rulesetConfig[0].fundAccessLimitGroups = new JBFundAccessLimitGroup[](0);
 
         JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
-        address[] memory _tokensToAccept = new address[](2);
-        _tokensToAccept[0] = JBConstants.NATIVE_TOKEN;
-        _tokensToAccept[1] = address(_usdc);
-        _terminalConfigurations[0] = JBTerminalConfig({terminal: _terminal, tokensToAccept: _tokensToAccept});
+        JBAccountingContext[] memory _tokensToAccept = new JBAccountingContext[](2);
+        _tokensToAccept[0] = JBAccountingContext({
+            token: JBConstants.NATIVE_TOKEN,
+            decimals: 18,
+            currency: uint32(uint160(JBConstants.NATIVE_TOKEN))
+        });
+        _tokensToAccept[1] = JBAccountingContext({
+            token: address(usdcToken()),
+            decimals: 6,
+            currency: uint32(uint160(address(usdcToken())))
+        });
+        _terminalConfigurations[0] =
+            JBTerminalConfig({terminal: _terminal, accountingContextsToAccept: _tokensToAccept});
 
         // Create a first project to collect fees.
         _controller.launchProjectFor({
@@ -101,11 +112,11 @@ contract TestPermit2Terminal_Local is TestBaseWorkflow {
         MockPriceFeed _priceFeedNativeUsd = new MockPriceFeed(_nativePricePerUsd, 18);
         vm.label(address(_priceFeedNativeUsd), "Mock Price Feed Native-USD");
 
-        _prices.addPriceFeedFor({
+        _controller.addPriceFeed({
             projectId: _projectId,
             pricingCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             unitCurrency: uint32(uint160(address(usdcToken()))),
-            priceFeed: _priceFeedNativeUsd
+            feed: _priceFeedNativeUsd
         });
 
         vm.stopPrank();

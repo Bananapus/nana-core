@@ -35,7 +35,7 @@ contract TestExecuteProcessFee_Local is JBMultiTerminalSetup {
         // it will revert 404_1
 
         vm.prank(address(_terminal));
-        vm.expectRevert(bytes("404_1"));
+        vm.expectRevert(bytes("FEE_TERMINAL_NOT_FOUND"));
         _terminal.executeProcessFee({
             projectId: _projectId,
             token: _native,

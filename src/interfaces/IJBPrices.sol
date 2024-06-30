@@ -36,7 +36,7 @@ interface IJBPrices {
         uint256 projectId,
         uint256 pricingCurrency,
         uint256 unitCurrency,
-        IJBPriceFeed priceFeed
+        IJBPriceFeed feed
     )
         external;
 }

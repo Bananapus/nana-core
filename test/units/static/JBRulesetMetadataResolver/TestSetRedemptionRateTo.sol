@@ -11,7 +11,7 @@ contract TestSetRedemptionRateTo_Local is JBTest {
     function testFuzzEnsureCorrectlyPackedBits(
         uint16 _fuzzReservedRate,
         uint16 _fuzzRedemptionRate,
-        uint8 _fuzzMetadata
+        uint16 _fuzzMetadata
     )
         external
     {
@@ -34,6 +34,8 @@ contract TestSetRedemptionRateTo_Local is JBTest {
             allowSetTerminals: true,
             ownerMustSendPayouts: true,
             allowSetController: true,
+            allowAddAccountingContext: true,
+            allowAddPriceFeed: true,
             holdFees: true,
             useTotalSurplusForRedemptions: true,
             useDataHookForPay: true,
@@ -53,17 +55,17 @@ contract TestSetRedemptionRateTo_Local is JBTest {
         assertEq(_reservedRate, _fuzzReservedRate);
         assertEq(_redemptionRate, _fuzzRedemptionRate);
 
-        for (uint256 _i = 68; _i < 79; _i++) {
+        for (uint256 _i = 68; _i < 81; _i++) {
             uint256 _flag = uint256(uint16(_packed >> _i) & 1);
             assertEq(_flag, 1);
         }
 
         // Data source address
-        address _packedDataHook = address(uint160(_packed >> 80));
+        address _packedDataHook = address(uint160(_packed >> 82));
         assertEq(_packedDataHook, _hookAddress);
 
         // Metadata
-        uint256 _packedMetadata = uint256(uint16(_packed >> 240));
-        assertEq(_packedMetadata, _fuzzMetadata);
+        uint256 _packedMetadata = uint256(uint16(_packed >> 242));
+        assertEq(_packedMetadata, uint16(uint256(_fuzzMetadata) >> 242));
     }
 }
