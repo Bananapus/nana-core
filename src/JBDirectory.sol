@@ -310,7 +310,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
             || IJBDirectoryAccessControl(address(controller)).setTerminalsAllowed(projectId);
 
         // If the caller is not the project's controller, the project's ruleset must allow setting terminals.
-        if (msg.sender != address(controllerOf[projectId]) && !allowSetTerminals) {
+        if (msg.sender != address(controller) && !allowSetTerminals) {
             revert SET_TERMINALS_NOT_ALLOWED();
         }
 
