@@ -17,9 +17,7 @@ interface IJBTerminal is IERC165 {
         uint256 indexed projectId, uint256 amount, uint256 unlockedFees, string memo, bytes metadata, address caller
     );
 
-    event SetAccountingContext(
-        uint256 indexed projectId, address indexed token, JBAccountingContext context, address caller
-    );
+    event SetAccountingContext(uint256 indexed projectId, JBAccountingContext context, address caller);
 
     event Pay(
         uint256 indexed rulesetId,
@@ -52,7 +50,7 @@ interface IJBTerminal is IERC165 {
 
     function migrateBalanceOf(uint256 projectId, address token, IJBTerminal to) external returns (uint256 balance);
 
-    function addAccountingContextsFor(uint256 projectId, address[] calldata tokens) external;
+    function addAccountingContextsFor(uint256 projectId, JBAccountingContext[] calldata accountingContexts) external;
 
     function pay(
         uint256 projectId,

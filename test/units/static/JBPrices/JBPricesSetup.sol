@@ -13,12 +13,14 @@ contract JBPricesSetup is JBTest {
     // Mocks
     IJBPermissions public permissions = IJBPermissions(makeAddr("permissions"));
     IJBProjects public projects = IJBProjects(makeAddr("projects"));
+    IJBDirectory public directory = IJBDirectory(makeAddr("directory"));
+    IJBRulesets public rulesets = IJBRulesets(makeAddr("rulesets"));
 
     // Target Contract
     IJBPrices public _prices;
 
     function pricesSetup() public virtual {
         // Instantiate the contract being tested
-        _prices = new JBPrices(permissions, projects, _owner);
+        _prices = new JBPrices(permissions, projects, directory, _owner);
     }
 }

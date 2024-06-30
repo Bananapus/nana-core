@@ -14,6 +14,8 @@ import {JBTerminalConfig} from "./../structs/JBTerminalConfig.sol";
 import {IJBDirectory} from "./IJBDirectory.sol";
 import {IJBDirectoryAccessControl} from "./IJBDirectoryAccessControl.sol";
 import {IJBFundAccessLimits} from "./IJBFundAccessLimits.sol";
+import {IJBPriceFeed} from "./IJBPriceFeed.sol";
+import {IJBPrices} from "./IJBPrices.sol";
 import {IJBProjects} from "./IJBProjects.sol";
 import {IJBProjectUriRegistry} from "./IJBProjectUriRegistry.sol";
 import {IJBRulesets} from "./IJBRulesets.sol";
@@ -81,6 +83,8 @@ interface IJBController is IERC165, IJBProjectUriRegistry, IJBDirectoryAccessCon
     function SPLITS() external view returns (IJBSplits);
 
     function FUND_ACCESS_LIMITS() external view returns (IJBFundAccessLimits);
+
+    function PRICES() external view returns (IJBPrices);
 
     function pendingReservedTokenBalanceOf(uint256 projectId) external view returns (uint256);
 
@@ -185,4 +189,12 @@ interface IJBController is IERC165, IJBProjectUriRegistry, IJBDirectoryAccessCon
     function claimTokensFor(address holder, uint256 projectId, uint256 amount, address beneficiary) external;
 
     function transferCreditsFrom(address holder, uint256 projectId, address recipient, uint256 amount) external;
+
+    function addPriceFeed(
+        uint256 projectId,
+        uint256 pricingCurrency,
+        uint256 unitCurrency,
+        IJBPriceFeed feed
+    )
+        external;
 }

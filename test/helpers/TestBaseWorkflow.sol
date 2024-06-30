@@ -206,11 +206,11 @@ contract TestBaseWorkflow is Test, DeployPermit2 {
     function setUp() public virtual {
         _jbPermissions = new JBPermissions();
         _jbProjects = new JBProjects(_multisig, address(0));
-        _jbPrices = new JBPrices(_jbPermissions, _jbProjects, _multisig);
         _jbDirectory = new JBDirectory(_jbPermissions, _jbProjects, _multisig);
         _jbErc20 = new JBERC20();
         _jbTokens = new JBTokens(_jbDirectory, _jbErc20);
         _jbRulesets = new JBRulesets(_jbDirectory);
+        _jbPrices = new JBPrices(_jbPermissions, _jbProjects, _jbDirectory, _multisig);
         _jbSplits = new JBSplits(_jbDirectory);
         _jbFundAccessLimits = new JBFundAccessLimits(_jbDirectory);
         _jbFeelessAddresses = new JBFeelessAddresses(_multisig);
@@ -225,6 +225,7 @@ contract TestBaseWorkflow is Test, DeployPermit2 {
             _jbTokens,
             _jbSplits,
             _jbFundAccessLimits,
+            _jbPrices,
             _trustedForwarder
         );
 
@@ -241,7 +242,6 @@ contract TestBaseWorkflow is Test, DeployPermit2 {
         _jbMultiTerminal = new JBMultiTerminal(
             _jbPermissions,
             _jbProjects,
-            _jbDirectory,
             _jbSplits,
             _jbTerminalStore,
             _jbFeelessAddresses,
@@ -252,7 +252,6 @@ contract TestBaseWorkflow is Test, DeployPermit2 {
         _jbMultiTerminal2 = new JBMultiTerminal(
             _jbPermissions,
             _jbProjects,
-            _jbDirectory,
             _jbSplits,
             _jbTerminalStore,
             _jbFeelessAddresses,

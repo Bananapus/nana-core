@@ -32,6 +32,8 @@ contract TestUpdateRulesetWeightCache_Local is JBRulesetsSetup {
             allowSetTerminals: false,
             ownerMustSendPayouts: false,
             allowSetController: false,
+            allowAddAccountingContext: true,
+            allowAddPriceFeed: false,
             holdFees: false,
             useTotalSurplusForRedemptions: false,
             useDataHookForPay: false,

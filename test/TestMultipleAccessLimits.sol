@@ -39,6 +39,8 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
             allowSetTerminals: false,
             ownerMustSendPayouts: false,
             allowSetController: false,
+            allowAddAccountingContext: true,
+            allowAddPriceFeed: true,
             holdFees: false,
             useTotalSurplusForRedemptions: false,
             useDataHookForPay: false,
@@ -82,10 +84,19 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
         _rulesetConfig[0].fundAccessLimitGroups = _fundAccessLimitGroup;
 
         JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
-        address[] memory _tokensToAccept = new address[](2);
-        _tokensToAccept[0] = JBConstants.NATIVE_TOKEN;
-        _tokensToAccept[1] = address(usdcToken());
-        _terminalConfigurations[0] = JBTerminalConfig({terminal: __terminal, tokensToAccept: _tokensToAccept});
+        JBAccountingContext[] memory _tokensToAccept = new JBAccountingContext[](2);
+        _tokensToAccept[0] = JBAccountingContext({
+            token: JBConstants.NATIVE_TOKEN,
+            decimals: 18,
+            currency: uint32(uint160(JBConstants.NATIVE_TOKEN))
+        });
+        _tokensToAccept[1] = JBAccountingContext({
+            token: address(usdcToken()),
+            decimals: 6,
+            currency: uint32(uint160(address(usdcToken())))
+        });
+        _terminalConfigurations[0] =
+            JBTerminalConfig({terminal: __terminal, accountingContextsToAccept: _tokensToAccept});
 
         // Dummy.
         _controller.launchProjectFor({
@@ -108,11 +119,11 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
         MockPriceFeed _priceFeedNativeUsd = new MockPriceFeed(_nativePricePerUsd, 18);
         vm.label(address(_priceFeedNativeUsd), "Mock Price Feed Native-USD");
 
-        _prices.addPriceFeedFor({
+        _controller.addPriceFeed({
             projectId: _projectId,
             pricingCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             unitCurrency: uint32(uint160(address(usdcToken()))),
-            priceFeed: _priceFeedNativeUsd
+            feed: IJBPriceFeed(address(_priceFeedNativeUsd))
         });
 
         vm.stopPrank();
@@ -249,11 +260,20 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
 
         _projectOwner = multisig();
 
-        JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
-        address[] memory _tokensToAccept = new address[](2);
-        _tokensToAccept[0] = JBConstants.NATIVE_TOKEN;
-        _tokensToAccept[1] = address(usdcToken());
-        _terminalConfigurations[0] = JBTerminalConfig({terminal: __terminal, tokensToAccept: _tokensToAccept});
+        JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](2);
+        JBAccountingContext[] memory _tokensToAccept = new JBAccountingContext[](2);
+        _tokensToAccept[0] = JBAccountingContext({
+            token: JBConstants.NATIVE_TOKEN,
+            decimals: 18,
+            currency: uint32(uint160(JBConstants.NATIVE_TOKEN))
+        });
+        _tokensToAccept[1] = JBAccountingContext({
+            token: address(usdcToken()),
+            decimals: 6,
+            currency: uint32(uint160(address(usdcToken())))
+        });
+        _terminalConfigurations[0] =
+            JBTerminalConfig({terminal: __terminal, accountingContextsToAccept: _tokensToAccept});
 
         vm.prank(_projectOwner);
 
@@ -300,10 +320,19 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
         _projectOwner = multisig();
 
         JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
-        address[] memory _tokensToAccept = new address[](2);
-        _tokensToAccept[0] = JBConstants.NATIVE_TOKEN;
-        _tokensToAccept[1] = address(usdcToken());
-        _terminalConfigurations[0] = JBTerminalConfig({terminal: __terminal, tokensToAccept: _tokensToAccept});
+        JBAccountingContext[] memory _tokensToAccept = new JBAccountingContext[](2);
+        _tokensToAccept[0] = JBAccountingContext({
+            token: JBConstants.NATIVE_TOKEN,
+            decimals: 18,
+            currency: uint32(uint160(JBConstants.NATIVE_TOKEN))
+        });
+        _tokensToAccept[1] = JBAccountingContext({
+            token: address(usdcToken()),
+            decimals: 6,
+            currency: uint32(uint160(address(usdcToken())))
+        });
+        _terminalConfigurations[0] =
+            JBTerminalConfig({terminal: __terminal, accountingContextsToAccept: _tokensToAccept});
 
         vm.prank(_projectOwner);
 
@@ -355,12 +384,20 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
         _rulesetConfig[0].metadata = _metadata;
         _rulesetConfig[0].splitGroups = _splitGroups;
         _rulesetConfig[0].fundAccessLimitGroups = _fundAccessLimitGroup;
-
         JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
-        address[] memory _tokensToAccept = new address[](2);
-        _tokensToAccept[0] = JBConstants.NATIVE_TOKEN;
-        _tokensToAccept[1] = address(usdcToken());
-        _terminalConfigurations[0] = JBTerminalConfig({terminal: __terminal, tokensToAccept: _tokensToAccept});
+        JBAccountingContext[] memory _tokensToAccept = new JBAccountingContext[](2);
+        _tokensToAccept[0] = JBAccountingContext({
+            token: JBConstants.NATIVE_TOKEN,
+            decimals: 18,
+            currency: uint32(uint160(JBConstants.NATIVE_TOKEN))
+        });
+        _tokensToAccept[1] = JBAccountingContext({
+            token: address(usdcToken()),
+            decimals: 6,
+            currency: uint32(uint160(address(usdcToken())))
+        });
+        _terminalConfigurations[0] =
+            JBTerminalConfig({terminal: __terminal, accountingContextsToAccept: _tokensToAccept});
 
         _controller.launchProjectFor({
             owner: _projectOwner,
@@ -402,13 +439,21 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
         _rulesetConfig[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfig[0].metadata = _metadata;
         _rulesetConfig[0].splitGroups = _splitGroups;
-        _rulesetConfig[0].fundAccessLimitGroups = _fundAccessLimitGroup;
 
         JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
-        address[] memory _tokensToAccept = new address[](2);
-        _tokensToAccept[0] = JBConstants.NATIVE_TOKEN;
-        _tokensToAccept[1] = address(usdcToken());
-        _terminalConfigurations[0] = JBTerminalConfig({terminal: __terminal, tokensToAccept: _tokensToAccept});
+        JBAccountingContext[] memory _tokensToAccept = new JBAccountingContext[](2);
+        _tokensToAccept[0] = JBAccountingContext({
+            token: JBConstants.NATIVE_TOKEN,
+            decimals: 18,
+            currency: uint32(uint160(JBConstants.NATIVE_TOKEN))
+        });
+        _tokensToAccept[1] = JBAccountingContext({
+            token: address(usdcToken()),
+            decimals: 6,
+            currency: uint32(uint160(address(usdcToken())))
+        });
+        _terminalConfigurations[0] =
+            JBTerminalConfig({terminal: __terminal, accountingContextsToAccept: _tokensToAccept});
 
         // Dummy.
         _controller.launchProjectFor({
@@ -503,14 +548,22 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
         _rulesetConfig[0].decayRate = 0;
         _rulesetConfig[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfig[0].metadata = _metadata;
-        _rulesetConfig[0].splitGroups = _splitGroups;
         _rulesetConfig[0].fundAccessLimitGroups = _fundAccessLimitGroup;
 
         JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
-        address[] memory _tokensToAccept = new address[](2);
-        _tokensToAccept[0] = JBConstants.NATIVE_TOKEN;
-        _tokensToAccept[1] = address(usdcToken());
-        _terminalConfigurations[0] = JBTerminalConfig({terminal: __terminal, tokensToAccept: _tokensToAccept});
+        JBAccountingContext[] memory _tokensToAccept = new JBAccountingContext[](2);
+        _tokensToAccept[0] = JBAccountingContext({
+            token: JBConstants.NATIVE_TOKEN,
+            decimals: 18,
+            currency: uint32(uint160(JBConstants.NATIVE_TOKEN))
+        });
+        _tokensToAccept[1] = JBAccountingContext({
+            token: address(usdcToken()),
+            decimals: 6,
+            currency: uint32(uint160(address(usdcToken())))
+        });
+        _terminalConfigurations[0] =
+            JBTerminalConfig({terminal: __terminal, accountingContextsToAccept: _tokensToAccept});
 
         uint256 _projectId = _controller.launchProjectFor({
             owner: _projectOwner,
@@ -535,11 +588,11 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
         MockPriceFeed _priceFeedNativeUsd = new MockPriceFeed(_price, 18);
         vm.label(address(_priceFeedNativeUsd), "Mock Price Feed MyToken-Native");
 
-        _prices.addPriceFeedFor({
+        _controller.addPriceFeed({
             projectId: _projectId,
             pricingCurrency: _nativeCurrency,
             unitCurrency: uint32(uint160(address(usdcToken()))),
-            priceFeed: _priceFeedNativeUsd
+            feed: _priceFeedNativeUsd
         });
 
         // Make sure the beneficiary has a balance of project tokens.

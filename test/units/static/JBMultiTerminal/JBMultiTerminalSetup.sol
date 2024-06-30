@@ -16,6 +16,7 @@ contract JBMultiTerminalSetup is JBTest {
     IJBPermissions public permissions = IJBPermissions(makeAddr("permissions"));
     IJBProjects public projects = IJBProjects(makeAddr("projects"));
     IJBDirectory public directory = IJBDirectory(makeAddr("directory"));
+    IJBRulesets public rulesets = IJBRulesets(makeAddr("rulesets"));
     IJBSplits public splits = IJBSplits(makeAddr("splits"));
     IJBTerminalStore public store = IJBTerminalStore(makeAddr("store"));
     IJBFeelessAddresses public feelessAddresses = IJBFeelessAddresses(makeAddr("feeless"));
@@ -23,10 +24,13 @@ contract JBMultiTerminalSetup is JBTest {
     address trustedForwarder = makeAddr("forwarder");
 
     function multiTerminalSetup() public virtual {
+        // Constructor will call to find directory and rulesets from the terminal store
+        mockExpect(address(store), abi.encodeCall(IJBTerminalStore.DIRECTORY, ()), abi.encode(address(directory)));
+        mockExpect(address(store), abi.encodeCall(IJBTerminalStore.RULESETS, ()), abi.encode(address(rulesets)));
+
         // Instantiate the contract being tested
-        _terminal = new JBMultiTerminal(
-            permissions, projects, directory, splits, store, feelessAddresses, permit2, trustedForwarder
-        );
+        _terminal =
+            new JBMultiTerminal(permissions, projects, splits, store, feelessAddresses, permit2, trustedForwarder);
 
         _metadataHelper = new MetadataResolverHelper();
     }
