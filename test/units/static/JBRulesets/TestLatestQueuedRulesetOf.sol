@@ -15,7 +15,7 @@ contract TestLatestQueuedRulesetOf_Local is JBRulesetsSetup {
     uint256 _duration = 3 days;
     uint256 _weight = 0;
     uint256 _decayRate = 450_000_000;
-    uint256 _mustStartAt = 0;
+    uint48 _mustStartAt = 0;
     uint256 _hookDuration = 1 days;
     IJBRulesetApprovalHook private _noHook = IJBRulesetApprovalHook(address(0));
 

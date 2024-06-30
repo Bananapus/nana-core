@@ -49,7 +49,7 @@ import {JBRedeemHookSpecification} from "../../src/structs/JBRedeemHookSpecifica
 import {JBTokenAmount} from "../../src/structs/JBTokenAmount.sol";
 import {JBSplitHookContext} from "../../src/structs/JBSplitHookContext.sol";
 import {IJBToken} from "../../src/interfaces/IJBToken.sol";
-import {JBSingleAllowanceContext} from "../../src/structs/JBSingleAllowanceContext.sol";
+import {JBSingleAllowance} from "../../src/structs/JBSingleAllowance.sol";
 import {IJBController} from "../../src/interfaces/IJBController.sol";
 import {IJBFeelessAddresses} from "../../src/interfaces/IJBFeelessAddresses.sol";
 import {IJBFundAccessLimits} from "../../src/interfaces/IJBFundAccessLimits.sol";

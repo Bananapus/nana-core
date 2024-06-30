@@ -6,7 +6,7 @@ import /* {*} from */ "./helpers/TestBaseWorkflow.sol";
 contract TestRedeemHooks_Local is TestBaseWorkflow {
     using JBRulesetMetadataResolver for JBRuleset;
 
-    uint256 private constant _WEIGHT = 1000 * 10 ** 18;
+    uint112 private constant _WEIGHT = 1000 * 10 ** 18;
     address private constant _DATA_HOOK = address(bytes20(keccak256("datahook")));
 
     IJBController private _controller;
@@ -15,7 +15,7 @@ contract TestRedeemHooks_Local is TestBaseWorkflow {
     address private _projectOwner;
     address private _beneficiary;
 
-    uint256 _projectId;
+    uint56 _projectId;
 
     function setUp() public override {
         super.setUp();
@@ -80,13 +80,15 @@ contract TestRedeemHooks_Local is TestBaseWorkflow {
             memo: ""
         });
 
-        _projectId = _controller.launchProjectFor({
-            owner: _projectOwner,
-            projectUri: "myIPFSHash",
-            rulesetConfigurations: _rulesetConfig,
-            terminalConfigurations: _terminalConfigurations,
-            memo: ""
-        });
+        _projectId = uint56(
+            _controller.launchProjectFor({
+                owner: _projectOwner,
+                projectUri: "myIPFSHash",
+                rulesetConfigurations: _rulesetConfig,
+                terminalConfigurations: _terminalConfigurations,
+                memo: ""
+            })
+        );
 
         // Issue the project's tokens.
         vm.prank(_projectOwner);
@@ -151,15 +153,15 @@ contract TestRedeemHooks_Local is TestBaseWorkflow {
             redeemCount: _beneficiaryTokenBalance / 2,
             reclaimedAmount: JBTokenAmount(
                 JBConstants.NATIVE_TOKEN,
-                _halfPaid,
                 _terminal.accountingContextForTokenOf(_projectId, JBConstants.NATIVE_TOKEN).decimals,
-                _terminal.accountingContextForTokenOf(_projectId, JBConstants.NATIVE_TOKEN).currency
+                _terminal.accountingContextForTokenOf(_projectId, JBConstants.NATIVE_TOKEN).currency,
+                _halfPaid
             ),
             forwardedAmount: JBTokenAmount(
                 JBConstants.NATIVE_TOKEN,
-                _halfPaid,
                 _terminal.accountingContextForTokenOf(_projectId, JBConstants.NATIVE_TOKEN).decimals,
-                _terminal.accountingContextForTokenOf(_projectId, JBConstants.NATIVE_TOKEN).currency
+                _terminal.accountingContextForTokenOf(_projectId, JBConstants.NATIVE_TOKEN).currency,
+                _halfPaid
             ),
             redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
             beneficiary: payable(address(this)),
@@ -268,17 +270,17 @@ contract TestRedeemHooks_Local is TestBaseWorkflow {
             redeemCount: _beneficiaryTokenBalance / 2,
             reclaimedAmount: JBTokenAmount(
                 JBConstants.NATIVE_TOKEN,
-                _beneficiaryAmount,
                 _terminal.accountingContextForTokenOf(_projectId, JBConstants.NATIVE_TOKEN).decimals,
-                _terminal.accountingContextForTokenOf(_projectId, JBConstants.NATIVE_TOKEN).currency
+                _terminal.accountingContextForTokenOf(_projectId, JBConstants.NATIVE_TOKEN).currency,
+                _beneficiaryAmount
             ),
             forwardedAmount: JBTokenAmount(
                 JBConstants.NATIVE_TOKEN,
-                _forwardedAmount,
                 _terminal.accountingContextForTokenOf(_projectId, JBConstants.NATIVE_TOKEN).decimals,
-                _terminal.accountingContextForTokenOf(_projectId, JBConstants.NATIVE_TOKEN).currency
+                _terminal.accountingContextForTokenOf(_projectId, JBConstants.NATIVE_TOKEN).currency,
+                _forwardedAmount
             ),
-            redemptionRate: _customRedemptionRate,
+            redemptionRate: uint16(_customRedemptionRate),
             beneficiary: payable(address(this)),
             hookMetadata: "",
             redeemerMetadata: ""

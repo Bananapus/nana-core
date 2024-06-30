@@ -224,15 +224,13 @@ contract JBPermissions is IJBPermissions {
     /// @notice Converts an array of permission IDs to a packed `uint256`.
     /// @param permissionIds The IDs of the permissions to pack.
     /// @return packed The packed value.
-    function _packedPermissions(uint256[] calldata permissionIds) internal pure returns (uint256 packed) {
+    function _packedPermissions(uint8[] calldata permissionIds) internal pure returns (uint256 packed) {
         // Keep a reference to the permission being iterated on.
         uint256 permissionId;
 
         for (uint256 i; i < permissionIds.length; i++) {
             // Set the permission being iterated on.
             permissionId = permissionIds[i];
-
-            if (permissionId > 255) revert PERMISSION_ID_OUT_OF_BOUNDS();
 
             // Turn on the bit at the ID.
             packed |= 1 << permissionId;

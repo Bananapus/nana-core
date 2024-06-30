@@ -8,7 +8,7 @@ interface IJBPermissions {
         address indexed operator,
         address indexed account,
         uint256 indexed projectId,
-        uint256[] permissionIds,
+        uint8[] permissionIds,
         uint256 packed,
         address caller
     );

@@ -30,11 +30,11 @@ pragma solidity ^0.8.0;
 /// @custom:member useDataHookForRedeem A flag indicating if the data hook should be used for redeem transactions during
 /// this ruleset.
 /// @custom:member dataHook The data hook to use during this ruleset.
-/// @custom:member metadata Metadata of the metadata, up to uint8 in size.
+/// @custom:member metadata Metadata of the metadata, up to uint16 in size though only the first 14 bits can be used.
 struct JBRulesetMetadata {
-    uint256 reservedRate;
-    uint256 redemptionRate;
-    uint256 baseCurrency;
+    uint16 reservedRate;
+    uint16 redemptionRate;
+    uint32 baseCurrency;
     bool pausePay;
     bool pauseCreditTransfers;
     bool allowOwnerMinting;
@@ -50,5 +50,5 @@ struct JBRulesetMetadata {
     bool useDataHookForPay;
     bool useDataHookForRedeem;
     address dataHook;
-    uint256 metadata;
+    uint16 metadata;
 }

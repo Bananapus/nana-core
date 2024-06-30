@@ -7,7 +7,7 @@ import {JBSplitsSetup} from "./JBSplitsSetup.sol";
 contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
     address _notThis = makeAddr("notThis");
     address payable _bene = payable(makeAddr("guy"));
-    uint256 _projectId = 1;
+    uint56 _projectId = 1;
     uint256 _rulesetId = block.timestamp;
 
     function setUp() public {
@@ -65,7 +65,7 @@ contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
             percent: JBConstants.SPLITS_TOTAL_PERCENT / 2,
             projectId: _projectId,
             beneficiary: _bene,
-            lockedUntil: block.timestamp + 100,
+            lockedUntil: uint48(block.timestamp + 100),
             hook: IJBSplitHook(address(0))
         });
 
@@ -116,31 +116,6 @@ contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
         _splits.setSplitGroupsOf(_projectId, _rulesetId, _splitsGroup);
     }
 
-    function test_GivenProjectIdGtUint56Max() external whenCallerIsController {
-        // it will revert with INVALID_PROJECT_ID
-
-        // data for call with invalid projectId
-        JBSplitGroup[] memory _splitsGroup = new JBSplitGroup[](1);
-        JBSplit[] memory _splitsArray = new JBSplit[](1);
-
-        // Set up a payout split recipient.
-        _splitsArray[0] = JBSplit({
-            preferAddToBalance: false,
-            percent: JBConstants.SPLITS_TOTAL_PERCENT / 2,
-            // invalid projectId
-            projectId: uint256(type(uint56).max) + 1,
-            beneficiary: _bene,
-            lockedUntil: 0,
-            hook: IJBSplitHook(address(0))
-        });
-
-        // outer structure
-        _splitsGroup[0] = JBSplitGroup({groupId: 0, splits: _splitsArray});
-
-        vm.expectRevert(abi.encodeWithSignature("INVALID_PROJECT_ID()"));
-        _splits.setSplitGroupsOf(_projectId, _rulesetId, _splitsGroup);
-    }
-
     function test_GivenSplitsTotalToGtSPLITS_TOTAL_PERCENT() external whenCallerIsController {
         // it will revert with INVALID_TOTAL_PERCENT
 
@@ -172,30 +147,6 @@ contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
         _splitsGroup[0] = JBSplitGroup({groupId: 0, splits: _splitsArray});
 
         vm.expectRevert(abi.encodeWithSignature("INVALID_TOTAL_PERCENT()"));
-        _splits.setSplitGroupsOf(_projectId, _rulesetId, _splitsGroup);
-    }
-
-    function test_GivenLockedUntilGtUint48Max() external whenCallerIsController {
-        // it will revert with INVALID_LOCKED_UNTIL
-
-        // data for call
-        JBSplitGroup[] memory _splitsGroup = new JBSplitGroup[](1);
-        JBSplit[] memory _splitsArray = new JBSplit[](1);
-
-        // Set up a payout split recipient.
-        _splitsArray[0] = JBSplit({
-            preferAddToBalance: false,
-            percent: JBConstants.SPLITS_TOTAL_PERCENT / 2,
-            projectId: _projectId,
-            beneficiary: _bene,
-            lockedUntil: uint256(type(uint48).max) + 1,
-            hook: IJBSplitHook(address(0))
-        });
-
-        // outer structure
-        _splitsGroup[0] = JBSplitGroup({groupId: 0, splits: _splitsArray});
-
-        vm.expectRevert(abi.encodeWithSignature("INVALID_LOCKED_UNTIL()"));
         _splits.setSplitGroupsOf(_projectId, _rulesetId, _splitsGroup);
     }
 
@@ -303,7 +254,7 @@ contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
             percent: JBConstants.SPLITS_TOTAL_PERCENT / 2,
             projectId: _projectId,
             beneficiary: _bene,
-            lockedUntil: block.timestamp + 100,
+            lockedUntil: uint48(block.timestamp + 100),
             hook: IJBSplitHook(address(0))
         });
 
@@ -325,7 +276,7 @@ contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
             percent: JBConstants.SPLITS_TOTAL_PERCENT / 2,
             projectId: _projectId,
             beneficiary: _bene,
-            lockedUntil: block.timestamp + 100,
+            lockedUntil: uint48(block.timestamp + 100),
             hook: IJBSplitHook(address(0))
         });
 
@@ -335,7 +286,7 @@ contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
             percent: JBConstants.SPLITS_TOTAL_PERCENT / 2,
             projectId: _projectId,
             beneficiary: _bene,
-            lockedUntil: block.timestamp + 200,
+            lockedUntil: uint48(block.timestamp + 200),
             hook: IJBSplitHook(address(0))
         });
 
@@ -366,7 +317,7 @@ contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
             percent: JBConstants.SPLITS_TOTAL_PERCENT / 2,
             projectId: _projectId,
             beneficiary: _bene,
-            lockedUntil: block.timestamp + 100,
+            lockedUntil: uint48(block.timestamp + 100),
             hook: IJBSplitHook(address(0))
         });
 
@@ -388,7 +339,7 @@ contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
             percent: JBConstants.SPLITS_TOTAL_PERCENT / 2,
             projectId: _projectId,
             beneficiary: _bene,
-            lockedUntil: block.timestamp + 100,
+            lockedUntil: uint48(block.timestamp + 100),
             hook: IJBSplitHook(address(0))
         });
 

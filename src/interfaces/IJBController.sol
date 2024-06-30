@@ -159,7 +159,7 @@ interface IJBController is IERC165, IJBProjectUriRegistry, IJBDirectoryAccessCon
         external
         returns (uint256 beneficiaryTokenCount);
 
-    function payReservedTokenToTerminal(
+    function executePayReservedTokenToTerminal(
         IJBTerminal terminal,
         uint256 projectId,
         IJBToken token,

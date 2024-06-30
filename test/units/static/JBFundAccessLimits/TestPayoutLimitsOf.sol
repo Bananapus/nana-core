@@ -7,9 +7,9 @@ import {JBFundAccessSetup} from "./JBFundAccessSetup.sol";
 contract TestPayoutLimitsOf_Local is JBFundAccessSetup {
     uint256 _projectId = 1;
     uint256 _ruleset = block.timestamp;
-    uint256 _payoutLimit = 1e18;
-    uint256 _payoutLimit2 = 1e6;
-    uint256 _currency = uint32(uint160(JBConstants.NATIVE_TOKEN));
+    uint224 _payoutLimit = 1e18;
+    uint224 _payoutLimit2 = 1e6;
+    uint32 _currency = uint32(uint160(JBConstants.NATIVE_TOKEN));
     address _terminal = address(1);
     address _terminal2 = address(2);
     address _someToken = makeAddr("sometoken");

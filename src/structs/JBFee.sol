@@ -8,5 +8,5 @@ pragma solidity ^0.8.0;
 struct JBFee {
     uint256 amount;
     address beneficiary;
-    uint256 unlockTimestamp;
+    uint48 unlockTimestamp;
 }

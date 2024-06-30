@@ -422,6 +422,6 @@ contract JBDelegateMetadataLib_Test_Local is Test {
 
         // New revert to help integrators.
         vm.expectRevert(abi.encodeWithSignature("DATA_NOT_PADDED()"));
-        bytes memory _metadata = parser.createMetadata(_ids, _datas);
+        parser.createMetadata(_ids, _datas);
     }
 }

@@ -65,11 +65,11 @@ contract TestRecordUsedAllowanceOf_Local is JBTerminalStoreSetup {
 
         // JBRulesets return calldata
         JBRuleset memory _returnedRuleset = JBRuleset({
-            cycleNumber: block.timestamp,
-            id: block.timestamp,
+            cycleNumber: uint48(block.timestamp),
+            id: uint48(block.timestamp),
             basedOnId: 0,
-            start: block.timestamp,
-            duration: block.timestamp + 1000,
+            start: uint48(block.timestamp),
+            duration: uint32(block.timestamp + 1000),
             weight: 1e18,
             decayRate: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
@@ -167,11 +167,11 @@ contract TestRecordUsedAllowanceOf_Local is JBTerminalStoreSetup {
 
         // JBRulesets return calldata
         JBRuleset memory _returnedRuleset = JBRuleset({
-            cycleNumber: block.timestamp,
-            id: block.timestamp,
+            cycleNumber: uint48(block.timestamp),
+            id: uint48(block.timestamp),
             basedOnId: 0,
-            start: block.timestamp,
-            duration: block.timestamp + 1000,
+            start: uint48(block.timestamp),
+            duration: uint32(block.timestamp + 1000),
             weight: 1e18,
             decayRate: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
@@ -271,11 +271,11 @@ contract TestRecordUsedAllowanceOf_Local is JBTerminalStoreSetup {
 
         // JBRulesets return calldata
         JBRuleset memory _returnedRuleset = JBRuleset({
-            cycleNumber: block.timestamp,
-            id: block.timestamp,
+            cycleNumber: uint48(block.timestamp),
+            id: uint48(block.timestamp),
             basedOnId: 0,
-            start: block.timestamp,
-            duration: block.timestamp + 1000,
+            start: uint48(block.timestamp),
+            duration: uint32(block.timestamp + 1000),
             weight: 1e18,
             decayRate: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
@@ -371,11 +371,11 @@ contract TestRecordUsedAllowanceOf_Local is JBTerminalStoreSetup {
 
         // JBRulesets return calldata
         JBRuleset memory _returnedRuleset = JBRuleset({
-            cycleNumber: block.timestamp,
-            id: block.timestamp,
+            cycleNumber: uint48(block.timestamp),
+            id: uint48(block.timestamp),
             basedOnId: 0,
-            start: block.timestamp,
-            duration: block.timestamp + 1000,
+            start: uint48(block.timestamp),
+            duration: uint32(block.timestamp + 1000),
             weight: 1e18,
             decayRate: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
