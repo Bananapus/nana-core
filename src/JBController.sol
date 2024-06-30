@@ -59,7 +59,6 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     error RULESETS_ARRAY_EMPTY();
     error INVALID_REDEMPTION_RATE();
     error INVALID_RESERVED_RATE();
-    error CONTROLLER_MIGRATION_NOT_ALLOWED();
     error MINT_NOT_ALLOWED_AND_NOT_TERMINAL_OR_HOOK();
     error NO_BURNABLE_TOKENS();
     error NO_RESERVED_TOKENS();
@@ -200,7 +199,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         override
         returns (JBRuleset memory ruleset, JBRulesetMetadata memory metadata)
     {
-        ruleset = RULESETS.currentOf(projectId);
+        ruleset = _currentRulesetOf(projectId);
         metadata = ruleset.expandMetadata();
     }
 
@@ -215,7 +214,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         override
         returns (JBRuleset memory ruleset, JBRulesetMetadata memory metadata)
     {
-        ruleset = RULESETS.upcomingOf(projectId);
+        ruleset = _upcomingRulesetOf(projectId);
         metadata = ruleset.expandMetadata();
     }
 
@@ -223,14 +222,14 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     /// @param projectId The ID of the project to check.
     /// @return A `bool` which is true if the project allows terminals to be set.
     function setTerminalsAllowed(uint256 projectId) external view returns (bool) {
-        return RULESETS.currentOf(projectId).expandMetadata().allowSetTerminals;
+        return _currentRulesetOf(projectId).expandMetadata().allowSetTerminals;
     }
 
     /// @notice Check whether the project's controller can currently be set.
     /// @param projectId The ID of the project to check.
     /// @return A `bool` which is true if the project allows controllers to be set.
     function setControllerAllowed(uint256 projectId) external view returns (bool) {
-        return RULESETS.currentOf(projectId).expandMetadata().allowSetController;
+        return _currentRulesetOf(projectId).expandMetadata().allowSetController;
     }
 
     //*********************************************************************//
@@ -241,10 +240,45 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     /// @dev See {IERC165-supportsInterface}.
     /// @param interfaceId The ID of the interface to check for adherence to.
     /// @return A flag indicating if the provided interface ID is supported.
-    function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {
+    function supportsInterface(bytes4 interfaceId) public view override returns (bool) {
         return interfaceId == type(IJBController).interfaceId || interfaceId == type(IJBProjectUriRegistry).interfaceId
             || interfaceId == type(IJBDirectoryAccessControl).interfaceId || interfaceId == type(IJBMigratable).interfaceId
             || interfaceId == type(IJBPermissioned).interfaceId || interfaceId == type(IERC165).interfaceId;
+    }
+    
+    //*********************************************************************//
+    // -------------------------- internal views ------------------------- //
+    //*********************************************************************//
+
+    /// @notice Indicates whether the provided address is a terminal for the project.
+    /// @param projectId The ID of the project to check.
+    /// @param terminal The address to check.
+    /// @return A flag indicating if the provided address is a terminal for the project.
+    function _isTerminalOf(uint256 projectId, address terminal) internal view returns (bool) {
+        return DIRECTORY.isTerminalOf(projectId, IJBTerminal(terminal));
+    }
+    
+    /// @notice Indicates whether the provided address has mint permission for the project byway of the data hook.
+    /// @param projectId The ID of the project to check.
+    /// @param ruleset The ruleset to check.
+    /// @param addrs The address to check.
+    /// @return A flag indicating if the provided address has mint permission for the project.
+    function _hasDataHookMintPermissionFor(uint256 projectId, JBRuleset memory ruleset, address addrs) internal view returns (bool) {
+        return IJBRulesetDataHook(ruleset.dataHook()).hasMintPermissionFor(projectId, addrs);
+    }
+
+    /// @notice The project's current ruleset.
+    /// @param projectId The ID of the project to check.
+    /// @return The project's current ruleset.
+    function _currentRulesetOf(uint256 projectId) internal view returns (JBRuleset memory) {
+        return RULESETS.currentOf(projectId);
+    }
+
+    /// @notice The project's upcoming ruleset.
+    /// @param projectId The ID of the project to check.
+    /// @return The project's upcoming ruleset.
+    function _upcomingRulesetOf(uint256 projectId) internal view returns (JBRuleset memory) {
+        return RULESETS.upcomingOf(projectId);
     }
 
     //*********************************************************************//
@@ -302,10 +336,9 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         string calldata projectUri,
         JBRulesetConfig[] calldata rulesetConfigurations,
         JBTerminalConfig[] calldata terminalConfigurations,
-        string memory memo
+        string calldata memo
     )
         external
-        virtual
         override
         returns (uint256 projectId)
     {
@@ -342,13 +375,13 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         uint256 projectId,
         JBRulesetConfig[] calldata rulesetConfigurations,
         JBTerminalConfig[] calldata terminalConfigurations,
-        string memory memo
+        string calldata memo
     )
         external
-        virtual
         override
         returns (uint256 rulesetId)
     {
+        // Make sure there are rulesets being queued.
         if (rulesetConfigurations.length == 0) revert RULESETS_ARRAY_EMPTY();
 
         // Enforce permissions.
@@ -394,11 +427,13 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         JBRulesetConfig[] calldata rulesetConfigurations,
         string calldata memo
     )
-        external
-        virtual
+        public 
         override
         returns (uint256 rulesetId)
     {
+        // Make sure there are rulesets being queued.
+        if (rulesetConfigurations.length == 0) revert RULESETS_ARRAY_EMPTY();
+
         // Enforce permissions.
         _requirePermissionFrom({
             account: PROJECTS.ownerOf(projectId),
@@ -432,7 +467,6 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         bool useReservedRate
     )
         external
-        virtual
         override
         returns (uint256 beneficiaryTokenCount)
     {
@@ -443,7 +477,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         uint256 reservedRate;
 
         // Get a reference to the project's ruleset.
-        JBRuleset memory ruleset = RULESETS.currentOf(projectId);
+        JBRuleset memory ruleset = _currentRulesetOf(projectId);
 
         // Minting is restricted to: the project's owner, addresses with permission to `MINT_TOKENS`, the project's
         // terminals, and the project's data hook.
@@ -451,11 +485,11 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
             account: PROJECTS.ownerOf(projectId),
             projectId: projectId,
             permissionId: JBPermissionIds.MINT_TOKENS,
-            alsoGrantAccessIf: DIRECTORY.isTerminalOf(projectId, IJBTerminal(_msgSender()))
+            alsoGrantAccessIf: _isTerminalOf(projectId, _msgSender())
                 || _msgSender() == ruleset.dataHook()
                 || (
                     ruleset.dataHook() != address(0)
-                        && IJBRulesetDataHook(ruleset.dataHook()).hasMintPermissionFor(projectId, _msgSender())
+                        && _hasDataHookMintPermissionFor(projectId, ruleset, _msgSender())
                 )
         });
 
@@ -463,11 +497,11 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         // set to `true`.
         if (
             ruleset.id != 0 && !ruleset.allowOwnerMinting()
-                && !DIRECTORY.isTerminalOf(projectId, IJBTerminal(_msgSender()))
+                && !_isTerminalOf(projectId, _msgSender())
                 && _msgSender() != address(ruleset.dataHook())
                 && (
                     ruleset.dataHook() == address(0)
-                        || !IJBRulesetDataHook(ruleset.dataHook()).hasMintPermissionFor(projectId, _msgSender())
+                        || !_hasDataHookMintPermissionFor(projectId, ruleset, _msgSender())
                 )
         ) revert MINT_NOT_ALLOWED_AND_NOT_TERMINAL_OR_HOOK();
 
@@ -505,7 +539,6 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         string calldata memo
     )
         external
-        virtual
         override
     {
         // Enforce permissions.
@@ -513,7 +546,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
             account: holder,
             projectId: projectId,
             permissionId: JBPermissionIds.BURN_TOKENS,
-            alsoGrantAccessIf: DIRECTORY.isTerminalOf(projectId, IJBTerminal(_msgSender()))
+            alsoGrantAccessIf: _isTerminalOf(projectId, _msgSender())
         });
 
         // There must be tokens to burn.
@@ -530,7 +563,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     /// the project's owner.
     /// @param projectId The ID of the project to send reserved tokens for.
     /// @return The amount of reserved tokens minted and sent.
-    function sendReservedTokensToSplitsOf(uint256 projectId) external virtual override returns (uint256) {
+    function sendReservedTokensToSplitsOf(uint256 projectId) external override returns (uint256) {
         return _sendReservedTokensToSplitsOf(projectId);
     }
 
@@ -538,7 +571,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     /// @dev This controller should not be the project's controller yet.
     /// @param from The controller being migrated from.
     /// @param projectId The ID of the project that will migrate to this controller.
-    function receiveMigrationFrom(IERC165 from, uint256 projectId) external virtual override {
+    function receiveMigrationFrom(IERC165 from, uint256 projectId) external override {
         // If the sending controller is an `IJBProjectUriRegistry`, copy the project's metadata URI.
         if (
             from.supportsInterface(type(IJBProjectUriRegistry).interfaceId) && DIRECTORY.controllerOf(projectId) == from
@@ -551,7 +584,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     /// @dev Can only be called by the directory.
     /// @param projectId The ID of the project to migrate.
     /// @param to The controller to migrate the project to.
-    function migrate(uint256 projectId, IERC165 to) external virtual override {
+    function migrate(uint256 projectId, IERC165 to) external override {
         // Make sure this is being called by the directory.
         if (msg.sender != address(DIRECTORY)) revert UNAUTHORIZED();
 
@@ -601,7 +634,6 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         JBSplitGroup[] calldata splitGroups
     )
         external
-        virtual
         override
     {
         // Enforce permissions.
@@ -631,7 +663,6 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         bytes32 salt
     )
         external
-        virtual
         override
         returns (IJBToken token)
     {
@@ -651,7 +682,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     /// @dev Can only be called by the project's owner or an address with the owner's permission to `SET_TOKEN`.
     /// @param projectId The ID of the project to set the token of.
     /// @param token The new token's address.
-    function setTokenFor(uint256 projectId, IJBToken token) external virtual override {
+    function setTokenFor(uint256 projectId, IJBToken token) external override {
         // Enforce permissions.
         _requirePermissionFrom({
             account: PROJECTS.ownerOf(projectId),
@@ -660,10 +691,10 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         });
 
         // Get a reference to the current ruleset.
-        JBRuleset memory ruleset = RULESETS.currentOf(projectId);
+        JBRuleset memory ruleset = _currentRulesetOf(projectId);
 
         // If there's no current ruleset, get a reference to the upcoming one.
-        if (ruleset.id == 0) ruleset = RULESETS.upcomingOf(projectId);
+        if (ruleset.id == 0) ruleset = _upcomingRulesetOf(projectId);
 
         // If owner minting is disabled for the ruleset, the owner cannot change the token.
         if (!ruleset.allowSetCustomToken()) revert RULESET_SET_TOKEN_DISABLED();
@@ -677,16 +708,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     /// @param projectId The ID of the project whose tokens are being claimed.
     /// @param amount The amount of tokens to claim.
     /// @param beneficiary The account the claimed tokens will go to.
-    function claimTokensFor(
-        address holder,
-        uint256 projectId,
-        uint256 amount,
-        address beneficiary
-    )
-        external
-        virtual
-        override
-    {
+    function claimTokensFor(address holder, uint256 projectId, uint256 amount, address beneficiary) external override {
         // Enforce permissions.
         _requirePermissionFrom({account: holder, projectId: projectId, permissionId: JBPermissionIds.CLAIM_TOKENS});
 
@@ -706,14 +728,13 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         uint256 amount
     )
         external
-        virtual
         override
     {
         // Enforce permissions.
         _requirePermissionFrom({account: holder, projectId: projectId, permissionId: JBPermissionIds.TRANSFER_CREDITS});
 
         // Get a reference to the project's ruleset.
-        JBRuleset memory ruleset = RULESETS.currentOf(projectId);
+        JBRuleset memory ruleset = _currentRulesetOf(projectId);
 
         // Credit transfers must not be paused.
         if (ruleset.pauseCreditTransfers()) revert CREDIT_TRANSFERS_PAUSED();
@@ -743,7 +764,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
             permissionId: JBPermissionIds.ADD_PRICE_FEED
         });
 
-        JBRuleset memory ruleset = RULESETS.currentOf(projectId);
+        JBRuleset memory ruleset = _currentRulesetOf(projectId);
 
         // Make sure the project's ruleset allows adding price feeds.
         if (!ruleset.allowAddPriceFeed()) revert ADDING_PRICE_FEED_NOT_ALLOWED();
@@ -760,7 +781,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     /// @param splitAmount The amount of tokens being paid.
     /// @param beneficiary The payment's beneficiary.
     /// @param metadata The pay metadata sent to the terminal.
-    function payReservedTokenToTerminal(
+    function executePayReservedTokenToTerminal(
         IJBTerminal terminal,
         uint256 projectId,
         IJBToken token,
@@ -808,7 +829,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     }
 
     /// @dev `ERC-2771` specifies the context as being a single address (20 bytes).
-    function _contextSuffixLength() internal view virtual override(ERC2771Context, Context) returns (uint256) {
+    function _contextSuffixLength() internal view override(ERC2771Context, Context) returns (uint256) {
         return super._contextSuffixLength();
     }
 
@@ -829,7 +850,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         if (tokenCount == 0) revert NO_RESERVED_TOKENS();
 
         // Get the ruleset to read the reserved rate from.
-        JBRuleset memory ruleset = RULESETS.currentOf(projectId);
+        JBRuleset memory ruleset = _currentRulesetOf(projectId);
 
         // Reset the pending reserved token balance.
         pendingReservedTokenBalanceOf[projectId] = 0;
@@ -877,13 +898,19 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         // Keep a reference to the number of splits being iterated on.
         uint256 numberOfSplits = splits.length;
 
+        // Keep a reference to the split being iterated on.
+        JBSplit memory split;
+
+        // Keep a reference to the split amount being iterated on.
+        uint256 splitAmount;
+
         // Send the tokens to the splits.
         for (uint256 i; i < numberOfSplits; i++) {
             // Get a reference to the split being iterated on.
-            JBSplit memory split = splits[i];
+            split = splits[i];
 
             // Calculate the amount to send to the split.
-            uint256 splitAmount = mulDiv(amount, split.percent, JBConstants.SPLITS_TOTAL_PERCENT);
+            splitAmount = mulDiv(amount, split.percent, JBConstants.SPLITS_TOTAL_PERCENT);
 
             // Mints tokens for the split if needed.
             if (splitAmount > 0) {
@@ -941,7 +968,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
                             bytes memory metadata = bytes(abi.encodePacked(projectId));
 
                             // Try to fulfill the payment.
-                            try this.payReservedTokenToTerminal({
+                            try this.executePayReservedTokenToTerminal({
                                 projectId: split.projectId,
                                 terminal: terminal,
                                 token: token,
@@ -985,6 +1012,9 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         // Keep a reference to the ruleset config being iterated on.
         JBRulesetConfig memory rulesetConfig;
 
+        // Keep a reference to the latest queued ruleset.
+        JBRuleset memory ruleset;
+
         for (uint256 i; i < numberOfConfigurations; i++) {
             // Get a reference to the ruleset config being iterated on.
             rulesetConfig = rulesetConfigurations[i];
@@ -1000,7 +1030,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
             }
 
             // Queue its ruleset.
-            JBRuleset memory ruleset = RULESETS.queueFor({
+            ruleset = RULESETS.queueFor({
                 projectId: projectId,
                 duration: rulesetConfig.duration,
                 weight: rulesetConfig.weight,

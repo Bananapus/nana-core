@@ -182,7 +182,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     )
         external
         view
-        virtual
         override
         returns (uint256)
     {
@@ -206,7 +205,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @dev See {IERC165-supportsInterface}.
     /// @param interfaceId The ID of the interface to check for adherence to.
     /// @return A flag indicating if the provided interface ID is supported.
-    function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {
+    function supportsInterface(bytes4 interfaceId) public view override returns (bool) {
         return interfaceId == type(IJBMultiTerminal).interfaceId || interfaceId == type(IJBPermissioned).interfaceId
             || interfaceId == type(IJBTerminal).interfaceId || interfaceId == type(IJBRedeemTerminal).interfaceId
             || interfaceId == type(IJBPayoutTerminal).interfaceId || interfaceId == type(IJBPermitTerminal).interfaceId
@@ -312,7 +311,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     )
         external
         payable
-        virtual
         override
         returns (uint256 beneficiaryTokenCount)
     {
@@ -352,7 +350,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     )
         external
         payable
-        virtual
         override
     {
         // Add to balance.
@@ -393,7 +390,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         bytes calldata metadata
     )
         external
-        virtual
         override
         returns (uint256 reclaimAmount)
     {
@@ -433,7 +429,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         uint256 minTokensPaidOut
     )
         external
-        virtual
         override
         returns (uint256 amountPaidOut)
     {
@@ -470,7 +465,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         string calldata memo
     )
         external
-        virtual
         override
         returns (uint256 amountPaidOut)
     {
@@ -501,7 +495,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         IJBTerminal to
     )
         external
-        virtual
         override
         returns (uint256 balance)
     {
@@ -548,7 +541,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @notice Process any fees that are being held for the project.
     /// @param projectId The ID of the project to process held fees for.
     /// @param token The token to process held fees for.
-    function processHeldFeesOf(uint256 projectId, address token) external virtual override {
+    function processHeldFeesOf(uint256 projectId, address token) external override {
         _processHeldFeesOf({projectId: projectId, token: token, forced: false});
     }
 
@@ -809,7 +802,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     }
 
     /// @dev `ERC-2771` specifies the context as being a single address (20 bytes).
-    function _contextSuffixLength() internal view virtual override(ERC2771Context, Context) returns (uint256) {
+    function _contextSuffixLength() internal view override(ERC2771Context, Context) returns (uint256) {
         return super._contextSuffixLength();
     }
 

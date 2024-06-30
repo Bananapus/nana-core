@@ -69,5 +69,6 @@ contract TestSetRedemptionRateTo_Local is JBTest {
         emit K(_fuzzMetadata, _packedMetadata);
         assertEq(_packedMetadata, uint256((_fuzzMetadata >> 2) << 2));
     }
+
     event K(uint16, uint256);
 }
