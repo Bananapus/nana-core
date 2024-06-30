@@ -245,7 +245,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
             || interfaceId == type(IJBDirectoryAccessControl).interfaceId || interfaceId == type(IJBMigratable).interfaceId
             || interfaceId == type(IJBPermissioned).interfaceId || interfaceId == type(IERC165).interfaceId;
     }
-    
+
     //*********************************************************************//
     // -------------------------- internal views ------------------------- //
     //*********************************************************************//
@@ -257,13 +257,21 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     function _isTerminalOf(uint256 projectId, address terminal) internal view returns (bool) {
         return DIRECTORY.isTerminalOf(projectId, IJBTerminal(terminal));
     }
-    
+
     /// @notice Indicates whether the provided address has mint permission for the project byway of the data hook.
     /// @param projectId The ID of the project to check.
     /// @param ruleset The ruleset to check.
     /// @param addrs The address to check.
     /// @return A flag indicating if the provided address has mint permission for the project.
-    function _hasDataHookMintPermissionFor(uint256 projectId, JBRuleset memory ruleset, address addrs) internal view returns (bool) {
+    function _hasDataHookMintPermissionFor(
+        uint256 projectId,
+        JBRuleset memory ruleset,
+        address addrs
+    )
+        internal
+        view
+        returns (bool)
+    {
         return IJBRulesetDataHook(ruleset.dataHook()).hasMintPermissionFor(projectId, addrs);
     }
 
@@ -427,7 +435,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         JBRulesetConfig[] calldata rulesetConfigurations,
         string calldata memo
     )
-        public 
+        public
         override
         returns (uint256 rulesetId)
     {
@@ -485,24 +493,16 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
             account: PROJECTS.ownerOf(projectId),
             projectId: projectId,
             permissionId: JBPermissionIds.MINT_TOKENS,
-            alsoGrantAccessIf: _isTerminalOf(projectId, _msgSender())
-                || _msgSender() == ruleset.dataHook()
-                || (
-                    ruleset.dataHook() != address(0)
-                        && _hasDataHookMintPermissionFor(projectId, ruleset, _msgSender())
-                )
+            alsoGrantAccessIf: _isTerminalOf(projectId, _msgSender()) || _msgSender() == ruleset.dataHook()
+                || (ruleset.dataHook() != address(0) && _hasDataHookMintPermissionFor(projectId, ruleset, _msgSender()))
         });
 
         // If the message sender is not the project's terminal or data hook, the ruleset must have `allowOwnerMinting`
         // set to `true`.
         if (
-            ruleset.id != 0 && !ruleset.allowOwnerMinting()
-                && !_isTerminalOf(projectId, _msgSender())
+            ruleset.id != 0 && !ruleset.allowOwnerMinting() && !_isTerminalOf(projectId, _msgSender())
                 && _msgSender() != address(ruleset.dataHook())
-                && (
-                    ruleset.dataHook() == address(0)
-                        || !_hasDataHookMintPermissionFor(projectId, ruleset, _msgSender())
-                )
+                && (ruleset.dataHook() == address(0) || !_hasDataHookMintPermissionFor(projectId, ruleset, _msgSender()))
         ) revert MINT_NOT_ALLOWED_AND_NOT_TERMINAL_OR_HOOK();
 
         // Determine the reserved rate to use.
