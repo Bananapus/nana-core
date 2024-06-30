@@ -61,6 +61,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
     error ACCOUNTING_CONTEXT_ALREADY_SET();
     error ADDING_ACCOUNTING_CONTEXT_NOT_ALLOWED();
+    error FEE_TERMINAL_NOT_FOUND();
     error INVALID_ACCOUNTING_CONTEXT_DECIMALS();
     error INVALID_ACCOUNTING_CONTEXT_CURRENCY();
     error UNDER_MIN_TOKENS_PAID_OUT();
@@ -69,6 +70,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     error NO_MSG_VALUE_ALLOWED();
     error OVERFLOW_ALERT();
     error PERMIT_ALLOWANCE_NOT_ENOUGH();
+    error RECIPIENT_PROJECT_TERMINAL_NOT_FOUND();
+    error SPLIT_HOOK_INVALID();
     error TERMINAL_TOKENS_INCOMPATIBLE();
     error TOKEN_NOT_ACCEPTED();
 
@@ -652,7 +655,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         require(msg.sender == address(this));
 
         if (address(feeTerminal) == address(0)) {
-            revert("FEE_TERMINAL_NOT_FOUND");
+            revert FEE_TERMINAL_NOT_FOUND();
         }
 
         // Trigger any inherited pre-transfer logic if funds will be transferred.
@@ -701,7 +704,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         if (split.hook != IJBSplitHook(address(0))) {
             // Make sure that the address supports the split hook interface.
             if (!split.hook.supportsInterface(type(IJBSplitHook).interfaceId)) {
-                revert("SPLIT_HOOK_INVALID");
+                revert SPLIT_HOOK_INVALID();
             }
 
             // This payout is eligible for a fee since the funds are leaving this contract and the split hook isn't a
@@ -735,7 +738,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             IJBTerminal terminal = DIRECTORY.primaryTerminalOf(split.projectId, token);
 
             // The project must have a terminal to send funds to.
-            if (terminal == IJBTerminal(address(0))) revert("RECIPIENT_PROJECT_TERMINAL_NOT_FOUND");
+            if (terminal == IJBTerminal(address(0))) revert RECIPIENT_PROJECT_TERMINAL_NOT_FOUND();
 
             // This payout is eligible for a fee if the funds are leaving this contract and the receiving terminal isn't
             // a feelss address.
