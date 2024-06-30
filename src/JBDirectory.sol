@@ -294,8 +294,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
     //*********************************************************************//
 
     /// @notice If a terminal hasn't already been added to a project's list of terminals, add it.
-    /// @dev Unless the caller is the project's controller, the project's ruleset must have `allowSetTerminals` set to
-    /// `true`.
+    /// @dev The project's ruleset must have `allowSetTerminals` set to `true`.
     /// @param projectId The ID of the project to add the terminal to.
     /// @param terminal The terminal to add.
     function _addTerminalIfNeeded(uint256 projectId, IJBTerminal terminal) internal {
@@ -310,7 +309,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
             || IJBDirectoryAccessControl(address(controller)).setTerminalsAllowed(projectId);
 
         // If the caller is not the project's controller, the project's ruleset must allow setting terminals.
-        if (msg.sender != address(controller) && !allowSetTerminals) {
+        if (!allowSetTerminals) {
             revert SET_TERMINALS_NOT_ALLOWED();
         }
 

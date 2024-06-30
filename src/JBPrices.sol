@@ -135,7 +135,8 @@ contract JBPrices is JBControlled, JBPermissioned, Ownable, IJBPrices {
     /// @notice Add a price feed for the `unitCurrency`, priced in terms of the `pricingCurrency`.
     /// @dev Price feeds can only be added, not modified or removed.
     /// @dev This contract's owner can add protocol-wide default price feed by passing a `projectId` of 0.
-    /// @param projectId The ID of the project to add a feed for. If `projectId` is 0, add a protocol-wide default price feed.
+    /// @param projectId The ID of the project to add a feed for. If `projectId` is 0, add a protocol-wide default price
+    /// feed.
     /// @param pricingCurrency The currency the feed's output price is in terms of.
     /// @param unitCurrency The currency being priced by the feed.
     /// @param feed The address of the price feed to add.
@@ -148,7 +149,8 @@ contract JBPrices is JBControlled, JBPermissioned, Ownable, IJBPrices {
         external
         override
     {
-        // Ensure default price feeds can only be set by this contract's owner, and that other `projectId`s can only be set by the controller
+        // Ensure default price feeds can only be set by this contract's owner, and that other `projectId`s can only be
+        // set by the controller
         projectId == DEFAULT_PROJECT_ID ? _checkOwner() : _onlyControllerOf(projectId);
 
         // Make sure the currencies aren't 0.
