@@ -26,31 +26,26 @@ contract TestAddPriceFeedFor_Local is JBPricesSetup {
 
     function test_WhenProjectIdIsTheDEFAULT_PROJECT_IDAndMsgSenderIsTheOwnerOfProjectZero() external {
         // it should add the price feed
+        vm.prank(_owner);
+        _prices.addPriceFeedFor(DEFAULT_PROJECT_ID, _pricingCurrency, _unitCurrency, _feed);
+    }
 
-        // mock ownerOf call
-        bytes memory projectsOwnerCall = abi.encodeCall(IERC721.ownerOf, (0));
-        bytes memory returned = abi.encode(address(this));
+    function test_WhenProjectIdIsTheDEFAULT_PROJECT_IDAndMsgSenderIsNotTheOwnerOfProjectZero() external {
+        // it should revert ONLY_OWNER()
 
-        mockExpect(address(projects), projectsOwnerCall, returned);
+        // encode custom error
+        bytes4 selector = bytes4(keccak256("OwnableUnauthorizedAccount(address)"));
+        bytes memory expectedError = abi.encodeWithSelector(selector, address(this));
 
+        vm.expectRevert(expectedError);
         _prices.addPriceFeedFor(DEFAULT_PROJECT_ID, _pricingCurrency, _unitCurrency, _feed);
     }
 
     modifier whenProjectIsNotDefaultAndHasPermissions() {
-        // mock ownerOf call
-        bytes memory projectsOwnerCall = abi.encodeCall(IERC721.ownerOf, (_projectId));
-        bytes memory returned = abi.encode(_projectOneOwner);
-
-        mockExpect(address(projects), projectsOwnerCall, returned);
-
-        // mock hasPermissions call
-        bytes memory permissionsCall = abi.encodeCall(
-            IJBPermissions.hasPermission,
-            (address(this), _projectOneOwner, _projectId, JBPermissionIds.ADD_PRICE_FEED, true, true)
+        // mock controllerOf call
+        mockExpect(
+            address(directory), abi.encodeCall(IJBDirectory.controllerOf, (_projectId)), abi.encode(address(this))
         );
-        bytes memory returned2 = abi.encode(true);
-
-        mockExpect(address(permissions), permissionsCall, returned2);
         _;
     }
 

@@ -8,7 +8,6 @@ import {IERC20Metadata} from "@openzeppelin/contracts/token/ERC20/extensions/IER
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {Address} from "@openzeppelin/contracts/utils/Address.sol";
 import {Context} from "@openzeppelin/contracts/utils/Context.sol";
-import {ERC165Checker} from "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import {mulDiv} from "@prb/math/src/Common.sol";
 import {IAllowanceTransfer} from "@uniswap/permit2/src/interfaces/IAllowanceTransfer.sol";
@@ -26,6 +25,7 @@ import {IJBPermitTerminal} from "./interfaces/IJBPermitTerminal.sol";
 import {IJBPermissions} from "./interfaces/IJBPermissions.sol";
 import {IJBProjects} from "./interfaces/IJBProjects.sol";
 import {IJBRedeemTerminal} from "./interfaces/IJBRedeemTerminal.sol";
+import {IJBRulesets} from "./interfaces/IJBRulesets.sol";
 import {IJBSplitHook} from "./interfaces/IJBSplitHook.sol";
 import {IJBSplits} from "./interfaces/IJBSplits.sol";
 import {IJBTerminal} from "./interfaces/IJBTerminal.sol";
@@ -60,6 +60,9 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     //*********************************************************************//
 
     error ACCOUNTING_CONTEXT_ALREADY_SET();
+    error ADDING_ACCOUNTING_CONTEXT_NOT_ALLOWED();
+    error INVALID_ACCOUNTING_CONTEXT_DECIMALS();
+    error INVALID_ACCOUNTING_CONTEXT_CURRENCY();
     error UNDER_MIN_TOKENS_PAID_OUT();
     error UNDER_MIN_TOKENS_RECLAIMED();
     error UNDER_MIN_RETURNED_TOKENS();
@@ -106,6 +109,9 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
     /// @notice The contract that stores addresses that shouldn't incur fees when being paid towards or from.
     IJBFeelessAddresses public immutable override FEELESS_ADDRESSES;
+
+    /// @notice The contract storing and managing project rulesets.
+    IJBRulesets public immutable override RULESETS;
 
     /// @notice The permit2 utility.
     IPermit2 public immutable override PERMIT2;
@@ -212,9 +218,32 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @notice Checks this terminal's balance of a specific token.
     /// @param token The address of the token to get this terminal's balance of.
     /// @return This terminal's balance.
-    function _balance(address token) internal view returns (uint256) {
+    function _balanceOf(address token) internal view returns (uint256) {
         // If the `token` is native, get the native token balance.
         return token == JBConstants.NATIVE_TOKEN ? address(this).balance : IERC20(token).balanceOf(address(this));
+    }
+
+    /// @notice Returns the value that should be forwarded with transactions, determined by whether or not a token is
+    /// the native token.
+    /// @param token The token being sent.
+    /// @param amount The amount of the token being sent
+    /// @return value The value to attach to the transaction being sent.
+    function _payValueOf(address token, uint256 amount) internal pure returns (uint256) {
+        return token == JBConstants.NATIVE_TOKEN ? amount : 0;
+    }
+
+    /// @notice Returns the current controller of a project.
+    /// @param projectId The ID of the project to get the controller of.
+    /// @return controller The project's controller.
+    function _controllerOf(uint256 projectId) internal view returns (IJBController) {
+        return IJBController(address(DIRECTORY.controllerOf(projectId)));
+    }
+
+    /// @notice Returns a flag indicating if interacting with an address should not incur fees.
+    /// @param addr The address to check.
+    /// @return A flag indicating if the address should not incur fees.
+    function _isFeeless(address addr) internal view returns (bool) {
+        return FEELESS_ADDRESSES.isFeeless(addr);
     }
 
     //*********************************************************************//
@@ -223,7 +252,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
     /// @param permissions A contract storing permissions.
     /// @param projects A contract which mints ERC-721s that represent project ownership and transfers.
-    /// @param directory A contract storing directories of terminals and controllers for each project.
     /// @param splits A contract that stores splits for each project.
     /// @param store A contract that stores the terminal's data.
     /// @param feelessAddresses A contract that stores addresses that shouldn't incur fees when being paid towards or
@@ -233,7 +261,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     constructor(
         IJBPermissions permissions,
         IJBProjects projects,
-        IJBDirectory directory,
         IJBSplits splits,
         IJBTerminalStore store,
         IJBFeelessAddresses feelessAddresses,
@@ -244,8 +271,9 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         ERC2771Context(trustedForwarder)
     {
         PROJECTS = projects;
-        DIRECTORY = directory;
+        DIRECTORY = store.DIRECTORY();
         SPLITS = splits;
+        RULESETS = store.RULESETS();
         STORE = store;
         FEELESS_ADDRESSES = feelessAddresses;
         PERMIT2 = permit2;
@@ -482,7 +510,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         });
 
         // The terminal being migrated to must accept the same token as this terminal.
-        if (to.accountingContextForTokenOf(projectId, token).decimals == 0) {
+        if (to.accountingContextForTokenOf(projectId, token).currency == 0) {
             revert TERMINAL_TOKENS_INCOMPATIBLE();
         }
 
@@ -498,7 +526,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             _beforeTransferTo({to: address(to), token: token, amount: balance});
 
             // If this terminal's token is the native token, send it in `msg.value`.
-            uint256 payValue = token == JBConstants.NATIVE_TOKEN ? balance : 0;
+            uint256 payValue = _payValueOf(token, balance);
 
             // Withdraw the balance to transfer to the new terminal;
             to.addToBalanceOf{value: payValue}({
@@ -526,42 +554,80 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @dev Only a project's owner, an operator with the `ADD_ACCOUNTING_CONTEXTS` permission from that owner, or a
     /// project's controller can add accounting contexts for the project.
     /// @param projectId The ID of the project having to add accounting contexts for.
-    /// @param tokens The tokens to add accounting contexts for.
-    function addAccountingContextsFor(uint256 projectId, address[] calldata tokens) external override {
+    /// @param accountingContexts The accounting contexts to add.
+    function addAccountingContextsFor(
+        uint256 projectId,
+        JBAccountingContext[] calldata accountingContexts
+    )
+        external
+        override
+    {
         // Enforce permissions.
         _requirePermissionAllowingOverrideFrom({
             account: PROJECTS.ownerOf(projectId),
             projectId: projectId,
             permissionId: JBPermissionIds.ADD_ACCOUNTING_CONTEXTS,
-            alsoGrantAccessIf: _msgSender() == address(DIRECTORY.controllerOf(projectId))
+            alsoGrantAccessIf: _msgSender() == address(_controllerOf(projectId))
         });
 
-        // Keep a reference to the number of accounting contexts to add.
-        uint256 numberOfAccountingContexts = tokens.length;
+        // Get a reference to the project's current ruleset.
+        JBRuleset memory ruleset = RULESETS.currentOf(projectId);
 
-        // Keep a reference to the token being iterated on.
-        address token;
+        // Make sure that if there's a ruleset, it allows adding accounting contexts.
+        if (ruleset.id != 0 && !ruleset.allowAddAccountingContext()) revert ADDING_ACCOUNTING_CONTEXT_NOT_ALLOWED();
+
+        // Keep a reference to the number of accounting contexts to add.
+        uint256 numberOfAccountingContexts = accountingContexts.length;
+
+        // Keep a reference to the accounting context being iterated on.
+        JBAccountingContext memory accountingContext;
 
         // Start accepting each token.
         for (uint256 i; i < numberOfAccountingContexts; i++) {
             // Set the accounting context being iterated on.
-            token = tokens[i];
+            accountingContext = accountingContexts[i];
 
             // Get a storage reference to the currency accounting context for the token.
-            JBAccountingContext storage accountingContext = _accountingContextForTokenOf[projectId][token];
+            JBAccountingContext storage storedAccountingContext =
+                _accountingContextForTokenOf[projectId][accountingContext.token];
 
             // Make sure the token accounting context isn't already set.
-            if (accountingContext.token != address(0)) revert ACCOUNTING_CONTEXT_ALREADY_SET();
+            if (storedAccountingContext.token != address(0)) revert ACCOUNTING_CONTEXT_ALREADY_SET();
+
+            // Keep track of a flag indiciating if we know the provided decimals are incorrect.
+            bool knownInvalidDecimals;
+
+            // Check if the token is the native token and has the correct decimals
+            if (accountingContext.token == JBConstants.NATIVE_TOKEN && accountingContext.decimals != 18) {
+                knownInvalidDecimals = true;
+            } else if (accountingContext.token != JBConstants.NATIVE_TOKEN) {
+                try IERC165(accountingContext.token).supportsInterface(type(IERC20Metadata).interfaceId) returns (
+                    bool doesSupport
+                ) {
+                    if (doesSupport && accountingContext.decimals != IERC20Metadata(accountingContext.token).decimals())
+                    {
+                        knownInvalidDecimals = true;
+                    }
+                } catch {}
+            }
+
+            // Make sure the decimals are correct.
+            if (knownInvalidDecimals) {
+                revert INVALID_ACCOUNTING_CONTEXT_DECIMALS();
+            }
+
+            // Make sure the currency is non-zero.
+            if (accountingContext.currency == 0) revert INVALID_ACCOUNTING_CONTEXT_CURRENCY();
 
             // Define the context from the config.
-            accountingContext.token = token;
-            accountingContext.decimals = token == JBConstants.NATIVE_TOKEN ? 18 : IERC20Metadata(token).decimals();
-            accountingContext.currency = uint32(uint160(token)); // Use the last 4 bytes of the address as the currency.
+            storedAccountingContext.token = accountingContext.token;
+            storedAccountingContext.decimals = accountingContext.decimals;
+            storedAccountingContext.currency = accountingContext.currency;
 
             // Add the token to the list of accepted tokens of the project.
-            _accountingContextsOf[projectId].push(accountingContext);
+            _accountingContextsOf[projectId].push(storedAccountingContext);
 
-            emit SetAccountingContext(projectId, token, accountingContext, _msgSender());
+            emit SetAccountingContext(projectId, storedAccountingContext, _msgSender());
         }
     }
 
@@ -586,7 +652,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         require(msg.sender == address(this));
 
         if (address(feeTerminal) == address(0)) {
-            revert("404_1");
+            revert("FEE_TERMINAL_NOT_FOUND");
         }
 
         // Trigger any inherited pre-transfer logic if funds will be transferred.
@@ -597,33 +663,14 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // Send the projectId in the metadata.
         bytes memory metadata = bytes(abi.encodePacked(projectId));
 
-        // Call the internal method of the same terminal is being used.
-        if (feeTerminal == IJBTerminal(address(this))) {
-            _pay({
-                projectId: _FEE_BENEFICIARY_PROJECT_ID,
-                token: token,
-                amount: amount,
-                payer: address(this),
-                beneficiary: beneficiary,
-                memo: "",
-                metadata: metadata
-            });
-        } else {
-            // Keep a reference to the amount that'll be paid in.
-            uint256 payValue = token == JBConstants.NATIVE_TOKEN ? amount : 0;
-            // Send the fee.
-            // If this terminal's token is ETH, send it in msg.value.
-            // slither-disable-next-line unused-return
-            feeTerminal.pay{value: payValue}({
-                projectId: _FEE_BENEFICIARY_PROJECT_ID,
-                token: token,
-                amount: amount,
-                beneficiary: beneficiary,
-                minReturnedTokens: 0,
-                memo: "",
-                metadata: metadata
-            });
-        }
+        _efficientPay({
+            terminal: feeTerminal,
+            projectId: _FEE_BENEFICIARY_PROJECT_ID,
+            token: token,
+            amount: amount,
+            beneficiary: beneficiary,
+            metadata: metadata
+        });
     }
 
     /// @notice Executes a payout to a split.
@@ -652,9 +699,14 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
         // If there's a split hook set, transfer to its `process` function.
         if (split.hook != IJBSplitHook(address(0))) {
+            // Make sure that the address supports the split hook interface.
+            if (!split.hook.supportsInterface(type(IJBSplitHook).interfaceId)) {
+                revert("SPLIT_HOOK_INVALID");
+            }
+
             // This payout is eligible for a fee since the funds are leaving this contract and the split hook isn't a
             // feeless address.
-            if (!FEELESS_ADDRESSES.isFeeless(address(split.hook))) {
+            if (!_isFeeless(address(split.hook))) {
                 netPayoutAmount -= JBFees.feeAmountIn(amount, FEE);
             }
 
@@ -668,16 +720,11 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                 split: split
             });
 
-            // Make sure that the address supports the split hook interface.
-            if (!split.hook.supportsInterface(type(IJBSplitHook).interfaceId)) {
-                revert("400_1");
-            }
-
             // Trigger any inherited pre-transfer logic.
             _beforeTransferTo({to: address(split.hook), token: token, amount: netPayoutAmount});
 
             // Get a reference to the amount being paid in `msg.value`.
-            uint256 payValue = token == JBConstants.NATIVE_TOKEN ? netPayoutAmount : 0;
+            uint256 payValue = _payValueOf(token, netPayoutAmount);
 
             // If this terminal's token is the native token, send it in `msg.value`.
             split.hook.processSplitWith{value: payValue}(context);
@@ -688,11 +735,11 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             IJBTerminal terminal = DIRECTORY.primaryTerminalOf(split.projectId, token);
 
             // The project must have a terminal to send funds to.
-            if (terminal == IJBTerminal(address(0))) revert("404_2");
+            if (terminal == IJBTerminal(address(0))) revert("RECIPIENT_PROJECT_TERMINAL_NOT_FOUND");
 
             // This payout is eligible for a fee if the funds are leaving this contract and the receiving terminal isn't
             // a feelss address.
-            if (terminal != this && !FEELESS_ADDRESSES.isFeeless(address(terminal))) {
+            if (terminal != this && !_isFeeless(address(terminal))) {
                 netPayoutAmount -= JBFees.feeAmountIn(amount, FEE);
             }
 
@@ -704,63 +751,25 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
             // Add to balance if preferred.
             if (split.preferAddToBalance) {
-                // Call the internal method if this terminal is being used.
-                if (terminal == IJBTerminal(address(this))) {
-                    _addToBalanceOf({
-                        projectId: split.projectId,
-                        token: token,
-                        amount: netPayoutAmount,
-                        shouldReturnHeldFees: false,
-                        memo: "",
-                        metadata: metadata
-                    });
-                } else {
-                    // Get a reference to the amount being added to balance through `msg.value`.
-                    uint256 payValue = token == JBConstants.NATIVE_TOKEN ? netPayoutAmount : 0;
-
-                    // Add to balance.
-                    // If this terminal's token is the native token, send it in `msg.value`.
-                    terminal.addToBalanceOf{value: payValue}({
-                        projectId: split.projectId,
-                        token: token,
-                        amount: netPayoutAmount,
-                        shouldReturnHeldFees: false,
-                        memo: "",
-                        metadata: metadata
-                    });
-                }
+                _efficientAddToBalance({
+                    terminal: terminal,
+                    projectId: split.projectId,
+                    token: token,
+                    amount: netPayoutAmount,
+                    metadata: metadata
+                });
             } else {
                 // Keep a reference to the beneficiary of the payment.
                 address beneficiary = split.beneficiary != address(0) ? split.beneficiary : originalMessageSender;
 
-                // Call the internal pay method if this terminal is being used.
-                if (terminal == IJBTerminal(address(this))) {
-                    _pay({
-                        projectId: split.projectId,
-                        token: token,
-                        amount: netPayoutAmount,
-                        payer: address(this),
-                        beneficiary: beneficiary,
-                        memo: "",
-                        metadata: metadata
-                    });
-                } else {
-                    // Keep a reference to the amount being paid through `msg.value`.
-                    uint256 payValue = token == JBConstants.NATIVE_TOKEN ? netPayoutAmount : 0;
-
-                    // Make the payment.
-                    // If this terminal's token is the native token, send it in `msg.value`.
-                    // slither-disable-next-line unused-return
-                    terminal.pay{value: payValue}({
-                        projectId: split.projectId,
-                        token: token,
-                        amount: netPayoutAmount,
-                        beneficiary: beneficiary,
-                        minReturnedTokens: 0,
-                        memo: "",
-                        metadata: metadata
-                    });
-                }
+                _efficientPay({
+                    terminal: terminal,
+                    projectId: split.projectId,
+                    token: token,
+                    amount: netPayoutAmount,
+                    beneficiary: beneficiary,
+                    metadata: metadata
+                });
             }
         } else {
             // If there's a beneficiary, send the funds directly to the beneficiary.
@@ -770,7 +779,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
             // This payout is eligible for a fee since the funds are leaving this contract and the recipient isn't a
             // feeless address.
-            if (!FEELESS_ADDRESSES.isFeeless(recipient)) {
+            if (!_isFeeless(recipient)) {
                 netPayoutAmount -= JBFees.feeAmountIn(amount, FEE);
             }
 
@@ -831,14 +840,9 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // If the terminal's token is not native, revert if there is a non-zero `msg.value`.
         if (msg.value != 0) revert NO_MSG_VALUE_ALLOWED();
 
-        // If the terminal is rerouting the tokens within its own functions, there's nothing to transfer.
-        if (_msgSender() == address(this)) return amount;
-
-        // The metadata ID is the first 4 bytes of this contract's address.
-        bytes4 metadataId = JBMetadataResolver.getId("permit2");
-
         // Unpack the allowance to use, if any, given by the frontend.
-        (bool exists, bytes memory parsedMetadata) = JBMetadataResolver.getDataFor(metadataId, metadata);
+        (bool exists, bytes memory parsedMetadata) =
+            JBMetadataResolver.getDataFor({id: JBMetadataResolver.getId("permit2"), metadata: metadata});
 
         // Check if the metadata contains permit data.
         if (exists) {
@@ -850,31 +854,31 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                 revert PERMIT_ALLOWANCE_NOT_ENOUGH();
             }
 
-            // Set the allowance to `spend` tokens for the user.
-            try PERMIT2.permit({
-                owner: _msgSender(),
-                permitSingle: IAllowanceTransfer.PermitSingle({
-                    details: IAllowanceTransfer.PermitDetails({
-                        token: token,
-                        amount: allowance.amount,
-                        expiration: allowance.expiration,
-                        nonce: allowance.nonce
-                    }),
-                    spender: address(this),
-                    sigDeadline: allowance.sigDeadline
+            // Keep a reference to the permit rules.
+            IAllowanceTransfer.PermitSingle memory permitSingle = IAllowanceTransfer.PermitSingle({
+                details: IAllowanceTransfer.PermitDetails({
+                    token: token,
+                    amount: allowance.amount,
+                    expiration: allowance.expiration,
+                    nonce: allowance.nonce
                 }),
-                signature: allowance.signature
-            }) {} catch (bytes memory) {}
+                spender: address(this),
+                sigDeadline: allowance.sigDeadline
+            });
+
+            // Set the allowance to `spend` tokens for the user.
+            try PERMIT2.permit({owner: _msgSender(), permitSingle: permitSingle, signature: allowance.signature}) {}
+                catch (bytes memory) {}
         }
 
         // Get a reference to the balance before receiving tokens.
-        uint256 balanceBefore = _balance(token);
+        uint256 balanceBefore = _balanceOf(token);
 
         // Transfer tokens to this terminal from the msg sender.
         _transferFrom({from: _msgSender(), to: payable(address(this)), token: token, amount: amount});
 
         // The amount should reflect the change in balance.
-        return _balance(token) - balanceBefore;
+        return _balanceOf(token) - balanceBefore;
     }
 
     /// @notice Pay a project with tokens.
@@ -902,15 +906,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         internal
         returns (uint256 beneficiaryTokenCount)
     {
-        // Keep a reference to the ruleset the payment is being made during.
-        JBRuleset memory ruleset;
-
-        // Keep a reference to the pay hook specifications.
-        JBPayHookSpecification[] memory hookSpecifications;
-
-        // Keep a reference to the token count that'll be minted as a result of the payment.
-        uint256 tokenCount;
-
         // Keep a reference to the token amount to forward to the store.
         JBTokenAmount memory tokenAmount;
 
@@ -924,7 +919,11 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         }
 
         // Record the payment.
-        (ruleset, tokenCount, hookSpecifications) = STORE.recordPaymentFrom({
+        // Keep a reference to the ruleset the payment is being made during.
+        // Keep a reference to the pay hook specifications.
+        // Keep a reference to the token count that'll be minted as a result of the payment.
+        (JBRuleset memory ruleset, uint256 tokenCount, JBPayHookSpecification[] memory hookSpecifications) = STORE
+            .recordPaymentFrom({
             payer: payer,
             amount: tokenAmount,
             projectId: projectId,
@@ -936,7 +935,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         if (tokenCount != 0) {
             // Set the token count to be the number of tokens minted for the beneficiary instead of the total
             // amount.
-            beneficiaryTokenCount = IJBController(address(DIRECTORY.controllerOf(projectId))).mintTokensOf({
+            beneficiaryTokenCount = _controllerOf(projectId).mintTokensOf({
                 projectId: projectId,
                 tokenCount: tokenCount,
                 beneficiary: beneficiary,
@@ -1048,7 +1047,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
         // Burn the project tokens.
         if (redeemCount != 0) {
-            IJBController(address(DIRECTORY.controllerOf(projectId))).burnTokensOf({
+            _controllerOf(projectId).burnTokensOf({
                 holder: holder,
                 projectId: projectId,
                 tokenCount: redeemCount,
@@ -1063,7 +1062,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         if (reclaimAmount != 0) {
             // Determine if a fee should be taken. Fees are not exercised if the redemption rate is at its max (100%),
             // if the beneficiary is feeless, or if the fee beneficiary doesn't accept the given token.
-            if (!FEELESS_ADDRESSES.isFeeless(beneficiary) && redemptionRate != JBConstants.MAX_REDEMPTION_RATE) {
+            if (!_isFeeless(beneficiary) && redemptionRate != JBConstants.MAX_REDEMPTION_RATE) {
                 amountEligibleForFees += reclaimAmount;
                 // Subtract the fee for the reclaimed amount.
                 reclaimAmount -= JBFees.feeAmountIn(reclaimAmount, FEE);
@@ -1246,7 +1245,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // The net amount is the final amount withdrawn after the fee has been taken.
         uint256 netAmountPaidOut = amountPaidOut
             - (
-                FEELESS_ADDRESSES.isFeeless(_msgSender())
+                _isFeeless(_msgSender())
                     ? 0
                     : _takeFeeFrom({
                         projectId: projectId,
@@ -1297,7 +1296,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         uint256 leftoverPercentage = JBConstants.SPLITS_TOTAL_PERCENT;
 
         // Get a reference to the project's payout splits.
-        JBSplit[] memory splits = SPLITS.splitsOf(projectId, rulesetId, uint256(uint160(token)));
+        JBSplit[] memory splits =
+            SPLITS.splitsOf({projectId: projectId, rulesetId: rulesetId, groupId: uint256(uint160(token))});
 
         // Keep a reference to the number of splits being iterated on.
         uint256 numberOfSplits = splits.length;
@@ -1431,7 +1431,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             _beforeTransferTo({to: address(specification.hook), token: tokenAmount.token, amount: specification.amount});
 
             // Keep a reference to the amount that'll be paid as a `msg.value`.
-            uint256 payValue = tokenAmount.token == JBConstants.NATIVE_TOKEN ? specification.amount : 0;
+            uint256 payValue = _payValueOf(tokenAmount.token, specification.amount);
 
             // Fulfill the specification.
             specification.hook.afterPayRecordedWith{value: payValue}(context);
@@ -1491,9 +1491,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             specification = specifications[i];
 
             // Get the fee for the specified amount.
-            uint256 specificationAmountFee = FEELESS_ADDRESSES.isFeeless(address(specification.hook))
-                ? 0
-                : JBFees.feeAmountIn(specification.amount, FEE);
+            uint256 specificationAmountFee =
+                _isFeeless(address(specification.hook)) ? 0 : JBFees.feeAmountIn(specification.amount, FEE);
 
             // Add the specification's amount to the amount eligible for fees.
             if (specificationAmountFee != 0) {
@@ -1520,7 +1519,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             });
 
             // Keep a reference to the amount that'll be paid as a `msg.value`.
-            uint256 payValue = beneficiaryReclaimAmount.token == JBConstants.NATIVE_TOKEN ? specification.amount : 0;
+            uint256 payValue = _payValueOf(beneficiaryReclaimAmount.token, specification.amount);
 
             // Fulfill the specification.
             specification.hook.afterRedeemRecordedWith{value: payValue}(context);
@@ -1720,6 +1719,99 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         }
 
         emit ReturnHeldFees(projectId, token, amount, returnedFees, leftoverAmount, _msgSender());
+    }
+
+    /// @notice Fund a project either by calling this terminal's internal `addToBalance` function or by calling the
+    /// recipient
+    /// terminal's `addToBalance` function.
+    /// @param terminal The terminal on which the project is expecting to receive funds.
+    /// @param projectId The ID of the project being funded.
+    /// @param token The token being used.
+    /// @param amount The amount being funded, as a fixed point number with the amount of decimals that the terminal's
+    /// accounting context specifies.
+    /// @param metadata Additional metadata to include with the payment.
+    function _efficientAddToBalance(
+        IJBTerminal terminal,
+        uint256 projectId,
+        address token,
+        uint256 amount,
+        bytes memory metadata
+    )
+        internal
+    {
+        // Call the internal method if this terminal is being used.
+        if (terminal == IJBTerminal(address(this))) {
+            _addToBalanceOf({
+                projectId: projectId,
+                token: token,
+                amount: amount,
+                shouldReturnHeldFees: false,
+                memo: "",
+                metadata: metadata
+            });
+        } else {
+            // Get a reference to the amount being added to balance through `msg.value`.
+            uint256 payValue = _payValueOf(token, amount);
+
+            // Add to balance.
+            // If this terminal's token is the native token, send it in `msg.value`.
+            terminal.addToBalanceOf{value: payValue}({
+                projectId: projectId,
+                token: token,
+                amount: amount,
+                shouldReturnHeldFees: false,
+                memo: "",
+                metadata: metadata
+            });
+        }
+    }
+
+    /// @notice Pay a project either by calling this terminal's internal `pay` function or by calling the recipient
+    /// terminal's `pay` function.
+    /// @param terminal The terminal on which the project is expecting to receive payments.
+    /// @param projectId The ID of the project being paid.
+    /// @param token The token being paid in.
+    /// @param amount The amount being paid, as a fixed point number with the amount of decimals that the terminal's
+    /// accounting context specifies.
+    /// @param beneficiary The address to receive any platform tokens minted.
+    /// @param metadata Additional metadata to include with the payment.
+    function _efficientPay(
+        IJBTerminal terminal,
+        uint256 projectId,
+        address token,
+        uint256 amount,
+        address beneficiary,
+        bytes memory metadata
+    )
+        internal
+    {
+        if (terminal == IJBTerminal(address(this))) {
+            _pay({
+                projectId: projectId,
+                token: token,
+                amount: amount,
+                payer: address(this),
+                beneficiary: beneficiary,
+                memo: "",
+                metadata: metadata
+            });
+        } else {
+            // Keep a reference to the amount that'll be paid in.
+            uint256 payValue = _payValueOf(token, amount);
+
+            // Send the fee.
+            // If this terminal's token is ETH, send it in msg.value.
+            // slither-disable-next-line unused-return
+            terminal.pay{value: payValue}({
+                projectId: projectId,
+                token: token,
+                amount: amount,
+                beneficiary: beneficiary,
+                minReturnedTokens: 0,
+                memo: "",
+                metadata: metadata
+            });
+        }
     }
 
     /// @notice Transfers tokens.

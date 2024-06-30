@@ -9,7 +9,7 @@ block_number = 14126430
 block_timestamp = 1643802347
 runs = 4096
 libs = ["node_modules", "lib"]
-build_info = true
+build_info = false
 extra_output = ['storageLayout']
 fs_permissions = [{ access = "read-write", path = "./"}]
 

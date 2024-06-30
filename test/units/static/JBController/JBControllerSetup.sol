@@ -17,6 +17,7 @@ contract JBControllerSetup is JBTest {
     IJBDirectory public directory = IJBDirectory(makeAddr("directory"));
     IJBRulesets public rulesets = IJBRulesets(makeAddr("rulesets"));
     IJBTokens public tokens = IJBTokens(makeAddr("tokens"));
+    IJBPrices public prices = IJBPrices(makeAddr("prices"));
     IJBSplits public splits = IJBSplits(makeAddr("splits"));
     IJBFundAccessLimits public fundAccessLimits = IJBFundAccessLimits(makeAddr("limits"));
     address public trustedForwarder = makeAddr("forwarder");
@@ -24,7 +25,7 @@ contract JBControllerSetup is JBTest {
     function controllerSetup() public virtual {
         // Instantiate the contract being tested
         _controller = new JBController(
-            permissions, projects, directory, rulesets, tokens, splits, fundAccessLimits, trustedForwarder
+            permissions, projects, directory, rulesets, tokens, splits, fundAccessLimits, prices, trustedForwarder
         );
     }
 }

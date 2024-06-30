@@ -29,9 +29,31 @@ contract TestAccountingContextsFor_Local is JBMultiTerminalSetup {
         // mock call to tokens decimals()
         mockExpect(_usdc, abi.encodeCall(IERC20Metadata.decimals, ()), abi.encode(6));
 
+        // mock call to rulesets currentOf returning 0 to bypass ruleset checking
+
+        // setup: return data
+        JBRuleset memory ruleset = JBRuleset({
+            cycleNumber: 1,
+            id: 0,
+            basedOnId: 0,
+            start: 0,
+            duration: 0,
+            weight: 0,
+            decayRate: 0,
+            approvalHook: IJBRulesetApprovalHook(address(0)),
+            metadata: 0
+        });
+
+        mockExpect(address(rulesets), abi.encodeCall(IJBRulesets.currentOf, (_projectId)), abi.encode(ruleset));
+
+        // mock supports interface call
+        mockExpect(
+            _usdc, abi.encodeCall(IERC165.supportsInterface, (type(IERC20Metadata).interfaceId)), abi.encode(true)
+        );
+
         // call params
-        address[] memory _tokens = new address[](1);
-        _tokens[0] = _usdc;
+        JBAccountingContext[] memory _tokens = new JBAccountingContext[](1);
+        _tokens[0] = JBAccountingContext({token: _usdc, decimals: 6, currency: uint32(uint160(_usdc))});
 
         _terminal.addAccountingContextsFor(_projectId, _tokens);
 

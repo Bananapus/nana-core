@@ -120,6 +120,8 @@ contract JBTokens is JBControlled, IJBTokens {
     /// @param projectId The ID of the project to deploy an ERC-20 token for.
     /// @param name The ERC-20's name.
     /// @param symbol The ERC-20's symbol.
+    /// @param salt The salt used for ERC-1167 clone deployment. Pass a non-zero salt for deterministic deployment based
+    /// on `msg.sender` and the `TOKEN` implementation address.
     /// @return token The address of the token that was deployed.
     function deployERC20For(
         uint256 projectId,
