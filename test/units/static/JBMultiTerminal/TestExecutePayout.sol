@@ -140,7 +140,7 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
             abi.encode(false)
         );
 
-        vm.expectRevert(bytes("SPLIT_HOOK_INVALID"));
+        vm.expectRevert(abi.encodeWithSignature(("SPLIT_HOOK_INVALID()")));
         _terminal.executePayout({
             split: _split,
             projectId: _noProject,
@@ -207,7 +207,7 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
             hook: IJBSplitHook(address(0))
         });
 
-        vm.expectRevert(bytes("RECIPIENT_PROJECT_TERMINAL_NOT_FOUND"));
+        vm.expectRevert(abi.encodeWithSignature(("RECIPIENT_PROJECT_TERMINAL_NOT_FOUND()")));
         vm.prank(address(_terminal));
         _terminal.executePayout({
             split: _splitMemory,

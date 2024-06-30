@@ -128,7 +128,7 @@ library JBRulesetMetadataResolver {
         // data source address in bits 82-241.
         packed |= uint256(uint160(address(rulesetMetadata.dataHook))) << 82;
         // metadata in bits 242-255 (14 bits).
-        packed |= uint256(rulesetMetadata.metadata) << 242;
+        packed |= (uint256(rulesetMetadata.metadata) >> 2) << 242;
     }
 
     /// @notice Expand the funding cycle metadata.
