@@ -13,8 +13,8 @@ import {JBSplit} from "./JBSplit.sol";
 struct JBSplitHookContext {
     address token;
     uint256 amount;
-    uint8 decimals;
-    uint56 projectId;
+    uint256 decimals;
+    uint256 projectId;
     uint256 groupId;
     JBSplit split;
 }

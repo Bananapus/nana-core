@@ -142,7 +142,7 @@ contract TestPermit2Terminal_Local is TestBaseWorkflow {
         // Setup: sign permit details.
         bytes memory sig = getPermitSignature(permit, fromPrivateKey, DOMAIN_SEPARATOR);
 
-        JBSingleAllowanceContext memory permitData = JBSingleAllowanceContext({
+        JBSingleAllowance memory permitData = JBSingleAllowance({
             sigDeadline: _deadline,
             amount: uint160(_coins),
             expiration: uint48(_expiration),
@@ -208,7 +208,7 @@ contract TestPermit2Terminal_Local is TestBaseWorkflow {
         // Setup: sign permit details.
         bytes memory sig = getPermitSignature(permit, fromPrivateKey, DOMAIN_SEPARATOR);
 
-        JBSingleAllowanceContext memory permitData = JBSingleAllowanceContext({
+        JBSingleAllowance memory permitData = JBSingleAllowance({
             sigDeadline: _deadline,
             amount: uint160(_coins),
             expiration: uint48(_expiration),
@@ -264,7 +264,7 @@ contract TestPermit2Terminal_Local is TestBaseWorkflow {
         // Setup: sign permit details.
         bytes memory sig = getPermitSignature(permit, fromPrivateKey, DOMAIN_SEPARATOR);
 
-        JBSingleAllowanceContext({
+        JBSingleAllowance({
             sigDeadline: _sigDeadline,
             amount: _permitAmount,
             expiration: _expiration,

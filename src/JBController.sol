@@ -907,7 +907,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
                             token: address(token),
                             amount: splitAmount,
                             decimals: 18, // Hard-coded in `JBTokens`.
-                            projectId: uint56(projectId),
+                            projectId: projectId,
                             groupId: groupId,
                             split: split
                         })

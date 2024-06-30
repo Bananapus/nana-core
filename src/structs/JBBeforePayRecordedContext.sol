@@ -19,10 +19,10 @@ struct JBBeforePayRecordedContext {
     address terminal;
     address payer;
     JBTokenAmount amount;
-    uint56 projectId;
-    uint48 rulesetId;
+    uint256 projectId;
+    uint256 rulesetId;
     address beneficiary;
-    uint112 weight;
-    uint16 reservedRate;
+    uint256 weight;
+    uint256 reservedRate;
     bytes metadata;
 }

@@ -17,11 +17,11 @@ import {JBTokenAmount} from "./JBTokenAmount.sol";
 /// @custom:member payerMetadata Extra data specified by the payer, which is sent to the pay hook.
 struct JBAfterPayRecordedContext {
     address payer;
-    uint56 projectId;
-    uint48 rulesetId;
+    uint256 projectId;
+    uint256 rulesetId;
     JBTokenAmount amount;
     JBTokenAmount forwardedAmount;
-    uint112 weight;
+    uint256 weight;
     uint256 projectTokenCount;
     address beneficiary;
     bytes hookMetadata;

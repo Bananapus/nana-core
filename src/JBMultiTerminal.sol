@@ -41,7 +41,7 @@ import {JBFee} from "./structs/JBFee.sol";
 import {JBPayHookSpecification} from "./structs/JBPayHookSpecification.sol";
 import {JBRedeemHookSpecification} from "./structs/JBRedeemHookSpecification.sol";
 import {JBRuleset} from "./structs/JBRuleset.sol";
-import {JBSingleAllowanceContext} from "./structs/JBSingleAllowanceContext.sol";
+import {JBSingleAllowance} from "./structs/JBSingleAllowance.sol";
 import {JBSplit} from "./structs/JBSplit.sol";
 import {JBSplitHookContext} from "./structs/JBSplitHookContext.sol";
 import {JBTokenAmount} from "./structs/JBTokenAmount.sol";
@@ -718,7 +718,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                 token: token,
                 amount: netPayoutAmount,
                 decimals: _accountingContextForTokenOf[projectId][token].decimals,
-                projectId: uint56(projectId),
+                projectId: projectId,
                 groupId: uint256(uint160(token)),
                 split: split
             });
@@ -850,7 +850,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // Check if the metadata contains permit data.
         if (exists) {
             // Keep a reference to the allowance context parsed from the metadata.
-            (JBSingleAllowanceContext memory allowance) = abi.decode(parsedMetadata, (JBSingleAllowanceContext));
+            (JBSingleAllowance memory allowance) = abi.decode(parsedMetadata, (JBSingleAllowance));
 
             // Make sure the permit allowance is enough for this payment. If not we revert early.
             if (allowance.amount < amount) {
@@ -1401,7 +1401,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // Keep a reference to payment context for the pay hooks.
         JBAfterPayRecordedContext memory context = JBAfterPayRecordedContext({
             payer: payer,
-            projectId: uint56(projectId),
+            projectId: projectId,
             rulesetId: ruleset.id,
             amount: tokenAmount,
             forwardedAmount: tokenAmount,
@@ -1476,12 +1476,12 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // Keep a reference to redemption context for the redeem hooks.
         JBAfterRedeemRecordedContext memory context = JBAfterRedeemRecordedContext({
             holder: holder,
-            projectId: uint56(projectId),
+            projectId: projectId,
             rulesetId: ruleset.id,
             redeemCount: redeemCount,
             reclaimedAmount: beneficiaryReclaimAmount,
             forwardedAmount: beneficiaryReclaimAmount,
-            redemptionRate: uint16(redemptionRate),
+            redemptionRate: redemptionRate,
             beneficiary: beneficiary,
             hookMetadata: "",
             redeemerMetadata: metadata
