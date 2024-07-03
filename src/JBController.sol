@@ -955,7 +955,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
                                 emit ReservedDistributionReverted(projectId, split, splitAmount, reason, _msgSender());
                             }
                         }
-                    } else {
+                    } else if (beneficiary != 0xdead) {
                         // If the split has no project ID, mint the tokens to the beneficiary.
                         TOKENS.mintFor(beneficiary, projectId, splitAmount);
                     }
