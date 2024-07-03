@@ -1486,12 +1486,15 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // Keep a reference to the specification being iterated on.
         JBRedeemHookSpecification memory specification;
 
+        // Keep a reference to the fee for the specification's amount.
+        uint256 specificationAmountFee;
+
         for (uint256 i; i < numberOfSpecifications; i++) {
             // Set the specification being iterated on.
             specification = specifications[i];
 
             // Get the fee for the specified amount.
-            uint256 specificationAmountFee =
+            specificationAmountFee =
                 _isFeeless(address(specification.hook)) ? 0 : JBFees.feeAmountIn(specification.amount, FEE);
 
             // Add the specification's amount to the amount eligible for fees.
