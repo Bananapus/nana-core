@@ -572,7 +572,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     /// @notice Set a project's metadata URI.
     /// @dev This is typically an IPFS hash, optionally with an `ipfs://` prefix.
     /// @dev Can only be called by the project's owner or an address with the owner's permission to
-    /// `SET_PROJECT_METADATA`.
+    /// `SET_PROJECT_URI`.
     /// @param projectId The ID of the project to set the metadata URI of.
     /// @param metadata The metadata URI to set.
     function setUriOf(uint256 projectId, string calldata metadata) external override {
@@ -580,7 +580,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         _requirePermissionFrom({
             account: PROJECTS.ownerOf(projectId),
             projectId: projectId,
-            permissionId: JBPermissionIds.SET_PROJECT_METADATA
+            permissionId: JBPermissionIds.SET_PROJECT_URI
         });
 
         // Set the project's metadata URI.
