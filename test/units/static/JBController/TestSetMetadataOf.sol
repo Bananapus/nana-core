@@ -34,7 +34,7 @@ contract TestSetMetadataOf_Local is JBControllerSetup {
         // mock first permissions call
         bytes memory _permissionsCall = abi.encodeCall(
             IJBPermissions.hasPermission,
-            (address(this), address(1), 1, JBPermissionIds.SET_PROJECT_METADATA, true, true)
+            (address(this), address(1), 1, JBPermissionIds.SET_PROJECT_URI, true, true)
         );
         bytes memory _permissionsReturned = abi.encode(false);
 

@@ -1,6 +1,6 @@
 {
   "name": "@bananapus/core",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -18,7 +18,7 @@
     "artifacts": "source ./.env && npx sphinx artifacts --org-id 'cltepuu9u0003j58rjtbd0hvu' --project-name 'nana-core-testnet'"
   },
   "dependencies": {
-    "@bananapus/permission-ids": "^0.0.9",
+    "@bananapus/permission-ids": "^0.0.10",
     "@chainlink/contracts": "^1.1.1",
     "@openzeppelin/contracts": "^5.0.2",
     "@prb/math": "^4.0.2",
