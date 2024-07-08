@@ -321,11 +321,11 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         // Set this contract as the project's controller in the directory.
         DIRECTORY.setControllerOf(projectId, IERC165(this));
 
-        // Queue the rulesets.
-        uint256 rulesetId = _queueRulesets(projectId, rulesetConfigurations);
-
         // Configure the terminals.
         _configureTerminals(projectId, terminalConfigurations);
+
+        // Queue the rulesets.
+        uint256 rulesetId = _queueRulesets(projectId, rulesetConfigurations);
 
         emit LaunchProject(rulesetId, projectId, projectUri, memo, _msgSender());
     }
@@ -374,11 +374,11 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         // Set this contract as the project's controller in the directory.
         DIRECTORY.setControllerOf(projectId, IERC165(this));
 
-        // Queue the first ruleset.
-        rulesetId = _queueRulesets(projectId, rulesetConfigurations);
-
         // Configure the terminals.
         _configureTerminals(projectId, terminalConfigurations);
+
+        // Queue the first ruleset.
+        rulesetId = _queueRulesets(projectId, rulesetConfigurations);
 
         emit LaunchRulesets(rulesetId, projectId, memo, _msgSender());
     }

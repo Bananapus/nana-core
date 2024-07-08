@@ -150,7 +150,6 @@ contract TestLaunchProject_Local is TestBaseWorkflow {
             decimals: 18,
             currency: uint32(uint160(JBConstants.NATIVE_TOKEN))
         });
-        new JBAccountingContext[](1);
         _terminalConfigurations[0] =
             JBTerminalConfig({terminal: _terminal, accountingContextsToAccept: _tokensToAccept});
 
