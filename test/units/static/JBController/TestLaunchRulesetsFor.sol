@@ -134,7 +134,7 @@ contract TestLaunchRulesetsFor_Local is JBControllerSetup {
         // setup: needed for the call chain
         JBTerminalConfig[] memory _terminalConfigs;
         JBRulesetConfig[] memory _rulesetConfigs;
-        uint256 _ts = block.timestamp;
+        uint48 _ts = uint48(block.timestamp);
         uint256 _projectId = 1;
         (_terminalConfigs, _rulesetConfigs) = genRuleset();
 
@@ -250,7 +250,7 @@ contract TestLaunchRulesetsFor_Local is JBControllerSetup {
         // setup: needed for the call chain
         JBTerminalConfig[] memory _terminalConfigs;
         JBRulesetConfig[] memory _rulesetConfigs;
-        uint256 _ts = block.timestamp;
+        uint48 _ts = uint48(block.timestamp);
         uint256 _projectId = 1;
         (_terminalConfigs, _rulesetConfigs) = genRuleset();
 

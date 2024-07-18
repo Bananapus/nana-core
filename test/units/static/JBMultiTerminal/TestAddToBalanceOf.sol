@@ -347,7 +347,7 @@ contract TestAddToBalanceOf_Local is JBMultiTerminalSetup {
         // Setup: sign permit details.
         bytes memory sig = getPermitSignature(permit, fromPrivateKey, DOMAIN_SEPARATOR);
 
-        JBSingleAllowanceContext memory permitData = JBSingleAllowanceContext({
+        JBSingleAllowance memory permitData = JBSingleAllowance({
             sigDeadline: deadline,
             amount: uint160(1),
             expiration: uint48(expiration),
@@ -400,7 +400,7 @@ contract TestAddToBalanceOf_Local is JBMultiTerminalSetup {
         // Setup: sign permit details.
         bytes memory sig = getPermitSignature(permit, fromPrivateKey, DOMAIN_SEPARATOR);
 
-        JBSingleAllowanceContext memory permitData = JBSingleAllowanceContext({
+        JBSingleAllowance memory permitData = JBSingleAllowance({
             sigDeadline: deadline,
             amount: uint160(payAmount),
             expiration: uint48(expiration),

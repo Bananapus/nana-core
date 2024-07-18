@@ -14,8 +14,6 @@ contract JBSplits is JBControlled, IJBSplits {
     //*********************************************************************//
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
-    error INVALID_LOCKED_UNTIL();
-    error INVALID_PROJECT_ID();
     error INVALID_SPLIT_PERCENT();
     error INVALID_TOTAL_PERCENT();
     error PREVIOUS_LOCKED_SPLITS_NOT_INCLUDED();
@@ -172,9 +170,6 @@ contract JBSplits is JBControlled, IJBSplits {
             // The percent should be greater than 0.
             if (splits[i].percent == 0) revert INVALID_SPLIT_PERCENT();
 
-            // `projectId` should fit within a uint56
-            if (splits[i].projectId > type(uint56).max) revert INVALID_PROJECT_ID();
-
             // Add to the `percent` total.
             percentTotal = percentTotal + splits[i].percent;
 
@@ -197,9 +192,6 @@ contract JBSplits is JBControlled, IJBSplits {
 
             // If there's data to store in the second packed split part, pack and store.
             if (splits[i].lockedUntil > 0 || splits[i].hook != IJBSplitHook(address(0))) {
-                // `lockedUntil` should fit within a uint48
-                if (splits[i].lockedUntil > type(uint48).max) revert INVALID_LOCKED_UNTIL();
-
                 // Pack `lockedUntil` in bits 0-47.
                 uint256 packedSplitParts2 = uint48(splits[i].lockedUntil);
                 // Pack `hook` in bits 48-207.
@@ -273,9 +265,9 @@ contract JBSplits is JBControlled, IJBSplits {
             // `preferAddToBalance` in bit 0.
             split.preferAddToBalance = packedSplitPart1 & 1 == 1;
             // `percent` in bits 1-32.
-            split.percent = uint256(uint32(packedSplitPart1 >> 1));
+            split.percent = uint32(packedSplitPart1 >> 1);
             // `projectId` in bits 33-88.
-            split.projectId = uint256(uint56(packedSplitPart1 >> 33));
+            split.projectId = uint56(packedSplitPart1 >> 33);
             // `beneficiary` in bits 89-248.
             split.beneficiary = payable(address(uint160(packedSplitPart1 >> 89)));
 
@@ -285,7 +277,7 @@ contract JBSplits is JBControlled, IJBSplits {
             // If there's anything in it, unpack.
             if (packedSplitPart2 > 0) {
                 // `lockedUntil` in bits 0-47.
-                split.lockedUntil = uint256(uint48(packedSplitPart2));
+                split.lockedUntil = uint48(packedSplitPart2);
                 // `hook` in bits 48-207.
                 split.hook = IJBSplitHook(address(uint160(packedSplitPart2 >> 48)));
             }

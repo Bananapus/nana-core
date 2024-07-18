@@ -5,18 +5,18 @@ import {JBRuleset} from "./../structs/JBRuleset.sol";
 import {JBRulesetMetadata} from "./../structs/JBRulesetMetadata.sol";
 
 library JBRulesetMetadataResolver {
-    function reservedRate(JBRuleset memory ruleset) internal pure returns (uint256) {
-        return uint256(uint16(ruleset.metadata >> 4));
+    function reservedRate(JBRuleset memory ruleset) internal pure returns (uint16) {
+        return uint16(ruleset.metadata >> 4);
     }
 
-    function redemptionRate(JBRuleset memory ruleset) internal pure returns (uint256) {
+    function redemptionRate(JBRuleset memory ruleset) internal pure returns (uint16) {
         // Redemption rate is a number 0-10000.
-        return uint256(uint16(ruleset.metadata >> 20));
+        return uint16(ruleset.metadata >> 20);
     }
 
-    function baseCurrency(JBRuleset memory ruleset) internal pure returns (uint256) {
+    function baseCurrency(JBRuleset memory ruleset) internal pure returns (uint32) {
         // Currency is a number 0-4294967296.
-        return uint256(uint32(ruleset.metadata >> 36));
+        return uint32(ruleset.metadata >> 36);
     }
 
     function pausePay(JBRuleset memory ruleset) internal pure returns (bool) {
@@ -79,8 +79,8 @@ library JBRulesetMetadataResolver {
         return address(uint160(ruleset.metadata >> 82));
     }
 
-    function metadata(JBRuleset memory ruleset) internal pure returns (uint256) {
-        return uint256(uint16(ruleset.metadata >> 242));
+    function metadata(JBRuleset memory ruleset) internal pure returns (uint16) {
+        return uint16(ruleset.metadata >> 242);
     }
 
     /// @notice Pack the funding cycle metadata.
@@ -90,13 +90,13 @@ library JBRulesetMetadataResolver {
         // version 1 in the bits 0-3 (4 bits).
         packed = 1;
         // reserved rate in bits 4-19 (16 bits).
-        packed |= rulesetMetadata.reservedRate << 4;
+        packed |= uint256(rulesetMetadata.reservedRate) << 4;
         // redemption rate in bits 20-35 (16 bits).
         // redemption rate is a number 0-10000.
-        packed |= rulesetMetadata.redemptionRate << 20;
+        packed |= uint256(rulesetMetadata.redemptionRate) << 20;
         // base currency in bits 36-67 (32 bits).
         // base currency is a number 0-16777215.
-        packed |= rulesetMetadata.baseCurrency << 36;
+        packed |= uint256(rulesetMetadata.baseCurrency) << 36;
         // pause pay in bit 68.
         if (rulesetMetadata.pausePay) packed |= 1 << 68;
         // pause credit transfers in bit 69.
@@ -128,7 +128,7 @@ library JBRulesetMetadataResolver {
         // data source address in bits 82-241.
         packed |= uint256(uint160(address(rulesetMetadata.dataHook))) << 82;
         // metadata in bits 242-255 (14 bits).
-        packed |= rulesetMetadata.metadata << 242;
+        packed |= (uint256(rulesetMetadata.metadata) >> 2) << 242;
     }
 
     /// @notice Expand the funding cycle metadata.

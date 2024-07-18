@@ -15,7 +15,7 @@ contract TestUpcomingOf_Local is JBRulesetsSetup {
     uint256 _duration = 3 days;
     uint256 _weight = 0;
     uint256 _decayRate = 450_000_000;
-    uint256 _mustStartAt = 0;
+    uint48 _mustStartAt = 0;
     uint256 _hookDuration = 1 days;
     IJBRulesetApprovalHook private _noHook = IJBRulesetApprovalHook(address(0));
 
@@ -231,7 +231,7 @@ contract TestUpcomingOf_Local is JBRulesetsSetup {
             decayRate: _decayRate,
             approvalHook: _mockApprovalHook,
             metadata: _packedWithApprovalHook,
-            mustStartAtOrAfter: block.timestamp + 10 days
+            mustStartAtOrAfter: uint48(block.timestamp + 10 days)
         });
 
         JBRuleset memory _upcoming = _rulesets.upcomingOf(_projectId);
@@ -310,7 +310,7 @@ contract TestUpcomingOf_Local is JBRulesetsSetup {
             decayRate: _decayRate,
             approvalHook: _mockApprovalHook,
             metadata: _packedWithApprovalHook,
-            mustStartAtOrAfter: block.timestamp + 10 days
+            mustStartAtOrAfter: uint48(block.timestamp + 10 days)
         });
 
         vm.warp(block.timestamp + 11 days);
@@ -436,7 +436,7 @@ contract TestUpcomingOf_Local is JBRulesetsSetup {
             decayRate: _decayRate,
             approvalHook: _mockApprovalHook,
             metadata: _packedWithApprovalHook,
-            mustStartAtOrAfter: block.timestamp + 10 days
+            mustStartAtOrAfter: uint48(block.timestamp + 10 days)
         });
 
         vm.warp(block.timestamp + 11 days);

@@ -27,9 +27,9 @@ import {IJBSplitHook} from "./../interfaces/IJBSplitHook.sol";
 /// behavior.
 struct JBSplit {
     bool preferAddToBalance;
-    uint256 percent;
-    uint256 projectId;
+    uint32 percent;
+    uint56 projectId;
     address payable beneficiary;
-    uint256 lockedUntil;
+    uint48 lockedUntil;
     IJBSplitHook hook;
 }

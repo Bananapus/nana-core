@@ -327,7 +327,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
                 terminal: msg.sender,
                 payer: payer,
                 amount: amount,
-                projectId: projectId,
+                projectId: uint56(projectId),
                 rulesetId: ruleset.id,
                 beneficiary: beneficiary,
                 weight: ruleset.weight,
@@ -469,7 +469,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
             JBBeforeRedeemRecordedContext memory context = JBBeforeRedeemRecordedContext({
                 terminal: msg.sender,
                 holder: holder,
-                projectId: projectId,
+                projectId: uint56(projectId),
                 rulesetId: ruleset.id,
                 redeemCount: redeemCount,
                 totalSupply: totalSupply,
@@ -849,26 +849,38 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
             payoutLimit = payoutLimits[i];
 
             // Set the payout limit value to the amount still available to pay out during the ruleset.
-            payoutLimit.amount = payoutLimit.amount
-                - usedPayoutLimitOf[terminal][projectId][accountingContext.token][ruleset.cycleNumber][payoutLimit.currency];
+            payoutLimit.amount = uint224(
+                payoutLimit.amount
+                    - usedPayoutLimitOf[terminal][projectId][accountingContext.token][ruleset.cycleNumber][payoutLimit
+                        .currency]
+            );
 
             // Adjust the decimals of the fixed point number if needed to have the correct decimals.
             payoutLimit.amount = accountingContext.decimals == targetDecimals
                 ? payoutLimit.amount
-                : JBFixedPointNumber.adjustDecimals({
-                    value: payoutLimit.amount,
-                    decimals: accountingContext.decimals,
-                    targetDecimals: targetDecimals
-                });
+                : uint224(
+                    JBFixedPointNumber.adjustDecimals({
+                        value: payoutLimit.amount,
+                        decimals: accountingContext.decimals,
+                        targetDecimals: targetDecimals
+                    })
+                );
 
             // Convert the `payoutLimit`'s amount to be in terms of the provided currency.
             payoutLimit.amount = payoutLimit.amount == 0 || payoutLimit.currency == targetCurrency
                 ? payoutLimit.amount
-                : mulDiv(
-                    payoutLimit.amount,
-                    10 ** _MAX_FIXED_POINT_FIDELITY, // Use `_MAX_FIXED_POINT_FIDELITY` to keep as much of the
-                        // `payoutLimitRemaining`'s fidelity as possible when converting.
-                    PRICES.pricePerUnitOf(projectId, payoutLimit.currency, targetCurrency, _MAX_FIXED_POINT_FIDELITY)
+                : uint224(
+                    mulDiv(
+                        payoutLimit.amount,
+                        10 ** _MAX_FIXED_POINT_FIDELITY, // Use `_MAX_FIXED_POINT_FIDELITY` to keep as much of the
+                            // `payoutLimitRemaining`'s fidelity as possible when converting.
+                        PRICES.pricePerUnitOf({
+                            projectId: projectId,
+                            pricingCurrency: payoutLimit.currency,
+                            unitCurrency: targetCurrency,
+                            decimals: _MAX_FIXED_POINT_FIDELITY
+                        })
+                    )
                 );
 
             // Decrement from the balance until it reaches zero.

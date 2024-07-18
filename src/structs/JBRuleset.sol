@@ -28,13 +28,13 @@ import {IJBRulesetApprovalHook} from "./../interfaces/IJBRulesetApprovalHook.sol
 /// project owner can change their ruleset over time.
 /// @custom:member metadata Extra data associated with a ruleset which can be used by other contracts.
 struct JBRuleset {
-    uint256 cycleNumber;
-    uint256 id;
-    uint256 basedOnId;
-    uint256 start;
-    uint256 duration;
-    uint256 weight;
-    uint256 decayRate;
+    uint48 cycleNumber;
+    uint48 id;
+    uint48 basedOnId;
+    uint48 start;
+    uint32 duration;
+    uint112 weight;
+    uint32 decayRate;
     IJBRulesetApprovalHook approvalHook;
     uint256 metadata;
 }

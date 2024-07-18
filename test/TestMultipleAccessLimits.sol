@@ -5,12 +5,12 @@ import /* {*} from */ "./helpers/TestBaseWorkflow.sol";
 import {MockPriceFeed} from "./mock/MockPriceFeed.sol";
 
 contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
-    uint256 private _nativeCurrency;
+    uint32 private _nativeCurrency;
     IJBController private _controller;
     IJBMultiTerminal private __terminal;
     IJBPrices private _prices;
     JBTokens private _tokens;
-    uint256 private _weight;
+    uint112 private _weight;
     JBRulesetMetadata _metadata;
     JBSplitGroup[] private _splitGroups;
     address private _projectOwner;
@@ -51,10 +51,10 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
     }
 
     function launchProjectsForTestBelow() public returns (uint256, JBCurrencyAmount[] memory) {
-        uint256 _nativePayoutLimit = 1 ether;
+        uint224 _nativePayoutLimit = 1 ether;
         uint256 _nativePricePerUsd = 0.0005 * 10 ** 18; // 1/2000
         // Will exceed the project's balance in the terminal.
-        uint256 _usdPayoutLimit = mulDiv(1 ether, 10 ** 18, _nativePricePerUsd);
+        uint224 _usdPayoutLimit = uint224(mulDiv(1 ether, 10 ** 18, _nativePricePerUsd));
 
         // Package up fund access limits.
         JBFundAccessLimitGroup[] memory _fundAccessLimitGroup = new JBFundAccessLimitGroup[](1);
@@ -343,17 +343,17 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
     }
 
     function testFuzzedConfigureAccess(
-        uint256 _payoutLimit,
-        uint256 _surplusAllowance,
-        uint256 _payoutCurrency,
-        uint256 ALLOWCURRENCY
+        uint224 _payoutLimit,
+        uint224 _surplusAllowance,
+        uint32 _payoutCurrency,
+        uint32 ALLOWCURRENCY
     )
         external
     {
-        _payoutCurrency = bound(uint256(_payoutCurrency), uint256(0), type(uint24).max - 1);
-        _payoutLimit = bound(uint256(_payoutLimit), uint232(1), uint232(type(uint24).max - 1));
-        _surplusAllowance = bound(uint256(_surplusAllowance), uint232(1), uint232(type(uint24).max - 1));
-        ALLOWCURRENCY = bound(uint256(ALLOWCURRENCY), uint256(0), type(uint24).max - 1);
+        _payoutCurrency = uint32(bound(uint256(_payoutCurrency), uint256(0), type(uint24).max - 1));
+        _payoutLimit = uint224(bound(uint256(_payoutLimit), uint232(1), uint224(type(uint24).max - 1)));
+        _surplusAllowance = uint224(bound(uint256(_surplusAllowance), uint224(1), uint232(type(uint24).max - 1)));
+        ALLOWCURRENCY = uint32(bound(uint256(ALLOWCURRENCY), uint256(0), type(uint24).max - 1));
 
         JBFundAccessLimitGroup[] memory _fundAccessLimitGroup = new JBFundAccessLimitGroup[](1);
         JBCurrencyAmount[] memory _payoutLimits = new JBCurrencyAmount[](2);
@@ -405,10 +405,10 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
 
     function testFailMultipleDistroLimitCurrenciesOverLimit() external {
         uint256 _nativePayAmount = 1.5 ether;
-        uint256 _nativePayoutLimit = 1 ether;
+        uint224 _nativePayoutLimit = 1 ether;
         uint256 _nativePricePerUsd = 0.0005 * 10 ** 18; // 1/2000
         // Will exceed the project's balance in the terminal.
-        uint256 _usdPayoutLimit = mulDiv(1 ether, 10 ** 18, _nativePricePerUsd);
+        uint224 _usdPayoutLimit = uint224(mulDiv(1 ether, 10 ** 18, _nativePricePerUsd));
 
         // Package up fund access limits.
         JBFundAccessLimitGroup[] memory _fundAccessLimitGroup = new JBFundAccessLimitGroup[](1);

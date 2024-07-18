@@ -6,7 +6,7 @@ import /* {*} from */ "./helpers/TestBaseWorkflow.sol";
 contract TestPayHooks_Local is TestBaseWorkflow {
     uint8 private constant _WEIGHT_DECIMALS = 18;
     uint8 private constant _NATIVE_TOKEN_DECIMALS = 18;
-    uint256 private constant _WEIGHT = 1000 * 10 ** _WEIGHT_DECIMALS;
+    uint112 private constant _WEIGHT = uint112(1000 * 10 ** _WEIGHT_DECIMALS);
     uint256 private constant _DATA_HOOK_WEIGHT = 2000 * 10 ** _WEIGHT_DECIMALS;
     address private constant _DATA_HOOK = address(bytes20(keccak256("datahook")));
     bytes private constant _PAYER_METADATA = bytes("Some payer metadata");
@@ -17,7 +17,7 @@ contract TestPayHooks_Local is TestBaseWorkflow {
     address private _beneficiary;
     address private _payer;
 
-    uint256 _projectId;
+    uint56 _projectId;
 
     function setUp() public override {
         super.setUp();
@@ -71,13 +71,15 @@ contract TestPayHooks_Local is TestBaseWorkflow {
         _terminalConfigurations[0] =
             JBTerminalConfig({terminal: _terminal, accountingContextsToAccept: _tokensToAccept});
 
-        _projectId = _controller.launchProjectFor({
-            owner: _projectOwner,
-            projectUri: "myIPFSHash",
-            rulesetConfigurations: _rulesetConfig,
-            terminalConfigurations: _terminalConfigurations,
-            memo: ""
-        });
+        _projectId = uint56(
+            _controller.launchProjectFor({
+                owner: _projectOwner,
+                projectUri: "myIPFSHash",
+                rulesetConfigurations: _rulesetConfig,
+                terminalConfigurations: _terminalConfigurations,
+                memo: ""
+            })
+        );
     }
 
     function testPayHooks(uint256 _numberOfSpecifications, uint256 _nativePayAmount) public {
@@ -127,15 +129,15 @@ contract TestPayHooks_Local is TestBaseWorkflow {
                 rulesetId: _ruleset.id,
                 amount: JBTokenAmount(
                     JBConstants.NATIVE_TOKEN,
-                    _nativePayAmount,
                     _terminal.accountingContextForTokenOf(_projectId, JBConstants.NATIVE_TOKEN).decimals,
-                    _terminal.accountingContextForTokenOf(_projectId, JBConstants.NATIVE_TOKEN).currency
+                    _terminal.accountingContextForTokenOf(_projectId, JBConstants.NATIVE_TOKEN).currency,
+                    _nativePayAmount
                 ),
                 forwardedAmount: JBTokenAmount(
                     JBConstants.NATIVE_TOKEN,
-                    _payHookAmounts[i],
                     _terminal.accountingContextForTokenOf(_projectId, JBConstants.NATIVE_TOKEN).decimals,
-                    _terminal.accountingContextForTokenOf(_projectId, JBConstants.NATIVE_TOKEN).currency
+                    _terminal.accountingContextForTokenOf(_projectId, JBConstants.NATIVE_TOKEN).currency,
+                    _payHookAmounts[i]
                 ),
                 weight: _WEIGHT,
                 projectTokenCount: mulDiv(_nativePayAmount, _DATA_HOOK_WEIGHT, 10 ** _NATIVE_TOKEN_DECIMALS),

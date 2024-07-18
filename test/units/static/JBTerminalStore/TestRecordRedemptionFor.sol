@@ -5,7 +5,7 @@ import /* {*} from */ "../../../helpers/TestBaseWorkflow.sol";
 import {JBTerminalStoreSetup} from "./JBTerminalStoreSetup.sol";
 
 contract TestRecordRedemptionFor_Local is JBTerminalStoreSetup {
-    uint256 _projectId = 1;
+    uint56 _projectId = 1;
     uint256 _decimals = 18;
     uint256 _balance = 10e18;
     uint256 _totalSupply = 20e18;
@@ -89,11 +89,11 @@ contract TestRecordRedemptionFor_Local is JBTerminalStoreSetup {
 
         // JBRulesets return calldata
         JBRuleset memory _returnedRuleset = JBRuleset({
-            cycleNumber: block.timestamp,
-            id: block.timestamp,
+            cycleNumber: uint48(block.timestamp),
+            id: uint48(block.timestamp),
             basedOnId: 0,
-            start: block.timestamp,
-            duration: block.timestamp + 1000,
+            start: uint48(block.timestamp),
+            duration: uint32(block.timestamp + 1000),
             weight: 1e18,
             decayRate: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
@@ -170,11 +170,11 @@ contract TestRecordRedemptionFor_Local is JBTerminalStoreSetup {
 
         // JBRulesets return calldata
         JBRuleset memory _returnedRuleset = JBRuleset({
-            cycleNumber: block.timestamp,
-            id: block.timestamp,
+            cycleNumber: uint48(block.timestamp),
+            id: uint48(block.timestamp),
             basedOnId: 0,
-            start: block.timestamp,
-            duration: block.timestamp + 1000,
+            start: uint48(block.timestamp),
+            duration: uint32(block.timestamp + 1000),
             weight: 1e18,
             decayRate: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
@@ -251,11 +251,11 @@ contract TestRecordRedemptionFor_Local is JBTerminalStoreSetup {
 
         // JBRulesets return calldata
         JBRuleset memory _returnedRuleset = JBRuleset({
-            cycleNumber: block.timestamp,
-            id: block.timestamp,
+            cycleNumber: uint48(block.timestamp),
+            id: uint48(block.timestamp),
             basedOnId: 0,
-            start: block.timestamp,
-            duration: block.timestamp + 1000,
+            start: uint48(block.timestamp),
+            duration: uint32(block.timestamp + 1000),
             weight: 1e18,
             decayRate: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
@@ -379,7 +379,7 @@ contract TestRecordRedemptionFor_Local is JBTerminalStoreSetup {
             terminal: address(this),
             holder: address(this),
             projectId: _projectId,
-            rulesetId: block.timestamp,
+            rulesetId: uint48(block.timestamp),
             redeemCount: _redeemCount,
             totalSupply: _totalSupply,
             surplus: _reclaimedTokenAmount,

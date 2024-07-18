@@ -17,7 +17,7 @@ jobs:
           submodules: recursive
       - uses: actions/setup-node@v4
         with:
-          node-version: latest
+          node-version: 22.4.x
       - name: Install npm dependencies
         run: npm ci --production
       - name: Install Foundry

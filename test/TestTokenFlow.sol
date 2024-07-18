@@ -104,7 +104,7 @@ contract TestTokenFlow_Local is TestBaseWorkflow {
             useReservedRate: true
         });
 
-        uint256 _expectedTokenBalance = _mintAmount * _metadata.reservedRate / JBConstants.MAX_RESERVED_RATE;
+        uint256 _expectedTokenBalance = mulDiv(_mintAmount, _metadata.reservedRate, JBConstants.MAX_RESERVED_RATE);
 
         // Make sure the beneficiary has the correct amount of tokens.
         assertEq(_tokens.totalBalanceOf(_beneficiary, _projectId), _expectedTokenBalance);

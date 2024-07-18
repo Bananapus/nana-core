@@ -388,17 +388,17 @@ contract JBRulesets is JBControlled, IJBRulesets {
             revert INVALID_DECAY_RATE();
         }
 
-        // Weight must fit into a uint88.
-        if (weight > type(uint88).max) revert INVALID_WEIGHT();
+        // Weight must fit into a uint112.
+        if (weight > type(uint112).max) revert INVALID_WEIGHT();
 
         // If the start date is not set, set it to be the current timestamp.
         if (mustStartAtOrAfter == 0) {
             mustStartAtOrAfter = block.timestamp;
         }
 
-        // Make sure the min start date fits in a uint56, and that the start date of the following ruleset will also fit
+        // Make sure the min start date fits in a uint48, and that the start date of the following ruleset will also fit
         // within the max.
-        if (mustStartAtOrAfter + duration > type(uint56).max) {
+        if (mustStartAtOrAfter + duration > type(uint48).max) {
             revert INVALID_RULESET_END_TIME();
         }
 
@@ -478,13 +478,14 @@ contract JBRulesets is JBControlled, IJBRulesets {
         uint256 startDistance = start - latestQueuedRuleset.start;
 
         // Calculate the decay multiple.
-        uint256 decayMultiple;
+        uint168 decayMultiple;
         unchecked {
-            decayMultiple = startDistance / latestQueuedRuleset.duration;
+            decayMultiple = uint168(startDistance / latestQueuedRuleset.duration);
         }
 
         // Store the new values.
-        cache.weight = _deriveWeightFrom({projectId: projectId, baseRuleset: latestQueuedRuleset, start: start});
+        cache.weight =
+            uint112(_deriveWeightFrom({projectId: projectId, baseRuleset: latestQueuedRuleset, start: start}));
         cache.decayMultiple = decayMultiple;
     }
 
@@ -641,17 +642,17 @@ contract JBRulesets is JBControlled, IJBRulesets {
     )
         internal
     {
-        // `weight` in bits 0-87.
+        // `weight` in bits 0-111.
         uint256 packed = weight;
 
-        // `basedOnId` in bits 88-143.
-        packed |= basedOnId << 88;
+        // `basedOnId` in bits 112-159.
+        packed |= basedOnId << 112;
 
-        // `start` in bits 144-199.
-        packed |= start << 144;
+        // `start` in bits 160-207.
+        packed |= start << 160;
 
-        // cycle number in bits 200-255.
-        packed |= rulesetCycleNumber << 200;
+        // cycle number in bits 208-255.
+        packed |= rulesetCycleNumber << 208;
 
         // Store the packed value.
         _packedIntrinsicPropertiesOf[projectId][rulesetId] = packed;
@@ -769,12 +770,12 @@ contract JBRulesets is JBControlled, IJBRulesets {
         uint256 rulesetCycleNumber = _deriveCycleNumberFrom(baseRuleset, start);
 
         return JBRuleset({
-            cycleNumber: rulesetCycleNumber,
+            cycleNumber: uint48(rulesetCycleNumber),
             id: baseRuleset.id,
             basedOnId: baseRuleset.basedOnId,
-            start: start,
+            start: uint48(start),
             duration: baseRuleset.duration,
-            weight: _deriveWeightFrom(projectId, baseRuleset, start),
+            weight: uint112(_deriveWeightFrom(projectId, baseRuleset, start)),
             decayRate: baseRuleset.decayRate,
             approvalHook: baseRuleset.approvalHook,
             metadata: baseRuleset.metadata
@@ -952,27 +953,27 @@ contract JBRulesets is JBControlled, IJBRulesets {
         // slither-disable-next-line incorrect-equality
         if (rulesetId == 0) return ruleset;
 
-        ruleset.id = rulesetId;
+        ruleset.id = uint48(rulesetId);
 
         uint256 packedIntrinsicProperties = _packedIntrinsicPropertiesOf[projectId][rulesetId];
 
-        // `weight` in bits 0-87 bits.
-        ruleset.weight = uint256(uint88(packedIntrinsicProperties));
-        // `basedOnId` in bits 88-143 bits.
-        ruleset.basedOnId = uint256(uint56(packedIntrinsicProperties >> 88));
-        // `start` in bits 144-199 bits.
-        ruleset.start = uint256(uint56(packedIntrinsicProperties >> 144));
-        // `cycleNumber` in bits 200-255 bits.
-        ruleset.cycleNumber = uint256(uint56(packedIntrinsicProperties >> 200));
+        // `weight` in bits 0-111 bits.
+        ruleset.weight = uint112(packedIntrinsicProperties);
+        // `basedOnId` in bits 112-159 bits.
+        ruleset.basedOnId = uint48(packedIntrinsicProperties >> 112);
+        // `start` in bits 160-207 bits.
+        ruleset.start = uint48(packedIntrinsicProperties >> 160);
+        // `cycleNumber` in bits 208-255 bits.
+        ruleset.cycleNumber = uint48(packedIntrinsicProperties >> 208);
 
         uint256 packedUserProperties = _packedUserPropertiesOf[projectId][rulesetId];
 
         // approval hook in bits 0-159 bits.
         ruleset.approvalHook = IJBRulesetApprovalHook(address(uint160(packedUserProperties)));
         // `duration` in bits 160-191 bits.
-        ruleset.duration = uint256(uint32(packedUserProperties >> 160));
+        ruleset.duration = uint32(packedUserProperties >> 160);
         // decay rate in bits 192-223 bits.
-        ruleset.decayRate = uint256(uint32(packedUserProperties >> 192));
+        ruleset.decayRate = uint32(packedUserProperties >> 192);
 
         ruleset.metadata = _metadataOf[projectId][rulesetId];
     }

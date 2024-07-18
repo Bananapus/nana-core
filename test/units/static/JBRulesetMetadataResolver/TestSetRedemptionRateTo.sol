@@ -9,9 +9,9 @@ contract TestSetRedemptionRateTo_Local is JBTest {
     function setUp() external {}
 
     function testFuzzEnsureCorrectlyPackedBits(
-        uint256 _fuzzReservedRate,
-        uint256 _fuzzRedemptionRate,
-        uint8 _fuzzMetadata
+        uint16 _fuzzReservedRate,
+        uint16 _fuzzRedemptionRate,
+        uint16 _fuzzMetadata
     )
         external
     {
@@ -19,8 +19,8 @@ contract TestSetRedemptionRateTo_Local is JBTest {
 
         address _hookAddress = makeAddr("someting");
 
-        _fuzzReservedRate = bound(_fuzzReservedRate, 0, JBConstants.MAX_RESERVED_RATE);
-        _fuzzRedemptionRate = bound(_fuzzRedemptionRate, 0, JBConstants.MAX_REDEMPTION_RATE);
+        _fuzzReservedRate = uint16(bound(_fuzzReservedRate, 0, JBConstants.MAX_RESERVED_RATE));
+        _fuzzRedemptionRate = uint16(bound(_fuzzRedemptionRate, 0, JBConstants.MAX_REDEMPTION_RATE));
 
         JBRulesetMetadata memory _rulesMetadata = JBRulesetMetadata({
             reservedRate: _fuzzReservedRate,
@@ -66,6 +66,6 @@ contract TestSetRedemptionRateTo_Local is JBTest {
 
         // Metadata
         uint256 _packedMetadata = uint256(uint16(_packed >> 242));
-        assertEq(_packedMetadata, _fuzzMetadata);
+        assertEq(_packedMetadata, uint256(_fuzzMetadata >> 2));
     }
 }

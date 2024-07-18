@@ -30,7 +30,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
     MockERC20 private _usdcToken;
     uint256 private _projectId;
 
-    uint256 private _weight;
+    uint112 private _weight;
     JBRulesetMetadata private _metadata;
 
     function setUp() public override {
@@ -44,7 +44,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
         _prices = jbPrices();
         _terminal = jbMultiTerminal();
         _terminal2 = jbMultiTerminal2();
-        _weight = 1000 * 10 ** _WEIGHT_DECIMALS;
+        _weight = uint112(1000 * 10 ** _WEIGHT_DECIMALS);
 
         _metadata = JBRulesetMetadata({
             reservedRate: JBConstants.MAX_RESERVED_RATE / 2, //50%
@@ -73,8 +73,8 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
 
     function testNativeAllowance() public {
         // Hardcode values to use.
-        uint256 _nativeCurrencyPayoutLimit = 10 * 10 ** _NATIVE_DECIMALS;
-        uint256 _nativeCurrencySurplusAllowance = 5 * 10 ** _NATIVE_DECIMALS;
+        uint224 _nativeCurrencyPayoutLimit = uint224(10 * 10 ** _NATIVE_DECIMALS);
+        uint224 _nativeCurrencySurplusAllowance = uint224(5 * 10 ** _NATIVE_DECIMALS);
 
         // Package up the limits for the given terminal.
         JBFundAccessLimitGroup[] memory _fundAccessLimitGroup = new JBFundAccessLimitGroup[](1);

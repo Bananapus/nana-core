@@ -1,4 +1,4 @@
-TestPayReservedTokenToTerminal_Local
+TestExecutePayReservedTokenToTerminal_Local
 ├── when caller is not itself
 │   └── it will revert
 └── when caller is itself

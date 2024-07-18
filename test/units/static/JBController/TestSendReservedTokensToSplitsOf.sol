@@ -8,9 +8,9 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
     using stdStorage for StdStorage;
     using JBRulesetMetadataResolver for JBRulesetMetadata;
 
-    uint256 _projectId = 1;
+    uint56 _projectId = 1;
     uint256 _tokenCount = 1e18;
-    uint256 _decimals = 18;
+    uint8 _decimals = 18;
     string _memo = "JUICAY";
     address _beneficiary = makeAddr("bene");
     IJBSplitHook _hook = IJBSplitHook(makeAddr("hook"));
@@ -131,10 +131,10 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
 
         // JBRulesets calldata
         JBRuleset memory _returnedRuleset = JBRuleset({
-            cycleNumber: block.timestamp,
-            id: block.timestamp,
+            cycleNumber: uint48(block.timestamp),
+            id: uint48(block.timestamp),
             basedOnId: 0,
-            start: block.timestamp,
+            start: uint48(block.timestamp),
             duration: _rulesetConfigurations[0].duration,
             weight: _rulesetConfigurations[0].weight,
             decayRate: _rulesetConfigurations[0].decayRate,
@@ -244,10 +244,10 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
 
         // JBRulesets calldata
         JBRuleset memory _returnedRuleset = JBRuleset({
-            cycleNumber: block.timestamp,
-            id: block.timestamp,
+            cycleNumber: uint48(block.timestamp),
+            id: uint48(block.timestamp),
             basedOnId: 0,
-            start: block.timestamp,
+            start: uint48(block.timestamp),
             duration: _rulesetConfigurations[0].duration,
             weight: _rulesetConfigurations[0].weight,
             decayRate: _rulesetConfigurations[0].decayRate,

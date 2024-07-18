@@ -4,7 +4,7 @@ pragma solidity 0.8.23;
 import /* {*} from */ "../../../helpers/TestBaseWorkflow.sol";
 import {JBControllerSetup} from "./JBControllerSetup.sol";
 
-contract TestPayReservedTokenToTerminal_Local is JBControllerSetup {
+contract TestExecutePayReservedTokenToTerminal_Local is JBControllerSetup {
     uint256 _projectId = 1;
     uint256 _defaultAmount = 1e18;
     IJBTerminal _terminal = IJBTerminal(makeAddr("someTerminal"));
@@ -18,7 +18,7 @@ contract TestPayReservedTokenToTerminal_Local is JBControllerSetup {
     function test_WhenCallerIsNotItself() external {
         // it will revert
         vm.expectRevert();
-        _controller.payReservedTokenToTerminal(_terminal, _projectId, _token, _defaultAmount, _bene, "");
+        _controller.executePayReservedTokenToTerminal(_terminal, _projectId, _token, _defaultAmount, _bene, "");
     }
 
     modifier whenCallerIsItself() {
@@ -44,7 +44,7 @@ contract TestPayReservedTokenToTerminal_Local is JBControllerSetup {
             address(_token), abi.encodeCall(IERC20.allowance, (address(_controller), address(_terminal))), abi.encode(0)
         );
 
-        _controller.payReservedTokenToTerminal(_terminal, _projectId, _token, _defaultAmount, _bene, "");
+        _controller.executePayReservedTokenToTerminal(_terminal, _projectId, _token, _defaultAmount, _bene, "");
     }
 
     function test_GivenAllowanceDNEQZeroAfterPay() external whenCallerIsItself {
@@ -63,6 +63,6 @@ contract TestPayReservedTokenToTerminal_Local is JBControllerSetup {
         );
 
         vm.expectRevert();
-        _controller.payReservedTokenToTerminal(_terminal, _projectId, _token, _defaultAmount, _bene, "");
+        _controller.executePayReservedTokenToTerminal(_terminal, _projectId, _token, _defaultAmount, _bene, "");
     }
 }

@@ -41,7 +41,7 @@ import {JBFee} from "./structs/JBFee.sol";
 import {JBPayHookSpecification} from "./structs/JBPayHookSpecification.sol";
 import {JBRedeemHookSpecification} from "./structs/JBRedeemHookSpecification.sol";
 import {JBRuleset} from "./structs/JBRuleset.sol";
-import {JBSingleAllowanceContext} from "./structs/JBSingleAllowanceContext.sol";
+import {JBSingleAllowance} from "./structs/JBSingleAllowance.sol";
 import {JBSplit} from "./structs/JBSplit.sol";
 import {JBSplitHookContext} from "./structs/JBSplitHookContext.sol";
 import {JBTokenAmount} from "./structs/JBTokenAmount.sol";
@@ -61,6 +61,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
     error ACCOUNTING_CONTEXT_ALREADY_SET();
     error ADDING_ACCOUNTING_CONTEXT_NOT_ALLOWED();
+    error FEE_TERMINAL_NOT_FOUND();
     error INVALID_ACCOUNTING_CONTEXT_DECIMALS();
     error INVALID_ACCOUNTING_CONTEXT_CURRENCY();
     error UNDER_MIN_TOKENS_PAID_OUT();
@@ -69,6 +70,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     error NO_MSG_VALUE_ALLOWED();
     error OVERFLOW_ALERT();
     error PERMIT_ALLOWANCE_NOT_ENOUGH();
+    error RECIPIENT_PROJECT_TERMINAL_NOT_FOUND();
+    error SPLIT_HOOK_INVALID();
     error TERMINAL_TOKENS_INCOMPATIBLE();
     error TOKEN_NOT_ACCEPTED();
 
@@ -179,7 +182,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     )
         external
         view
-        virtual
         override
         returns (uint256)
     {
@@ -203,7 +205,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @dev See {IERC165-supportsInterface}.
     /// @param interfaceId The ID of the interface to check for adherence to.
     /// @return A flag indicating if the provided interface ID is supported.
-    function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {
+    function supportsInterface(bytes4 interfaceId) public pure override returns (bool) {
         return interfaceId == type(IJBMultiTerminal).interfaceId || interfaceId == type(IJBPermissioned).interfaceId
             || interfaceId == type(IJBTerminal).interfaceId || interfaceId == type(IJBRedeemTerminal).interfaceId
             || interfaceId == type(IJBPayoutTerminal).interfaceId || interfaceId == type(IJBPermitTerminal).interfaceId
@@ -309,7 +311,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     )
         external
         payable
-        virtual
         override
         returns (uint256 beneficiaryTokenCount)
     {
@@ -349,7 +350,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     )
         external
         payable
-        virtual
         override
     {
         // Add to balance.
@@ -390,7 +390,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         bytes calldata metadata
     )
         external
-        virtual
         override
         returns (uint256 reclaimAmount)
     {
@@ -430,7 +429,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         uint256 minTokensPaidOut
     )
         external
-        virtual
         override
         returns (uint256 amountPaidOut)
     {
@@ -467,7 +465,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         string calldata memo
     )
         external
-        virtual
         override
         returns (uint256 amountPaidOut)
     {
@@ -498,7 +495,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         IJBTerminal to
     )
         external
-        virtual
         override
         returns (uint256 balance)
     {
@@ -545,7 +541,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @notice Process any fees that are being held for the project.
     /// @param projectId The ID of the project to process held fees for.
     /// @param token The token to process held fees for.
-    function processHeldFeesOf(uint256 projectId, address token) external virtual override {
+    function processHeldFeesOf(uint256 projectId, address token) external override {
         _processHeldFeesOf({projectId: projectId, token: token, forced: false});
     }
 
@@ -652,7 +648,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         require(msg.sender == address(this));
 
         if (address(feeTerminal) == address(0)) {
-            revert("FEE_TERMINAL_NOT_FOUND");
+            revert FEE_TERMINAL_NOT_FOUND();
         }
 
         // Trigger any inherited pre-transfer logic if funds will be transferred.
@@ -701,7 +697,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         if (split.hook != IJBSplitHook(address(0))) {
             // Make sure that the address supports the split hook interface.
             if (!split.hook.supportsInterface(type(IJBSplitHook).interfaceId)) {
-                revert("SPLIT_HOOK_INVALID");
+                revert SPLIT_HOOK_INVALID();
             }
 
             // This payout is eligible for a fee since the funds are leaving this contract and the split hook isn't a
@@ -735,7 +731,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             IJBTerminal terminal = DIRECTORY.primaryTerminalOf(split.projectId, token);
 
             // The project must have a terminal to send funds to.
-            if (terminal == IJBTerminal(address(0))) revert("RECIPIENT_PROJECT_TERMINAL_NOT_FOUND");
+            if (terminal == IJBTerminal(address(0))) revert RECIPIENT_PROJECT_TERMINAL_NOT_FOUND();
 
             // This payout is eligible for a fee if the funds are leaving this contract and the receiving terminal isn't
             // a feelss address.
@@ -806,7 +802,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     }
 
     /// @dev `ERC-2771` specifies the context as being a single address (20 bytes).
-    function _contextSuffixLength() internal view virtual override(ERC2771Context, Context) returns (uint256) {
+    function _contextSuffixLength() internal view override(ERC2771Context, Context) returns (uint256) {
         return super._contextSuffixLength();
     }
 
@@ -847,7 +843,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // Check if the metadata contains permit data.
         if (exists) {
             // Keep a reference to the allowance context parsed from the metadata.
-            (JBSingleAllowanceContext memory allowance) = abi.decode(parsedMetadata, (JBSingleAllowanceContext));
+            (JBSingleAllowance memory allowance) = abi.decode(parsedMetadata, (JBSingleAllowance));
 
             // Make sure the permit allowance is enough for this payment. If not we revert early.
             if (allowance.amount < amount) {
@@ -915,7 +911,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             JBAccountingContext memory context = _accountingContextForTokenOf[projectId][token];
 
             // Bundle the amount info into a `JBTokenAmount` struct.
-            tokenAmount = JBTokenAmount(token, amount, context.decimals, context.currency);
+            tokenAmount =
+                JBTokenAmount({token: token, decimals: context.decimals, currency: context.currency, value: amount});
         }
 
         // Record the payment.
@@ -1084,9 +1081,12 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                 ruleset: ruleset,
                 redemptionRate: redemptionRate,
                 beneficiary: beneficiary,
-                beneficiaryReclaimAmount: JBTokenAmount(
-                    tokenToReclaim, reclaimAmount, accountingContext.decimals, accountingContext.currency
-                ),
+                beneficiaryReclaimAmount: JBTokenAmount({
+                    token: tokenToReclaim,
+                    decimals: accountingContext.decimals,
+                    currency: accountingContext.currency,
+                    value: reclaimAmount
+                }),
                 specifications: hookSpecifications,
                 metadata: metadata
             });
@@ -1556,7 +1556,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                 JBFee({
                     amount: amount,
                     beneficiary: beneficiary,
-                    unlockTimestamp: block.timestamp + _FEE_HOLDING_SECONDS
+                    unlockTimestamp: uint48(block.timestamp + _FEE_HOLDING_SECONDS)
                 })
             );
 
