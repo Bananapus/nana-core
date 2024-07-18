@@ -4,7 +4,7 @@ pragma solidity 0.8.23;
 import /* {*} from */ "../../../helpers/TestBaseWorkflow.sol";
 import {JBControllerSetup} from "./JBControllerSetup.sol";
 
-contract TestSetMetadataOf_Local is JBControllerSetup {
+contract TestSetUriOf_Local is JBControllerSetup {
     function setUp() public {
         super.controllerSetup();
     }
@@ -33,8 +33,7 @@ contract TestSetMetadataOf_Local is JBControllerSetup {
 
         // mock first permissions call
         bytes memory _permissionsCall = abi.encodeCall(
-            IJBPermissions.hasPermission,
-            (address(this), address(1), 1, JBPermissionIds.SET_PROJECT_METADATA, true, true)
+            IJBPermissions.hasPermission, (address(this), address(1), 1, JBPermissionIds.SET_PROJECT_URI, true, true)
         );
         bytes memory _permissionsReturned = abi.encode(false);
 

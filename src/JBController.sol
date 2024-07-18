@@ -272,7 +272,8 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         view
         returns (bool)
     {
-        return IJBRulesetDataHook(ruleset.dataHook()).hasMintPermissionFor(projectId, addrs);
+        return ruleset.dataHook() != address(0)
+            && IJBRulesetDataHook(ruleset.dataHook()).hasMintPermissionFor(projectId, addrs);
     }
 
     /// @notice The project's current ruleset.
@@ -435,7 +436,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         JBRulesetConfig[] calldata rulesetConfigurations,
         string calldata memo
     )
-        public
+        external
         override
         returns (uint256 rulesetId)
     {
@@ -494,7 +495,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
             projectId: projectId,
             permissionId: JBPermissionIds.MINT_TOKENS,
             alsoGrantAccessIf: _isTerminalOf(projectId, _msgSender()) || _msgSender() == ruleset.dataHook()
-                || (ruleset.dataHook() != address(0) && _hasDataHookMintPermissionFor(projectId, ruleset, _msgSender()))
+                || _hasDataHookMintPermissionFor(projectId, ruleset, _msgSender())
         });
 
         // If the message sender is not the project's terminal or data hook, the ruleset must have `allowOwnerMinting`
@@ -502,7 +503,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         if (
             ruleset.id != 0 && !ruleset.allowOwnerMinting() && !_isTerminalOf(projectId, _msgSender())
                 && _msgSender() != address(ruleset.dataHook())
-                && (ruleset.dataHook() == address(0) || !_hasDataHookMintPermissionFor(projectId, ruleset, _msgSender()))
+                && !_hasDataHookMintPermissionFor(projectId, ruleset, _msgSender())
         ) revert MINT_NOT_ALLOWED_AND_NOT_TERMINAL_OR_HOOK();
 
         // Determine the reserved rate to use.
@@ -612,7 +613,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         _requirePermissionFrom({
             account: PROJECTS.ownerOf(projectId),
             projectId: projectId,
-            permissionId: JBPermissionIds.SET_PROJECT_METADATA
+            permissionId: JBPermissionIds.SET_PROJECT_URI
         });
 
         // Set the project's metadata URI.
