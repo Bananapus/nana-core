@@ -260,17 +260,12 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
 
         _projectOwner = multisig();
 
-        JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](2);
-        JBAccountingContext[] memory _tokensToAccept = new JBAccountingContext[](2);
+        JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
+        JBAccountingContext[] memory _tokensToAccept = new JBAccountingContext[](1);
         _tokensToAccept[0] = JBAccountingContext({
             token: JBConstants.NATIVE_TOKEN,
             decimals: 18,
             currency: uint32(uint160(JBConstants.NATIVE_TOKEN))
-        });
-        _tokensToAccept[1] = JBAccountingContext({
-            token: address(usdcToken()),
-            decimals: 6,
-            currency: uint32(uint160(address(usdcToken())))
         });
         _terminalConfigurations[0] =
             JBTerminalConfig({terminal: __terminal, accountingContextsToAccept: _tokensToAccept});

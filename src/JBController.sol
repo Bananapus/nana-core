@@ -362,11 +362,11 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         // Set this contract as the project's controller in the directory.
         DIRECTORY.setControllerOf(projectId, IERC165(this));
 
-        // Queue the rulesets.
-        uint256 rulesetId = _queueRulesets(projectId, rulesetConfigurations);
-
         // Configure the terminals.
         _configureTerminals(projectId, terminalConfigurations);
+
+        // Queue the rulesets.
+        uint256 rulesetId = _queueRulesets(projectId, rulesetConfigurations);
 
         emit LaunchProject(rulesetId, projectId, projectUri, memo, _msgSender());
     }
@@ -415,11 +415,11 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         // Set this contract as the project's controller in the directory.
         DIRECTORY.setControllerOf(projectId, IERC165(this));
 
-        // Queue the first ruleset.
-        rulesetId = _queueRulesets(projectId, rulesetConfigurations);
-
         // Configure the terminals.
         _configureTerminals(projectId, terminalConfigurations);
+
+        // Queue the first ruleset.
+        rulesetId = _queueRulesets(projectId, rulesetConfigurations);
 
         emit LaunchRulesets(rulesetId, projectId, memo, _msgSender());
     }
@@ -605,7 +605,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     /// @notice Set a project's metadata URI.
     /// @dev This is typically an IPFS hash, optionally with an `ipfs://` prefix.
     /// @dev Can only be called by the project's owner or an address with the owner's permission to
-    /// `SET_PROJECT_METADATA`.
+    /// `SET_PROJECT_URI`.
     /// @param projectId The ID of the project to set the metadata URI of.
     /// @param metadata The metadata URI to set.
     function setUriOf(uint256 projectId, string calldata metadata) external override {
