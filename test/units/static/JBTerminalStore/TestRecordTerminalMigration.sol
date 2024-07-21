@@ -33,7 +33,7 @@ contract TestRecordTerminalMigration_Local is JBTerminalStoreSetup {
         assertEq(_balanceCallReturn, _balance);
 
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
-            reservedRate: 0,
+            reservedPercent: 0,
             redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
@@ -64,7 +64,7 @@ contract TestRecordTerminalMigration_Local is JBTerminalStoreSetup {
             start: uint48(block.timestamp),
             duration: uint32(block.timestamp + 1000),
             weight: 1e18,
-            decayRate: 0,
+            decayPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: _packedMetadata
         });
@@ -85,7 +85,7 @@ contract TestRecordTerminalMigration_Local is JBTerminalStoreSetup {
         // it will revert TERMINAL_MIGRATION_NOT_ALLOWED
 
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
-            reservedRate: 0,
+            reservedPercent: 0,
             redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
@@ -117,7 +117,7 @@ contract TestRecordTerminalMigration_Local is JBTerminalStoreSetup {
             start: uint48(block.timestamp),
             duration: uint32(block.timestamp + 1000),
             weight: 1e18,
-            decayRate: 0,
+            decayPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: _packedMetadata
         });

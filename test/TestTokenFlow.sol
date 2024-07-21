@@ -22,7 +22,7 @@ contract TestTokenFlow_Local is TestBaseWorkflow {
         _tokens = jbTokens();
         _terminal = jbMultiTerminal();
         _metadata = JBRulesetMetadata({
-            reservedRate: JBConstants.MAX_RESERVED_RATE / 2,
+            reservedPercent: JBConstants.MAX_RESERVED_PERCENT / 2,
             redemptionRate: 0,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
@@ -48,7 +48,7 @@ contract TestTokenFlow_Local is TestBaseWorkflow {
         _rulesetConfig[0].mustStartAtOrAfter = 0;
         _rulesetConfig[0].duration = 0;
         _rulesetConfig[0].weight = 1000 * 10 ** 18;
-        _rulesetConfig[0].decayRate = 0;
+        _rulesetConfig[0].decayPercent = 0;
         _rulesetConfig[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfig[0].metadata = _metadata;
         _rulesetConfig[0].splitGroups = new JBSplitGroup[](0);
@@ -101,10 +101,10 @@ contract TestTokenFlow_Local is TestBaseWorkflow {
             tokenCount: _mintAmount,
             beneficiary: _beneficiary,
             memo: "Mint memo",
-            useReservedRate: true
+            useReservedPercent: true
         });
 
-        uint256 _expectedTokenBalance = mulDiv(_mintAmount, _metadata.reservedRate, JBConstants.MAX_RESERVED_RATE);
+        uint256 _expectedTokenBalance = mulDiv(_mintAmount, _metadata.reservedPercent, JBConstants.MAX_RESERVED_PERCENT);
 
         // Make sure the beneficiary has the correct amount of tokens.
         assertEq(_tokens.totalBalanceOf(_beneficiary, _projectId), _expectedTokenBalance);
@@ -158,7 +158,7 @@ contract TestTokenFlow_Local is TestBaseWorkflow {
             tokenCount: type(uint208).max,
             beneficiary: _beneficiary,
             memo: "Mint memo",
-            useReservedRate: false
+            useReservedPercent: false
         });
     }
 }

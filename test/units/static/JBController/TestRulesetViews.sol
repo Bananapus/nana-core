@@ -42,7 +42,7 @@ contract TestRulesetViews_Local is JBControllerSetup {
             start: uint48(block.timestamp),
             duration: 8000,
             weight: 5000,
-            decayRate: 0,
+            decayPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0x1234567890123456789012345678901234567890)),
             metadata: genMetadata()
         });
@@ -58,7 +58,7 @@ contract TestRulesetViews_Local is JBControllerSetup {
 
         // check: return makes sense
         assertEq(data.duration, ruleset.duration);
-        assertEq(metadata.reservedRate, data.expandMetadata().reservedRate);
+        assertEq(metadata.reservedPercent, data.expandMetadata().reservedPercent);
     }
 
     function test_latestQueuedOf() external {
@@ -70,7 +70,7 @@ contract TestRulesetViews_Local is JBControllerSetup {
             start: uint48(block.timestamp),
             duration: 8000,
             weight: 5000,
-            decayRate: 0,
+            decayPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0x1234567890123456789012345678901234567890)),
             metadata: genMetadata()
         });
@@ -87,7 +87,7 @@ contract TestRulesetViews_Local is JBControllerSetup {
 
         // check: return makes sense
         assertEq(data.duration, ruleset.duration);
-        assertEq(metadata.reservedRate, data.expandMetadata().reservedRate);
+        assertEq(metadata.reservedPercent, data.expandMetadata().reservedPercent);
         assertEq(abi.encode(approvalStatus), abi.encode(JBApprovalStatus.Empty));
     }
 
@@ -100,7 +100,7 @@ contract TestRulesetViews_Local is JBControllerSetup {
             start: uint48(block.timestamp),
             duration: 8000,
             weight: 100,
-            decayRate: 0,
+            decayPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0x1234567890123456789012345678901234567890)),
             metadata: genMetadata()
         });
@@ -113,7 +113,7 @@ contract TestRulesetViews_Local is JBControllerSetup {
             start: uint48(block.timestamp),
             duration: 8000,
             weight: 200,
-            decayRate: 0,
+            decayPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0x1234567890123456789012345678901234567890)),
             metadata: genMetadata()
         });
@@ -144,7 +144,7 @@ contract TestRulesetViews_Local is JBControllerSetup {
             start: uint48(block.timestamp),
             duration: 8000,
             weight: 5000,
-            decayRate: 0,
+            decayPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0x1234567890123456789012345678901234567890)),
             metadata: genMetadata()
         });
@@ -160,7 +160,7 @@ contract TestRulesetViews_Local is JBControllerSetup {
 
         // check: return makes sense
         assertEq(data.duration, ruleset.duration);
-        assertEq(metadata.reservedRate, data.expandMetadata().reservedRate);
+        assertEq(metadata.reservedPercent, data.expandMetadata().reservedPercent);
     }
 
     function test_SetTerminalAllowed() public {
@@ -172,7 +172,7 @@ contract TestRulesetViews_Local is JBControllerSetup {
             start: uint48(block.timestamp),
             duration: 8000,
             weight: 5000,
-            decayRate: 0,
+            decayPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0x1234567890123456789012345678901234567890)),
             metadata: genMetadata()
         });
@@ -199,7 +199,7 @@ contract TestRulesetViews_Local is JBControllerSetup {
             start: uint48(block.timestamp),
             duration: 8000,
             weight: 5000,
-            decayRate: 0,
+            decayPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0x1234567890123456789012345678901234567890)),
             metadata: genMetadata()
         });

@@ -58,7 +58,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     error CREDIT_TRANSFERS_PAUSED();
     error RULESETS_ARRAY_EMPTY();
     error INVALID_REDEMPTION_RATE();
-    error INVALID_RESERVED_RATE();
+    error INVALID_RESERVED_PERCENT();
     error MINT_NOT_ALLOWED_AND_NOT_TERMINAL_OR_HOOK();
     error NO_BURNABLE_TOKENS();
     error NO_RESERVED_TOKENS();
@@ -457,7 +457,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     }
 
     /// @notice Add new project tokens or credits to the specified beneficiary's balance. Optionally, reserve a portion
-    /// according to the ruleset's reserved rate.
+    /// according to the ruleset's reserved percent.
     /// @dev Can only be called by the project's owner, an address with the owner's permission to `MINT_TOKENS`, one of
     /// the project's terminals, or the project's data hook.
     /// @dev If the ruleset's metadata has `allowOwnerMinting` set to `false`, this function can only be called by the
@@ -466,14 +466,14 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     /// @param tokenCount The number of tokens to mint, including any reserved tokens.
     /// @param beneficiary The address which will receive the (non-reserved) tokens.
     /// @param memo A memo to pass along to the emitted event.
-    /// @param useReservedRate Whether to apply the ruleset's reserved rate.
+    /// @param useReservedPercent Whether to apply the ruleset's reserved percent.
     /// @return beneficiaryTokenCount The number of tokens minted for the `beneficiary`.
     function mintTokensOf(
         uint256 projectId,
         uint256 tokenCount,
         address beneficiary,
         string calldata memo,
-        bool useReservedRate
+        bool useReservedPercent
     )
         external
         override
@@ -482,8 +482,8 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         // There should be tokens to mint.
         if (tokenCount == 0) revert ZERO_TOKENS_TO_MINT();
 
-        // Keep a reference to the reserved rate.
-        uint256 reservedRate;
+        // Keep a reference to the reserved percent.
+        uint256 reservedPercent;
 
         // Get a reference to the project's ruleset.
         JBRuleset memory ruleset = _currentRulesetOf(projectId);
@@ -506,24 +506,24 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
                 && !_hasDataHookMintPermissionFor(projectId, ruleset, _msgSender())
         ) revert MINT_NOT_ALLOWED_AND_NOT_TERMINAL_OR_HOOK();
 
-        // Determine the reserved rate to use.
-        reservedRate = useReservedRate ? ruleset.reservedRate() : 0;
+        // Determine the reserved percent to use.
+        reservedPercent = useReservedPercent ? ruleset.reservedPercent() : 0;
 
-        if (reservedRate != JBConstants.MAX_RESERVED_RATE) {
+        if (reservedPercent != JBConstants.MAX_RESERVED_PERCENT) {
             // Calculate the number of (non-reserved) tokens that will be minted to the beneficiary.
             beneficiaryTokenCount =
-                mulDiv(tokenCount, JBConstants.MAX_RESERVED_RATE - reservedRate, JBConstants.MAX_RESERVED_RATE);
+                mulDiv(tokenCount, JBConstants.MAX_RESERVED_PERCENT - reservedPercent, JBConstants.MAX_RESERVED_PERCENT);
 
             // Mint the tokens.
             TOKENS.mintFor(beneficiary, projectId, beneficiaryTokenCount);
         }
 
         // Add any reserved tokens to the pending reserved token balance.
-        if (reservedRate > 0) {
+        if (reservedPercent > 0) {
             pendingReservedTokenBalanceOf[projectId] += tokenCount - beneficiaryTokenCount;
         }
 
-        emit MintTokens(beneficiary, projectId, tokenCount, beneficiaryTokenCount, memo, reservedRate, _msgSender());
+        emit MintTokens(beneficiary, projectId, tokenCount, beneficiaryTokenCount, memo, reservedPercent, _msgSender());
     }
 
     /// @notice Burns a project's tokens or credits from the specific holder's balance.
@@ -850,7 +850,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         // Revert if there are no pending reserved tokens
         if (tokenCount == 0) revert NO_RESERVED_TOKENS();
 
-        // Get the ruleset to read the reserved rate from.
+        // Get the ruleset to read the reserved percent from.
         JBRuleset memory ruleset = _currentRulesetOf(projectId);
 
         // Reset the pending reserved token balance.
@@ -1020,9 +1020,9 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
             // Get a reference to the ruleset config being iterated on.
             rulesetConfig = rulesetConfigurations[i];
 
-            // Make sure its reserved rate is valid.
-            if (rulesetConfig.metadata.reservedRate > JBConstants.MAX_RESERVED_RATE) {
-                revert INVALID_RESERVED_RATE();
+            // Make sure its reserved percent is valid.
+            if (rulesetConfig.metadata.reservedPercent > JBConstants.MAX_RESERVED_PERCENT) {
+                revert INVALID_RESERVED_PERCENT();
             }
 
             // Make sure its redemption rate is valid.
@@ -1035,7 +1035,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
                 projectId: projectId,
                 duration: rulesetConfig.duration,
                 weight: rulesetConfig.weight,
-                decayRate: rulesetConfig.decayRate,
+                decayPercent: rulesetConfig.decayPercent,
                 approvalHook: rulesetConfig.approvalHook,
                 metadata: JBRulesetMetadataResolver.packRulesetMetadata(rulesetConfig.metadata),
                 mustStartAtOrAfter: rulesetConfig.mustStartAtOrAfter

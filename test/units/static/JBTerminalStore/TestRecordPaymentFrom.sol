@@ -43,7 +43,7 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
             start: uint48(block.timestamp),
             duration: uint32(block.timestamp + 1000),
             weight: 1e18,
-            decayRate: 0,
+            decayPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: 0
         });
@@ -74,7 +74,7 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
         });
 
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
-            reservedRate: 0,
+            reservedPercent: 0,
             redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: true,
@@ -105,7 +105,7 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
             start: uint48(block.timestamp),
             duration: uint32(block.timestamp + 1000),
             weight: 1e18,
-            decayRate: 0,
+            decayPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: _packedMetadata
         });
@@ -143,7 +143,7 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
         });
 
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
-            reservedRate: 0,
+            reservedPercent: 0,
             redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
             baseCurrency: uint32(uint160(address(_token))),
             pausePay: false,
@@ -174,7 +174,7 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
             start: uint48(block.timestamp),
             duration: uint32(block.timestamp + 1000),
             weight: 1e18,
-            decayRate: 0,
+            decayPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: _packedMetadata
         });
@@ -191,7 +191,7 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
             rulesetId: uint48(block.timestamp),
             beneficiary: address(this),
             weight: _returnedRuleset.weight,
-            reservedRate: _returnedRuleset.reservedRate(),
+            reservedPercent: _returnedRuleset.reservedPercent(),
             metadata: ""
         });
 
@@ -230,7 +230,7 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
         });
 
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
-            reservedRate: 0,
+            reservedPercent: 0,
             redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
             baseCurrency: uint32(uint160(address(_token))),
             pausePay: false,
@@ -261,7 +261,7 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
             start: uint48(block.timestamp),
             duration: uint32(block.timestamp + 1000),
             weight: 1e18,
-            decayRate: 0,
+            decayPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: _packedMetadata
         });
@@ -278,7 +278,7 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
             rulesetId: uint48(block.timestamp),
             beneficiary: address(this),
             weight: _returnedRuleset.weight,
-            reservedRate: _returnedRuleset.reservedRate(),
+            reservedPercent: _returnedRuleset.reservedPercent(),
             metadata: ""
         });
 
@@ -316,7 +316,7 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
         });
 
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
-            reservedRate: 0,
+            reservedPercent: 0,
             redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
             baseCurrency: uint32(uint160(address(_token))),
             pausePay: false,
@@ -347,7 +347,7 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
             start: uint48(block.timestamp),
             duration: uint32(block.timestamp + 1000),
             weight: 1e18,
-            decayRate: 0,
+            decayPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: _packedMetadata
         });
@@ -364,7 +364,7 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
             rulesetId: uint48(block.timestamp),
             beneficiary: address(this),
             weight: _returnedRuleset.weight,
-            reservedRate: _returnedRuleset.reservedRate(),
+            reservedPercent: _returnedRuleset.reservedPercent(),
             metadata: ""
         });
 
@@ -400,7 +400,7 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
         });
 
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
-            reservedRate: 0,
+            reservedPercent: 0,
             redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
             baseCurrency: uint32(uint160(address(_token))),
             pausePay: false,
@@ -432,7 +432,7 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
             start: uint48(block.timestamp),
             duration: uint32(block.timestamp + 1000),
             weight: 1e18,
-            decayRate: 0,
+            decayPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: _packedMetadata
         });
@@ -467,7 +467,7 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
         });
 
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
-            reservedRate: 0,
+            reservedPercent: 0,
             redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
             baseCurrency: _nativeCurrency,
             pausePay: false,
@@ -498,7 +498,7 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
             start: uint48(block.timestamp),
             duration: uint32(block.timestamp + 1000),
             weight: 1e18,
-            decayRate: 0,
+            decayPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: _packedMetadata
         });
@@ -515,7 +515,7 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
             rulesetId: uint48(block.timestamp),
             beneficiary: address(this),
             weight: _returnedRuleset.weight,
-            reservedRate: _returnedRuleset.reservedRate(),
+            reservedPercent: _returnedRuleset.reservedPercent(),
             metadata: ""
         });
 

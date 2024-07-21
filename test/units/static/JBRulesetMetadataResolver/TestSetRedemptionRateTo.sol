@@ -9,7 +9,7 @@ contract TestSetRedemptionRateTo_Local is JBTest {
     function setUp() external {}
 
     function testFuzzEnsureCorrectlyPackedBits(
-        uint16 _fuzzReservedRate,
+        uint16 _fuzzReservedPercent,
         uint16 _fuzzRedemptionRate,
         uint16 _fuzzMetadata
     )
@@ -19,11 +19,11 @@ contract TestSetRedemptionRateTo_Local is JBTest {
 
         address _hookAddress = makeAddr("someting");
 
-        _fuzzReservedRate = uint16(bound(_fuzzReservedRate, 0, JBConstants.MAX_RESERVED_RATE));
+        _fuzzReservedPercent = uint16(bound(_fuzzReservedPercent, 0, JBConstants.MAX_RESERVED_PERCENT));
         _fuzzRedemptionRate = uint16(bound(_fuzzRedemptionRate, 0, JBConstants.MAX_REDEMPTION_RATE));
 
         JBRulesetMetadata memory _rulesMetadata = JBRulesetMetadata({
-            reservedRate: _fuzzReservedRate,
+            reservedPercent: _fuzzReservedPercent,
             redemptionRate: _fuzzRedemptionRate,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: true,
@@ -47,12 +47,12 @@ contract TestSetRedemptionRateTo_Local is JBTest {
         uint256 _packed = _rulesMetadata.packRulesetMetadata();
 
         // Reserved Rate
-        uint256 _reservedRate = uint256(uint16(_packed >> 4));
+        uint256 _reservedPercent = uint256(uint16(_packed >> 4));
 
         // Redemption rate
         uint256 _redemptionRate = uint256(uint16(_packed >> 20));
 
-        assertEq(_reservedRate, _fuzzReservedRate);
+        assertEq(_reservedPercent, _fuzzReservedPercent);
         assertEq(_redemptionRate, _fuzzRedemptionRate);
 
         for (uint256 _i = 68; _i < 81; _i++) {

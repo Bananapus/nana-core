@@ -24,7 +24,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
         // it will revert NO_RESERVED_TOKENS
 
         JBRulesetMetadata memory _rulesMetadata = JBRulesetMetadata({
-            reservedRate: JBConstants.MAX_RESERVED_RATE / 2,
+            reservedPercent: JBConstants.MAX_RESERVED_PERCENT / 2,
             redemptionRate: JBConstants.MAX_REDEMPTION_RATE / 2,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
@@ -55,7 +55,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
         _rulesetConfigurations[0].mustStartAtOrAfter = 0;
         _rulesetConfigurations[0].duration = 0;
         _rulesetConfigurations[0].weight = 1e18;
-        _rulesetConfigurations[0].decayRate = 0;
+        _rulesetConfigurations[0].decayPercent = 0;
         _rulesetConfigurations[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfigurations[0].metadata = _rulesMetadata;
         _rulesetConfigurations[0].splitGroups = _splitsGroup;
@@ -78,7 +78,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
         // it will mint to hook and call its processSplitWith function
 
         JBRulesetMetadata memory _rulesMetadata = JBRulesetMetadata({
-            reservedRate: JBConstants.MAX_RESERVED_RATE / 2,
+            reservedPercent: JBConstants.MAX_RESERVED_PERCENT / 2,
             redemptionRate: JBConstants.MAX_REDEMPTION_RATE / 2,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
@@ -123,7 +123,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
         _rulesetConfigurations[0].mustStartAtOrAfter = 0;
         _rulesetConfigurations[0].duration = 0;
         _rulesetConfigurations[0].weight = 1e18;
-        _rulesetConfigurations[0].decayRate = 0;
+        _rulesetConfigurations[0].decayPercent = 0;
         _rulesetConfigurations[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfigurations[0].metadata = _rulesMetadata;
         _rulesetConfigurations[0].splitGroups = _splitsGroup;
@@ -137,7 +137,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
             start: uint48(block.timestamp),
             duration: _rulesetConfigurations[0].duration,
             weight: _rulesetConfigurations[0].weight,
-            decayRate: _rulesetConfigurations[0].decayRate,
+            decayPercent: _rulesetConfigurations[0].decayPercent,
             approvalHook: _rulesetConfigurations[0].approvalHook,
             metadata: _packed
         });
@@ -191,7 +191,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
         // it will mint for the beneficiary
 
         JBRulesetMetadata memory _rulesMetadata = JBRulesetMetadata({
-            reservedRate: JBConstants.MAX_RESERVED_RATE / 2,
+            reservedPercent: JBConstants.MAX_RESERVED_PERCENT / 2,
             redemptionRate: JBConstants.MAX_REDEMPTION_RATE / 2,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
@@ -236,7 +236,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
         _rulesetConfigurations[0].mustStartAtOrAfter = 0;
         _rulesetConfigurations[0].duration = 0;
         _rulesetConfigurations[0].weight = 1e18;
-        _rulesetConfigurations[0].decayRate = 0;
+        _rulesetConfigurations[0].decayPercent = 0;
         _rulesetConfigurations[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfigurations[0].metadata = _rulesMetadata;
         _rulesetConfigurations[0].splitGroups = _splitsGroup;
@@ -250,7 +250,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
             start: uint48(block.timestamp),
             duration: _rulesetConfigurations[0].duration,
             weight: _rulesetConfigurations[0].weight,
-            decayRate: _rulesetConfigurations[0].decayRate,
+            decayPercent: _rulesetConfigurations[0].decayPercent,
             approvalHook: _rulesetConfigurations[0].approvalHook,
             metadata: _packed
         });

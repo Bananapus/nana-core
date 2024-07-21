@@ -59,7 +59,7 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
             start: uint48(block.timestamp),
             duration: uint32(block.timestamp + 1000),
             weight: 1e18,
-            decayRate: 0,
+            decayPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: 0
         });
@@ -103,7 +103,7 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
         _contexts[0] = JBAccountingContext({token: address(_token), decimals: 18, currency: _currency});
 
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
-            reservedRate: 0,
+            reservedPercent: 0,
             redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
@@ -134,7 +134,7 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
             start: uint48(block.timestamp),
             duration: uint32(block.timestamp + 1000),
             weight: 1e18,
-            decayRate: 0,
+            decayPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: _packedMetadata
         });
@@ -180,7 +180,7 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
         _contexts[0] = JBAccountingContext({token: address(_token), decimals: 18, currency: _currency});
 
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
-            reservedRate: 0,
+            reservedPercent: 0,
             redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
@@ -211,7 +211,7 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
             start: uint48(block.timestamp),
             duration: uint32(block.timestamp + 1000),
             weight: 1e18,
-            decayRate: 0,
+            decayPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: _packedMetadata
         });
@@ -257,7 +257,7 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
         _contexts[0] = JBAccountingContext({token: address(_token), decimals: 18, currency: _currency});
 
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
-            reservedRate: 0,
+            reservedPercent: 0,
             redemptionRate: 0,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
@@ -288,7 +288,7 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
             start: uint48(block.timestamp),
             duration: uint32(block.timestamp + 1000),
             weight: 1e18,
-            decayRate: 0,
+            decayPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: _packedMetadata
         });
@@ -338,7 +338,7 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
         _contexts[0] = JBAccountingContext({token: address(_token), decimals: 18, currency: _currency});
 
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
-            reservedRate: 0,
+            reservedPercent: 0,
             redemptionRate: JBConstants.MAX_REDEMPTION_RATE / 2,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
@@ -369,7 +369,7 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
             start: uint48(block.timestamp),
             duration: uint32(block.timestamp + 1000),
             weight: 1e18,
-            decayRate: 0,
+            decayPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: _packedMetadata
         });
@@ -418,7 +418,7 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
 
         // Params
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
-            reservedRate: 0,
+            reservedPercent: 0,
             redemptionRate: JBConstants.MAX_REDEMPTION_RATE / 2,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
@@ -449,7 +449,7 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
             start: uint48(block.timestamp),
             duration: uint32(block.timestamp + 1000),
             weight: 1e18,
-            decayRate: 0,
+            decayPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: _packedMetadata
         });

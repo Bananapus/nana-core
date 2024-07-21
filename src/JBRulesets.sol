@@ -23,7 +23,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
     error INVALID_RULESET_APPROVAL_HOOK();
-    error INVALID_DECAY_RATE();
+    error INVALID_DECAY_PERCENT();
     error INVALID_RULESET_DURATION();
     error INVALID_RULESET_END_TIME();
     error INVALID_WEIGHT();
@@ -32,10 +32,10 @@ contract JBRulesets is JBControlled, IJBRulesets {
     // ------------------------- internal constants ----------------------- //
     //*********************************************************************//
 
-    /// @notice The maximum number of decay rate multiples that can be cached at a time.
+    /// @notice The maximum number of decay percent multiples that can be cached at a time.
     uint256 internal constant _MAX_DECAY_MULTIPLE_CACHE_THRESHOLD = 50_000;
 
-    /// @notice The number of decay rate multiples before a cached value is sought.
+    /// @notice The number of decay percent multiples before a cached value is sought.
     uint256 internal constant _DECAY_MULTIPLE_CACHE_LOOKUP_THRESHOLD = 1000;
 
     //*********************************************************************//
@@ -355,10 +355,12 @@ contract JBRulesets is JBControlled, IJBRulesets {
     /// (except for a new `start` timestamp and a decayed `weight`).
     /// @param weight A fixed point number with 18 decimals that contracts can use to base arbitrary calculations on.
     /// Payment terminals generally use this to determine how many tokens should be minted when the project is paid.
-    /// @param decayRate A fraction (out of `JBConstants.MAX_DECAY_RATE`) to reduce the next ruleset's `weight` by.
-    /// - If a ruleset specifies a non-zero `weight`, the `decayRate` does not apply.
-    /// - If the `decayRate` is 0, the `weight` stays the same.
-    /// - If the `decayRate` is 10% of `JBConstants.MAX_DECAY_RATE`, next ruleset's `weight` will be 90% of the current
+    /// @param decayPercent A fraction (out of `JBConstants.MAX_DECAY_PERCENT`) to reduce the next ruleset's `weight`
+    /// by.
+    /// - If a ruleset specifies a non-zero `weight`, the `decayPercent` does not apply.
+    /// - If the `decayPercent` is 0, the `weight` stays the same.
+    /// - If the `decayPercent` is 10% of `JBConstants.MAX_DECAY_PERCENT`, next ruleset's `weight` will be 90% of the
+    /// current
     /// one.
     /// @param approvalHook A contract which dictates whether a proposed ruleset should be accepted or rejected. It can
     /// be used to constrain a project owner's ability to change ruleset parameters over time.
@@ -370,7 +372,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
         uint256 projectId,
         uint256 duration,
         uint256 weight,
-        uint256 decayRate,
+        uint256 decayPercent,
         IJBRulesetApprovalHook approvalHook,
         uint256 metadata,
         uint256 mustStartAtOrAfter
@@ -384,8 +386,8 @@ contract JBRulesets is JBControlled, IJBRulesets {
         if (duration > type(uint32).max) revert INVALID_RULESET_DURATION();
 
         // Decay rate must be less than or equal to 100%.
-        if (decayRate > JBConstants.MAX_DECAY_RATE) {
-            revert INVALID_DECAY_RATE();
+        if (decayPercent > JBConstants.MAX_DECAY_PERCENT) {
+            revert INVALID_DECAY_PERCENT();
         }
 
         // Weight must fit into a uint112.
@@ -428,15 +430,15 @@ contract JBRulesets is JBControlled, IJBRulesets {
         // Efficiently stores the ruleset's user-defined properties.
         // If all user config properties are zero, no need to store anything as the default value will have the same
         // outcome.
-        if (approvalHook != IJBRulesetApprovalHook(address(0)) || duration > 0 || decayRate > 0) {
+        if (approvalHook != IJBRulesetApprovalHook(address(0)) || duration > 0 || decayPercent > 0) {
             // approval hook in bits 0-159 bytes.
             uint256 packed = uint160(address(approvalHook));
 
             // duration in bits 160-191 bytes.
             packed |= duration << 160;
 
-            // decayRate in bits 192-223 bytes.
-            packed |= decayRate << 192;
+            // decayPercent in bits 192-223 bytes.
+            packed |= decayPercent << 192;
 
             // Set in storage.
             _packedUserPropertiesOf[projectId][rulesetId] = packed;
@@ -446,7 +448,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
         if (metadata > 0) _metadataOf[projectId][rulesetId] = metadata;
 
         emit RulesetQueued(
-            rulesetId, projectId, duration, weight, decayRate, approvalHook, metadata, mustStartAtOrAfter, msg.sender
+            rulesetId, projectId, duration, weight, decayPercent, approvalHook, metadata, mustStartAtOrAfter, msg.sender
         );
 
         // Return the struct for the new ruleset's ID.
@@ -460,8 +462,8 @@ contract JBRulesets is JBControlled, IJBRulesets {
         // The cached value will be based on this struct.
         JBRuleset memory latestQueuedRuleset = _getStructFor(projectId, latestRulesetIdOf[projectId]);
 
-        // Nothing to cache if the latest ruleset doesn't have a duration or a decay rate.
-        if (latestQueuedRuleset.duration == 0 || latestQueuedRuleset.decayRate == 0) return;
+        // Nothing to cache if the latest ruleset doesn't have a duration or a decay percent.
+        if (latestQueuedRuleset.duration == 0 || latestQueuedRuleset.decayPercent == 0) return;
 
         // Get a reference to the current cache.
         JBRulesetWeightCache storage cache = _weightCacheOf[projectId][latestQueuedRuleset.id];
@@ -776,7 +778,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
             start: uint48(start),
             duration: baseRuleset.duration,
             weight: uint112(_deriveWeightFrom(projectId, baseRuleset, start)),
-            decayRate: baseRuleset.decayRate,
+            decayPercent: baseRuleset.decayPercent,
             approvalHook: baseRuleset.approvalHook,
             metadata: baseRuleset.metadata
         });
@@ -837,7 +839,9 @@ contract JBRulesets is JBControlled, IJBRulesets {
         // A subsequent ruleset to one with a duration of 0 should have the next possible weight.
         if (baseRuleset.duration == 0) {
             return mulDiv(
-                baseRuleset.weight, JBConstants.MAX_DECAY_RATE - baseRuleset.decayRate, JBConstants.MAX_DECAY_RATE
+                baseRuleset.weight,
+                JBConstants.MAX_DECAY_PERCENT - baseRuleset.decayPercent,
+                JBConstants.MAX_DECAY_PERCENT
             );
         }
 
@@ -845,12 +849,12 @@ contract JBRulesets is JBControlled, IJBRulesets {
         weight = baseRuleset.weight;
 
         // If the decay is 0, the weight doesn't change.
-        if (baseRuleset.decayRate == 0) return weight;
+        if (baseRuleset.decayPercent == 0) return weight;
 
         // The difference between the start of the base ruleset and the proposed start.
         uint256 startDistance = start - baseRuleset.start;
 
-        // Apply the base ruleset's decay rate for each ruleset that has passed.
+        // Apply the base ruleset's decay percent for each ruleset that has passed.
         uint256 decayMultiple;
         unchecked {
             decayMultiple = startDistance / baseRuleset.duration; // Non-null duration is excluded above
@@ -873,9 +877,10 @@ contract JBRulesets is JBControlled, IJBRulesets {
         }
 
         for (uint256 i; i < decayMultiple; i++) {
-            // The number of times to apply the decay rate.
+            // The number of times to apply the decay percent.
             // Base the new weight on the specified ruleset's weight.
-            weight = mulDiv(weight, JBConstants.MAX_DECAY_RATE - baseRuleset.decayRate, JBConstants.MAX_DECAY_RATE);
+            weight =
+                mulDiv(weight, JBConstants.MAX_DECAY_PERCENT - baseRuleset.decayPercent, JBConstants.MAX_DECAY_PERCENT);
 
             // The calculation doesn't need to continue if the weight is 0.
             if (weight == 0) break;
@@ -972,8 +977,8 @@ contract JBRulesets is JBControlled, IJBRulesets {
         ruleset.approvalHook = IJBRulesetApprovalHook(address(uint160(packedUserProperties)));
         // `duration` in bits 160-191 bits.
         ruleset.duration = uint32(packedUserProperties >> 160);
-        // decay rate in bits 192-223 bits.
-        ruleset.decayRate = uint32(packedUserProperties >> 192);
+        // decay percent in bits 192-223 bits.
+        ruleset.decayPercent = uint32(packedUserProperties >> 192);
 
         ruleset.metadata = _metadataOf[projectId][rulesetId];
     }

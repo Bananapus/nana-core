@@ -29,7 +29,7 @@ contract TestUseAllowanceOf_Local is JBMultiTerminalSetup {
             start: 0,
             duration: 0,
             weight: 0,
-            decayRate: 0,
+            decayPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: 0
         });

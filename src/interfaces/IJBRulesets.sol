@@ -11,7 +11,7 @@ interface IJBRulesets {
         uint256 indexed projectId,
         uint256 duration,
         uint256 weight,
-        uint256 decayRate,
+        uint256 decayPercent,
         IJBRulesetApprovalHook hook,
         uint256 metadata,
         uint256 mustStartAtOrAfter,
@@ -48,7 +48,7 @@ interface IJBRulesets {
         uint256 projectId,
         uint256 duration,
         uint256 weight,
-        uint256 decayRate,
+        uint256 decayPercent,
         IJBRulesetApprovalHook approvalHook,
         uint256 metadata,
         uint256 mustStartAtOrAfter

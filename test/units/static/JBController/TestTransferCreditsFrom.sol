@@ -33,7 +33,7 @@ contract TestTransferCreditsFrom_Local is JBControllerSetup {
 
         // data for JBRulesets currentOf call
         JBRulesetMetadata memory _rulesMetadata = JBRulesetMetadata({
-            reservedRate: JBConstants.MAX_RESERVED_RATE / 2,
+            reservedPercent: JBConstants.MAX_RESERVED_PERCENT / 2,
             redemptionRate: JBConstants.MAX_REDEMPTION_RATE / 2,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
@@ -64,7 +64,7 @@ contract TestTransferCreditsFrom_Local is JBControllerSetup {
             start: uint48(block.timestamp),
             duration: 100,
             weight: 1e18,
-            decayRate: 0,
+            decayPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: _packed
         });
@@ -88,7 +88,7 @@ contract TestTransferCreditsFrom_Local is JBControllerSetup {
 
         // data for JBRulesets currentOf call
         JBRulesetMetadata memory _rulesMetadata = JBRulesetMetadata({
-            reservedRate: JBConstants.MAX_RESERVED_RATE / 2,
+            reservedPercent: JBConstants.MAX_RESERVED_PERCENT / 2,
             redemptionRate: JBConstants.MAX_REDEMPTION_RATE / 2,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
@@ -120,7 +120,7 @@ contract TestTransferCreditsFrom_Local is JBControllerSetup {
             start: uint48(block.timestamp),
             duration: 100,
             weight: 1e18,
-            decayRate: 0,
+            decayPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: _packed
         });

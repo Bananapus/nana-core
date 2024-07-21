@@ -9,7 +9,7 @@ contract TestRulesetWeightCaching_Local is TestBaseWorkflow {
     uint256 private constant _GAS_LIMIT = 30_000_000;
     uint8 private constant _WEIGHT_DECIMALS = 18; // FIXED
     uint256 private constant _DURATION = 1;
-    uint256 private constant _DECAY_RATE = 1;
+    uint256 private constant _DECAY_PERCENT = 1;
 
     IJBController private _controller;
     IJBRulesets private _rulesets;
@@ -25,7 +25,7 @@ contract TestRulesetWeightCaching_Local is TestBaseWorkflow {
         _controller = jbController();
 
         _metadata = JBRulesetMetadata({
-            reservedRate: 0,
+            reservedPercent: 0,
             redemptionRate: 0,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
@@ -64,7 +64,7 @@ contract TestRulesetWeightCaching_Local is TestBaseWorkflow {
         //     _rulesetConfigurations[0].mustStartAtOrAfter = 0;
         //     _rulesetConfigurations[0].duration = _DURATION;
         //     _rulesetConfigurations[0].weight = 1000 * 10 ** _WEIGHT_DECIMALS;
-        //     _rulesetConfigurations[0].decayRate = _DECAY_RATE;
+        //     _rulesetConfigurations[0].decayPercent = _DECAY_PERCENT;
         //     _rulesetConfigurations[0].approvalHook = IJBRulesetApprovalHook(address(0));
         //     _rulesetConfigurations[0].metadata = _metadata;
         //     _rulesetConfigurations[0].splitGroups = new JBSplitGroup[](0);

@@ -43,7 +43,7 @@ contract TestLaunchRulesetsFor_Local is JBControllerSetup {
         JBRulesetConfig[] memory _rulesetConfigs = new JBRulesetConfig[](1);
 
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
-            reservedRate: JBConstants.MAX_RESERVED_RATE / 2, //50%
+            reservedPercent: JBConstants.MAX_RESERVED_PERCENT / 2, //50%
             redemptionRate: JBConstants.MAX_REDEMPTION_RATE / 2, //50%
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
@@ -86,7 +86,7 @@ contract TestLaunchRulesetsFor_Local is JBControllerSetup {
         _rulesetConfigs[0].mustStartAtOrAfter = 0;
         _rulesetConfigs[0].duration = 0;
         _rulesetConfigs[0].weight = 0;
-        _rulesetConfigs[0].decayRate = 0;
+        _rulesetConfigs[0].decayPercent = 0;
         _rulesetConfigs[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfigs[0].metadata = _metadata;
         _rulesetConfigs[0].splitGroups = new JBSplitGroup[](0);
@@ -155,7 +155,7 @@ contract TestLaunchRulesetsFor_Local is JBControllerSetup {
             start: _ts,
             duration: 0,
             weight: 0,
-            decayRate: 0,
+            decayPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: 0
         });
@@ -271,7 +271,7 @@ contract TestLaunchRulesetsFor_Local is JBControllerSetup {
             start: _ts,
             duration: 0,
             weight: 0,
-            decayRate: 0,
+            decayPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: 0
         });

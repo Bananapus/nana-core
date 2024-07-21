@@ -41,11 +41,11 @@ contract TestLaunchProjectFor_Local is JBControllerSetup {
         _controller.launchProjectFor(address(this), _metadata, _rulesets, _terminals, "");
     }
 
-    function test_GivenRulesetHasInvalidReservedRate() external whenCalledDefault {
-        // it will revert INVALID_RESERVED_RATE()
+    function test_GivenRulesetHasInvalidReservedPercent() external whenCalledDefault {
+        // it will revert INVALID_RESERVED_PERCENT()
 
         JBRulesetMetadata memory _rulesMetadata = JBRulesetMetadata({
-            reservedRate: JBConstants.MAX_RESERVED_RATE + 1, // invalid
+            reservedPercent: JBConstants.MAX_RESERVED_PERCENT + 1, // invalid
             redemptionRate: JBConstants.MAX_REDEMPTION_RATE / 2, //50%
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
@@ -74,13 +74,13 @@ contract TestLaunchProjectFor_Local is JBControllerSetup {
         _rulesetConfigurations[0].mustStartAtOrAfter = 0;
         _rulesetConfigurations[0].duration = 0;
         _rulesetConfigurations[0].weight = 1e18;
-        _rulesetConfigurations[0].decayRate = 0;
+        _rulesetConfigurations[0].decayPercent = 0;
         _rulesetConfigurations[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfigurations[0].metadata = _rulesMetadata;
         _rulesetConfigurations[0].splitGroups = new JBSplitGroup[](0);
         _rulesetConfigurations[0].fundAccessLimitGroups = _fundAccessLimitGroup;
 
-        vm.expectRevert(abi.encodeWithSignature("INVALID_RESERVED_RATE()"));
+        vm.expectRevert(abi.encodeWithSignature("INVALID_RESERVED_PERCENT()"));
         _controller.launchProjectFor(address(this), _metadata, _rulesetConfigurations, _terminals, _memo);
     }
 
@@ -88,7 +88,7 @@ contract TestLaunchProjectFor_Local is JBControllerSetup {
         // it will revert INVALID_REDEMPTION_RATE()
 
         JBRulesetMetadata memory _rulesMetadata = JBRulesetMetadata({
-            reservedRate: JBConstants.MAX_RESERVED_RATE / 2,
+            reservedPercent: JBConstants.MAX_RESERVED_PERCENT / 2,
             redemptionRate: JBConstants.MAX_REDEMPTION_RATE + 1, // invalid
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
@@ -117,7 +117,7 @@ contract TestLaunchProjectFor_Local is JBControllerSetup {
         _rulesetConfigurations[0].mustStartAtOrAfter = 0;
         _rulesetConfigurations[0].duration = 0;
         _rulesetConfigurations[0].weight = 1e18;
-        _rulesetConfigurations[0].decayRate = 0;
+        _rulesetConfigurations[0].decayPercent = 0;
         _rulesetConfigurations[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfigurations[0].metadata = _rulesMetadata;
         _rulesetConfigurations[0].splitGroups = new JBSplitGroup[](0);
@@ -131,7 +131,7 @@ contract TestLaunchProjectFor_Local is JBControllerSetup {
         // it will set split groups, ruleset, fundAccessConstraints
 
         JBRulesetMetadata memory _rulesMetadata = JBRulesetMetadata({
-            reservedRate: JBConstants.MAX_RESERVED_RATE / 2,
+            reservedPercent: JBConstants.MAX_RESERVED_PERCENT / 2,
             redemptionRate: JBConstants.MAX_REDEMPTION_RATE / 2,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
@@ -177,7 +177,7 @@ contract TestLaunchProjectFor_Local is JBControllerSetup {
         _rulesetConfigurations[0].mustStartAtOrAfter = 0;
         _rulesetConfigurations[0].duration = 0;
         _rulesetConfigurations[0].weight = 1e18;
-        _rulesetConfigurations[0].decayRate = 0;
+        _rulesetConfigurations[0].decayPercent = 0;
         _rulesetConfigurations[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfigurations[0].metadata = _rulesMetadata;
         _rulesetConfigurations[0].splitGroups = _splitsGroup;
@@ -191,7 +191,7 @@ contract TestLaunchProjectFor_Local is JBControllerSetup {
             start: uint48(block.timestamp),
             duration: _rulesetConfigurations[0].duration,
             weight: _rulesetConfigurations[0].weight,
-            decayRate: _rulesetConfigurations[0].decayRate,
+            decayPercent: _rulesetConfigurations[0].decayPercent,
             approvalHook: _rulesetConfigurations[0].approvalHook,
             metadata: _packed
         });
@@ -201,7 +201,7 @@ contract TestLaunchProjectFor_Local is JBControllerSetup {
                 1,
                 _rulesetConfigurations[0].duration,
                 _rulesetConfigurations[0].weight,
-                _rulesetConfigurations[0].decayRate,
+                _rulesetConfigurations[0].decayPercent,
                 _rulesetConfigurations[0].approvalHook,
                 _packed,
                 _rulesetConfigurations[0].mustStartAtOrAfter

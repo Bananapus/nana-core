@@ -937,7 +937,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                 tokenCount: tokenCount,
                 beneficiary: beneficiary,
                 memo: "",
-                useReservedRate: true
+                useReservedPercent: true
             });
         }
 
