@@ -1,6 +1,6 @@
 {
   "name": "@bananapus/core",
-  "version": "0.0.24",
+  "version": "0.0.25",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -21,7 +21,7 @@
     "@bananapus/permission-ids": "^0.0.11",
     "@chainlink/contracts": "^1.1.1",
     "@openzeppelin/contracts": "^5.0.2",
-    "@prb/math": "^4.0.2",
+    "@prb/math": "^4.0.3",
     "@uniswap/permit2": "github:Uniswap/permit2"
   },
   "devDependencies": {
