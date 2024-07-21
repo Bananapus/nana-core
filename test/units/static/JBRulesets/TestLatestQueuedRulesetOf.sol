@@ -14,7 +14,7 @@ contract TestLatestQueuedRulesetOf_Local is JBRulesetsSetup {
     uint256 _projectId = 1;
     uint256 _duration = 3 days;
     uint256 _weight = 0;
-    uint256 _decayRate = 450_000_000;
+    uint256 _decayPercent = 450_000_000;
     uint48 _mustStartAt = 0;
     uint256 _hookDuration = 1 days;
     IJBRulesetApprovalHook private _noHook = IJBRulesetApprovalHook(address(0));
@@ -24,7 +24,7 @@ contract TestLatestQueuedRulesetOf_Local is JBRulesetsSetup {
 
         // Params for tests
         _metadata = JBRulesetMetadata({
-            reservedRate: 0,
+            reservedPercent: 0,
             redemptionRate: 0,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
@@ -47,7 +47,7 @@ contract TestLatestQueuedRulesetOf_Local is JBRulesetsSetup {
 
         // Params for tests
         _metadataWithApprovalHook = JBRulesetMetadata({
-            reservedRate: 0,
+            reservedPercent: 0,
             redemptionRate: 0,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
@@ -97,7 +97,7 @@ contract TestLatestQueuedRulesetOf_Local is JBRulesetsSetup {
             _projectId,
             _duration,
             _weight,
-            _decayRate,
+            _decayPercent,
             _mockApprovalHook,
             _packedWithApprovalHook,
             block.timestamp,
@@ -109,7 +109,7 @@ contract TestLatestQueuedRulesetOf_Local is JBRulesetsSetup {
             projectId: _projectId,
             duration: _duration,
             weight: _weight,
-            decayRate: _decayRate,
+            decayPercent: _decayPercent,
             approvalHook: _mockApprovalHook,
             metadata: _packedWithApprovalHook,
             mustStartAtOrAfter: _mustStartAt
@@ -144,7 +144,7 @@ contract TestLatestQueuedRulesetOf_Local is JBRulesetsSetup {
             _projectId,
             _duration,
             _weight,
-            _decayRate,
+            _decayPercent,
             _noHook,
             _packedMetadata,
             block.timestamp,
@@ -156,7 +156,7 @@ contract TestLatestQueuedRulesetOf_Local is JBRulesetsSetup {
             projectId: _projectId,
             duration: _duration,
             weight: _weight,
-            decayRate: _decayRate,
+            decayPercent: _decayPercent,
             approvalHook: _noHook,
             metadata: _packedMetadata,
             mustStartAtOrAfter: _mustStartAt
@@ -193,7 +193,7 @@ contract TestLatestQueuedRulesetOf_Local is JBRulesetsSetup {
             _projectId,
             _duration,
             _weight,
-            _decayRate,
+            _decayPercent,
             _noHook,
             _packedMetadata,
             block.timestamp,
@@ -205,7 +205,7 @@ contract TestLatestQueuedRulesetOf_Local is JBRulesetsSetup {
             projectId: _projectId,
             duration: _duration,
             weight: _weight,
-            decayRate: _decayRate,
+            decayPercent: _decayPercent,
             approvalHook: _noHook,
             metadata: _packedMetadata,
             mustStartAtOrAfter: _mustStartAt
@@ -218,7 +218,7 @@ contract TestLatestQueuedRulesetOf_Local is JBRulesetsSetup {
             _projectId,
             _duration,
             _weight,
-            _decayRate,
+            _decayPercent,
             _noHook,
             _packedMetadata,
             block.timestamp,
@@ -230,7 +230,7 @@ contract TestLatestQueuedRulesetOf_Local is JBRulesetsSetup {
             projectId: _projectId,
             duration: _duration,
             weight: _weight,
-            decayRate: _decayRate,
+            decayPercent: _decayPercent,
             approvalHook: _noHook,
             metadata: _packedMetadata,
             mustStartAtOrAfter: _mustStartAt

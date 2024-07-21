@@ -23,7 +23,7 @@ contract TestMintTokensOfUnits_Local is JBControllerSetup {
 
         // setup: return data
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
-            reservedRate: JBConstants.MAX_RESERVED_RATE / 2, //50%
+            reservedPercent: JBConstants.MAX_RESERVED_PERCENT / 2, //50%
             redemptionRate: JBConstants.MAX_REDEMPTION_RATE / 2, //50%
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
@@ -53,7 +53,7 @@ contract TestMintTokensOfUnits_Local is JBControllerSetup {
             start: uint48(block.timestamp),
             duration: 8000,
             weight: 5000,
-            decayRate: 0,
+            decayPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0x1234567890123456789012345678901234567890)),
             metadata: _packedMetadata
         });
@@ -75,7 +75,7 @@ contract TestMintTokensOfUnits_Local is JBControllerSetup {
             tokenCount: 1,
             beneficiary: address(this),
             memo: "",
-            useReservedRate: true
+            useReservedPercent: true
         });
     }
 

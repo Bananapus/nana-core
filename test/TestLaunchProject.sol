@@ -21,7 +21,7 @@ contract TestLaunchProject_Local is TestBaseWorkflow {
         _rulesets = jbRulesets();
 
         _metadata = JBRulesetMetadata({
-            reservedRate: 0,
+            reservedPercent: 0,
             redemptionRate: 0,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
@@ -54,7 +54,7 @@ contract TestLaunchProject_Local is TestBaseWorkflow {
                     queued.start,
                     queued.duration,
                     queued.weight,
-                    queued.decayRate,
+                    queued.decayPercent,
                     queued.approvalHook,
                     queued.metadata
                 )
@@ -67,7 +67,7 @@ contract TestLaunchProject_Local is TestBaseWorkflow {
                         stored.start,
                         stored.duration,
                         stored.weight,
-                        stored.decayRate,
+                        stored.decayPercent,
                         stored.approvalHook,
                         stored.metadata
                     )
@@ -81,7 +81,7 @@ contract TestLaunchProject_Local is TestBaseWorkflow {
         _rulesetConfig[0].mustStartAtOrAfter = 0;
         _rulesetConfig[0].duration = 0;
         _rulesetConfig[0].weight = 0;
-        _rulesetConfig[0].decayRate = 0;
+        _rulesetConfig[0].decayPercent = 0;
         _rulesetConfig[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfig[0].metadata = _metadata;
         _rulesetConfig[0].splitGroups = new JBSplitGroup[](0);
@@ -117,7 +117,7 @@ contract TestLaunchProject_Local is TestBaseWorkflow {
             start: uint48(block.timestamp),
             duration: 0,
             weight: 0,
-            decayRate: 0,
+            decayPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: ruleset.metadata
         });
@@ -135,7 +135,7 @@ contract TestLaunchProject_Local is TestBaseWorkflow {
         _rulesetConfig[0].mustStartAtOrAfter = 0;
         _rulesetConfig[0].duration = 14;
         _rulesetConfig[0].weight = _weight;
-        _rulesetConfig[0].decayRate = 450_000_000;
+        _rulesetConfig[0].decayPercent = 450_000_000;
         _rulesetConfig[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfig[0].metadata = _metadata;
         _rulesetConfig[0].splitGroups = new JBSplitGroup[](0);
@@ -170,7 +170,7 @@ contract TestLaunchProject_Local is TestBaseWorkflow {
             start: uint48(block.timestamp),
             duration: _rulesetConfig[0].duration,
             weight: _weight,
-            decayRate: _rulesetConfig[0].decayRate,
+            decayPercent: _rulesetConfig[0].decayPercent,
             approvalHook: _rulesetConfig[0].approvalHook,
             metadata: ruleset.metadata
         });

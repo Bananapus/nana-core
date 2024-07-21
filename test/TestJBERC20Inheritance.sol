@@ -18,7 +18,7 @@ contract JBERC20Inheritance_Local is JBERC20, TestBaseWorkflow {
     // This test checks that voting power gets accounted for.
     function test_votesUpdateOnTransfer() public {
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
-            reservedRate: 0,
+            reservedPercent: 0,
             redemptionRate: 0,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
@@ -47,7 +47,7 @@ contract JBERC20Inheritance_Local is JBERC20, TestBaseWorkflow {
         _rulesetConfig[0].mustStartAtOrAfter = 0;
         _rulesetConfig[0].duration = 0;
         _rulesetConfig[0].weight = 0;
-        _rulesetConfig[0].decayRate = 0;
+        _rulesetConfig[0].decayPercent = 0;
         _rulesetConfig[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfig[0].metadata = _metadata;
         _rulesetConfig[0].splitGroups = new JBSplitGroup[](0);

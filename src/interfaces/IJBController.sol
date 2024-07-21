@@ -56,7 +56,7 @@ interface IJBController is IERC165, IJBProjectUriRegistry, IJBDirectoryAccessCon
         uint256 tokenCount,
         uint256 beneficiaryTokenCount,
         string memo,
-        uint256 reservedRate,
+        uint256 reservedPercent,
         address caller
     );
 
@@ -154,7 +154,7 @@ interface IJBController is IERC165, IJBProjectUriRegistry, IJBDirectoryAccessCon
         uint256 tokenCount,
         address beneficiary,
         string calldata memo,
-        bool useReservedRate
+        bool useReservedPercent
     )
         external
         returns (uint256 beneficiaryTokenCount);

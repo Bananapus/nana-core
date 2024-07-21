@@ -14,7 +14,7 @@ contract TestUpcomingOf_Local is JBRulesetsSetup {
     uint256 _projectId = 1;
     uint256 _duration = 3 days;
     uint256 _weight = 0;
-    uint256 _decayRate = 450_000_000;
+    uint256 _decayPercent = 450_000_000;
     uint48 _mustStartAt = 0;
     uint256 _hookDuration = 1 days;
     IJBRulesetApprovalHook private _noHook = IJBRulesetApprovalHook(address(0));
@@ -24,7 +24,7 @@ contract TestUpcomingOf_Local is JBRulesetsSetup {
 
         // Params for tests
         _metadata = JBRulesetMetadata({
-            reservedRate: 0,
+            reservedPercent: 0,
             redemptionRate: 0,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
@@ -47,7 +47,7 @@ contract TestUpcomingOf_Local is JBRulesetsSetup {
 
         // Params for tests
         _metadataWithApprovalHook = JBRulesetMetadata({
-            reservedRate: 0,
+            reservedPercent: 0,
             redemptionRate: 0,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
@@ -109,7 +109,7 @@ contract TestUpcomingOf_Local is JBRulesetsSetup {
             _projectId,
             _duration,
             _weight,
-            _decayRate,
+            _decayPercent,
             _mockApprovalHook,
             _packedWithApprovalHook,
             block.timestamp,
@@ -121,7 +121,7 @@ contract TestUpcomingOf_Local is JBRulesetsSetup {
             projectId: _projectId,
             duration: _duration,
             weight: _weight,
-            decayRate: _decayRate,
+            decayPercent: _decayPercent,
             approvalHook: _mockApprovalHook,
             metadata: _packedWithApprovalHook,
             mustStartAtOrAfter: _mustStartAt
@@ -134,7 +134,7 @@ contract TestUpcomingOf_Local is JBRulesetsSetup {
             _projectId,
             _duration,
             _weight,
-            _decayRate,
+            _decayPercent,
             _mockApprovalHook,
             _packedWithApprovalHook,
             block.timestamp,
@@ -146,7 +146,7 @@ contract TestUpcomingOf_Local is JBRulesetsSetup {
             projectId: _projectId,
             duration: _duration,
             weight: _weight,
-            decayRate: _decayRate,
+            decayPercent: _decayPercent,
             approvalHook: _mockApprovalHook,
             metadata: _packedWithApprovalHook,
             mustStartAtOrAfter: _mustStartAt
@@ -216,7 +216,7 @@ contract TestUpcomingOf_Local is JBRulesetsSetup {
             _projectId,
             _duration,
             _weight,
-            _decayRate,
+            _decayPercent,
             _mockApprovalHook,
             _packedWithApprovalHook,
             block.timestamp + 10 days, // starts in the future
@@ -228,7 +228,7 @@ contract TestUpcomingOf_Local is JBRulesetsSetup {
             projectId: _projectId,
             duration: _duration,
             weight: _weight,
-            decayRate: _decayRate,
+            decayPercent: _decayPercent,
             approvalHook: _mockApprovalHook,
             metadata: _packedWithApprovalHook,
             mustStartAtOrAfter: uint48(block.timestamp + 10 days)
@@ -265,7 +265,7 @@ contract TestUpcomingOf_Local is JBRulesetsSetup {
             _projectId,
             0, // duration zero
             _weight,
-            _decayRate,
+            _decayPercent,
             _mockApprovalHook,
             _packedWithApprovalHook,
             block.timestamp,
@@ -277,7 +277,7 @@ contract TestUpcomingOf_Local is JBRulesetsSetup {
             projectId: _projectId,
             duration: 0,
             weight: _weight,
-            decayRate: _decayRate,
+            decayPercent: _decayPercent,
             approvalHook: _mockApprovalHook,
             metadata: _packedWithApprovalHook,
             mustStartAtOrAfter: _mustStartAt
@@ -295,7 +295,7 @@ contract TestUpcomingOf_Local is JBRulesetsSetup {
             _projectId,
             0, // duration zero
             _weight,
-            _decayRate,
+            _decayPercent,
             _mockApprovalHook,
             _packedWithApprovalHook,
             block.timestamp + 10 days,
@@ -307,7 +307,7 @@ contract TestUpcomingOf_Local is JBRulesetsSetup {
             projectId: _projectId,
             duration: 0,
             weight: _weight,
-            decayRate: _decayRate,
+            decayPercent: _decayPercent,
             approvalHook: _mockApprovalHook,
             metadata: _packedWithApprovalHook,
             mustStartAtOrAfter: uint48(block.timestamp + 10 days)
@@ -382,7 +382,7 @@ contract TestUpcomingOf_Local is JBRulesetsSetup {
             _projectId,
             0, // duration zero
             _weight,
-            _decayRate,
+            _decayPercent,
             _mockApprovalHook,
             _packedWithApprovalHook,
             block.timestamp,
@@ -394,7 +394,7 @@ contract TestUpcomingOf_Local is JBRulesetsSetup {
             projectId: _projectId,
             duration: 0,
             weight: _weight,
-            decayRate: _decayRate,
+            decayPercent: _decayPercent,
             approvalHook: _mockApprovalHook,
             metadata: _packedWithApprovalHook,
             mustStartAtOrAfter: _mustStartAt
@@ -412,7 +412,7 @@ contract TestUpcomingOf_Local is JBRulesetsSetup {
             _projectId,
             _duration,
             _weight,
-            _decayRate,
+            _decayPercent,
             _mockApprovalHook,
             _packedWithApprovalHook,
             block.timestamp + 10 days,
@@ -433,7 +433,7 @@ contract TestUpcomingOf_Local is JBRulesetsSetup {
             projectId: _projectId,
             duration: _duration,
             weight: _weight,
-            decayRate: _decayRate,
+            decayPercent: _decayPercent,
             approvalHook: _mockApprovalHook,
             metadata: _packedWithApprovalHook,
             mustStartAtOrAfter: uint48(block.timestamp + 10 days)
@@ -475,7 +475,7 @@ contract TestUpcomingOf_Local is JBRulesetsSetup {
             _projectId,
             _duration,
             _weight,
-            _decayRate,
+            _decayPercent,
             _mockApprovalHook,
             _packedWithApprovalHook,
             block.timestamp,
@@ -487,7 +487,7 @@ contract TestUpcomingOf_Local is JBRulesetsSetup {
             projectId: _projectId,
             duration: _duration,
             weight: _weight,
-            decayRate: _decayRate,
+            decayPercent: _decayPercent,
             approvalHook: _mockApprovalHook,
             metadata: _packedWithApprovalHook,
             mustStartAtOrAfter: _mustStartAt
@@ -503,7 +503,7 @@ contract TestUpcomingOf_Local is JBRulesetsSetup {
             projectId: _projectId,
             duration: _duration,
             weight: _weight,
-            decayRate: _decayRate,
+            decayPercent: _decayPercent,
             approvalHook: _mockApprovalHook,
             metadata: _packedWithApprovalHook,
             mustStartAtOrAfter: 0

@@ -5,7 +5,7 @@ import {JBRuleset} from "./../structs/JBRuleset.sol";
 import {JBRulesetMetadata} from "./../structs/JBRulesetMetadata.sol";
 
 library JBRulesetMetadataResolver {
-    function reservedRate(JBRuleset memory ruleset) internal pure returns (uint16) {
+    function reservedPercent(JBRuleset memory ruleset) internal pure returns (uint16) {
         return uint16(ruleset.metadata >> 4);
     }
 
@@ -89,8 +89,8 @@ library JBRulesetMetadataResolver {
     function packRulesetMetadata(JBRulesetMetadata memory rulesetMetadata) internal pure returns (uint256 packed) {
         // version 1 in the bits 0-3 (4 bits).
         packed = 1;
-        // reserved rate in bits 4-19 (16 bits).
-        packed |= uint256(rulesetMetadata.reservedRate) << 4;
+        // reserved percent in bits 4-19 (16 bits).
+        packed |= uint256(rulesetMetadata.reservedPercent) << 4;
         // redemption rate in bits 20-35 (16 bits).
         // redemption rate is a number 0-10000.
         packed |= uint256(rulesetMetadata.redemptionRate) << 20;
@@ -136,7 +136,7 @@ library JBRulesetMetadataResolver {
     /// @return rulesetMetadata The ruleset's metadata object.
     function expandMetadata(JBRuleset memory ruleset) internal pure returns (JBRulesetMetadata memory) {
         return JBRulesetMetadata(
-            reservedRate(ruleset),
+            reservedPercent(ruleset),
             redemptionRate(ruleset),
             baseCurrency(ruleset),
             pausePay(ruleset),

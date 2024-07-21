@@ -26,7 +26,7 @@ contract TestSplits_Local is TestBaseWorkflow {
         _weight = 1000 * 10 ** 18;
 
         _metadata = JBRulesetMetadata({
-            reservedRate: JBConstants.MAX_RESERVED_RATE / 2,
+            reservedPercent: JBConstants.MAX_RESERVED_PERCENT / 2,
             redemptionRate: 0,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
@@ -110,7 +110,7 @@ contract TestSplits_Local is TestBaseWorkflow {
         _rulesetConfig[0].mustStartAtOrAfter = 0;
         _rulesetConfig[0].duration = 0;
         _rulesetConfig[0].weight = _weight;
-        _rulesetConfig[0].decayRate = 0;
+        _rulesetConfig[0].decayPercent = 0;
         _rulesetConfig[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfig[0].metadata = _metadata;
         _rulesetConfig[0].splitGroups = _splitsGroup;
@@ -145,7 +145,7 @@ contract TestSplits_Local is TestBaseWorkflow {
         });
     }
 
-    function testSplitPayoutAndReservedRateSplit() public {
+    function testSplitPayoutAndReservedPercentSplit() public {
         uint256 _nativePayAmount = 10 ether;
         address _payee = makeAddr("payee");
         vm.deal(_payee, _nativePayAmount);
@@ -194,12 +194,12 @@ contract TestSplits_Local is TestBaseWorkflow {
 
         // 10 native tokens paid -> 1000 per Eth, 10000 total, 50% reserve rate, 5000 tokens sent.
         uint256 _reserveRateDistributionAmount =
-            mulDiv(_nativePayAmount, _weight, 10 ** 18) * _metadata.reservedRate / JBConstants.MAX_RESERVED_RATE;
+            mulDiv(_nativePayAmount, _weight, 10 ** 18) * _metadata.reservedPercent / JBConstants.MAX_RESERVED_PERCENT;
 
         assertEq(_tokens.totalBalanceOf(_splitsGuy, _projectId), _reserveRateDistributionAmount);
     }
 
-    function testReservedRateSplitTerminal_reverts() public {
+    function testReservedPercentSplitTerminal_reverts() public {
         uint256 _amount = 100 ether;
         uint56 _mockProjectId = 9_999_999;
         address _mockTerminal = address(88_888_888);
@@ -219,7 +219,7 @@ contract TestSplits_Local is TestBaseWorkflow {
         _splitsGroup[0] = JBSplitGroup({groupId: JBSplitGroupIds.RESERVED_TOKENS, splits: _reserveRateSplits});
 
         _metadata = JBRulesetMetadata({
-            reservedRate: JBConstants.MAX_RESERVED_RATE,
+            reservedPercent: JBConstants.MAX_RESERVED_PERCENT,
             redemptionRate: 0,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
@@ -245,7 +245,7 @@ contract TestSplits_Local is TestBaseWorkflow {
         _rulesetConfig[0].mustStartAtOrAfter = 0;
         _rulesetConfig[0].duration = 0;
         _rulesetConfig[0].weight = _weight;
-        _rulesetConfig[0].decayRate = 0;
+        _rulesetConfig[0].decayPercent = 0;
         _rulesetConfig[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfig[0].metadata = _metadata;
         _rulesetConfig[0].splitGroups = _splitsGroup;
@@ -264,13 +264,13 @@ contract TestSplits_Local is TestBaseWorkflow {
         IERC20Metadata _token =
             IERC20Metadata(address(_controller.deployERC20For(_projectId, "Token", "Token", bytes32(0))));
 
-        // Mint tokens with reservedRate enabled.
+        // Mint tokens with reservedPercent enabled.
         _controller.mintTokensOf({
             projectId: _projectId,
             tokenCount: _amount,
             beneficiary: _projectOwner,
             memo: "",
-            useReservedRate: true
+            useReservedPercent: true
         });
 
         // Mock the primary terminal of the mock project.
@@ -342,7 +342,7 @@ contract TestSplits_Local is TestBaseWorkflow {
         _rulesetConfig[0].mustStartAtOrAfter = 0;
         _rulesetConfig[0].duration = 0;
         _rulesetConfig[0].weight = _weight;
-        _rulesetConfig[0].decayRate = 0;
+        _rulesetConfig[0].decayPercent = 0;
         _rulesetConfig[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfig[0].metadata = _metadata;
         _rulesetConfig[0].splitGroups = _splitsGroup;

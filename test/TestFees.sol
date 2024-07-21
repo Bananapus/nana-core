@@ -32,7 +32,7 @@ contract TestFees_Local is TestBaseWorkflow {
         _nativeDistLimit = 1 ether;
 
         _metadata = JBRulesetMetadata({
-            reservedRate: 0,
+            reservedPercent: 0,
             redemptionRate: 0,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
@@ -54,7 +54,7 @@ contract TestFees_Local is TestBaseWorkflow {
         });
 
         _feeProjectMetadata = JBRulesetMetadata({
-            reservedRate: 0,
+            reservedPercent: 0,
             redemptionRate: 0,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
@@ -101,7 +101,7 @@ contract TestFees_Local is TestBaseWorkflow {
         _rulesetConfig[0].mustStartAtOrAfter = 0;
         _rulesetConfig[0].duration = 0;
         _rulesetConfig[0].weight = 0;
-        _rulesetConfig[0].decayRate = 0;
+        _rulesetConfig[0].decayPercent = 0;
         _rulesetConfig[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfig[0].metadata = _metadata;
         _rulesetConfig[0].splitGroups = new JBSplitGroup[](0);
@@ -112,7 +112,7 @@ contract TestFees_Local is TestBaseWorkflow {
         _feeProjectRuleset[0].mustStartAtOrAfter = 0;
         _feeProjectRuleset[0].duration = 0;
         _feeProjectRuleset[0].weight = 0;
-        _feeProjectRuleset[0].decayRate = 0;
+        _feeProjectRuleset[0].decayPercent = 0;
         _feeProjectRuleset[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _feeProjectRuleset[0].metadata = _feeProjectMetadata;
         _feeProjectRuleset[0].splitGroups = new JBSplitGroup[](0);
