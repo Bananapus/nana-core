@@ -256,7 +256,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
 
         mockExpect(address(_directory), _encodedCall, _willReturn);
 
-        vm.expectRevert(abi.encodeWithSignature("INVALID_DECAY_PERCENTAGE()"));
+        vm.expectRevert(abi.encodeWithSignature("INVALID_DECAY_PERCENT()"));
 
         // Send: Call from this contract as it's been mock authorized above.
         _rulesets.queueFor({

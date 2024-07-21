@@ -23,7 +23,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
     error INVALID_RULESET_APPROVAL_HOOK();
-    error INVALID_DECAY_PERCENTAGE();
+    error INVALID_DECAY_PERCENT();
     error INVALID_RULESET_DURATION();
     error INVALID_RULESET_END_TIME();
     error INVALID_WEIGHT();
@@ -387,7 +387,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
 
         // Decay rate must be less than or equal to 100%.
         if (decayPercent > JBConstants.MAX_DECAY_PERCENT) {
-            revert INVALID_DECAY_PERCENTAGE();
+            revert INVALID_DECAY_PERCENT();
         }
 
         // Weight must fit into a uint112.
