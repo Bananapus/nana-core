@@ -355,10 +355,12 @@ contract JBRulesets is JBControlled, IJBRulesets {
     /// (except for a new `start` timestamp and a decayed `weight`).
     /// @param weight A fixed point number with 18 decimals that contracts can use to base arbitrary calculations on.
     /// Payment terminals generally use this to determine how many tokens should be minted when the project is paid.
-    /// @param decayPercent A fraction (out of `JBConstants.MAX_DECAY_PERCENT`) to reduce the next ruleset's `weight` by.
+    /// @param decayPercent A fraction (out of `JBConstants.MAX_DECAY_PERCENT`) to reduce the next ruleset's `weight`
+    /// by.
     /// - If a ruleset specifies a non-zero `weight`, the `decayPercent` does not apply.
     /// - If the `decayPercent` is 0, the `weight` stays the same.
-    /// - If the `decayPercent` is 10% of `JBConstants.MAX_DECAY_PERCENT`, next ruleset's `weight` will be 90% of the current
+    /// - If the `decayPercent` is 10% of `JBConstants.MAX_DECAY_PERCENT`, next ruleset's `weight` will be 90% of the
+    /// current
     /// one.
     /// @param approvalHook A contract which dictates whether a proposed ruleset should be accepted or rejected. It can
     /// be used to constrain a project owner's ability to change ruleset parameters over time.
@@ -837,7 +839,9 @@ contract JBRulesets is JBControlled, IJBRulesets {
         // A subsequent ruleset to one with a duration of 0 should have the next possible weight.
         if (baseRuleset.duration == 0) {
             return mulDiv(
-                baseRuleset.weight, JBConstants.MAX_DECAY_PERCENT - baseRuleset.decayPercent, JBConstants.MAX_DECAY_PERCENT
+                baseRuleset.weight,
+                JBConstants.MAX_DECAY_PERCENT - baseRuleset.decayPercent,
+                JBConstants.MAX_DECAY_PERCENT
             );
         }
 
@@ -875,7 +879,8 @@ contract JBRulesets is JBControlled, IJBRulesets {
         for (uint256 i; i < decayMultiple; i++) {
             // The number of times to apply the decay percent.
             // Base the new weight on the specified ruleset's weight.
-            weight = mulDiv(weight, JBConstants.MAX_DECAY_PERCENT - baseRuleset.decayPercent, JBConstants.MAX_DECAY_PERCENT);
+            weight =
+                mulDiv(weight, JBConstants.MAX_DECAY_PERCENT - baseRuleset.decayPercent, JBConstants.MAX_DECAY_PERCENT);
 
             // The calculation doesn't need to continue if the weight is 0.
             if (weight == 0) break;

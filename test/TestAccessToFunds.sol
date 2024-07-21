@@ -289,7 +289,8 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
         // Make sure the project owner got the expected number of the fee project's tokens by paying the fee.
         assertEq(
             _tokens.totalBalanceOf(_beneficiary, _FEE_PROJECT_ID),
-            mulDiv(_feeAmount, _weight, 10 ** _NATIVE_DECIMALS) * _metadata.reservedPercent / JBConstants.MAX_RESERVED_PERCENT
+            mulDiv(_feeAmount, _weight, 10 ** _NATIVE_DECIMALS) * _metadata.reservedPercent
+                / JBConstants.MAX_RESERVED_PERCENT
         );
     }
 
@@ -2295,7 +2296,8 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
     }
 
     function _unreservedPortion(uint256 _fullPortion) internal view returns (uint256) {
-        return
-            mulDiv(_fullPortion, JBConstants.MAX_RESERVED_PERCENT - _metadata.reservedPercent, JBConstants.MAX_RESERVED_PERCENT);
+        return mulDiv(
+            _fullPortion, JBConstants.MAX_RESERVED_PERCENT - _metadata.reservedPercent, JBConstants.MAX_RESERVED_PERCENT
+        );
     }
 }

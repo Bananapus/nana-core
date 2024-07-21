@@ -18,7 +18,8 @@ import {IJBRulesetApprovalHook} from "./../interfaces/IJBRulesetApprovalHook.sol
 /// @custom:member weight A fixed point number with 18 decimals which is typically used by payment terminals to
 /// determine how many tokens should be minted when a payment is received. This can be used by other contracts for
 /// arbitrary calculations.
-/// @custom:member decayPercent The percentage by which to reduce the `weight` each time a new ruleset starts. `weight` is
+/// @custom:member decayPercent The percentage by which to reduce the `weight` each time a new ruleset starts. `weight`
+/// is
 /// a percentage out of `JBConstants.MAX_DECAY_PERCENT`. If it's 0, the next ruleset will have the same `weight` by
 /// default. If it's 90%, the next ruleset's `weight` will be 10% smaller. If a ruleset explicitly sets a new `weight`,
 /// the `decayPercent` doesn't apply.
