@@ -510,21 +510,23 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             revert TERMINAL_TOKENS_INCOMPATIBLE();
         }
 
-        // Process any held fees.
-        _processHeldFeesOf({projectId: projectId, token: token, forced: true});
-
         // Record the migration in the store.
+        // slither-disable-next-line reentrancy-events
         balance = STORE.recordTerminalMigration(projectId, token);
+
+        emit MigrateTerminal(projectId, token, to, balance, _msgSender());
 
         // Transfer the balance if needed.
         if (balance != 0) {
             // Trigger any inherited pre-transfer logic.
+            // slither-disable-next-line reentrancy-events
             _beforeTransferTo({to: address(to), token: token, amount: balance});
 
             // If this terminal's token is the native token, send it in `msg.value`.
             uint256 payValue = _payValueOf(token, balance);
 
             // Withdraw the balance to transfer to the new terminal;
+            // slither-disable-next-line reentrancy-events
             to.addToBalanceOf{value: payValue}({
                 projectId: projectId,
                 token: token,
@@ -535,7 +537,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             });
         }
 
-        emit MigrateTerminal(projectId, token, to, balance, _msgSender());
+        // Process any held fees.
+        _processHeldFeesOf({projectId: projectId, token: token, forced: true});
     }
 
     /// @notice Process any fees that are being held for the project.
@@ -591,16 +594,17 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             if (storedAccountingContext.token != address(0)) revert ACCOUNTING_CONTEXT_ALREADY_SET();
 
             // Keep track of a flag indiciating if we know the provided decimals are incorrect.
-            // slither-disable-next-line uninitialized-local
             bool knownInvalidDecimals;
 
             // Check if the token is the native token and has the correct decimals
             if (accountingContext.token == JBConstants.NATIVE_TOKEN && accountingContext.decimals != 18) {
                 knownInvalidDecimals = true;
             } else if (accountingContext.token != JBConstants.NATIVE_TOKEN) {
+                // slither-disable-next-line calls-loop
                 try IERC165(accountingContext.token).supportsInterface(type(IERC20Metadata).interfaceId) returns (
                     bool doesSupport
                 ) {
+                    // slither-disable-next-line calls-loop
                     if (doesSupport && accountingContext.decimals != IERC20Metadata(accountingContext.token).decimals())
                     {
                         knownInvalidDecimals = true;
@@ -654,6 +658,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
         // Trigger any inherited pre-transfer logic if funds will be transferred.
         if (address(feeTerminal) != address(this)) {
+            // slither-disable-next-line reentrancy-events
             _beforeTransferTo({to: address(feeTerminal), token: token, amount: amount});
         }
 
@@ -741,6 +746,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             }
 
             // Trigger any inherited pre-transfer logic.
+            // slither-disable-next-line reentrancy-events
             if (terminal != this) _beforeTransferTo({to: address(terminal), token: token, amount: netPayoutAmount});
 
             // Send the `projectId` in the metadata as a referral.
@@ -920,6 +926,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // Keep a reference to the ruleset the payment is being made during.
         // Keep a reference to the pay hook specifications.
         // Keep a reference to the token count that'll be minted as a result of the payment.
+        // slither-disable-next-line reentrancy-events
         (JBRuleset memory ruleset, uint256 tokenCount, JBPayHookSpecification[] memory hookSpecifications) = STORE
             .recordPaymentFrom({
             payer: payer,
@@ -933,6 +940,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         if (tokenCount != 0) {
             // Set the token count to be the number of tokens minted for the beneficiary instead of the total
             // amount.
+            // slither-disable-next-line reentrancy-events
             beneficiaryTokenCount = _controllerOf(projectId).mintTokensOf({
                 projectId: projectId,
                 tokenCount: tokenCount,
@@ -940,13 +948,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                 memo: "",
                 useReservedPercent: true
             });
-        }
-
-        // If the data hook returned pay hook specifications, fulfill them.
-        if (hookSpecifications.length != 0) {
-            _fulfillPayHookSpecificationsFor(
-                projectId, hookSpecifications, tokenAmount, payer, ruleset, beneficiary, beneficiaryTokenCount, metadata
-            );
         }
 
         emit Pay(
@@ -961,6 +962,13 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             metadata,
             _msgSender()
         );
+
+        // If the data hook returned pay hook specifications, fulfill them.
+        if (hookSpecifications.length != 0) {
+            _fulfillPayHookSpecificationsFor(
+                projectId, hookSpecifications, tokenAmount, payer, ruleset, beneficiary, beneficiaryTokenCount, metadata
+            );
+        }
     }
 
     /// @notice Adds funds to a project's balance without minting tokens.
@@ -985,10 +993,10 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // and back into the protocol.
         uint256 returnedFees = shouldReturnHeldFees ? _returnHeldFees(projectId, token, amount) : 0;
 
+        emit AddToBalance(projectId, amount, returnedFees, memo, metadata, _msgSender());
+
         // Record the added funds with any returned fees.
         STORE.recordAddedBalanceFor({projectId: projectId, token: token, amount: amount + returnedFees});
-
-        emit AddToBalance(projectId, amount, returnedFees, memo, metadata, _msgSender());
     }
 
     /// @notice Holders can redeem their tokens to claim some of a project's surplus, or to trigger rules determined by
@@ -1054,7 +1062,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         }
 
         // Keep a reference to the amount being reclaimed that is subject to fees.
-        // slither-disable-next-line uninitialized-local
         uint256 amountEligibleForFees;
 
         // Send the reclaimed funds to the beneficiary.
@@ -1184,7 +1191,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         });
 
         /// The leftover amount that was sent to the project owner.
-        // slither-disable-next-line uninitialized-local
         uint256 netLeftoverPayoutAmount;
 
         // Send any leftover funds to the project owner and update the net leftover (which is returned) accordingly.
@@ -1246,6 +1252,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
         // Take a fee from the `amountPaidOut`, if needed.
         // The net amount is the final amount withdrawn after the fee has been taken.
+        // slither-disable-next-line reentrancy-events
         uint256 netAmountPaidOut = amountPaidOut
             - (
                 _isFeeless(_msgSender())
@@ -1260,11 +1267,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                     })
             );
 
-        // Transfer any remaining balance to the beneficiary.
-        if (netAmountPaidOut != 0) {
-            _transferFrom({from: address(this), to: beneficiary, token: token, amount: netAmountPaidOut});
-        }
-
         emit UseAllowance(
             ruleset.id,
             ruleset.cycleNumber,
@@ -1276,6 +1278,11 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             memo,
             _msgSender()
         );
+
+        // Transfer any remaining balance to the beneficiary.
+        if (netAmountPaidOut != 0) {
+            _transferFrom({from: address(this), to: beneficiary, token: token, amount: netAmountPaidOut});
+        }
     }
 
     /// @notice Sends payouts to the payout splits group specified in a project's ruleset.
@@ -1361,13 +1368,15 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         returns (uint256)
     {
         // Attempt to distribute this split.
+        // slither-disable-next-line reentrancy-events
         try this.executePayout(split, projectId, token, amount, _msgSender()) returns (uint256 netPayoutAmount) {
             return netPayoutAmount;
         } catch (bytes memory failureReason) {
+            emit PayoutReverted(projectId, split, amount, failureReason, _msgSender());
+
             // Add balance back to the project.
             STORE.recordAddedBalanceFor(projectId, token, amount);
-            // Emit event.
-            emit PayoutReverted(projectId, split, amount, failureReason, _msgSender());
+
             // Since the payout failed the netPayoutAmount is zero.
             return 0;
         }
@@ -1431,12 +1440,14 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             context.hookMetadata = specification.metadata;
 
             // Trigger any inherited pre-transfer logic.
+            // slither-disable-next-line reentrancy-events
             _beforeTransferTo({to: address(specification.hook), token: tokenAmount.token, amount: specification.amount});
 
             // Keep a reference to the amount that'll be paid as a `msg.value`.
             uint256 payValue = _payValueOf(tokenAmount.token, specification.amount);
 
             // Fulfill the specification.
+            // slither-disable-next-line reentrancy-events
             specification.hook.afterPayRecordedWith{value: payValue}(context);
 
             emit HookAfterRecordPay(specification.hook, context, specification.amount, _msgSender());
@@ -1515,6 +1526,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             context.hookMetadata = specification.metadata;
 
             // Trigger any inherited pre-transfer logic.
+            // slither-disable-next-line reentrancy-events
             _beforeTransferTo({
                 to: address(specification.hook),
                 token: beneficiaryReclaimAmount.token,
@@ -1525,6 +1537,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             uint256 payValue = _payValueOf(beneficiaryReclaimAmount.token, specification.amount);
 
             // Fulfill the specification.
+            // slither-disable-next-line reentrancy-events
             specification.hook.afterRedeemRecordedWith{value: payValue}(context);
 
             emit HookAfterRecordRedeem(
@@ -1613,6 +1626,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             }
 
             // Process the fee.
+            // slither-disable-next-line reentrancy-no-eth
             _processFee({
                 projectId: projectId,
                 token: token,
@@ -1641,15 +1655,14 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     )
         internal
     {
-        // slither-disable-start reentrancy-no-eth
+        // slither-disable-next-line reentrancy-events
         try this.executeProcessFee(projectId, token, amount, beneficiary, feeTerminal) {
             emit ProcessFee(projectId, token, amount, wasHeld, beneficiary, _msgSender());
         } catch (bytes memory reason) {
-            STORE.recordAddedBalanceFor(projectId, token, amount);
-
             emit FeeReverted(projectId, token, _FEE_BENEFICIARY_PROJECT_ID, amount, reason, _msgSender());
+
+            STORE.recordAddedBalanceFor(projectId, token, amount);
         }
-        // slither-disable-end reentrancy-no-eth
     }
 
     /// @notice Returns held fees to the project who paid them based on the specified amount.

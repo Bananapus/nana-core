@@ -45,8 +45,6 @@ contract JBDeadline is IJBRulesetApprovalHook {
         override
         returns (JBApprovalStatus)
     {
-        projectId; // Prevents unused var compiler and natspec complaints.
-
         // The ruleset ID is the timestamp at which the ruleset was queued.
         // If the provided `rulesetId` timestamp is after the start timestamp, the ruleset has `Failed`.
         if (rulesetId > start) return JBApprovalStatus.Failed;

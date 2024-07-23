@@ -205,6 +205,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
 
             // If the approval hook is empty, expects approval, or has approved the ruleset, return it.
             if (
+                // slither-disable-next-line incorrect-equality
                 approvalStatus == JBApprovalStatus.Approved || approvalStatus == JBApprovalStatus.ApprovalExpected
                     || approvalStatus == JBApprovalStatus.Empty
             ) return ruleset;
@@ -232,8 +233,8 @@ contract JBRulesets is JBControlled, IJBRulesets {
 
         // Check to see if this ruleset's approval hook hasn't failed.
         // If so, return a ruleset based on it.
+        // slither-disable-next-line incorrect-equality
         if (approvalStatus == JBApprovalStatus.Approved || approvalStatus == JBApprovalStatus.Empty) {
-            // slither-disable-next-line dangerous-strict-equalities
             return _simulateCycledRulesetBasedOn({projectId: projectId, baseRuleset: ruleset, allowMidRuleset: false});
         }
 
@@ -270,7 +271,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
 
             // Check to see if this ruleset's approval hook is approved if it exists.
             // If so, return it.
-            // slither-disable-next-line dangerous-strict-equalities
+            // slither-disable-next-line incorrect-equality
             if (approvalStatus == JBApprovalStatus.Approved || approvalStatus == JBApprovalStatus.Empty) {
                 return ruleset;
             }
@@ -468,7 +469,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
         JBRuleset memory latestQueuedRuleset = _getStructFor(projectId, latestRulesetIdOf[projectId]);
 
         // Nothing to cache if the latest ruleset doesn't have a duration or a decay percent.
-        // slither-disable-next-line dangerous-strict-equalities
+        // slither-disable-next-line incorrect-equality
         if (latestQueuedRuleset.duration == 0 || latestQueuedRuleset.decayPercent == 0) return;
 
         // Get a reference to the current cache.
@@ -960,6 +961,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
         }
 
         // Return the approval hook's approval status.
+        // slither-disable-next-line calls-loop
         return approvalHookRuleset.approvalHook.approvalStatusOf(projectId, rulesetId, start);
     }
 

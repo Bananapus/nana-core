@@ -3,7 +3,6 @@ pragma solidity 0.8.23;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import {EIP712} from "@openzeppelin/contracts/utils/cryptography/EIP712.sol";
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
 import {IJBProjects} from "./interfaces/IJBProjects.sol";
@@ -75,10 +74,10 @@ contract JBProjects is ERC721, Ownable, IJBProjects {
         // Increment the count, which will be used as the ID.
         projectId = ++count;
 
+        emit Create(projectId, owner, _msgSender());
+
         // Mint the project.
         _safeMint(owner, projectId);
-
-        emit Create(projectId, owner, _msgSender());
     }
 
     //*********************************************************************//

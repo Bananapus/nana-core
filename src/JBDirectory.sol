@@ -97,6 +97,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
             IJBTerminal terminal = _terminalsOf[projectId][i];
 
             // If the terminal accepts the specified token, return it.
+            // slither-disable-next-line calls-loop
             if (terminal.accountingContextForTokenOf(projectId, token).token != address(0)) {
                 return terminal;
             }
@@ -188,6 +189,8 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
         // Set the new controller.
         controllerOf[projectId] = controller;
 
+        emit SetController(projectId, controller, msg.sender);
+
         // Migrate if needed.
         if (
             address(currentController) != address(0)
@@ -195,8 +198,6 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
         ) {
             IJBMigratable(address(currentController)).migrate(projectId, controller);
         }
-
-        emit SetController(projectId, controller, msg.sender);
     }
 
     /// @notice Set a project's terminals.
