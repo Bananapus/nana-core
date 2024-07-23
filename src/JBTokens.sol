@@ -47,7 +47,7 @@ contract JBTokens is JBControlled, IJBTokens {
     mapping(uint256 projectId => IJBToken) public override tokenOf;
 
     /// @notice Each token's project.
-    /// @custom:param token The address of the token associated with the project. 
+    /// @custom:param token The address of the token associated with the project.
     // slither-disable-next-line unused-return
     mapping(IJBToken token => uint256) public override projectIdOf;
 
