@@ -176,6 +176,7 @@ contract JBSplits is JBControlled, IJBSplits {
             // Ensure the total does not exceed 100%.
             if (percentTotal > JBConstants.SPLITS_TOTAL_PERCENT) revert INVALID_TOTAL_PERCENT();
 
+            // slither-disable-next-line uninitialized-local
             uint256 packedSplitParts1;
 
             // Pack `preferAddToBalance` in bit 0.

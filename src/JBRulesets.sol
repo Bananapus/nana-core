@@ -224,6 +224,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
         }
 
         // There's no queued if the current has a duration of 0.
+        // slither-disable-next-line incorrect-equality
         if (ruleset.duration == 0) return _getStructFor(0, 0);
 
         // Get a reference to the approval status.
@@ -232,6 +233,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
         // Check to see if this ruleset's approval hook hasn't failed.
         // If so, return a ruleset based on it.
         if (approvalStatus == JBApprovalStatus.Approved || approvalStatus == JBApprovalStatus.Empty) {
+            // slither-disable-next-line dangerous-strict-equalities
             return _simulateCycledRulesetBasedOn({projectId: projectId, baseRuleset: ruleset, allowMidRuleset: false});
         }
 
@@ -239,6 +241,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
         ruleset = _getStructFor(projectId, ruleset.basedOnId);
 
         // There's no queued if the base, which must still be the current, has a duration of 0.
+        // slither-disable-next-line incorrect-equality
         if (ruleset.duration == 0) return _getStructFor(0, 0);
 
         // Return a simulated cycled ruleset.
@@ -267,6 +270,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
 
             // Check to see if this ruleset's approval hook is approved if it exists.
             // If so, return it.
+            // slither-disable-next-line dangerous-strict-equalities
             if (approvalStatus == JBApprovalStatus.Approved || approvalStatus == JBApprovalStatus.Empty) {
                 return ruleset;
             }
@@ -302,6 +306,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
         }
 
         // If the base has no duration, it's still the current one.
+        // slither-disable-next-line incorrect-equality
         if (ruleset.duration == 0) return ruleset;
 
         // Return a simulation of the current ruleset.
@@ -463,6 +468,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
         JBRuleset memory latestQueuedRuleset = _getStructFor(projectId, latestRulesetIdOf[projectId]);
 
         // Nothing to cache if the latest ruleset doesn't have a duration or a decay percent.
+        // slither-disable-next-line dangerous-strict-equalities
         if (latestQueuedRuleset.duration == 0 || latestQueuedRuleset.decayPercent == 0) return;
 
         // Get a reference to the current cache.
@@ -588,6 +594,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
         internal
     {
         // If there is no base, initialize a first ruleset.
+        // slither-disable-next-line incorrect-equality
         if (baseRuleset.cycleNumber == 0) {
             // Set fresh intrinsic properties.
             _packAndStoreIntrinsicPropertiesOf({
@@ -673,9 +680,11 @@ contract JBRulesets is JBControlled, IJBRulesets {
         JBRuleset memory ruleset = _getStructFor(projectId, rulesetId);
 
         // There is no upcoming ruleset if the latest ruleset has already started.
+        // slither-disable-next-line incorrect-equality
         if (block.timestamp >= ruleset.start) return 0;
 
         // If this is the first ruleset, it is queued.
+        // slither-disable-next-line incorrect-equality
         if (ruleset.cycleNumber == 1) return rulesetId;
 
         // Get a reference to the ID of the ruleset the latest ruleset was based on.
@@ -798,6 +807,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
         returns (uint256 start)
     {
         // A subsequent ruleset to one with a duration of 0 should start as soon as possible.
+        // slither-disable-next-line incorrect-equality
         if (baseRuleset.duration == 0) return mustStartAtOrAfter;
 
         // The time when the ruleset immediately after the specified ruleset starts.
@@ -837,6 +847,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
         returns (uint256 weight)
     {
         // A subsequent ruleset to one with a duration of 0 should have the next possible weight.
+        // slither-disable-next-line incorrect-equality
         if (baseRuleset.duration == 0) {
             return mulDiv(
                 baseRuleset.weight,
@@ -849,6 +860,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
         weight = baseRuleset.weight;
 
         // If the decay is 0, the weight doesn't change.
+        // slither-disable-next-line incorrect-equality
         if (baseRuleset.decayPercent == 0) return weight;
 
         // The difference between the start of the base ruleset and the proposed start.
@@ -894,6 +906,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
     /// @return The ruleset's cycle number.
     function _deriveCycleNumberFrom(JBRuleset memory baseRuleset, uint256 start) internal pure returns (uint256) {
         // A subsequent ruleset to one with a duration of 0 should be the next number.
+        // slither-disable-next-line incorrect-equality
         if (baseRuleset.duration == 0) {
             return baseRuleset.cycleNumber + 1;
         }
@@ -935,6 +948,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
         returns (JBApprovalStatus)
     {
         // If there is no ruleset ID to check the approval hook of, the approval hook is empty.
+        // slither-disable-next-line incorrect-equality
         if (approvalHookRulesetId == 0) return JBApprovalStatus.Empty;
 
         // Get the struct of the ruleset with the approval hook.

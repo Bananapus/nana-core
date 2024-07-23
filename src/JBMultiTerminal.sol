@@ -591,6 +591,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             if (storedAccountingContext.token != address(0)) revert ACCOUNTING_CONTEXT_ALREADY_SET();
 
             // Keep track of a flag indiciating if we know the provided decimals are incorrect.
+            // slither-disable-next-line uninitialized-local
             bool knownInvalidDecimals;
 
             // Check if the token is the native token and has the correct decimals
@@ -1053,6 +1054,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         }
 
         // Keep a reference to the amount being reclaimed that is subject to fees.
+        // slither-disable-next-line uninitialized-local
         uint256 amountEligibleForFees;
 
         // Send the reclaimed funds to the beneficiary.
@@ -1182,6 +1184,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         });
 
         /// The leftover amount that was sent to the project owner.
+        // slither-disable-next-line uninitialized-local
         uint256 netLeftoverPayoutAmount;
 
         // Send any leftover funds to the project owner and update the net leftover (which is returned) accordingly.

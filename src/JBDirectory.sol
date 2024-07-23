@@ -185,6 +185,9 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
             revert SET_CONTROLLER_NOT_ALLOWED();
         }
 
+        // Set the new controller.
+        controllerOf[projectId] = controller;
+
         // Migrate if needed.
         if (
             address(currentController) != address(0)
@@ -192,9 +195,6 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
         ) {
             IJBMigratable(address(currentController)).migrate(projectId, controller);
         }
-
-        // Set the new controller.
-        controllerOf[projectId] = controller;
 
         emit SetController(projectId, controller, msg.sender);
     }
