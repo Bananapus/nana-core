@@ -31,12 +31,11 @@ contract JBDeadline is IJBRulesetApprovalHook {
     //*********************************************************************//
 
     /// @notice The approval status of a given ruleset.
-    /// @param projectId The ID of the project the ruleset belongs to.
     /// @param rulesetId The ID of the ruleset to check the status of.
     /// @param start The start timestamp of the ruleset to check the status of.
     /// @return The ruleset's approval status.
     function approvalStatusOf(
-        uint256 projectId,
+        uint256,
         uint256 rulesetId,
         uint256 start
     )
