@@ -34,6 +34,7 @@ interface IJBPayoutTerminal is IJBTerminal {
         uint256 indexed rulesetCycleNumber,
         uint256 indexed projectId,
         address beneficiary,
+        address feeBeneficiary,
         uint256 amount,
         uint256 amountPaidOut,
         uint256 netAmountPaidOut,
@@ -71,6 +72,7 @@ interface IJBPayoutTerminal is IJBTerminal {
         uint256 currency,
         uint256 minTokensPaidOut,
         address payable beneficiary,
+        address payable feeBeneficiary,
         string calldata memo
     )
         external
