@@ -8,8 +8,6 @@ import {JBConstants} from "./JBConstants.sol";
 /// @notice Redemption calculations.
 library JBRedemptions {
 
-    error ILLOGICAL_VALUES();
-
     /// @notice Returns the amount of surplus terminal tokens which can be reclaimed based on the total surplus, the
     /// number of tokens being redeemed, the total token supply, and the ruleset's redemption rate.
     /// @param surplus The total amount of surplus terminal tokens.
@@ -31,7 +29,7 @@ library JBRedemptions {
         if (redemptionRate == 0) return 0;
 
         // If the total supply is being redeemed, return the entire surplus.
-        if (tokensRedeemed == totalSupply) return surplus;
+        if (tokensRedeemed >= totalSupply) return surplus;
 
         // Get a reference to the linear proportion.
         uint256 base = mulDiv(surplus, tokensRedeemed, totalSupply);
@@ -73,7 +71,7 @@ library JBRedemptions {
         if (redemptionRate == 0 || surplus == 0) return 0;
 
         // If the entire surplus is reclaimed, return the total supply.
-        if (reclaimableSurplus == surplus) return totalSupply;
+        if (reclaimableSurplus >= surplus) return totalSupply;
 
         // Calculate the base value.
         uint256 base = mulDiv(reclaimableSurplus, totalSupply, surplus);
