@@ -33,6 +33,7 @@ import {JBAfterPayRecordedContext} from "../../src/structs/JBAfterPayRecordedCon
 import {JBAfterRedeemRecordedContext} from "../../src/structs/JBAfterRedeemRecordedContext.sol";
 import {JBFee} from "../../src/structs/JBFee.sol";
 import {JBFees} from "../../src/libraries/JBFees.sol";
+import {JBRedemptions} from "../../src/libraries/JBRedemptions.sol";
 import {JBFundAccessLimitGroup} from "../../src/structs/JBFundAccessLimitGroup.sol";
 import {JBRuleset} from "../../src/structs/JBRuleset.sol";
 import {JBRulesetWithMetadata} from "../../src/structs/JBRulesetWithMetadata.sol";
