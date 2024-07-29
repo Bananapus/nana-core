@@ -331,7 +331,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
                 rulesetId: ruleset.id,
                 beneficiary: beneficiary,
                 weight: ruleset.weight,
-                reservedRate: ruleset.reservedPercent(),
+                reservedPercent: ruleset.reservedPercent(),
                 metadata: metadata
             });
 
