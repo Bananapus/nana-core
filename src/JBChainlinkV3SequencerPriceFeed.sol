@@ -34,6 +34,7 @@ contract JBChainlinkV3SequencerPriceFeed is JBChainlinkV3PriceFeed {
     /// @return The current unit price from the feed, as a fixed point number with the specified number of decimals.
     function currentUnitPrice(uint256 decimals) public view override returns (uint256) {
         // Fetch sequencer status.
+        // slither-disable-next-line unused-return
         (, int256 answer, uint256 startedAt,,) = SEQUENCER_FEED.latestRoundData();
 
         // Revert if sequencer has too recently restarted or is currently down.

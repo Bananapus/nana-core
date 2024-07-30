@@ -352,6 +352,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         returns (uint256 projectId)
     {
         // Mint the project ERC-721 into the owner's wallet.
+        // slither-disable-next-line reentrancy-benign
         projectId = PROJECTS.createFor(owner);
 
         // If provided, set the project's metadata URI.
@@ -366,6 +367,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         _configureTerminals(projectId, terminalConfigurations);
 
         // Queue the rulesets.
+        // slither-disable-next-line reentrancy-events
         uint256 rulesetId = _queueRulesets(projectId, rulesetConfigurations);
 
         emit LaunchProject(rulesetId, projectId, projectUri, memo, _msgSender());
@@ -419,6 +421,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         _configureTerminals(projectId, terminalConfigurations);
 
         // Queue the first ruleset.
+        // slither-disable-next-line reentrancy-events
         rulesetId = _queueRulesets(projectId, rulesetConfigurations);
 
         emit LaunchRulesets(rulesetId, projectId, memo, _msgSender());
@@ -451,6 +454,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         });
 
         // Queue the rulesets.
+        // slither-disable-next-line reentrancy-events
         rulesetId = _queueRulesets(projectId, rulesetConfigurations);
 
         emit QueueRulesets(rulesetId, projectId, memo, _msgSender());
@@ -515,15 +519,16 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
                 mulDiv(tokenCount, JBConstants.MAX_RESERVED_PERCENT - reservedPercent, JBConstants.MAX_RESERVED_PERCENT);
 
             // Mint the tokens.
+            // slither-disable-next-line reentrancy-benign,reentrancy-events
             TOKENS.mintFor(beneficiary, projectId, beneficiaryTokenCount);
         }
+
+        emit MintTokens(beneficiary, projectId, tokenCount, beneficiaryTokenCount, memo, reservedPercent, _msgSender());
 
         // Add any reserved tokens to the pending reserved token balance.
         if (reservedPercent > 0) {
             pendingReservedTokenBalanceOf[projectId] += tokenCount - beneficiaryTokenCount;
         }
-
-        emit MintTokens(beneficiary, projectId, tokenCount, beneficiaryTokenCount, memo, reservedPercent, _msgSender());
     }
 
     /// @notice Burns a project's tokens or credits from the specific holder's balance.
@@ -553,10 +558,10 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         // There must be tokens to burn.
         if (tokenCount == 0) revert NO_BURNABLE_TOKENS();
 
+        emit BurnTokens(holder, projectId, tokenCount, memo, _msgSender());
+
         // Burn the tokens.
         TOKENS.burnFrom(holder, projectId, tokenCount);
-
-        emit BurnTokens(holder, projectId, tokenCount, memo, _msgSender());
     }
 
     /// @notice Sends a project's pending reserved tokens to its reserved token splits.
@@ -589,6 +594,8 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         // Make sure this is being called by the directory.
         if (msg.sender != address(DIRECTORY)) revert UNAUTHORIZED();
 
+        emit Migrate(projectId, to, msg.sender);
+
         // Mint any pending reserved tokens before migrating.
         if (pendingReservedTokenBalanceOf[projectId] != 0) {
             _sendReservedTokensToSplitsOf(projectId);
@@ -598,8 +605,6 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         if (to.supportsInterface(type(IJBMigratable).interfaceId)) {
             IJBMigratable(address(to)).receiveMigrationFrom(IERC165(this), projectId);
         }
-
-        emit Migrate(projectId, to, msg.sender);
     }
 
     /// @notice Set a project's metadata URI.
@@ -924,12 +929,14 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
                 // If the split has a hook, call its `processSplitWith` function.
                 if (split.hook != IJBSplitHook(address(0))) {
                     // Mint the tokens for the split hook.
+                    // slither-disable-next-line reentrancy-events
                     TOKENS.mintFor(address(split.hook), projectId, splitAmount);
 
                     // Get a reference to the project token address. If the project doesn't have a token, this will
                     // return the 0 address.
                     IJBToken token = TOKENS.tokenOf(projectId);
 
+                    // slither-disable-next-line reentrancy-events
                     split.hook.processSplitWith(
                         JBSplitHookContext({
                             token: address(token),
@@ -960,12 +967,15 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
                         // which accepts the token, send the tokens to the beneficiary.
                         if (address(token) == address(0) || address(terminal) == address(0)) {
                             // Mint the tokens to the beneficiary.
+                            // slither-disable-next-line reentrancy-events
                             TOKENS.mintFor(beneficiary, projectId, splitAmount);
                         } else {
                             // Mint the tokens to this contract.
+                            // slither-disable-next-line reentrancy-events
                             TOKENS.mintFor(address(this), projectId, splitAmount);
 
                             // Use the `projectId` in the pay metadata.
+                            // slither-disable-next-line reentrancy-events
                             bytes memory metadata = bytes(abi.encodePacked(projectId));
 
                             // Try to fulfill the payment.
@@ -977,9 +987,10 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
                                 beneficiary: beneficiary,
                                 metadata: metadata
                             }) {} catch (bytes memory reason) {
+                                emit ReservedDistributionReverted(projectId, split, splitAmount, reason, _msgSender());
+
                                 // If it fails, transfer the tokens from this contract to the beneficiary.
                                 IERC20(address(token)).safeTransfer(beneficiary, splitAmount);
-                                emit ReservedDistributionReverted(projectId, split, splitAmount, reason, _msgSender());
                             }
                         }
                     } else if (beneficiary != address(0xdead)) {

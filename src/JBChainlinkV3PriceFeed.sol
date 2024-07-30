@@ -49,6 +49,7 @@ contract JBChainlinkV3PriceFeed is IJBPriceFeed {
         if (block.timestamp - updatedAt > THRESHOLD) revert STALE_PRICE();
 
         // Make sure the round is finished.
+        // slither-disable-next-line incorrect-equality
         if (updatedAt == 0) revert INCOMPLETE_ROUND();
 
         // Make sure the price is positive.

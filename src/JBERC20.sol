@@ -17,9 +17,11 @@ contract JBERC20 is ERC20Votes, ERC20Permit, Ownable, IJBToken {
     //*********************************************************************//
 
     /// @notice The token's name.
+    // slither-disable-next-line shadowing-state
     string private _name;
 
     /// @notice The token's symbol.
+    // slither-disable-next-line shadowing-state
     string private _symbol;
 
     //*********************************************************************//

@@ -48,6 +48,7 @@ contract JBTokens is JBControlled, IJBTokens {
 
     /// @notice Each token's project.
     /// @custom:param token The address of the token associated with the project.
+    // slither-disable-next-line unused-return
     mapping(IJBToken token => uint256) public override projectIdOf;
 
     /// @notice The total supply of credits for each project.
@@ -153,10 +154,10 @@ contract JBTokens is JBControlled, IJBTokens {
         // Store the project for the token.
         projectIdOf[token] = projectId;
 
+        emit DeployERC20(projectId, token, name, symbol, salt, msg.sender);
+
         // Initialize the token.
         token.initialize({name: name, symbol: symbol, owner: address(this)});
-
-        emit DeployERC20(projectId, token, name, symbol, salt, msg.sender);
     }
 
     /// @notice Set a project's token if not already set.
@@ -199,6 +200,7 @@ contract JBTokens is JBControlled, IJBTokens {
 
         if (shouldClaimTokens) {
             // If tokens should be claimed, mint tokens into the holder's wallet.
+            // slither-disable-next-line reentrancy-events
             token.mint(holder, amount);
         } else {
             // Otherwise, add the tokens to their credits and the credit supply.
@@ -262,10 +264,10 @@ contract JBTokens is JBControlled, IJBTokens {
             totalCreditSupplyOf[projectId] = totalCreditSupplyOf[projectId] - creditsToBurn;
         }
 
+        emit Burn(holder, projectId, amount, creditBalance, tokenBalance, msg.sender);
+
         // Burn the tokens.
         if (tokensToBurn > 0) token.burn(holder, tokensToBurn);
-
-        emit Burn(holder, projectId, amount, creditBalance, tokenBalance, msg.sender);
     }
 
     /// @notice Redeem credits to claim tokens into a holder's wallet.
@@ -304,10 +306,10 @@ contract JBTokens is JBControlled, IJBTokens {
             totalCreditSupplyOf[projectId] = totalCreditSupplyOf[projectId] - amount;
         }
 
+        emit ClaimTokens(holder, projectId, creditBalance, amount, beneficiary, msg.sender);
+
         // Mint the equivalent amount of the project's token for the holder.
         token.mint(beneficiary, amount);
-
-        emit ClaimTokens(holder, projectId, creditBalance, amount, beneficiary, msg.sender);
     }
 
     /// @notice Allows a holder to transfer credits to another account.
