@@ -41,8 +41,8 @@ library JBRedemptions {
 
         return mulDiv(
             base,
-            redemptionRate + mulDiv(JBConstants.MAX_REDEMPTION_RATE - redemptionRate, tokensRedeemed,  totalSupply),
+            redemptionRate + mulDiv(JBConstants.MAX_REDEMPTION_RATE - redemptionRate, tokensRedeemed, totalSupply),
             JBConstants.MAX_REDEMPTION_RATE
         );
-    } 
+    }
 }

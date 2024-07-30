@@ -15,6 +15,7 @@ import {JBConstants} from "./libraries/JBConstants.sol";
 import {JBFixedPointNumber} from "./libraries/JBFixedPointNumber.sol";
 import {JBRedemptions} from "./libraries/JBRedemptions.sol";
 import {JBRulesetMetadataResolver} from "./libraries/JBRulesetMetadataResolver.sol";
+import {JBSurplus} from "./libraries/JBSurplus.sol";
 import {JBAccountingContext} from "./structs/JBAccountingContext.sol";
 import {JBBeforePayRecordedContext} from "./structs/JBBeforePayRecordedContext.sol";
 import {JBBeforeRedeemRecordedContext} from "./structs/JBBeforeRedeemRecordedContext.sol";
@@ -167,7 +168,12 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
         override
         returns (uint256)
     {
-        return _currentTotalSurplusOf(projectId, decimals, currency);
+        return JBSurplus.currentSurplusOf({
+            projectId: projectId,
+            terminals: DIRECTORY.terminalsOf(projectId),
+            decimals: decimals,
+            currency: currency
+        });
     }
 
     /// @notice Returns the number of surplus terminal tokens that would be reclaimed from a terminal by redeeming a
@@ -205,7 +211,12 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
         // If `useTotalSurplus` is true, use the total surplus across all terminals. Otherwise, get the `terminal`'s
         // surplus.
         uint256 currentSurplus = useTotalSurplus
-            ? _currentTotalSurplusOf(projectId, decimals, currency)
+            ? JBSurplus.currentSurplusOf({
+                projectId: projectId,
+                terminals: DIRECTORY.terminalsOf(projectId),
+                decimals: decimals,
+                currency: currency
+            })
             : _surplusFrom(terminal, projectId, accountingContexts, ruleset, decimals, currency);
 
         // If there's no surplus, nothing can be reclaimed.
@@ -442,8 +453,9 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
         // Use the local surplus if the ruleset specifies that it should be used. Otherwise, use the project's total
         // surplus across all of its terminals.
         uint256 currentSurplus = ruleset.useTotalSurplusForRedemptions()
-            ? _currentTotalSurplusOf({
+            ? JBSurplus.currentSurplusOf({
                 projectId: projectId,
+                terminals: DIRECTORY.terminalsOf(projectId),
                 decimals: accountingContext.decimals,
                 currency: accountingContext.currency
             })
@@ -889,35 +901,6 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
             } else {
                 return 0;
             }
-        }
-    }
-
-    /// @notice Gets the total current surplus amount across all of a project's terminals.
-    /// @dev This amount changes as the value of the balances changes in relation to the currency being used to measure
-    /// the project's payout limits.
-    /// @param projectId The ID of the project to get the total surplus for.
-    /// @param decimals The number of decimals that the fixed point surplus result should include.
-    /// @param currency The currency that the surplus result should be in terms of.
-    /// @return surplus The total surplus of a project's funds in terms of `currency`, as a fixed point number with the
-    /// specified number of decimals.
-    function _currentTotalSurplusOf(
-        uint256 projectId,
-        uint256 decimals,
-        uint256 currency
-    )
-        internal
-        view
-        returns (uint256 surplus)
-    {
-        // Get a reference to the project's terminals.
-        IJBTerminal[] memory terminals = DIRECTORY.terminalsOf(projectId);
-
-        // Keep a reference to the number of termainls.
-        uint256 numberOfTerminals = terminals.length;
-
-        // Add the current surplus for each terminal.
-        for (uint256 i; i < numberOfTerminals; i++) {
-            surplus += terminals[i].currentSurplusOf(projectId, decimals, currency);
         }
     }
 }
