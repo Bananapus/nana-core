@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
-import {mulDiv, sqrt} from "@prb/math/src/Common.sol";
+import {mulDiv} from "@prb/math/src/Common.sol";
 
 import {JBConstants} from "./JBConstants.sol";
 
