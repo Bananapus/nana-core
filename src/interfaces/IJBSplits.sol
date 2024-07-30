@@ -3,7 +3,6 @@ pragma solidity ^0.8.0;
 
 import {JBSplit} from "./../structs/JBSplit.sol";
 import {JBSplitGroup} from "./../structs/JBSplitGroup.sol";
-import {IJBProjects} from "./IJBProjects.sol";
 
 interface IJBSplits {
     event SetSplit(

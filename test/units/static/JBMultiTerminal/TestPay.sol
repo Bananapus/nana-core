@@ -278,10 +278,6 @@ contract TestPay_Local is JBMultiTerminalSetup {
         // mock call to hook
         mockExpect(address(_mockHook), abi.encodeCall(IJBPayHook.afterPayRecordedWith, (context)), "");
 
-        // expect _fulfillPayHookSpecificationsFor emit
-        vm.expectEmit();
-        emit IJBTerminal.HookAfterRecordPay(_mockHook, context, _defaultAmount, address(this));
-
         vm.expectEmit();
         emit IJBTerminal.Pay(
             returnedRuleset.id,
@@ -295,6 +291,9 @@ contract TestPay_Local is JBMultiTerminalSetup {
             bytes(""),
             address(this)
         );
+        vm.expectEmit();
+        emit IJBTerminal.HookAfterRecordPay(_mockHook, context, _defaultAmount, address(this));
+
         _terminal.pay({
             projectId: _projectId,
             token: address(_mockToken),
@@ -361,10 +360,6 @@ contract TestPay_Local is JBMultiTerminalSetup {
         // mock call to hook (including msg.value)
         mockExpect(address(_mockHook), abi.encodeCall(IJBPayHook.afterPayRecordedWith, (context)), "");
 
-        // expect _fulfillPayHookSpecificationsFor emit
-        vm.expectEmit();
-        emit IJBTerminal.HookAfterRecordPay(_mockHook, context, _defaultAmount, address(this));
-
         vm.expectEmit();
         emit IJBTerminal.Pay(
             returnedRuleset.id,
@@ -378,6 +373,9 @@ contract TestPay_Local is JBMultiTerminalSetup {
             bytes(""),
             address(this)
         );
+
+        vm.expectEmit();
+        emit IJBTerminal.HookAfterRecordPay(_mockHook, context, _defaultAmount, address(this));
 
         _terminal.pay{value: 1e18}({
             projectId: _projectId,
