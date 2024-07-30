@@ -452,6 +452,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// (including fees), as a fixed point number with 18 decimals. If the amount of surplus used would be less than
     /// this amount, the transaction is reverted.
     /// @param beneficiary The address to send the surplus funds to.
+    /// @param feeBeneficiary The address to send the tokens resulting from paying the fee.
     /// @param memo A memo to pass along to the emitted event.
     /// @return amountPaidOut The number of tokens that were sent to the beneficiary, as a fixed point number with
     /// the same amount of decimals as the terminal.
@@ -462,6 +463,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         uint256 currency,
         uint256 minTokensPaidOut,
         address payable beneficiary,
+        address payable feeBeneficiary,
         string calldata memo
     )
         external
@@ -475,7 +477,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             permissionId: JBPermissionIds.USE_ALLOWANCE
         });
 
-        amountPaidOut = _useAllowanceOf(projectId, token, amount, currency, beneficiary, memo);
+        amountPaidOut = _useAllowanceOf(projectId, token, amount, currency, beneficiary, feeBeneficiary, memo);
 
         // The amount being withdrawn must be at least as much as was expected.
         if (amountPaidOut < minTokensPaidOut) revert UNDER_MIN_TOKENS_PAID_OUT();
@@ -1226,6 +1228,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @param currency The expected currency of the amount being paid out. Must match the currency of one of the
     /// project's current ruleset's surplus allowances.
     /// @param beneficiary The address to send the funds to.
+    /// @param feeBeneficiary The address to send the tokens resulting from paying the fee.
     /// @param memo A memo to pass along to the emitted event.
     /// @return amountPaidOut The amount of tokens paid out.
     function _useAllowanceOf(
@@ -1234,6 +1237,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         uint256 amount,
         uint256 currency,
         address payable beneficiary,
+        address payable feeBeneficiary,
         string memory memo
     )
         internal
@@ -1262,7 +1266,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                         token: token,
                         amount: amountPaidOut,
                         // The project owner will receive tokens minted by paying the platform fee.
-                        beneficiary: PROJECTS.ownerOf(projectId),
+                        beneficiary: feeBeneficiary,
                         shouldHoldFees: ruleset.holdFees()
                     })
             );
@@ -1272,6 +1276,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             ruleset.cycleNumber,
             projectId,
             beneficiary,
+            feeBeneficiary,
             amount,
             amountPaidOut,
             netAmountPaidOut,
@@ -1712,7 +1717,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
                 if (leftoverAmount >= amountFromFee) {
                     unchecked {
-                        leftoverAmount = leftoverAmount - amountFromFee;
+                        leftoverAmount -= amountFromFee;
                         returnedFees += feeAmount;
                     }
                 } else {

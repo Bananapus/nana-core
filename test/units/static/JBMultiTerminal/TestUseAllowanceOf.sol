@@ -49,7 +49,7 @@ contract TestUseAllowanceOf_Local is JBMultiTerminalSetup {
         );
 
         vm.expectRevert(abi.encodeWithSignature("UNDER_MIN_TOKENS_PAID_OUT()"));
-        _terminal.useAllowanceOf(_projectId, address(0), 0, 0, 1, payable(address(this)), "");
+        _terminal.useAllowanceOf(_projectId, address(0), 0, 0, 1, payable(address(this)), payable(address(this)), "");
     }
 
     function test_WhenMsgSenderEQFeeless() external {

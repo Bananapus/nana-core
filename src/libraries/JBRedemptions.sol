@@ -13,7 +13,7 @@ library JBRedemptions {
     /// @param tokensRedeemed The number of tokens being redeemed, as a fixed point number with 18 decimals.
     /// @param totalSupply The total token supply, as a fixed point number with 18 decimals.
     /// @param redemptionRate The current ruleset's redemption rate.
-    /// @return The amount of surplus tokens that can be reclaimed.
+    /// @return reclaimableSurplus The amount of surplus tokens that can be reclaimed.
     function reclaimFrom(
         uint256 surplus,
         uint256 tokensRedeemed,
@@ -28,7 +28,7 @@ library JBRedemptions {
         if (redemptionRate == 0) return 0;
 
         // If the total supply is being redeemed, return the entire surplus.
-        if (tokensRedeemed == totalSupply) return surplus;
+        if (tokensRedeemed >= totalSupply) return surplus;
 
         // Get a reference to the linear proportion.
         uint256 base = mulDiv(surplus, tokensRedeemed, totalSupply);
@@ -41,7 +41,7 @@ library JBRedemptions {
 
         return mulDiv(
             base,
-            redemptionRate + mulDiv(tokensRedeemed, JBConstants.MAX_REDEMPTION_RATE - redemptionRate, totalSupply),
+            redemptionRate + mulDiv(JBConstants.MAX_REDEMPTION_RATE - redemptionRate, tokensRedeemed, totalSupply),
             JBConstants.MAX_REDEMPTION_RATE
         );
     }

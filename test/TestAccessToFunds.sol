@@ -177,6 +177,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             token: JBConstants.NATIVE_TOKEN,
             minTokensPaidOut: 0,
             beneficiary: payable(_beneficiary),
+            feeBeneficiary: payable(_projectOwner),
             memo: "MEMO"
         });
 
@@ -416,6 +417,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             token: JBConstants.NATIVE_TOKEN,
             minTokensPaidOut: 0,
             beneficiary: payable(_beneficiary),
+            feeBeneficiary: payable(_projectOwner),
             memo: "MEMO"
         });
 
@@ -687,6 +689,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             token: JBConstants.NATIVE_TOKEN,
             minTokensPaidOut: 0,
             beneficiary: payable(_beneficiary),
+            feeBeneficiary: payable(_projectOwner),
             memo: "MEMO"
         });
 
@@ -928,6 +931,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             token: JBConstants.NATIVE_TOKEN,
             minTokensPaidOut: 0,
             beneficiary: payable(_beneficiary),
+            feeBeneficiary: payable(_projectOwner),
             memo: "MEMO"
         });
 
@@ -1257,6 +1261,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             token: JBConstants.NATIVE_TOKEN,
             minTokensPaidOut: 0,
             beneficiary: payable(_beneficiary),
+            feeBeneficiary: payable(_projectOwner),
             memo: "MEMO"
         });
 
@@ -1318,6 +1323,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             token: JBConstants.NATIVE_TOKEN,
             minTokensPaidOut: 0,
             beneficiary: payable(_beneficiary),
+            feeBeneficiary: payable(_projectOwner),
             memo: "MEMO"
         });
 
@@ -1889,6 +1895,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             token: JBConstants.NATIVE_TOKEN,
             minTokensPaidOut: 0,
             beneficiary: payable(_beneficiary),
+            feeBeneficiary: payable(_projectOwner),
             memo: "MEMO"
         });
 
@@ -1943,6 +1950,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             token: address(_usdcToken),
             minTokensPaidOut: 0,
             beneficiary: payable(_beneficiary),
+            feeBeneficiary: payable(_projectOwner),
             memo: "MEMO"
         });
 

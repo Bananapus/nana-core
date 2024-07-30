@@ -171,6 +171,7 @@ contract TestFees_Local is TestBaseWorkflow {
             token: JBConstants.NATIVE_TOKEN,
             minTokensPaidOut: 0,
             beneficiary: payable(_projectOwner),
+            feeBeneficiary: payable(_projectOwner),
             memo: "MEMO"
         });
 
@@ -214,6 +215,7 @@ contract TestFees_Local is TestBaseWorkflow {
             token: JBConstants.NATIVE_TOKEN,
             minTokensPaidOut: 0,
             beneficiary: payable(_projectOwner),
+            feeBeneficiary: payable(_projectOwner),
             memo: "MEMO"
         });
 
@@ -263,6 +265,7 @@ contract TestFees_Local is TestBaseWorkflow {
             token: JBConstants.NATIVE_TOKEN,
             minTokensPaidOut: 0,
             beneficiary: payable(_projectOwner),
+            feeBeneficiary: payable(_projectOwner),
             memo: "MEMO"
         });
 
@@ -308,6 +311,7 @@ contract TestFees_Local is TestBaseWorkflow {
             token: JBConstants.NATIVE_TOKEN,
             minTokensPaidOut: 0,
             beneficiary: payable(_projectOwner),
+            feeBeneficiary: payable(_projectOwner),
             memo: "MEMO"
         });
 
