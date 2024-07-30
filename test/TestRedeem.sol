@@ -168,4 +168,37 @@ contract TestRedeem_Local is TestBaseWorkflow {
             1
         );
     }
+    function testInverseRedeemFormula(uint256 surplus, uint256 tokenAmountToRedeem, uint256 totalSupply, uint16 redemptionRate) external {
+        redemptionRate = uint16(bound(redemptionRate, 0, JBConstants.MAX_REDEMPTION_RATE));
+        totalSupply = bound(totalSupply, 0, 100);
+        tokenAmountToRedeem = bound(tokenAmountToRedeem, 0, totalSupply);
+        surplus = bound(surplus, 0, 100);
+
+        emit log_named_uint("redemptionRate", redemptionRate);
+        emit log_named_uint("totalSupply", totalSupply);
+        emit log_named_uint("tokenAmountToRedeem", tokenAmountToRedeem);
+        emit log_named_uint("surplus", surplus);
+
+        uint256 reclaimableSurplus = JBRedemptions.reclaimFrom({
+            surplus: surplus,
+            totalSupply: totalSupply,
+            tokensRedeemed: tokenAmountToRedeem,
+            redemptionRate: redemptionRate
+        });
+        emit log_named_uint("reclaimableSurplus", reclaimableSurplus);
+        uint256 derivedTokenAmountToRedeem = JBRedemptions.redeemedFrom({
+            surplus: surplus,
+            totalSupply: totalSupply,
+            reclaimableSurplus: reclaimableSurplus,
+            redemptionRate: redemptionRate
+        });
+
+        emit log_named_uint("derivedTokenAmountToRedeem", derivedTokenAmountToRedeem);
+
+               // Make sure the native token balance in terminal should be up to date (with 1 wei precision).
+        assertEq(
+            tokenAmountToRedeem, 
+            derivedTokenAmountToRedeem
+        );
+    }
 }
