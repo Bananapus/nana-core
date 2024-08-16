@@ -456,6 +456,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @param memo A memo to pass along to the emitted event.
     /// @return amountPaidOut The number of tokens that were sent to the beneficiary, as a fixed point number with
     /// the same amount of decimals as the terminal.
+    /// @return netAmountPaidOut The number of tokens that were sent to the beneficiary, excluding fees, as a fixed
+    /// point number with the same amount of decimals as the terminal.
     function useAllowanceOf(
         uint256 projectId,
         address token,
@@ -468,7 +470,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     )
         external
         override
-        returns (uint256 amountPaidOut)
+        returns (uint256 amountPaidOut, uint256 netAmountPaidOut)
     {
         // Enforce permissions.
         _requirePermissionFrom({
@@ -477,7 +479,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             permissionId: JBPermissionIds.USE_ALLOWANCE
         });
 
-        amountPaidOut = _useAllowanceOf(projectId, token, amount, currency, beneficiary, feeBeneficiary, memo);
+        (amountPaidOut, netAmountPaidOut) = _useAllowanceOf(projectId, token, amount, currency, beneficiary, feeBeneficiary, memo);
 
         // The amount being withdrawn must be at least as much as was expected.
         if (amountPaidOut < minTokensPaidOut) revert UNDER_MIN_TOKENS_PAID_OUT();
@@ -1231,6 +1233,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @param feeBeneficiary The address to send the tokens resulting from paying the fee.
     /// @param memo A memo to pass along to the emitted event.
     /// @return amountPaidOut The amount of tokens paid out.
+    /// @return netAmountPaidOut The amount of tokens paid out, excluding fees.
     function _useAllowanceOf(
         uint256 projectId,
         address token,
@@ -1241,7 +1244,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         string memory memo
     )
         internal
-        returns (uint256 amountPaidOut)
+        returns (uint256 amountPaidOut, uint256 netAmountPaidOut)
     {
         // Keep a reference to the ruleset.
         JBRuleset memory ruleset;
@@ -1257,7 +1260,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // Take a fee from the `amountPaidOut`, if needed.
         // The net amount is the final amount withdrawn after the fee has been taken.
         // slither-disable-next-line reentrancy-events
-        uint256 netAmountPaidOut = amountPaidOut
+        netAmountPaidOut = amountPaidOut
             - (
                 _isFeeless(_msgSender())
                     ? 0

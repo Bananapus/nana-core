@@ -76,5 +76,5 @@ interface IJBPayoutTerminal is IJBTerminal {
         string calldata memo
     )
         external
-        returns (uint256 netAmountPaidOut);
+        returns (uint256 amountPaidOut, uint256 netAmountPaidOut);
 }
