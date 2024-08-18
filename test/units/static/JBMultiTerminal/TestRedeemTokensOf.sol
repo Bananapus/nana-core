@@ -222,7 +222,7 @@ contract TestRedeemTokensOf_Local is JBMultiTerminalSetup {
         // executeProcessFee
         mockExpect(
             address(_terminal),
-            abi.encodeCall(IJBFeeTerminal.executeProcessFee, (_projectId, _mockToken, tax, _bene, _terminal)),
+            abi.encodeCall(JBMultiTerminal.executeProcessFee, (_projectId, _mockToken, tax, _bene, _terminal)),
             ""
         );
 

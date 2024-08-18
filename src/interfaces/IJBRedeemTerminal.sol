@@ -7,6 +7,13 @@ import {JBAfterRedeemRecordedContext} from "../structs/JBAfterRedeemRecordedCont
 
 /// @notice A terminal that can be redeemed from.
 interface IJBRedeemTerminal is IJBTerminal {
+    event HookAfterRecordRedeem(
+        IJBRedeemHook indexed hook,
+        JBAfterRedeemRecordedContext context,
+        uint256 specificationAmount,
+        uint256 fee,
+        address caller
+    );
     event RedeemTokens(
         uint256 indexed rulesetId,
         uint256 indexed rulesetCycleNumber,
@@ -17,14 +24,6 @@ interface IJBRedeemTerminal is IJBTerminal {
         uint256 redemptionRate,
         uint256 reclaimedAmount,
         bytes metadata,
-        address caller
-    );
-
-    event HookAfterRecordRedeem(
-        IJBRedeemHook indexed hook,
-        JBAfterRedeemRecordedContext context,
-        uint256 specificationAmount,
-        uint256 fee,
         address caller
     );
 

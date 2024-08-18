@@ -13,13 +13,9 @@ import {IJBTerminal} from "./IJBTerminal.sol";
 import {IJBTerminalStore} from "./IJBTerminalStore.sol";
 
 interface IJBMultiTerminal is IJBTerminal, IJBFeeTerminal, IJBRedeemTerminal, IJBPayoutTerminal, IJBPermitTerminal {
-    function STORE() external view returns (IJBTerminalStore);
-
-    function PROJECTS() external view returns (IJBProjects);
-
     function DIRECTORY() external view returns (IJBDirectory);
-
-    function SPLITS() external view returns (IJBSplits);
-
+    function PROJECTS() external view returns (IJBProjects);
     function RULESETS() external view returns (IJBRulesets);
+    function SPLITS() external view returns (IJBSplits);
+    function STORE() external view returns (IJBTerminalStore);
 }

@@ -22,7 +22,7 @@ contract TestExecuteProcessFee_Local is JBMultiTerminalSetup {
         // it will revert
 
         vm.expectRevert();
-        _terminal.executeProcessFee({
+        JBMultiTerminal(address(_terminal)).executeProcessFee({
             projectId: _projectId,
             token: _native,
             amount: _defaultAmount,
@@ -36,7 +36,7 @@ contract TestExecuteProcessFee_Local is JBMultiTerminalSetup {
 
         vm.prank(address(_terminal));
         vm.expectRevert(JBMultiTerminal.JBMultiTerminal_FeeTerminalNotFound.selector);
-        _terminal.executeProcessFee({
+        JBMultiTerminal(address(_terminal)).executeProcessFee({
             projectId: _projectId,
             token: _native,
             amount: _defaultAmount,
@@ -64,7 +64,7 @@ contract TestExecuteProcessFee_Local is JBMultiTerminalSetup {
         );
 
         vm.prank(address(_terminal));
-        _terminal.executeProcessFee({
+        JBMultiTerminal(address(_terminal)).executeProcessFee({
             projectId: _projectId,
             token: _usdc,
             amount: _defaultAmount,
@@ -102,7 +102,7 @@ contract TestExecuteProcessFee_Local is JBMultiTerminalSetup {
         );
 
         vm.prank(address(_terminal));
-        _terminal.executeProcessFee({
+        JBMultiTerminal(address(_terminal)).executeProcessFee({
             projectId: _projectId,
             token: _native,
             amount: _defaultAmount,
@@ -125,7 +125,7 @@ contract TestExecuteProcessFee_Local is JBMultiTerminalSetup {
         );
 
         vm.prank(address(_terminal));
-        _terminal.executeProcessFee({
+        JBMultiTerminal(address(_terminal)).executeProcessFee({
             projectId: _projectId,
             token: _native,
             amount: _defaultAmount,
@@ -163,7 +163,7 @@ contract TestExecuteProcessFee_Local is JBMultiTerminalSetup {
         );
 
         vm.prank(address(_terminal));
-        _terminal.executeProcessFee({
+        JBMultiTerminal(address(_terminal)).executeProcessFee({
             projectId: _projectId,
             token: _usdc,
             amount: _defaultAmount,
