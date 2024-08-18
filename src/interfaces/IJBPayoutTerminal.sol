@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {JBSplit} from "../structs/JBSplit.sol";
 import {IJBSplits} from "./IJBSplits.sol";
 import {IJBTerminal} from "./IJBTerminal.sol";
+import {JBSplit} from "../structs/JBSplit.sol";
 
 /// @notice A terminal that can send payouts.
 interface IJBPayoutTerminal is IJBTerminal {

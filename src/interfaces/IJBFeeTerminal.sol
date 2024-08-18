@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {JBFee} from "../structs/JBFee.sol";
 import {IJBFeelessAddresses} from "./IJBFeelessAddresses.sol";
 import {IJBTerminal} from "./IJBTerminal.sol";
+import {JBFee} from "../structs/JBFee.sol";
 
 /// @notice A terminal that can process and hold fees.
 interface IJBFeeTerminal is IJBTerminal {

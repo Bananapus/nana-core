@@ -3,14 +3,6 @@ pragma solidity ^0.8.0;
 
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
-import {JBApprovalStatus} from "./../enums/JBApprovalStatus.sol";
-import {JBRuleset} from "./../structs/JBRuleset.sol";
-import {JBRulesetConfig} from "./../structs/JBRulesetConfig.sol";
-import {JBRulesetMetadata} from "./../structs/JBRulesetMetadata.sol";
-import {JBRulesetWithMetadata} from "./../structs/JBRulesetWithMetadata.sol";
-import {JBSplit} from "./../structs/JBSplit.sol";
-import {JBSplitGroup} from "./../structs/JBSplitGroup.sol";
-import {JBTerminalConfig} from "./../structs/JBTerminalConfig.sol";
 import {IJBDirectory} from "./IJBDirectory.sol";
 import {IJBDirectoryAccessControl} from "./IJBDirectoryAccessControl.sol";
 import {IJBFundAccessLimits} from "./IJBFundAccessLimits.sol";
@@ -23,6 +15,14 @@ import {IJBSplits} from "./IJBSplits.sol";
 import {IJBTerminal} from "./IJBTerminal.sol";
 import {IJBToken} from "./IJBToken.sol";
 import {IJBTokens} from "./IJBTokens.sol";
+import {JBApprovalStatus} from "./../enums/JBApprovalStatus.sol";
+import {JBRuleset} from "./../structs/JBRuleset.sol";
+import {JBRulesetConfig} from "./../structs/JBRulesetConfig.sol";
+import {JBRulesetMetadata} from "./../structs/JBRulesetMetadata.sol";
+import {JBRulesetWithMetadata} from "./../structs/JBRulesetWithMetadata.sol";
+import {JBSplit} from "./../structs/JBSplit.sol";
+import {JBSplitGroup} from "./../structs/JBSplitGroup.sol";
+import {JBTerminalConfig} from "./../structs/JBTerminalConfig.sol";
 
 interface IJBController is IERC165, IJBProjectUriRegistry, IJBDirectoryAccessControl {
     event LaunchProject(uint256 rulesetId, uint256 projectId, string metadata, string memo, address caller);
