@@ -14,6 +14,7 @@ import {ERC165, IERC165} from "@openzeppelin/contracts/utils/introspection/ERC16
 import {JBPermissionIds} from "@bananapus/permission-ids/src/JBPermissionIds.sol";
 import {JBController} from "../../src/JBController.sol";
 import {JBDirectory} from "../../src/JBDirectory.sol";
+import {JBControlled} from "../../src/abstract/JBControlled.sol";
 import {JBTerminalStore} from "../../src/JBTerminalStore.sol";
 import {JBFeelessAddresses} from "../../src/JBFeelessAddresses.sol";
 import {JBFundAccessLimits} from "../../src/JBFundAccessLimits.sol";

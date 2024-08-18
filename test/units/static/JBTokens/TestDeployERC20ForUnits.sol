@@ -27,14 +27,14 @@ contract TestDeployERC20ForUnits_Local is JBTokensSetup {
     function test_WhenNameLengthEQZero() external whenCallerIsController {
         // it will revert EMPTY_NAME
 
-        vm.expectRevert(abi.encodeWithSignature("EMPTY_NAME()"));
+        vm.expectRevert(JBTokens.JBTokens_EmptyName.selector);
         _tokens.deployERC20For({projectId: _projectId, name: "", symbol: _symbol, salt: bytes32(0)});
     }
 
     function test_WhenSymbolLengthEQZero() external whenCallerIsController {
         // it will revert EMPTY_SYMBOL
 
-        vm.expectRevert(abi.encodeWithSignature("EMPTY_SYMBOL()"));
+        vm.expectRevert(JBTokens.JBTokens_EmptySymbol.selector);
         _tokens.deployERC20For({projectId: _projectId, name: _name, symbol: "", salt: bytes32(0)});
     }
 
@@ -51,7 +51,7 @@ contract TestDeployERC20ForUnits_Local is JBTokensSetup {
         IJBToken _storedToken = _tokens.tokenOf(_projectId);
         assertEq(address(_storedToken), address(_token));
 
-        vm.expectRevert(abi.encodeWithSignature("PROJECT_ALREADY_HAS_TOKEN()"));
+        vm.expectRevert(JBTokens.JBTokens_ProjectAlreadyHasToken.selector);
         _tokens.deployERC20For({projectId: _projectId, name: _name, symbol: _symbol, salt: bytes32(0)});
     }
 

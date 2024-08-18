@@ -80,7 +80,7 @@ contract TestMintFor_Local is JBTokensSetup {
         // mock call to token totalSupply()
         mockExpect(address(_token), abi.encodeCall(IJBToken.totalSupply, ()), abi.encode(_overflowedSupply));
 
-        vm.expectRevert(abi.encodeWithSignature("OVERFLOW_ALERT()"));
+        vm.expectRevert(JBTokens.JBTokens_OverflowAlert.selector);
         _tokens.mintFor(_holder, _projectId, _defaultAmount);
     }
 
@@ -90,7 +90,7 @@ contract TestMintFor_Local is JBTokensSetup {
         // mock call to JBDirectory controllerOf
         mockExpect(address(directory), abi.encodeCall(IJBDirectory.controllerOf, (_projectId)), abi.encode(address(0)));
 
-        vm.expectRevert(abi.encodeWithSignature("CONTROLLER_UNAUTHORIZED()"));
+        vm.expectRevert(JBControlled.JBControlled_ControllerUnauthorized.selector);
         _tokens.mintFor(_holder, _projectId, _defaultAmount);
     }
 }

@@ -112,7 +112,7 @@ contract TestTokenFlow_Local is TestBaseWorkflow {
         if (_burnAmount == 0) {
             vm.expectRevert(abi.encodeWithSignature("NO_BURNABLE_TOKENS()"));
         } else if (_burnAmount > _expectedTokenBalance) {
-            vm.expectRevert(abi.encodeWithSignature("INSUFFICIENT_FUNDS()"));
+            vm.expectRevert(JBTokens.JBTokens_InsufficientFunds.selector);
         } else {
             _expectedTokenBalance = _expectedTokenBalance - _burnAmount;
         }
@@ -151,7 +151,7 @@ contract TestTokenFlow_Local is TestBaseWorkflow {
         _controller.deployERC20For({projectId: _projectId, name: "TestName", symbol: "TestSymbol", salt: bytes32(0)});
 
         // Mint claimed tokens to beneficiary: since this is 1,000 over `uint(208)` it will revert.
-        vm.expectRevert(abi.encodeWithSignature("OVERFLOW_ALERT()"));
+        vm.expectRevert(JBTokens.JBTokens_OverflowAlert.selector);
 
         _controller.mintTokensOf({
             projectId: _projectId,

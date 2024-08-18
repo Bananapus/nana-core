@@ -26,7 +26,7 @@ contract TestSetTokenFor_Local is JBTokensSetup {
     function test_WhenTokenIsTheZeroAddress() external whenCallerIsControllerOfProject {
         // it will revert EMPTY_TOKEN
 
-        vm.expectRevert(abi.encodeWithSignature("EMPTY_TOKEN()"));
+        vm.expectRevert(JBTokens.JBTokens_EmptyToken.selector);
         _tokens.setTokenFor(_projectId, IJBToken(address(0)));
     }
 
@@ -39,7 +39,7 @@ contract TestSetTokenFor_Local is JBTokensSetup {
         // Set storage
         vm.store(address(_tokens), tokenOfSlot, bytes32(uint256(uint160(address(_token)))));
 
-        vm.expectRevert(abi.encodeWithSignature("TOKEN_ALREADY_SET()"));
+        vm.expectRevert(JBTokens.JBTokens_TokenAlreadySet.selector);
         _tokens.setTokenFor(_projectId, IJBToken(address(_token)));
     }
 
@@ -52,7 +52,7 @@ contract TestSetTokenFor_Local is JBTokensSetup {
         // Set storage
         vm.store(address(_tokens), projectIdOfSlot, bytes32(uint256(uint160(address(_token)))));
 
-        vm.expectRevert(abi.encodeWithSignature("TOKEN_ALREADY_SET()"));
+        vm.expectRevert(JBTokens.JBTokens_TokenAlreadySet.selector);
         _tokens.setTokenFor(_projectId, IJBToken(address(_token)));
     }
 
@@ -62,7 +62,7 @@ contract TestSetTokenFor_Local is JBTokensSetup {
         //mock call to token decimals
         mockExpect(address(_token), abi.encodeCall(IJBToken.decimals, ()), abi.encode(6));
 
-        vm.expectRevert(abi.encodeWithSignature("TOKENS_MUST_HAVE_18_DECIMALS()"));
+        vm.expectRevert(JBTokens.JBTokens_TokensMustHave18Decimals.selector);
         _tokens.setTokenFor(_projectId, IJBToken(address(_token)));
     }
 

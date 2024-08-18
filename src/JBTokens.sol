@@ -20,17 +20,17 @@ contract JBTokens is JBControlled, IJBTokens {
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
 
-    error TOKEN_ALREADY_SET();
-    error EMPTY_NAME();
-    error EMPTY_SYMBOL();
-    error EMPTY_TOKEN();
-    error INSUFFICIENT_FUNDS();
-    error INSUFFICIENT_CREDITS();
-    error PROJECT_ALREADY_HAS_TOKEN();
-    error RECIPIENT_ZERO_ADDRESS();
-    error TOKEN_NOT_FOUND();
-    error TOKENS_MUST_HAVE_18_DECIMALS();
-    error OVERFLOW_ALERT();
+    error JBTokens_TokenAlreadySet();
+    error JBTokens_EmptyName();
+    error JBTokens_EmptySymbol();
+    error JBTokens_EmptyToken();
+    error JBTokens_InsufficientFunds();
+    error JBTokens_InsufficientCredits();
+    error JBTokens_ProjectAlreadyHasToken();
+    error JBTokens_RecipientZeroAddress();
+    error JBTokens_TokenNotFound();
+    error JBTokens_TokensMustHave18Decimals();
+    error JBTokens_OverflowAlert();
 
     //*********************************************************************//
     // --------------- public immutable stored properties ---------------- //
@@ -136,13 +136,13 @@ contract JBTokens is JBControlled, IJBTokens {
         returns (IJBToken token)
     {
         // There must be a name.
-        if (bytes(name).length == 0) revert EMPTY_NAME();
+        if (bytes(name).length == 0) revert JBTokens_EmptyName();
 
         // There must be a symbol.
-        if (bytes(symbol).length == 0) revert EMPTY_SYMBOL();
+        if (bytes(symbol).length == 0) revert JBTokens_EmptySymbol();
 
         // The project shouldn't already have a token.
-        if (tokenOf[projectId] != IJBToken(address(0))) revert PROJECT_ALREADY_HAS_TOKEN();
+        if (tokenOf[projectId] != IJBToken(address(0))) revert JBTokens_ProjectAlreadyHasToken();
 
         token = salt == bytes32(0)
             ? IJBToken(Clones.clone(address(TOKEN)))
@@ -166,16 +166,16 @@ contract JBTokens is JBControlled, IJBTokens {
     /// @param token The new token's address.
     function setTokenFor(uint256 projectId, IJBToken token) external override onlyControllerOf(projectId) {
         // Can't set to the zero address.
-        if (token == IJBToken(address(0))) revert EMPTY_TOKEN();
+        if (token == IJBToken(address(0))) revert JBTokens_EmptyToken();
 
         // Can't set a token if the project is already associated with another token.
-        if (tokenOf[projectId] != IJBToken(address(0))) revert TOKEN_ALREADY_SET();
+        if (tokenOf[projectId] != IJBToken(address(0))) revert JBTokens_TokenAlreadySet();
 
         // Can't set a token if it's already associated with another project.
-        if (projectIdOf[token] != 0) revert TOKEN_ALREADY_SET();
+        if (projectIdOf[token] != 0) revert JBTokens_TokenAlreadySet();
 
         // Can't change to a token that doesn't use 18 decimals.
-        if (token.decimals() != 18) revert TOKENS_MUST_HAVE_18_DECIMALS();
+        if (token.decimals() != 18) revert JBTokens_TokensMustHave18Decimals();
 
         // Store the new token.
         tokenOf[projectId] = token;
@@ -209,7 +209,7 @@ contract JBTokens is JBControlled, IJBTokens {
         }
 
         // The total supply can't exceed the maximum value storable in a uint208.
-        if (totalSupplyOf(projectId) > type(uint208).max) revert OVERFLOW_ALERT();
+        if (totalSupplyOf(projectId) > type(uint208).max) revert JBTokens_OverflowAlert();
 
         emit Mint(holder, projectId, amount, shouldClaimTokens, msg.sender);
     }
@@ -239,7 +239,7 @@ contract JBTokens is JBControlled, IJBTokens {
         uint256 tokenBalance = token == IJBToken(address(0)) ? 0 : token.balanceOf(holder);
 
         // There must be enough tokens to burn across the holder's combined token and credit balance.
-        if (amount > tokenBalance + creditBalance) revert INSUFFICIENT_FUNDS();
+        if (amount > tokenBalance + creditBalance) revert JBTokens_InsufficientFunds();
 
         // The amount of tokens to burn.
         uint256 tokensToBurn;
@@ -290,13 +290,13 @@ contract JBTokens is JBControlled, IJBTokens {
         IJBToken token = tokenOf[projectId];
 
         // The project must have a token contract attached.
-        if (token == IJBToken(address(0))) revert TOKEN_NOT_FOUND();
+        if (token == IJBToken(address(0))) revert JBTokens_TokenNotFound();
 
         // Get a reference to the amount of credits the holder has.
         uint256 creditBalance = creditBalanceOf[holder][projectId];
 
         // There must be enough credits to claim.
-        if (creditBalance < amount) revert INSUFFICIENT_CREDITS();
+        if (creditBalance < amount) revert JBTokens_InsufficientCredits();
 
         unchecked {
             // Subtract the claim amount from the holder's credit balance.
@@ -329,13 +329,13 @@ contract JBTokens is JBControlled, IJBTokens {
         onlyControllerOf(projectId)
     {
         // Can't transfer to the zero address.
-        if (recipient == address(0)) revert RECIPIENT_ZERO_ADDRESS();
+        if (recipient == address(0)) revert JBTokens_RecipientZeroAddress();
 
         // Get a reference to the holder's unclaimed project token balance.
         uint256 creditBalance = creditBalanceOf[holder][projectId];
 
         // The holder must have enough unclaimed tokens to transfer.
-        if (amount > creditBalance) revert INSUFFICIENT_CREDITS();
+        if (amount > creditBalance) revert JBTokens_InsufficientCredits();
 
         // Subtract from the holder's unclaimed token balance.
         unchecked {

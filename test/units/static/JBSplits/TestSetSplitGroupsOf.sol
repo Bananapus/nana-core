@@ -40,7 +40,7 @@ contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
         mockExpect(address(directory), _controllerCall, _return);
 
         // not controller so revert
-        vm.expectRevert(abi.encodeWithSignature("CONTROLLER_UNAUTHORIZED()"));
+        vm.expectRevert(JBControlled.JBControlled_ControllerUnauthorized.selector);
         _splits.setSplitGroupsOf(_projectId, _rulesetId, _splitsGroup);
     }
 

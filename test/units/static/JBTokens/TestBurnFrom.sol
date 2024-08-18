@@ -27,7 +27,7 @@ contract TestBurnFrom_Local is JBTokensSetup {
     function test_GivenTheCallingAmountGTTokenbalancePlusCreditbalanceOfHolder() external whenCallerIsController {
         // it will revert INSUFFICIENT_FUNDS
 
-        vm.expectRevert(abi.encodeWithSignature("INSUFFICIENT_FUNDS()"));
+        vm.expectRevert(JBTokens.JBTokens_InsufficientFunds.selector);
         _tokens.burnFrom(address(this), _projectId, _defaultAmount);
     }
 
@@ -98,7 +98,7 @@ contract TestBurnFrom_Local is JBTokensSetup {
             abi.encode(address(0))
         );
 
-        vm.expectRevert(abi.encodeWithSignature("CONTROLLER_UNAUTHORIZED()"));
+        vm.expectRevert(JBControlled.JBControlled_ControllerUnauthorized.selector);
         _tokens.burnFrom(address(this), _projectId, _defaultAmount);
     }
 }

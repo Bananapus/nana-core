@@ -26,14 +26,14 @@ contract TestTransferCreditsFrom_Local is JBTokensSetup {
     function test_GivenRecipientEQZeroAddress() external whenCallerIsController {
         // it will revert RECIPIENT_ZERO_ADDRESS
 
-        vm.expectRevert(abi.encodeWithSignature("RECIPIENT_ZERO_ADDRESS()"));
+        vm.expectRevert(JBTokens.JBTokens_RecipientZeroAddress.selector);
         _tokens.transferCreditsFrom(_holder, _projectId, address(0), _defaultAmount);
     }
 
     function test_GivenCallingAmountGTCreditBalance() external whenCallerIsController {
         // it will revert INSUFFICIENT_CREDITS
 
-        vm.expectRevert(abi.encodeWithSignature("INSUFFICIENT_CREDITS()"));
+        vm.expectRevert(JBTokens.JBTokens_InsufficientCredits.selector);
         _tokens.transferCreditsFrom(_holder, _projectId, _recipient, _defaultAmount);
     }
 
