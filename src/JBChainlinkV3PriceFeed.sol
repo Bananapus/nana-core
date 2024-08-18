@@ -15,9 +15,9 @@ contract JBChainlinkV3PriceFeed is IJBPriceFeed {
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
 
-    error STALE_PRICE();
-    error INCOMPLETE_ROUND();
-    error NEGATIVE_PRICE();
+    error JBChainlinkV3PriceFeed_StalePrice();
+    error JBChainlinkV3PriceFeed_IncompleteRound();
+    error JBChainlinkV3PriceFeed_NegativePrice();
 
     //*********************************************************************//
     // ---------------- public stored immutable properties --------------- //
@@ -34,6 +34,17 @@ contract JBChainlinkV3PriceFeed is IJBPriceFeed {
     uint256 public immutable THRESHOLD;
 
     //*********************************************************************//
+    // -------------------------- constructor ---------------------------- //
+    //*********************************************************************//
+
+    /// @param feed The Chainlink feed to report prices from.
+    /// @param threshold How many blocks old a price update may be.
+    constructor(AggregatorV3Interface feed, uint256 threshold) {
+        FEED = feed;
+        THRESHOLD = threshold;
+    }
+
+    //*********************************************************************//
     // ------------------------- external views -------------------------- //
     //*********************************************************************//
 
@@ -46,30 +57,19 @@ contract JBChainlinkV3PriceFeed is IJBPriceFeed {
         (, int256 price,, uint256 updatedAt,) = FEED.latestRoundData();
 
         // Make sure the price's update threshold is met.
-        if (block.timestamp - updatedAt > THRESHOLD) revert STALE_PRICE();
+        if (block.timestamp - updatedAt > THRESHOLD) revert JBChainlinkV3PriceFeed_StalePrice();
 
         // Make sure the round is finished.
         // slither-disable-next-line incorrect-equality
-        if (updatedAt == 0) revert INCOMPLETE_ROUND();
+        if (updatedAt == 0) revert JBChainlinkV3PriceFeed_IncompleteRound();
 
         // Make sure the price is positive.
-        if (price <= 0) revert NEGATIVE_PRICE();
+        if (price <= 0) revert JBChainlinkV3PriceFeed_NegativePrice();
 
         // Get a reference to the number of decimals the feed uses.
         uint256 feedDecimals = FEED.decimals();
 
         // Return the price, adjusted to the specified number of decimals.
         return uint256(price).adjustDecimals({decimals: feedDecimals, targetDecimals: decimals});
-    }
-
-    //*********************************************************************//
-    // -------------------------- constructor ---------------------------- //
-    //*********************************************************************//
-
-    /// @param feed The Chainlink feed to report prices from.
-    /// @param threshold How many blocks old a price update may be.
-    constructor(AggregatorV3Interface feed, uint256 threshold) {
-        FEED = feed;
-        THRESHOLD = threshold;
     }
 }
