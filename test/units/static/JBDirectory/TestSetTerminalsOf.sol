@@ -68,7 +68,7 @@ contract TestSetTerminalsOf_Local is JBDirectorySetup {
         IJBTerminal[] memory _terminals = new IJBTerminal[](1);
         _terminals[0] = _terminalToAdd;
 
-        vm.expectRevert(abi.encodeWithSignature("SET_TERMINALS_NOT_ALLOWED()"));
+        vm.expectRevert(JBDirectory.JBDirectory_SetTerminalsNotAllowed.selector);
         _directory.setTerminalsOf(1, _terminals);
     }
 
@@ -103,7 +103,7 @@ contract TestSetTerminalsOf_Local is JBDirectorySetup {
         _terminals[0] = _terminalToAdd;
         _terminals[1] = _terminalToAdd;
 
-        vm.expectRevert(abi.encodeWithSignature("DUPLICATE_TERMINALS()"));
+        vm.expectRevert(JBDirectory.JBDirectory_DuplicateTerminals.selector);
         _directory.setTerminalsOf(1, _terminals);
     }
 

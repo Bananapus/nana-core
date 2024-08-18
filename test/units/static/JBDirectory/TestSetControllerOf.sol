@@ -87,7 +87,7 @@ contract TestSetControllerOf_Local is JBDirectorySetup {
 
         mockExpect(address(projects), _countCall, _countReturn);
 
-        vm.expectRevert(abi.encodeWithSignature("INVALID_PROJECT_ID_IN_DIRECTORY()"));
+        vm.expectRevert(JBDirectory.JBDirectory_InvalidProjectIdInDirectory.selector);
         _directory.setControllerOf(1, IERC165(address(this)));
     }
 
@@ -98,7 +98,7 @@ contract TestSetControllerOf_Local is JBDirectorySetup {
         givenControllerIsAlreadySet
     {
         // it should revert
-        vm.expectRevert(abi.encodeWithSignature("SET_CONTROLLER_NOT_ALLOWED()"));
+        vm.expectRevert(JBDirectory.JBDirectory_SetControllerNotAllowed.selector);
         _directory.setControllerOf(1, IERC165(address(this)));
     }
 

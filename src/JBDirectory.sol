@@ -10,8 +10,8 @@ import {IJBDirectory} from "./interfaces/IJBDirectory.sol";
 import {IJBDirectoryAccessControl} from "./interfaces/IJBDirectoryAccessControl.sol";
 import {IJBMigratable} from "./interfaces/IJBMigratable.sol";
 import {IJBPermissions} from "./interfaces/IJBPermissions.sol";
-import {IJBTerminal} from "./interfaces/IJBTerminal.sol";
 import {IJBProjects} from "./interfaces/IJBProjects.sol";
+import {IJBTerminal} from "./interfaces/IJBTerminal.sol";
 
 /// @notice `JBDirectory` tracks the terminals and the controller used by each project.
 /// @dev Tracks which `IJBTerminal`s each project is currently accepting funds through, and which `IJBController` is
@@ -21,11 +21,11 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
 
-    error DUPLICATE_TERMINALS();
-    error INVALID_PROJECT_ID_IN_DIRECTORY();
-    error SET_CONTROLLER_NOT_ALLOWED();
-    error SET_TERMINALS_NOT_ALLOWED();
-    error TOKEN_NOT_ACCEPTED();
+    error JBDirectory_DuplicateTerminals();
+    error JBDirectory_InvalidProjectIdInDirectory();
+    error JBDirectory_SetControllerNotAllowed();
+    error JBDirectory_SetTerminalsNotAllowed();
+    error JBDirectory_TokenNotAccepted();
 
     //*********************************************************************//
     // ---------------- public immutable stored properties --------------- //
@@ -60,6 +60,25 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
     /// @custom:param projectId The ID of the project to get the primary terminal of.
     /// @custom:param token The token that the terminal accepts.
     mapping(uint256 projectId => mapping(address token => IJBTerminal)) internal _primaryTerminalOf;
+
+    //*********************************************************************//
+    // -------------------------- constructor ---------------------------- //
+    //*********************************************************************//
+
+    /// @param permissions A contract storing permissions.
+    /// @param projects A contract which mints ERC-721s that represent project ownership and transfers.
+    /// @param owner The address that will own the contract.
+    constructor(
+        IJBPermissions permissions,
+        IJBProjects projects,
+        address owner
+    )
+        JBPermissioned(permissions)
+        Ownable(owner)
+    {
+        PROJECTS = projects;
+    }
+
 
     //*********************************************************************//
     // ------------------------- external views -------------------------- //
@@ -129,24 +148,6 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
     }
 
     //*********************************************************************//
-    // -------------------------- constructor ---------------------------- //
-    //*********************************************************************//
-
-    /// @param permissions A contract storing permissions.
-    /// @param projects A contract which mints ERC-721s that represent project ownership and transfers.
-    /// @param owner The address that will own the contract.
-    constructor(
-        IJBPermissions permissions,
-        IJBProjects projects,
-        address owner
-    )
-        JBPermissioned(permissions)
-        Ownable(owner)
-    {
-        PROJECTS = projects;
-    }
-
-    //*********************************************************************//
     // ---------------------- external transactions ---------------------- //
     //*********************************************************************//
 
@@ -166,8 +167,9 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
             permissionId: JBPermissionIds.SET_CONTROLLER,
             alsoGrantAccessIf: (isAllowedToSetFirstController[msg.sender] && address(controllerOf[projectId]) == address(0))
         });
+
         // The project must exist.
-        if (PROJECTS.count() < projectId) revert INVALID_PROJECT_ID_IN_DIRECTORY();
+        if (PROJECTS.count() < projectId) revert JBDirectory_InvalidProjectIdInDirectory();
 
         // Keep a reference to the current controller.
         IERC165 currentController = controllerOf[projectId];
@@ -183,7 +185,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
 
         // If setting the controller is not allowed, revert.
         if (!allowSetController) {
-            revert SET_CONTROLLER_NOT_ALLOWED();
+            revert JBDirectory_SetControllerNotAllowed();
         }
 
         // Set the new controller.
@@ -224,7 +226,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
 
         // If the caller is not the project's controller, the project's ruleset must allow setting terminals.
         if (msg.sender != address(controllerOf[projectId]) && !allowSetTerminals) {
-            revert SET_TERMINALS_NOT_ALLOWED();
+            revert JBDirectory_SetTerminalsNotAllowed();
         }
 
         // Set the stored terminals for the project.
@@ -237,7 +239,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
         if (numberOfTerminals > 1) {
             for (uint256 i; i < numberOfTerminals; i++) {
                 for (uint256 j = i + 1; j < numberOfTerminals; j++) {
-                    if (terminals[i] == terminals[j]) revert DUPLICATE_TERMINALS();
+                    if (terminals[i] == terminals[j]) revert JBDirectory_DuplicateTerminals();
                 }
             }
         }
@@ -262,7 +264,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
 
         // If the terminal doesn't accept the token, revert.
         if (terminal.accountingContextForTokenOf(projectId, token).token == address(0)) {
-            revert TOKEN_NOT_ACCEPTED();
+            revert JBDirectory_TokenNotAccepted();
         }
 
         // If the terminal hasn't already been added to the project, add it.
@@ -311,7 +313,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
 
         // If the caller is not the project's controller, the project's ruleset must allow setting terminals.
         if (!allowSetTerminals) {
-            revert SET_TERMINALS_NOT_ALLOWED();
+            revert JBDirectory_SetTerminalsNotAllowed();
         }
 
         // Add the new terminal.
