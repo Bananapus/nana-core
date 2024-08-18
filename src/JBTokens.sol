@@ -35,7 +35,8 @@ contract JBTokens is JBControlled, IJBTokens {
     //*********************************************************************//
     // --------------- public immutable stored properties ---------------- //
     //*********************************************************************//
-
+    
+    /// @notice A reference to the token implementation that'll be cloned as projects deploy their own tokens.
     IJBToken public immutable TOKEN;
 
     //*********************************************************************//

@@ -402,10 +402,10 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
 
         // Revert if there's no surplus allowance.
         if (_nativeCurrencySurplusAllowance == 0) {
-            vm.expectRevert(abi.encodeWithSignature("INADEQUATE_CONTROLLER_ALLOWANCE()"));
+            vm.expectRevert(JBTerminalStore.JBTerminalStore_InadequateControllerAllowance.selector);
             // Revert if there's no surplus, or if too much is being withdrawn.
         } else if (_nativeCurrencySurplusAllowance + _nativeCurrencyPayoutLimit > _nativePayAmount) {
-            vm.expectRevert(abi.encodeWithSignature("INADEQUATE_TERMINAL_STORE_BALANCE()"));
+            vm.expectRevert(JBTerminalStore.JBTerminalStore_InadequateTerminalStoreBalance.selector);
         }
 
         // Use the full surplus allowance.
@@ -455,11 +455,11 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
 
         // Revert if the payout limit is greater than the balance.
         if (_nativeCurrencyPayoutLimit > _nativePayAmount) {
-            vm.expectRevert(abi.encodeWithSignature("INADEQUATE_TERMINAL_STORE_BALANCE()"));
+            vm.expectRevert(JBTerminalStore.JBTerminalStore_InadequateTerminalStoreBalance.selector);
 
             // Revert if there's no payout limit.
         } else if (_nativeCurrencyPayoutLimit == 0) {
-            vm.expectRevert(abi.encodeWithSignature("PAYOUT_LIMIT_EXCEEDED()"));
+            vm.expectRevert(JBTerminalStore.JBTerminalStore_PayoutLimitExceeded.selector);
         }
 
         // Pay out native tokens up to the payout limit. Since `splits[]` is empty, everything goes to project owner.
@@ -674,10 +674,10 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
 
         // Revert if there's no surplus allowance.
         if (_nativeCurrencySurplusAllowance == 0) {
-            vm.expectRevert(abi.encodeWithSignature("INADEQUATE_CONTROLLER_ALLOWANCE()"));
+            vm.expectRevert(JBTerminalStore.JBTerminalStore_InadequateControllerAllowance.selector);
             // Revert if there's no surplus, or if too much is being withdrawn.
         } else if (_nativeCurrencySurplusAllowance + _nativeCurrencyPayoutLimit > _nativePayAmount) {
-            vm.expectRevert(abi.encodeWithSignature("INADEQUATE_TERMINAL_STORE_BALANCE()"));
+            vm.expectRevert(JBTerminalStore.JBTerminalStore_InadequateTerminalStoreBalance.selector);
         }
 
         // Use the full surplus allowance.
@@ -721,11 +721,11 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
 
         // Revert if the payout limit is greater than the balance.
         if (_nativeCurrencyPayoutLimit > _nativePayAmount) {
-            vm.expectRevert(abi.encodeWithSignature("INADEQUATE_TERMINAL_STORE_BALANCE()"));
+            vm.expectRevert(JBTerminalStore.JBTerminalStore_InadequateTerminalStoreBalance.selector);
 
             // Revert if there's no payout limit.
         } else if (_nativeCurrencyPayoutLimit == 0) {
-            vm.expectRevert(abi.encodeWithSignature("PAYOUT_LIMIT_EXCEEDED()"));
+            vm.expectRevert(JBTerminalStore.JBTerminalStore_PayoutLimitExceeded.selector);
         }
 
         // Pay out native tokens up to the payout limit. Since `splits[]` is empty, everything goes to project owner.
@@ -916,10 +916,10 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
 
         // Revert if there's no surplus allowance.
         if (_nativeCurrencySurplusAllowance == 0) {
-            vm.expectRevert(abi.encodeWithSignature("INADEQUATE_CONTROLLER_ALLOWANCE()"));
+            vm.expectRevert(JBTerminalStore.JBTerminalStore_InadequateControllerAllowance.selector);
             // Revert if there's no surplus, or if too much is being withdrawn.
         } else if (_nativeCurrencySurplusAllowance + _nativeCurrencyPayoutLimit > _nativePayAmount) {
-            vm.expectRevert(abi.encodeWithSignature("INADEQUATE_TERMINAL_STORE_BALANCE()"));
+            vm.expectRevert(JBTerminalStore.JBTerminalStore_InadequateTerminalStoreBalance.selector);
         }
 
         // Use the full surplus allowance.
@@ -963,11 +963,11 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
 
         // Revert if the payout limit is greater than the balance.
         if (_nativeCurrencyPayoutLimit > _nativePayAmount) {
-            vm.expectRevert(abi.encodeWithSignature("INADEQUATE_TERMINAL_STORE_BALANCE()"));
+            vm.expectRevert(JBTerminalStore.JBTerminalStore_InadequateTerminalStoreBalance.selector);
 
             // Revert if there's no payout limit.
         } else if (_nativeCurrencyPayoutLimit == 0) {
-            vm.expectRevert(abi.encodeWithSignature("PAYOUT_LIMIT_EXCEEDED()"));
+            vm.expectRevert(JBTerminalStore.JBTerminalStore_PayoutLimitExceeded.selector);
         }
 
         // Pay out native tokens up to the payout limit. Since `splits[]` is empty, everything goes to project owner.
@@ -1244,12 +1244,12 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
 
         // Revert if there's no native token allowance.
         if (_nativeCurrencySurplusAllowance == 0) {
-            vm.expectRevert(abi.encodeWithSignature("INADEQUATE_CONTROLLER_ALLOWANCE()"));
+            vm.expectRevert(JBTerminalStore.JBTerminalStore_InadequateControllerAllowance.selector);
         } else if (
             _nativeCurrencySurplusAllowance + _nativeCurrencyPayoutLimit + _toNative(_usdCurrencyPayoutLimit)
                 > _nativePayAmount
         ) {
-            vm.expectRevert(abi.encodeWithSignature("INADEQUATE_TERMINAL_STORE_BALANCE()"));
+            vm.expectRevert(JBTerminalStore.JBTerminalStore_InadequateTerminalStoreBalance.selector);
         }
 
         // Use the full native token surplus allowance.
@@ -1303,7 +1303,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
 
         // Revert if there's no native token allowance.
         if (_usdCurrencySurplusAllowance == 0) {
-            vm.expectRevert(abi.encodeWithSignature("INADEQUATE_CONTROLLER_ALLOWANCE()"));
+            vm.expectRevert(JBTerminalStore.JBTerminalStore_InadequateControllerAllowance.selector);
             // revert if the USD surplus allowance resolved to native tokens is greater than 0, and there is sufficient
             // surplus to pull from including what was already pulled from.
         } else if (
@@ -1311,7 +1311,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                 && _toNative(_usdCurrencySurplusAllowance + _usdCurrencyPayoutLimit) + _nativeCurrencyPayoutLimit
                     + _nativeCurrencySurplusAllowance > _nativePayAmount
         ) {
-            vm.expectRevert(abi.encodeWithSignature("INADEQUATE_TERMINAL_STORE_BALANCE()"));
+            vm.expectRevert(JBTerminalStore.JBTerminalStore_InadequateTerminalStoreBalance.selector);
         }
 
         // Use the full native token surplus allowance.
@@ -1370,10 +1370,10 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
         {
             // Revert if the payout limit is greater than the balance.
             if (_nativeCurrencyPayoutLimit > _nativePayAmount) {
-                vm.expectRevert(abi.encodeWithSignature("INADEQUATE_TERMINAL_STORE_BALANCE()"));
+                vm.expectRevert(JBTerminalStore.JBTerminalStore_InadequateTerminalStoreBalance.selector);
                 // Revert if there's no payout limit.
             } else if (_nativeCurrencyPayoutLimit == 0) {
-                vm.expectRevert(abi.encodeWithSignature("PAYOUT_LIMIT_EXCEEDED()"));
+                vm.expectRevert(JBTerminalStore.JBTerminalStore_PayoutLimitExceeded.selector);
             }
 
             // Pay out native tokens up to the payout limit. Since `splits[]` is empty, everything goes to project
@@ -1427,14 +1427,14 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                 _nativeCurrencyPayoutLimit <= _nativePayAmount
                     && _toNative(_usdCurrencyPayoutLimit) + _nativeCurrencyPayoutLimit > _nativePayAmount
             ) {
-                vm.expectRevert(abi.encodeWithSignature("INADEQUATE_TERMINAL_STORE_BALANCE()"));
+                vm.expectRevert(JBTerminalStore.JBTerminalStore_InadequateTerminalStoreBalance.selector);
             } else if (
                 _nativeCurrencyPayoutLimit > _nativePayAmount && _toNative(_usdCurrencyPayoutLimit) > _nativePayAmount
             ) {
-                vm.expectRevert(abi.encodeWithSignature("INADEQUATE_TERMINAL_STORE_BALANCE()"));
+                vm.expectRevert(JBTerminalStore.JBTerminalStore_InadequateTerminalStoreBalance.selector);
                 // Revert if there's no payout limit.
             } else if (_usdCurrencyPayoutLimit == 0) {
-                vm.expectRevert(abi.encodeWithSignature("PAYOUT_LIMIT_EXCEEDED()"));
+                vm.expectRevert(JBTerminalStore.JBTerminalStore_PayoutLimitExceeded.selector);
             }
 
             // Pay out usdc tokens up to the payout limit. Since `splits[]` is empty, everything goes to project
@@ -1881,9 +1881,9 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
 
         // Revert if there's no native token allowance.
         if (_nativeCurrencySurplusAllowance == 0) {
-            vm.expectRevert(abi.encodeWithSignature("INADEQUATE_CONTROLLER_ALLOWANCE()"));
+            vm.expectRevert(JBTerminalStore.JBTerminalStore_InadequateControllerAllowance.selector);
         } else if (_nativeCurrencySurplusAllowance + _nativeCurrencyPayoutLimit > _nativePayAmount) {
-            vm.expectRevert(abi.encodeWithSignature("INADEQUATE_TERMINAL_STORE_BALANCE()"));
+            vm.expectRevert(JBTerminalStore.JBTerminalStore_InadequateTerminalStoreBalance.selector);
         }
 
         // Use the full native token surplus allowance.
@@ -1934,11 +1934,11 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
 
         // Revert if there's no native token allowance.
         if (_usdCurrencySurplusAllowance == 0) {
-            vm.expectRevert(abi.encodeWithSignature("INADEQUATE_CONTROLLER_ALLOWANCE()"));
+            vm.expectRevert(JBTerminalStore.JBTerminalStore_InadequateControllerAllowance.selector);
             // Revert if the USD surplus allowance resolved to native tokens is greater than 0, and there is sufficient
             // surplus to pull from including what was already pulled from.
         } else if (_usdCurrencySurplusAllowance + _usdCurrencyPayoutLimit > _usdcPayAmount) {
-            vm.expectRevert(abi.encodeWithSignature("INADEQUATE_TERMINAL_STORE_BALANCE()"));
+            vm.expectRevert(JBTerminalStore.JBTerminalStore_InadequateTerminalStoreBalance.selector);
         }
 
         // Use the full native token surplus allowance.
@@ -2002,10 +2002,10 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
         {
             // Revert if the payout limit is greater than the balance.
             if (_nativeCurrencyPayoutLimit > _nativePayAmount) {
-                vm.expectRevert(abi.encodeWithSignature("INADEQUATE_TERMINAL_STORE_BALANCE()"));
+                vm.expectRevert(JBTerminalStore.JBTerminalStore_InadequateTerminalStoreBalance.selector);
                 // Revert if there's no payout limit.
             } else if (_nativeCurrencyPayoutLimit == 0) {
-                vm.expectRevert(abi.encodeWithSignature("PAYOUT_LIMIT_EXCEEDED()"));
+                vm.expectRevert(JBTerminalStore.JBTerminalStore_PayoutLimitExceeded.selector);
             }
 
             // Pay out native tokens up to the payout limit. Since `splits[]` is empty, everything goes to project
@@ -2051,10 +2051,10 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
 
             // Revert if the payout limit is greater than the balance.
             if (_usdCurrencyPayoutLimit > _usdcPayAmount) {
-                vm.expectRevert(abi.encodeWithSignature("INADEQUATE_TERMINAL_STORE_BALANCE()"));
+                vm.expectRevert(JBTerminalStore.JBTerminalStore_InadequateTerminalStoreBalance.selector);
                 // Revert if there's no payout limit.
             } else if (_usdCurrencyPayoutLimit == 0) {
-                vm.expectRevert(abi.encodeWithSignature("PAYOUT_LIMIT_EXCEEDED()"));
+                vm.expectRevert(JBTerminalStore.JBTerminalStore_PayoutLimitExceeded.selector);
             }
 
             // Pay out native tokens up to the payout limit. Since `splits[]` is empty, everything goes to project

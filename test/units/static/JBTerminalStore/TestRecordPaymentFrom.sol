@@ -52,7 +52,7 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
         bytes memory _currentOfReturn = abi.encode(_returnedRuleset);
         mockExpect(address(rulesets), _currentOfCall, _currentOfReturn);
 
-        vm.expectRevert(abi.encodeWithSignature("INVALID_RULESET()"));
+        vm.expectRevert(JBTerminalStore.JBTerminalStore_InvalidRuleset.selector);
         _store.recordPaymentFrom({
             payer: address(this),
             amount: _tokenAmount,
@@ -114,7 +114,7 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
         bytes memory _currentOfReturn = abi.encode(_returnedRuleset);
         mockExpect(address(rulesets), _currentOfCall, _currentOfReturn);
 
-        vm.expectRevert(abi.encodeWithSignature("RULESET_PAYMENT_PAUSED()"));
+        vm.expectRevert(JBTerminalStore.JBTerminalStore_RulesetPaymentPaused.selector);
         _store.recordPaymentFrom({
             payer: address(this),
             amount: _tokenAmount,
@@ -291,7 +291,7 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
         bytes memory _beforePayReturn = abi.encode(1e18 / 2, _spec);
         mockExpect(address(_dataHook), _beforePayCall, _beforePayReturn);
 
-        vm.expectRevert(abi.encodeWithSignature("INVALID_AMOUNT_TO_SEND_HOOK()"));
+        vm.expectRevert(JBTerminalStore.JBTerminalStore_InvalidAmountToSendHook.selector);
         _store.recordPaymentFrom({
             payer: address(this),
             amount: _tokenAmount,
