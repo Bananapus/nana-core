@@ -41,7 +41,7 @@ contract TestTransferCreditsFrom_Local is JBTokensSetup {
         // it will subtract creditBalanceOf from holder to recipient and emit TransferCredits
 
         // Find the storage slot to set credit balance
-        bytes32 creditBalanceOfSlot = keccak256(abi.encode(_holder, uint256(3)));
+        bytes32 creditBalanceOfSlot = keccak256(abi.encode(_holder, uint256(0)));
         bytes32 slot = keccak256(abi.encode(_projectId, uint256(creditBalanceOfSlot)));
 
         // Set storage

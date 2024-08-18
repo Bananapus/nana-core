@@ -30,7 +30,7 @@ contract TestClaimTokensFor_Local is JBTokensSetup {
         // it will revert TOKEN_NOT_FOUND
 
         // Find the storage slot to set credit balance
-        bytes32 tokenOfSlot = keccak256(abi.encode(_projectId, uint256(0)));
+        bytes32 tokenOfSlot = keccak256(abi.encode(_projectId, uint256(2)));
 
         // Set storage
         vm.store(address(_tokens), tokenOfSlot, bytes32(uint256(uint160(address(0)))));
@@ -43,7 +43,7 @@ contract TestClaimTokensFor_Local is JBTokensSetup {
         // it will revert INSUFFICIENT_CREDITS
 
         // Find the storage slot to set credit balance
-        bytes32 tokenOfSlot = keccak256(abi.encode(_projectId, uint256(0)));
+        bytes32 tokenOfSlot = keccak256(abi.encode(_projectId, uint256(2)));
 
         // Set storage
         vm.store(address(_tokens), tokenOfSlot, bytes32(uint256(uint160(address(_token)))));
@@ -56,13 +56,13 @@ contract TestClaimTokensFor_Local is JBTokensSetup {
         // it will mint to the beneficiary and emit ClaimTokens
 
         // Find the storage slot to set credit balance
-        bytes32 tokenOfSlot = keccak256(abi.encode(_projectId, uint256(0)));
+        bytes32 tokenOfSlot = keccak256(abi.encode(_projectId, uint256(2)));
 
         // Set storage
         vm.store(address(_tokens), tokenOfSlot, bytes32(uint256(uint160(address(_token)))));
 
         // Find the storage slot to set credit balance
-        bytes32 creditBalanceOfSlot = keccak256(abi.encode(address(this), uint256(3)));
+        bytes32 creditBalanceOfSlot = keccak256(abi.encode(address(this), uint256(0)));
         bytes32 slot = keccak256(abi.encode(_projectId, uint256(creditBalanceOfSlot)));
 
         // Set storage
@@ -73,7 +73,7 @@ contract TestClaimTokensFor_Local is JBTokensSetup {
         assertEq(_defaultAmount, _creditBalance);
 
         // Find the storage slot to set totalCreditSupplyOf
-        bytes32 totalCreditSlot = keccak256(abi.encode(_projectId, uint256(2)));
+        bytes32 totalCreditSlot = keccak256(abi.encode(_projectId, uint256(3)));
         // Set storage
         vm.store(address(_tokens), totalCreditSlot, bytes32(_defaultAmount));
 

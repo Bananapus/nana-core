@@ -34,7 +34,7 @@ contract TestSetTokenFor_Local is JBTokensSetup {
         // it will revert TOKEN_ALREADY_SET
 
         // Find the storage slot to set token
-        bytes32 tokenOfSlot = keccak256(abi.encode(_projectId, uint256(0)));
+        bytes32 tokenOfSlot = keccak256(abi.encode(_projectId, uint256(2)));
 
         // Set storage
         vm.store(address(_tokens), tokenOfSlot, bytes32(uint256(uint160(address(_token)))));

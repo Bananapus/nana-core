@@ -31,7 +31,7 @@ contract TestMintFor_Local is JBTokensSetup {
         // it will add tokens to credit balances and total credit supply
 
         // Find the storage slot to set token
-        bytes32 tokenOfSlot = keccak256(abi.encode(_projectId, uint256(0)));
+        bytes32 tokenOfSlot = keccak256(abi.encode(_projectId, uint256(2)));
 
         // Set storage
         vm.store(address(_tokens), tokenOfSlot, bytes32(uint256(uint160(address(0)))));
@@ -51,7 +51,7 @@ contract TestMintFor_Local is JBTokensSetup {
         // it will call token mint
 
         // Find the storage slot to set token
-        bytes32 tokenOfSlot = keccak256(abi.encode(_projectId, uint256(0)));
+        bytes32 tokenOfSlot = keccak256(abi.encode(_projectId, uint256(2)));
 
         // Set storage
         vm.store(address(_tokens), tokenOfSlot, bytes32(uint256(uint160(address(_token)))));
@@ -69,7 +69,7 @@ contract TestMintFor_Local is JBTokensSetup {
         // it will revert OVERFLOW_ALERT
 
         // Find the storage slot to set token
-        bytes32 tokenOfSlot = keccak256(abi.encode(_projectId, uint256(0)));
+        bytes32 tokenOfSlot = keccak256(abi.encode(_projectId, uint256(2)));
 
         // Set storage
         vm.store(address(_tokens), tokenOfSlot, bytes32(uint256(uint160(address(_token)))));

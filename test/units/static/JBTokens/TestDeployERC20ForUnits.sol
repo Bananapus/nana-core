@@ -42,7 +42,7 @@ contract TestDeployERC20ForUnits_Local is JBTokensSetup {
         // it will revert PROJECT_ALREADY_HAS_TOKEN
 
         // Find the storage slot to set credit balance
-        bytes32 tokenOfSlot = keccak256(abi.encode(_projectId, uint256(0)));
+        bytes32 tokenOfSlot = keccak256(abi.encode(_projectId, uint256(2)));
 
         // Set storage
         vm.store(address(_tokens), tokenOfSlot, bytes32(uint256(uint160(address(_token)))));

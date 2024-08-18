@@ -24,12 +24,12 @@ contract JBTokens is JBControlled, IJBTokens {
     error JBTokens_EmptyToken();
     error JBTokens_InsufficientFunds();
     error JBTokens_InsufficientCredits();
+    error JBTokens_OverflowAlert();
     error JBTokens_ProjectAlreadyHasToken();
     error JBTokens_RecipientZeroAddress();
     error JBTokens_TokenAlreadySet();
     error JBTokens_TokenNotFound();
     error JBTokens_TokensMustHave18Decimals();
-    error JBTokens_OverflowAlert();
 
     //*********************************************************************//
     // --------------- public immutable stored properties ---------------- //
@@ -42,23 +42,23 @@ contract JBTokens is JBControlled, IJBTokens {
     // --------------------- public stored properties -------------------- //
     //*********************************************************************//
 
-    /// @notice Each project's attached token contract.
-    /// @custom:param projectId The ID of the project the token belongs to.
-    mapping(uint256 projectId => IJBToken) public override tokenOf;
+    /// @notice Each holder's credit balance for each project.
+    /// @custom:param holder The credit holder.
+    /// @custom:param projectId The ID of the project to which the credits belong.
+    mapping(address holder => mapping(uint256 projectId => uint256)) public override creditBalanceOf;
 
     /// @notice Each token's project.
     /// @custom:param token The address of the token associated with the project.
     // slither-disable-next-line unused-return
     mapping(IJBToken token => uint256) public override projectIdOf;
 
+    /// @notice Each project's attached token contract.
+    /// @custom:param projectId The ID of the project the token belongs to.
+    mapping(uint256 projectId => IJBToken) public override tokenOf;
+
     /// @notice The total supply of credits for each project.
     /// @custom:param projectId The ID of the project to which the credits belong.
     mapping(uint256 projectId => uint256) public override totalCreditSupplyOf;
-
-    /// @notice Each holder's credit balance for each project.
-    /// @custom:param holder The credit holder.
-    /// @custom:param projectId The ID of the project to which the credits belong.
-    mapping(address holder => mapping(uint256 projectId => uint256)) public override creditBalanceOf;
 
     //*********************************************************************//
     // -------------------------- constructor ---------------------------- //
@@ -114,105 +114,6 @@ contract JBTokens is JBControlled, IJBTokens {
     //*********************************************************************//
     // ---------------------- external transactions ---------------------- //
     //*********************************************************************//
-
-    /// @notice Deploys an ERC-20 token for a project. It will be used when claiming tokens.
-    /// @dev Deploys a project's ERC-20 token contract.
-    /// @dev Only a project's controller can deploy its token.
-    /// @param projectId The ID of the project to deploy an ERC-20 token for.
-    /// @param name The ERC-20's name.
-    /// @param symbol The ERC-20's symbol.
-    /// @param salt The salt used for ERC-1167 clone deployment. Pass a non-zero salt for deterministic deployment based
-    /// on `msg.sender` and the `TOKEN` implementation address.
-    /// @return token The address of the token that was deployed.
-    function deployERC20For(
-        uint256 projectId,
-        string calldata name,
-        string calldata symbol,
-        bytes32 salt
-    )
-        external
-        override
-        onlyControllerOf(projectId)
-        returns (IJBToken token)
-    {
-        // There must be a name.
-        if (bytes(name).length == 0) revert JBTokens_EmptyName();
-
-        // There must be a symbol.
-        if (bytes(symbol).length == 0) revert JBTokens_EmptySymbol();
-
-        // The project shouldn't already have a token.
-        if (tokenOf[projectId] != IJBToken(address(0))) revert JBTokens_ProjectAlreadyHasToken();
-
-        token = salt == bytes32(0)
-            ? IJBToken(Clones.clone(address(TOKEN)))
-            : IJBToken(Clones.cloneDeterministic(address(TOKEN), keccak256(abi.encode(msg.sender, salt))));
-
-        // Store the token contract.
-        tokenOf[projectId] = token;
-
-        // Store the project for the token.
-        projectIdOf[token] = projectId;
-
-        emit DeployERC20({projectId: projectId, token: token, name: name, symbol: symbol, salt: salt, caller: msg.sender});
-
-        // Initialize the token.
-        token.initialize({name: name, symbol: symbol, owner: address(this)});
-    }
-
-    /// @notice Set a project's token if not already set.
-    /// @dev Only a project's controller can set its token.
-    /// @param projectId The ID of the project to set the token of.
-    /// @param token The new token's address.
-    function setTokenFor(uint256 projectId, IJBToken token) external override onlyControllerOf(projectId) {
-        // Can't set to the zero address.
-        if (token == IJBToken(address(0))) revert JBTokens_EmptyToken();
-
-        // Can't set a token if the project is already associated with another token.
-        if (tokenOf[projectId] != IJBToken(address(0))) revert JBTokens_TokenAlreadySet();
-
-        // Can't set a token if it's already associated with another project.
-        if (projectIdOf[token] != 0) revert JBTokens_TokenAlreadySet();
-
-        // Can't change to a token that doesn't use 18 decimals.
-        if (token.decimals() != 18) revert JBTokens_TokensMustHave18Decimals();
-
-        // Store the new token.
-        tokenOf[projectId] = token;
-
-        // Store the project for the token.
-        projectIdOf[token] = projectId;
-
-        emit SetToken({ projectId: projectId, token: token, caller: msg.sender });
-    }
-
-    /// @notice Mint (create) new tokens or credits.
-    /// @dev Only a project's current controller can mint its tokens.
-    /// @param holder The address receiving the new tokens.
-    /// @param projectId The ID of the project to which the tokens belong.
-    /// @param amount The amount of tokens to mint.
-    function mintFor(address holder, uint256 projectId, uint256 amount) external override onlyControllerOf(projectId) {
-        // Get a reference to the project's current token.
-        IJBToken token = tokenOf[projectId];
-
-        // Save a reference to whether there a token exists.
-        bool shouldClaimTokens = token != IJBToken(address(0));
-
-        if (shouldClaimTokens) {
-            // If tokens should be claimed, mint tokens into the holder's wallet.
-            // slither-disable-next-line reentrancy-events
-            token.mint(holder, amount);
-        } else {
-            // Otherwise, add the tokens to their credits and the credit supply.
-            creditBalanceOf[holder][projectId] = creditBalanceOf[holder][projectId] + amount;
-            totalCreditSupplyOf[projectId] = totalCreditSupplyOf[projectId] + amount;
-        }
-
-        // The total supply can't exceed the maximum value storable in a uint208.
-        if (totalSupplyOf(projectId) > type(uint208).max) revert JBTokens_OverflowAlert();
-
-        emit Mint({ holder: holder, projectId: projectId, amount: amount, shouldClaimTokens: shouldClaimTokens, caller: msg.sender });
-    }
 
     /// @notice Burns (destroys) credits or tokens.
     /// @dev Credits are burned first, then tokens are burned.
@@ -310,6 +211,105 @@ contract JBTokens is JBControlled, IJBTokens {
 
         // Mint the equivalent amount of the project's token for the holder.
         token.mint(beneficiary, amount);
+    }
+
+    /// @notice Deploys an ERC-20 token for a project. It will be used when claiming tokens.
+    /// @dev Deploys a project's ERC-20 token contract.
+    /// @dev Only a project's controller can deploy its token.
+    /// @param projectId The ID of the project to deploy an ERC-20 token for.
+    /// @param name The ERC-20's name.
+    /// @param symbol The ERC-20's symbol.
+    /// @param salt The salt used for ERC-1167 clone deployment. Pass a non-zero salt for deterministic deployment based
+    /// on `msg.sender` and the `TOKEN` implementation address.
+    /// @return token The address of the token that was deployed.
+    function deployERC20For(
+        uint256 projectId,
+        string calldata name,
+        string calldata symbol,
+        bytes32 salt
+    )
+        external
+        override
+        onlyControllerOf(projectId)
+        returns (IJBToken token)
+    {
+        // There must be a name.
+        if (bytes(name).length == 0) revert JBTokens_EmptyName();
+
+        // There must be a symbol.
+        if (bytes(symbol).length == 0) revert JBTokens_EmptySymbol();
+
+        // The project shouldn't already have a token.
+        if (tokenOf[projectId] != IJBToken(address(0))) revert JBTokens_ProjectAlreadyHasToken();
+
+        token = salt == bytes32(0)
+            ? IJBToken(Clones.clone(address(TOKEN)))
+            : IJBToken(Clones.cloneDeterministic(address(TOKEN), keccak256(abi.encode(msg.sender, salt))));
+
+        // Store the token contract.
+        tokenOf[projectId] = token;
+
+        // Store the project for the token.
+        projectIdOf[token] = projectId;
+
+        emit DeployERC20({projectId: projectId, token: token, name: name, symbol: symbol, salt: salt, caller: msg.sender});
+
+        // Initialize the token.
+        token.initialize({name: name, symbol: symbol, owner: address(this)});
+    }
+
+    /// @notice Mint (create) new tokens or credits.
+    /// @dev Only a project's current controller can mint its tokens.
+    /// @param holder The address receiving the new tokens.
+    /// @param projectId The ID of the project to which the tokens belong.
+    /// @param amount The amount of tokens to mint.
+    function mintFor(address holder, uint256 projectId, uint256 amount) external override onlyControllerOf(projectId) {
+        // Get a reference to the project's current token.
+        IJBToken token = tokenOf[projectId];
+
+        // Save a reference to whether there a token exists.
+        bool shouldClaimTokens = token != IJBToken(address(0));
+
+        if (shouldClaimTokens) {
+            // If tokens should be claimed, mint tokens into the holder's wallet.
+            // slither-disable-next-line reentrancy-events
+            token.mint(holder, amount);
+        } else {
+            // Otherwise, add the tokens to their credits and the credit supply.
+            creditBalanceOf[holder][projectId] = creditBalanceOf[holder][projectId] + amount;
+            totalCreditSupplyOf[projectId] = totalCreditSupplyOf[projectId] + amount;
+        }
+
+        // The total supply can't exceed the maximum value storable in a uint208.
+        if (totalSupplyOf(projectId) > type(uint208).max) revert JBTokens_OverflowAlert();
+
+        emit Mint({ holder: holder, projectId: projectId, amount: amount, shouldClaimTokens: shouldClaimTokens, caller: msg.sender });
+    }
+
+    /// @notice Set a project's token if not already set.
+    /// @dev Only a project's controller can set its token.
+    /// @param projectId The ID of the project to set the token of.
+    /// @param token The new token's address.
+    function setTokenFor(uint256 projectId, IJBToken token) external override onlyControllerOf(projectId) {
+        // Can't set to the zero address.
+        if (token == IJBToken(address(0))) revert JBTokens_EmptyToken();
+
+        // Can't set a token if the project is already associated with another token.
+        if (tokenOf[projectId] != IJBToken(address(0))) revert JBTokens_TokenAlreadySet();
+
+        // Can't set a token if it's already associated with another project.
+        if (projectIdOf[token] != 0) revert JBTokens_TokenAlreadySet();
+
+        // Can't change to a token that doesn't use 18 decimals.
+        if (token.decimals() != 18) revert JBTokens_TokensMustHave18Decimals();
+
+        // Store the new token.
+        tokenOf[projectId] = token;
+
+        // Store the project for the token.
+        projectIdOf[token] = projectId;
+
+        emit SetToken({ projectId: projectId, token: token, caller: msg.sender });
     }
 
     /// @notice Allows a holder to transfer credits to another account.
