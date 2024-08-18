@@ -277,7 +277,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     }
 
     //*********************************************************************//
-    // -------------------------- internal views ------------------------- //
+    // ----------------------- internal helper views --------------------- //
     //*********************************************************************//
 
     /// @notice Gets a project's surplus amount in a terminal as measured by a given ruleset, across multiple accounting

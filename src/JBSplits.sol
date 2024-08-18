@@ -14,9 +14,10 @@ contract JBSplits is JBControlled, IJBSplits {
     //*********************************************************************//
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
-    error INVALID_SPLIT_PERCENT();
-    error INVALID_TOTAL_PERCENT();
-    error PREVIOUS_LOCKED_SPLITS_NOT_INCLUDED();
+
+    error JBSplits_InvalidSplitPercent();
+    error JBSplits_InvalidTotalPercent();
+    error JBSplits_PreviousLockedSplitsNotIncluded();
 
     //*********************************************************************//
     // ------------------------- public constants ------------------------ //
@@ -94,123 +95,9 @@ contract JBSplits is JBControlled, IJBSplits {
     }
 
     //*********************************************************************//
-    // -------------------------- constructor ---------------------------- //
+    // ----------------------- internal helper views --------------------- //
     //*********************************************************************//
-
-    /// @param directory A contract storing directories of terminals and controllers for each project.
-    constructor(IJBDirectory directory) JBControlled(directory) {}
-
-    //*********************************************************************//
-    // ---------------------- external transactions ---------------------- //
-    //*********************************************************************//
-
-    /// @notice Sets a project's split groups.
-    /// @dev Only a project's controller can set its splits.
-    /// @dev The new split groups must include any currently set splits that are locked.
-    /// @param projectId The ID of the project to set the split groups of.
-    /// @param rulesetId The ID of the ruleset the split groups should be active in. Send
-    /// 0 to set the default split that'll be active if no ruleset has specific splits set. The default's default is the
-    /// project's owner.
-    /// @param splitGroups An array of split groups to set.
-    function setSplitGroupsOf(
-        uint256 projectId,
-        uint256 rulesetId,
-        JBSplitGroup[] calldata splitGroups
-    )
-        external
-        override
-        onlyControllerOf(projectId)
-    {
-        // Keep a reference to the number of split groups.
-        uint256 numberOfSplitGroups = splitGroups.length;
-
-        // Set each grouped splits.
-        for (uint256 i; i < numberOfSplitGroups; i++) {
-            // Get a reference to the grouped split being iterated on.
-            JBSplitGroup memory splitGroup = splitGroups[i];
-
-            // Set the splits for the group.
-            _setSplitsOf(projectId, rulesetId, splitGroup.groupId, splitGroup.splits);
-        }
-    }
-
-    //*********************************************************************//
-    // --------------------- internal helper functions ------------------- //
-    //*********************************************************************//
-
-    /// @notice Sets the splits for a group given a project, ruleset, and group ID.
-    /// @dev The new splits must include any currently set splits that are locked.
-    /// @dev The sum of the split `percent`s within one group must be less than 100%.
-    /// @param projectId The ID of the project splits are being set for.
-    /// @param rulesetId The ID of the ruleset the splits should be considered active within.
-    /// @param groupId The ID of the group to set the splits within.
-    /// @param splits An array of splits to set.
-    function _setSplitsOf(uint256 projectId, uint256 rulesetId, uint256 groupId, JBSplit[] memory splits) internal {
-        // Get a reference to the current split structs within the project, ruleset, and group.
-        JBSplit[] memory currentSplits = _getStructsFor(projectId, rulesetId, groupId);
-
-        // Keep a reference to the current number of splits within the group.
-        uint256 numberOfCurrentSplits = currentSplits.length;
-
-        // Check to see if all locked splits are included in the array of splits which is being set.
-        for (uint256 i; i < numberOfCurrentSplits; i++) {
-            // If not locked, continue.
-            if (block.timestamp < currentSplits[i].lockedUntil && !_includesLockedSplits(splits, currentSplits[i])) {
-                revert PREVIOUS_LOCKED_SPLITS_NOT_INCLUDED();
-            }
-        }
-
-        // Add up all the `percent`s to make sure their total is under 100%.
-        uint256 percentTotal;
-
-        // Keep a reference to the number of splits to set.
-        uint256 numberOfSplits = splits.length;
-
-        for (uint256 i; i < numberOfSplits; i++) {
-            // The percent should be greater than 0.
-            if (splits[i].percent == 0) revert INVALID_SPLIT_PERCENT();
-
-            // Add to the `percent` total.
-            percentTotal = percentTotal + splits[i].percent;
-
-            // Ensure the total does not exceed 100%.
-            if (percentTotal > JBConstants.SPLITS_TOTAL_PERCENT) revert INVALID_TOTAL_PERCENT();
-
-            uint256 packedSplitParts1;
-
-            // Pack `preferAddToBalance` in bit 0.
-            if (splits[i].preferAddToBalance) packedSplitParts1 = 1;
-            // Pack `percent` in bits 1-32.
-            packedSplitParts1 |= splits[i].percent << 1;
-            // Pack `projectId` in bits 33-88.
-            packedSplitParts1 |= splits[i].projectId << 33;
-            // Pack `beneficiary` in bits 89-248.
-            packedSplitParts1 |= uint256(uint160(address(splits[i].beneficiary))) << 89;
-
-            // Store the first split part.
-            _packedSplitParts1Of[projectId][rulesetId][groupId][i] = packedSplitParts1;
-
-            // If there's data to store in the second packed split part, pack and store.
-            if (splits[i].lockedUntil > 0 || splits[i].hook != IJBSplitHook(address(0))) {
-                // Pack `lockedUntil` in bits 0-47.
-                uint256 packedSplitParts2 = uint48(splits[i].lockedUntil);
-                // Pack `hook` in bits 48-207.
-                packedSplitParts2 |= uint256(uint160(address(splits[i].hook))) << 48;
-
-                // Store the second split part.
-                _packedSplitParts2Of[projectId][rulesetId][groupId][i] = packedSplitParts2;
-            } else if (_packedSplitParts2Of[projectId][rulesetId][groupId][i] > 0) {
-                // If there's a value stored in the indexed position, delete it.
-                delete _packedSplitParts2Of[projectId][rulesetId][groupId][i];
-            }
-
-            emit SetSplit(projectId, rulesetId, groupId, splits[i], msg.sender);
-        }
-
-        // Store the number of splits for the project, ruleset, and group.
-        _splitCountOf[projectId][rulesetId][groupId] = numberOfSplits;
-    }
-
+    
     /// @notice Determine if the provided splits array includes the locked split.
     /// @param splits The array of splits to check within.
     /// @param lockedSplit The locked split.
@@ -287,5 +174,123 @@ contract JBSplits is JBControlled, IJBSplits {
         }
 
         return splits;
+    }
+
+    //*********************************************************************//
+    // -------------------------- constructor ---------------------------- //
+    //*********************************************************************//
+
+    /// @param directory A contract storing directories of terminals and controllers for each project.
+    constructor(IJBDirectory directory) JBControlled(directory) {}
+
+    //*********************************************************************//
+    // ---------------------- external transactions ---------------------- //
+    //*********************************************************************//
+
+    /// @notice Sets a project's split groups.
+    /// @dev Only a project's controller can set its splits.
+    /// @dev The new split groups must include any currently set splits that are locked.
+    /// @param projectId The ID of the project to set the split groups of.
+    /// @param rulesetId The ID of the ruleset the split groups should be active in. Send
+    /// 0 to set the default split that'll be active if no ruleset has specific splits set. The default's default is the
+    /// project's owner.
+    /// @param splitGroups An array of split groups to set.
+    function setSplitGroupsOf(
+        uint256 projectId,
+        uint256 rulesetId,
+        JBSplitGroup[] calldata splitGroups
+    )
+        external
+        override
+        onlyControllerOf(projectId)
+    {
+        // Keep a reference to the number of split groups.
+        uint256 numberOfSplitGroups = splitGroups.length;
+
+        // Set each grouped splits.
+        for (uint256 i; i < numberOfSplitGroups; i++) {
+            // Get a reference to the grouped split being iterated on.
+            JBSplitGroup memory splitGroup = splitGroups[i];
+
+            // Set the splits for the group.
+            _setSplitsOf(projectId, rulesetId, splitGroup.groupId, splitGroup.splits);
+        }
+    }
+
+    //*********************************************************************//
+    // --------------------- internal helper functions ------------------- //
+    //*********************************************************************//
+
+    /// @notice Sets the splits for a group given a project, ruleset, and group ID.
+    /// @dev The new splits must include any currently set splits that are locked.
+    /// @dev The sum of the split `percent`s within one group must be less than 100%.
+    /// @param projectId The ID of the project splits are being set for.
+    /// @param rulesetId The ID of the ruleset the splits should be considered active within.
+    /// @param groupId The ID of the group to set the splits within.
+    /// @param splits An array of splits to set.
+    function _setSplitsOf(uint256 projectId, uint256 rulesetId, uint256 groupId, JBSplit[] memory splits) internal {
+        // Get a reference to the current split structs within the project, ruleset, and group.
+        JBSplit[] memory currentSplits = _getStructsFor(projectId, rulesetId, groupId);
+
+        // Keep a reference to the current number of splits within the group.
+        uint256 numberOfCurrentSplits = currentSplits.length;
+
+        // Check to see if all locked splits are included in the array of splits which is being set.
+        for (uint256 i; i < numberOfCurrentSplits; i++) {
+            // If not locked, continue.
+            if (block.timestamp < currentSplits[i].lockedUntil && !_includesLockedSplits(splits, currentSplits[i])) {
+                revert JBSplits_PreviousLockedSplitsNotIncluded();
+            }
+        }
+
+        // Add up all the `percent`s to make sure their total is under 100%.
+        uint256 percentTotal;
+
+        // Keep a reference to the number of splits to set.
+        uint256 numberOfSplits = splits.length;
+
+        for (uint256 i; i < numberOfSplits; i++) {
+            // The percent should be greater than 0.
+            if (splits[i].percent == 0) revert JBSplits_InvalidSplitPercent();
+
+            // Add to the `percent` total.
+            percentTotal = percentTotal + splits[i].percent;
+
+            // Ensure the total does not exceed 100%.
+            if (percentTotal > JBConstants.SPLITS_TOTAL_PERCENT) revert JBSplits_InvalidTotalPercent();
+
+            uint256 packedSplitParts1;
+
+            // Pack `preferAddToBalance` in bit 0.
+            if (splits[i].preferAddToBalance) packedSplitParts1 = 1;
+            // Pack `percent` in bits 1-32.
+            packedSplitParts1 |= splits[i].percent << 1;
+            // Pack `projectId` in bits 33-88.
+            packedSplitParts1 |= splits[i].projectId << 33;
+            // Pack `beneficiary` in bits 89-248.
+            packedSplitParts1 |= uint256(uint160(address(splits[i].beneficiary))) << 89;
+
+            // Store the first split part.
+            _packedSplitParts1Of[projectId][rulesetId][groupId][i] = packedSplitParts1;
+
+            // If there's data to store in the second packed split part, pack and store.
+            if (splits[i].lockedUntil > 0 || splits[i].hook != IJBSplitHook(address(0))) {
+                // Pack `lockedUntil` in bits 0-47.
+                uint256 packedSplitParts2 = uint48(splits[i].lockedUntil);
+                // Pack `hook` in bits 48-207.
+                packedSplitParts2 |= uint256(uint160(address(splits[i].hook))) << 48;
+
+                // Store the second split part.
+                _packedSplitParts2Of[projectId][rulesetId][groupId][i] = packedSplitParts2;
+            } else if (_packedSplitParts2Of[projectId][rulesetId][groupId][i] > 0) {
+                // If there's a value stored in the indexed position, delete it.
+                delete _packedSplitParts2Of[projectId][rulesetId][groupId][i];
+            }
+
+            emit SetSplit(projectId, rulesetId, groupId, splits[i], msg.sender);
+        }
+
+        // Store the number of splits for the project, ruleset, and group.
+        _splitCountOf[projectId][rulesetId][groupId] = numberOfSplits;
     }
 }
