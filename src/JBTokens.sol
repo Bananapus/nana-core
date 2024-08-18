@@ -61,6 +61,17 @@ contract JBTokens is JBControlled, IJBTokens {
     /// @custom:param projectId The ID of the project to which the credits belong.
     mapping(address holder => mapping(uint256 projectId => uint256)) public override creditBalanceOf;
 
+
+    //*********************************************************************//
+    // -------------------------- constructor ---------------------------- //
+    //*********************************************************************//
+
+    /// @param directory A contract storing directories of terminals and controllers for each project.
+    /// @param token The implementation of the token contract that project can deploy.
+    constructor(IJBDirectory directory, IJBToken token) JBControlled(directory) {
+        TOKEN = token;
+    }
+
     //*********************************************************************//
     // ------------------------- external views -------------------------- //
     //*********************************************************************//
@@ -100,16 +111,6 @@ contract JBTokens is JBControlled, IJBTokens {
         if (token != IJBToken(address(0))) {
             totalSupply = totalSupply + token.totalSupply();
         }
-    }
-
-    //*********************************************************************//
-    // -------------------------- constructor ---------------------------- //
-    //*********************************************************************//
-
-    /// @param directory A contract storing directories of terminals and controllers for each project.
-    /// @param token The implementation of the token contract that project can deploy.
-    constructor(IJBDirectory directory, IJBToken token) JBControlled(directory) {
-        TOKEN = token;
     }
 
     //*********************************************************************//

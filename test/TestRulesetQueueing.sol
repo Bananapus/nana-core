@@ -373,7 +373,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         uint256 projectId = launchProjectForTest();
 
         vm.prank(multisig());
-        vm.expectRevert(abi.encodeWithSignature("INVALID_RULESET_APPROVAL_HOOK()"));
+        vm.expectRevert(JBRulesets.JBRulesets_InvalidRulesetApprovalHook.selector);
 
         JBRulesetConfig[] memory _config = new JBRulesetConfig[](1);
         _config[0].mustStartAtOrAfter = 0;

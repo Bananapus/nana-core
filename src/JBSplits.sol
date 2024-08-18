@@ -65,6 +65,13 @@ contract JBSplits is JBControlled, IJBSplits {
     ) internal _packedSplitParts2Of;
 
     //*********************************************************************//
+    // -------------------------- constructor ---------------------------- //
+    //*********************************************************************//
+
+    /// @param directory A contract storing directories of terminals and controllers for each project.
+    constructor(IJBDirectory directory) JBControlled(directory) {}
+
+    //*********************************************************************//
     // ------------------------- external views -------------------------- //
     //*********************************************************************//
 
@@ -175,13 +182,6 @@ contract JBSplits is JBControlled, IJBSplits {
 
         return splits;
     }
-
-    //*********************************************************************//
-    // -------------------------- constructor ---------------------------- //
-    //*********************************************************************//
-
-    /// @param directory A contract storing directories of terminals and controllers for each project.
-    constructor(IJBDirectory directory) JBControlled(directory) {}
 
     //*********************************************************************//
     // ---------------------- external transactions ---------------------- //

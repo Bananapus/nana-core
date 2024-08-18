@@ -116,6 +116,19 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     ) public override usedSurplusAllowanceOf;
 
     //*********************************************************************//
+    // -------------------------- constructor ---------------------------- //
+    //*********************************************************************//
+
+    /// @param directory A contract storing directories of terminals and controllers for each project.
+    /// @param rulesets A contract storing and managing project rulesets.
+    /// @param prices A contract that exposes price feeds.
+    constructor(IJBDirectory directory, IJBRulesets rulesets, IJBPrices prices) {
+        DIRECTORY = directory;
+        RULESETS = rulesets;
+        PRICES = prices;
+    }
+
+    //*********************************************************************//
     // ------------------------- external views -------------------------- //
     //*********************************************************************//
 
@@ -436,19 +449,6 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
                 return 0;
             }
         }
-    }
-
-    //*********************************************************************//
-    // -------------------------- constructor ---------------------------- //
-    //*********************************************************************//
-
-    /// @param directory A contract storing directories of terminals and controllers for each project.
-    /// @param rulesets A contract storing and managing project rulesets.
-    /// @param prices A contract that exposes price feeds.
-    constructor(IJBDirectory directory, IJBRulesets rulesets, IJBPrices prices) {
-        DIRECTORY = directory;
-        RULESETS = rulesets;
-        PRICES = prices;
     }
 
     //*********************************************************************//
