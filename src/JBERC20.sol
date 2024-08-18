@@ -2,8 +2,10 @@
 pragma solidity 0.8.23;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {ERC20Permit, Nonces} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
-import {ERC20Votes, ERC20} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
+import {ERC20Votes} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
+import {Nonces} from "@openzeppelin/contracts/utils/Nonces.sol";
 
 import {IJBToken} from "./interfaces/IJBToken.sol";
 
@@ -23,6 +25,12 @@ contract JBERC20 is ERC20Votes, ERC20Permit, Ownable, IJBToken {
     /// @notice The token's symbol.
     // slither-disable-next-line shadowing-state
     string private _symbol;
+
+    //*********************************************************************//
+    // -------------------------- constructor ---------------------------- //
+    //*********************************************************************//
+
+    constructor() Ownable(address(this)) ERC20("invalid", "invalid") ERC20Permit("JBToken") {}
 
     //*********************************************************************//
     // -------------------------- public views --------------------------- //
@@ -56,12 +64,6 @@ contract JBERC20 is ERC20Votes, ERC20Permit, Ownable, IJBToken {
     function balanceOf(address account) public view override(ERC20, IJBToken) returns (uint256) {
         return super.balanceOf(account);
     }
-
-    //*********************************************************************//
-    // -------------------------- constructor ---------------------------- //
-    //*********************************************************************//
-
-    constructor() Ownable(address(this)) ERC20("invalid", "invalid") ERC20Permit("JBToken") {}
 
     //*********************************************************************//
     // ---------------------- external transactions ---------------------- //
@@ -108,7 +110,7 @@ contract JBERC20 is ERC20Votes, ERC20Permit, Ownable, IJBToken {
     }
 
     //*********************************************************************//
-    // ---------------------- internal transactions ---------------------- //
+    // --------------------- internal helper functions ------------------- //
     //*********************************************************************//
 
     /// @notice Required override.
