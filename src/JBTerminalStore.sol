@@ -57,11 +57,11 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     /// @notice The directory of terminals and controllers for projects.
     IJBDirectory public immutable override DIRECTORY;
 
-    /// @notice The contract storing and managing project rulesets.
-    IJBRulesets public immutable override RULESETS;
-
     /// @notice The contract that exposes price feeds.
     IJBPrices public immutable override PRICES;
+
+    /// @notice The contract storing and managing project rulesets.
+    IJBRulesets public immutable override RULESETS;
 
     //*********************************************************************//
     // --------------------- public stored properties -------------------- //
@@ -119,72 +119,53 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     //*********************************************************************//
 
     /// @param directory A contract storing directories of terminals and controllers for each project.
-    /// @param rulesets A contract storing and managing project rulesets.
     /// @param prices A contract that exposes price feeds.
-    constructor(IJBDirectory directory, IJBRulesets rulesets, IJBPrices prices) {
+    /// @param rulesets A contract storing and managing project rulesets.
+    constructor(IJBDirectory directory, IJBPrices prices, IJBRulesets rulesets) {
         DIRECTORY = directory;
-        RULESETS = rulesets;
         PRICES = prices;
+        RULESETS = rulesets;
     }
 
     //*********************************************************************//
     // ------------------------- external views -------------------------- //
     //*********************************************************************//
 
-    /// @notice Gets the current surplus amount in a terminal for a specified project.
-    /// @dev The surplus is the amount of funds a project has in a terminal in excess of its payout limit.
-    /// @dev The surplus is represented as a fixed point number with the same amount of decimals as the specified
-    /// terminal.
-    /// @param terminal The terminal the surplus is being calculated for.
-    /// @param projectId The ID of the project to get surplus for.
-    /// @param accountingContexts The accounting contexts of tokens whose balances should contribute to the surplus
-    /// being calculated.
-    /// @param currency The currency the resulting amount should be in terms of.
-    /// @param decimals The number of decimals to expect in the resulting fixed point number.
-    /// @return The current surplus amount the project has in the specified terminal.
-    function currentSurplusOf(
-        address terminal,
+    /// @notice Returns the number of surplus terminal tokens that would be reclaimed by redeeming a given project's
+    /// tokens based on its current ruleset and the given total project token supply and total terminal token surplus.
+    /// @param projectId The ID of the project whose project tokens would be redeemed.
+    /// @param tokensRedeemed The number of project tokens that would be redeemed, as a fixed point number with 18
+    /// decimals.
+    /// @param totalSupply The total project token supply, as a fixed point number with 18 decimals.
+    /// @param surplus The total terminal token surplus amount, as a fixed point number.
+    /// @return The number of surplus terminal tokens that would be reclaimed, as a fixed point number with the same
+    /// number of decimals as the provided `surplus`.
+    function currentReclaimableSurplusOf(
         uint256 projectId,
-        JBAccountingContext[] calldata accountingContexts,
-        uint256 decimals,
-        uint256 currency
+        uint256 tokensRedeemed,
+        uint256 totalSupply,
+        uint256 surplus
     )
         external
         view
         override
         returns (uint256)
     {
-        // Return the surplus during the project's current ruleset.
-        return _surplusFrom({
-            terminal: terminal,
-            projectId: projectId,
-            accountingContexts: accountingContexts,
-            ruleset: RULESETS.currentOf(projectId),
-            targetDecimals: decimals,
-            targetCurrency: currency
-        });
-    }
+        // If there's no surplus, nothing can be reclaimed.
+        if (surplus == 0) return 0;
 
-    /// @notice Gets the current surplus amount for a specified project across all terminals.
-    /// @param projectId The ID of the project to get the total surplus for.
-    /// @param decimals The number of decimals that the fixed point surplus should include.
-    /// @param currency The currency that the total surplus should be in terms of.
-    /// @return The current total surplus amount that the project has across all terminals.
-    function currentTotalSurplusOf(
-        uint256 projectId,
-        uint256 decimals,
-        uint256 currency
-    )
-        external
-        view
-        override
-        returns (uint256)
-    {
-        return JBSurplus.currentSurplusOf({
-            projectId: projectId,
-            terminals: DIRECTORY.terminalsOf(projectId),
-            decimals: decimals,
-            currency: currency
+        // Can't redeem more tokens than are in the total supply.
+        if (tokensRedeemed > totalSupply) return 0;
+
+        // Get a reference to the project's current ruleset.
+        JBRuleset memory ruleset = RULESETS.currentOf(projectId);
+
+        // Return the amount of surplus terminal tokens that would be reclaimed.
+        return JBRedemptions.reclaimFrom({
+            surplus: surplus,
+            tokensRedeemed: tokensRedeemed,
+            totalSupply: totalSupply,
+            redemptionRate: ruleset.redemptionRate()
         });
     }
 
@@ -250,41 +231,60 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
         });
     }
 
-    /// @notice Returns the number of surplus terminal tokens that would be reclaimed by redeeming a given project's
-    /// tokens based on its current ruleset and the given total project token supply and total terminal token surplus.
-    /// @param projectId The ID of the project whose project tokens would be redeemed.
-    /// @param tokensRedeemed The number of project tokens that would be redeemed, as a fixed point number with 18
-    /// decimals.
-    /// @param totalSupply The total project token supply, as a fixed point number with 18 decimals.
-    /// @param surplus The total terminal token surplus amount, as a fixed point number.
-    /// @return The number of surplus terminal tokens that would be reclaimed, as a fixed point number with the same
-    /// number of decimals as the provided `surplus`.
-    function currentReclaimableSurplusOf(
+    /// @notice Gets the current surplus amount in a terminal for a specified project.
+    /// @dev The surplus is the amount of funds a project has in a terminal in excess of its payout limit.
+    /// @dev The surplus is represented as a fixed point number with the same amount of decimals as the specified
+    /// terminal.
+    /// @param terminal The terminal the surplus is being calculated for.
+    /// @param projectId The ID of the project to get surplus for.
+    /// @param accountingContexts The accounting contexts of tokens whose balances should contribute to the surplus
+    /// being calculated.
+    /// @param currency The currency the resulting amount should be in terms of.
+    /// @param decimals The number of decimals to expect in the resulting fixed point number.
+    /// @return The current surplus amount the project has in the specified terminal.
+    function currentSurplusOf(
+        address terminal,
         uint256 projectId,
-        uint256 tokensRedeemed,
-        uint256 totalSupply,
-        uint256 surplus
+        JBAccountingContext[] calldata accountingContexts,
+        uint256 decimals,
+        uint256 currency
     )
         external
         view
         override
         returns (uint256)
     {
-        // If there's no surplus, nothing can be reclaimed.
-        if (surplus == 0) return 0;
+        // Return the surplus during the project's current ruleset.
+        return _surplusFrom({
+            terminal: terminal,
+            projectId: projectId,
+            accountingContexts: accountingContexts,
+            ruleset: RULESETS.currentOf(projectId),
+            targetDecimals: decimals,
+            targetCurrency: currency
+        });
+    }
 
-        // Can't redeem more tokens than are in the total supply.
-        if (tokensRedeemed > totalSupply) return 0;
-
-        // Get a reference to the project's current ruleset.
-        JBRuleset memory ruleset = RULESETS.currentOf(projectId);
-
-        // Return the amount of surplus terminal tokens that would be reclaimed.
-        return JBRedemptions.reclaimFrom({
-            surplus: surplus,
-            tokensRedeemed: tokensRedeemed,
-            totalSupply: totalSupply,
-            redemptionRate: ruleset.redemptionRate()
+    /// @notice Gets the current surplus amount for a specified project across all terminals.
+    /// @param projectId The ID of the project to get the total surplus for.
+    /// @param decimals The number of decimals that the fixed point surplus should include.
+    /// @param currency The currency that the total surplus should be in terms of.
+    /// @return The current total surplus amount that the project has across all terminals.
+    function currentTotalSurplusOf(
+        uint256 projectId,
+        uint256 decimals,
+        uint256 currency
+    )
+        external
+        view
+        override
+        returns (uint256)
+    {
+        return JBSurplus.currentSurplusOf({
+            projectId: projectId,
+            terminals: DIRECTORY.terminalsOf(projectId),
+            decimals: decimals,
+            currency: currency
         });
     }
 
@@ -454,6 +454,17 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     // ---------------------- external transactions ---------------------- //
     //*********************************************************************//
 
+
+    /// @notice Records funds being added to a project's balance.
+    /// @param projectId The ID of the project which funds are being added to the balance of.
+    /// @param token The token being added to the balance.
+    /// @param amount The amount of terminal tokens added, as a fixed point number with the same amount of decimals as
+    /// its relative terminal.
+    function recordAddedBalanceFor(uint256 projectId, address token, uint256 amount) external override {
+        // Increment the balance.
+        balanceOf[msg.sender][projectId][token] = balanceOf[msg.sender][projectId][token] + amount;
+    }
+
     /// @notice Records a payment to a project.
     /// @dev Mints the project's tokens according to values provided by the ruleset's data hook. If the ruleset has no
     /// data hook, mints tokens in proportion with the amount paid.
@@ -569,6 +580,78 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
 
         // Find the number of tokens to mint, as a fixed point number with as many decimals as `weight` has.
         tokenCount = mulDiv(amount.value, weight, weightRatio);
+    }
+
+    /// @notice Records a payout from a project.
+    /// @param projectId The ID of the project that is paying out funds.
+    /// @param accountingContext The context of the token being paid out.
+    /// @param amount The amount to pay out (use from the payout limit), as a fixed point number.
+    /// @param currency The currency of the `amount`. This must match the project's current ruleset's currency.
+    /// @return ruleset The ruleset the payout was made during, as a `JBRuleset` struct.
+    /// @return amountPaidOut The amount of terminal tokens paid out, as a fixed point number with the same amount of
+    /// decimals as its relative terminal.
+    function recordPayoutFor(
+        uint256 projectId,
+        JBAccountingContext calldata accountingContext,
+        uint256 amount,
+        uint256 currency
+    )
+        external
+        override
+        nonReentrant
+        returns (JBRuleset memory ruleset, uint256 amountPaidOut)
+    {
+        // Get a reference to the project's current ruleset.
+        ruleset = RULESETS.currentOf(projectId);
+
+        // The new total amount which has been paid out during this ruleset.
+        uint256 newUsedPayoutLimitOf =
+            usedPayoutLimitOf[msg.sender][projectId][accountingContext.token][ruleset.cycleNumber][currency] + amount;
+
+        // Amount must be within what is still available to pay out.
+        uint256 payoutLimit = IJBController(address(DIRECTORY.controllerOf(projectId))).FUND_ACCESS_LIMITS()
+            .payoutLimitOf({
+            projectId: projectId,
+            rulesetId: ruleset.id,
+            terminal: msg.sender,
+            token: accountingContext.token,
+            currency: currency
+        });
+
+        // Make sure the new used amount is within the payout limit.
+        if (newUsedPayoutLimitOf > payoutLimit || payoutLimit == 0) {
+            revert JBTerminalStore_PayoutLimitExceeded();
+        }
+
+        // Convert the amount to the balance's currency.
+        amountPaidOut = (currency == accountingContext.currency)
+            ? amount
+            : mulDiv(
+                amount,
+                10 ** _MAX_FIXED_POINT_FIDELITY, // Use `_MAX_FIXED_POINT_FIDELITY` to keep as much of the `_amount`'s
+                    // fidelity as possible when converting.
+                PRICES.pricePerUnitOf({
+                    projectId: projectId,
+                    pricingCurrency: currency,
+                    unitCurrency: accountingContext.currency,
+                    decimals: _MAX_FIXED_POINT_FIDELITY
+                })
+            );
+
+        // The amount being paid out must be available.
+        if (amountPaidOut > balanceOf[msg.sender][projectId][accountingContext.token]) {
+            revert JBTerminalStore_InadequateTerminalStoreBalance();
+        }
+
+        // Store the new amount.
+        usedPayoutLimitOf[msg.sender][projectId][accountingContext.token][ruleset.cycleNumber][currency] =
+            newUsedPayoutLimitOf;
+
+        // Removed the paid out funds from the project's token balance.
+        unchecked {
+            balanceOf[msg.sender][projectId][accountingContext.token] =
+                balanceOf[msg.sender][projectId][accountingContext.token] - amountPaidOut;
+        }
     }
 
     /// @notice Records a redemption from a project.
@@ -708,76 +791,33 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
         }
     }
 
-    /// @notice Records a payout from a project.
-    /// @param projectId The ID of the project that is paying out funds.
-    /// @param accountingContext The context of the token being paid out.
-    /// @param amount The amount to pay out (use from the payout limit), as a fixed point number.
-    /// @param currency The currency of the `amount`. This must match the project's current ruleset's currency.
-    /// @return ruleset The ruleset the payout was made during, as a `JBRuleset` struct.
-    /// @return amountPaidOut The amount of terminal tokens paid out, as a fixed point number with the same amount of
-    /// decimals as its relative terminal.
-    function recordPayoutFor(
+    /// @notice Records the migration of funds from this store.
+    /// @param projectId The ID of the project being migrated.
+    /// @param token The token being migrated.
+    /// @return balance The project's current balance (which is being migrated), as a fixed point number with the same
+    /// amount of decimals as its relative terminal.
+    function recordTerminalMigration(
         uint256 projectId,
-        JBAccountingContext calldata accountingContext,
-        uint256 amount,
-        uint256 currency
+        address token
     )
         external
         override
         nonReentrant
-        returns (JBRuleset memory ruleset, uint256 amountPaidOut)
+        returns (uint256 balance)
     {
         // Get a reference to the project's current ruleset.
-        ruleset = RULESETS.currentOf(projectId);
+        JBRuleset memory ruleset = RULESETS.currentOf(projectId);
 
-        // The new total amount which has been paid out during this ruleset.
-        uint256 newUsedPayoutLimitOf =
-            usedPayoutLimitOf[msg.sender][projectId][accountingContext.token][ruleset.cycleNumber][currency] + amount;
-
-        // Amount must be within what is still available to pay out.
-        uint256 payoutLimit = IJBController(address(DIRECTORY.controllerOf(projectId))).FUND_ACCESS_LIMITS()
-            .payoutLimitOf({
-            projectId: projectId,
-            rulesetId: ruleset.id,
-            terminal: msg.sender,
-            token: accountingContext.token,
-            currency: currency
-        });
-
-        // Make sure the new used amount is within the payout limit.
-        if (newUsedPayoutLimitOf > payoutLimit || payoutLimit == 0) {
-            revert JBTerminalStore_PayoutLimitExceeded();
+        // Terminal migration must be allowed.
+        if (!ruleset.allowTerminalMigration()) {
+            revert JBTerminalStore_TerminalMigrationNotAllowed();
         }
 
-        // Convert the amount to the balance's currency.
-        amountPaidOut = (currency == accountingContext.currency)
-            ? amount
-            : mulDiv(
-                amount,
-                10 ** _MAX_FIXED_POINT_FIDELITY, // Use `_MAX_FIXED_POINT_FIDELITY` to keep as much of the `_amount`'s
-                    // fidelity as possible when converting.
-                PRICES.pricePerUnitOf({
-                    projectId: projectId,
-                    pricingCurrency: currency,
-                    unitCurrency: accountingContext.currency,
-                    decimals: _MAX_FIXED_POINT_FIDELITY
-                })
-            );
+        // Return the current balance, which is the amount being migrated.
+        balance = balanceOf[msg.sender][projectId][token];
 
-        // The amount being paid out must be available.
-        if (amountPaidOut > balanceOf[msg.sender][projectId][accountingContext.token]) {
-            revert JBTerminalStore_InadequateTerminalStoreBalance();
-        }
-
-        // Store the new amount.
-        usedPayoutLimitOf[msg.sender][projectId][accountingContext.token][ruleset.cycleNumber][currency] =
-            newUsedPayoutLimitOf;
-
-        // Removed the paid out funds from the project's token balance.
-        unchecked {
-            balanceOf[msg.sender][projectId][accountingContext.token] =
-                balanceOf[msg.sender][projectId][accountingContext.token] - amountPaidOut;
-        }
+        // Set the balance to 0.
+        balanceOf[msg.sender][projectId][token] = 0;
     }
 
     /// @notice Records a use of a project's surplus allowance.
@@ -862,44 +902,5 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
         // Update the project's balance.
         balanceOf[msg.sender][projectId][accountingContext.token] =
             balanceOf[msg.sender][projectId][accountingContext.token] - usedAmount;
-    }
-
-    /// @notice Records funds being added to a project's balance.
-    /// @param projectId The ID of the project which funds are being added to the balance of.
-    /// @param token The token being added to the balance.
-    /// @param amount The amount of terminal tokens added, as a fixed point number with the same amount of decimals as
-    /// its relative terminal.
-    function recordAddedBalanceFor(uint256 projectId, address token, uint256 amount) external override {
-        // Increment the balance.
-        balanceOf[msg.sender][projectId][token] = balanceOf[msg.sender][projectId][token] + amount;
-    }
-
-    /// @notice Records the migration of funds from this store.
-    /// @param projectId The ID of the project being migrated.
-    /// @param token The token being migrated.
-    /// @return balance The project's current balance (which is being migrated), as a fixed point number with the same
-    /// amount of decimals as its relative terminal.
-    function recordTerminalMigration(
-        uint256 projectId,
-        address token
-    )
-        external
-        override
-        nonReentrant
-        returns (uint256 balance)
-    {
-        // Get a reference to the project's current ruleset.
-        JBRuleset memory ruleset = RULESETS.currentOf(projectId);
-
-        // Terminal migration must be allowed.
-        if (!ruleset.allowTerminalMigration()) {
-            revert JBTerminalStore_TerminalMigrationNotAllowed();
-        }
-
-        // Return the current balance, which is the amount being migrated.
-        balance = balanceOf[msg.sender][projectId][token];
-
-        // Set the balance to 0.
-        balanceOf[msg.sender][projectId][token] = 0;
     }
 }
