@@ -753,7 +753,8 @@ contract JBRulesets is JBControlled, IJBRulesets {
 
             // Make sure the approval hook supports the expected interface.
             try approvalHook.supportsInterface(type(IJBRulesetApprovalHook).interfaceId) returns (bool doesSupport) {
-                if (!doesSupport) revert JBRulesets_InvalidRulesetApprovalHook(); // Contract exists at the address but with the
+                if (!doesSupport) revert JBRulesets_InvalidRulesetApprovalHook(); // Contract exists at the address but
+                    // with the
                     // wrong interface
             } catch {
                 revert JBRulesets_InvalidRulesetApprovalHook(); // No ERC165 support

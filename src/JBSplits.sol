@@ -104,7 +104,7 @@ contract JBSplits is JBControlled, IJBSplits {
     //*********************************************************************//
     // ----------------------- internal helper views --------------------- //
     //*********************************************************************//
-    
+
     /// @notice Determine if the provided splits array includes the locked split.
     /// @param splits The array of splits to check within.
     /// @param lockedSplit The locked split.

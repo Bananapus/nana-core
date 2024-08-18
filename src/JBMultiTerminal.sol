@@ -59,7 +59,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
 
-    error JBMultiTerminal_AccountingContextAlreadySet(); 
+    error JBMultiTerminal_AccountingContextAlreadySet();
     error JBMultiTerminal_AddingAccountingContextNotAllowed();
     error JBMultiTerminal_FeeTerminalNotFound();
     error JBMultiTerminal_InvalidAccountingContextCurrency();
@@ -592,7 +592,9 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         JBRuleset memory ruleset = RULESETS.currentOf(projectId);
 
         // Make sure that if there's a ruleset, it allows adding accounting contexts.
-        if (ruleset.id != 0 && !ruleset.allowAddAccountingContext()) revert JBMultiTerminal_AddingAccountingContextNotAllowed();
+        if (ruleset.id != 0 && !ruleset.allowAddAccountingContext()) {
+            revert JBMultiTerminal_AddingAccountingContextNotAllowed();
+        }
 
         // Keep a reference to the number of accounting contexts to add.
         uint256 numberOfAccountingContexts = accountingContexts.length;

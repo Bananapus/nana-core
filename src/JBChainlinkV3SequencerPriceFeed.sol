@@ -58,7 +58,9 @@ contract JBChainlinkV3SequencerPriceFeed is JBChainlinkV3PriceFeed {
         (, int256 answer, uint256 startedAt,,) = SEQUENCER_FEED.latestRoundData();
 
         // Revert if sequencer has too recently restarted or is currently down.
-        if (block.timestamp - startedAt <= GRACE_PERIOD_TIME || answer == 1) revert JBChainlinkV3SequencerPriceFeed_SequencerDownOrRestarting();
+        if (block.timestamp - startedAt <= GRACE_PERIOD_TIME || answer == 1) {
+            revert JBChainlinkV3SequencerPriceFeed_SequencerDownOrRestarting();
+        }
 
         return super.currentUnitPrice(decimals);
     }

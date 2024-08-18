@@ -34,7 +34,7 @@ contract JBTokens is JBControlled, IJBTokens {
     //*********************************************************************//
     // --------------- public immutable stored properties ---------------- //
     //*********************************************************************//
-    
+
     /// @notice A reference to the token implementation that'll be cloned as projects deploy their own tokens.
     IJBToken public immutable TOKEN;
 
@@ -59,7 +59,6 @@ contract JBTokens is JBControlled, IJBTokens {
     /// @custom:param holder The credit holder.
     /// @custom:param projectId The ID of the project to which the credits belong.
     mapping(address holder => mapping(uint256 projectId => uint256)) public override creditBalanceOf;
-
 
     //*********************************************************************//
     // -------------------------- constructor ---------------------------- //
