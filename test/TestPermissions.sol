@@ -264,7 +264,7 @@ contract TestPermissions_Local is TestBaseWorkflow, JBTest {
         permData2[0] = JBPermissionsData({operator: address(0), projectId: _projectZero, permissionIds: permIds});
 
         // Shouldn't be able to forward root
-        vm.expectRevert(abi.encodeWithSignature("UNAUTHORIZED()"));
+        vm.expectRevert(JBPermissions.JBPermissions_Unauthorized.selector);
         _permissions.setPermissionsFor(zeroOwner, permData2[0]);
     }
 }
