@@ -24,6 +24,19 @@ contract JBProjects is ERC721, Ownable, IJBProjects {
     IJBTokenUriResolver public override tokenUriResolver;
 
     //*********************************************************************//
+    // -------------------------- constructor ---------------------------- //
+    //*********************************************************************//
+
+    /// @param owner The owner of the contract who can set metadata.
+    /// @param feeProjectOwner The address that will receive the fee-project. If `address(0)` the fee-project will not
+    /// be minted.
+    constructor(address owner, address feeProjectOwner) ERC721("Juicebox Projects", "JUICEBOX") Ownable(owner) {
+        if (feeProjectOwner != address(0)) {
+            createFor(feeProjectOwner);
+        }
+    }
+
+    //*********************************************************************//
     // -------------------------- public views --------------------------- //
     //*********************************************************************//
 
@@ -50,16 +63,16 @@ contract JBProjects is ERC721, Ownable, IJBProjects {
     }
 
     //*********************************************************************//
-    // -------------------------- constructor ---------------------------- //
+    // ---------------------- external transactions ---------------------- //
     //*********************************************************************//
 
-    /// @param owner The owner of the contract who can set metadata.
-    /// @param feeProjectOwner The address that will receive the fee-project. If `address(0)` the fee-project will not
-    /// be minted.
-    constructor(address owner, address feeProjectOwner) ERC721("Juicebox Projects", "JUICEBOX") Ownable(owner) {
-        if (feeProjectOwner != address(0)) {
-            createFor(feeProjectOwner);
-        }
+    /// @notice Sets the address of the resolver used to retrieve the tokenURI of projects.
+    /// @param newResolver The address of the new resolver.
+    function setTokenUriResolver(IJBTokenUriResolver newResolver) external override onlyOwner {
+        // Store the new resolver.
+        tokenUriResolver = newResolver;
+
+        emit SetTokenUriResolver(newResolver, _msgSender());
     }
 
     //*********************************************************************//
@@ -78,18 +91,5 @@ contract JBProjects is ERC721, Ownable, IJBProjects {
 
         // Mint the project.
         _safeMint(owner, projectId);
-    }
-
-    //*********************************************************************//
-    // ---------------------- external transactions ---------------------- //
-    //*********************************************************************//
-
-    /// @notice Sets the address of the resolver used to retrieve the tokenURI of projects.
-    /// @param newResolver The address of the new resolver.
-    function setTokenUriResolver(IJBTokenUriResolver newResolver) external override onlyOwner {
-        // Store the new resolver.
-        tokenUriResolver = newResolver;
-
-        emit SetTokenUriResolver(newResolver, _msgSender());
     }
 }
