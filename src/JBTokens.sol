@@ -7,7 +7,6 @@ import {JBControlled} from "./abstract/JBControlled.sol";
 import {IJBDirectory} from "./interfaces/IJBDirectory.sol";
 import {IJBToken} from "./interfaces/IJBToken.sol";
 import {IJBTokens} from "./interfaces/IJBTokens.sol";
-import {JBERC20} from "./JBERC20.sol";
 
 /// @notice Manages minting, burning, and balances of projects' tokens and token credits.
 /// @dev Token balances can either be ERC-20s or token credits. This contract manages these two representations and

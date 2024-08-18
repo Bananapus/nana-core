@@ -123,7 +123,7 @@ contract TestPricePerUnitOf_Local is JBPricesSetup {
     function test_WhenNoPriceFeedIsFoundOrExistsIncludingDefaultCase() external {
         // it should revert with PRICE_FEED_NOT_FOUND
 
-        vm.expectRevert(abi.encodeWithSignature("PRICE_FEED_NOT_FOUND()"));
+        vm.expectRevert(JBPrices.JBPrices_PriceFeedNotFound.selector);
         _prices.pricePerUnitOf(_projectId, _pricingCurrency, _unitCurrency, 6);
     }
 }

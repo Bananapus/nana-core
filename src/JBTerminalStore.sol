@@ -9,7 +9,6 @@ import {IJBDirectory} from "./interfaces/IJBDirectory.sol";
 import {IJBPrices} from "./interfaces/IJBPrices.sol";
 import {IJBRulesetDataHook} from "./interfaces/IJBRulesetDataHook.sol";
 import {IJBRulesets} from "./interfaces/IJBRulesets.sol";
-import {IJBTerminal} from "./interfaces/IJBTerminal.sol";
 import {IJBTerminalStore} from "./interfaces/IJBTerminalStore.sol";
 import {JBFixedPointNumber} from "./libraries/JBFixedPointNumber.sol";
 import {JBRedemptions} from "./libraries/JBRedemptions.sol";
