@@ -11,7 +11,7 @@ abstract contract JBPermissioned is Context, IJBPermissioned {
     //*********************************************************************//
     // --------------------------- custom errors -------------------------- //
     //*********************************************************************//
-    error UNAUTHORIZED();
+    error JBPermissioned_Unauthorized();
 
     //*********************************************************************//
     // ---------------- public immutable stored properties --------------- //
@@ -30,7 +30,7 @@ abstract contract JBPermissioned is Context, IJBPermissioned {
     }
 
     //*********************************************************************//
-    // -------------------------- internal views ------------------------- //
+    // ----------------------- internal helper views --------------------- //
     //*********************************************************************//
 
     /// @notice Require the message sender to be the account or have the relevant permission.
@@ -50,7 +50,7 @@ abstract contract JBPermissioned is Context, IJBPermissioned {
                     includeRoot: true,
                     includeWildcardProjectId: true
                 })
-        ) revert UNAUTHORIZED();
+        ) revert JBPermissioned_Unauthorized();
     }
 
     /// @notice If the 'alsoGrantAccessIf' condition is truthy, proceed. Otherwise, require the message sender to be the

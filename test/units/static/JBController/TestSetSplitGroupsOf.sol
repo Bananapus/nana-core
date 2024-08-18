@@ -49,7 +49,7 @@ contract TestSetSplitGroupsOf_Local is JBControllerSetup {
         bytes memory _permReturn = abi.encode(false);
         mockExpect(address(permissions), _permCall, _permReturn);
 
-        vm.expectRevert(abi.encodeWithSignature("UNAUTHORIZED()"));
+        vm.expectRevert(JBPermissioned.JBPermissioned_Unauthorized.selector);
         _controller.setSplitGroupsOf(_projectId, _rulesetId, _splitGroups);
     }
 }

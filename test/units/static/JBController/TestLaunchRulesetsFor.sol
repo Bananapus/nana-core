@@ -100,7 +100,7 @@ contract TestLaunchRulesetsFor_Local is JBControllerSetup {
         JBTerminalConfig[] memory _terminalConfigs = new JBTerminalConfig[](0);
         JBRulesetConfig[] memory _rulesetConfigs = new JBRulesetConfig[](0);
 
-        vm.expectRevert(abi.encodeWithSignature("RULESETS_ARRAY_EMPTY()"));
+        vm.expectRevert(JBController.JBController_RulesetsArrayEmpty.selector);
 
         _controller.launchRulesetsFor(1, _rulesetConfigs, _terminalConfigs, "");
     }
@@ -110,7 +110,7 @@ contract TestLaunchRulesetsFor_Local is JBControllerSetup {
         JBTerminalConfig[] memory _terminalConfigs = new JBTerminalConfig[](0);
         JBRulesetConfig[] memory _rulesetConfigs = new JBRulesetConfig[](1);
 
-        vm.expectRevert(abi.encodeWithSignature("UNAUTHORIZED()"));
+        vm.expectRevert(JBPermissioned.JBPermissioned_Unauthorized.selector);
 
         _controller.launchRulesetsFor(1, _rulesetConfigs, _terminalConfigs, "");
     }
@@ -125,7 +125,7 @@ contract TestLaunchRulesetsFor_Local is JBControllerSetup {
 
         mockExpect(address(rulesets), _latestRulesetIdOfCall, _returnData);
 
-        vm.expectRevert(abi.encodeWithSignature("RULESETS_ALREADY_LAUNCHED()"));
+        vm.expectRevert(JBController.JBController_RulesetsAlreadyLaunched.selector);
 
         _controller.launchRulesetsFor(1, _rulesetConfigs, _terminalConfigs, "");
     }
@@ -221,7 +221,7 @@ contract TestLaunchRulesetsFor_Local is JBControllerSetup {
         JBTerminalConfig[] memory _terminalConfigs = new JBTerminalConfig[](0);
         JBRulesetConfig[] memory _rulesetConfigs = new JBRulesetConfig[](1);
 
-        vm.expectRevert(abi.encodeWithSignature("UNAUTHORIZED()"));
+        vm.expectRevert(JBPermissioned.JBPermissioned_Unauthorized.selector);
 
         _controller.launchRulesetsFor(1, _rulesetConfigs, _terminalConfigs, "");
     }

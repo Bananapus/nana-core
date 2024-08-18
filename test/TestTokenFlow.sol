@@ -93,7 +93,7 @@ contract TestTokenFlow_Local is TestBaseWorkflow {
         }
 
         // Expect revert if there are no tokens being minted.
-        if (_mintAmount == 0) vm.expectRevert(abi.encodeWithSignature("ZERO_TOKENS_TO_MINT()"));
+        if (_mintAmount == 0) vm.expectRevert(JBController.JBController_ZeroTokensToMint.selector);
 
         // Mint tokens to beneficiary.
         _controller.mintTokensOf({
@@ -110,7 +110,7 @@ contract TestTokenFlow_Local is TestBaseWorkflow {
         assertEq(_tokens.totalBalanceOf(_beneficiary, _projectId), _expectedTokenBalance);
 
         if (_burnAmount == 0) {
-            vm.expectRevert(abi.encodeWithSignature("NO_BURNABLE_TOKENS()"));
+            vm.expectRevert(JBController.JBController_NoBurnableTokens.selector);
         } else if (_burnAmount > _expectedTokenBalance) {
             vm.expectRevert(JBTokens.JBTokens_InsufficientFunds.selector);
         } else {

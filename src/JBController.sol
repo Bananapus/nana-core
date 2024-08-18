@@ -22,8 +22,8 @@ import {IJBPriceFeed} from "./interfaces/IJBPriceFeed.sol";
 import {IJBPrices} from "./interfaces/IJBPrices.sol";
 import {IJBProjects} from "./interfaces/IJBProjects.sol";
 import {IJBProjectUriRegistry} from "./interfaces/IJBProjectUriRegistry.sol";
-import {IJBRulesets} from "./interfaces/IJBRulesets.sol";
 import {IJBRulesetDataHook} from "./interfaces/IJBRulesetDataHook.sol";
+import {IJBRulesets} from "./interfaces/IJBRulesets.sol";
 import {IJBSplitHook} from "./interfaces/IJBSplitHook.sol";
 import {IJBSplits} from "./interfaces/IJBSplits.sol";
 import {IJBTerminal} from "./interfaces/IJBTerminal.sol";
@@ -54,17 +54,17 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
 
-    error ADDING_PRICE_FEED_NOT_ALLOWED();
-    error CREDIT_TRANSFERS_PAUSED();
-    error RULESETS_ARRAY_EMPTY();
-    error INVALID_REDEMPTION_RATE();
-    error INVALID_RESERVED_PERCENT();
-    error MINT_NOT_ALLOWED_AND_NOT_TERMINAL_OR_HOOK();
-    error NO_BURNABLE_TOKENS();
-    error NO_RESERVED_TOKENS();
-    error RULESETS_ALREADY_LAUNCHED();
-    error ZERO_TOKENS_TO_MINT();
-    error RULESET_SET_TOKEN_DISABLED();
+    error JBController_AddingPriceFeedNotAllowed();
+    error JBController_CreditTransfersPaused();
+    error JBController_RulesetsArrayEmpty();
+    error JBController_InvalidRedemptionRate();
+    error JBController_InvalidReservedPercent();
+    error JBController_MintNotAllowedAndNotTerminalOrHook();
+    error JBController_NoBurnableTokens();
+    error JBController_NoReservedTokens();
+    error JBController_RulesetsAlreadyLaunched();
+    error JBController_ZeroTokensToMint();
+    error JBController_RulesetSetTokenDisabled();
 
     //*********************************************************************//
     // --------------- public immutable stored properties ---------------- //
@@ -103,6 +103,41 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     /// @notice The metadata URI for each project. This is typically an IPFS hash, optionally with an `ipfs://` prefix.
     /// @custom:param projectId The ID of the project to get the metadata URI of.
     mapping(uint256 projectId => string) public override uriOf;
+
+    //*********************************************************************//
+    // ---------------------------- constructor -------------------------- //
+    //*********************************************************************//
+
+    /// @param permissions A contract storing permissions.
+    /// @param projects A contract which mints ERC-721s that represent project ownership and transfers.
+    /// @param directory A contract storing directories of terminals and controllers for each project.
+    /// @param rulesets A contract storing and managing project rulesets.
+    /// @param tokens A contract that manages token minting and burning.
+    /// @param splits A contract that stores splits for each project.
+    /// @param fundAccessLimits A contract that stores fund access limits for each project.
+    /// @param prices A contract that stores prices for each project.
+    constructor(
+        IJBPermissions permissions,
+        IJBProjects projects,
+        IJBDirectory directory,
+        IJBRulesets rulesets,
+        IJBTokens tokens,
+        IJBSplits splits,
+        IJBFundAccessLimits fundAccessLimits,
+        IJBPrices prices,
+        address trustedForwarder
+    )
+        JBPermissioned(permissions)
+        ERC2771Context(trustedForwarder)
+    {
+        PROJECTS = projects;
+        DIRECTORY = directory;
+        RULESETS = rulesets;
+        TOKENS = tokens;
+        SPLITS = splits;
+        FUND_ACCESS_LIMITS = fundAccessLimits;
+        PRICES = prices;
+    }
 
     //*********************************************************************//
     // ------------------------- external views -------------------------- //
@@ -247,7 +282,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     }
 
     //*********************************************************************//
-    // -------------------------- internal views ------------------------- //
+    // ----------------------- internal helper views --------------------- //
     //*********************************************************************//
 
     /// @notice Indicates whether the provided address is a terminal for the project.
@@ -290,39 +325,21 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         return RULESETS.upcomingOf(projectId);
     }
 
-    //*********************************************************************//
-    // ---------------------------- constructor -------------------------- //
-    //*********************************************************************//
+    /// @notice The message's sender. Preferred to use over `msg.sender`.
+    /// @return sender The address which sent this call.
+    function _msgSender() internal view override(ERC2771Context, Context) returns (address sender) {
+        return ERC2771Context._msgSender();
+    }
 
-    /// @param permissions A contract storing permissions.
-    /// @param projects A contract which mints ERC-721s that represent project ownership and transfers.
-    /// @param directory A contract storing directories of terminals and controllers for each project.
-    /// @param rulesets A contract storing and managing project rulesets.
-    /// @param tokens A contract that manages token minting and burning.
-    /// @param splits A contract that stores splits for each project.
-    /// @param fundAccessLimits A contract that stores fund access limits for each project.
-    /// @param prices A contract that stores prices for each project.
-    constructor(
-        IJBPermissions permissions,
-        IJBProjects projects,
-        IJBDirectory directory,
-        IJBRulesets rulesets,
-        IJBTokens tokens,
-        IJBSplits splits,
-        IJBFundAccessLimits fundAccessLimits,
-        IJBPrices prices,
-        address trustedForwarder
-    )
-        JBPermissioned(permissions)
-        ERC2771Context(trustedForwarder)
-    {
-        PROJECTS = projects;
-        DIRECTORY = directory;
-        RULESETS = rulesets;
-        TOKENS = tokens;
-        SPLITS = splits;
-        FUND_ACCESS_LIMITS = fundAccessLimits;
-        PRICES = prices;
+    /// @notice The calldata. Preferred to use over `msg.data`.
+    /// @return calldata The `msg.data` of this call.
+    function _msgData() internal view override(ERC2771Context, Context) returns (bytes calldata) {
+        return ERC2771Context._msgData();
+    }
+
+    /// @dev `ERC-2771` specifies the context as being a single address (20 bytes).
+    function _contextSuffixLength() internal view override(ERC2771Context, Context) returns (uint256) {
+        return super._contextSuffixLength();
     }
 
     //*********************************************************************//
@@ -393,7 +410,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         returns (uint256 rulesetId)
     {
         // Make sure there are rulesets being queued.
-        if (rulesetConfigurations.length == 0) revert RULESETS_ARRAY_EMPTY();
+        if (rulesetConfigurations.length == 0) revert JBController_RulesetsArrayEmpty();
 
         // Enforce permissions.
         _requirePermissionFrom({
@@ -411,7 +428,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
 
         // If the project has already had rulesets, use `queueRulesetsOf(...)` instead.
         if (RULESETS.latestRulesetIdOf(projectId) > 0) {
-            revert RULESETS_ALREADY_LAUNCHED();
+            revert JBController_RulesetsAlreadyLaunched();
         }
 
         // Set this contract as the project's controller in the directory.
@@ -444,7 +461,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         returns (uint256 rulesetId)
     {
         // Make sure there are rulesets being queued.
-        if (rulesetConfigurations.length == 0) revert RULESETS_ARRAY_EMPTY();
+        if (rulesetConfigurations.length == 0) revert JBController_RulesetsArrayEmpty();
 
         // Enforce permissions.
         _requirePermissionFrom({
@@ -484,7 +501,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         returns (uint256 beneficiaryTokenCount)
     {
         // There should be tokens to mint.
-        if (tokenCount == 0) revert ZERO_TOKENS_TO_MINT();
+        if (tokenCount == 0) revert JBController_ZeroTokensToMint();
 
         // Keep a reference to the reserved percent.
         uint256 reservedPercent;
@@ -508,7 +525,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
             ruleset.id != 0 && !ruleset.allowOwnerMinting() && !_isTerminalOf(projectId, _msgSender())
                 && _msgSender() != address(ruleset.dataHook())
                 && !_hasDataHookMintPermissionFor(projectId, ruleset, _msgSender())
-        ) revert MINT_NOT_ALLOWED_AND_NOT_TERMINAL_OR_HOOK();
+        ) revert JBController_MintNotAllowedAndNotTerminalOrHook();
 
         // Determine the reserved percent to use.
         reservedPercent = useReservedPercent ? ruleset.reservedPercent() : 0;
@@ -556,7 +573,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         });
 
         // There must be tokens to burn.
-        if (tokenCount == 0) revert NO_BURNABLE_TOKENS();
+        if (tokenCount == 0) revert JBController_NoBurnableTokens();
 
         emit BurnTokens(holder, projectId, tokenCount, memo, _msgSender());
 
@@ -592,7 +609,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     /// @param to The controller to migrate the project to.
     function migrate(uint256 projectId, IERC165 to) external override {
         // Make sure this is being called by the directory.
-        if (msg.sender != address(DIRECTORY)) revert UNAUTHORIZED();
+        if (msg.sender != address(DIRECTORY)) revert JBPermissioned_Unauthorized();
 
         emit Migrate(projectId, to, msg.sender);
 
@@ -703,7 +720,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         if (ruleset.id == 0) ruleset = _upcomingRulesetOf(projectId);
 
         // If owner minting is disabled for the ruleset, the owner cannot change the token.
-        if (!ruleset.allowSetCustomToken()) revert RULESET_SET_TOKEN_DISABLED();
+        if (!ruleset.allowSetCustomToken()) revert JBController_RulesetSetTokenDisabled();
 
         TOKENS.setTokenFor(projectId, token);
     }
@@ -743,7 +760,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         JBRuleset memory ruleset = _currentRulesetOf(projectId);
 
         // Credit transfers must not be paused.
-        if (ruleset.pauseCreditTransfers()) revert CREDIT_TRANSFERS_PAUSED();
+        if (ruleset.pauseCreditTransfers()) revert JBController_CreditTransfersPaused();
 
         TOKENS.transferCreditsFrom(holder, projectId, recipient, amount);
     }
@@ -773,7 +790,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         JBRuleset memory ruleset = _currentRulesetOf(projectId);
 
         // Make sure the project's ruleset allows adding price feeds.
-        if (!ruleset.allowAddPriceFeed()) revert ADDING_PRICE_FEED_NOT_ALLOWED();
+        if (!ruleset.allowAddPriceFeed()) revert JBController_AddingPriceFeedNotAllowed();
 
         PRICES.addPriceFeedFor(projectId, pricingCurrency, unitCurrency, feed);
     }
@@ -819,28 +836,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     }
 
     //*********************************************************************//
-    // ---------------------- internal transactions ---------------------- //
-    //*********************************************************************//
-
-    /// @notice The message's sender. Preferred to use over `msg.sender`.
-    /// @return sender The address which sent this call.
-    function _msgSender() internal view override(ERC2771Context, Context) returns (address sender) {
-        return ERC2771Context._msgSender();
-    }
-
-    /// @notice The calldata. Preferred to use over `msg.data`.
-    /// @return calldata The `msg.data` of this call.
-    function _msgData() internal view override(ERC2771Context, Context) returns (bytes calldata) {
-        return ERC2771Context._msgData();
-    }
-
-    /// @dev `ERC-2771` specifies the context as being a single address (20 bytes).
-    function _contextSuffixLength() internal view override(ERC2771Context, Context) returns (uint256) {
-        return super._contextSuffixLength();
-    }
-
-    //*********************************************************************//
-    // ---------------------- internal transactions ---------------------- //
+    // --------------------- internal helper functions ------------------- //
     //*********************************************************************//
 
     /// @notice Sends pending reserved tokens to the project's reserved token splits.
@@ -853,7 +849,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         tokenCount = pendingReservedTokenBalanceOf[projectId];
 
         // Revert if there are no pending reserved tokens
-        if (tokenCount == 0) revert NO_RESERVED_TOKENS();
+        if (tokenCount == 0) revert JBController_NoReservedTokens();
 
         // Get the ruleset to read the reserved percent from.
         JBRuleset memory ruleset = _currentRulesetOf(projectId);
@@ -1033,12 +1029,12 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
 
             // Make sure its reserved percent is valid.
             if (rulesetConfig.metadata.reservedPercent > JBConstants.MAX_RESERVED_PERCENT) {
-                revert INVALID_RESERVED_PERCENT();
+                revert JBController_InvalidReservedPercent();
             }
 
             // Make sure its redemption rate is valid.
             if (rulesetConfig.metadata.redemptionRate > JBConstants.MAX_REDEMPTION_RATE) {
-                revert INVALID_REDEMPTION_RATE();
+                revert JBController_InvalidRedemptionRate();
             }
 
             // Queue its ruleset.

@@ -92,7 +92,7 @@ contract TestSetTerminalsOf_Local is JBDirectorySetup {
         IJBTerminal[] memory _terminals = new IJBTerminal[](1);
         _terminals[0] = _terminalToAdd;
 
-        vm.expectRevert(abi.encodeWithSignature("UNAUTHORIZED()"));
+        vm.expectRevert(JBPermissioned.JBPermissioned_Unauthorized.selector);
         _directory.setTerminalsOf(1, _terminals);
     }
 

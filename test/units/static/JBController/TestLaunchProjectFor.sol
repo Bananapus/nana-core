@@ -80,7 +80,7 @@ contract TestLaunchProjectFor_Local is JBControllerSetup {
         _rulesetConfigurations[0].splitGroups = new JBSplitGroup[](0);
         _rulesetConfigurations[0].fundAccessLimitGroups = _fundAccessLimitGroup;
 
-        vm.expectRevert(abi.encodeWithSignature("INVALID_RESERVED_PERCENT()"));
+        vm.expectRevert(JBController.JBController_InvalidReservedPercent.selector);
         _controller.launchProjectFor(address(this), _metadata, _rulesetConfigurations, _terminals, _memo);
     }
 
@@ -123,7 +123,7 @@ contract TestLaunchProjectFor_Local is JBControllerSetup {
         _rulesetConfigurations[0].splitGroups = new JBSplitGroup[](0);
         _rulesetConfigurations[0].fundAccessLimitGroups = _fundAccessLimitGroup;
 
-        vm.expectRevert(abi.encodeWithSignature("INVALID_REDEMPTION_RATE()"));
+        vm.expectRevert(JBController.JBController_InvalidRedemptionRate.selector);
         _controller.launchProjectFor(address(this), _metadata, _rulesetConfigurations, _terminals, _memo);
     }
 

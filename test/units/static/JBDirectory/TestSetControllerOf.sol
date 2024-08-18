@@ -74,7 +74,7 @@ contract TestSetControllerOf_Local is JBDirectorySetup {
 
         mockExpect(address(permissions), _permissionsCall, _permissionsReturned);
 
-        vm.expectRevert(abi.encodeWithSignature("UNAUTHORIZED()"));
+        vm.expectRevert(JBPermissioned.JBPermissioned_Unauthorized.selector);
         _directory.setControllerOf(1, IERC165(address(this)));
     }
 

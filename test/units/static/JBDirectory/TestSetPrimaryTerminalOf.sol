@@ -59,7 +59,7 @@ contract TestSetPrimaryTerminalOf_Local is JBDirectorySetup {
 
         mockExpect(address(permissions), _permissionsCall, _permissionsReturned);
 
-        vm.expectRevert(abi.encodeWithSignature("UNAUTHORIZED()"));
+        vm.expectRevert(JBPermissioned.JBPermissioned_Unauthorized.selector);
         _directory.setPrimaryTerminalOf(1, _token, _terminalToAdd);
     }
 
