@@ -13,7 +13,7 @@ contract JBChainlinkV3SequencerPriceFeed is JBChainlinkV3PriceFeed {
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
 
-    error SEQUENCER_DOWN_OR_RESTARTING();
+    error JBChainlinkV3SequencerPriceFeed_SequencerDownOrRestarting();
 
     //*********************************************************************//
     // ---------------- public stored immutable properties --------------- //
@@ -24,24 +24,6 @@ contract JBChainlinkV3SequencerPriceFeed is JBChainlinkV3PriceFeed {
 
     /// @notice How long the sequencer must be re-active in order to return a price.
     uint256 public immutable GRACE_PERIOD_TIME;
-
-    //*********************************************************************//
-    // ------------------------- external views -------------------------- //
-    //*********************************************************************//
-
-    /// @notice Gets the current price (per 1 unit) from the feed.
-    /// @param decimals The number of decimals the return value should use.
-    /// @return The current unit price from the feed, as a fixed point number with the specified number of decimals.
-    function currentUnitPrice(uint256 decimals) public view override returns (uint256) {
-        // Fetch sequencer status.
-        // slither-disable-next-line unused-return
-        (, int256 answer, uint256 startedAt,,) = SEQUENCER_FEED.latestRoundData();
-
-        // Revert if sequencer has too recently restarted or is currently down.
-        if (block.timestamp - startedAt <= GRACE_PERIOD_TIME || answer == 1) revert SEQUENCER_DOWN_OR_RESTARTING();
-
-        return super.currentUnitPrice(decimals);
-    }
 
     //*********************************************************************//
     // -------------------------- constructor ---------------------------- //
@@ -61,5 +43,23 @@ contract JBChainlinkV3SequencerPriceFeed is JBChainlinkV3PriceFeed {
     {
         SEQUENCER_FEED = sequencerFeed;
         GRACE_PERIOD_TIME = gracePeriod;
+    }
+
+    //*********************************************************************//
+    // ------------------------- external views -------------------------- //
+    //*********************************************************************//
+
+    /// @notice Gets the current price (per 1 unit) from the feed.
+    /// @param decimals The number of decimals the return value should use.
+    /// @return The current unit price from the feed, as a fixed point number with the specified number of decimals.
+    function currentUnitPrice(uint256 decimals) public view override returns (uint256) {
+        // Fetch sequencer status.
+        // slither-disable-next-line unused-return
+        (, int256 answer, uint256 startedAt,,) = SEQUENCER_FEED.latestRoundData();
+
+        // Revert if sequencer has too recently restarted or is currently down.
+        if (block.timestamp - startedAt <= GRACE_PERIOD_TIME || answer == 1) revert JBChainlinkV3SequencerPriceFeed_SequencerDownOrRestarting();
+
+        return super.currentUnitPrice(decimals);
     }
 }
