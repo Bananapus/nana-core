@@ -152,7 +152,7 @@ contract TestRedeemTokensOf_Local is JBMultiTerminalSetup {
 
         // mock feeless address check
         mockExpect(address(feelessAddresses), abi.encodeCall(IJBFeelessAddresses.isFeeless, (_bene)), abi.encode(true));
-        vm.expectRevert(abi.encodeWithSignature("UNDER_MIN_TOKENS_RECLAIMED()"));
+        vm.expectRevert(JBMultiTerminal.JBMultiTerminal_UnderMinTokensReclaimed.selector);
         _terminal.redeemTokensOf(_holder, _projectId, _mockToken, _defaultAmount, 1e18, _bene, ""); // minReclaimAmount
             // = 1e18 but only 1e19 reclaimed
     }

@@ -23,8 +23,8 @@ contract JBRulesets is JBControlled, IJBRulesets {
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
 
-    error JBRulesets_InvalidRulesetApprovalHook();
     error JBRulesets_InvalidDecayPercent();
+    error JBRulesets_InvalidRulesetApprovalHook();
     error JBRulesets_InvalidRulesetDuration();
     error JBRulesets_InvalidRulesetEndTime();
     error JBRulesets_InvalidWeight();

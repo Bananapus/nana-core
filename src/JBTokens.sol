@@ -19,7 +19,6 @@ contract JBTokens is JBControlled, IJBTokens {
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
 
-    error JBTokens_TokenAlreadySet();
     error JBTokens_EmptyName();
     error JBTokens_EmptySymbol();
     error JBTokens_EmptyToken();
@@ -27,6 +26,7 @@ contract JBTokens is JBControlled, IJBTokens {
     error JBTokens_InsufficientCredits();
     error JBTokens_ProjectAlreadyHasToken();
     error JBTokens_RecipientZeroAddress();
+    error JBTokens_TokenAlreadySet();
     error JBTokens_TokenNotFound();
     error JBTokens_TokensMustHave18Decimals();
     error JBTokens_OverflowAlert();

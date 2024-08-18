@@ -21,8 +21,8 @@ import {IJBFeeTerminal} from "./interfaces/IJBFeeTerminal.sol";
 import {IJBMultiTerminal} from "./interfaces/IJBMultiTerminal.sol";
 import {IJBPayoutTerminal} from "./interfaces/IJBPayoutTerminal.sol";
 import {IJBPermissioned} from "./interfaces/IJBPermissioned.sol";
-import {IJBPermitTerminal} from "./interfaces/IJBPermitTerminal.sol";
 import {IJBPermissions} from "./interfaces/IJBPermissions.sol";
+import {IJBPermitTerminal} from "./interfaces/IJBPermitTerminal.sol";
 import {IJBProjects} from "./interfaces/IJBProjects.sol";
 import {IJBRedeemTerminal} from "./interfaces/IJBRedeemTerminal.sol";
 import {IJBRulesets} from "./interfaces/IJBRulesets.sol";
@@ -59,21 +59,21 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
 
-    error ACCOUNTING_CONTEXT_ALREADY_SET();
-    error ADDING_ACCOUNTING_CONTEXT_NOT_ALLOWED();
-    error FEE_TERMINAL_NOT_FOUND();
-    error INVALID_ACCOUNTING_CONTEXT_DECIMALS();
-    error INVALID_ACCOUNTING_CONTEXT_CURRENCY();
-    error UNDER_MIN_TOKENS_PAID_OUT();
-    error UNDER_MIN_TOKENS_RECLAIMED();
-    error UNDER_MIN_RETURNED_TOKENS();
-    error NO_MSG_VALUE_ALLOWED();
-    error OVERFLOW_ALERT();
-    error PERMIT_ALLOWANCE_NOT_ENOUGH();
-    error RECIPIENT_PROJECT_TERMINAL_NOT_FOUND();
-    error SPLIT_HOOK_INVALID();
-    error TERMINAL_TOKENS_INCOMPATIBLE();
-    error TOKEN_NOT_ACCEPTED();
+    error JBMultiTerminal_AccountingContextAlreadySet(); 
+    error JBMultiTerminal_AddingAccountingContextNotAllowed();
+    error JBMultiTerminal_FeeTerminalNotFound();
+    error JBMultiTerminal_InvalidAccountingContextCurrency();
+    error JBMultiTerminal_InvalidAccountingContextDecimals();
+    error JBMultiTerminal_NoMsgValueAllowed();
+    error JBMultiTerminal_OverflowAlert();
+    error JBMultiTerminal_PermitAllowanceNotEnough();
+    error JBMultiTerminal_RecipientProjectTerminalNotFound();
+    error JBMultiTerminal_SplitHookInvalid();
+    error JBMultiTerminal_TerminalTokensIncompatible();
+    error JBMultiTerminal_TokenNotAccepted();
+    error JBMultiTerminal_UnderMinReturnedTokens();
+    error JBMultiTerminal_UnderMinTokensPaidOut();
+    error JBMultiTerminal_UnderMinTokensReclaimed();
 
     //*********************************************************************//
     // ------------------------- public constants ------------------------ //
@@ -138,6 +138,39 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @custom:param projectId The ID of the project that is holding fees.
     /// @custom:param token The token that the fees are held in.
     mapping(uint256 projectId => mapping(address token => JBFee[])) internal _heldFeesOf;
+
+    //*********************************************************************//
+    // -------------------------- constructor ---------------------------- //
+    //*********************************************************************//
+
+    /// @param permissions A contract storing permissions.
+    /// @param projects A contract which mints ERC-721s that represent project ownership and transfers.
+    /// @param splits A contract that stores splits for each project.
+    /// @param store A contract that stores the terminal's data.
+    /// @param feelessAddresses A contract that stores addresses that shouldn't incur fees when being paid towards or
+    /// from.
+    /// @param permit2 A permit2 utility.
+    /// @param trustedForwarder A trusted forwarder of transactions to this contract.
+    constructor(
+        IJBPermissions permissions,
+        IJBProjects projects,
+        IJBSplits splits,
+        IJBTerminalStore store,
+        IJBFeelessAddresses feelessAddresses,
+        IPermit2 permit2,
+        address trustedForwarder
+    )
+        JBPermissioned(permissions)
+        ERC2771Context(trustedForwarder)
+    {
+        PROJECTS = projects;
+        DIRECTORY = store.DIRECTORY();
+        SPLITS = splits;
+        RULESETS = store.RULESETS();
+        STORE = store;
+        FEELESS_ADDRESSES = feelessAddresses;
+        PERMIT2 = permit2;
+    }
 
     //*********************************************************************//
     // ------------------------- external views -------------------------- //
@@ -214,7 +247,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     }
 
     //*********************************************************************//
-    // -------------------------- internal views ------------------------- //
+    // ----------------------- internal helper views --------------------- //
     //*********************************************************************//
 
     /// @notice Checks this terminal's balance of a specific token.
@@ -248,37 +281,21 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         return FEELESS_ADDRESSES.isFeeless(addr);
     }
 
-    //*********************************************************************//
-    // -------------------------- constructor ---------------------------- //
-    //*********************************************************************//
+    /// @notice The message's sender. Preferred to use over `msg.sender`.
+    /// @return sender The address which sent this call.
+    function _msgSender() internal view override(ERC2771Context, Context) returns (address sender) {
+        return ERC2771Context._msgSender();
+    }
 
-    /// @param permissions A contract storing permissions.
-    /// @param projects A contract which mints ERC-721s that represent project ownership and transfers.
-    /// @param splits A contract that stores splits for each project.
-    /// @param store A contract that stores the terminal's data.
-    /// @param feelessAddresses A contract that stores addresses that shouldn't incur fees when being paid towards or
-    /// from.
-    /// @param permit2 A permit2 utility.
-    /// @param trustedForwarder A trusted forwarder of transactions to this contract.
-    constructor(
-        IJBPermissions permissions,
-        IJBProjects projects,
-        IJBSplits splits,
-        IJBTerminalStore store,
-        IJBFeelessAddresses feelessAddresses,
-        IPermit2 permit2,
-        address trustedForwarder
-    )
-        JBPermissioned(permissions)
-        ERC2771Context(trustedForwarder)
-    {
-        PROJECTS = projects;
-        DIRECTORY = store.DIRECTORY();
-        SPLITS = splits;
-        RULESETS = store.RULESETS();
-        STORE = store;
-        FEELESS_ADDRESSES = feelessAddresses;
-        PERMIT2 = permit2;
+    /// @notice The calldata. Preferred to use over `msg.data`.
+    /// @return calldata The `msg.data` of this call.
+    function _msgData() internal view override(ERC2771Context, Context) returns (bytes calldata) {
+        return ERC2771Context._msgData();
+    }
+
+    /// @dev `ERC-2771` specifies the context as being a single address (20 bytes).
+    function _contextSuffixLength() internal view override(ERC2771Context, Context) returns (uint256) {
+        return super._contextSuffixLength();
     }
 
     //*********************************************************************//
@@ -327,7 +344,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
         // The token count for the beneficiary must be greater than or equal to the specified minimum.
         if (beneficiaryTokenCount < minReturnedTokens) {
-            revert UNDER_MIN_RETURNED_TOKENS();
+            revert JBMultiTerminal_UnderMinReturnedTokens();
         }
     }
 
@@ -399,7 +416,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         reclaimAmount = _redeemTokensOf(holder, projectId, tokenToReclaim, redeemCount, beneficiary, metadata);
 
         // The amount being reclaimed must be at least as much as was expected.
-        if (reclaimAmount < minTokensReclaimed) revert UNDER_MIN_TOKENS_RECLAIMED();
+        if (reclaimAmount < minTokensReclaimed) revert JBMultiTerminal_UnderMinTokensReclaimed();
     }
 
     /// @notice Sends payouts to a project's current payout split group, according to its ruleset, up to its current
@@ -435,7 +452,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         amountPaidOut = _sendPayoutsOf(projectId, token, amount, currency);
 
         // The amount being paid out must be at least as much as was expected.
-        if (amountPaidOut < minTokensPaidOut) revert UNDER_MIN_TOKENS_PAID_OUT();
+        if (amountPaidOut < minTokensPaidOut) revert JBMultiTerminal_UnderMinTokensPaidOut();
     }
 
     /// @notice Allows a project to pay out funds from its surplus up to the current surplus allowance.
@@ -480,7 +497,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         amountPaidOut = _useAllowanceOf(projectId, token, amount, currency, beneficiary, feeBeneficiary, memo);
 
         // The amount being withdrawn must be at least as much as was expected.
-        if (amountPaidOut < minTokensPaidOut) revert UNDER_MIN_TOKENS_PAID_OUT();
+        if (amountPaidOut < minTokensPaidOut) revert JBMultiTerminal_UnderMinTokensPaidOut();
     }
 
     /// @notice Migrate a project's funds and operations to a new terminal that accepts the same token type.
@@ -509,7 +526,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
         // The terminal being migrated to must accept the same token as this terminal.
         if (to.accountingContextForTokenOf(projectId, token).currency == 0) {
-            revert TERMINAL_TOKENS_INCOMPATIBLE();
+            revert JBMultiTerminal_TerminalTokensIncompatible();
         }
 
         // Record the migration in the store.
@@ -575,7 +592,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         JBRuleset memory ruleset = RULESETS.currentOf(projectId);
 
         // Make sure that if there's a ruleset, it allows adding accounting contexts.
-        if (ruleset.id != 0 && !ruleset.allowAddAccountingContext()) revert ADDING_ACCOUNTING_CONTEXT_NOT_ALLOWED();
+        if (ruleset.id != 0 && !ruleset.allowAddAccountingContext()) revert JBMultiTerminal_AddingAccountingContextNotAllowed();
 
         // Keep a reference to the number of accounting contexts to add.
         uint256 numberOfAccountingContexts = accountingContexts.length;
@@ -593,7 +610,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                 _accountingContextForTokenOf[projectId][accountingContext.token];
 
             // Make sure the token accounting context isn't already set.
-            if (storedAccountingContext.token != address(0)) revert ACCOUNTING_CONTEXT_ALREADY_SET();
+            if (storedAccountingContext.token != address(0)) revert JBMultiTerminal_AccountingContextAlreadySet();
 
             // Keep track of a flag indiciating if we know the provided decimals are incorrect.
             bool knownInvalidDecimals;
@@ -616,11 +633,11 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
             // Make sure the decimals are correct.
             if (knownInvalidDecimals) {
-                revert INVALID_ACCOUNTING_CONTEXT_DECIMALS();
+                revert JBMultiTerminal_InvalidAccountingContextDecimals();
             }
 
             // Make sure the currency is non-zero.
-            if (accountingContext.currency == 0) revert INVALID_ACCOUNTING_CONTEXT_CURRENCY();
+            if (accountingContext.currency == 0) revert JBMultiTerminal_InvalidAccountingContextCurrency();
 
             // Define the context from the config.
             storedAccountingContext.token = accountingContext.token;
@@ -655,7 +672,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         require(msg.sender == address(this));
 
         if (address(feeTerminal) == address(0)) {
-            revert FEE_TERMINAL_NOT_FOUND();
+            revert JBMultiTerminal_FeeTerminalNotFound();
         }
 
         // Trigger any inherited pre-transfer logic if funds will be transferred.
@@ -705,7 +722,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         if (split.hook != IJBSplitHook(address(0))) {
             // Make sure that the address supports the split hook interface.
             if (!split.hook.supportsInterface(type(IJBSplitHook).interfaceId)) {
-                revert SPLIT_HOOK_INVALID();
+                revert JBMultiTerminal_SplitHookInvalid();
             }
 
             // This payout is eligible for a fee since the funds are leaving this contract and the split hook isn't a
@@ -739,7 +756,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             IJBTerminal terminal = DIRECTORY.primaryTerminalOf(split.projectId, token);
 
             // The project must have a terminal to send funds to.
-            if (terminal == IJBTerminal(address(0))) revert RECIPIENT_PROJECT_TERMINAL_NOT_FOUND();
+            if (terminal == IJBTerminal(address(0))) revert JBMultiTerminal_RecipientProjectTerminalNotFound();
 
             // This payout is eligible for a fee if the funds are leaving this contract and the receiving terminal isn't
             // a feelss address.
@@ -795,28 +812,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     }
 
     //*********************************************************************//
-    // ---------------------- internal transactions ---------------------- //
-    //*********************************************************************//
-
-    /// @notice The message's sender. Preferred to use over `msg.sender`.
-    /// @return sender The address which sent this call.
-    function _msgSender() internal view override(ERC2771Context, Context) returns (address sender) {
-        return ERC2771Context._msgSender();
-    }
-
-    /// @notice The calldata. Preferred to use over `msg.data`.
-    /// @return calldata The `msg.data` of this call.
-    function _msgData() internal view override(ERC2771Context, Context) returns (bytes calldata) {
-        return ERC2771Context._msgData();
-    }
-
-    /// @dev `ERC-2771` specifies the context as being a single address (20 bytes).
-    function _contextSuffixLength() internal view override(ERC2771Context, Context) returns (uint256) {
-        return super._contextSuffixLength();
-    }
-
-    //*********************************************************************//
-    // ---------------------- internal transactions ---------------------- //
+    // --------------------- internal helper functions ------------------- //
     //*********************************************************************//
 
     /// @notice Accepts an incoming token.
@@ -836,14 +832,14 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     {
         // Make sure the project has an accounting context for the token being paid.
         if (_accountingContextForTokenOf[projectId][token].token == address(0)) {
-            revert TOKEN_NOT_ACCEPTED();
+            revert JBMultiTerminal_TokenNotAccepted();
         }
 
         // If the terminal's token is the native token, override `amount` with `msg.value`.
         if (token == JBConstants.NATIVE_TOKEN) return msg.value;
 
         // If the terminal's token is not native, revert if there is a non-zero `msg.value`.
-        if (msg.value != 0) revert NO_MSG_VALUE_ALLOWED();
+        if (msg.value != 0) revert JBMultiTerminal_NoMsgValueAllowed();
 
         // Unpack the allowance to use, if any, given by the frontend.
         (bool exists, bytes memory parsedMetadata) =
@@ -856,7 +852,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
             // Make sure the permit allowance is enough for this payment. If not we revert early.
             if (allowance.amount < amount) {
-                revert PERMIT_ALLOWANCE_NOT_ENOUGH();
+                revert JBMultiTerminal_PermitAllowanceNotEnough();
             }
 
             // Keep a reference to the permit rules.
@@ -1853,7 +1849,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         }
 
         // Make sure the amount being paid is less than the maximum permit2 allowance.
-        if (amount > type(uint160).max) revert OVERFLOW_ALERT();
+        if (amount > type(uint160).max) revert JBMultiTerminal_OverflowAlert();
 
         // Otherwise we attempt to use the PERMIT2 method.
         PERMIT2.transferFrom(from, to, uint160(amount), token);
