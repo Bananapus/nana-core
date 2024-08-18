@@ -154,7 +154,7 @@ contract JBTokens is JBControlled, IJBTokens {
         // Store the project for the token.
         projectIdOf[token] = projectId;
 
-        emit DeployERC20(projectId, token, name, symbol, salt, msg.sender);
+        emit DeployERC20({projectId: projectId, token: token, name: name, symbol: symbol, salt: salt, caller: msg.sender});
 
         // Initialize the token.
         token.initialize({name: name, symbol: symbol, owner: address(this)});
@@ -183,7 +183,7 @@ contract JBTokens is JBControlled, IJBTokens {
         // Store the project for the token.
         projectIdOf[token] = projectId;
 
-        emit SetToken(projectId, token, msg.sender);
+        emit SetToken({ projectId: projectId, token: token, caller: msg.sender });
     }
 
     /// @notice Mint (create) new tokens or credits.
@@ -211,7 +211,7 @@ contract JBTokens is JBControlled, IJBTokens {
         // The total supply can't exceed the maximum value storable in a uint208.
         if (totalSupplyOf(projectId) > type(uint208).max) revert JBTokens_OverflowAlert();
 
-        emit Mint(holder, projectId, amount, shouldClaimTokens, msg.sender);
+        emit Mint({ holder: holder, projectId: projectId, amount: amount, shouldClaimTokens: shouldClaimTokens, caller: msg.sender });
     }
 
     /// @notice Burns (destroys) credits or tokens.
@@ -264,7 +264,7 @@ contract JBTokens is JBControlled, IJBTokens {
             totalCreditSupplyOf[projectId] = totalCreditSupplyOf[projectId] - creditsToBurn;
         }
 
-        emit Burn(holder, projectId, amount, creditBalance, tokenBalance, msg.sender);
+        emit Burn({ holder: holder, projectId: projectId, amount: amount, creditBalance: creditBalance, tokenBalance: tokenBalance, caller: msg.sender });
 
         // Burn the tokens.
         if (tokensToBurn > 0) token.burn(holder, tokensToBurn);
@@ -306,7 +306,7 @@ contract JBTokens is JBControlled, IJBTokens {
             totalCreditSupplyOf[projectId] = totalCreditSupplyOf[projectId] - amount;
         }
 
-        emit ClaimTokens(holder, projectId, creditBalance, amount, beneficiary, msg.sender);
+        emit ClaimTokens({ holder: holder, projectId: projectId, creditBalance: creditBalance, amount: amount, beneficiary: beneficiary, caller: msg.sender });
 
         // Mint the equivalent amount of the project's token for the holder.
         token.mint(beneficiary, amount);
@@ -345,6 +345,6 @@ contract JBTokens is JBControlled, IJBTokens {
         // Add the unclaimed project tokens to the recipient's balance.
         creditBalanceOf[recipient][projectId] = creditBalanceOf[recipient][projectId] + amount;
 
-        emit TransferCredits(holder, projectId, recipient, amount, msg.sender);
+        emit TransferCredits({ holder: holder, projectId: projectId, recipient: recipient, amount: amount, caller: msg.sender });
     }
 }

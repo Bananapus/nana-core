@@ -12,11 +12,11 @@ interface IJBPayoutTerminal is IJBTerminal {
         uint256 indexed rulesetId,
         uint256 indexed rulesetCycleNumber,
         uint256 indexed projectId,
-        address beneficiary,
+        address projectOwner,
         uint256 amount,
         uint256 amountPaidOut,
         uint256 fee,
-        uint256 beneficiaryDistributionAmount,
+        uint256 netLeftoverPayoutAmount,
         address caller
     );
     event SendPayoutToSplit(

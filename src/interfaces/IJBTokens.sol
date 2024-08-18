@@ -11,22 +11,22 @@ interface IJBTokens {
         address indexed holder,
         uint256 indexed projectId,
         uint256 amount,
-        uint256 initialCreditBalance,
-        uint256 initialTokenBalance,
+        uint256 creditBalance,
+        uint256 tokenBalance,
         address caller
     );
     event ClaimTokens(
         address indexed holder,
         uint256 indexed projectId,
-        uint256 initialCreditBalance,
+        uint256 creditBalance,
         uint256 amount,
         address beneficiary,
         address caller
     );
     event Mint(
-        address indexed holder, uint256 indexed projectId, uint256 amount, bool tokensWereClaimed, address caller
+        address indexed holder, uint256 indexed projectId, uint256 amount, bool shouldClaimTokens, address caller
     );
-    event SetToken(uint256 indexed projectId, IJBToken indexed newToken, address caller);
+    event SetToken(uint256 indexed projectId, IJBToken indexed token, address caller);
     event TransferCredits(
         address indexed holder, uint256 indexed projectId, address indexed recipient, uint256 amount, address caller
     );

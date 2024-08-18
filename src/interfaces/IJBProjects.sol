@@ -13,5 +13,5 @@ interface IJBProjects is IERC721 {
     function tokenUriResolver() external view returns (IJBTokenUriResolver);
 
     function createFor(address owner) external returns (uint256 projectId);
-    function setTokenUriResolver(IJBTokenUriResolver newResolver) external;
+    function setTokenUriResolver(IJBTokenUriResolver resolver) external;
 }

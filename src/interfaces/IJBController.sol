@@ -28,7 +28,7 @@ interface IJBController is IERC165, IJBProjectUriRegistry, IJBDirectoryAccessCon
     event BurnTokens(
         address indexed holder, uint256 indexed projectId, uint256 tokenCount, string memo, address caller
     );
-    event LaunchProject(uint256 rulesetId, uint256 projectId, string metadata, string memo, address caller);
+    event LaunchProject(uint256 rulesetId, uint256 projectId, string projectUri, string memo, address caller);
     event LaunchRulesets(uint256 rulesetId, uint256 projectId, string memo, address caller);
     event MintTokens(
         address indexed beneficiary,
@@ -42,12 +42,12 @@ interface IJBController is IERC165, IJBProjectUriRegistry, IJBDirectoryAccessCon
     event PrepMigration(uint256 indexed projectId, address from, address caller);
     event QueueRulesets(uint256 rulesetId, uint256 projectId, string memo, address caller);
     event ReservedDistributionReverted(
-        uint256 indexed projectId, JBSplit split, uint256 amount, bytes reason, address caller
+        uint256 indexed projectId, JBSplit split, uint256 tokenCount, bytes reason, address caller
     );
     event SendReservedTokensToSplit(
         uint256 indexed projectId,
         uint256 indexed rulesetId,
-        uint256 indexed group,
+        uint256 indexed groupId,
         JBSplit split,
         uint256 tokenCount,
         address caller
@@ -56,12 +56,12 @@ interface IJBController is IERC165, IJBProjectUriRegistry, IJBDirectoryAccessCon
         uint256 indexed rulesetId,
         uint256 indexed rulesetCycleNumber,
         uint256 indexed projectId,
-        address beneficiary,
+        address owner,
         uint256 tokenCount,
-        uint256 beneficiaryTokenCount,
+        uint256 leftoverAmount,
         address caller
     );
-    event SetMetadata(uint256 indexed projectId, string metadata, address caller);
+    event SetUri(uint256 indexed projectId, string uri, address caller);
 
     function DIRECTORY() external view returns (IJBDirectory);
     function FUND_ACCESS_LIMITS() external view returns (IJBFundAccessLimits);

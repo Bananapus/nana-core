@@ -172,6 +172,6 @@ contract JBPrices is JBControlled, JBPermissioned, Ownable, IJBPrices {
         // Store the feed.
         priceFeedFor[projectId][pricingCurrency][unitCurrency] = feed;
 
-        emit AddPriceFeed(projectId, pricingCurrency, unitCurrency, feed);
+        emit AddPriceFeed({ projectId: projectId, pricingCurrency: pricingCurrency, unitCurrency: unitCurrency, feed: feed, caller: msg.sender });
     }
 }

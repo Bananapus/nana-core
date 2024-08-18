@@ -533,7 +533,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // slither-disable-next-line reentrancy-events
         balance = STORE.recordTerminalMigration(projectId, token);
 
-        emit MigrateTerminal(projectId, token, to, balance, _msgSender());
+        emit MigrateTerminal({ projectId: projectId, token: token, to: to, amount: balance, caller: _msgSender() });
 
         // Transfer the balance if needed.
         if (balance != 0) {
@@ -649,7 +649,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             // Add the token to the list of accepted tokens of the project.
             _accountingContextsOf[projectId].push(storedAccountingContext);
 
-            emit SetAccountingContext(projectId, storedAccountingContext, _msgSender());
+            emit SetAccountingContext({ projectId: projectId, context: storedAccountingContext, caller: _msgSender() });
         }
     }
 
@@ -950,18 +950,18 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             });
         }
 
-        emit Pay(
-            ruleset.id,
-            ruleset.cycleNumber,
-            projectId,
-            payer,
-            beneficiary,
-            amount,
-            beneficiaryTokenCount,
-            memo,
-            metadata,
-            _msgSender()
-        );
+        emit Pay({
+            rulesetId: ruleset.id,
+            rulesetCycleNumber: ruleset.cycleNumber,
+            projectId: projectId,
+            payer: payer,
+            beneficiary: beneficiary,
+            amount: amount,
+            beneficiaryTokenCount: beneficiaryTokenCount,
+            memo: memo,
+            metadata: metadata,
+            caller: _msgSender()
+        });
 
         // If the data hook returned pay hook specifications, fulfill them.
         if (hookSpecifications.length != 0) {
@@ -993,7 +993,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // and back into the protocol.
         uint256 returnedFees = shouldReturnHeldFees ? _returnHeldFees(projectId, token, amount) : 0;
 
-        emit AddToBalance(projectId, amount, returnedFees, memo, metadata, _msgSender());
+        emit AddToBalance({ projectId: projectId, amount: amount, returnedFees: returnedFees, memo: memo, metadata: metadata, caller: _msgSender() });
 
         // Record the added funds with any returned fees.
         STORE.recordAddedBalanceFor({projectId: projectId, token: token, amount: amount + returnedFees});
@@ -1112,18 +1112,18 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             })
             : 0;
 
-        emit RedeemTokens(
-            ruleset.id,
-            ruleset.cycleNumber,
-            projectId,
-            holder,
-            beneficiary,
-            redeemCount,
-            redemptionRate,
-            reclaimAmount,
-            metadata,
-            _msgSender()
-        );
+        emit RedeemTokens({
+            rulesetId: ruleset.id,
+            rulesetCycleNumber: ruleset.cycleNumber,
+            projectId: projectId,
+            holder: holder,
+            beneficiary: beneficiary,
+            redeemCount: redeemCount,
+            redemptionRate: redemptionRate,
+            reclaimAmount: reclaimAmount,
+            metadata: metadata,
+            caller: _msgSender()
+        });
     }
 
     /// @notice Sends payouts to a project's current payout split group, according to its ruleset, up to its current
@@ -1202,17 +1202,17 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             _transferFrom({from: address(this), to: projectOwner, token: token, amount: netLeftoverPayoutAmount});
         }
 
-        emit SendPayouts(
-            ruleset.id,
-            ruleset.cycleNumber,
-            projectId,
-            projectOwner,
-            amount,
-            amountPaidOut,
-            feeTaken,
-            netLeftoverPayoutAmount,
-            _msgSender()
-        );
+        emit SendPayouts({
+            rulesetId: ruleset.id,
+            rulesetCycleNumber: ruleset.cycleNumber,
+            projectId: projectId,
+            projectOwner: projectOwner,
+            amount: amount,
+            amountPaidOut: amountPaidOut,
+            fee: feeTaken,
+            netLeftoverPayoutAmount: netLeftoverPayoutAmount,
+            caller: _msgSender()
+        });
     }
 
     /// @notice Allows a project to send out funds from its surplus up to the current surplus allowance.
@@ -1269,18 +1269,18 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                     })
             );
 
-        emit UseAllowance(
-            ruleset.id,
-            ruleset.cycleNumber,
-            projectId,
-            beneficiary,
-            feeBeneficiary,
-            amount,
-            amountPaidOut,
-            netAmountPaidOut,
-            memo,
-            _msgSender()
-        );
+        emit UseAllowance({
+            rulesetId: ruleset.id,
+            rulesetCycleNumber: ruleset.cycleNumber,
+            projectId: projectId,
+            beneficiary: beneficiary,
+            feeBeneficiary: feeBeneficiary,
+            amount: amount,
+            amountPaidOut: amountPaidOut,
+            netAmountPaidOut: netAmountPaidOut,
+            memo: memo,
+            caller: _msgSender()
+        });
 
         // Transfer any remaining balance to the beneficiary.
         if (netAmountPaidOut != 0) {
@@ -1346,9 +1346,15 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                 leftoverPercentage -= split.percent;
             }
 
-            emit SendPayoutToSplit(
-                projectId, rulesetId, uint256(uint160(token)), split, payoutAmount, netPayoutAmount, _msgSender()
-            );
+            emit SendPayoutToSplit({
+                projectId: projectId, 
+                rulesetId: rulesetId, 
+                group: uint256(uint160(token)), 
+                split: split, 
+                amount: payoutAmount, 
+                netAmount: netPayoutAmount, 
+                caller: _msgSender()
+            });
         }
 
         return (amount, amountEligibleForFees);
@@ -1375,7 +1381,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         try this.executePayout(split, projectId, token, amount, _msgSender()) returns (uint256 netPayoutAmount) {
             return netPayoutAmount;
         } catch (bytes memory failureReason) {
-            emit PayoutReverted(projectId, split, amount, failureReason, _msgSender());
+            emit PayoutReverted({ projectId: projectId, split: split, amount: amount, reason: failureReason, caller: _msgSender()});
 
             // Add balance back to the project.
             STORE.recordAddedBalanceFor(projectId, token, amount);
@@ -1453,7 +1459,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             // slither-disable-next-line reentrancy-events
             specification.hook.afterPayRecordedWith{value: payValue}(context);
 
-            emit HookAfterRecordPay(specification.hook, context, specification.amount, _msgSender());
+            emit HookAfterRecordPay({ hook: specification.hook, context: context, specificationAmount: specification.amount, caller: _msgSender() });
         }
     }
 
@@ -1543,9 +1549,9 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             // slither-disable-next-line reentrancy-events
             specification.hook.afterRedeemRecordedWith{value: payValue}(context);
 
-            emit HookAfterRecordRedeem(
-                specification.hook, context, specification.amount, specificationAmountFee, _msgSender()
-            );
+            emit HookAfterRecordRedeem({
+                hook: specification.hook, context: context, specificationAmount: specification.amount, fee: specificationAmountFee, caller: _msgSender()
+            });
         }
     }
 
@@ -1579,7 +1585,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                 })
             );
 
-            emit HoldFee(projectId, token, amount, FEE, beneficiary, _msgSender());
+            emit HoldFee({ projectId: projectId, token: token, amount: amount, fee: FEE, beneficiary: beneficiary, caller: _msgSender() });
         } else {
             // Get the terminal that'll receive the fee if one wasn't provided.
             IJBTerminal feeTerminal = DIRECTORY.primaryTerminalOf(_FEE_BENEFICIARY_PROJECT_ID, token);
@@ -1660,9 +1666,9 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     {
         // slither-disable-next-line reentrancy-events
         try this.executeProcessFee(projectId, token, amount, beneficiary, feeTerminal) {
-            emit ProcessFee(projectId, token, amount, wasHeld, beneficiary, _msgSender());
+            emit ProcessFee({ projectId: projectId, token: token, amount: amount, wasHeld: wasHeld, beneficiary: beneficiary, caller: _msgSender() });
         } catch (bytes memory reason) {
-            emit FeeReverted(projectId, token, _FEE_BENEFICIARY_PROJECT_ID, amount, reason, _msgSender());
+            emit FeeReverted({ projectId: projectId, token: token, feeProjectId: _FEE_BENEFICIARY_PROJECT_ID, amount: amount, reason: reason, caller: _msgSender() });
 
             STORE.recordAddedBalanceFor(projectId, token, amount);
         }
@@ -1737,7 +1743,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             }
         }
 
-        emit ReturnHeldFees(projectId, token, amount, returnedFees, leftoverAmount, _msgSender());
+        emit ReturnHeldFees({ projectId: projectId, token: token, amount: amount, returnedFees: returnedFees, leftoverAmount: leftoverAmount, caller: _msgSender() });
     }
 
     /// @notice Fund a project either by calling this terminal's internal `addToBalance` function or by calling the

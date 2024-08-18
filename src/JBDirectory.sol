@@ -190,7 +190,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
         // Set the new controller.
         controllerOf[projectId] = controller;
 
-        emit SetController(projectId, controller, msg.sender);
+        emit SetController({ projectId: projectId, controller: controller, caller: msg.sender });
 
         // Migrate if needed.
         if (
@@ -242,7 +242,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
                 }
             }
         }
-        emit SetTerminals(projectId, terminals, msg.sender);
+        emit SetTerminals({ projectId: projectId, terminals: terminals, caller: msg.sender });
     }
 
     /// @notice Set a project's primary terminal for a token.
@@ -272,7 +272,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
         // Store the terminal as the project's primary terminal for the token.
         _primaryTerminalOf[projectId][token] = terminal;
 
-        emit SetPrimaryTerminal(projectId, token, terminal, msg.sender);
+        emit SetPrimaryTerminal({ projectId: projectId, token: token, terminal: terminal, caller: msg.sender });
     }
 
     /// @notice Add or remove an address/contract from a list of trusted addresses which are allowed to set a first
@@ -288,7 +288,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
         // Set the flag in the allowlist.
         isAllowedToSetFirstController[addr] = flag;
 
-        emit SetIsAllowedToSetFirstController(addr, flag, msg.sender);
+        emit SetIsAllowedToSetFirstController({ addr: addr, isAllowed: flag, caller: msg.sender });
     }
 
     //*********************************************************************//
@@ -318,6 +318,6 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
         // Add the new terminal.
         _terminalsOf[projectId].push(terminal);
 
-        emit AddTerminal(projectId, terminal, msg.sender);
+        emit AddTerminal({ projectId: projectId, terminal: terminal, caller: msg.sender });
     }
 }

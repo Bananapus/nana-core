@@ -342,7 +342,7 @@ contract JBFundAccessLimits is JBControlled, IJBFundAccessLimits {
                 }
             }
 
-            emit SetFundAccessLimits(rulesetId, projectId, limits, msg.sender);
+            emit SetFundAccessLimits({ rulesetId: rulesetId, projectId: projectId, limits: limits, caller: msg.sender });
         }
     }
 }

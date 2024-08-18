@@ -49,6 +49,6 @@ contract JBFeelessAddresses is Ownable, IJBFeelessAddresses, IERC165 {
     function setFeelessAddress(address addr, bool flag) external virtual override onlyOwner {
         isFeeless[addr] = flag;
 
-        emit SetFeelessAddress(addr, flag, _msgSender());
+        emit SetFeelessAddress({ addr: addr, isFeeless: flag, caller: _msgSender() });
     }
 }

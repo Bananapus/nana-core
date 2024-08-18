@@ -10,7 +10,7 @@ import {JBAfterPayRecordedContext} from "../structs/JBAfterPayRecordedContext.so
 /// @notice A terminal that accepts payments and can be migrated.
 interface IJBTerminal is IERC165 {
     event AddToBalance(
-        uint256 indexed projectId, uint256 amount, uint256 unlockedFees, string memo, bytes metadata, address caller
+        uint256 indexed projectId, uint256 amount, uint256 returnedFees, string memo, bytes metadata, address caller
     );
     event HookAfterRecordPay(
         IJBPayHook indexed hook, JBAfterPayRecordedContext context, uint256 specificationAmount, address caller

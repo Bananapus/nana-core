@@ -95,7 +95,7 @@ contract TestAddPriceFeedFor_Local is JBPricesSetup {
         // it should emit AddPriceFeed event with projectId, pricingCurrency, unitCurrency, and feed
 
         vm.expectEmit();
-        emit IJBPrices.AddPriceFeed(_projectId, _pricingCurrency, _unitCurrency, _feed);
+        emit IJBPrices.AddPriceFeed(_projectId, _pricingCurrency, _unitCurrency, _feed, address(this));
 
         _prices.addPriceFeedFor(_projectId, _pricingCurrency, _unitCurrency, _feed);
     }

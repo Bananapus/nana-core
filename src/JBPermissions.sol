@@ -235,13 +235,13 @@ contract JBPermissions is IJBPermissions {
         // Store the new value.
         permissionsOf[permissionsData.operator][account][permissionsData.projectId] = packed;
 
-        emit OperatorPermissionsSet(
-            permissionsData.operator,
-            account,
-            permissionsData.projectId,
-            permissionsData.permissionIds,
-            packed,
-            msg.sender
-        );
+        emit OperatorPermissionsSet({
+            operator: permissionsData.operator,
+            account: account,
+            projectId: permissionsData.projectId,
+            permissionIds: permissionsData.permissionIds,
+            packed: packed,
+            caller: msg.sender
+        });
     }
 }

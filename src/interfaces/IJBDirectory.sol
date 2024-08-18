@@ -9,7 +9,7 @@ import {IJBTerminal} from "./IJBTerminal.sol";
 interface IJBDirectory {
     event AddTerminal(uint256 indexed projectId, IJBTerminal indexed terminal, address caller);
     event SetController(uint256 indexed projectId, IERC165 indexed controller, address caller);
-    event SetIsAllowedToSetFirstController(address indexed addr, bool indexed flag, address caller);
+    event SetIsAllowedToSetFirstController(address indexed addr, bool indexed isAllowed, address caller);
     event SetPrimaryTerminal(
         uint256 indexed projectId, address indexed token, IJBTerminal indexed terminal, address caller
     );

@@ -67,12 +67,12 @@ contract JBProjects is ERC721, Ownable, IJBProjects {
     //*********************************************************************//
 
     /// @notice Sets the address of the resolver used to retrieve the tokenURI of projects.
-    /// @param newResolver The address of the new resolver.
-    function setTokenUriResolver(IJBTokenUriResolver newResolver) external override onlyOwner {
+    /// @param resolver The address of the new resolver.
+    function setTokenUriResolver(IJBTokenUriResolver resolver) external override onlyOwner {
         // Store the new resolver.
-        tokenUriResolver = newResolver;
+        tokenUriResolver = resolver;
 
-        emit SetTokenUriResolver(newResolver, _msgSender());
+        emit SetTokenUriResolver({ resolver: resolver, caller: _msgSender() });
     }
 
     //*********************************************************************//
@@ -87,7 +87,7 @@ contract JBProjects is ERC721, Ownable, IJBProjects {
         // Increment the count, which will be used as the ID.
         projectId = ++count;
 
-        emit Create(projectId, owner, _msgSender());
+        emit Create({ projectId: projectId, owner: owner, caller: _msgSender() });
 
         // Mint the project.
         _safeMint(owner, projectId);

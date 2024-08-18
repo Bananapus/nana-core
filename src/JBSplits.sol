@@ -113,14 +113,20 @@ contract JBSplits is JBControlled, IJBSplits {
         // Keep a reference to the number of splits.
         uint256 numberOfSplits = splits.length;
 
+        // Keep a reference to the split being iterated on.
+        JBSplit memory split;
+
         for (uint256 i; i < numberOfSplits; i++) {
+            // Set the split being iterated on.
+            split = splits[i];
+
             // Check for sameness.
             if (
-                splits[i].percent == lockedSplit.percent && splits[i].beneficiary == lockedSplit.beneficiary
-                    && splits[i].hook == lockedSplit.hook && splits[i].projectId == lockedSplit.projectId
-                    && splits[i].preferAddToBalance == lockedSplit.preferAddToBalance
+                split.percent == lockedSplit.percent && split.beneficiary == lockedSplit.beneficiary
+                    && split.hook == lockedSplit.hook && split.projectId == lockedSplit.projectId
+                    && split.preferAddToBalance == lockedSplit.preferAddToBalance
                 // Allow the lock to be extended.
-                && splits[i].lockedUntil >= lockedSplit.lockedUntil
+                && split.lockedUntil >= lockedSplit.lockedUntil
             ) return true;
         }
 
@@ -249,12 +255,18 @@ contract JBSplits is JBControlled, IJBSplits {
         // Keep a reference to the number of splits to set.
         uint256 numberOfSplits = splits.length;
 
+        // Keep a reference to the split being iterated on.        
+        JBSplit memory split;
+
         for (uint256 i; i < numberOfSplits; i++) {
+            // Set the split being iterated on.
+            split = splits[i];
+
             // The percent should be greater than 0.
-            if (splits[i].percent == 0) revert JBSplits_InvalidSplitPercent();
+            if (split.percent == 0) revert JBSplits_InvalidSplitPercent();
 
             // Add to the `percent` total.
-            percentTotal = percentTotal + splits[i].percent;
+            percentTotal = percentTotal + split.percent;
 
             // Ensure the total does not exceed 100%.
             if (percentTotal > JBConstants.SPLITS_TOTAL_PERCENT) revert JBSplits_InvalidTotalPercent();
@@ -262,23 +274,23 @@ contract JBSplits is JBControlled, IJBSplits {
             uint256 packedSplitParts1;
 
             // Pack `preferAddToBalance` in bit 0.
-            if (splits[i].preferAddToBalance) packedSplitParts1 = 1;
+            if (split.preferAddToBalance) packedSplitParts1 = 1;
             // Pack `percent` in bits 1-32.
-            packedSplitParts1 |= splits[i].percent << 1;
+            packedSplitParts1 |= split.percent << 1;
             // Pack `projectId` in bits 33-88.
-            packedSplitParts1 |= splits[i].projectId << 33;
+            packedSplitParts1 |= split.projectId << 33;
             // Pack `beneficiary` in bits 89-248.
-            packedSplitParts1 |= uint256(uint160(address(splits[i].beneficiary))) << 89;
+            packedSplitParts1 |= uint256(uint160(address(split.beneficiary))) << 89;
 
             // Store the first split part.
             _packedSplitParts1Of[projectId][rulesetId][groupId][i] = packedSplitParts1;
 
             // If there's data to store in the second packed split part, pack and store.
-            if (splits[i].lockedUntil > 0 || splits[i].hook != IJBSplitHook(address(0))) {
+            if (split.lockedUntil > 0 || split.hook != IJBSplitHook(address(0))) {
                 // Pack `lockedUntil` in bits 0-47.
-                uint256 packedSplitParts2 = uint48(splits[i].lockedUntil);
+                uint256 packedSplitParts2 = uint48(split.lockedUntil);
                 // Pack `hook` in bits 48-207.
-                packedSplitParts2 |= uint256(uint160(address(splits[i].hook))) << 48;
+                packedSplitParts2 |= uint256(uint160(address(split.hook))) << 48;
 
                 // Store the second split part.
                 _packedSplitParts2Of[projectId][rulesetId][groupId][i] = packedSplitParts2;
@@ -287,7 +299,7 @@ contract JBSplits is JBControlled, IJBSplits {
                 delete _packedSplitParts2Of[projectId][rulesetId][groupId][i];
             }
 
-            emit SetSplit(projectId, rulesetId, groupId, splits[i], msg.sender);
+            emit SetSplit({ projectId: projectId, rulesetId: rulesetId, groupId: groupId, split: split, caller: msg.sender });
         }
 
         // Store the number of splits for the project, ruleset, and group.

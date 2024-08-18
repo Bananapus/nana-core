@@ -790,9 +790,9 @@ contract JBRulesets is JBControlled, IJBRulesets {
         // Set the metadata if needed.
         if (metadata > 0) _metadataOf[projectId][rulesetId] = metadata;
 
-        emit RulesetQueued(
-            rulesetId, projectId, duration, weight, decayPercent, approvalHook, metadata, mustStartAtOrAfter, msg.sender
-        );
+        emit RulesetQueued({
+            rulesetId: rulesetId, projectId: projectId, duration: duration, weight: weight, decayPercent: decayPercent, approvalHook: approvalHook, metadata: metadata, mustStartAtOrAfter: mustStartAtOrAfter, caller: msg.sender
+        });
 
         // Return the struct for the new ruleset's ID.
         return _getStructFor(projectId, rulesetId);
@@ -969,7 +969,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
         // Set the project's latest ruleset configuration.
         latestRulesetIdOf[projectId] = rulesetId;
 
-        emit RulesetInitialized(rulesetId, projectId, baseRuleset.id);
+        emit RulesetInitialized({ rulesetId: rulesetId, projectId: projectId, basedOnId: baseRuleset.id, caller: msg.sender });
     }
 
     /// @notice Efficiently stores the provided intrinsic properties of a ruleset.
