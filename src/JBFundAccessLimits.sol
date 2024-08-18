@@ -14,12 +14,12 @@ contract JBFundAccessLimits is JBControlled, IJBFundAccessLimits {
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
 
-    error INVALID_PAYOUT_LIMIT();
-    error INVALID_PAYOUT_LIMIT_CURRENCY();
-    error INVALID_PAYOUT_LIMIT_CURRENCY_ORDERING();
-    error INVALID_SURPLUS_ALLOWANCE();
-    error INVALID_SURPLUS_ALLOWANCE_CURRENCY();
-    error INVALID_SURPLUS_ALLOWANCE_CURRENCY_ORDERING();
+    error JBFundAccessLimits_InvalidPayoutLimit();
+    error JBFundAccessLimits_InvalidPayoutLimitCurrency();
+    error JBFundAccessLimits_InvalidPayoutLimitCurrencyOrdering();
+    error JBFundAccessLimits_InvalidSurplusAllowance();
+    error JBFundAccessLimits_InvalidSurplusAllowanceCurrency();
+    error JBFundAccessLimits_InvalidSurplusAllowanceCurrencyOrdering();
 
     //*********************************************************************//
     // --------------------- internal stored properties ------------------ //
@@ -52,6 +52,14 @@ contract JBFundAccessLimits is JBControlled, IJBFundAccessLimits {
         uint256 projectId
             => mapping(uint256 rulesetId => mapping(address terminal => mapping(address token => uint256[])))
     ) internal _packedSurplusAllowancesDataOf;
+
+    //*********************************************************************//
+    // -------------------------- constructor ---------------------------- //
+    //*********************************************************************//
+
+    /// @param directory A contract storing the terminals and the controller used by each project.
+    // solhint-disable-next-line no-empty-blocks
+    constructor(IJBDirectory directory) JBControlled(directory) {}
 
     //*********************************************************************//
     // ------------------------- external views -------------------------- //
@@ -235,14 +243,6 @@ contract JBFundAccessLimits is JBControlled, IJBFundAccessLimits {
     }
 
     //*********************************************************************//
-    // -------------------------- constructor ---------------------------- //
-    //*********************************************************************//
-
-    /// @param directory A contract storing the terminals and the controller used by each project.
-    // solhint-disable-next-line no-empty-blocks
-    constructor(IJBDirectory directory) JBControlled(directory) {}
-
-    //*********************************************************************//
     // --------------------- external transactions ----------------------- //
     //*********************************************************************//
 
@@ -287,18 +287,18 @@ contract JBFundAccessLimits is JBControlled, IJBFundAccessLimits {
 
                 // If payout limit amount is larger than 224 bits, revert.
                 if (payoutLimit.amount > type(uint224).max) {
-                    revert INVALID_PAYOUT_LIMIT();
+                    revert JBFundAccessLimits_InvalidPayoutLimit();
                 }
 
                 // If payout limit currency's index is larger than 32 bits, revert.
                 if (payoutLimit.currency > type(uint32).max) {
-                    revert INVALID_PAYOUT_LIMIT_CURRENCY();
+                    revert JBFundAccessLimits_InvalidPayoutLimitCurrency();
                 }
 
                 // Make sure the payout limits are passed in strictly increasing order (sorted by currency) to prevent
                 // duplicates.
                 if (j != 0 && payoutLimit.currency <= limits.payoutLimits[j - 1].currency) {
-                    revert INVALID_PAYOUT_LIMIT_CURRENCY_ORDERING();
+                    revert JBFundAccessLimits_InvalidPayoutLimitCurrencyOrdering();
                 }
 
                 // Set the payout limit if there is one.
@@ -321,18 +321,18 @@ contract JBFundAccessLimits is JBControlled, IJBFundAccessLimits {
 
                 // If surplus allowance is larger than 224 bits, revert.
                 if (surplusAllowance.amount > type(uint224).max) {
-                    revert INVALID_SURPLUS_ALLOWANCE();
+                    revert JBFundAccessLimits_InvalidSurplusAllowance();
                 }
 
                 // If surplus allowance currency value is larger than 32 bits, revert.
                 if (surplusAllowance.currency > type(uint32).max) {
-                    revert INVALID_SURPLUS_ALLOWANCE_CURRENCY();
+                    revert JBFundAccessLimits_InvalidSurplusAllowanceCurrency();
                 }
 
                 // Make sure the surplus allowances are passed in strictly increasing order (sorted by currency) to
                 // prevent duplicates.
                 if (j != 0 && surplusAllowance.currency <= limits.surplusAllowances[j - 1].currency) {
-                    revert INVALID_SURPLUS_ALLOWANCE_CURRENCY_ORDERING();
+                    revert JBFundAccessLimits_InvalidSurplusAllowanceCurrencyOrdering();
                 }
 
                 // Set the surplus allowance if there is one.
