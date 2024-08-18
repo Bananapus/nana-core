@@ -20,6 +20,13 @@ contract JBFeelessAddresses is Ownable, IJBFeelessAddresses, IERC165 {
     mapping(address addr => bool) public override isFeeless;
 
     //*********************************************************************//
+    // -------------------------- constructor ---------------------------- //
+    //*********************************************************************//
+
+    /// @param owner This contract's owner.
+    constructor(address owner) Ownable(owner) {}
+
+    //*********************************************************************//
     // -------------------------- public views --------------------------- //
     //*********************************************************************//
 
@@ -30,9 +37,6 @@ contract JBFeelessAddresses is Ownable, IJBFeelessAddresses, IERC165 {
     function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {
         return interfaceId == type(IJBFeelessAddresses).interfaceId || interfaceId == type(IERC165).interfaceId;
     }
-
-    /// @param owner This contract's owner.
-    constructor(address owner) Ownable(owner) {}
 
     //*********************************************************************//
     // ---------------------- external transactions ---------------------- //
