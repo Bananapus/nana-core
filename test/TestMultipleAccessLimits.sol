@@ -41,6 +41,7 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
             allowSetController: false,
             allowAddAccountingContext: true,
             allowAddPriceFeed: true,
+            allowCrosschainSuckerExtension: false,
             holdFees: false,
             useTotalSurplusForRedemptions: false,
             useDataHookForPay: false,

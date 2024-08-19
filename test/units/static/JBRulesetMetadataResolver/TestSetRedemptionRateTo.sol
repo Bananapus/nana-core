@@ -36,6 +36,7 @@ contract TestSetRedemptionRateTo_Local is JBTest {
             allowSetController: true,
             allowAddAccountingContext: true,
             allowAddPriceFeed: true,
+            allowCrosschainSuckerExtension: true,
             holdFees: true,
             useTotalSurplusForRedemptions: true,
             useDataHookForPay: true,
@@ -55,17 +56,17 @@ contract TestSetRedemptionRateTo_Local is JBTest {
         assertEq(_reservedPercent, _fuzzReservedPercent);
         assertEq(_redemptionRate, _fuzzRedemptionRate);
 
-        for (uint256 _i = 68; _i < 81; _i++) {
+        for (uint256 _i = 68; _i < 82; _i++) {
             uint256 _flag = uint256(uint16(_packed >> _i) & 1);
             assertEq(_flag, 1);
         }
 
         // Data source address
-        address _packedDataHook = address(uint160(_packed >> 82));
+        address _packedDataHook = address(uint160(_packed >> 83));
         assertEq(_packedDataHook, _hookAddress);
 
         // Metadata
-        uint256 _packedMetadata = uint256(uint16(_packed >> 242));
-        assertEq(_packedMetadata, uint256(_fuzzMetadata >> 2));
+        uint256 _packedMetadata = uint256(uint16(_packed >> 243));
+        assertEq(_packedMetadata, uint256(_fuzzMetadata >> 3));
     }
 }

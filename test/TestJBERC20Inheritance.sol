@@ -31,6 +31,7 @@ contract JBERC20Inheritance_Local is JBERC20, TestBaseWorkflow {
             allowSetController: false,
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
+            allowCrosschainSuckerExtension: false,
             holdFees: false,
             useTotalSurplusForRedemptions: false,
             useDataHookForPay: true,

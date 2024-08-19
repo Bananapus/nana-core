@@ -39,6 +39,7 @@ contract TestRecordPayoutFor_Local is JBTerminalStoreSetup {
             allowSetController: false,
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
+            allowCrosschainSuckerExtension: false,
             holdFees: false,
             useTotalSurplusForRedemptions: false,
             useDataHookForPay: false,

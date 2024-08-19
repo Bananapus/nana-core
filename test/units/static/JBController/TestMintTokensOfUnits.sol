@@ -36,6 +36,7 @@ contract TestMintTokensOfUnits_Local is JBControllerSetup {
             allowSetController: false,
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
+            allowCrosschainSuckerExtension: false,
             holdFees: false,
             useTotalSurplusForRedemptions: true,
             useDataHookForPay: false,

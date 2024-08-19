@@ -56,6 +56,7 @@ contract TestLaunchRulesetsFor_Local is JBControllerSetup {
             allowSetController: false,
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
+            allowCrosschainSuckerExtension: false,
             holdFees: false,
             useTotalSurplusForRedemptions: true,
             useDataHookForPay: false,
@@ -279,7 +280,7 @@ contract TestLaunchRulesetsFor_Local is JBControllerSetup {
         // Mock call to rulesets queueFor
         bytes memory _queueForCall = abi.encodeCall(
             IJBRulesets.queueFor,
-            (_projectId, 0, 0, 0, _rulesetConfigs[0].approvalHook, 642_241_845_873_572_506_056_833, 0)
+            (_projectId, 0, 0, 0, _rulesetConfigs[0].approvalHook, 1246704755680887093409921, 0)
         );
         bytes memory _queueReturn = abi.encode(data);
         mockExpect(address(rulesets), _queueForCall, _queueReturn);

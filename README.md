@@ -404,12 +404,13 @@ For example, if `alice.eth` owns project ID #5, she can queue new rulesets for t
 | 20  | `ADJUST_721_TIERS`              | Permission to call `JB721TiersHook.adjustTiers`.                                                   | [`nana-721-hook`](https://github.com/Bananapus/nana-721-hook)               |
 | 21  | `SET_721_METADATA`              | Permission to call `JB721TiersHook.setMetadata`.                                                   | [`nana-721-hook`](https://github.com/Bananapus/nana-721-hook)               |
 | 22  | `MINT_721`                      | Permission to call `JB721TiersHook.mintFor`.                                                       | [`nana-721-hook`](https://github.com/Bananapus/nana-721-hook)               |
-| 23  | `SET_BUYBACK_TWAP`              | Permission to call `JBBuybackHook.setTwapWindowOf` and `JBBuybackHook.setTwapSlippageToleranceOf`. | [`nana-buyback-hook`](https://github.com/Bananapus/nana-buyback-hook)       |
-| 24  | `SET_BUYBACK_POOL`              | Permission to call `JBBuybackHook.setPoolFor`.                                                     | [`nana-buyback-hook`](https://github.com/Bananapus/nana-buyback-hook)       |
-| 25  | `ADD_SWAP_TERMINAL_POOL`        | Permission to call `JBSwapTerminal.addDefaultPool`.                                                | [`nana-swap-terminal`](https://github.com/Bananapus/nana-swap-terminal)     |
-| 26  | `ADD_SWAP_TERMINAL_TWAP_PARAMS` | Permission to call `JBSwapTerminal.addTwapParamsFor`.                                              | [`nana-swap-terminal`](https://github.com/Bananapus/nana-swap-terminal)     |
-| 27  | `MAP_SUCKER_TOKEN`              | Permission to call `BPSucker.mapToken`.                                                            | [`nana-suckers`](https://github.com/Bananapus/nana-suckers)                 |
-| 28  | `DEPLOY_SUCKERS`                | Permission to call `BPSuckerRegistry.deploySuckersFor`.                                            | [`nana-suckers`](https://github.com/Bananapus/nana-suckers)                 |
+| 23  | `SET_721_DISCOUNT_PERCENT`      | Permission to call `JB721TiersHook.setDiscountPercentOf`.                                                       | [`nana-721-hook`](https://github.com/Bananapus/nana-721-hook)               |
+| 24  | `SET_BUYBACK_TWAP`              | Permission to call `JBBuybackHook.setTwapWindowOf` and `JBBuybackHook.setTwapSlippageToleranceOf`. | [`nana-buyback-hook`](https://github.com/Bananapus/nana-buyback-hook)       |
+| 25  | `SET_BUYBACK_POOL`              | Permission to call `JBBuybackHook.setPoolFor`.                                                     | [`nana-buyback-hook`](https://github.com/Bananapus/nana-buyback-hook)       |
+| 26  | `ADD_SWAP_TERMINAL_POOL`        | Permission to call `JBSwapTerminal.addDefaultPool`.                                                | [`nana-swap-terminal`](https://github.com/Bananapus/nana-swap-terminal)     |
+| 27  | `ADD_SWAP_TERMINAL_TWAP_PARAMS` | Permission to call `JBSwapTerminal.addTwapParamsFor`.                                              | [`nana-swap-terminal`](https://github.com/Bananapus/nana-swap-terminal)     |
+| 28  | `MAP_SUCKER_TOKEN`              | Permission to call `BPSucker.mapToken`.                                                            | [`nana-suckers`](https://github.com/Bananapus/nana-suckers)                 |
+| 29  | `DEPLOY_SUCKERS`                | Permission to call `BPSuckerRegistry.deploySuckersFor`.                                            | [`nana-suckers`](https://github.com/Bananapus/nana-suckers)                 |
 
 </details>
 
