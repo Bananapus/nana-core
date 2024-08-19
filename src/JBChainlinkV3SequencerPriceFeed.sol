@@ -13,17 +13,37 @@ contract JBChainlinkV3SequencerPriceFeed is JBChainlinkV3PriceFeed {
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
 
-    error SEQUENCER_DOWN_OR_RESTARTING();
+    error JBChainlinkV3SequencerPriceFeed_SequencerDownOrRestarting();
 
     //*********************************************************************//
     // ---------------- public stored immutable properties --------------- //
     //*********************************************************************//
 
+    /// @notice How long the sequencer must be re-active in order to return a price.
+    uint256 public immutable GRACE_PERIOD_TIME;
+
     /// @notice The Chainlink sequencer feed that prices are reported from.
     AggregatorV2V3Interface public immutable SEQUENCER_FEED;
 
-    /// @notice How long the sequencer must be re-active in order to return a price.
-    uint256 public immutable GRACE_PERIOD_TIME;
+    //*********************************************************************//
+    // -------------------------- constructor ---------------------------- //
+    //*********************************************************************//
+
+    /// @param feed The Chainlink feed to report prices from.
+    /// @param gracePeriod How long the sequencer should have been re-active before returning prices.
+    /// @param sequencerFeed The Chainlink feed to report sequencer status.
+    /// @param threshold How many blocks old a price update may be.
+    constructor(
+        AggregatorV3Interface feed,
+        uint256 gracePeriod,
+        AggregatorV2V3Interface sequencerFeed,
+        uint256 threshold
+    )
+        JBChainlinkV3PriceFeed(feed, threshold)
+    {
+        GRACE_PERIOD_TIME = gracePeriod;
+        SEQUENCER_FEED = sequencerFeed;
+    }
 
     //*********************************************************************//
     // ------------------------- external views -------------------------- //
@@ -38,28 +58,10 @@ contract JBChainlinkV3SequencerPriceFeed is JBChainlinkV3PriceFeed {
         (, int256 answer, uint256 startedAt,,) = SEQUENCER_FEED.latestRoundData();
 
         // Revert if sequencer has too recently restarted or is currently down.
-        if (block.timestamp - startedAt <= GRACE_PERIOD_TIME || answer == 1) revert SEQUENCER_DOWN_OR_RESTARTING();
+        if (block.timestamp - startedAt <= GRACE_PERIOD_TIME || answer == 1) {
+            revert JBChainlinkV3SequencerPriceFeed_SequencerDownOrRestarting();
+        }
 
         return super.currentUnitPrice(decimals);
-    }
-
-    //*********************************************************************//
-    // -------------------------- constructor ---------------------------- //
-    //*********************************************************************//
-
-    /// @param feed The Chainlink feed to report prices from.
-    /// @param threshold How many blocks old a price update may be.
-    /// @param sequencerFeed The Chainlink feed to report sequencer status.
-    /// @param gracePeriod How long the sequencer should have been re-active before returning prices.
-    constructor(
-        AggregatorV3Interface feed,
-        uint256 threshold,
-        AggregatorV2V3Interface sequencerFeed,
-        uint256 gracePeriod
-    )
-        JBChainlinkV3PriceFeed(feed, threshold)
-    {
-        SEQUENCER_FEED = sequencerFeed;
-        GRACE_PERIOD_TIME = gracePeriod;
     }
 }

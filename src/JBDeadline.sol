@@ -5,7 +5,6 @@ import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
 import {JBApprovalStatus} from "./enums/JBApprovalStatus.sol";
 import {IJBRulesetApprovalHook} from "./interfaces/IJBRulesetApprovalHook.sol";
-import {JBRuleset} from "./structs/JBRuleset.sol";
 
 /// @notice `JBDeadline` is a ruleset approval hook which rejects rulesets if they are not queued at least `duration`
 /// seconds before the current ruleset ends. In other words, rulesets must be queued before the deadline to take effect.
@@ -16,7 +15,7 @@ contract JBDeadline is IJBRulesetApprovalHook {
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
 
-    error DURATION_TOO_LONG();
+    error JBDeadline_DurationTooLong();
 
     //*********************************************************************//
     // ---------------- public immutable stored properties --------------- //
@@ -25,6 +24,19 @@ contract JBDeadline is IJBRulesetApprovalHook {
     /// @notice The minimum number of seconds between the time a ruleset is queued and the time it starts. If the
     /// difference is greater than this number, the ruleset is `Approved`.
     uint256 public immutable override DURATION;
+
+    //*********************************************************************//
+    // -------------------------- constructor ---------------------------- //
+    //*********************************************************************//
+
+    /// @param duration The minimum number of seconds between the time a ruleset is queued and the time it starts for it
+    /// to be `Approved`.
+    constructor(uint256 duration) {
+        // Ensure we don't underflow in `approvalStatusOf(...)`.
+        if (duration > block.timestamp) revert JBDeadline_DurationTooLong();
+
+        DURATION = duration;
+    }
 
     //*********************************************************************//
     // -------------------------- public views --------------------------- //
@@ -65,18 +77,5 @@ contract JBDeadline is IJBRulesetApprovalHook {
     /// @return A flag indicating if this contract adheres to the specified interface.
     function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {
         return interfaceId == type(IJBRulesetApprovalHook).interfaceId || interfaceId == type(IERC165).interfaceId;
-    }
-
-    //*********************************************************************//
-    // -------------------------- constructor ---------------------------- //
-    //*********************************************************************//
-
-    /// @param duration The minimum number of seconds between the time a ruleset is queued and the time it starts for it
-    /// to be `Approved`.
-    constructor(uint256 duration) {
-        // Ensure we don't underflow in `approvalStatusOf(...)`.
-        if (duration > block.timestamp) revert DURATION_TOO_LONG();
-
-        DURATION = duration;
     }
 }

@@ -178,7 +178,7 @@ contract TestSplits_Local is TestBaseWorkflow {
 
         // Check that split groups of "0" don't extend the payout limit (keeping this out of a number test, for
         // brevity).
-        vm.expectRevert(abi.encodeWithSignature("PAYOUT_LIMIT_EXCEEDED()"));
+        vm.expectRevert(JBTerminalStore.JBTerminalStore_PayoutLimitExceeded.selector);
 
         // First payout meets our native token payout limit.
         _terminal.sendPayoutsOf({

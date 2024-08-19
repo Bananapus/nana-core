@@ -2,8 +2,10 @@
 pragma solidity 0.8.23;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {ERC20Permit, Nonces} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
-import {ERC20Votes, ERC20} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
+import {ERC20Votes} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
+import {Nonces} from "@openzeppelin/contracts/utils/Nonces.sol";
 
 import {IJBToken} from "./interfaces/IJBToken.sol";
 
@@ -25,8 +27,27 @@ contract JBERC20 is ERC20Votes, ERC20Permit, Ownable, IJBToken {
     string private _symbol;
 
     //*********************************************************************//
+    // -------------------------- constructor ---------------------------- //
+    //*********************************************************************//
+
+    constructor() Ownable(address(this)) ERC20("invalid", "invalid") ERC20Permit("JBToken") {}
+
+    //*********************************************************************//
     // -------------------------- public views --------------------------- //
     //*********************************************************************//
+
+    /// @notice The balance of the given address.
+    /// @param account The account to get the balance of.
+    /// @return The number of tokens owned by the `account`, as a fixed point number with 18 decimals.
+    function balanceOf(address account) public view override(ERC20, IJBToken) returns (uint256) {
+        return super.balanceOf(account);
+    }
+
+    /// @notice The number of decimals used for this token's fixed point accounting.
+    /// @return The number of decimals.
+    function decimals() public view override(ERC20, IJBToken) returns (uint8) {
+        return super.decimals();
+    }
 
     /// @notice The token's name.
     function name() public view virtual override returns (string memory) {
@@ -38,42 +59,15 @@ contract JBERC20 is ERC20Votes, ERC20Permit, Ownable, IJBToken {
         return _symbol;
     }
 
-    /// @notice The number of decimals used for this token's fixed point accounting.
-    /// @return The number of decimals.
-    function decimals() public view override(ERC20, IJBToken) returns (uint8) {
-        return super.decimals();
-    }
-
     /// @notice The total supply of this ERC20 i.e. the total number of tokens in existence.
     /// @return The total supply of this ERC20, as a fixed point number.
     function totalSupply() public view override(ERC20, IJBToken) returns (uint256) {
         return super.totalSupply();
     }
 
-    /// @notice The balance of the given address.
-    /// @param account The account to get the balance of.
-    /// @return The number of tokens owned by the `account`, as a fixed point number with 18 decimals.
-    function balanceOf(address account) public view override(ERC20, IJBToken) returns (uint256) {
-        return super.balanceOf(account);
-    }
-
-    //*********************************************************************//
-    // -------------------------- constructor ---------------------------- //
-    //*********************************************************************//
-
-    constructor() Ownable(address(this)) ERC20("invalid", "invalid") ERC20Permit("JBToken") {}
-
     //*********************************************************************//
     // ---------------------- external transactions ---------------------- //
     //*********************************************************************//
-
-    /// @notice Mints more of this token.
-    /// @dev Can only be called by this contract's owner.
-    /// @param account The address to mint the new tokens to.
-    /// @param amount The amount of tokens to mint, as a fixed point number with 18 decimals.
-    function mint(address account, uint256 amount) external override onlyOwner {
-        return _mint(account, amount);
-    }
 
     /// @notice Burn some outstanding tokens.
     /// @dev Can only be called by this contract's owner.
@@ -81,6 +75,14 @@ contract JBERC20 is ERC20Votes, ERC20Permit, Ownable, IJBToken {
     /// @param amount The amount of tokens to burn, as a fixed point number with 18 decimals.
     function burn(address account, uint256 amount) external override onlyOwner {
         return _burn(account, amount);
+    }
+
+    /// @notice Mints more of this token.
+    /// @dev Can only be called by this contract's owner.
+    /// @param account The address to mint the new tokens to.
+    /// @param amount The amount of tokens to mint, as a fixed point number with 18 decimals.
+    function mint(address account, uint256 amount) external override onlyOwner {
+        return _mint(account, amount);
     }
 
     //*********************************************************************//
@@ -108,7 +110,7 @@ contract JBERC20 is ERC20Votes, ERC20Permit, Ownable, IJBToken {
     }
 
     //*********************************************************************//
-    // ---------------------- internal transactions ---------------------- //
+    // --------------------- internal helper functions ------------------- //
     //*********************************************************************//
 
     /// @notice Required override.

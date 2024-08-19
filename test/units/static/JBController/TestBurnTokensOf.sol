@@ -31,7 +31,7 @@ contract TestBurnTokensOf_Local is JBControllerSetup {
         bytes memory _permReturn = abi.encode(false);
         mockExpect(address(permissions), _permCall, _permReturn);
 
-        vm.expectRevert(abi.encodeWithSignature("UNAUTHORIZED()"));
+        vm.expectRevert(JBPermissioned.JBPermissioned_Unauthorized.selector);
         _controller.burnTokensOf(_holder, _projectId, _validCount, _memo);
     }
 
@@ -93,7 +93,7 @@ contract TestBurnTokensOf_Local is JBControllerSetup {
         bytes memory _permReturn = abi.encode(true);
         mockExpect(address(permissions), _permCall, _permReturn);
 
-        vm.expectRevert(abi.encodeWithSignature("NO_BURNABLE_TOKENS()"));
+        vm.expectRevert(JBController.JBController_NoBurnableTokens.selector);
         _controller.burnTokensOf(_holder, _projectId, _invalidCount, _memo);
     }
 }

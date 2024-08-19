@@ -19,9 +19,9 @@ contract JBPrices is JBControlled, JBPermissioned, Ownable, IJBPrices {
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
 
-    error INVALID_CURRENCY();
-    error PRICE_FEED_ALREADY_EXISTS();
-    error PRICE_FEED_NOT_FOUND();
+    error JBPrices_InvalidCurrency();
+    error JBPrices_PriceFeedAlreadyExists();
+    error JBPrices_PriceFeedNotFound();
 
     //*********************************************************************//
     // ------------------------- public constants ------------------------ //
@@ -50,6 +50,27 @@ contract JBPrices is JBControlled, JBPermissioned, Ownable, IJBPrices {
     mapping(uint256 projectId => mapping(uint256 pricingCurrency => mapping(uint256 unitCurrency => IJBPriceFeed)))
         public
         override priceFeedFor;
+
+    //*********************************************************************//
+    // ---------------------------- constructor -------------------------- //
+    //*********************************************************************//
+
+    /// @param directory A contract storing directories of terminals and controllers for each project.
+    /// @param permissions A contract storing permissions.
+    /// @param projects A contract which mints ERC-721s that represent project ownership and transfers.
+    /// @param owner The address that will own the contract.
+    constructor(
+        IJBDirectory directory,
+        IJBPermissions permissions,
+        IJBProjects projects,
+        address owner
+    )
+        JBControlled(directory)
+        JBPermissioned(permissions)
+        Ownable(owner)
+    {
+        PROJECTS = projects;
+    }
 
     //*********************************************************************//
     // -------------------------- public views --------------------------- //
@@ -103,28 +124,7 @@ contract JBPrices is JBControlled, JBPermissioned, Ownable, IJBPrices {
         }
 
         // No price feed available, revert.
-        revert PRICE_FEED_NOT_FOUND();
-    }
-
-    //*********************************************************************//
-    // ---------------------------- constructor -------------------------- //
-    //*********************************************************************//
-
-    /// @param permissions A contract storing permissions.
-    /// @param projects A contract which mints ERC-721s that represent project ownership and transfers.
-    /// @param directory A contract storing directories of terminals and controllers for each project.
-    /// @param owner The address that will own the contract.
-    constructor(
-        IJBPermissions permissions,
-        IJBProjects projects,
-        IJBDirectory directory,
-        address owner
-    )
-        JBControlled(directory)
-        JBPermissioned(permissions)
-        Ownable(owner)
-    {
-        PROJECTS = projects;
+        revert JBPrices_PriceFeedNotFound();
     }
 
     //*********************************************************************//
@@ -153,25 +153,31 @@ contract JBPrices is JBControlled, JBPermissioned, Ownable, IJBPrices {
         projectId == DEFAULT_PROJECT_ID ? _checkOwner() : _onlyControllerOf(projectId);
 
         // Make sure the currencies aren't 0.
-        if (pricingCurrency == 0 || unitCurrency == 0) revert INVALID_CURRENCY();
+        if (pricingCurrency == 0 || unitCurrency == 0) revert JBPrices_InvalidCurrency();
 
         // Make sure there isn't already a default price feed for the pair or its inverse.
         if (
             priceFeedFor[DEFAULT_PROJECT_ID][pricingCurrency][unitCurrency] != IJBPriceFeed(address(0))
                 || priceFeedFor[DEFAULT_PROJECT_ID][unitCurrency][pricingCurrency] != IJBPriceFeed(address(0))
         ) {
-            revert PRICE_FEED_ALREADY_EXISTS();
+            revert JBPrices_PriceFeedAlreadyExists();
         }
 
         // Make sure this project doesn't already have a price feed for the pair or its inverse.
         if (
             priceFeedFor[projectId][pricingCurrency][unitCurrency] != IJBPriceFeed(address(0))
                 || priceFeedFor[projectId][unitCurrency][pricingCurrency] != IJBPriceFeed(address(0))
-        ) revert PRICE_FEED_ALREADY_EXISTS();
+        ) revert JBPrices_PriceFeedAlreadyExists();
 
         // Store the feed.
         priceFeedFor[projectId][pricingCurrency][unitCurrency] = feed;
 
-        emit AddPriceFeed(projectId, pricingCurrency, unitCurrency, feed);
+        emit AddPriceFeed({
+            projectId: projectId,
+            pricingCurrency: pricingCurrency,
+            unitCurrency: unitCurrency,
+            feed: feed,
+            caller: msg.sender
+        });
     }
 }

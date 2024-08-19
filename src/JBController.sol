@@ -22,8 +22,8 @@ import {IJBPriceFeed} from "./interfaces/IJBPriceFeed.sol";
 import {IJBPrices} from "./interfaces/IJBPrices.sol";
 import {IJBProjects} from "./interfaces/IJBProjects.sol";
 import {IJBProjectUriRegistry} from "./interfaces/IJBProjectUriRegistry.sol";
-import {IJBRulesets} from "./interfaces/IJBRulesets.sol";
 import {IJBRulesetDataHook} from "./interfaces/IJBRulesetDataHook.sol";
+import {IJBRulesets} from "./interfaces/IJBRulesets.sol";
 import {IJBSplitHook} from "./interfaces/IJBSplitHook.sol";
 import {IJBSplits} from "./interfaces/IJBSplits.sol";
 import {IJBTerminal} from "./interfaces/IJBTerminal.sol";
@@ -54,42 +54,42 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
 
-    error ADDING_PRICE_FEED_NOT_ALLOWED();
-    error CREDIT_TRANSFERS_PAUSED();
-    error RULESETS_ARRAY_EMPTY();
-    error INVALID_REDEMPTION_RATE();
-    error INVALID_RESERVED_PERCENT();
-    error MINT_NOT_ALLOWED_AND_NOT_TERMINAL_OR_HOOK();
-    error NO_BURNABLE_TOKENS();
-    error NO_RESERVED_TOKENS();
-    error RULESETS_ALREADY_LAUNCHED();
-    error ZERO_TOKENS_TO_MINT();
-    error RULESET_SET_TOKEN_DISABLED();
+    error JBController_AddingPriceFeedNotAllowed();
+    error JBController_CreditTransfersPaused();
+    error JBController_InvalidRedemptionRate();
+    error JBController_InvalidReservedPercent();
+    error JBController_MintNotAllowedAndNotTerminalOrHook();
+    error JBController_NoBurnableTokens();
+    error JBController_NoReservedTokens();
+    error JBController_RulesetsAlreadyLaunched();
+    error JBController_RulesetsArrayEmpty();
+    error JBController_RulesetSetTokenDisabled();
+    error JBController_ZeroTokensToMint();
 
     //*********************************************************************//
     // --------------- public immutable stored properties ---------------- //
     //*********************************************************************//
 
-    /// @notice Mints ERC-721s that represent project ownership and transfers.
-    IJBProjects public immutable override PROJECTS;
-
     /// @notice The directory of terminals and controllers for projects.
     IJBDirectory public immutable override DIRECTORY;
-
-    /// @notice The contract storing and managing project rulesets.
-    IJBRulesets public immutable override RULESETS;
-
-    /// @notice The contract that manages token minting and burning.
-    IJBTokens public immutable override TOKENS;
-
-    /// @notice The contract that stores splits for each project.
-    IJBSplits public immutable override SPLITS;
 
     /// @notice A contract that stores fund access limits for each project.
     IJBFundAccessLimits public immutable override FUND_ACCESS_LIMITS;
 
     /// @notice A contract that stores prices for each project.
     IJBPrices public immutable override PRICES;
+
+    /// @notice Mints ERC-721s that represent project ownership and transfers.
+    IJBProjects public immutable override PROJECTS;
+
+    /// @notice The contract storing and managing project rulesets.
+    IJBRulesets public immutable override RULESETS;
+
+    /// @notice The contract that stores splits for each project.
+    IJBSplits public immutable override SPLITS;
+
+    /// @notice The contract that manages token minting and burning.
+    IJBTokens public immutable override TOKENS;
 
     //*********************************************************************//
     // --------------------- public stored properties -------------------- //
@@ -105,15 +105,97 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     mapping(uint256 projectId => string) public override uriOf;
 
     //*********************************************************************//
+    // ---------------------------- constructor -------------------------- //
+    //*********************************************************************//
+
+    /// @param directory A contract storing directories of terminals and controllers for each project.
+    /// @param fundAccessLimits A contract that stores fund access limits for each project.
+    /// @param permissions A contract storing permissions.
+    /// @param prices A contract that stores prices for each project.
+    /// @param projects A contract which mints ERC-721s that represent project ownership and transfers.
+    /// @param rulesets A contract storing and managing project rulesets.
+    /// @param splits A contract that stores splits for each project.
+    /// @param tokens A contract that manages token minting and burning.
+    constructor(
+        IJBDirectory directory,
+        IJBFundAccessLimits fundAccessLimits,
+        IJBPermissions permissions,
+        IJBPrices prices,
+        IJBProjects projects,
+        IJBRulesets rulesets,
+        IJBSplits splits,
+        IJBTokens tokens,
+        address trustedForwarder
+    )
+        JBPermissioned(permissions)
+        ERC2771Context(trustedForwarder)
+    {
+        DIRECTORY = directory;
+        FUND_ACCESS_LIMITS = fundAccessLimits;
+        PRICES = prices;
+        PROJECTS = projects;
+        RULESETS = rulesets;
+        SPLITS = splits;
+        TOKENS = tokens;
+    }
+
+    //*********************************************************************//
     // ------------------------- external views -------------------------- //
     //*********************************************************************//
 
-    /// @notice Gets the a project token's total supply, including pending reserved tokens.
-    /// @param projectId The ID of the project to get the total token supply of.
-    /// @return The total supply of the project's token, including pending reserved tokens.
-    function totalTokenSupplyWithReservedTokensOf(uint256 projectId) external view override returns (uint256) {
-        // Add the reserved tokens to the total supply.
-        return TOKENS.totalSupplyOf(projectId) + pendingReservedTokenBalanceOf[projectId];
+    /// @notice Get an array of a project's rulesets (with metadata) up to a maximum array size, sorted from latest to
+    /// earliest.
+    /// @param projectId The ID of the project to get the rulesets of.
+    /// @param startingId The ID of the ruleset to begin with. This will be the latest ruleset in the result. If the
+    /// `startingId` is 0, passed, the project's latest ruleset will be used.
+    /// @param size The maximum number of rulesets to return.
+    /// @return rulesets The array of rulesets with their metadata.
+    function allRulesetsOf(
+        uint256 projectId,
+        uint256 startingId,
+        uint256 size
+    )
+        external
+        view
+        override
+        returns (JBRulesetWithMetadata[] memory rulesets)
+    {
+        // Get the rulesets (without metadata).
+        JBRuleset[] memory baseRulesets = RULESETS.allOf(projectId, startingId, size);
+
+        // Keep a reference to the number of rulesets.
+        uint256 numberOfRulesets = baseRulesets.length;
+
+        // Initialize the array being returned.
+        rulesets = new JBRulesetWithMetadata[](numberOfRulesets);
+
+        // Keep a reference to the ruleset being iterated on.
+        JBRuleset memory baseRuleset;
+
+        // Populate the array with rulesets AND their metadata.
+        for (uint256 i; i < numberOfRulesets; i++) {
+            // Set the ruleset being iterated on.
+            baseRuleset = baseRulesets[i];
+
+            // Set the returned value.
+            rulesets[i] = JBRulesetWithMetadata({ruleset: baseRuleset, metadata: baseRuleset.expandMetadata()});
+        }
+    }
+
+    /// @notice A project's currently active ruleset and its metadata.
+    /// @param projectId The ID of the project to get the current ruleset of.
+    /// @return ruleset The current ruleset's struct.
+    /// @return metadata The current ruleset's metadata.
+    function currentRulesetOf(
+        uint256 projectId
+    )
+        external
+        view
+        override
+        returns (JBRuleset memory ruleset, JBRulesetMetadata memory metadata)
+    {
+        ruleset = _currentRulesetOf(projectId);
+        metadata = ruleset.expandMetadata();
     }
 
     /// @notice Get the `JBRuleset` and `JBRulesetMetadata` corresponding to the specified `rulesetId`.
@@ -140,81 +222,15 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     /// @return ruleset The struct for the project's latest queued ruleset.
     /// @return metadata The ruleset's metadata.
     /// @return approvalStatus The ruleset's approval status.
-    function latestQueuedRulesetOf(uint256 projectId)
+    function latestQueuedRulesetOf(
+        uint256 projectId
+    )
         external
         view
         override
         returns (JBRuleset memory ruleset, JBRulesetMetadata memory metadata, JBApprovalStatus approvalStatus)
     {
         (ruleset, approvalStatus) = RULESETS.latestQueuedOf(projectId);
-        metadata = ruleset.expandMetadata();
-    }
-
-    /// @notice Get an array of a project's rulesets (with metadata) up to a maximum array size, sorted from latest to
-    /// earliest.
-    /// @param projectId The ID of the project to get the rulesets of.
-    /// @param startingId The ID of the ruleset to begin with. This will be the latest ruleset in the result. If the
-    /// `startingId` is 0, passed, the project's latest ruleset will be used.
-    /// @param size The maximum number of rulesets to return.
-    /// @return rulesets The array of rulesets with their metadata.
-    function rulesetsOf(
-        uint256 projectId,
-        uint256 startingId,
-        uint256 size
-    )
-        external
-        view
-        override
-        returns (JBRulesetWithMetadata[] memory rulesets)
-    {
-        // Get the rulesets (without metadata).
-        JBRuleset[] memory baseRulesets = RULESETS.rulesetsOf(projectId, startingId, size);
-
-        // Keep a reference to the number of rulesets.
-        uint256 numberOfRulesets = baseRulesets.length;
-
-        // Initialize the array being returned.
-        rulesets = new JBRulesetWithMetadata[](numberOfRulesets);
-
-        // Keep a reference to the ruleset being iterated on.
-        JBRuleset memory baseRuleset;
-
-        // Populate the array with rulesets AND their metadata.
-        for (uint256 i; i < numberOfRulesets; i++) {
-            // Set the ruleset being iterated on.
-            baseRuleset = baseRulesets[i];
-
-            // Set the returned value.
-            rulesets[i] = JBRulesetWithMetadata({ruleset: baseRuleset, metadata: baseRuleset.expandMetadata()});
-        }
-    }
-
-    /// @notice A project's currently active ruleset and its metadata.
-    /// @param projectId The ID of the project to get the current ruleset of.
-    /// @return ruleset The current ruleset's struct.
-    /// @return metadata The current ruleset's metadata.
-    function currentRulesetOf(uint256 projectId)
-        external
-        view
-        override
-        returns (JBRuleset memory ruleset, JBRulesetMetadata memory metadata)
-    {
-        ruleset = _currentRulesetOf(projectId);
-        metadata = ruleset.expandMetadata();
-    }
-
-    /// @notice A project's next ruleset along with its metadata.
-    /// @dev If an upcoming ruleset isn't found, returns an empty ruleset with all properties set to 0.
-    /// @param projectId The ID of the project to get the next ruleset of.
-    /// @return ruleset The upcoming ruleset's struct.
-    /// @return metadata The upcoming ruleset's metadata.
-    function upcomingRulesetOf(uint256 projectId)
-        external
-        view
-        override
-        returns (JBRuleset memory ruleset, JBRulesetMetadata memory metadata)
-    {
-        ruleset = _upcomingRulesetOf(projectId);
         metadata = ruleset.expandMetadata();
     }
 
@@ -232,6 +248,31 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         return _currentRulesetOf(projectId).expandMetadata().allowSetController;
     }
 
+    /// @notice Gets the a project token's total supply, including pending reserved tokens.
+    /// @param projectId The ID of the project to get the total token supply of.
+    /// @return The total supply of the project's token, including pending reserved tokens.
+    function totalTokenSupplyWithReservedTokensOf(uint256 projectId) external view override returns (uint256) {
+        // Add the reserved tokens to the total supply.
+        return TOKENS.totalSupplyOf(projectId) + pendingReservedTokenBalanceOf[projectId];
+    }
+
+    /// @notice A project's next ruleset along with its metadata.
+    /// @dev If an upcoming ruleset isn't found, returns an empty ruleset with all properties set to 0.
+    /// @param projectId The ID of the project to get the next ruleset of.
+    /// @return ruleset The upcoming ruleset's struct.
+    /// @return metadata The upcoming ruleset's metadata.
+    function upcomingRulesetOf(
+        uint256 projectId
+    )
+        external
+        view
+        override
+        returns (JBRuleset memory ruleset, JBRulesetMetadata memory metadata)
+    {
+        ruleset = _upcomingRulesetOf(projectId);
+        metadata = ruleset.expandMetadata();
+    }
+
     //*********************************************************************//
     // -------------------------- public views --------------------------- //
     //*********************************************************************//
@@ -247,8 +288,20 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     }
 
     //*********************************************************************//
-    // -------------------------- internal views ------------------------- //
+    // ----------------------- internal helper views --------------------- //
     //*********************************************************************//
+
+    /// @dev `ERC-2771` specifies the context as being a single address (20 bytes).
+    function _contextSuffixLength() internal view override(ERC2771Context, Context) returns (uint256) {
+        return super._contextSuffixLength();
+    }
+
+    /// @notice The project's current ruleset.
+    /// @param projectId The ID of the project to check.
+    /// @return The project's current ruleset.
+    function _currentRulesetOf(uint256 projectId) internal view returns (JBRuleset memory) {
+        return RULESETS.currentOf(projectId);
+    }
 
     /// @notice Indicates whether the provided address is a terminal for the project.
     /// @param projectId The ID of the project to check.
@@ -276,11 +329,16 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
             && IJBRulesetDataHook(ruleset.dataHook()).hasMintPermissionFor(projectId, addrs);
     }
 
-    /// @notice The project's current ruleset.
-    /// @param projectId The ID of the project to check.
-    /// @return The project's current ruleset.
-    function _currentRulesetOf(uint256 projectId) internal view returns (JBRuleset memory) {
-        return RULESETS.currentOf(projectId);
+    /// @notice The message's sender. Preferred to use over `msg.sender`.
+    /// @return sender The address which sent this call.
+    function _msgSender() internal view override(ERC2771Context, Context) returns (address sender) {
+        return ERC2771Context._msgSender();
+    }
+
+    /// @notice The calldata. Preferred to use over `msg.data`.
+    /// @return calldata The `msg.data` of this call.
+    function _msgData() internal view override(ERC2771Context, Context) returns (bytes calldata) {
+        return ERC2771Context._msgData();
     }
 
     /// @notice The project's upcoming ruleset.
@@ -291,43 +349,168 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     }
 
     //*********************************************************************//
-    // ---------------------------- constructor -------------------------- //
-    //*********************************************************************//
-
-    /// @param permissions A contract storing permissions.
-    /// @param projects A contract which mints ERC-721s that represent project ownership and transfers.
-    /// @param directory A contract storing directories of terminals and controllers for each project.
-    /// @param rulesets A contract storing and managing project rulesets.
-    /// @param tokens A contract that manages token minting and burning.
-    /// @param splits A contract that stores splits for each project.
-    /// @param fundAccessLimits A contract that stores fund access limits for each project.
-    /// @param prices A contract that stores prices for each project.
-    constructor(
-        IJBPermissions permissions,
-        IJBProjects projects,
-        IJBDirectory directory,
-        IJBRulesets rulesets,
-        IJBTokens tokens,
-        IJBSplits splits,
-        IJBFundAccessLimits fundAccessLimits,
-        IJBPrices prices,
-        address trustedForwarder
-    )
-        JBPermissioned(permissions)
-        ERC2771Context(trustedForwarder)
-    {
-        PROJECTS = projects;
-        DIRECTORY = directory;
-        RULESETS = rulesets;
-        TOKENS = tokens;
-        SPLITS = splits;
-        FUND_ACCESS_LIMITS = fundAccessLimits;
-        PRICES = prices;
-    }
-
-    //*********************************************************************//
     // --------------------- external transactions ----------------------- //
     //*********************************************************************//
+
+    /// @notice Add a price feed for a project.
+    /// @dev Can only be called by the project's owner or an address with the owner's permission to `ADD_PRICE_FEED`.
+    /// @param projectId The ID of the project to add the feed for.
+    /// @param pricingCurrency The currency the feed's output price is in terms of.
+    /// @param unitCurrency The currency being priced by the feed.
+    /// @param feed The address of the price feed to add.
+    function addPriceFeed(
+        uint256 projectId,
+        uint256 pricingCurrency,
+        uint256 unitCurrency,
+        IJBPriceFeed feed
+    )
+        external
+        override
+    {
+        // Enforce permissions.
+        _requirePermissionFrom({
+            account: PROJECTS.ownerOf(projectId),
+            projectId: projectId,
+            permissionId: JBPermissionIds.ADD_PRICE_FEED
+        });
+
+        JBRuleset memory ruleset = _currentRulesetOf(projectId);
+
+        // Make sure the project's ruleset allows adding price feeds.
+        if (!ruleset.allowAddPriceFeed()) revert JBController_AddingPriceFeedNotAllowed();
+
+        PRICES.addPriceFeedFor({
+            projectId: projectId,
+            pricingCurrency: pricingCurrency,
+            unitCurrency: unitCurrency,
+            feed: feed
+        });
+    }
+
+    /// @notice Burns a project's tokens or credits from the specific holder's balance.
+    /// @dev Can only be called by the holder, an address with the holder's permission to `BURN_TOKENS`, or a project's
+    /// terminal.
+    /// @param holder The address whose tokens are being burned.
+    /// @param projectId The ID of the project whose tokens are being burned.
+    /// @param tokenCount The number of tokens to burn.
+    /// @param memo A memo to pass along to the emitted event.
+    function burnTokensOf(
+        address holder,
+        uint256 projectId,
+        uint256 tokenCount,
+        string calldata memo
+    )
+        external
+        override
+    {
+        // Enforce permissions.
+        _requirePermissionAllowingOverrideFrom({
+            account: holder,
+            projectId: projectId,
+            permissionId: JBPermissionIds.BURN_TOKENS,
+            alsoGrantAccessIf: _isTerminalOf(projectId, _msgSender())
+        });
+
+        // There must be tokens to burn.
+        if (tokenCount == 0) revert JBController_NoBurnableTokens();
+
+        emit BurnTokens({holder: holder, projectId: projectId, tokenCount: tokenCount, memo: memo, caller: _msgSender()});
+
+        // Burn the tokens.
+        TOKENS.burnFrom({holder: holder, projectId: projectId, count: tokenCount});
+    }
+
+    /// @notice Redeem credits to claim tokens into a `beneficiary`'s account.
+    /// @dev Can only be called by the credit holder or an address with the holder's permission to `CLAIM_TOKENS`.
+    /// @param holder The address to redeem credits from.
+    /// @param projectId The ID of the project whose tokens are being claimed.
+    /// @param tokenCount The number of tokens to claim.
+    /// @param beneficiary The account the claimed tokens will go to.
+    function claimTokensFor(
+        address holder,
+        uint256 projectId,
+        uint256 tokenCount,
+        address beneficiary
+    )
+        external
+        override
+    {
+        // Enforce permissions.
+        _requirePermissionFrom({account: holder, projectId: projectId, permissionId: JBPermissionIds.CLAIM_TOKENS});
+
+        TOKENS.claimTokensFor({holder: holder, projectId: projectId, count: tokenCount, beneficiary: beneficiary});
+    }
+
+    /// @notice Deploys an ERC-20 token for a project. It will be used when claiming tokens (with credits).
+    /// @dev Deploys the project's ERC-20 contract.
+    /// @dev Can only be called by the project's owner or an address with the owner's permission to `DEPLOY_ERC20`.
+    /// @param projectId The ID of the project to deploy the ERC-20 for.
+    /// @param name The ERC-20's name.
+    /// @param symbol The ERC-20's symbol.
+    /// @param salt The salt used for ERC-1167 clone deployment. Pass a non-zero salt for deterministic deployment based
+    /// on `msg.sender` and the `TOKEN` implementation address.
+    /// @return token The address of the token that was deployed.
+    function deployERC20For(
+        uint256 projectId,
+        string calldata name,
+        string calldata symbol,
+        bytes32 salt
+    )
+        external
+        override
+        returns (IJBToken token)
+    {
+        // Enforce permissions.
+        _requirePermissionFrom({
+            account: PROJECTS.ownerOf(projectId),
+            projectId: projectId,
+            permissionId: JBPermissionIds.DEPLOY_ERC20
+        });
+
+        if (salt != bytes32(0)) salt = keccak256(abi.encodePacked(_msgSender(), salt));
+
+        return TOKENS.deployERC20For({projectId: projectId, name: name, symbol: symbol, salt: salt});
+    }
+
+    /// @notice When a project receives reserved tokens, if it has a terminal for the token, this is used to pay the
+    /// terminal.
+    /// @dev Can only be called by this controller.
+    /// @param terminal The terminal to pay.
+    /// @param projectId The ID of the project being paid.
+    /// @param token The token being paid with.
+    /// @param splitTokenCount The number of tokens being paid.
+    /// @param beneficiary The payment's beneficiary.
+    /// @param metadata The pay metadata sent to the terminal.
+    function executePayReservedTokenToTerminal(
+        IJBTerminal terminal,
+        uint256 projectId,
+        IJBToken token,
+        uint256 splitTokenCount,
+        address beneficiary,
+        bytes calldata metadata
+    )
+        external
+    {
+        // Can only be called by this contract.
+        require(msg.sender == address(this));
+
+        // Approve the tokens being paid.
+        IERC20(address(token)).forceApprove(address(terminal), splitTokenCount);
+
+        // slither-disable-next-line unused-return
+        terminal.pay({
+            projectId: projectId,
+            token: address(token),
+            amount: splitTokenCount,
+            beneficiary: beneficiary,
+            minReturnedTokens: 0,
+            memo: "",
+            metadata: metadata
+        });
+
+        // Make sure that the terminal received the tokens.
+        assert(IERC20(address(token)).allowance(address(this), address(terminal)) == 0);
+    }
 
     /// @notice Creates a project.
     /// @dev This will mint the project's ERC-721 to the `owner`'s address, queue the specified rulesets, and set up the
@@ -370,7 +553,13 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         // slither-disable-next-line reentrancy-events
         uint256 rulesetId = _queueRulesets(projectId, rulesetConfigurations);
 
-        emit LaunchProject(rulesetId, projectId, projectUri, memo, _msgSender());
+        emit LaunchProject({
+            rulesetId: rulesetId,
+            projectId: projectId,
+            projectUri: projectUri,
+            memo: memo,
+            caller: _msgSender()
+        });
     }
 
     /// @notice Queue a project's initial rulesets and set up terminals for it. Projects which already have rulesets
@@ -393,7 +582,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         returns (uint256 rulesetId)
     {
         // Make sure there are rulesets being queued.
-        if (rulesetConfigurations.length == 0) revert RULESETS_ARRAY_EMPTY();
+        if (rulesetConfigurations.length == 0) revert JBController_RulesetsArrayEmpty();
 
         // Enforce permissions.
         _requirePermissionFrom({
@@ -411,7 +600,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
 
         // If the project has already had rulesets, use `queueRulesetsOf(...)` instead.
         if (RULESETS.latestRulesetIdOf(projectId) > 0) {
-            revert RULESETS_ALREADY_LAUNCHED();
+            revert JBController_RulesetsAlreadyLaunched();
         }
 
         // Set this contract as the project's controller in the directory.
@@ -424,40 +613,28 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         // slither-disable-next-line reentrancy-events
         rulesetId = _queueRulesets(projectId, rulesetConfigurations);
 
-        emit LaunchRulesets(rulesetId, projectId, memo, _msgSender());
+        emit LaunchRulesets({rulesetId: rulesetId, projectId: projectId, memo: memo, caller: _msgSender()});
     }
 
-    /// @notice Add one or more rulesets to the end of a project's ruleset queue. Rulesets take effect after the
-    /// previous ruleset in the queue ends, and only if they are approved by the previous ruleset's approval hook.
-    /// @dev Can only be called by the project's owner or an address with the owner's permission to `QUEUE_RULESETS`.
-    /// @param projectId The ID of the project to queue rulesets for.
-    /// @param rulesetConfigurations The rulesets to queue.
-    /// @param memo A memo to pass along to the emitted event.
-    /// @return rulesetId The ID of the last ruleset which was successfully queued.
-    function queueRulesetsOf(
-        uint256 projectId,
-        JBRulesetConfig[] calldata rulesetConfigurations,
-        string calldata memo
-    )
-        external
-        override
-        returns (uint256 rulesetId)
-    {
-        // Make sure there are rulesets being queued.
-        if (rulesetConfigurations.length == 0) revert RULESETS_ARRAY_EMPTY();
+    /// @notice Migrate a project from this controller to another one.
+    /// @dev Can only be called by the directory.
+    /// @param projectId The ID of the project to migrate.
+    /// @param to The controller to migrate the project to.
+    function migrate(uint256 projectId, IERC165 to) external override {
+        // Make sure this is being called by the directory.
+        if (msg.sender != address(DIRECTORY)) revert JBPermissioned_Unauthorized();
 
-        // Enforce permissions.
-        _requirePermissionFrom({
-            account: PROJECTS.ownerOf(projectId),
-            projectId: projectId,
-            permissionId: JBPermissionIds.QUEUE_RULESETS
-        });
+        emit Migrate({projectId: projectId, to: to, caller: msg.sender});
 
-        // Queue the rulesets.
-        // slither-disable-next-line reentrancy-events
-        rulesetId = _queueRulesets(projectId, rulesetConfigurations);
+        // Mint any pending reserved tokens before migrating.
+        if (pendingReservedTokenBalanceOf[projectId] != 0) {
+            _sendReservedTokensToSplitsOf(projectId);
+        }
 
-        emit QueueRulesets(rulesetId, projectId, memo, _msgSender());
+        // Prepare the new controller to receive the project.
+        if (to.supportsInterface(type(IJBMigratable).interfaceId)) {
+            IJBMigratable(address(to)).receiveMigrationFrom(IERC165(this), projectId);
+        }
     }
 
     /// @notice Add new project tokens or credits to the specified beneficiary's balance. Optionally, reserve a portion
@@ -484,7 +661,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         returns (uint256 beneficiaryTokenCount)
     {
         // There should be tokens to mint.
-        if (tokenCount == 0) revert ZERO_TOKENS_TO_MINT();
+        if (tokenCount == 0) revert JBController_ZeroTokensToMint();
 
         // Keep a reference to the reserved percent.
         uint256 reservedPercent;
@@ -508,7 +685,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
             ruleset.id != 0 && !ruleset.allowOwnerMinting() && !_isTerminalOf(projectId, _msgSender())
                 && _msgSender() != address(ruleset.dataHook())
                 && !_hasDataHookMintPermissionFor(projectId, ruleset, _msgSender())
-        ) revert MINT_NOT_ALLOWED_AND_NOT_TERMINAL_OR_HOOK();
+        ) revert JBController_MintNotAllowedAndNotTerminalOrHook();
 
         // Determine the reserved percent to use.
         reservedPercent = useReservedPercent ? ruleset.reservedPercent() : 0;
@@ -520,10 +697,18 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
 
             // Mint the tokens.
             // slither-disable-next-line reentrancy-benign,reentrancy-events
-            TOKENS.mintFor(beneficiary, projectId, beneficiaryTokenCount);
+            TOKENS.mintFor({holder: beneficiary, projectId: projectId, count: beneficiaryTokenCount});
         }
 
-        emit MintTokens(beneficiary, projectId, tokenCount, beneficiaryTokenCount, memo, reservedPercent, _msgSender());
+        emit MintTokens({
+            beneficiary: beneficiary,
+            projectId: projectId,
+            tokenCount: tokenCount,
+            beneficiaryTokenCount: beneficiaryTokenCount,
+            memo: memo,
+            reservedPercent: reservedPercent,
+            caller: _msgSender()
+        });
 
         // Add any reserved tokens to the pending reserved token balance.
         if (reservedPercent > 0) {
@@ -531,46 +716,37 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         }
     }
 
-    /// @notice Burns a project's tokens or credits from the specific holder's balance.
-    /// @dev Can only be called by the holder, an address with the holder's permission to `BURN_TOKENS`, or a project's
-    /// terminal.
-    /// @param holder The address whose tokens are being burned.
-    /// @param projectId The ID of the project whose tokens are being burned.
-    /// @param tokenCount The number of tokens to burn.
+    /// @notice Add one or more rulesets to the end of a project's ruleset queue. Rulesets take effect after the
+    /// previous ruleset in the queue ends, and only if they are approved by the previous ruleset's approval hook.
+    /// @dev Can only be called by the project's owner or an address with the owner's permission to `QUEUE_RULESETS`.
+    /// @param projectId The ID of the project to queue rulesets for.
+    /// @param rulesetConfigurations The rulesets to queue.
     /// @param memo A memo to pass along to the emitted event.
-    function burnTokensOf(
-        address holder,
+    /// @return rulesetId The ID of the last ruleset which was successfully queued.
+    function queueRulesetsOf(
         uint256 projectId,
-        uint256 tokenCount,
+        JBRulesetConfig[] calldata rulesetConfigurations,
         string calldata memo
     )
         external
         override
+        returns (uint256 rulesetId)
     {
+        // Make sure there are rulesets being queued.
+        if (rulesetConfigurations.length == 0) revert JBController_RulesetsArrayEmpty();
+
         // Enforce permissions.
-        _requirePermissionAllowingOverrideFrom({
-            account: holder,
+        _requirePermissionFrom({
+            account: PROJECTS.ownerOf(projectId),
             projectId: projectId,
-            permissionId: JBPermissionIds.BURN_TOKENS,
-            alsoGrantAccessIf: _isTerminalOf(projectId, _msgSender())
+            permissionId: JBPermissionIds.QUEUE_RULESETS
         });
 
-        // There must be tokens to burn.
-        if (tokenCount == 0) revert NO_BURNABLE_TOKENS();
+        // Queue the rulesets.
+        // slither-disable-next-line reentrancy-events
+        rulesetId = _queueRulesets(projectId, rulesetConfigurations);
 
-        emit BurnTokens(holder, projectId, tokenCount, memo, _msgSender());
-
-        // Burn the tokens.
-        TOKENS.burnFrom(holder, projectId, tokenCount);
-    }
-
-    /// @notice Sends a project's pending reserved tokens to its reserved token splits.
-    /// @dev If the project has no reserved token splits, or if they don't add up to 100%, leftover tokens are sent to
-    /// the project's owner.
-    /// @param projectId The ID of the project to send reserved tokens for.
-    /// @return The amount of reserved tokens minted and sent.
-    function sendReservedTokensToSplitsOf(uint256 projectId) external override returns (uint256) {
-        return _sendReservedTokensToSplitsOf(projectId);
+        emit QueueRulesets({rulesetId: rulesetId, projectId: projectId, memo: memo, caller: _msgSender()});
     }
 
     /// @notice Prepares this controller to receive a project being migrated from another controller.
@@ -586,45 +762,13 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         }
     }
 
-    /// @notice Migrate a project from this controller to another one.
-    /// @dev Can only be called by the directory.
-    /// @param projectId The ID of the project to migrate.
-    /// @param to The controller to migrate the project to.
-    function migrate(uint256 projectId, IERC165 to) external override {
-        // Make sure this is being called by the directory.
-        if (msg.sender != address(DIRECTORY)) revert UNAUTHORIZED();
-
-        emit Migrate(projectId, to, msg.sender);
-
-        // Mint any pending reserved tokens before migrating.
-        if (pendingReservedTokenBalanceOf[projectId] != 0) {
-            _sendReservedTokensToSplitsOf(projectId);
-        }
-
-        // Prepare the new controller to receive the project.
-        if (to.supportsInterface(type(IJBMigratable).interfaceId)) {
-            IJBMigratable(address(to)).receiveMigrationFrom(IERC165(this), projectId);
-        }
-    }
-
-    /// @notice Set a project's metadata URI.
-    /// @dev This is typically an IPFS hash, optionally with an `ipfs://` prefix.
-    /// @dev Can only be called by the project's owner or an address with the owner's permission to
-    /// `SET_PROJECT_URI`.
-    /// @param projectId The ID of the project to set the metadata URI of.
-    /// @param metadata The metadata URI to set.
-    function setUriOf(uint256 projectId, string calldata metadata) external override {
-        // Enforce permissions.
-        _requirePermissionFrom({
-            account: PROJECTS.ownerOf(projectId),
-            projectId: projectId,
-            permissionId: JBPermissionIds.SET_PROJECT_URI
-        });
-
-        // Set the project's metadata URI.
-        uriOf[projectId] = metadata;
-
-        emit SetMetadata(projectId, metadata, _msgSender());
+    /// @notice Sends a project's pending reserved tokens to its reserved token splits.
+    /// @dev If the project has no reserved token splits, or if they don't add up to 100%, leftover tokens are sent to
+    /// the project's owner.
+    /// @param projectId The ID of the project to send reserved tokens for.
+    /// @return The amount of reserved tokens minted and sent.
+    function sendReservedTokensToSplitsOf(uint256 projectId) external override returns (uint256) {
+        return _sendReservedTokensToSplitsOf(projectId);
     }
 
     /// @notice Sets a project's split groups. The new split groups must include any current splits which are locked.
@@ -650,38 +794,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         });
 
         // Set the split groups.
-        SPLITS.setSplitGroupsOf(projectId, rulesetId, splitGroups);
-    }
-
-    /// @notice Deploys an ERC-20 token for a project. It will be used when claiming tokens (with credits).
-    /// @dev Deploys the project's ERC-20 contract.
-    /// @dev Can only be called by the project's owner or an address with the owner's permission to `DEPLOY_ERC20`.
-    /// @param projectId The ID of the project to deploy the ERC-20 for.
-    /// @param name The ERC-20's name.
-    /// @param symbol The ERC-20's symbol.
-    /// @param salt The salt used for ERC-1167 clone deployment. Pass a non-zero salt for deterministic deployment based
-    /// on `msg.sender` and the `TOKEN` implementation address.
-    /// @return token The address of the token that was deployed.
-    function deployERC20For(
-        uint256 projectId,
-        string calldata name,
-        string calldata symbol,
-        bytes32 salt
-    )
-        external
-        override
-        returns (IJBToken token)
-    {
-        // Enforce permissions.
-        _requirePermissionFrom({
-            account: PROJECTS.ownerOf(projectId),
-            projectId: projectId,
-            permissionId: JBPermissionIds.DEPLOY_ERC20
-        });
-
-        if (salt != bytes32(0)) salt = keccak256(abi.encodePacked(_msgSender(), salt));
-
-        return TOKENS.deployERC20For(projectId, name, symbol, salt);
+        SPLITS.setSplitGroupsOf({projectId: projectId, rulesetId: rulesetId, splitGroups: splitGroups});
     }
 
     /// @notice Set a project's token. If the project's token is already set, this will revert.
@@ -703,22 +816,29 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         if (ruleset.id == 0) ruleset = _upcomingRulesetOf(projectId);
 
         // If owner minting is disabled for the ruleset, the owner cannot change the token.
-        if (!ruleset.allowSetCustomToken()) revert RULESET_SET_TOKEN_DISABLED();
+        if (!ruleset.allowSetCustomToken()) revert JBController_RulesetSetTokenDisabled();
 
-        TOKENS.setTokenFor(projectId, token);
+        TOKENS.setTokenFor({projectId: projectId, token: token});
     }
 
-    /// @notice Redeem credits to claim tokens into a `beneficiary`'s account.
-    /// @dev Can only be called by the credit holder or an address with the holder's permission to `CLAIM_TOKENS`.
-    /// @param holder The address to redeem credits from.
-    /// @param projectId The ID of the project whose tokens are being claimed.
-    /// @param amount The amount of tokens to claim.
-    /// @param beneficiary The account the claimed tokens will go to.
-    function claimTokensFor(address holder, uint256 projectId, uint256 amount, address beneficiary) external override {
+    /// @notice Set a project's metadata URI.
+    /// @dev This is typically an IPFS hash, optionally with an `ipfs://` prefix.
+    /// @dev Can only be called by the project's owner or an address with the owner's permission to
+    /// `SET_PROJECT_URI`.
+    /// @param projectId The ID of the project to set the metadata URI of.
+    /// @param uri The metadata URI to set.
+    function setUriOf(uint256 projectId, string calldata uri) external override {
         // Enforce permissions.
-        _requirePermissionFrom({account: holder, projectId: projectId, permissionId: JBPermissionIds.CLAIM_TOKENS});
+        _requirePermissionFrom({
+            account: PROJECTS.ownerOf(projectId),
+            projectId: projectId,
+            permissionId: JBPermissionIds.SET_PROJECT_URI
+        });
 
-        TOKENS.claimTokensFor(holder, projectId, amount, beneficiary);
+        // Set the project's metadata URI.
+        uriOf[projectId] = uri;
+
+        emit SetUri({projectId: projectId, uri: uri, caller: _msgSender()});
     }
 
     /// @notice Allows a credit holder to transfer credits to another address.
@@ -726,12 +846,12 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     /// @param holder The address to transfer credits from.
     /// @param projectId The ID of the project whose credits are being transferred.
     /// @param recipient The address to transfer credits to.
-    /// @param amount The amount of credits to transfer.
+    /// @param creditCount The number of credits to transfer.
     function transferCreditsFrom(
         address holder,
         uint256 projectId,
         address recipient,
-        uint256 amount
+        uint256 creditCount
     )
         external
         override
@@ -743,327 +863,14 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         JBRuleset memory ruleset = _currentRulesetOf(projectId);
 
         // Credit transfers must not be paused.
-        if (ruleset.pauseCreditTransfers()) revert CREDIT_TRANSFERS_PAUSED();
+        if (ruleset.pauseCreditTransfers()) revert JBController_CreditTransfersPaused();
 
-        TOKENS.transferCreditsFrom(holder, projectId, recipient, amount);
-    }
-
-    /// @notice Add a price feed for a project.
-    /// @dev Can only be called by the project's owner or an address with the owner's permission to `ADD_PRICE_FEED`.
-    /// @param projectId The ID of the project to add the feed for.
-    /// @param pricingCurrency The currency the feed's output price is in terms of.
-    /// @param unitCurrency The currency being priced by the feed.
-    /// @param feed The address of the price feed to add.
-    function addPriceFeed(
-        uint256 projectId,
-        uint256 pricingCurrency,
-        uint256 unitCurrency,
-        IJBPriceFeed feed
-    )
-        external
-        override
-    {
-        // Enforce permissions.
-        _requirePermissionFrom({
-            account: PROJECTS.ownerOf(projectId),
-            projectId: projectId,
-            permissionId: JBPermissionIds.ADD_PRICE_FEED
-        });
-
-        JBRuleset memory ruleset = _currentRulesetOf(projectId);
-
-        // Make sure the project's ruleset allows adding price feeds.
-        if (!ruleset.allowAddPriceFeed()) revert ADDING_PRICE_FEED_NOT_ALLOWED();
-
-        PRICES.addPriceFeedFor(projectId, pricingCurrency, unitCurrency, feed);
-    }
-
-    /// @notice When a project receives reserved tokens, if it has a terminal for the token, this is used to pay the
-    /// terminal.
-    /// @dev Can only be called by this controller.
-    /// @param terminal The terminal to pay.
-    /// @param projectId The ID of the project being paid.
-    /// @param token The token being paid with.
-    /// @param splitAmount The amount of tokens being paid.
-    /// @param beneficiary The payment's beneficiary.
-    /// @param metadata The pay metadata sent to the terminal.
-    function executePayReservedTokenToTerminal(
-        IJBTerminal terminal,
-        uint256 projectId,
-        IJBToken token,
-        uint256 splitAmount,
-        address beneficiary,
-        bytes calldata metadata
-    )
-        external
-    {
-        // Can only be called by this contract.
-        require(msg.sender == address(this));
-
-        // Approve the tokens being paid.
-        IERC20(address(token)).forceApprove(address(terminal), splitAmount);
-
-        // slither-disable-next-line unused-return
-        terminal.pay({
-            projectId: projectId,
-            token: address(token),
-            amount: splitAmount,
-            beneficiary: beneficiary,
-            minReturnedTokens: 0,
-            memo: "",
-            metadata: metadata
-        });
-
-        // Make sure that the terminal received the tokens.
-        assert(IERC20(address(token)).allowance(address(this), address(terminal)) == 0);
+        TOKENS.transferCreditsFrom({holder: holder, projectId: projectId, recipient: recipient, count: creditCount});
     }
 
     //*********************************************************************//
-    // ---------------------- internal transactions ---------------------- //
+    // --------------------- internal helper functions ------------------- //
     //*********************************************************************//
-
-    /// @notice The message's sender. Preferred to use over `msg.sender`.
-    /// @return sender The address which sent this call.
-    function _msgSender() internal view override(ERC2771Context, Context) returns (address sender) {
-        return ERC2771Context._msgSender();
-    }
-
-    /// @notice The calldata. Preferred to use over `msg.data`.
-    /// @return calldata The `msg.data` of this call.
-    function _msgData() internal view override(ERC2771Context, Context) returns (bytes calldata) {
-        return ERC2771Context._msgData();
-    }
-
-    /// @dev `ERC-2771` specifies the context as being a single address (20 bytes).
-    function _contextSuffixLength() internal view override(ERC2771Context, Context) returns (uint256) {
-        return super._contextSuffixLength();
-    }
-
-    //*********************************************************************//
-    // ---------------------- internal transactions ---------------------- //
-    //*********************************************************************//
-
-    /// @notice Sends pending reserved tokens to the project's reserved token splits.
-    /// @dev If the project has no reserved token splits, or if they don't add up to 100%, leftover tokens are sent to
-    /// the project's owner.
-    /// @param projectId The ID of the project to send reserved tokens for.
-    /// @return tokenCount The amount of reserved tokens minted and sent.
-    function _sendReservedTokensToSplitsOf(uint256 projectId) internal returns (uint256 tokenCount) {
-        // Get a reference to the number of tokens that need to be minted.
-        tokenCount = pendingReservedTokenBalanceOf[projectId];
-
-        // Revert if there are no pending reserved tokens
-        if (tokenCount == 0) revert NO_RESERVED_TOKENS();
-
-        // Get the ruleset to read the reserved percent from.
-        JBRuleset memory ruleset = _currentRulesetOf(projectId);
-
-        // Reset the pending reserved token balance.
-        pendingReservedTokenBalanceOf[projectId] = 0;
-
-        // Get a reference to the project's owner.
-        address owner = PROJECTS.ownerOf(projectId);
-
-        // Send reserved tokens to splits and get a reference to the amount left after the splits have all been paid.
-        uint256 leftoverTokenCount = tokenCount == 0
-            ? 0
-            : _sendTokensToSplitGroupOf(projectId, ruleset.id, JBSplitGroupIds.RESERVED_TOKENS, tokenCount);
-
-        // Mint any leftover tokens to the project owner.
-        if (leftoverTokenCount > 0) {
-            TOKENS.mintFor(owner, projectId, leftoverTokenCount);
-        }
-
-        emit SendReservedTokensToSplits(
-            ruleset.id, ruleset.cycleNumber, projectId, owner, tokenCount, leftoverTokenCount, _msgSender()
-        );
-    }
-
-    /// @notice Send project tokens to a split group.
-    /// @dev This is used to send reserved tokens to the reserved token split group.
-    /// @param projectId The ID of the project the splits belong to.
-    /// @param rulesetId The ID of the split group's ruleset.
-    /// @param groupId The ID of the split group.
-    /// @param amount The number of tokens to send.
-    /// @return leftoverAmount If the split percents don't add up to 100%, the leftover amount is returned.
-    function _sendTokensToSplitGroupOf(
-        uint256 projectId,
-        uint256 rulesetId,
-        uint256 groupId,
-        uint256 amount
-    )
-        internal
-        returns (uint256 leftoverAmount)
-    {
-        // Set the leftover amount to the initial amount.
-        leftoverAmount = amount;
-
-        // Get a reference to the split group.
-        JBSplit[] memory splits = SPLITS.splitsOf(projectId, rulesetId, groupId);
-
-        // Keep a reference to the number of splits being iterated on.
-        uint256 numberOfSplits = splits.length;
-
-        // Keep a reference to the split being iterated on.
-        JBSplit memory split;
-
-        // Keep a reference to the split amount being iterated on.
-        uint256 splitAmount;
-
-        // Send the tokens to the splits.
-        for (uint256 i; i < numberOfSplits; i++) {
-            // Get a reference to the split being iterated on.
-            split = splits[i];
-
-            // Calculate the amount to send to the split.
-            splitAmount = mulDiv(amount, split.percent, JBConstants.SPLITS_TOTAL_PERCENT);
-
-            // Mints tokens for the split if needed.
-            if (splitAmount > 0) {
-                // 1. If the split has a `hook`, call the hook's `processSplitWith` function.
-                // 2. Otherwise, if the split has a `projectId`, try to pay the project using the split's `beneficiary`,
-                // or the `_msgSender()` if the split has no beneficiary.
-                // 3. Otherwise, if the split has a beneficiary, send the tokens to the split's beneficiary.
-                // 4. Otherwise, send the tokens to the `_msgSender()`.
-
-                // If the split has a hook, call its `processSplitWith` function.
-                if (split.hook != IJBSplitHook(address(0))) {
-                    // Mint the tokens for the split hook.
-                    // slither-disable-next-line reentrancy-events
-                    TOKENS.mintFor(address(split.hook), projectId, splitAmount);
-
-                    // Get a reference to the project token address. If the project doesn't have a token, this will
-                    // return the 0 address.
-                    IJBToken token = TOKENS.tokenOf(projectId);
-
-                    // slither-disable-next-line reentrancy-events
-                    split.hook.processSplitWith(
-                        JBSplitHookContext({
-                            token: address(token),
-                            amount: splitAmount,
-                            decimals: 18, // Hard-coded in `JBTokens`.
-                            projectId: projectId,
-                            groupId: groupId,
-                            split: split
-                        })
-                    );
-                    // If the split has a project ID, try to pay the project. If that fails, pay the beneficiary.
-                } else {
-                    // Pay the project using the split's beneficiary if one was provided. Otherwise, use the message
-                    // sender.
-                    address beneficiary = split.beneficiary != address(0) ? split.beneficiary : _msgSender();
-
-                    if (split.projectId != 0) {
-                        // Get a reference to the project's token address. If the project doesn't have a token, this
-                        // will return the 0 address.
-                        IJBToken token = TOKENS.tokenOf(projectId);
-
-                        // Get a reference to the receiving project's primary payment terminal for the token.
-                        IJBTerminal terminal = token == IJBToken(address(0))
-                            ? IJBTerminal(address(0))
-                            : DIRECTORY.primaryTerminalOf(split.projectId, address(token));
-
-                        // If the project doesn't have a token, or if the receiving project doesn't have a terminal
-                        // which accepts the token, send the tokens to the beneficiary.
-                        if (address(token) == address(0) || address(terminal) == address(0)) {
-                            // Mint the tokens to the beneficiary.
-                            // slither-disable-next-line reentrancy-events
-                            TOKENS.mintFor(beneficiary, projectId, splitAmount);
-                        } else {
-                            // Mint the tokens to this contract.
-                            // slither-disable-next-line reentrancy-events
-                            TOKENS.mintFor(address(this), projectId, splitAmount);
-
-                            // Use the `projectId` in the pay metadata.
-                            // slither-disable-next-line reentrancy-events
-                            bytes memory metadata = bytes(abi.encodePacked(projectId));
-
-                            // Try to fulfill the payment.
-                            try this.executePayReservedTokenToTerminal({
-                                projectId: split.projectId,
-                                terminal: terminal,
-                                token: token,
-                                splitAmount: splitAmount,
-                                beneficiary: beneficiary,
-                                metadata: metadata
-                            }) {} catch (bytes memory reason) {
-                                emit ReservedDistributionReverted(projectId, split, splitAmount, reason, _msgSender());
-
-                                // If it fails, transfer the tokens from this contract to the beneficiary.
-                                IERC20(address(token)).safeTransfer(beneficiary, splitAmount);
-                            }
-                        }
-                    } else if (beneficiary != address(0xdead)) {
-                        // If the split has no project ID, mint the tokens to the beneficiary.
-                        TOKENS.mintFor(beneficiary, projectId, splitAmount);
-                    }
-                }
-
-                // Subtract the amount sent from the leftover.
-                leftoverAmount = leftoverAmount - splitAmount;
-            }
-
-            emit SendReservedTokensToSplit(projectId, rulesetId, groupId, split, splitAmount, _msgSender());
-        }
-    }
-
-    /// @notice Queues one or more rulesets and stores information pertinent to the configuration.
-    /// @param projectId The ID of the project to queue rulesets for.
-    /// @param rulesetConfigurations The rulesets being queued.
-    /// @return rulesetId The ID of the last ruleset that was successfully queued.
-    function _queueRulesets(
-        uint256 projectId,
-        JBRulesetConfig[] calldata rulesetConfigurations
-    )
-        internal
-        returns (uint256 rulesetId)
-    {
-        // Keep a reference to the number of ruleset configurations being queued.
-        uint256 numberOfConfigurations = rulesetConfigurations.length;
-
-        // Keep a reference to the ruleset config being iterated on.
-        JBRulesetConfig memory rulesetConfig;
-
-        // Keep a reference to the latest queued ruleset.
-        JBRuleset memory ruleset;
-
-        for (uint256 i; i < numberOfConfigurations; i++) {
-            // Get a reference to the ruleset config being iterated on.
-            rulesetConfig = rulesetConfigurations[i];
-
-            // Make sure its reserved percent is valid.
-            if (rulesetConfig.metadata.reservedPercent > JBConstants.MAX_RESERVED_PERCENT) {
-                revert INVALID_RESERVED_PERCENT();
-            }
-
-            // Make sure its redemption rate is valid.
-            if (rulesetConfig.metadata.redemptionRate > JBConstants.MAX_REDEMPTION_RATE) {
-                revert INVALID_REDEMPTION_RATE();
-            }
-
-            // Queue its ruleset.
-            ruleset = RULESETS.queueFor({
-                projectId: projectId,
-                duration: rulesetConfig.duration,
-                weight: rulesetConfig.weight,
-                decayPercent: rulesetConfig.decayPercent,
-                approvalHook: rulesetConfig.approvalHook,
-                metadata: JBRulesetMetadataResolver.packRulesetMetadata(rulesetConfig.metadata),
-                mustStartAtOrAfter: rulesetConfig.mustStartAtOrAfter
-            });
-
-            // Set its split groups.
-            SPLITS.setSplitGroupsOf(projectId, ruleset.id, rulesetConfig.splitGroups);
-
-            // Set its fund access limits.
-            FUND_ACCESS_LIMITS.setFundAccessLimitsFor(projectId, ruleset.id, rulesetConfig.fundAccessLimitGroups);
-
-            // If this is the last configuration being queued, return the ruleset's ID.
-            if (i == numberOfConfigurations - 1) {
-                rulesetId = ruleset.id;
-            }
-        }
-    }
 
     /// @notice Set up a project's terminals.
     /// @param projectId The ID of the project to set up terminals for.
@@ -1094,7 +901,261 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
 
         // Set the terminals in the directory.
         if (numberOfTerminalConfigs > 0) {
-            DIRECTORY.setTerminalsOf(projectId, terminals);
+            DIRECTORY.setTerminalsOf({projectId: projectId, terminals: terminals});
+        }
+    }
+
+    /// @notice Queues one or more rulesets and stores information pertinent to the configuration.
+    /// @param projectId The ID of the project to queue rulesets for.
+    /// @param rulesetConfigurations The rulesets being queued.
+    /// @return rulesetId The ID of the last ruleset that was successfully queued.
+    function _queueRulesets(
+        uint256 projectId,
+        JBRulesetConfig[] calldata rulesetConfigurations
+    )
+        internal
+        returns (uint256 rulesetId)
+    {
+        // Keep a reference to the number of ruleset configurations being queued.
+        uint256 numberOfConfigurations = rulesetConfigurations.length;
+
+        // Keep a reference to the ruleset config being iterated on.
+        JBRulesetConfig memory rulesetConfig;
+
+        // Keep a reference to the latest queued ruleset.
+        JBRuleset memory ruleset;
+
+        for (uint256 i; i < numberOfConfigurations; i++) {
+            // Get a reference to the ruleset config being iterated on.
+            rulesetConfig = rulesetConfigurations[i];
+
+            // Make sure its reserved percent is valid.
+            if (rulesetConfig.metadata.reservedPercent > JBConstants.MAX_RESERVED_PERCENT) {
+                revert JBController_InvalidReservedPercent();
+            }
+
+            // Make sure its redemption rate is valid.
+            if (rulesetConfig.metadata.redemptionRate > JBConstants.MAX_REDEMPTION_RATE) {
+                revert JBController_InvalidRedemptionRate();
+            }
+
+            // Queue its ruleset.
+            ruleset = RULESETS.queueFor({
+                projectId: projectId,
+                duration: rulesetConfig.duration,
+                weight: rulesetConfig.weight,
+                decayPercent: rulesetConfig.decayPercent,
+                approvalHook: rulesetConfig.approvalHook,
+                metadata: JBRulesetMetadataResolver.packRulesetMetadata(rulesetConfig.metadata),
+                mustStartAtOrAfter: rulesetConfig.mustStartAtOrAfter
+            });
+
+            // Set its split groups.
+            SPLITS.setSplitGroupsOf({
+                projectId: projectId,
+                rulesetId: ruleset.id,
+                splitGroups: rulesetConfig.splitGroups
+            });
+
+            // Set its fund access limits.
+            FUND_ACCESS_LIMITS.setFundAccessLimitsFor({
+                projectId: projectId,
+                rulesetId: ruleset.id,
+                fundAccessLimitGroups: rulesetConfig.fundAccessLimitGroups
+            });
+
+            // If this is the last configuration being queued, return the ruleset's ID.
+            if (i == numberOfConfigurations - 1) {
+                rulesetId = ruleset.id;
+            }
+        }
+    }
+
+    /// @notice Sends pending reserved tokens to the project's reserved token splits.
+    /// @dev If the project has no reserved token splits, or if they don't add up to 100%, leftover tokens are sent to
+    /// the project's owner.
+    /// @param projectId The ID of the project to send reserved tokens for.
+    /// @return tokenCount The amount of reserved tokens minted and sent.
+    function _sendReservedTokensToSplitsOf(uint256 projectId) internal returns (uint256 tokenCount) {
+        // Get a reference to the number of tokens that need to be minted.
+        tokenCount = pendingReservedTokenBalanceOf[projectId];
+
+        // Revert if there are no pending reserved tokens
+        if (tokenCount == 0) revert JBController_NoReservedTokens();
+
+        // Get the ruleset to read the reserved percent from.
+        JBRuleset memory ruleset = _currentRulesetOf(projectId);
+
+        // Reset the pending reserved token balance.
+        pendingReservedTokenBalanceOf[projectId] = 0;
+
+        // Get a reference to the project's owner.
+        address owner = PROJECTS.ownerOf(projectId);
+
+        // Send reserved tokens to splits and get a reference to the amount left after the splits have all been paid.
+        uint256 leftoverTokenCount = tokenCount == 0
+            ? 0
+            : _sendReservedTokensToSplitGroupOf({
+                projectId: projectId,
+                rulesetId: ruleset.id,
+                groupId: JBSplitGroupIds.RESERVED_TOKENS,
+                tokenCount: tokenCount
+            });
+
+        // Mint any leftover tokens to the project owner.
+        if (leftoverTokenCount > 0) {
+            TOKENS.mintFor({holder: owner, projectId: projectId, count: leftoverTokenCount});
+        }
+
+        emit SendReservedTokensToSplits({
+            rulesetId: ruleset.id,
+            rulesetCycleNumber: ruleset.cycleNumber,
+            projectId: projectId,
+            owner: owner,
+            tokenCount: tokenCount,
+            leftoverAmount: leftoverTokenCount,
+            caller: _msgSender()
+        });
+    }
+
+    /// @notice Send project tokens to a split group.
+    /// @dev This is used to send reserved tokens to the reserved token split group.
+    /// @param projectId The ID of the project the splits belong to.
+    /// @param rulesetId The ID of the split group's ruleset.
+    /// @param groupId The ID of the split group.
+    /// @param tokenCount The number of tokens to send.
+    /// @return leftoverTokenCount If the split percents don't add up to 100%, the leftover amount is returned.
+    function _sendReservedTokensToSplitGroupOf(
+        uint256 projectId,
+        uint256 rulesetId,
+        uint256 groupId,
+        uint256 tokenCount
+    )
+        internal
+        returns (uint256 leftoverTokenCount)
+    {
+        // Set the leftover amount to the initial amount.
+        leftoverTokenCount = tokenCount;
+
+        // Get a reference to the split group.
+        JBSplit[] memory splits = SPLITS.splitsOf({projectId: projectId, rulesetId: rulesetId, groupId: groupId});
+
+        // Keep a reference to the number of splits being iterated on.
+        uint256 numberOfSplits = splits.length;
+
+        // Keep a reference to the split being iterated on.
+        JBSplit memory split;
+
+        // Keep a reference to the split amount being iterated on.
+        uint256 splitTokenCount;
+
+        // Send the tokens to the splits.
+        for (uint256 i; i < numberOfSplits; i++) {
+            // Get a reference to the split being iterated on.
+            split = splits[i];
+
+            // Calculate the amount to send to the split.
+            splitTokenCount = mulDiv(tokenCount, split.percent, JBConstants.SPLITS_TOTAL_PERCENT);
+
+            // Mints tokens for the split if needed.
+            if (splitTokenCount > 0) {
+                // 1. If the split has a `hook`, call the hook's `processSplitWith` function.
+                // 2. Otherwise, if the split has a `projectId`, try to pay the project using the split's `beneficiary`,
+                // or the `_msgSender()` if the split has no beneficiary.
+                // 3. Otherwise, if the split has a beneficiary, send the tokens to the split's beneficiary.
+                // 4. Otherwise, send the tokens to the `_msgSender()`.
+
+                // If the split has a hook, call its `processSplitWith` function.
+                if (split.hook != IJBSplitHook(address(0))) {
+                    // Mint the tokens for the split hook.
+                    // slither-disable-next-line reentrancy-events
+                    TOKENS.mintFor({holder: address(split.hook), projectId: projectId, count: splitTokenCount});
+
+                    // Get a reference to the project token address. If the project doesn't have a token, this will
+                    // return the 0 address.
+                    IJBToken token = TOKENS.tokenOf(projectId);
+
+                    // slither-disable-next-line reentrancy-events
+                    split.hook.processSplitWith(
+                        JBSplitHookContext({
+                            token: address(token),
+                            amount: splitTokenCount,
+                            decimals: 18, // Hard-coded in `JBTokens`.
+                            projectId: projectId,
+                            groupId: groupId,
+                            split: split
+                        })
+                    );
+                    // If the split has a project ID, try to pay the project. If that fails, pay the beneficiary.
+                } else {
+                    // Pay the project using the split's beneficiary if one was provided. Otherwise, use the message
+                    // sender.
+                    address beneficiary = split.beneficiary != address(0) ? split.beneficiary : _msgSender();
+
+                    if (split.projectId != 0) {
+                        // Get a reference to the project's token address. If the project doesn't have a token, this
+                        // will return the 0 address.
+                        IJBToken token = TOKENS.tokenOf(projectId);
+
+                        // Get a reference to the receiving project's primary payment terminal for the token.
+                        IJBTerminal terminal = token == IJBToken(address(0))
+                            ? IJBTerminal(address(0))
+                            : DIRECTORY.primaryTerminalOf({projectId: split.projectId, token: address(token)});
+
+                        // If the project doesn't have a token, or if the receiving project doesn't have a terminal
+                        // which accepts the token, send the tokens to the beneficiary.
+                        if (address(token) == address(0) || address(terminal) == address(0)) {
+                            // Mint the tokens to the beneficiary.
+                            // slither-disable-next-line reentrancy-events
+                            TOKENS.mintFor({holder: beneficiary, projectId: projectId, count: splitTokenCount});
+                        } else {
+                            // Mint the tokens to this contract.
+                            // slither-disable-next-line reentrancy-events
+                            TOKENS.mintFor({holder: address(this), projectId: projectId, count: splitTokenCount});
+
+                            // Use the `projectId` in the pay metadata.
+                            // slither-disable-next-line reentrancy-events
+                            bytes memory metadata = bytes(abi.encodePacked(projectId));
+
+                            // Try to fulfill the payment.
+                            try this.executePayReservedTokenToTerminal({
+                                projectId: split.projectId,
+                                terminal: terminal,
+                                token: token,
+                                splitTokenCount: splitTokenCount,
+                                beneficiary: beneficiary,
+                                metadata: metadata
+                            }) {} catch (bytes memory reason) {
+                                emit ReservedDistributionReverted({
+                                    projectId: projectId,
+                                    split: split,
+                                    tokenCount: splitTokenCount,
+                                    reason: reason,
+                                    caller: _msgSender()
+                                });
+
+                                // If it fails, transfer the tokens from this contract to the beneficiary.
+                                IERC20(address(token)).safeTransfer(beneficiary, splitTokenCount);
+                            }
+                        }
+                    } else if (beneficiary != address(0xdead)) {
+                        // If the split has no project ID, mint the tokens to the beneficiary.
+                        TOKENS.mintFor({holder: beneficiary, projectId: projectId, count: splitTokenCount});
+                    }
+                }
+
+                // Subtract the amount sent from the leftover.
+                leftoverTokenCount = leftoverTokenCount - splitTokenCount;
+            }
+
+            emit SendReservedTokensToSplit({
+                projectId: projectId,
+                rulesetId: rulesetId,
+                groupId: groupId,
+                split: split,
+                tokenCount: splitTokenCount,
+                caller: _msgSender()
+            });
         }
     }
 }

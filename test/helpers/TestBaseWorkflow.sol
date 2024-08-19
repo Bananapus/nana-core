@@ -12,6 +12,8 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ERC165, IERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import {JBPermissionIds} from "@bananapus/permission-ids/src/JBPermissionIds.sol";
+import {JBControlled} from "../../src/abstract/JBControlled.sol";
+import {JBPermissioned} from "../../src/abstract/JBPermissioned.sol";
 import {JBController} from "../../src/JBController.sol";
 import {JBDirectory} from "../../src/JBDirectory.sol";
 import {JBTerminalStore} from "../../src/JBTerminalStore.sol";
@@ -33,6 +35,7 @@ import {JBAfterPayRecordedContext} from "../../src/structs/JBAfterPayRecordedCon
 import {JBAfterRedeemRecordedContext} from "../../src/structs/JBAfterRedeemRecordedContext.sol";
 import {JBFee} from "../../src/structs/JBFee.sol";
 import {JBFees} from "../../src/libraries/JBFees.sol";
+import {JBMetadataResolver} from "../../src/libraries/JBMetadataResolver.sol";
 import {JBRedemptions} from "../../src/libraries/JBRedemptions.sol";
 import {JBFundAccessLimitGroup} from "../../src/structs/JBFundAccessLimitGroup.sol";
 import {JBRuleset} from "../../src/structs/JBRuleset.sol";
@@ -211,7 +214,7 @@ contract TestBaseWorkflow is Test, DeployPermit2 {
         _jbErc20 = new JBERC20();
         _jbTokens = new JBTokens(_jbDirectory, _jbErc20);
         _jbRulesets = new JBRulesets(_jbDirectory);
-        _jbPrices = new JBPrices(_jbPermissions, _jbProjects, _jbDirectory, _multisig);
+        _jbPrices = new JBPrices(_jbDirectory, _jbPermissions, _jbProjects, _multisig);
         _jbSplits = new JBSplits(_jbDirectory);
         _jbFundAccessLimits = new JBFundAccessLimits(_jbDirectory);
         _jbFeelessAddresses = new JBFeelessAddresses(_multisig);
@@ -219,14 +222,14 @@ contract TestBaseWorkflow is Test, DeployPermit2 {
         _usdcToken = new MockERC20("USDC", "USDC");
 
         _jbController = new JBController(
-            _jbPermissions,
-            _jbProjects,
             _jbDirectory,
-            _jbRulesets,
-            _jbTokens,
-            _jbSplits,
             _jbFundAccessLimits,
+            _jbPermissions,
             _jbPrices,
+            _jbProjects,
+            _jbRulesets,
+            _jbSplits,
+            _jbTokens,
             _trustedForwarder
         );
 
@@ -235,27 +238,27 @@ contract TestBaseWorkflow is Test, DeployPermit2 {
         vm.prank(_multisig);
         _jbDirectory.setIsAllowedToSetFirstController(address(_jbController), true);
 
-        _jbTerminalStore = new JBTerminalStore(_jbDirectory, _jbRulesets, _jbPrices);
+        _jbTerminalStore = new JBTerminalStore(_jbDirectory, _jbPrices, _jbRulesets);
 
         vm.prank(_multisig);
         _permit2 = deployPermit2();
 
         _jbMultiTerminal = new JBMultiTerminal(
+            _jbFeelessAddresses,
             _jbPermissions,
             _jbProjects,
             _jbSplits,
             _jbTerminalStore,
-            _jbFeelessAddresses,
             IPermit2(_permit2),
             _trustedForwarder
         );
 
         _jbMultiTerminal2 = new JBMultiTerminal(
+            _jbFeelessAddresses,
             _jbPermissions,
             _jbProjects,
             _jbSplits,
             _jbTerminalStore,
-            _jbFeelessAddresses,
             IPermit2(_permit2),
             _trustedForwarder
         );

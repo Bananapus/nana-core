@@ -26,14 +26,14 @@ contract TestTransferCreditsFrom_Local is JBTokensSetup {
     function test_GivenRecipientEQZeroAddress() external whenCallerIsController {
         // it will revert RECIPIENT_ZERO_ADDRESS
 
-        vm.expectRevert(abi.encodeWithSignature("RECIPIENT_ZERO_ADDRESS()"));
+        vm.expectRevert(JBTokens.JBTokens_RecipientZeroAddress.selector);
         _tokens.transferCreditsFrom(_holder, _projectId, address(0), _defaultAmount);
     }
 
     function test_GivenCallingAmountGTCreditBalance() external whenCallerIsController {
         // it will revert INSUFFICIENT_CREDITS
 
-        vm.expectRevert(abi.encodeWithSignature("INSUFFICIENT_CREDITS()"));
+        vm.expectRevert(JBTokens.JBTokens_InsufficientCredits.selector);
         _tokens.transferCreditsFrom(_holder, _projectId, _recipient, _defaultAmount);
     }
 
@@ -41,7 +41,7 @@ contract TestTransferCreditsFrom_Local is JBTokensSetup {
         // it will subtract creditBalanceOf from holder to recipient and emit TransferCredits
 
         // Find the storage slot to set credit balance
-        bytes32 creditBalanceOfSlot = keccak256(abi.encode(_holder, uint256(3)));
+        bytes32 creditBalanceOfSlot = keccak256(abi.encode(_holder, uint256(0)));
         bytes32 slot = keccak256(abi.encode(_projectId, uint256(creditBalanceOfSlot)));
 
         // Set storage

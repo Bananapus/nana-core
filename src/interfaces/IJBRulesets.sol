@@ -6,30 +6,33 @@ import {JBRuleset} from "./../structs/JBRuleset.sol";
 import {IJBRulesetApprovalHook} from "./IJBRulesetApprovalHook.sol";
 
 interface IJBRulesets {
+    event RulesetInitialized(
+        uint256 indexed rulesetId, uint256 indexed projectId, uint256 indexed basedOnId, address caller
+    );
     event RulesetQueued(
         uint256 indexed rulesetId,
         uint256 indexed projectId,
         uint256 duration,
         uint256 weight,
         uint256 decayPercent,
-        IJBRulesetApprovalHook hook,
+        IJBRulesetApprovalHook approvalHook,
         uint256 metadata,
         uint256 mustStartAtOrAfter,
         address caller
     );
 
-    event RulesetInitialized(uint256 indexed rulesetId, uint256 indexed projectId, uint256 indexed basedOnId);
-
     function latestRulesetIdOf(uint256 projectId) external view returns (uint256);
 
+    function currentApprovalStatusForLatestRulesetOf(uint256 projectId) external view returns (JBApprovalStatus);
+    function currentOf(uint256 projectId) external view returns (JBRuleset memory ruleset);
     function getRulesetOf(uint256 projectId, uint256 rulesetId) external view returns (JBRuleset memory);
-
-    function latestQueuedOf(uint256 projectId)
+    function latestQueuedOf(
+        uint256 projectId
+    )
         external
         view
         returns (JBRuleset memory ruleset, JBApprovalStatus approvalStatus);
-
-    function rulesetsOf(
+    function allOf(
         uint256 projectId,
         uint256 startingId,
         uint256 size
@@ -37,12 +40,7 @@ interface IJBRulesets {
         external
         view
         returns (JBRuleset[] memory rulesets);
-
     function upcomingOf(uint256 projectId) external view returns (JBRuleset memory ruleset);
-
-    function currentOf(uint256 projectId) external view returns (JBRuleset memory ruleset);
-
-    function currentApprovalStatusForLatestRulesetOf(uint256 projectId) external view returns (JBApprovalStatus);
 
     function queueFor(
         uint256 projectId,
@@ -55,6 +53,5 @@ interface IJBRulesets {
     )
         external
         returns (JBRuleset memory ruleset);
-
     function updateRulesetWeightCache(uint256 projectId) external;
 }

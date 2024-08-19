@@ -25,10 +25,10 @@ pragma solidity ^0.8.17;
  *            +-----------------------+
  */
 library JBMetadataResolver {
-    error DATA_NOT_PADDED();
-    error LENGTH_MISMATCH();
-    error METADATA_TOO_LONG();
-    error METADATA_TOO_SHORT();
+    error JBMetadataResolver_DataNotPadded();
+    error JBMetadataResolver_LengthMismatch();
+    error JBMetadataResolver_MetadataTooLong();
+    error JBMetadataResolver_MetadataTooShort();
 
     // The various sizes used in bytes.
     uint256 constant ID_SIZE = 4;
@@ -46,59 +46,11 @@ library JBMetadataResolver {
     uint256 constant RESERVED_SIZE = 32; // 1 * WORD_SIZE;
     uint256 constant MIN_METADATA_LENGTH = 37; // RESERVED_SIZE + ID_SIZE + ID_OFFSET_SIZE;
 
-    /**
-     * @notice Parse the metadata to find the data for a specific ID
-     *
-     * @dev    Returns false and an empty bytes if no data is found
-     *
-     * @param  id             The ID to find
-     * @param  metadata       The metadata to parse
-     *
-     * @return found          Whether the {id:data} was found
-     * @return targetData The data for the ID (can be empty)
-     */
-    function getDataFor(bytes4 id, bytes memory metadata) internal pure returns (bool found, bytes memory targetData) {
-        // Either no data or empty one with only one selector (32+4+1)
-        if (metadata.length <= MIN_METADATA_LENGTH) return (false, "");
-
-        // Get the first data offset - upcast to avoid overflow (same for other offset)
-        uint256 firstOffset = uint8(metadata[RESERVED_SIZE + ID_SIZE]);
-
-        // Parse the id's to find id, stop when next offset == 0 or current = first offset
-        for (uint256 i = RESERVED_SIZE; metadata[i + ID_SIZE] != bytes1(0) && i < firstOffset * WORD_SIZE;) {
-            uint256 currentOffset = uint256(uint8(metadata[i + ID_SIZE]));
-
-            bytes4 parsedId;
-            assembly {
-                parsedId := mload(add(add(metadata, 0x20), i))
-            }
-
-            // _id found?
-            if (parsedId == id) {
-                // Are we at the end of the lookup table (either at the start of data's or next offset is 0/in the
-                // padding)
-                // If not, only return until from this offset to the begining of the next offset
-                uint256 end = (i + NEXT_ID_OFFSET >= firstOffset * WORD_SIZE || metadata[i + NEXT_ID_OFFSET] == 0)
-                    ? metadata.length
-                    : uint256(uint8(metadata[i + NEXT_ID_OFFSET])) * WORD_SIZE;
-
-                return (true, _sliceBytes(metadata, currentOffset * WORD_SIZE, end));
-            }
-            unchecked {
-                i += TOTAL_ID_SIZE;
-            }
-        }
-    }
-
-    /**
-     * @notice Add an {id: data} entry to an existing metadata. This is an append-only mechanism.
-     *
-     * @param originalMetadata The original metadata
-     * @param idToAdd          The id to add
-     * @param dataToAdd        The data to add
-     *
-     * @return newMetadata    The new metadata with the entry added
-     */
+    /// @notice Add an {id: data} entry to an existing metadata. This is an append-only mechanism.
+    /// @param originalMetadata The original metadata
+    /// @param idToAdd The id to add
+    /// @param dataToAdd The data to add
+    /// @return newMetadata The new metadata with the entry added
     function addToMetadata(
         bytes memory originalMetadata,
         bytes4 idToAdd,
@@ -114,10 +66,10 @@ library JBMetadataResolver {
         }
 
         // There is something in the table offset, but not a valid entry - avoid overwriting
-        if (originalMetadata.length < RESERVED_SIZE + ID_SIZE + 1) revert METADATA_TOO_SHORT();
+        if (originalMetadata.length < RESERVED_SIZE + ID_SIZE + 1) revert JBMetadataResolver_MetadataTooShort();
 
         // Make sure the data is padded to 32 bytes.
-        if (dataToAdd.length < 32) revert DATA_NOT_PADDED();
+        if (dataToAdd.length < 32) revert JBMetadataResolver_DataNotPadded();
 
         // Get the first data offset - upcast to avoid overflow (same for other offset)...
         uint256 firstOffset = uint8(originalMetadata[RESERVED_SIZE + ID_SIZE]);
@@ -198,93 +150,110 @@ library JBMetadataResolver {
         }
     }
 
-    /**
-     * @notice Create the metadata for a list of {id:data}
-     *
-     * @dev    Intended for offchain use (gas heavy)
-     *
-     * @param _ids             The list of ids
-     * @param _datas       The list of corresponding datas
-     *
-     * @return metadata       The resulting metadata
-     */
-    function createMetadata(
-        bytes4[] memory _ids,
-        bytes[] memory _datas
-    )
-        internal
-        pure
-        returns (bytes memory metadata)
-    {
-        if (_ids.length != _datas.length) revert LENGTH_MISMATCH();
+    /// @notice Create the metadata for a list of {id:data}
+    /// @dev Intended for offchain use (gas heavy)
+    /// @param ids The list of ids
+    /// @param datas The list of corresponding datas
+    /// @return metadata The resulting metadata
+    function createMetadata(bytes4[] memory ids, bytes[] memory datas) internal pure returns (bytes memory metadata) {
+        if (ids.length != datas.length) revert JBMetadataResolver_LengthMismatch();
 
         // Add a first empty 32B for the protocol reserved word
         metadata = abi.encodePacked(bytes32(0));
 
         // First offset for the data is after the first reserved word...
-        uint256 _offset = 1;
+        uint256 offset = 1;
 
         // ... and after the id/offset lookup table, rounding up to 32 bytes words if not a multiple
-        _offset += ((_ids.length * JBMetadataResolver.TOTAL_ID_SIZE) - 1) / JBMetadataResolver.WORD_SIZE + 1;
+        offset += ((ids.length * JBMetadataResolver.TOTAL_ID_SIZE) - 1) / JBMetadataResolver.WORD_SIZE + 1;
 
         // For each id, add it to the lookup table with the next free offset, then increment the offset by the data
         // length (rounded up)
-        for (uint256 _i; _i < _ids.length; ++_i) {
-            if (_datas[_i].length < 32 || _datas[_i].length % JBMetadataResolver.WORD_SIZE != 0) {
-                revert DATA_NOT_PADDED();
+        for (uint256 i; i < ids.length; ++i) {
+            if (datas[i].length < 32 || datas[i].length % JBMetadataResolver.WORD_SIZE != 0) {
+                revert JBMetadataResolver_DataNotPadded();
             }
 
-            metadata = abi.encodePacked(metadata, _ids[_i], bytes1(uint8(_offset)));
-            _offset += _datas[_i].length / JBMetadataResolver.WORD_SIZE;
+            metadata = abi.encodePacked(metadata, ids[i], bytes1(uint8(offset)));
+            offset += datas[i].length / JBMetadataResolver.WORD_SIZE;
 
             // Overflowing a bytes1?
-            if (_offset > 255) revert METADATA_TOO_LONG();
+            if (offset > 255) revert JBMetadataResolver_MetadataTooLong();
         }
 
         // Pad the table to a multiple of 32B
-        uint256 _paddedLength = metadata.length % JBMetadataResolver.WORD_SIZE == 0
+        uint256 paddedLength = metadata.length % JBMetadataResolver.WORD_SIZE == 0
             ? metadata.length
             : (metadata.length / JBMetadataResolver.WORD_SIZE + 1) * JBMetadataResolver.WORD_SIZE;
         assembly {
-            mstore(metadata, _paddedLength)
+            mstore(metadata, paddedLength)
         }
 
         // Add each metadata to the array, each padded to 32 bytes
-        for (uint256 _i; _i < _datas.length; _i++) {
-            metadata = abi.encodePacked(metadata, _datas[_i]);
-            _paddedLength = metadata.length % JBMetadataResolver.WORD_SIZE == 0
+        for (uint256 i; i < datas.length; i++) {
+            metadata = abi.encodePacked(metadata, datas[i]);
+            paddedLength = metadata.length % JBMetadataResolver.WORD_SIZE == 0
                 ? metadata.length
                 : (metadata.length / JBMetadataResolver.WORD_SIZE + 1) * JBMetadataResolver.WORD_SIZE;
 
             assembly {
-                mstore(metadata, _paddedLength)
+                mstore(metadata, paddedLength)
             }
         }
     }
 
-    /**
-     * @notice Returns an unique id following a suggested format
-     *         (`xor(address(this), purpose name)` where purpose name is a string
-     *         giving context to the id (Permit2, quoteForSwap, etc)
-     *
-     * @param purpose   A string describing the purpose associated with the id
-     *
-     * @return id       The resulting id
-     */
+    /// @notice Parse the metadata to find the data for a specific ID
+    /// @dev Returns false and an empty bytes if no data is found
+    /// @param id The ID to find.
+    /// @param metadata The metadata to parse.
+    /// @return found Whether the {id:data} was found
+    /// @return targetData The data for the ID (can be empty)
+    function getDataFor(bytes4 id, bytes memory metadata) internal pure returns (bool found, bytes memory targetData) {
+        // Either no data or empty one with only one selector (32+4+1)
+        if (metadata.length <= MIN_METADATA_LENGTH) return (false, "");
+
+        // Get the first data offset - upcast to avoid overflow (same for other offset)
+        uint256 firstOffset = uint8(metadata[RESERVED_SIZE + ID_SIZE]);
+
+        // Parse the id's to find id, stop when next offset == 0 or current = first offset
+        for (uint256 i = RESERVED_SIZE; metadata[i + ID_SIZE] != bytes1(0) && i < firstOffset * WORD_SIZE;) {
+            uint256 currentOffset = uint256(uint8(metadata[i + ID_SIZE]));
+
+            bytes4 parsedId;
+            assembly {
+                parsedId := mload(add(add(metadata, 0x20), i))
+            }
+
+            // _id found?
+            if (parsedId == id) {
+                // Are we at the end of the lookup table (either at the start of data's or next offset is 0/in the
+                // padding)
+                // If not, only return until from this offset to the begining of the next offset
+                uint256 end = (i + NEXT_ID_OFFSET >= firstOffset * WORD_SIZE || metadata[i + NEXT_ID_OFFSET] == 0)
+                    ? metadata.length
+                    : uint256(uint8(metadata[i + NEXT_ID_OFFSET])) * WORD_SIZE;
+
+                return (true, _sliceBytes(metadata, currentOffset * WORD_SIZE, end));
+            }
+            unchecked {
+                i += TOTAL_ID_SIZE;
+            }
+        }
+    }
+
+    /// @notice Returns an unique id following a suggested format (`xor(address(this), purpose name)` where purpose name
+    /// is a string giving context to the id (Permit2, quoteForSwap, etc)
+    /// @param purpose A string describing the purpose associated with the id
+    /// @return id The resulting ID.
     function getId(string memory purpose) internal view returns (bytes4) {
         return getId(purpose, address(this));
     }
 
-    /**
-     * @notice Returns an unique id following a suggested format
-     *         (`xor(address(this), purpose name)` where purpose name is a string
-     *         giving context to the id (Permit2, quoteForSwap, etc)
-     *
-     * @param purpose   A string describing the purpose associated with the id
-     * @param target          The target which will use the metadata
-     *
-     * @return id       The resulting id
-     */
+    /// @notice Returns an unique id following a suggested format (`xor(address(this), purpose name)` where purpose name
+    /// is a string giving context to the id (Permit2, quoteForSwap, etc)
+    /// @param purpose A string describing the purpose associated with the id
+    /// @param target The target which will use the metadata
+    /// @return id The resulting ID.
     function getId(string memory purpose, address target) internal pure returns (bytes4) {
         return bytes4(bytes20(target) ^ bytes20(keccak256(bytes(purpose))));
     }
@@ -299,7 +268,7 @@ library JBMetadataResolver {
         uint256 start,
         uint256 end
     )
-        internal
+        private
         pure
         returns (bytes memory slicedBytes)
     {

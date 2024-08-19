@@ -21,14 +21,14 @@ contract TestTotalBalanceOf_Local is JBTokensSetup {
         // it will return creditBalanceOf plus token balance of holder
 
         // Find the storage slot to set credit balance
-        bytes32 creditBalanceOfSlot = keccak256(abi.encode(address(this), uint256(3)));
+        bytes32 creditBalanceOfSlot = keccak256(abi.encode(address(this), uint256(0)));
         bytes32 slot = keccak256(abi.encode(_projectId, uint256(creditBalanceOfSlot)));
 
         // Set storage
         vm.store(address(_tokens), slot, bytes32(_creditBalance));
 
         // Find the storage slot to set token
-        bytes32 tokenOfSlot = keccak256(abi.encode(_projectId, uint256(0)));
+        bytes32 tokenOfSlot = keccak256(abi.encode(_projectId, uint256(2)));
 
         // Set storage
         vm.store(address(_tokens), tokenOfSlot, bytes32(uint256(uint160(address(_token)))));
@@ -53,7 +53,7 @@ contract TestTotalBalanceOf_Local is JBTokensSetup {
         // it will return only the credit balance
 
         // Find the storage slot to set credit balance
-        bytes32 creditBalanceOfSlot = keccak256(abi.encode(address(this), uint256(3)));
+        bytes32 creditBalanceOfSlot = keccak256(abi.encode(address(this), uint256(0)));
         bytes32 slot = keccak256(abi.encode(_projectId, uint256(creditBalanceOfSlot)));
 
         // Set storage

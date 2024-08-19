@@ -12,8 +12,8 @@ contract JBPermissions is IJBPermissions {
     //*********************************************************************//
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
-    error PERMISSION_ID_OUT_OF_BOUNDS();
-    error UNAUTHORIZED();
+    error JBPermissions_PermissionIdOutOfBounds();
+    error JBPermissions_Unauthorized();
 
     //*********************************************************************//
     // ------------------------- public constants ------------------------ //
@@ -68,7 +68,7 @@ contract JBPermissions is IJBPermissions {
         returns (bool)
     {
         // Indexes above 255 don't exist
-        if (permissionId > 255) revert PERMISSION_ID_OUT_OF_BOUNDS();
+        if (permissionId > 255) revert JBPermissions_PermissionIdOutOfBounds();
 
         // If the ROOT permission is set and should be included, return true.
         if (
@@ -162,7 +162,7 @@ contract JBPermissions is IJBPermissions {
             permissionId = permissionIds[i];
 
             // Indexes above 255 don't exist
-            if (permissionId > 255) revert PERMISSION_ID_OUT_OF_BOUNDS();
+            if (permissionId > 255) revert JBPermissions_PermissionIdOutOfBounds();
 
             // Check each permissionId
             if (
@@ -173,6 +173,34 @@ contract JBPermissions is IJBPermissions {
             }
         }
         return true;
+    }
+
+    //*********************************************************************//
+    // ----------------------- internal helper views --------------------- //
+    //*********************************************************************//
+
+    /// @notice Checks if a permission is included in a packed permissions data.
+    /// @param permissions The packed permissions to check.
+    /// @param permissionId The ID of the permission to check for.
+    /// @return A flag indicating whether the permission is included.
+    function _includesPermission(uint256 permissions, uint256 permissionId) internal pure returns (bool) {
+        return ((permissions >> permissionId) & 1) == 1;
+    }
+
+    /// @notice Converts an array of permission IDs to a packed `uint256`.
+    /// @param permissionIds The IDs of the permissions to pack.
+    /// @return packed The packed value.
+    function _packedPermissions(uint8[] calldata permissionIds) internal pure returns (uint256 packed) {
+        // Keep a reference to the permission being iterated on.
+        uint256 permissionId;
+
+        for (uint256 i; i < permissionIds.length; i++) {
+            // Set the permission being iterated on.
+            permissionId = permissionIds[i];
+
+            // Turn on the bit at the ID.
+            packed |= 1 << permissionId;
+        }
     }
 
     //*********************************************************************//
@@ -202,46 +230,18 @@ contract JBPermissions is IJBPermissions {
                             includeWildcardProjectId: true
                         })
                 )
-        ) revert UNAUTHORIZED();
+        ) revert JBPermissions_Unauthorized();
 
         // Store the new value.
         permissionsOf[permissionsData.operator][account][permissionsData.projectId] = packed;
 
-        emit OperatorPermissionsSet(
-            permissionsData.operator,
-            account,
-            permissionsData.projectId,
-            permissionsData.permissionIds,
-            packed,
-            msg.sender
-        );
-    }
-
-    //*********************************************************************//
-    // --------------------- internal helper functions ------------------- //
-    //*********************************************************************//
-
-    /// @notice Converts an array of permission IDs to a packed `uint256`.
-    /// @param permissionIds The IDs of the permissions to pack.
-    /// @return packed The packed value.
-    function _packedPermissions(uint8[] calldata permissionIds) internal pure returns (uint256 packed) {
-        // Keep a reference to the permission being iterated on.
-        uint256 permissionId;
-
-        for (uint256 i; i < permissionIds.length; i++) {
-            // Set the permission being iterated on.
-            permissionId = permissionIds[i];
-
-            // Turn on the bit at the ID.
-            packed |= 1 << permissionId;
-        }
-    }
-
-    /// @notice Checks if a permission is included in a packed permissions data.
-    /// @param permissions The packed permissions to check.
-    /// @param permissionId The ID of the permission to check for.
-    /// @return A flag indicating whether the permission is included.
-    function _includesPermission(uint256 permissions, uint256 permissionId) internal pure returns (bool) {
-        return ((permissions >> permissionId) & 1) == 1;
+        emit OperatorPermissionsSet({
+            operator: permissionsData.operator,
+            account: account,
+            projectId: permissionsData.projectId,
+            permissionIds: permissionsData.permissionIds,
+            packed: packed,
+            caller: msg.sender
+        });
     }
 }

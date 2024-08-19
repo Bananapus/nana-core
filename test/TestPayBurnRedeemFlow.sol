@@ -127,9 +127,9 @@ contract TestPayBurnRedeemFlow_Local is TestBaseWorkflow {
 
         // Burn tokens from beneficiary.
         if (_burnTokenAmount == 0) {
-            vm.expectRevert(abi.encodeWithSignature("NO_BURNABLE_TOKENS()"));
+            vm.expectRevert(JBController.JBController_NoBurnableTokens.selector);
         } else if (_burnTokenAmount > _beneficiaryTokenBalance) {
-            vm.expectRevert(abi.encodeWithSignature("INSUFFICIENT_FUNDS()"));
+            vm.expectRevert(JBTokens.JBTokens_InsufficientFunds.selector);
         } else {
             _beneficiaryTokenBalance = _beneficiaryTokenBalance - _burnTokenAmount;
         }
@@ -147,7 +147,7 @@ contract TestPayBurnRedeemFlow_Local is TestBaseWorkflow {
 
         // Redeem tokens.
         if (_redeemTokenAmount > _beneficiaryTokenBalance) {
-            vm.expectRevert(abi.encodeWithSignature("INSUFFICIENT_TOKENS()"));
+            vm.expectRevert(JBTerminalStore.JBTerminalStore_InsufficientTokens.selector);
         } else {
             _beneficiaryTokenBalance = _beneficiaryTokenBalance - _redeemTokenAmount;
         }

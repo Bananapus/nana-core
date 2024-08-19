@@ -30,12 +30,12 @@ contract TestClaimTokensFor_Local is JBTokensSetup {
         // it will revert TOKEN_NOT_FOUND
 
         // Find the storage slot to set credit balance
-        bytes32 tokenOfSlot = keccak256(abi.encode(_projectId, uint256(0)));
+        bytes32 tokenOfSlot = keccak256(abi.encode(_projectId, uint256(2)));
 
         // Set storage
         vm.store(address(_tokens), tokenOfSlot, bytes32(uint256(uint160(address(0)))));
 
-        vm.expectRevert(abi.encodeWithSignature("TOKEN_NOT_FOUND()"));
+        vm.expectRevert(JBTokens.JBTokens_TokenNotFound.selector);
         _tokens.claimTokensFor(_holder, _projectId, _defaultAmount, _beneficiary);
     }
 
@@ -43,12 +43,12 @@ contract TestClaimTokensFor_Local is JBTokensSetup {
         // it will revert INSUFFICIENT_CREDITS
 
         // Find the storage slot to set credit balance
-        bytes32 tokenOfSlot = keccak256(abi.encode(_projectId, uint256(0)));
+        bytes32 tokenOfSlot = keccak256(abi.encode(_projectId, uint256(2)));
 
         // Set storage
         vm.store(address(_tokens), tokenOfSlot, bytes32(uint256(uint160(address(_token)))));
 
-        vm.expectRevert(abi.encodeWithSignature("INSUFFICIENT_CREDITS()"));
+        vm.expectRevert(JBTokens.JBTokens_InsufficientCredits.selector);
         _tokens.claimTokensFor(_holder, _projectId, _defaultAmount, _beneficiary);
     }
 
@@ -56,13 +56,13 @@ contract TestClaimTokensFor_Local is JBTokensSetup {
         // it will mint to the beneficiary and emit ClaimTokens
 
         // Find the storage slot to set credit balance
-        bytes32 tokenOfSlot = keccak256(abi.encode(_projectId, uint256(0)));
+        bytes32 tokenOfSlot = keccak256(abi.encode(_projectId, uint256(2)));
 
         // Set storage
         vm.store(address(_tokens), tokenOfSlot, bytes32(uint256(uint160(address(_token)))));
 
         // Find the storage slot to set credit balance
-        bytes32 creditBalanceOfSlot = keccak256(abi.encode(address(this), uint256(3)));
+        bytes32 creditBalanceOfSlot = keccak256(abi.encode(address(this), uint256(0)));
         bytes32 slot = keccak256(abi.encode(_projectId, uint256(creditBalanceOfSlot)));
 
         // Set storage
@@ -73,7 +73,7 @@ contract TestClaimTokensFor_Local is JBTokensSetup {
         assertEq(_defaultAmount, _creditBalance);
 
         // Find the storage slot to set totalCreditSupplyOf
-        bytes32 totalCreditSlot = keccak256(abi.encode(_projectId, uint256(2)));
+        bytes32 totalCreditSlot = keccak256(abi.encode(_projectId, uint256(3)));
         // Set storage
         vm.store(address(_tokens), totalCreditSlot, bytes32(_defaultAmount));
 
@@ -101,7 +101,7 @@ contract TestClaimTokensFor_Local is JBTokensSetup {
         // mock call to JBDirectory controllerOf
         mockExpect(address(directory), abi.encodeCall(IJBDirectory.controllerOf, (_projectId)), abi.encode(address(0)));
 
-        vm.expectRevert(abi.encodeWithSignature("CONTROLLER_UNAUTHORIZED()"));
+        vm.expectRevert(JBControlled.JBControlled_ControllerUnauthorized.selector);
         _tokens.claimTokensFor(_holder, _projectId, _defaultAmount, _beneficiary);
     }
 }

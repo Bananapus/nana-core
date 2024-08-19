@@ -57,7 +57,7 @@ contract TestPayoutsOf_Local is JBMultiTerminalSetup {
             abi.encode(address(_terminal))
         );
 
-        vm.expectRevert(abi.encodeWithSignature("UNDER_MIN_TOKENS_PAID_OUT()"));
+        vm.expectRevert(JBMultiTerminal.JBMultiTerminal_UnderMinTokensPaidOut.selector);
         _terminal.sendPayoutsOf(_projectId, address(0), 0, 0, 1);
     }
 

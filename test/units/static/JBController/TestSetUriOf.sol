@@ -18,7 +18,7 @@ contract TestSetUriOf_Local is JBControllerSetup {
         mockExpect(address(projects), _ownerOfCall, _ownerData);
 
         vm.expectEmit();
-        emit IJBController.SetMetadata(1, "Juicay", address(this));
+        emit IJBController.SetUri(1, "Juicay", address(this));
 
         _controller.setUriOf(1, "Juicay");
     }
@@ -39,7 +39,7 @@ contract TestSetUriOf_Local is JBControllerSetup {
 
         mockExpect(address(permissions), _permissionsCall, _permissionsReturned);
 
-        vm.expectRevert(abi.encodeWithSignature("UNAUTHORIZED()"));
+        vm.expectRevert(JBPermissioned.JBPermissioned_Unauthorized.selector);
         _controller.setUriOf(1, "Not Juicay");
     }
 }

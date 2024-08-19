@@ -68,7 +68,7 @@ contract TestMintTokensOfUnits_Local is JBControllerSetup {
             abi.encode(false)
         );
 
-        vm.expectRevert(abi.encodeWithSignature("MINT_NOT_ALLOWED_AND_NOT_TERMINAL_OR_HOOK()"));
+        vm.expectRevert(JBController.JBController_MintNotAllowedAndNotTerminalOrHook.selector);
 
         _controller.mintTokensOf({
             projectId: _projectId,

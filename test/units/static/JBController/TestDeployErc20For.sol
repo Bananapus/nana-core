@@ -47,7 +47,7 @@ contract TestDeployERC20For_Local is JBControllerSetup {
         bytes memory _permissionCallReturn1 = abi.encode(false);
         mockExpect(address(permissions), _permissionCall1, _permissionCallReturn1);
 
-        vm.expectRevert(abi.encodeWithSignature("UNAUTHORIZED()"));
+        vm.expectRevert(JBPermissioned.JBPermissioned_Unauthorized.selector);
         _controller.deployERC20For(_projectId, _name, _symbol, _salt);
     }
 }

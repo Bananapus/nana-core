@@ -192,7 +192,7 @@ contract TestSetTokenFor_Local is JBControllerSetup {
         bytes memory _currentRulesetCall = abi.encodeCall(IJBRulesets.currentOf, (1));
         mockExpect(address(rulesets), _currentRulesetCall, abi.encode(ruleset));
 
-        vm.expectRevert(abi.encodeWithSignature("RULESET_SET_TOKEN_DISABLED()"));
+        vm.expectRevert(JBController.JBController_RulesetSetTokenDisabled.selector);
         _controller.setTokenFor(_projectId, _token);
     }
 
@@ -211,7 +211,7 @@ contract TestSetTokenFor_Local is JBControllerSetup {
         bytes memory _permsCallReturn1 = abi.encode(false);
         mockExpect(address(permissions), _permsCall1, _permsCallReturn1);
 
-        vm.expectRevert(abi.encodeWithSignature("UNAUTHORIZED()"));
+        vm.expectRevert(JBPermissioned.JBPermissioned_Unauthorized.selector);
         _controller.setTokenFor(_projectId, _token);
     }
 }

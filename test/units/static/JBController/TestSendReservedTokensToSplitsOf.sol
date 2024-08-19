@@ -61,7 +61,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
         _rulesetConfigurations[0].splitGroups = _splitsGroup;
         _rulesetConfigurations[0].fundAccessLimitGroups = _fundAccessLimitGroup;
 
-        vm.expectRevert(abi.encodeWithSignature("NO_RESERVED_TOKENS()"));
+        vm.expectRevert(JBController.JBController_NoReservedTokens.selector);
         _controller.sendReservedTokensToSplitsOf(_projectId);
     }
 

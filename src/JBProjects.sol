@@ -18,36 +18,10 @@ contract JBProjects is ERC721, Ownable, IJBProjects {
     /// @notice The number of projects that have been created using this contract.
     /// @dev The count is incremented with each new project created.
     /// @dev The resulting ERC-721 token ID for each project is the newly incremented count value.
-    uint256 public override count = 0;
+    uint256 public override count;
 
     /// @notice The contract resolving each project ID to its ERC721 URI.
     IJBTokenUriResolver public override tokenUriResolver;
-
-    //*********************************************************************//
-    // -------------------------- public views --------------------------- //
-    //*********************************************************************//
-
-    /// @notice Returns the URI where the ERC-721 standard JSON of a project is hosted.
-    /// @param projectId The ID of the project to get a URI of.
-    /// @return The token URI to use for the provided `projectId`.
-    function tokenURI(uint256 projectId) public view override returns (string memory) {
-        // Keep a reference to the resolver.
-        IJBTokenUriResolver resolver = tokenUriResolver;
-
-        // If there's no resolver, there's no URI.
-        if (resolver == IJBTokenUriResolver(address(0))) return "";
-
-        // Return the resolved URI.
-        return resolver.getUri(projectId);
-    }
-
-    /// @notice Indicates whether this contract adheres to the specified interface.
-    /// @dev See {IERC165-supportsInterface}.
-    /// @param interfaceId The ID of the interface to check for adherence to.
-    /// @return A flag indicating if the provided interface ID is supported.
-    function supportsInterface(bytes4 interfaceId) public view virtual override(IERC165, ERC721) returns (bool) {
-        return interfaceId == type(IJBProjects).interfaceId || super.supportsInterface(interfaceId);
-    }
 
     //*********************************************************************//
     // -------------------------- constructor ---------------------------- //
@@ -63,6 +37,45 @@ contract JBProjects is ERC721, Ownable, IJBProjects {
     }
 
     //*********************************************************************//
+    // -------------------------- public views --------------------------- //
+    //*********************************************************************//
+
+    /// @notice Indicates whether this contract adheres to the specified interface.
+    /// @dev See {IERC165-supportsInterface}.
+    /// @param interfaceId The ID of the interface to check for adherence to.
+    /// @return A flag indicating if the provided interface ID is supported.
+    function supportsInterface(bytes4 interfaceId) public view virtual override(IERC165, ERC721) returns (bool) {
+        return interfaceId == type(IJBProjects).interfaceId || super.supportsInterface(interfaceId);
+    }
+
+    /// @notice Returns the URI where the ERC-721 standard JSON of a project is hosted.
+    /// @param projectId The ID of the project to get a URI of.
+    /// @return The token URI to use for the provided `projectId`.
+    function tokenURI(uint256 projectId) public view override returns (string memory) {
+        // Keep a reference to the resolver.
+        IJBTokenUriResolver resolver = tokenUriResolver;
+
+        // If there's no resolver, there's no URI.
+        if (resolver == IJBTokenUriResolver(address(0))) return "";
+
+        // Return the resolved URI.
+        return resolver.getUri(projectId);
+    }
+
+    //*********************************************************************//
+    // ---------------------- external transactions ---------------------- //
+    //*********************************************************************//
+
+    /// @notice Sets the address of the resolver used to retrieve the tokenURI of projects.
+    /// @param resolver The address of the new resolver.
+    function setTokenUriResolver(IJBTokenUriResolver resolver) external override onlyOwner {
+        // Store the new resolver.
+        tokenUriResolver = resolver;
+
+        emit SetTokenUriResolver({resolver: resolver, caller: _msgSender()});
+    }
+
+    //*********************************************************************//
     // ---------------------- public transactions ---------------------- //
     //*********************************************************************//
 
@@ -74,22 +87,9 @@ contract JBProjects is ERC721, Ownable, IJBProjects {
         // Increment the count, which will be used as the ID.
         projectId = ++count;
 
-        emit Create(projectId, owner, _msgSender());
+        emit Create({projectId: projectId, owner: owner, caller: _msgSender()});
 
         // Mint the project.
         _safeMint(owner, projectId);
-    }
-
-    //*********************************************************************//
-    // ---------------------- external transactions ---------------------- //
-    //*********************************************************************//
-
-    /// @notice Sets the address of the resolver used to retrieve the tokenURI of projects.
-    /// @param newResolver The address of the new resolver.
-    function setTokenUriResolver(IJBTokenUriResolver newResolver) external override onlyOwner {
-        // Store the new resolver.
-        tokenUriResolver = newResolver;
-
-        emit SetTokenUriResolver(newResolver, _msgSender());
     }
 }

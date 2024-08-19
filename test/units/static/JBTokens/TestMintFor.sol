@@ -31,7 +31,7 @@ contract TestMintFor_Local is JBTokensSetup {
         // it will add tokens to credit balances and total credit supply
 
         // Find the storage slot to set token
-        bytes32 tokenOfSlot = keccak256(abi.encode(_projectId, uint256(0)));
+        bytes32 tokenOfSlot = keccak256(abi.encode(_projectId, uint256(2)));
 
         // Set storage
         vm.store(address(_tokens), tokenOfSlot, bytes32(uint256(uint160(address(0)))));
@@ -51,7 +51,7 @@ contract TestMintFor_Local is JBTokensSetup {
         // it will call token mint
 
         // Find the storage slot to set token
-        bytes32 tokenOfSlot = keccak256(abi.encode(_projectId, uint256(0)));
+        bytes32 tokenOfSlot = keccak256(abi.encode(_projectId, uint256(2)));
 
         // Set storage
         vm.store(address(_tokens), tokenOfSlot, bytes32(uint256(uint160(address(_token)))));
@@ -69,7 +69,7 @@ contract TestMintFor_Local is JBTokensSetup {
         // it will revert OVERFLOW_ALERT
 
         // Find the storage slot to set token
-        bytes32 tokenOfSlot = keccak256(abi.encode(_projectId, uint256(0)));
+        bytes32 tokenOfSlot = keccak256(abi.encode(_projectId, uint256(2)));
 
         // Set storage
         vm.store(address(_tokens), tokenOfSlot, bytes32(uint256(uint160(address(_token)))));
@@ -80,7 +80,7 @@ contract TestMintFor_Local is JBTokensSetup {
         // mock call to token totalSupply()
         mockExpect(address(_token), abi.encodeCall(IJBToken.totalSupply, ()), abi.encode(_overflowedSupply));
 
-        vm.expectRevert(abi.encodeWithSignature("OVERFLOW_ALERT()"));
+        vm.expectRevert(JBTokens.JBTokens_OverflowAlert.selector);
         _tokens.mintFor(_holder, _projectId, _defaultAmount);
     }
 
@@ -90,7 +90,7 @@ contract TestMintFor_Local is JBTokensSetup {
         // mock call to JBDirectory controllerOf
         mockExpect(address(directory), abi.encodeCall(IJBDirectory.controllerOf, (_projectId)), abi.encode(address(0)));
 
-        vm.expectRevert(abi.encodeWithSignature("CONTROLLER_UNAUTHORIZED()"));
+        vm.expectRevert(JBControlled.JBControlled_ControllerUnauthorized.selector);
         _tokens.mintFor(_holder, _projectId, _defaultAmount);
     }
 }

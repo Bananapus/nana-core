@@ -75,7 +75,7 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
         // mock call to hooks processSplitWith
         mockExpect(address(_hook), abi.encodeCall(IJBSplitHook.processSplitWith, (context)), "");
 
-        _terminal.executePayout({
+        JBMultiTerminal(address(_terminal)).executePayout({
             split: _split,
             projectId: _noProject,
             token: _native,
@@ -121,7 +121,7 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
         // mock call to hooks processSplitWith
         mockExpect(address(_hook), abi.encodeCall(IJBSplitHook.processSplitWith, (context)), "");
 
-        _terminal.executePayout({
+        JBMultiTerminal(address(_terminal)).executePayout({
             split: _split,
             projectId: _noProject,
             token: _native,
@@ -140,8 +140,8 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
             abi.encode(false)
         );
 
-        vm.expectRevert(abi.encodeWithSignature(("SPLIT_HOOK_INVALID()")));
-        _terminal.executePayout({
+        vm.expectRevert(JBMultiTerminal.JBMultiTerminal_SplitHookInvalid.selector);
+        JBMultiTerminal(address(_terminal)).executePayout({
             split: _split,
             projectId: _noProject,
             token: _native,
@@ -179,7 +179,7 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
         // for safe ERC20 check of code length at token address
         vm.etch(_usdc, abi.encode(1));
 
-        _terminal.executePayout({
+        JBMultiTerminal(address(_terminal)).executePayout({
             split: _splitMemory,
             projectId: _noProject,
             token: _usdc,
@@ -207,9 +207,9 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
             hook: IJBSplitHook(address(0))
         });
 
-        vm.expectRevert(abi.encodeWithSignature(("RECIPIENT_PROJECT_TERMINAL_NOT_FOUND()")));
+        vm.expectRevert(JBMultiTerminal.JBMultiTerminal_RecipientProjectTerminalNotFound.selector);
         vm.prank(address(_terminal));
-        _terminal.executePayout({
+        JBMultiTerminal(address(_terminal)).executePayout({
             split: _splitMemory,
             projectId: _projectId,
             token: _native,
@@ -247,7 +247,7 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
         // for safe ERC20 check of code length at token address
         vm.prank(address(_terminal));
 
-        _terminal.executePayout({
+        JBMultiTerminal(address(_terminal)).executePayout({
             split: _splitMemory,
             projectId: _projectId,
             token: _usdc,
@@ -304,7 +304,7 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
         );
 
         vm.prank(address(_terminal));
-        _terminal.executePayout({
+        JBMultiTerminal(address(_terminal)).executePayout({
             split: _splitMemory,
             projectId: _projectId,
             token: _usdc,
@@ -366,7 +366,7 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
         // for safe ERC20 check of code length at token address
         vm.prank(address(_terminal));
 
-        _terminal.executePayout({
+        JBMultiTerminal(address(_terminal)).executePayout({
             split: _splitMemory,
             projectId: _projectId,
             token: _usdc,
@@ -423,7 +423,7 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
         );
 
         vm.prank(address(_terminal));
-        _terminal.executePayout({
+        JBMultiTerminal(address(_terminal)).executePayout({
             split: _splitMemory,
             projectId: _projectId,
             token: _usdc,
@@ -455,7 +455,7 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
         // for safe ERC20 check of code length at token address
         vm.prank(address(_terminal));
 
-        _terminal.executePayout({
+        JBMultiTerminal(address(_terminal)).executePayout({
             split: _splitMemory,
             projectId: _projectId,
             token: _usdc,
@@ -492,7 +492,7 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
         // for safe ERC20 check of code length at token address
         vm.prank(address(_terminal));
 
-        _terminal.executePayout({
+        JBMultiTerminal(address(_terminal)).executePayout({
             split: _splitMemory,
             projectId: _projectId,
             token: _usdc,
@@ -527,7 +527,7 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
         // for safe ERC20 check of code length at token address
         vm.prank(address(_terminal));
 
-        _terminal.executePayout({
+        JBMultiTerminal(address(_terminal)).executePayout({
             split: _splitMemory,
             projectId: _projectId,
             token: _usdc,
@@ -549,7 +549,7 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
         });
 
         vm.expectRevert();
-        _terminal.executePayout({
+        JBMultiTerminal(address(_terminal)).executePayout({
             split: _splitMemory,
             projectId: _projectId,
             token: _usdc,

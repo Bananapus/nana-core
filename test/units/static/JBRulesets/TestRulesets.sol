@@ -232,7 +232,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
 
         mockExpect(address(_directory), _encodedCall, _willReturn);
 
-        vm.expectRevert(abi.encodeWithSignature("INVALID_RULESET_DURATION()"));
+        vm.expectRevert(JBRulesets.JBRulesets_InvalidRulesetDuration.selector);
 
         // Send: Call from this contract as it's been mock authorized above.
         _rulesets.queueFor({
@@ -256,7 +256,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
 
         mockExpect(address(_directory), _encodedCall, _willReturn);
 
-        vm.expectRevert(abi.encodeWithSignature("INVALID_DECAY_PERCENT()"));
+        vm.expectRevert(JBRulesets.JBRulesets_InvalidDecayPercent.selector);
 
         // Send: Call from this contract as it's been mock authorized above.
         _rulesets.queueFor({
@@ -280,7 +280,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
 
         mockExpect(address(_directory), _encodedCall, _willReturn);
 
-        vm.expectRevert(abi.encodeWithSignature("INVALID_WEIGHT()"));
+        vm.expectRevert(JBRulesets.JBRulesets_InvalidWeight.selector);
 
         // Send: Call from this contract as it's been mock authorized above.
         _rulesets.queueFor({
@@ -316,7 +316,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
         }
 
         if (_bigDuration + _bigStartAt > type(uint48).max) {
-            vm.expectRevert(abi.encodeWithSignature("INVALID_RULESET_END_TIME()"));
+            vm.expectRevert(JBRulesets.JBRulesets_InvalidRulesetEndTime.selector);
         }
 
         // Send: Call from this contract as it's been mock authorized above.
@@ -341,7 +341,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
         mockExpect(address(_directory), _encodedCall, _willReturn);
 
         // will revert since code length is zero
-        vm.expectRevert(abi.encodeWithSignature("INVALID_RULESET_APPROVAL_HOOK()"));
+        vm.expectRevert(JBRulesets.JBRulesets_InvalidRulesetApprovalHook.selector);
 
         // Send: Call from this contract as it's been mock authorized above.
         _rulesets.queueFor({
@@ -494,7 +494,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
             mustStartAtOrAfter: block.timestamp
         });
 
-        JBRuleset[] memory queuedRulesetsOf = _rulesets.rulesetsOf(_projectId, block.timestamp, 3);
+        JBRuleset[] memory queuedRulesetsOf = _rulesets.allOf(_projectId, block.timestamp, 3);
 
         // check: 2 rulesets will be enqueued, we just overwrote the last queued
         assertEq(queuedRulesetsOf.length, 3);

@@ -18,6 +18,6 @@ contract JBTerminalStoreSetup is JBTest {
 
     function terminalStoreSetup() public virtual {
         // Instantiate the contract being tested
-        _store = new JBTerminalStore(directory, rulesets, prices);
+        _store = new JBTerminalStore(directory, prices, rulesets);
     }
 }

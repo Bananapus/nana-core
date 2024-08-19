@@ -125,7 +125,7 @@ contract TestRecordTerminalMigration_Local is JBTerminalStoreSetup {
         // mock call to JBRulesets currentOf
         mockExpect(address(rulesets), abi.encodeCall(IJBRulesets.currentOf, (_projectId)), abi.encode(_returnedRuleset));
 
-        vm.expectRevert(abi.encodeWithSignature("TERMINAL_MIGRATION_NOT_ALLOWED()"));
+        vm.expectRevert(JBTerminalStore.JBTerminalStore_TerminalMigrationNotAllowed.selector);
         _store.recordTerminalMigration(_projectId, address(_token));
     }
 }

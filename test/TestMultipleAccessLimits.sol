@@ -272,7 +272,7 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
 
         vm.prank(_projectOwner);
 
-        vm.expectRevert(abi.encodeWithSignature("INVALID_SURPLUS_ALLOWANCE_CURRENCY_ORDERING()"));
+        vm.expectRevert(JBFundAccessLimits.JBFundAccessLimits_InvalidSurplusAllowanceCurrencyOrdering.selector);
 
         _controller.launchProjectFor({
             owner: _projectOwner,
@@ -331,7 +331,7 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
 
         vm.prank(_projectOwner);
 
-        vm.expectRevert(abi.encodeWithSignature("INVALID_PAYOUT_LIMIT_CURRENCY_ORDERING()"));
+        vm.expectRevert(JBFundAccessLimits.JBFundAccessLimits_InvalidPayoutLimitCurrencyOrdering.selector);
 
         _controller.launchProjectFor({
             owner: _projectOwner,

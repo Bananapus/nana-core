@@ -46,7 +46,7 @@ contract TestClaimTokensFor_Local is JBControllerSetup {
         mockExpect(address(permissions), _permCall, _permReturn);
 
         // will revert
-        vm.expectRevert(abi.encodeWithSignature("UNAUTHORIZED()"));
+        vm.expectRevert(JBPermissioned.JBPermissioned_Unauthorized.selector);
         _controller.claimTokensFor(_holder, _projectId, _amount, _beneficiary);
     }
 }

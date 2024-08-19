@@ -210,7 +210,7 @@ contract TestPermissions_Local is TestBaseWorkflow, JBTest {
         assertEq(_check, true);
 
         // Will revert attempting to set another projects token
-        vm.expectRevert(abi.encodeWithSignature("UNAUTHORIZED()"));
+        vm.expectRevert(JBPermissioned.JBPermissioned_Unauthorized.selector);
         _controller.setTokenFor(2, IJBToken(token));
 
         // Will succeed when setting the correct projects token
@@ -264,7 +264,7 @@ contract TestPermissions_Local is TestBaseWorkflow, JBTest {
         permData2[0] = JBPermissionsData({operator: address(0), projectId: _projectZero, permissionIds: permIds});
 
         // Shouldn't be able to forward root
-        vm.expectRevert(abi.encodeWithSignature("UNAUTHORIZED()"));
+        vm.expectRevert(JBPermissions.JBPermissions_Unauthorized.selector);
         _permissions.setPermissionsFor(zeroOwner, permData2[0]);
     }
 }

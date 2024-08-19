@@ -294,7 +294,7 @@ contract TestRecordRedemptionFor_Local is JBTerminalStoreSetup {
 
         uint256 _redeemCount = 4e18; // greater than token total supply
 
-        vm.expectRevert(abi.encodeWithSignature("INSUFFICIENT_TOKENS()"));
+        vm.expectRevert(JBTerminalStore.JBTerminalStore_InsufficientTokens.selector);
         _store.recordRedemptionFor({
             holder: address(this),
             projectId: _projectId,
@@ -440,7 +440,7 @@ contract TestRecordRedemptionFor_Local is JBTerminalStoreSetup {
 
         uint256 _redeemCount = 4e18; // greater than caller balance
 
-        vm.expectRevert(abi.encodeWithSignature("INADEQUATE_TERMINAL_STORE_BALANCE()"));
+        vm.expectRevert(JBTerminalStore.JBTerminalStore_InadequateTerminalStoreBalance.selector);
         _store.recordRedemptionFor({
             holder: address(this),
             projectId: _projectId,
