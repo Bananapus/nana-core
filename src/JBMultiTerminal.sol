@@ -247,7 +247,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     }
 
     //*********************************************************************//
-    // ----------------------- internal helper views --------------------- //
+    // -------------------------- internal views ------------------------- //
     //*********************************************************************//
 
     /// @notice Checks this terminal's balance of a specific token.
@@ -814,7 +814,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     }
 
     //*********************************************************************//
-    // --------------------- internal helper functions ------------------- //
+    // ------------------------ internal functions ----------------------- //
     //*********************************************************************//
 
     /// @notice Accepts an incoming token.

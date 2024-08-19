@@ -292,7 +292,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
     }
 
     //*********************************************************************//
-    // --------------------- internal helper functions ------------------- //
+    // ------------------------ internal functions ----------------------- //
     //*********************************************************************//
 
     /// @notice If a terminal hasn't already been added to a project's list of terminals, add it.

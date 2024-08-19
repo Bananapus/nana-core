@@ -102,7 +102,7 @@ contract JBSplits is JBControlled, IJBSplits {
     }
 
     //*********************************************************************//
-    // ----------------------- internal helper views --------------------- //
+    // -------------------------- internal views ------------------------- //
     //*********************************************************************//
 
     /// @notice Unpack an array of `JBSplit` structs for all of the splits in a group, given project, ruleset, and group
@@ -224,7 +224,7 @@ contract JBSplits is JBControlled, IJBSplits {
     }
 
     //*********************************************************************//
-    // --------------------- internal helper functions ------------------- //
+    // ------------------------ internal functions ----------------------- //
     //*********************************************************************//
 
     /// @notice Sets the splits for a group given a project, ruleset, and group ID.

@@ -288,7 +288,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     }
 
     //*********************************************************************//
-    // ----------------------- internal helper views --------------------- //
+    // -------------------------- internal views ------------------------- //
     //*********************************************************************//
 
     /// @dev `ERC-2771` specifies the context as being a single address (20 bytes).
@@ -869,7 +869,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     }
 
     //*********************************************************************//
-    // --------------------- internal helper functions ------------------- //
+    // ------------------------ internal functions ----------------------- //
     //*********************************************************************//
 
     /// @notice Set up a project's terminals.

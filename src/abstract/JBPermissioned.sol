@@ -30,7 +30,7 @@ abstract contract JBPermissioned is Context, IJBPermissioned {
     }
 
     //*********************************************************************//
-    // ----------------------- internal helper views --------------------- //
+    // -------------------------- internal views ------------------------- //
     //*********************************************************************//
 
     /// @notice Require the message sender to be the account or have the relevant permission.

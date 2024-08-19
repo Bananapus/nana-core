@@ -351,7 +351,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
     }
 
     //*********************************************************************//
-    // ----------------------- internal helper views --------------------- //
+    // -------------------------- internal views ------------------------- //
     //*********************************************************************//
 
     /// @notice The approval status of a given project and ruleset struct according to the relevant approval hook.
@@ -848,7 +848,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
     }
 
     //*********************************************************************//
-    // --------------------- internal helper functions ------------------- //
+    // ------------------------ internal functions ----------------------- //
     //*********************************************************************//
 
     /// @notice Updates the latest ruleset for this project if it exists. If there is no ruleset, initializes one.

@@ -176,7 +176,7 @@ contract JBPermissions is IJBPermissions {
     }
 
     //*********************************************************************//
-    // ----------------------- internal helper views --------------------- //
+    // -------------------------- internal views ------------------------- //
     //*********************************************************************//
 
     /// @notice Checks if a permission is included in a packed permissions data.
