@@ -64,6 +64,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     error JBController_RulesetsAlreadyLaunched();
     error JBController_RulesetsArrayEmpty();
     error JBController_RulesetSetTokenDisabled();
+    error JBController_Unauthorized();
     error JBController_ZeroTokensToMint();
 
     //*********************************************************************//
@@ -622,7 +623,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     /// @param to The controller to migrate the project to.
     function migrate(uint256 projectId, IERC165 to) external override {
         // Make sure this is being called by the directory.
-        if (msg.sender != address(DIRECTORY)) revert JBPermissioned_Unauthorized();
+        if (msg.sender != address(DIRECTORY)) revert JBController_Unauthorized();
 
         emit Migrate({projectId: projectId, to: to, caller: msg.sender});
 
