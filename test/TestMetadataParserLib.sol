@@ -99,7 +99,7 @@ contract JBDelegateMetadataLib_Test_Local is Test {
             _datas[_i] = abi.encode(type(uint256).max - _i);
         }
 
-        if (_numberOfIds == 220) vm.expectRevert(abi.encodeWithSignature("METADATA_TOO_LONG()"));
+        if (_numberOfIds == 220) vm.expectRevert(JBMetadataResolver.JBMetadataResolver_MetadataTooLong.selector);
         bytes memory _metadata = parser.createMetadata(_ids, _datas);
         if (_numberOfIds < 220) {
             for (uint256 _i; _i < _ids.length; _i++) {
@@ -152,7 +152,7 @@ contract JBDelegateMetadataLib_Test_Local is Test {
             _datas[_i] = abi.encode(type(uint256).max - _i);
         }
 
-        vm.expectRevert(abi.encodeWithSignature("METADATA_TOO_LONG()"));
+        vm.expectRevert(JBMetadataResolver.JBMetadataResolver_MetadataTooLong.selector);
         parser.createMetadata(_ids, _datas);
     }
 
@@ -308,7 +308,7 @@ contract JBDelegateMetadataLib_Test_Local is Test {
     }
 
     function test_addToMetadata_invalidExistingTable_reverts() public {
-        vm.expectRevert(abi.encodeWithSignature("METADATA_TOO_SHORT()"));
+        vm.expectRevert(JBMetadataResolver.JBMetadataResolver_MetadataTooShort.selector);
 
         // Preexisting metadata: 32B + 4B
         parser.addDataToMetadata(
@@ -380,7 +380,7 @@ contract JBDelegateMetadataLib_Test_Local is Test {
         }
 
         // Below should revert.
-        vm.expectRevert(abi.encodeWithSignature("LENGTH_MISMATCH()"));
+        vm.expectRevert(JBMetadataResolver.JBMetadataResolver_LengthMismatch.selector);
         parser.createMetadata(_ids, _datas);
     }
 
@@ -397,7 +397,7 @@ contract JBDelegateMetadataLib_Test_Local is Test {
         _ids[0] = bytes4(uint32(1));
         _datas[0] = shortData;
 
-        vm.expectRevert(abi.encodeWithSignature("DATA_NOT_PADDED()"));
+        vm.expectRevert(JBMetadataResolver.JBMetadataResolver_DataNotPadded.selector);
         parser.createMetadata(_ids, _datas);
     }
 
@@ -421,7 +421,7 @@ contract JBDelegateMetadataLib_Test_Local is Test {
         assertGt(_datas[0].length % 32, 0);
 
         // New revert to help integrators.
-        vm.expectRevert(abi.encodeWithSignature("DATA_NOT_PADDED()"));
+        vm.expectRevert(JBMetadataResolver.JBMetadataResolver_DataNotPadded.selector);
         parser.createMetadata(_ids, _datas);
     }
 }
