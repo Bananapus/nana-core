@@ -842,7 +842,8 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     /// @param recipient The address to transfer credits to.
     /// @param creditCount The number of credits to transfer.
     function transferCreditsFrom(
-        address holder, uint256 projectId,
+        address holder,
+        uint256 projectId,
         address recipient,
         uint256 creditCount
     )
