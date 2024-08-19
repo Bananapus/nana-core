@@ -149,7 +149,9 @@ contract JBRulesets is JBControlled, IJBRulesets {
     /// @notice The current approval status of a given project's latest ruleset.
     /// @param projectId The ID of the project to check the approval status of.
     /// @return The project's current approval status.
-    function currentApprovalStatusForLatestRulesetOf(uint256 projectId)
+    function currentApprovalStatusForLatestRulesetOf(
+        uint256 projectId
+    )
         external
         view
         override
@@ -256,7 +258,9 @@ contract JBRulesets is JBControlled, IJBRulesets {
     /// @param projectId The ID of the project to get the latest queued ruleset of.
     /// @return ruleset The project's latest queued ruleset's struct.
     /// @return approvalStatus The approval hook's status for the ruleset.
-    function latestQueuedOf(uint256 projectId)
+    function latestQueuedOf(
+        uint256 projectId
+    )
         external
         view
         override

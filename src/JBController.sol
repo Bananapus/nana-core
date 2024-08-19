@@ -186,7 +186,9 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     /// @param projectId The ID of the project to get the current ruleset of.
     /// @return ruleset The current ruleset's struct.
     /// @return metadata The current ruleset's metadata.
-    function currentRulesetOf(uint256 projectId)
+    function currentRulesetOf(
+        uint256 projectId
+    )
         external
         view
         override
@@ -220,7 +222,9 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     /// @return ruleset The struct for the project's latest queued ruleset.
     /// @return metadata The ruleset's metadata.
     /// @return approvalStatus The ruleset's approval status.
-    function latestQueuedRulesetOf(uint256 projectId)
+    function latestQueuedRulesetOf(
+        uint256 projectId
+    )
         external
         view
         override
@@ -257,7 +261,9 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     /// @param projectId The ID of the project to get the next ruleset of.
     /// @return ruleset The upcoming ruleset's struct.
     /// @return metadata The upcoming ruleset's metadata.
-    function upcomingRulesetOf(uint256 projectId)
+    function upcomingRulesetOf(
+        uint256 projectId
+    )
         external
         view
         override

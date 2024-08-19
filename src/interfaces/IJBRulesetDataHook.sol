@@ -26,7 +26,9 @@ interface IJBRulesetDataHook is IERC165 {
     /// struct.
     /// @return weight The new `weight` to use, overriding the ruleset's `weight`.
     /// @return hookSpecifications The amount and data to send to pay hooks instead of adding to the terminal's balance.
-    function beforePayRecordedWith(JBBeforePayRecordedContext calldata context)
+    function beforePayRecordedWith(
+        JBBeforePayRecordedContext calldata context
+    )
         external
         view
         returns (uint256 weight, JBPayHookSpecification[] memory hookSpecifications);
@@ -40,7 +42,9 @@ interface IJBRulesetDataHook is IERC165 {
     /// @return redeemCount The amount of tokens that should be considered redeemed.
     /// @return totalSupply The total amount of tokens that are considered to be existing.
     /// @return hookSpecifications The amount and data to send to redeem hooks instead of returning to the beneficiary.
-    function beforeRedeemRecordedWith(JBBeforeRedeemRecordedContext calldata context)
+    function beforeRedeemRecordedWith(
+        JBBeforeRedeemRecordedContext calldata context
+    )
         external
         view
         returns (
