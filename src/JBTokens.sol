@@ -120,16 +120,8 @@ contract JBTokens is JBControlled, IJBTokens {
     /// @dev Only a project's current controller can burn its tokens.
     /// @param holder The address that owns the tokens which are being burned.
     /// @param projectId The ID of the project to the burned tokens belong to.
-    /// @param amount The amount of tokens to burn.
-    function burnFrom(
-        address holder,
-        uint256 projectId,
-        uint256 amount
-    )
-        external
-        override
-        onlyControllerOf(projectId)
-    {
+    /// @param count The number of tokens to burn.
+    function burnFrom(address holder, uint256 projectId, uint256 count) external override onlyControllerOf(projectId) {
         // Get a reference to the project's current token.
         IJBToken token = tokenOf[projectId];
 
@@ -140,7 +132,7 @@ contract JBTokens is JBControlled, IJBTokens {
         uint256 tokenBalance = token == IJBToken(address(0)) ? 0 : token.balanceOf(holder);
 
         // There must be enough tokens to burn across the holder's combined token and credit balance.
-        if (amount > tokenBalance + creditBalance) revert JBTokens_InsufficientFunds();
+        if (count > tokenBalance + creditBalance) revert JBTokens_InsufficientFunds();
 
         // The amount of tokens to burn.
         uint256 tokensToBurn;
@@ -149,14 +141,14 @@ contract JBTokens is JBControlled, IJBTokens {
         if (tokenBalance != 0) {
             // Burn credits before tokens.
             unchecked {
-                tokensToBurn = creditBalance < amount ? amount - creditBalance : 0;
+                tokensToBurn = creditBalance < count ? count - creditBalance : 0;
             }
         }
 
         // The amount of credits to burn.
         uint256 creditsToBurn;
         unchecked {
-            creditsToBurn = amount - tokensToBurn;
+            creditsToBurn = count - tokensToBurn;
         }
 
         // Subtract the burned credits from the credit balance and credit supply.
@@ -168,7 +160,7 @@ contract JBTokens is JBControlled, IJBTokens {
         emit Burn({
             holder: holder,
             projectId: projectId,
-            amount: amount,
+            count: count,
             creditBalance: creditBalance,
             tokenBalance: tokenBalance,
             caller: msg.sender
@@ -182,12 +174,12 @@ contract JBTokens is JBControlled, IJBTokens {
     /// @dev Only a project's controller can claim that project's tokens.
     /// @param holder The owner of the credits being redeemed.
     /// @param projectId The ID of the project whose tokens are being claimed.
-    /// @param amount The amount of tokens to claim.
+    /// @param count The number of tokens to claim.
     /// @param beneficiary The account into which the claimed tokens will go.
     function claimTokensFor(
         address holder,
         uint256 projectId,
-        uint256 amount,
+        uint256 count,
         address beneficiary
     )
         external
@@ -204,27 +196,27 @@ contract JBTokens is JBControlled, IJBTokens {
         uint256 creditBalance = creditBalanceOf[holder][projectId];
 
         // There must be enough credits to claim.
-        if (creditBalance < amount) revert JBTokens_InsufficientCredits();
+        if (creditBalance < count) revert JBTokens_InsufficientCredits();
 
         unchecked {
             // Subtract the claim amount from the holder's credit balance.
-            creditBalanceOf[holder][projectId] = creditBalance - amount;
+            creditBalanceOf[holder][projectId] = creditBalance - count;
 
             // Subtract the claim amount from the project's total credit supply.
-            totalCreditSupplyOf[projectId] = totalCreditSupplyOf[projectId] - amount;
+            totalCreditSupplyOf[projectId] = totalCreditSupplyOf[projectId] - count;
         }
 
         emit ClaimTokens({
             holder: holder,
             projectId: projectId,
             creditBalance: creditBalance,
-            amount: amount,
+            count: count,
             beneficiary: beneficiary,
             caller: msg.sender
         });
 
         // Mint the equivalent amount of the project's token for the holder.
-        token.mint(beneficiary, amount);
+        token.mint(beneficiary, count);
     }
 
     /// @notice Deploys an ERC-20 token for a project. It will be used when claiming tokens.
@@ -283,8 +275,8 @@ contract JBTokens is JBControlled, IJBTokens {
     /// @dev Only a project's current controller can mint its tokens.
     /// @param holder The address receiving the new tokens.
     /// @param projectId The ID of the project to which the tokens belong.
-    /// @param amount The amount of tokens to mint.
-    function mintFor(address holder, uint256 projectId, uint256 amount) external override onlyControllerOf(projectId) {
+    /// @param count The number of tokens to mint.
+    function mintFor(address holder, uint256 projectId, uint256 count) external override onlyControllerOf(projectId) {
         // Get a reference to the project's current token.
         IJBToken token = tokenOf[projectId];
 
@@ -294,11 +286,11 @@ contract JBTokens is JBControlled, IJBTokens {
         if (shouldClaimTokens) {
             // If tokens should be claimed, mint tokens into the holder's wallet.
             // slither-disable-next-line reentrancy-events
-            token.mint(holder, amount);
+            token.mint(holder, count);
         } else {
             // Otherwise, add the tokens to their credits and the credit supply.
-            creditBalanceOf[holder][projectId] = creditBalanceOf[holder][projectId] + amount;
-            totalCreditSupplyOf[projectId] = totalCreditSupplyOf[projectId] + amount;
+            creditBalanceOf[holder][projectId] = creditBalanceOf[holder][projectId] + count;
+            totalCreditSupplyOf[projectId] = totalCreditSupplyOf[projectId] + count;
         }
 
         // The total supply can't exceed the maximum value storable in a uint208.
@@ -307,7 +299,7 @@ contract JBTokens is JBControlled, IJBTokens {
         emit Mint({
             holder: holder,
             projectId: projectId,
-            amount: amount,
+            count: count,
             shouldClaimTokens: shouldClaimTokens,
             caller: msg.sender
         });
@@ -344,12 +336,12 @@ contract JBTokens is JBControlled, IJBTokens {
     /// @param holder The address to transfer credits from.
     /// @param projectId The ID of the project whose credits are being transferred.
     /// @param recipient The recipient of the credits.
-    /// @param amount The amount of credits to transfer.
+    /// @param count The number of token credits to transfer.
     function transferCreditsFrom(
         address holder,
         uint256 projectId,
         address recipient,
-        uint256 amount
+        uint256 count
     )
         external
         override
@@ -362,21 +354,21 @@ contract JBTokens is JBControlled, IJBTokens {
         uint256 creditBalance = creditBalanceOf[holder][projectId];
 
         // The holder must have enough unclaimed tokens to transfer.
-        if (amount > creditBalance) revert JBTokens_InsufficientCredits();
+        if (count > creditBalance) revert JBTokens_InsufficientCredits();
 
         // Subtract from the holder's unclaimed token balance.
         unchecked {
-            creditBalanceOf[holder][projectId] = creditBalance - amount;
+            creditBalanceOf[holder][projectId] = creditBalance - count;
         }
 
         // Add the unclaimed project tokens to the recipient's balance.
-        creditBalanceOf[recipient][projectId] = creditBalanceOf[recipient][projectId] + amount;
+        creditBalanceOf[recipient][projectId] = creditBalanceOf[recipient][projectId] + count;
 
         emit TransferCredits({
             holder: holder,
             projectId: projectId,
             recipient: recipient,
-            amount: amount,
+            count: count,
             caller: msg.sender
         });
     }

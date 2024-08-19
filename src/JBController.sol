@@ -411,7 +411,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         emit BurnTokens({holder: holder, projectId: projectId, tokenCount: tokenCount, memo: memo, caller: _msgSender()});
 
         // Burn the tokens.
-        TOKENS.burnFrom({holder: holder, projectId: projectId, amount: tokenCount});
+        TOKENS.burnFrom({holder: holder, projectId: projectId, count: tokenCount});
     }
 
     /// @notice Redeem credits to claim tokens into a `beneficiary`'s account.
@@ -420,11 +420,19 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     /// @param projectId The ID of the project whose tokens are being claimed.
     /// @param tokenCount The number of tokens to claim.
     /// @param beneficiary The account the claimed tokens will go to.
-    function claimTokensFor(address holder, uint256 projectId, uint256 tokenCount, address beneficiary) external override {
+    function claimTokensFor(
+        address holder,
+        uint256 projectId,
+        uint256 tokenCount,
+        address beneficiary
+    )
+        external
+        override
+    {
         // Enforce permissions.
         _requirePermissionFrom({account: holder, projectId: projectId, permissionId: JBPermissionIds.CLAIM_TOKENS});
 
-        TOKENS.claimTokensFor({holder: holder, projectId: projectId, amount: tokenCount, beneficiary: beneficiary});
+        TOKENS.claimTokensFor({holder: holder, projectId: projectId, count: tokenCount, beneficiary: beneficiary});
     }
 
     /// @notice Deploys an ERC-20 token for a project. It will be used when claiming tokens (with credits).
@@ -683,7 +691,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
 
             // Mint the tokens.
             // slither-disable-next-line reentrancy-benign,reentrancy-events
-            TOKENS.mintFor({holder: beneficiary, projectId: projectId, amount: beneficiaryTokenCount});
+            TOKENS.mintFor({holder: beneficiary, projectId: projectId, count: beneficiaryTokenCount});
         }
 
         emit MintTokens({
@@ -832,12 +840,12 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     /// @param holder The address to transfer credits from.
     /// @param projectId The ID of the project whose credits are being transferred.
     /// @param recipient The address to transfer credits to.
-    /// @param amount The amount of credits to transfer.
+    /// @param creditCount The number of credits to transfer.
     function transferCreditsFrom(
         address holder,
         uint256 projectId,
         address recipient,
-        uint256 amount
+        uint256 creditCount
     )
         external
         override
@@ -851,7 +859,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         // Credit transfers must not be paused.
         if (ruleset.pauseCreditTransfers()) revert JBController_CreditTransfersPaused();
 
-        TOKENS.transferCreditsFrom({holder: holder, projectId: projectId, recipient: recipient, amount: amount});
+        TOKENS.transferCreditsFrom({holder: holder, projectId: projectId, recipient: recipient, count: creditCount});
     }
 
     //*********************************************************************//
@@ -990,7 +998,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
 
         // Mint any leftover tokens to the project owner.
         if (leftoverTokenCount > 0) {
-            TOKENS.mintFor({holder: owner, projectId: projectId, amount: leftoverTokenCount});
+            TOKENS.mintFor({holder: owner, projectId: projectId, count: leftoverTokenCount});
         }
 
         emit SendReservedTokensToSplits({
@@ -1055,7 +1063,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
                 if (split.hook != IJBSplitHook(address(0))) {
                     // Mint the tokens for the split hook.
                     // slither-disable-next-line reentrancy-events
-                    TOKENS.mintFor({holder: address(split.hook), projectId: projectId, amount: splitTokenCount});
+                    TOKENS.mintFor({holder: address(split.hook), projectId: projectId, count: splitTokenCount});
 
                     // Get a reference to the project token address. If the project doesn't have a token, this will
                     // return the 0 address.
@@ -1093,11 +1101,11 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
                         if (address(token) == address(0) || address(terminal) == address(0)) {
                             // Mint the tokens to the beneficiary.
                             // slither-disable-next-line reentrancy-events
-                            TOKENS.mintFor({holder: beneficiary, projectId: projectId, amount: splitTokenCount});
+                            TOKENS.mintFor({holder: beneficiary, projectId: projectId, count: splitTokenCount});
                         } else {
                             // Mint the tokens to this contract.
                             // slither-disable-next-line reentrancy-events
-                            TOKENS.mintFor({holder: address(this), projectId: projectId, amount: splitTokenCount});
+                            TOKENS.mintFor({holder: address(this), projectId: projectId, count: splitTokenCount});
 
                             // Use the `projectId` in the pay metadata.
                             // slither-disable-next-line reentrancy-events
@@ -1126,7 +1134,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
                         }
                     } else if (beneficiary != address(0xdead)) {
                         // If the split has no project ID, mint the tokens to the beneficiary.
-                        TOKENS.mintFor({holder: beneficiary, projectId: projectId, amount: splitTokenCount});
+                        TOKENS.mintFor({holder: beneficiary, projectId: projectId, count: splitTokenCount});
                     }
                 }
 

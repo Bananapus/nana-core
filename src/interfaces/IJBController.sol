@@ -154,5 +154,5 @@ interface IJBController is IERC165, IJBProjectUriRegistry, IJBDirectoryAccessCon
     function sendReservedTokensToSplitsOf(uint256 projectId) external returns (uint256);
     function setSplitGroupsOf(uint256 projectId, uint256 rulesetId, JBSplitGroup[] calldata splitGroups) external;
     function setTokenFor(uint256 projectId, IJBToken token) external;
-    function transferCreditsFrom(address holder, uint256 projectId, address recipient, uint256 amount) external;
+    function transferCreditsFrom(address holder, uint256 projectId, address recipient, uint256 creditCount) external;
 }

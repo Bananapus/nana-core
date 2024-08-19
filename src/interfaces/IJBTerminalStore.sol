@@ -110,6 +110,7 @@ interface IJBTerminalStore {
             uint256 redemptionRate,
             JBRedeemHookSpecification[] memory hookSpecifications
         );
+    function recordTerminalMigration(uint256 projectId, address token) external returns (uint256 balance);
     function recordUsedAllowanceOf(
         uint256 projectId,
         JBAccountingContext calldata accountingContext,
@@ -117,6 +118,5 @@ interface IJBTerminalStore {
         uint256 currency
     )
         external
-        returns (JBRuleset memory ruleset, uint256 withdrawnAmount);
-    function recordTerminalMigration(uint256 projectId, address token) external returns (uint256 balance);
+        returns (JBRuleset memory ruleset, uint256 usedAmount);
 }

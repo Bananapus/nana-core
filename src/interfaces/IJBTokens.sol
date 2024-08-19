@@ -10,7 +10,7 @@ interface IJBTokens {
     event Burn(
         address indexed holder,
         uint256 indexed projectId,
-        uint256 amount,
+        uint256 count,
         uint256 creditBalance,
         uint256 tokenBalance,
         address caller
@@ -19,16 +19,16 @@ interface IJBTokens {
         address indexed holder,
         uint256 indexed projectId,
         uint256 creditBalance,
-        uint256 amount,
+        uint256 count,
         address beneficiary,
         address caller
     );
     event Mint(
-        address indexed holder, uint256 indexed projectId, uint256 amount, bool shouldClaimTokens, address caller
+        address indexed holder, uint256 indexed projectId, uint256 count, bool shouldClaimTokens, address caller
     );
     event SetToken(uint256 indexed projectId, IJBToken indexed token, address caller);
     event TransferCredits(
-        address indexed holder, uint256 indexed projectId, address indexed recipient, uint256 amount, address caller
+        address indexed holder, uint256 indexed projectId, address indexed recipient, uint256 count, address caller
     );
 
     function creditBalanceOf(address holder, uint256 projectId) external view returns (uint256);
@@ -39,8 +39,8 @@ interface IJBTokens {
     function totalBalanceOf(address holder, uint256 projectId) external view returns (uint256 result);
     function totalSupplyOf(uint256 projectId) external view returns (uint256);
 
-    function burnFrom(address holder, uint256 projectId, uint256 amount) external;
-    function claimTokensFor(address holder, uint256 projectId, uint256 amount, address beneficiary) external;
+    function burnFrom(address holder, uint256 projectId, uint256 count) external;
+    function claimTokensFor(address holder, uint256 projectId, uint256 count, address beneficiary) external;
     function deployERC20For(
         uint256 projectId,
         string calldata name,
@@ -49,7 +49,7 @@ interface IJBTokens {
     )
         external
         returns (IJBToken token);
-    function mintFor(address holder, uint256 projectId, uint256 amount) external;
+    function mintFor(address holder, uint256 projectId, uint256 count) external;
     function setTokenFor(uint256 projectId, IJBToken token) external;
-    function transferCreditsFrom(address holder, uint256 projectId, address recipient, uint256 amount) external;
+    function transferCreditsFrom(address holder, uint256 projectId, address recipient, uint256 count) external;
 }
