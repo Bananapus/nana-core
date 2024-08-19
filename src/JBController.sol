@@ -418,13 +418,13 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     /// @dev Can only be called by the credit holder or an address with the holder's permission to `CLAIM_TOKENS`.
     /// @param holder The address to redeem credits from.
     /// @param projectId The ID of the project whose tokens are being claimed.
-    /// @param amount The amount of tokens to claim.
+    /// @param tokenCount The number of tokens to claim.
     /// @param beneficiary The account the claimed tokens will go to.
-    function claimTokensFor(address holder, uint256 projectId, uint256 amount, address beneficiary) external override {
+    function claimTokensFor(address holder, uint256 projectId, uint256 tokenCount, address beneficiary) external override {
         // Enforce permissions.
         _requirePermissionFrom({account: holder, projectId: projectId, permissionId: JBPermissionIds.CLAIM_TOKENS});
 
-        TOKENS.claimTokensFor({holder: holder, projectId: projectId, amount: amount, beneficiary: beneficiary});
+        TOKENS.claimTokensFor({holder: holder, projectId: projectId, amount: tokenCount, beneficiary: beneficiary});
     }
 
     /// @notice Deploys an ERC-20 token for a project. It will be used when claiming tokens (with credits).

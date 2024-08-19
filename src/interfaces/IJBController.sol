@@ -109,7 +109,7 @@ interface IJBController is IERC165, IJBProjectUriRegistry, IJBDirectoryAccessCon
     )
         external;
     function burnTokensOf(address holder, uint256 projectId, uint256 tokenCount, string calldata memo) external;
-    function claimTokensFor(address holder, uint256 projectId, uint256 amount, address beneficiary) external;
+    function claimTokensFor(address holder, uint256 projectId, uint256 tokenCount, address beneficiary) external;
     function deployERC20For(
         uint256 projectId,
         string calldata name,

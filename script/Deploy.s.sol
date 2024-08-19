@@ -57,39 +57,37 @@ contract Deploy is Script, Sphinx {
     }
 
     function deploy() public sphinx {
-        bytes32 _coreDeploymentSalt = keccak256(abi.encode(CORE_DEPLOYMENT_NONCE));
-
-        JBPermissions permissions = new JBPermissions{salt: _coreDeploymentSalt}();
-        JBProjects projects = new JBProjects{salt: _coreDeploymentSalt}(safeAddress(), safeAddress());
-        JBDirectory directory = new JBDirectory{salt: _coreDeploymentSalt}(permissions, projects, safeAddress());
-        JBSplits splits = new JBSplits{salt: _coreDeploymentSalt}(directory);
-        JBRulesets rulesets = new JBRulesets{salt: _coreDeploymentSalt}(directory);
-        JBPrices prices = new JBPrices{salt: _coreDeploymentSalt}(directory, permissions, projects, safeAddress());
+        JBPermissions permissions = new JBPermissions{salt: keccak256(abi.encode(CORE_DEPLOYMENT_NONCE))}();
+        JBProjects projects = new JBProjects{salt: keccak256(abi.encode(CORE_DEPLOYMENT_NONCE))}(safeAddress(), safeAddress());
+        JBDirectory directory = new JBDirectory{salt: keccak256(abi.encode(CORE_DEPLOYMENT_NONCE))}(permissions, projects, safeAddress());
+        JBSplits splits = new JBSplits{salt: keccak256(abi.encode(CORE_DEPLOYMENT_NONCE))}(directory);
+        JBRulesets rulesets = new JBRulesets{salt: keccak256(abi.encode(CORE_DEPLOYMENT_NONCE))}(directory);
+        JBPrices prices = new JBPrices{salt: keccak256(abi.encode(CORE_DEPLOYMENT_NONCE))}(directory, permissions, projects, safeAddress());
 
         directory.setIsAllowedToSetFirstController(
             address(
-                new JBController{salt: _coreDeploymentSalt}({
+                new JBController{salt: keccak256(abi.encode(CORE_DEPLOYMENT_NONCE))}({
+                    directory: directory,
+                    fundAccessLimits: new JBFundAccessLimits{salt: keccak256(abi.encode(CORE_DEPLOYMENT_NONCE))}(directory),
+                    prices: prices,
                     permissions: permissions,
                     projects: projects,
-                    directory: directory,
                     rulesets: rulesets,
-                    tokens: new JBTokens{salt: _coreDeploymentSalt}(directory, new JBERC20{salt: _coreDeploymentSalt}()),
                     splits: splits,
-                    fundAccessLimits: new JBFundAccessLimits{salt: _coreDeploymentSalt}(directory),
-                    prices: prices,
+                    tokens: new JBTokens{salt: keccak256(abi.encode(CORE_DEPLOYMENT_NONCE))}(directory, new JBERC20{salt: keccak256(abi.encode(CORE_DEPLOYMENT_NONCE))}()),
                     trustedForwarder: TRUSTED_FORWARDER
                 })
             ),
             true
         );
 
-        JBFeelessAddresses feeless = new JBFeelessAddresses{salt: _coreDeploymentSalt}(safeAddress());
+        JBFeelessAddresses feeless = new JBFeelessAddresses{salt: keccak256(abi.encode(CORE_DEPLOYMENT_NONCE))}(safeAddress());
 
-        new JBMultiTerminal{salt: _coreDeploymentSalt}({
+        new JBMultiTerminal{salt: keccak256(abi.encode(CORE_DEPLOYMENT_NONCE))}({
             permissions: permissions,
             projects: projects,
             splits: splits,
-            store: new JBTerminalStore{salt: _coreDeploymentSalt}({directory: directory, rulesets: rulesets, prices: prices}),
+            store: new JBTerminalStore{salt: keccak256(abi.encode(CORE_DEPLOYMENT_NONCE))}({directory: directory, rulesets: rulesets, prices: prices}),
             feelessAddresses: feeless,
             permit2: _PERMIT2,
             trustedForwarder: TRUSTED_FORWARDER
