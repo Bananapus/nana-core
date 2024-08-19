@@ -6,7 +6,9 @@ import {JBRuleset} from "./../structs/JBRuleset.sol";
 import {IJBRulesetApprovalHook} from "./IJBRulesetApprovalHook.sol";
 
 interface IJBRulesets {
-    event RulesetInitialized(uint256 indexed rulesetId, uint256 indexed projectId, uint256 indexed basedOnId, address caller);
+    event RulesetInitialized(
+        uint256 indexed rulesetId, uint256 indexed projectId, uint256 indexed basedOnId, address caller
+    );
     event RulesetQueued(
         uint256 indexed rulesetId,
         uint256 indexed projectId,
@@ -19,7 +21,6 @@ interface IJBRulesets {
         address caller
     );
 
-
     function latestRulesetIdOf(uint256 projectId) external view returns (uint256);
 
     function currentApprovalStatusForLatestRulesetOf(uint256 projectId) external view returns (JBApprovalStatus);
@@ -29,7 +30,7 @@ interface IJBRulesets {
         external
         view
         returns (JBRuleset memory ruleset, JBApprovalStatus approvalStatus);
-    function rulesetsOf(
+    function allOf(
         uint256 projectId,
         uint256 startingId,
         uint256 size

@@ -64,7 +64,7 @@ contract Deploy is Script, Sphinx {
         JBDirectory directory = new JBDirectory{salt: _coreDeploymentSalt}(permissions, projects, safeAddress());
         JBSplits splits = new JBSplits{salt: _coreDeploymentSalt}(directory);
         JBRulesets rulesets = new JBRulesets{salt: _coreDeploymentSalt}(directory);
-        JBPrices prices = new JBPrices{salt: _coreDeploymentSalt}(permissions, projects, directory, safeAddress());
+        JBPrices prices = new JBPrices{salt: _coreDeploymentSalt}(directory, permissions, projects, safeAddress());
 
         directory.setIsAllowedToSetFirstController(
             address(

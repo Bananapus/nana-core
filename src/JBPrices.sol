@@ -55,14 +55,14 @@ contract JBPrices is JBControlled, JBPermissioned, Ownable, IJBPrices {
     // ---------------------------- constructor -------------------------- //
     //*********************************************************************//
 
+    /// @param directory A contract storing directories of terminals and controllers for each project.
     /// @param permissions A contract storing permissions.
     /// @param projects A contract which mints ERC-721s that represent project ownership and transfers.
-    /// @param directory A contract storing directories of terminals and controllers for each project.
     /// @param owner The address that will own the contract.
     constructor(
+        IJBDirectory directory,
         IJBPermissions permissions,
         IJBProjects projects,
-        IJBDirectory directory,
         address owner
     )
         JBControlled(directory)
@@ -172,6 +172,12 @@ contract JBPrices is JBControlled, JBPermissioned, Ownable, IJBPrices {
         // Store the feed.
         priceFeedFor[projectId][pricingCurrency][unitCurrency] = feed;
 
-        emit AddPriceFeed({ projectId: projectId, pricingCurrency: pricingCurrency, unitCurrency: unitCurrency, feed: feed, caller: msg.sender });
+        emit AddPriceFeed({
+            projectId: projectId,
+            pricingCurrency: pricingCurrency,
+            unitCurrency: unitCurrency,
+            feed: feed,
+            caller: msg.sender
+        });
     }
 }

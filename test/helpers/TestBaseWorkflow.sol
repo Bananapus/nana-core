@@ -213,7 +213,7 @@ contract TestBaseWorkflow is Test, DeployPermit2 {
         _jbErc20 = new JBERC20();
         _jbTokens = new JBTokens(_jbDirectory, _jbErc20);
         _jbRulesets = new JBRulesets(_jbDirectory);
-        _jbPrices = new JBPrices(_jbPermissions, _jbProjects, _jbDirectory, _multisig);
+        _jbPrices = new JBPrices(_jbDirectory, _jbPermissions, _jbProjects, _multisig);
         _jbSplits = new JBSplits(_jbDirectory);
         _jbFundAccessLimits = new JBFundAccessLimits(_jbDirectory);
         _jbFeelessAddresses = new JBFeelessAddresses(_multisig);
@@ -221,14 +221,14 @@ contract TestBaseWorkflow is Test, DeployPermit2 {
         _usdcToken = new MockERC20("USDC", "USDC");
 
         _jbController = new JBController(
-            _jbPermissions,
-            _jbProjects,
             _jbDirectory,
-            _jbRulesets,
-            _jbTokens,
-            _jbSplits,
             _jbFundAccessLimits,
+            _jbPermissions,
             _jbPrices,
+            _jbProjects,
+            _jbRulesets,
+            _jbSplits,
+            _jbTokens,
             _trustedForwarder
         );
 
@@ -243,21 +243,21 @@ contract TestBaseWorkflow is Test, DeployPermit2 {
         _permit2 = deployPermit2();
 
         _jbMultiTerminal = new JBMultiTerminal(
+            _jbFeelessAddresses,
             _jbPermissions,
             _jbProjects,
             _jbSplits,
             _jbTerminalStore,
-            _jbFeelessAddresses,
             IPermit2(_permit2),
             _trustedForwarder
         );
 
         _jbMultiTerminal2 = new JBMultiTerminal(
+            _jbFeelessAddresses,
             _jbPermissions,
             _jbProjects,
             _jbSplits,
             _jbTerminalStore,
-            _jbFeelessAddresses,
             IPermit2(_permit2),
             _trustedForwarder
         );

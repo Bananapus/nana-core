@@ -494,7 +494,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
             mustStartAtOrAfter: block.timestamp
         });
 
-        JBRuleset[] memory queuedRulesetsOf = _rulesets.rulesetsOf(_projectId, block.timestamp, 3);
+        JBRuleset[] memory queuedRulesetsOf = _rulesets.allOf(_projectId, block.timestamp, 3);
 
         // check: 2 rulesets will be enqueued, we just overwrote the last queued
         assertEq(queuedRulesetsOf.length, 3);

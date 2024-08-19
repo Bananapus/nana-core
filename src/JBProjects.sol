@@ -18,7 +18,7 @@ contract JBProjects is ERC721, Ownable, IJBProjects {
     /// @notice The number of projects that have been created using this contract.
     /// @dev The count is incremented with each new project created.
     /// @dev The resulting ERC-721 token ID for each project is the newly incremented count value.
-    uint256 public override count = 0;
+    uint256 public override count;
 
     /// @notice The contract resolving each project ID to its ERC721 URI.
     IJBTokenUriResolver public override tokenUriResolver;
@@ -40,6 +40,14 @@ contract JBProjects is ERC721, Ownable, IJBProjects {
     // -------------------------- public views --------------------------- //
     //*********************************************************************//
 
+    /// @notice Indicates whether this contract adheres to the specified interface.
+    /// @dev See {IERC165-supportsInterface}.
+    /// @param interfaceId The ID of the interface to check for adherence to.
+    /// @return A flag indicating if the provided interface ID is supported.
+    function supportsInterface(bytes4 interfaceId) public view virtual override(IERC165, ERC721) returns (bool) {
+        return interfaceId == type(IJBProjects).interfaceId || super.supportsInterface(interfaceId);
+    }
+
     /// @notice Returns the URI where the ERC-721 standard JSON of a project is hosted.
     /// @param projectId The ID of the project to get a URI of.
     /// @return The token URI to use for the provided `projectId`.
@@ -54,14 +62,6 @@ contract JBProjects is ERC721, Ownable, IJBProjects {
         return resolver.getUri(projectId);
     }
 
-    /// @notice Indicates whether this contract adheres to the specified interface.
-    /// @dev See {IERC165-supportsInterface}.
-    /// @param interfaceId The ID of the interface to check for adherence to.
-    /// @return A flag indicating if the provided interface ID is supported.
-    function supportsInterface(bytes4 interfaceId) public view virtual override(IERC165, ERC721) returns (bool) {
-        return interfaceId == type(IJBProjects).interfaceId || super.supportsInterface(interfaceId);
-    }
-
     //*********************************************************************//
     // ---------------------- external transactions ---------------------- //
     //*********************************************************************//
@@ -72,7 +72,7 @@ contract JBProjects is ERC721, Ownable, IJBProjects {
         // Store the new resolver.
         tokenUriResolver = resolver;
 
-        emit SetTokenUriResolver({ resolver: resolver, caller: _msgSender() });
+        emit SetTokenUriResolver({resolver: resolver, caller: _msgSender()});
     }
 
     //*********************************************************************//
@@ -87,7 +87,7 @@ contract JBProjects is ERC721, Ownable, IJBProjects {
         // Increment the count, which will be used as the ID.
         projectId = ++count;
 
-        emit Create({ projectId: projectId, owner: owner, caller: _msgSender() });
+        emit Create({projectId: projectId, owner: owner, caller: _msgSender()});
 
         // Mint the project.
         _safeMint(owner, projectId);

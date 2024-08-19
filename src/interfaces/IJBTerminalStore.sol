@@ -37,7 +37,6 @@ interface IJBTerminalStore {
         view
         returns (uint256);
 
-
     function currentReclaimableSurplusOf(
         uint256 projectId,
         uint256 tokenCount,

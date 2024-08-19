@@ -18,7 +18,9 @@ contract TestExecutePayReservedTokenToTerminal_Local is JBControllerSetup {
     function test_WhenCallerIsNotItself() external {
         // it will revert
         vm.expectRevert();
-        JBController(address(_controller)).executePayReservedTokenToTerminal(_terminal, _projectId, _token, _defaultAmount, _bene, "");
+        JBController(address(_controller)).executePayReservedTokenToTerminal(
+            _terminal, _projectId, _token, _defaultAmount, _bene, ""
+        );
     }
 
     modifier whenCallerIsItself() {
@@ -44,7 +46,9 @@ contract TestExecutePayReservedTokenToTerminal_Local is JBControllerSetup {
             address(_token), abi.encodeCall(IERC20.allowance, (address(_controller), address(_terminal))), abi.encode(0)
         );
 
-        JBController(address(_controller)).executePayReservedTokenToTerminal(_terminal, _projectId, _token, _defaultAmount, _bene, "");
+        JBController(address(_controller)).executePayReservedTokenToTerminal(
+            _terminal, _projectId, _token, _defaultAmount, _bene, ""
+        );
     }
 
     function test_GivenAllowanceDNEQZeroAfterPay() external whenCallerIsItself {
@@ -63,6 +67,8 @@ contract TestExecutePayReservedTokenToTerminal_Local is JBControllerSetup {
         );
 
         vm.expectRevert();
-        JBController(address(_controller)).executePayReservedTokenToTerminal(_terminal, _projectId, _token, _defaultAmount, _bene, "");
+        JBController(address(_controller)).executePayReservedTokenToTerminal(
+            _terminal, _projectId, _token, _defaultAmount, _bene, ""
+        );
     }
 }

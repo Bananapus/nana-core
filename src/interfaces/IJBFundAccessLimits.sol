@@ -6,9 +6,11 @@ import {JBFundAccessLimitGroup} from "./../structs/JBFundAccessLimitGroup.sol";
 
 interface IJBFundAccessLimits {
     event SetFundAccessLimits(
-        uint256 indexed rulesetId, uint256 indexed projectId, JBFundAccessLimitGroup limits, address caller
+        uint256 indexed rulesetId,
+        uint256 indexed projectId,
+        JBFundAccessLimitGroup fundAccessLimitGroup,
+        address caller
     );
-
 
     function payoutLimitOf(
         uint256 projectId,
@@ -52,7 +54,7 @@ interface IJBFundAccessLimits {
     function setFundAccessLimitsFor(
         uint256 projectId,
         uint256 rulesetId,
-        JBFundAccessLimitGroup[] memory fundAccessConstaints
+        JBFundAccessLimitGroup[] memory fundAccessLimitGroups
     )
         external;
 }

@@ -318,7 +318,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
             upcomingRuleset = jbRulesets().upcomingOf(projectId);
 
             // Get a list of queued rulesets
-            JBRuleset[] memory rulesetsOf = jbRulesets().rulesetsOf(projectId, 0, 1);
+            JBRuleset[] memory rulesetsOf = jbRulesets().allOf(projectId, 0, 1);
 
             // Make sure the upcoming ruleset is the ruleset currently under the approval hook.
             assertEq(upcomingRuleset.weight, _config[0].weight);
@@ -546,7 +546,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         assertEq(_queued.weight, _weightFirstQueued);
 
         // Get a list of queued rulesets
-        JBRuleset[] memory queuedRulesets = jbRulesets().rulesetsOf(projectId, 0, 1);
+        JBRuleset[] memory queuedRulesets = jbRulesets().allOf(projectId, 0, 1);
 
         // Ensure rulesetsOf is accurate
         assertEq(queuedRulesets[0].weight, _weightFirstQueued);
@@ -576,7 +576,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         assertEq(_requeued.weight, _weightInitial);
 
         // Get a list of queued rulesets
-        JBRuleset[] memory queuedRulesets2 = jbRulesets().rulesetsOf(projectId, 0, 1);
+        JBRuleset[] memory queuedRulesets2 = jbRulesets().allOf(projectId, 0, 1);
 
         // Ensure rulesetsOf is accurate
         assertEq(queuedRulesets2[0].weight, _weightSecondQueued);
@@ -597,7 +597,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         assertEq(_requeued2.weight, _weightSecondQueued);
 
         // Get queued rulesets
-        JBRuleset[] memory queuedRulesets3 = jbRulesets().rulesetsOf(projectId, 0, 1);
+        JBRuleset[] memory queuedRulesets3 = jbRulesets().allOf(projectId, 0, 1);
 
         // Ensure rulesetsOf is accurate
         assertEq(queuedRulesets3[0].weight, _weightSecondQueued);
@@ -713,7 +713,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         uint256 id = launchProjectForTestWithThreeRulesets();
 
         // Get a list of queued rulesets
-        JBRuleset[] memory rulesetsOf = jbRulesets().rulesetsOf(id, 0, 3);
+        JBRuleset[] memory rulesetsOf = jbRulesets().allOf(id, 0, 3);
 
         // check: three rulesets returned
         assertEq(rulesetsOf.length, 3);
@@ -740,7 +740,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         assertEq(upcomingRuleset.weight, _weight + 100);
 
         // Get a list of queued rulesets
-        rulesetsOf = jbRulesets().rulesetsOf(id, 0, 3);
+        rulesetsOf = jbRulesets().allOf(id, 0, 3);
 
         // check: three rulesets returned again
         assertEq(rulesetsOf.length, 3);
@@ -755,7 +755,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         assertEq(rulesetsOf[2].weight, _weight);
 
         // Get a list of queued rulesets
-        rulesetsOf = jbRulesets().rulesetsOf(id, 0, 2);
+        rulesetsOf = jbRulesets().allOf(id, 0, 2);
 
         // check: two rulesets returned again
         assertEq(rulesetsOf.length, 2);
@@ -767,7 +767,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         assertEq(rulesetsOf[1].weight, _weight + 100);
 
         // Get a list of queued rulesets
-        rulesetsOf = jbRulesets().rulesetsOf(id, upcomingRuleset.id, 2);
+        rulesetsOf = jbRulesets().allOf(id, upcomingRuleset.id, 2);
 
         // check: two rulesets returned again
         assertEq(rulesetsOf.length, 2);
@@ -779,7 +779,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         assertEq(rulesetsOf[1].weight, _weight);
 
         // Get a list of queued rulesets
-        rulesetsOf = jbRulesets().rulesetsOf(id, upcomingRuleset.id, 1);
+        rulesetsOf = jbRulesets().allOf(id, upcomingRuleset.id, 1);
 
         // check: one rulesets returned again
         assertEq(rulesetsOf.length, 1);
@@ -788,7 +788,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         assertEq(rulesetsOf[0].weight, _weight + 100);
 
         // Get a list of queued rulesets with a larger size than there are rulesets.
-        rulesetsOf = jbRulesets().rulesetsOf(id, 0, 10);
+        rulesetsOf = jbRulesets().allOf(id, 0, 10);
 
         // check: three rulesets returned
         assertEq(rulesetsOf.length, 3);
@@ -857,7 +857,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         });
 
         // Get a list of queued rulesets
-        JBRuleset[] memory rulesetsOf = jbRulesets().rulesetsOf(projectId, 0, 3);
+        JBRuleset[] memory rulesetsOf = jbRulesets().allOf(projectId, 0, 3);
 
         // check: three rulesets returned
         assertEq(rulesetsOf.length, 3);

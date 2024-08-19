@@ -454,7 +454,6 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     // ---------------------- external transactions ---------------------- //
     //*********************************************************************//
 
-
     /// @notice Records funds being added to a project's balance.
     /// @param projectId The ID of the project which funds are being added to the balance of.
     /// @param token The token being added to the balance.

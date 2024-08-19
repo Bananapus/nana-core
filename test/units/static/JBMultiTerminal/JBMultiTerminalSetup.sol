@@ -30,7 +30,7 @@ contract JBMultiTerminalSetup is JBTest {
 
         // Instantiate the contract being tested
         _terminal =
-            new JBMultiTerminal(permissions, projects, splits, store, feelessAddresses, permit2, trustedForwarder);
+            new JBMultiTerminal(feelessAddresses, permissions, projects, splits, store, permit2, trustedForwarder);
 
         _metadataHelper = new MetadataResolverHelper();
     }

@@ -179,6 +179,14 @@ contract JBPermissions is IJBPermissions {
     // ----------------------- internal helper views --------------------- //
     //*********************************************************************//
 
+    /// @notice Checks if a permission is included in a packed permissions data.
+    /// @param permissions The packed permissions to check.
+    /// @param permissionId The ID of the permission to check for.
+    /// @return A flag indicating whether the permission is included.
+    function _includesPermission(uint256 permissions, uint256 permissionId) internal pure returns (bool) {
+        return ((permissions >> permissionId) & 1) == 1;
+    }
+
     /// @notice Converts an array of permission IDs to a packed `uint256`.
     /// @param permissionIds The IDs of the permissions to pack.
     /// @return packed The packed value.
@@ -193,14 +201,6 @@ contract JBPermissions is IJBPermissions {
             // Turn on the bit at the ID.
             packed |= 1 << permissionId;
         }
-    }
-
-    /// @notice Checks if a permission is included in a packed permissions data.
-    /// @param permissions The packed permissions to check.
-    /// @param permissionId The ID of the permission to check for.
-    /// @return A flag indicating whether the permission is included.
-    function _includesPermission(uint256 permissions, uint256 permissionId) internal pure returns (bool) {
-        return ((permissions >> permissionId) & 1) == 1;
     }
 
     //*********************************************************************//

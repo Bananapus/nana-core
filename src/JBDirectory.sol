@@ -52,14 +52,14 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
     // --------------------- internal stored properties ------------------ //
     //*********************************************************************//
 
-    /// @notice The specified project's terminals.
-    /// @custom:param projectId The ID of the project to get the terminals of.
-    mapping(uint256 projectId => IJBTerminal[]) internal _terminalsOf;
-
     /// @notice The primary terminal that a project uses for the specified token.
     /// @custom:param projectId The ID of the project to get the primary terminal of.
     /// @custom:param token The token that the terminal accepts.
     mapping(uint256 projectId => mapping(address token => IJBTerminal)) internal _primaryTerminalOf;
+
+    /// @notice The specified project's terminals.
+    /// @custom:param projectId The ID of the project to get the terminals of.
+    mapping(uint256 projectId => IJBTerminal[]) internal _terminalsOf;
 
     //*********************************************************************//
     // -------------------------- constructor ---------------------------- //
@@ -82,13 +82,6 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
     //*********************************************************************//
     // ------------------------- external views -------------------------- //
     //*********************************************************************//
-
-    /// @notice The specified project's terminals.
-    /// @param projectId The ID of the project to get the terminals of.
-    /// @return An array of the project's terminal addresses.
-    function terminalsOf(uint256 projectId) external view override returns (IJBTerminal[] memory) {
-        return _terminalsOf[projectId];
-    }
 
     /// @notice The primary terminal that a project uses for the specified token.
     /// @dev Returns the first terminal that accepts the token if the project hasn't explicitly set a primary terminal
@@ -125,6 +118,13 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
         return IJBTerminal(address(0));
     }
 
+    /// @notice The specified project's terminals.
+    /// @param projectId The ID of the project to get the terminals of.
+    /// @return An array of the project's terminal addresses.
+    function terminalsOf(uint256 projectId) external view override returns (IJBTerminal[] memory) {
+        return _terminalsOf[projectId];
+    }
+
     //*********************************************************************//
     // -------------------------- public views --------------------------- //
     //*********************************************************************//
@@ -149,6 +149,22 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
     //*********************************************************************//
     // ---------------------- external transactions ---------------------- //
     //*********************************************************************//
+
+    /// @notice Add or remove an address/contract from a list of trusted addresses which are allowed to set a first
+    /// controller for projects.
+    /// @dev Only this contract's owner can call this function.
+    /// @dev These addresses are vetted controllers as well as contracts designed to launch new projects.
+    /// @dev A project can set its own controller without being on this list.
+    /// @dev If you would like to add an address/contract to this list, please reach out to this contract's owner.
+    /// @param addr The address to allow or not allow.
+    /// @param flag Whether the address is allowed to set first controllers for projects. Use `true` to allow and
+    /// `false` to not allow.
+    function setIsAllowedToSetFirstController(address addr, bool flag) external override onlyOwner {
+        // Set the flag in the allowlist.
+        isAllowedToSetFirstController[addr] = flag;
+
+        emit SetIsAllowedToSetFirstController({addr: addr, isAllowed: flag, caller: msg.sender});
+    }
 
     /// @notice Set a project's controller. Controllers manage how terminals interact with tokens and rulesets.
     /// @dev Can only be called if:
@@ -190,7 +206,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
         // Set the new controller.
         controllerOf[projectId] = controller;
 
-        emit SetController({ projectId: projectId, controller: controller, caller: msg.sender });
+        emit SetController({projectId: projectId, controller: controller, caller: msg.sender});
 
         // Migrate if needed.
         if (
@@ -199,6 +215,36 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
         ) {
             IJBMigratable(address(currentController)).migrate(projectId, controller);
         }
+    }
+
+    /// @notice Set a project's primary terminal for a token.
+    /// @dev The primary terminal for a token is where payments in that token are routed to by default.
+    /// @dev This is useful in cases where a project has multiple terminals which accept the same token.
+    /// @dev Can only be called by the project's owner, or an address with the owner's permission to
+    /// `SET_PRIMARY_TERMINAL`.
+    /// @param projectId The ID of the project whose primary terminal is being set.
+    /// @param token The token to set the primary terminal for.
+    /// @param terminal The terminal being set as the primary terminal.
+    function setPrimaryTerminalOf(uint256 projectId, address token, IJBTerminal terminal) external override {
+        // Enforce permissions.
+        _requirePermissionFrom({
+            account: PROJECTS.ownerOf(projectId),
+            projectId: projectId,
+            permissionId: JBPermissionIds.SET_PRIMARY_TERMINAL
+        });
+
+        // If the terminal doesn't accept the token, revert.
+        if (terminal.accountingContextForTokenOf(projectId, token).token == address(0)) {
+            revert JBDirectory_TokenNotAccepted();
+        }
+
+        // If the terminal hasn't already been added to the project, add it.
+        _addTerminalIfNeeded(projectId, terminal);
+
+        // Store the terminal as the project's primary terminal for the token.
+        _primaryTerminalOf[projectId][token] = terminal;
+
+        emit SetPrimaryTerminal({projectId: projectId, token: token, terminal: terminal, caller: msg.sender});
     }
 
     /// @notice Set a project's terminals.
@@ -242,53 +288,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
                 }
             }
         }
-        emit SetTerminals({ projectId: projectId, terminals: terminals, caller: msg.sender });
-    }
-
-    /// @notice Set a project's primary terminal for a token.
-    /// @dev The primary terminal for a token is where payments in that token are routed to by default.
-    /// @dev This is useful in cases where a project has multiple terminals which accept the same token.
-    /// @dev Can only be called by the project's owner, or an address with the owner's permission to
-    /// `SET_PRIMARY_TERMINAL`.
-    /// @param projectId The ID of the project whose primary terminal is being set.
-    /// @param token The token to set the primary terminal for.
-    /// @param terminal The terminal being set as the primary terminal.
-    function setPrimaryTerminalOf(uint256 projectId, address token, IJBTerminal terminal) external override {
-        // Enforce permissions.
-        _requirePermissionFrom({
-            account: PROJECTS.ownerOf(projectId),
-            projectId: projectId,
-            permissionId: JBPermissionIds.SET_PRIMARY_TERMINAL
-        });
-
-        // If the terminal doesn't accept the token, revert.
-        if (terminal.accountingContextForTokenOf(projectId, token).token == address(0)) {
-            revert JBDirectory_TokenNotAccepted();
-        }
-
-        // If the terminal hasn't already been added to the project, add it.
-        _addTerminalIfNeeded(projectId, terminal);
-
-        // Store the terminal as the project's primary terminal for the token.
-        _primaryTerminalOf[projectId][token] = terminal;
-
-        emit SetPrimaryTerminal({ projectId: projectId, token: token, terminal: terminal, caller: msg.sender });
-    }
-
-    /// @notice Add or remove an address/contract from a list of trusted addresses which are allowed to set a first
-    /// controller for projects.
-    /// @dev Only this contract's owner can call this function.
-    /// @dev These addresses are vetted controllers as well as contracts designed to launch new projects.
-    /// @dev A project can set its own controller without being on this list.
-    /// @dev If you would like to add an address/contract to this list, please reach out to this contract's owner.
-    /// @param addr The address to allow or not allow.
-    /// @param flag Whether the address is allowed to set first controllers for projects. Use `true` to allow and
-    /// `false` to not allow.
-    function setIsAllowedToSetFirstController(address addr, bool flag) external override onlyOwner {
-        // Set the flag in the allowlist.
-        isAllowedToSetFirstController[addr] = flag;
-
-        emit SetIsAllowedToSetFirstController({ addr: addr, isAllowed: flag, caller: msg.sender });
+        emit SetTerminals({projectId: projectId, terminals: terminals, caller: msg.sender});
     }
 
     //*********************************************************************//
@@ -318,6 +318,6 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
         // Add the new terminal.
         _terminalsOf[projectId].push(terminal);
 
-        emit AddTerminal({ projectId: projectId, terminal: terminal, caller: msg.sender });
+        emit AddTerminal({projectId: projectId, terminal: terminal, caller: msg.sender});
     }
 }

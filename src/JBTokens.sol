@@ -165,7 +165,14 @@ contract JBTokens is JBControlled, IJBTokens {
             totalCreditSupplyOf[projectId] = totalCreditSupplyOf[projectId] - creditsToBurn;
         }
 
-        emit Burn({ holder: holder, projectId: projectId, amount: amount, creditBalance: creditBalance, tokenBalance: tokenBalance, caller: msg.sender });
+        emit Burn({
+            holder: holder,
+            projectId: projectId,
+            amount: amount,
+            creditBalance: creditBalance,
+            tokenBalance: tokenBalance,
+            caller: msg.sender
+        });
 
         // Burn the tokens.
         if (tokensToBurn > 0) token.burn(holder, tokensToBurn);
@@ -207,7 +214,14 @@ contract JBTokens is JBControlled, IJBTokens {
             totalCreditSupplyOf[projectId] = totalCreditSupplyOf[projectId] - amount;
         }
 
-        emit ClaimTokens({ holder: holder, projectId: projectId, creditBalance: creditBalance, amount: amount, beneficiary: beneficiary, caller: msg.sender });
+        emit ClaimTokens({
+            holder: holder,
+            projectId: projectId,
+            creditBalance: creditBalance,
+            amount: amount,
+            beneficiary: beneficiary,
+            caller: msg.sender
+        });
 
         // Mint the equivalent amount of the project's token for the holder.
         token.mint(beneficiary, amount);
@@ -252,7 +266,14 @@ contract JBTokens is JBControlled, IJBTokens {
         // Store the project for the token.
         projectIdOf[token] = projectId;
 
-        emit DeployERC20({projectId: projectId, token: token, name: name, symbol: symbol, salt: salt, caller: msg.sender});
+        emit DeployERC20({
+            projectId: projectId,
+            token: token,
+            name: name,
+            symbol: symbol,
+            salt: salt,
+            caller: msg.sender
+        });
 
         // Initialize the token.
         token.initialize({name: name, symbol: symbol, owner: address(this)});
@@ -283,7 +304,13 @@ contract JBTokens is JBControlled, IJBTokens {
         // The total supply can't exceed the maximum value storable in a uint208.
         if (totalSupplyOf(projectId) > type(uint208).max) revert JBTokens_OverflowAlert();
 
-        emit Mint({ holder: holder, projectId: projectId, amount: amount, shouldClaimTokens: shouldClaimTokens, caller: msg.sender });
+        emit Mint({
+            holder: holder,
+            projectId: projectId,
+            amount: amount,
+            shouldClaimTokens: shouldClaimTokens,
+            caller: msg.sender
+        });
     }
 
     /// @notice Set a project's token if not already set.
@@ -309,7 +336,7 @@ contract JBTokens is JBControlled, IJBTokens {
         // Store the project for the token.
         projectIdOf[token] = projectId;
 
-        emit SetToken({ projectId: projectId, token: token, caller: msg.sender });
+        emit SetToken({projectId: projectId, token: token, caller: msg.sender});
     }
 
     /// @notice Allows a holder to transfer credits to another account.
@@ -345,6 +372,12 @@ contract JBTokens is JBControlled, IJBTokens {
         // Add the unclaimed project tokens to the recipient's balance.
         creditBalanceOf[recipient][projectId] = creditBalanceOf[recipient][projectId] + amount;
 
-        emit TransferCredits({ holder: holder, projectId: projectId, recipient: recipient, amount: amount, caller: msg.sender });
+        emit TransferCredits({
+            holder: holder,
+            projectId: projectId,
+            recipient: recipient,
+            amount: amount,
+            caller: msg.sender
+        });
     }
 }

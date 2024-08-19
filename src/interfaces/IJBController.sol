@@ -71,6 +71,14 @@ interface IJBController is IERC165, IJBProjectUriRegistry, IJBDirectoryAccessCon
     function SPLITS() external view returns (IJBSplits);
     function TOKENS() external view returns (IJBTokens);
 
+    function allRulesetsOf(
+        uint256 projectId,
+        uint256 startingId,
+        uint256 size
+    )
+        external
+        view
+        returns (JBRulesetWithMetadata[] memory rulesets);
     function currentRulesetOf(uint256 projectId)
         external
         view
@@ -87,14 +95,6 @@ interface IJBController is IERC165, IJBProjectUriRegistry, IJBDirectoryAccessCon
         view
         returns (JBRuleset memory, JBRulesetMetadata memory metadata, JBApprovalStatus);
     function pendingReservedTokenBalanceOf(uint256 projectId) external view returns (uint256);
-    function rulesetsOf(
-        uint256 projectId,
-        uint256 startingId,
-        uint256 size
-    )
-        external
-        view
-        returns (JBRulesetWithMetadata[] memory rulesets);
     function totalTokenSupplyWithReservedTokensOf(uint256 projectId) external view returns (uint256);
     function upcomingRulesetOf(uint256 projectId)
         external

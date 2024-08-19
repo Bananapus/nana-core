@@ -23,7 +23,7 @@ contract TestRulesetsOf_Local is JBRulesetsSetup {
     function test_WhenSizeIsZero() external {
         // it will return an empty array
 
-        JBRuleset[] memory _rulesets = _rulesets.rulesetsOf(_projectId, 0, 0);
+        JBRuleset[] memory _rulesets = _rulesets.allOf(_projectId, 0, 0);
         assertEq(_rulesets.length, 0);
     }
 

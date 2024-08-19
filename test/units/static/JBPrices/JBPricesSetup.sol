@@ -21,6 +21,6 @@ contract JBPricesSetup is JBTest {
 
     function pricesSetup() public virtual {
         // Instantiate the contract being tested
-        _prices = new JBPrices(permissions, projects, directory, _owner);
+        _prices = new JBPrices(directory, permissions, projects, _owner);
     }
 }
