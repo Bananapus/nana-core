@@ -12,6 +12,7 @@ contract JBPermissions is IJBPermissions {
     //*********************************************************************//
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
+
     error JBPermissions_PermissionIdOutOfBounds();
     error JBPermissions_Unauthorized();
 
