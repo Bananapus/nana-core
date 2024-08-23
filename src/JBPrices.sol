@@ -19,9 +19,10 @@ contract JBPrices is JBControlled, JBPermissioned, Ownable, IJBPrices {
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
 
-    error JBPrices_InvalidCurrency();
-    error JBPrices_PriceFeedAlreadyExists();
+    error JBPrices_PriceFeedAlreadyExists(IJBPriceFeed feed);
     error JBPrices_PriceFeedNotFound();
+    error JBPrices_ZeroPricingCurrency();
+    error JBPrices_ZeroUnitCurrency();
 
     //*********************************************************************//
     // ------------------------- public constants ------------------------ //
@@ -152,22 +153,25 @@ contract JBPrices is JBControlled, JBPermissioned, Ownable, IJBPrices {
         // set by the controller
         projectId == DEFAULT_PROJECT_ID ? _checkOwner() : _onlyControllerOf(projectId);
 
-        // Make sure the currencies aren't 0.
-        if (pricingCurrency == 0 || unitCurrency == 0) revert JBPrices_InvalidCurrency();
+        // Make sure the pricing currency isn't 0.
+        if (pricingCurrency == 0) revert JBPrices_ZeroPricingCurrency();
+
+        // Make sure the unit currency isn't 0.
+        if (unitCurrency == 0) revert JBPrices_ZeroUnitCurrency();
 
         // Make sure there isn't already a default price feed for the pair or its inverse.
         if (
             priceFeedFor[DEFAULT_PROJECT_ID][pricingCurrency][unitCurrency] != IJBPriceFeed(address(0))
                 || priceFeedFor[DEFAULT_PROJECT_ID][unitCurrency][pricingCurrency] != IJBPriceFeed(address(0))
         ) {
-            revert JBPrices_PriceFeedAlreadyExists();
+            revert JBPrices_PriceFeedAlreadyExists(priceFeedFor[DEFAULT_PROJECT_ID][pricingCurrency][unitCurrency] != IJBPriceFeed(address(0)) ? priceFeedFor[DEFAULT_PROJECT_ID][pricingCurrency][unitCurrency] : priceFeedFor[DEFAULT_PROJECT_ID][unitCurrency][pricingCurrency]);
         }
 
         // Make sure this project doesn't already have a price feed for the pair or its inverse.
         if (
             priceFeedFor[projectId][pricingCurrency][unitCurrency] != IJBPriceFeed(address(0))
                 || priceFeedFor[projectId][unitCurrency][pricingCurrency] != IJBPriceFeed(address(0))
-        ) revert JBPrices_PriceFeedAlreadyExists();
+        ) revert JBPrices_PriceFeedAlreadyExists(priceFeedFor[projectId][pricingCurrency][unitCurrency] != IJBPriceFeed(address(0)) ? priceFeedFor[projectId][pricingCurrency][unitCurrency] : priceFeedFor[projectId][unitCurrency][pricingCurrency]);
 
         // Store the feed.
         priceFeedFor[projectId][pricingCurrency][unitCurrency] = feed;

@@ -278,13 +278,13 @@ contract TestRecordRedemptionFor_Local is JBTerminalStoreSetup {
     function test_GivenTheRedeemCountGtTotalSupply() external whenCurrentRulesetUseTotalSurplusForRedemptionsEqTrue {
         // it will revert INSUFFICIENT_TOKENS
 
-        uint256 _totalSupply = 1e18;
+        uint256 _supply = 1e18;
 
         // mock JBController totalTokenSupplyWithReservedTokensOf
         mockExpect(
             address(_controller),
             abi.encodeCall(IJBController.totalTokenSupplyWithReservedTokensOf, (_projectId)),
-            abi.encode(_totalSupply)
+            abi.encode(_supply)
         );
 
         JBCurrencyAmount[] memory _payoutLimits = new JBCurrencyAmount[](1);
@@ -299,7 +299,7 @@ contract TestRecordRedemptionFor_Local is JBTerminalStoreSetup {
 
         uint256 _redeemCount = 4e18; // greater than token total supply
 
-        vm.expectRevert(abi.encodeWithSelector(JBTerminalStore.JBTerminalStore_InsufficientTokens.selector, _redeemCount, _totalSupply));
+        vm.expectRevert(abi.encodeWithSelector(JBTerminalStore.JBTerminalStore_InsufficientTokens.selector, _redeemCount, _supply));
         _store.recordRedemptionFor({
             holder: address(this),
             projectId: _projectId,

@@ -13,7 +13,7 @@ contract JBPermissions is IJBPermissions {
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
 
-    error JBPermissions_PermissionIdOutOfBounds();
+    error JBPermissions_PermissionIdOutOfBounds(uint256 permissionId);
     error JBPermissions_Unauthorized();
 
     //*********************************************************************//
@@ -69,7 +69,7 @@ contract JBPermissions is IJBPermissions {
         returns (bool)
     {
         // Indexes above 255 don't exist
-        if (permissionId > 255) revert JBPermissions_PermissionIdOutOfBounds();
+        if (permissionId > 255) revert JBPermissions_PermissionIdOutOfBounds(permissionId);
 
         // If the ROOT permission is set and should be included, return true.
         if (
@@ -163,7 +163,7 @@ contract JBPermissions is IJBPermissions {
             permissionId = permissionIds[i];
 
             // Indexes above 255 don't exist
-            if (permissionId > 255) revert JBPermissions_PermissionIdOutOfBounds();
+            if (permissionId > 255) revert JBPermissions_PermissionIdOutOfBounds(permissionId);
 
             // Check each permissionId
             if (

@@ -17,7 +17,7 @@ contract TestHasPermissions_Local is JBPermissionsSetup {
     function test_WhenPermissionIdGt255() external {
         // it will revert with PERMISSION_ID_OUT_OF_BOUNDS
 
-        vm.expectRevert(JBPermissions.JBPermissions_PermissionIdOutOfBounds.selector);
+        vm.expectRevert(abi.encodeWithSelector(JBPermissions.JBPermissions_PermissionIdOutOfBounds.selector,256));
         _permissions.hasPermission(_op, _account, _projectId, _permission, true, true);
     }
 

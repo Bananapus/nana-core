@@ -12,12 +12,6 @@ import {IJBRulesetApprovalHook} from "./interfaces/IJBRulesetApprovalHook.sol";
 /// only if they are approved by the previous ruleset's approval hook.
 contract JBDeadline is IJBRulesetApprovalHook {
     //*********************************************************************//
-    // --------------------------- custom errors ------------------------- //
-    //*********************************************************************//
-
-    error JBDeadline_DurationTooLong();
-
-    //*********************************************************************//
     // ---------------- public immutable stored properties --------------- //
     //*********************************************************************//
 
@@ -32,9 +26,6 @@ contract JBDeadline is IJBRulesetApprovalHook {
     /// @param duration The minimum number of seconds between the time a ruleset is queued and the time it starts for it
     /// to be `Approved`.
     constructor(uint256 duration) {
-        // Ensure we don't underflow in `approvalStatusOf(...)`.
-        if (duration > block.timestamp) revert JBDeadline_DurationTooLong();
-
         DURATION = duration;
     }
 
@@ -67,7 +58,7 @@ contract JBDeadline is IJBRulesetApprovalHook {
             // If we've already passed the deadline, the ruleset is `Approved`.
             return (start - rulesetId < DURATION)
                 ? JBApprovalStatus.Failed
-                : (block.timestamp < start - DURATION) ? JBApprovalStatus.ApprovalExpected : JBApprovalStatus.Approved;
+                : (block.timestamp + DURATION < start) ? JBApprovalStatus.ApprovalExpected : JBApprovalStatus.Approved;
         }
     }
 

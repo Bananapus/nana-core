@@ -92,7 +92,7 @@ contract TestMintFor_Local is JBTokensSetup {
         // mock call to JBDirectory controllerOf
         mockExpect(address(directory), abi.encodeCall(IJBDirectory.controllerOf, (_projectId)), abi.encode(address(0)));
 
-        vm.expectRevert(JBControlled.JBControlled_ControllerUnauthorized.selector);
+        vm.expectRevert(abi.encodeWithSelector(JBControlled.JBControlled_ControllerUnauthorized.selector, address(0)));
         _tokens.mintFor(_holder, _projectId, _defaultAmount);
     }
 }

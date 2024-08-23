@@ -15,9 +15,9 @@ contract JBChainlinkV3PriceFeed is IJBPriceFeed {
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
 
-    error JBChainlinkV3PriceFeed_StalePrice();
     error JBChainlinkV3PriceFeed_IncompleteRound();
-    error JBChainlinkV3PriceFeed_NegativePrice();
+    error JBChainlinkV3PriceFeed_NegativePrice(int256 price);
+    error JBChainlinkV3PriceFeed_StalePrice(uint256 timestamp, uint256 threshold, uint256 updatedAt);
 
     //*********************************************************************//
     // ---------------- public stored immutable properties --------------- //
@@ -57,14 +57,14 @@ contract JBChainlinkV3PriceFeed is IJBPriceFeed {
         (, int256 price,, uint256 updatedAt,) = FEED.latestRoundData();
 
         // Make sure the price's update threshold is met.
-        if (block.timestamp - updatedAt > THRESHOLD) revert JBChainlinkV3PriceFeed_StalePrice();
+        if (block.timestamp > THRESHOLD + updatedAt) revert JBChainlinkV3PriceFeed_StalePrice(block.timestamp, THRESHOLD, updatedAt);
 
         // Make sure the round is finished.
         // slither-disable-next-line incorrect-equality
         if (updatedAt == 0) revert JBChainlinkV3PriceFeed_IncompleteRound();
 
         // Make sure the price is positive.
-        if (price <= 0) revert JBChainlinkV3PriceFeed_NegativePrice();
+        if (price <= 0) revert JBChainlinkV3PriceFeed_NegativePrice(price);
 
         // Get a reference to the number of decimals the feed uses.
         uint256 feedDecimals = FEED.decimals();

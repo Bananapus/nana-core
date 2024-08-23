@@ -98,7 +98,7 @@ contract TestBurnFrom_Local is JBTokensSetup {
             abi.encode(address(0))
         );
 
-        vm.expectRevert(JBControlled.JBControlled_ControllerUnauthorized.selector);
+        vm.expectRevert(abi.encodeWithSelector(JBControlled.JBControlled_ControllerUnauthorized.selector, address(0)));
         _tokens.burnFrom(address(this), _projectId, _defaultAmount);
     }
 }

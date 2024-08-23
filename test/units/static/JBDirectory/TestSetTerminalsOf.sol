@@ -103,7 +103,7 @@ contract TestSetTerminalsOf_Local is JBDirectorySetup {
         _terminals[0] = _terminalToAdd;
         _terminals[1] = _terminalToAdd;
 
-        vm.expectRevert(JBDirectory.JBDirectory_DuplicateTerminals.selector);
+        vm.expectRevert(abi.encodeWithSelector(JBDirectory.JBDirectory_DuplicateTerminals.selector, _terminalToAdd));
         _directory.setTerminalsOf(1, _terminals);
     }
 
