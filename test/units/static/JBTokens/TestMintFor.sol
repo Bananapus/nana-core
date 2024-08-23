@@ -80,7 +80,9 @@ contract TestMintFor_Local is JBTokensSetup {
         // mock call to token totalSupply()
         mockExpect(address(_token), abi.encodeCall(IJBToken.totalSupply, ()), abi.encode(_overflowedSupply));
 
-        vm.expectRevert(abi.encodeWithSelector(JBTokens.JBTokens_OverflowAlert.selector, _overflowedSupply, type(uint208).max));
+        vm.expectRevert(
+            abi.encodeWithSelector(JBTokens.JBTokens_OverflowAlert.selector, _overflowedSupply, type(uint208).max)
+        );
         _tokens.mintFor(_holder, _projectId, _defaultAmount);
     }
 

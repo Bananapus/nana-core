@@ -99,7 +99,7 @@ contract TestRecordPayoutFor_Local is JBTerminalStoreSetup {
         bytes memory _payoutsReturn = abi.encode(_limits[0].amount);
         mockExpect(address(_accessLimits), _payoutsCall, _payoutsReturn);
 
-        vm.expectRevert(JBTerminalStore.JBTerminalStore_PayoutLimitExceeded.selector);
+        vm.expectRevert(abi.encodeWithSelector(JBTerminalStore.JBTerminalStore_PayoutLimitExceeded.selector,_defaultValue,0));
         _store.recordPayoutFor(_projectId, _contexts[0], _defaultValue, _currency);
     }
 
@@ -211,7 +211,7 @@ contract TestRecordPayoutFor_Local is JBTerminalStoreSetup {
         bytes memory _payoutsReturn = abi.encode(_defaultValue);
         mockExpect(address(_accessLimits), _payoutsCall, _payoutsReturn);
 
-        vm.expectRevert(JBTerminalStore.JBTerminalStore_InadequateTerminalStoreBalance.selector);
+        vm.expectRevert(abi.encodeWithSelector(JBTerminalStore.JBTerminalStore_InadequateTerminalStoreBalance.selector,_defaultValue, 0));
         _store.recordPayoutFor(_projectId, _contexts[0], _defaultValue, _currency);
     }
 }

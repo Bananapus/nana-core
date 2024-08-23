@@ -49,7 +49,7 @@ contract TestSetTokenFor_Local is JBTokensSetup {
         // Find the storage slot to set token
         bytes32 projectIdOfSlot = keccak256(abi.encode(_token, uint256(1)));
 
-        uint256 otherProjectId = 1234;        
+        uint256 otherProjectId = 1234;
 
         // Set storage
         vm.store(address(_tokens), projectIdOfSlot, bytes32(uint256(otherProjectId)));

@@ -132,7 +132,9 @@ contract JBTokens is JBControlled, IJBTokens {
         uint256 tokenBalance = token == IJBToken(address(0)) ? 0 : token.balanceOf(holder);
 
         // There must be enough tokens to burn across the holder's combined token and credit balance.
-        if (count > tokenBalance + creditBalance) revert JBTokens_InsufficientTokensToBurn(count, tokenBalance + creditBalance);
+        if (count > tokenBalance + creditBalance) {
+            revert JBTokens_InsufficientTokensToBurn(count, tokenBalance + creditBalance);
+        }
 
         // The amount of tokens to burn.
         uint256 tokensToBurn;
@@ -294,7 +296,9 @@ contract JBTokens is JBControlled, IJBTokens {
         }
 
         // The total supply can't exceed the maximum value storable in a uint208.
-        if (totalSupplyOf(projectId) > type(uint208).max) revert JBTokens_OverflowAlert(totalSupplyOf(projectId), type(uint208).max);
+        if (totalSupplyOf(projectId) > type(uint208).max) {
+            revert JBTokens_OverflowAlert(totalSupplyOf(projectId), type(uint208).max);
+        }
 
         emit Mint({
             holder: holder,
