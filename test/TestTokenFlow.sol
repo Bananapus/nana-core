@@ -111,7 +111,7 @@ contract TestTokenFlow_Local is TestBaseWorkflow {
         assertEq(_tokens.totalBalanceOf(_beneficiary, _projectId), _expectedTokenBalance);
 
         if (_burnAmount == 0) {
-            vm.expectRevert(JBController.JBController_NoBurnableTokens.selector);
+            vm.expectRevert(JBController.JBController_ZeroTokensToBurn.selector);
         } else if (_burnAmount > _expectedTokenBalance) {
             vm.expectRevert(
                 abi.encodeWithSelector(

@@ -97,7 +97,7 @@ contract TestBurnTokensOf_Local is JBControllerSetup {
         bytes memory _permReturn = abi.encode(true);
         mockExpect(address(permissions), _permCall, _permReturn);
 
-        vm.expectRevert(JBController.JBController_NoBurnableTokens.selector);
+        vm.expectRevert(JBController.JBController_ZeroTokensToBurn.selector);
         _controller.burnTokensOf(_holder, _projectId, _invalidCount, _memo);
     }
 }

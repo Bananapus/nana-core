@@ -56,15 +56,15 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
 
     error JBController_AddingPriceFeedNotAllowed();
     error JBController_CreditTransfersPaused();
-    error JBController_InvalidRedemptionRate();
-    error JBController_InvalidReservedPercent();
+    error JBController_InvalidRedemptionRate(uint256 rate, uint256 limit);
+    error JBController_InvalidReservedPercent(uint256 percent, uint256 limit);
     error JBController_MintNotAllowedAndNotTerminalOrHook();
-    error JBController_NoBurnableTokens();
     error JBController_NoReservedTokens();
+    error JBController_OnlyDirectory(address sender, IJBDirectory directory);
     error JBController_RulesetsAlreadyLaunched();
     error JBController_RulesetsArrayEmpty();
-    error JBController_RulesetSetTokenDisabled();
-    error JBController_Unauthorized();
+    error JBController_RulesetSetTokenNotAllowed();
+    error JBController_ZeroTokensToBurn();
     error JBController_ZeroTokensToMint();
 
     //*********************************************************************//
@@ -413,7 +413,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         });
 
         // There must be tokens to burn.
-        if (tokenCount == 0) revert JBController_NoBurnableTokens();
+        if (tokenCount == 0) revert JBController_ZeroTokensToBurn();
 
         emit BurnTokens({holder: holder, projectId: projectId, tokenCount: tokenCount, memo: memo, caller: _msgSender()});
 
@@ -623,7 +623,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     /// @param to The controller to migrate the project to.
     function migrate(uint256 projectId, IERC165 to) external override {
         // Make sure this is being called by the directory.
-        if (msg.sender != address(DIRECTORY)) revert JBController_Unauthorized();
+        if (msg.sender != address(DIRECTORY)) revert JBController_OnlyDirectory(msg.sender, DIRECTORY);
 
         emit Migrate({projectId: projectId, to: to, caller: msg.sender});
 
@@ -817,7 +817,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         if (ruleset.id == 0) ruleset = _upcomingRulesetOf(projectId);
 
         // If owner minting is disabled for the ruleset, the owner cannot change the token.
-        if (!ruleset.allowSetCustomToken()) revert JBController_RulesetSetTokenDisabled();
+        if (!ruleset.allowSetCustomToken()) revert JBController_RulesetSetTokenNotAllowed();
 
         TOKENS.setTokenFor({projectId: projectId, token: token});
     }
@@ -932,12 +932,12 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
 
             // Make sure its reserved percent is valid.
             if (rulesetConfig.metadata.reservedPercent > JBConstants.MAX_RESERVED_PERCENT) {
-                revert JBController_InvalidReservedPercent();
+                revert JBController_InvalidReservedPercent(rulesetConfig.metadata.reservedPercent, JBConstants.MAX_RESERVED_PERCENT);
             }
 
             // Make sure its redemption rate is valid.
             if (rulesetConfig.metadata.redemptionRate > JBConstants.MAX_REDEMPTION_RATE) {
-                revert JBController_InvalidRedemptionRate();
+                revert JBController_InvalidRedemptionRate(rulesetConfig.metadata.redemptionRate, JBConstants.MAX_REDEMPTION_RATE);
             }
 
             // Queue its ruleset.
