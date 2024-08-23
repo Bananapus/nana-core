@@ -184,7 +184,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
         });
 
         // The project must exist.
-        if (projectId > PROJECTS.count()) revert JBDirectory_InvalidProjectIdInDirectory(projectId,  PROJECTS.count());
+        if (projectId > PROJECTS.count()) revert JBDirectory_InvalidProjectIdInDirectory(projectId, PROJECTS.count());
 
         // Keep a reference to the current controller.
         IERC165 currentController = controllerOf[projectId];

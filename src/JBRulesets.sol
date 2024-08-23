@@ -757,7 +757,8 @@ contract JBRulesets is JBControlled, IJBRulesets {
 
             // Make sure the approval hook supports the expected interface.
             try approvalHook.supportsInterface(type(IJBRulesetApprovalHook).interfaceId) returns (bool doesSupport) {
-                if (!doesSupport) revert JBRulesets_InvalidRulesetApprovalHook(approvalHook); // Contract exists at the address but
+                if (!doesSupport) revert JBRulesets_InvalidRulesetApprovalHook(approvalHook); // Contract exists at the
+                    // address but
                     // with the
                     // wrong interface
             } catch {

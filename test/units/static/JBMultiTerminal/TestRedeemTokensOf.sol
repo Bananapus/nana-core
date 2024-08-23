@@ -39,7 +39,9 @@ contract TestRedeemTokensOf_Local is JBMultiTerminalSetup {
             abi.encode(false)
         );
 
-        vm.expectRevert(JBPermissioned.JBPermissioned_Unauthorized.selector);
+        vm.expectRevert(
+            abi.encodeWithSelector(JBPermissioned.JBPermissioned_Unauthorized.selector, _holder, _bene, _projectId, 3)
+        );
         vm.prank(_bene);
         _terminal.redeemTokensOf(_holder, _projectId, _mockToken, _defaultAmount, _minReclaimed, _bene, "");
     }

@@ -639,7 +639,9 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
 
         // The amount being paid out must be available.
         if (amountPaidOut > balanceOf[msg.sender][projectId][accountingContext.token]) {
-            revert JBTerminalStore_InadequateTerminalStoreBalance(amountPaidOut, balanceOf[msg.sender][projectId][accountingContext.token]);
+            revert JBTerminalStore_InadequateTerminalStoreBalance(
+                amountPaidOut, balanceOf[msg.sender][projectId][accountingContext.token]
+            );
         }
 
         // Store the new amount.

@@ -74,7 +74,7 @@ contract TestAddPriceFeedFor_Local is JBPricesSetup {
         vm.prank(_owner);
         _prices.addPriceFeedFor(DEFAULT_PROJECT_ID, _pricingCurrency, _unitCurrency, _feed);
 
-        vm.expectRevert(abi.encodeWithSelector(JBPrices.JBPrices_PriceFeedAlreadyExists.selector,_feed));
+        vm.expectRevert(abi.encodeWithSelector(JBPrices.JBPrices_PriceFeedAlreadyExists.selector, _feed));
         _prices.addPriceFeedFor(_projectId, _pricingCurrency, _unitCurrency, _feed);
     }
 

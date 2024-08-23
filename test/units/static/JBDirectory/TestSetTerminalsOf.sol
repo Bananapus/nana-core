@@ -76,9 +76,9 @@ contract TestSetTerminalsOf_Local is JBDirectorySetup {
         // it should revert with UNAUTHORIZED()
         // mock ownerOf call
         bytes memory _ownerOfCall = abi.encodeCall(IERC721.ownerOf, (1));
-        bytes memory _ownerData = abi.encode(address(1));
+        address _ownerData = address(1);
 
-        mockExpect(address(projects), _ownerOfCall, _ownerData);
+        mockExpect(address(projects), _ownerOfCall, abi.encode(_ownerData));
 
         // mock first permissions call
         bytes memory _permissionsCall = abi.encodeCall(
@@ -92,7 +92,11 @@ contract TestSetTerminalsOf_Local is JBDirectorySetup {
         IJBTerminal[] memory _terminals = new IJBTerminal[](1);
         _terminals[0] = _terminalToAdd;
 
-        vm.expectRevert(JBPermissioned.JBPermissioned_Unauthorized.selector);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                JBPermissioned.JBPermissioned_Unauthorized.selector, _ownerData, address(this), 1, 14
+            )
+        );
         _directory.setTerminalsOf(1, _terminals);
     }
 

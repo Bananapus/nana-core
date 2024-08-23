@@ -12,7 +12,7 @@ abstract contract JBPermissioned is Context, IJBPermissioned {
     // --------------------------- custom errors -------------------------- //
     //*********************************************************************//
 
-    error JBPermissioned_Unauthorized();
+    error JBPermissioned_Unauthorized(address account, address sender, uint256 projectId, uint256 permissionId);
 
     //*********************************************************************//
     // ---------------- public immutable stored properties --------------- //
@@ -51,7 +51,7 @@ abstract contract JBPermissioned is Context, IJBPermissioned {
                     includeRoot: true,
                     includeWildcardProjectId: true
                 })
-        ) revert JBPermissioned_Unauthorized();
+        ) revert JBPermissioned_Unauthorized(account, sender, projectId, permissionId);
     }
 
     /// @notice If the 'alsoGrantAccessIf' condition is truthy, proceed. Otherwise, require the message sender to be the

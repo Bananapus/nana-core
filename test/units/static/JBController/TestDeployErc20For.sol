@@ -36,8 +36,8 @@ contract TestDeployERC20For_Local is JBControllerSetup {
 
         // mock call to JBProjects ownerOf which will give permission
         bytes memory _projectsCall = abi.encodeCall(IERC721.ownerOf, (_projectId));
-        bytes memory _projectsCallReturn = abi.encode(address(0));
-        mockExpect(address(projects), _projectsCall, _projectsCallReturn);
+        address _projectsCallReturn = address(0);
+        mockExpect(address(projects), _projectsCall, abi.encode(_projectsCallReturn));
 
         // mock call for projects permission
         bytes memory _permissionCall1 = abi.encodeCall(
@@ -47,7 +47,11 @@ contract TestDeployERC20For_Local is JBControllerSetup {
         bytes memory _permissionCallReturn1 = abi.encode(false);
         mockExpect(address(permissions), _permissionCall1, _permissionCallReturn1);
 
-        vm.expectRevert(JBPermissioned.JBPermissioned_Unauthorized.selector);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                JBPermissioned.JBPermissioned_Unauthorized.selector, _projectsCallReturn, address(this), _projectId, 7
+            )
+        );
         _controller.deployERC20For(_projectId, _name, _symbol, _salt);
     }
 }

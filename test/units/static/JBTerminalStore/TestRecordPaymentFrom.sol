@@ -294,7 +294,13 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
         bytes memory _beforePayReturn = abi.encode(1e18 / 2, _spec);
         mockExpect(address(_dataHook), _beforePayCall, _beforePayReturn);
 
-        vm.expectRevert(abi.encodeWithSelector(JBTerminalStore.JBTerminalStore_InvalidAmountToForwardHook.selector, _defaultValue * 2, _tokenAmount.value));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                JBTerminalStore.JBTerminalStore_InvalidAmountToForwardHook.selector,
+                _defaultValue * 2,
+                _tokenAmount.value
+            )
+        );
         _store.recordPaymentFrom({
             payer: address(this),
             amount: _tokenAmount,

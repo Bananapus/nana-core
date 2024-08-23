@@ -57,7 +57,9 @@ contract JBChainlinkV3PriceFeed is IJBPriceFeed {
         (, int256 price,, uint256 updatedAt,) = FEED.latestRoundData();
 
         // Make sure the price's update threshold is met.
-        if (block.timestamp > THRESHOLD + updatedAt) revert JBChainlinkV3PriceFeed_StalePrice(block.timestamp, THRESHOLD, updatedAt);
+        if (block.timestamp > THRESHOLD + updatedAt) {
+            revert JBChainlinkV3PriceFeed_StalePrice(block.timestamp, THRESHOLD, updatedAt);
+        }
 
         // Make sure the round is finished.
         // slither-disable-next-line incorrect-equality

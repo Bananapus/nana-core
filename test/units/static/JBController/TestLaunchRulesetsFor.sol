@@ -111,7 +111,9 @@ contract TestLaunchRulesetsFor_Local is JBControllerSetup {
         JBTerminalConfig[] memory _terminalConfigs = new JBTerminalConfig[](0);
         JBRulesetConfig[] memory _rulesetConfigs = new JBRulesetConfig[](1);
 
-        vm.expectRevert(JBPermissioned.JBPermissioned_Unauthorized.selector);
+        vm.expectRevert(
+            abi.encodeWithSelector(JBPermissioned.JBPermissioned_Unauthorized.selector, address(1), address(this), 1, 2)
+        );
 
         _controller.launchRulesetsFor(1, _rulesetConfigs, _terminalConfigs, "");
     }
@@ -202,9 +204,9 @@ contract TestLaunchRulesetsFor_Local is JBControllerSetup {
 
         // mock ownerOf call
         bytes memory _ownerOfCall = abi.encodeCall(IERC721.ownerOf, (1));
-        bytes memory _ownerData = abi.encode(address(1));
+        address _ownerData = address(1);
 
-        mockExpect(address(projects), _ownerOfCall, _ownerData);
+        mockExpect(address(projects), _ownerOfCall, abi.encode(_ownerData));
 
         // mock permission call
         bytes memory _call = abi.encodeCall(
@@ -222,7 +224,11 @@ contract TestLaunchRulesetsFor_Local is JBControllerSetup {
         JBTerminalConfig[] memory _terminalConfigs = new JBTerminalConfig[](0);
         JBRulesetConfig[] memory _rulesetConfigs = new JBRulesetConfig[](1);
 
-        vm.expectRevert(JBPermissioned.JBPermissioned_Unauthorized.selector);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                JBPermissioned.JBPermissioned_Unauthorized.selector, _ownerData, address(this), 1, 14
+            )
+        );
 
         _controller.launchRulesetsFor(1, _rulesetConfigs, _terminalConfigs, "");
     }

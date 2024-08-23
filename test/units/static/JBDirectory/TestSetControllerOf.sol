@@ -62,9 +62,9 @@ contract TestSetControllerOf_Local is JBDirectorySetup {
         // it should revert
         // mock ownerOf call
         bytes memory _ownerOfCall = abi.encodeCall(IERC721.ownerOf, (1));
-        bytes memory _ownerData = abi.encode(address(1));
+        address _ownerData = address(1);
 
-        mockExpect(address(projects), _ownerOfCall, _ownerData);
+        mockExpect(address(projects), _ownerOfCall, abi.encode(_ownerData));
 
         // mock first permissions call
         bytes memory _permissionsCall = abi.encodeCall(
@@ -74,7 +74,11 @@ contract TestSetControllerOf_Local is JBDirectorySetup {
 
         mockExpect(address(permissions), _permissionsCall, _permissionsReturned);
 
-        vm.expectRevert(JBPermissioned.JBPermissioned_Unauthorized.selector);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                JBPermissioned.JBPermissioned_Unauthorized.selector, _ownerData, address(this), 1, 13
+            )
+        );
         _directory.setControllerOf(1, IERC165(address(this)));
     }
 

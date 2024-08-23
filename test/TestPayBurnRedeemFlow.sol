@@ -152,7 +152,13 @@ contract TestPayBurnRedeemFlow_Local is TestBaseWorkflow {
 
         // Redeem tokens.
         if (_redeemTokenAmount > _beneficiaryTokenBalance) {
-            vm.expectRevert(abi.encodeWithSelector(JBTerminalStore.JBTerminalStore_InsufficientTokens.selector, _redeemTokenAmount, _beneficiaryTokenBalance));
+            vm.expectRevert(
+                abi.encodeWithSelector(
+                    JBTerminalStore.JBTerminalStore_InsufficientTokens.selector,
+                    _redeemTokenAmount,
+                    _beneficiaryTokenBalance
+                )
+            );
         } else {
             _beneficiaryTokenBalance = _beneficiaryTokenBalance - _redeemTokenAmount;
         }
