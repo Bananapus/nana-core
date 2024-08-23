@@ -27,7 +27,7 @@ contract TestBurnFrom_Local is JBTokensSetup {
     function test_GivenTheCallingAmountGTTokenbalancePlusCreditbalanceOfHolder() external whenCallerIsController {
         // it will revert INSUFFICIENT_FUNDS
 
-        vm.expectRevert(JBTokens.JBTokens_InsufficientFunds.selector);
+        vm.expectRevert(abi.encodeWithSelector(JBTokens.JBTokens_InsufficientTokensToBurn.selector, _defaultAmount, 0));
         _tokens.burnFrom(address(this), _projectId, _defaultAmount);
     }
 

@@ -51,7 +51,7 @@ contract TestDeployERC20ForUnits_Local is JBTokensSetup {
         IJBToken _storedToken = _tokens.tokenOf(_projectId);
         assertEq(address(_storedToken), address(_token));
 
-        vm.expectRevert(JBTokens.JBTokens_ProjectAlreadyHasToken.selector);
+        vm.expectRevert(abi.encodeWithSelector(JBTokens.JBTokens_ProjectAlreadyHasToken.selector, _storedToken));
         _tokens.deployERC20For({projectId: _projectId, name: _name, symbol: _symbol, salt: bytes32(0)});
     }
 
