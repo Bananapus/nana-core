@@ -112,7 +112,7 @@ contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
         // outer structure
         _splitsGroup[0] = JBSplitGroup({groupId: 0, splits: _splitsArray});
 
-        vm.expectRevert(JBSplits.JBSplits_InvalidSplitPercent.selector);
+        vm.expectRevert(JBSplits.JBSplits_ZeroSplitPercent.selector);
         _splits.setSplitGroupsOf(_projectId, _rulesetId, _splitsGroup);
     }
 
@@ -146,7 +146,7 @@ contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
         // outer structure
         _splitsGroup[0] = JBSplitGroup({groupId: 0, splits: _splitsArray});
 
-        vm.expectRevert(JBSplits.JBSplits_InvalidTotalPercent.selector);
+        vm.expectRevert(JBSplits.JBSplits_TotalPercentExceeds100.selector);
         _splits.setSplitGroupsOf(_projectId, _rulesetId, _splitsGroup);
     }
 

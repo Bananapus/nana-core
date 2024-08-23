@@ -234,7 +234,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
 
         mockExpect(address(_directory), _encodedCall, _willReturn);
 
-        vm.expectRevert(JBRulesets.JBRulesets_InvalidRulesetDuration.selector);
+        vm.expectRevert(abi.encodeWithSelector(JBRulesets.JBRulesets_InvalidRulesetDuration.selector, _invalidDuration, type(uint32).max));
 
         // Send: Call from this contract as it's been mock authorized above.
         _rulesets.queueFor({
@@ -258,7 +258,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
 
         mockExpect(address(_directory), _encodedCall, _willReturn);
 
-        vm.expectRevert(JBRulesets.JBRulesets_InvalidDecayPercent.selector);
+        vm.expectRevert(abi.encodeWithSelector(JBRulesets.JBRulesets_InvalidDecayPercent.selector, _invalidDecayPercent));
 
         // Send: Call from this contract as it's been mock authorized above.
         _rulesets.queueFor({
@@ -282,7 +282,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
 
         mockExpect(address(_directory), _encodedCall, _willReturn);
 
-        vm.expectRevert(JBRulesets.JBRulesets_InvalidWeight.selector);
+        vm.expectRevert(abi.encodeWithSelector(JBRulesets.JBRulesets_InvalidWeight.selector, _invalidWeight, type(uint112).max));
 
         // Send: Call from this contract as it's been mock authorized above.
         _rulesets.queueFor({
@@ -318,7 +318,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
         }
 
         if (_bigDuration + _bigStartAt > type(uint48).max) {
-            vm.expectRevert(JBRulesets.JBRulesets_InvalidRulesetEndTime.selector);
+            vm.expectRevert(abi.encodeWithSelector(JBRulesets.JBRulesets_InvalidRulesetEndTime.selector, _bigDuration + _bigStartAt ,type(uint48).max));
         }
 
         // Send: Call from this contract as it's been mock authorized above.
@@ -343,7 +343,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
         mockExpect(address(_directory), _encodedCall, _willReturn);
 
         // will revert since code length is zero
-        vm.expectRevert(JBRulesets.JBRulesets_InvalidRulesetApprovalHook.selector);
+        vm.expectRevert(abi.encodeWithSelector(JBRulesets.JBRulesets_InvalidRulesetApprovalHook.selector, _mockApprovalHook));
 
         // Send: Call from this contract as it's been mock authorized above.
         _rulesets.queueFor({

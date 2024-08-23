@@ -15,9 +15,9 @@ contract JBSplits is JBControlled, IJBSplits {
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
 
-    error JBSplits_InvalidSplitPercent();
-    error JBSplits_InvalidTotalPercent();
+    error JBSplits_TotalPercentExceeds100();
     error JBSplits_PreviousLockedSplitsNotIncluded();
+    error JBSplits_ZeroSplitPercent();
 
     //*********************************************************************//
     // ------------------------- public constants ------------------------ //
@@ -263,13 +263,13 @@ contract JBSplits is JBControlled, IJBSplits {
             split = splits[i];
 
             // The percent should be greater than 0.
-            if (split.percent == 0) revert JBSplits_InvalidSplitPercent();
+            if (split.percent == 0) revert JBSplits_ZeroSplitPercent();
 
             // Add to the `percent` total.
             percentTotal = percentTotal + split.percent;
 
             // Ensure the total does not exceed 100%.
-            if (percentTotal > JBConstants.SPLITS_TOTAL_PERCENT) revert JBSplits_InvalidTotalPercent();
+            if (percentTotal > JBConstants.SPLITS_TOTAL_PERCENT) revert JBSplits_TotalPercentExceeds100();
 
             uint256 packedSplitParts1;
 

@@ -373,15 +373,17 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         // Launch the project.
         uint256 projectId = launchProjectForTest();
 
+        IJBRulesetApprovalHook invalidHook = IJBRulesetApprovalHook(address(6969));
+
         vm.prank(multisig());
-        vm.expectRevert(JBRulesets.JBRulesets_InvalidRulesetApprovalHook.selector);
+        vm.expectRevert(abi.encodeWithSelector(JBRulesets.JBRulesets_InvalidRulesetApprovalHook.selector, invalidHook));
 
         JBRulesetConfig[] memory _config = new JBRulesetConfig[](1);
         _config[0].mustStartAtOrAfter = 0;
         _config[0].duration = _RULESET_DURATION;
         _config[0].weight = 12_345 * 10 ** 18;
         _config[0].decayPercent = 0;
-        _config[0].approvalHook = IJBRulesetApprovalHook(address(6969));
+        _config[0].approvalHook = invalidHook;
         _config[0].metadata = _metadata;
         _config[0].splitGroups = _splitGroup;
         _config[0].fundAccessLimitGroups = _fundAccessLimitGroup;
