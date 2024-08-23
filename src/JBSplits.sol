@@ -210,11 +210,8 @@ contract JBSplits is JBControlled, IJBSplits {
         override
         onlyControllerOf(projectId)
     {
-        // Keep a reference to the number of split groups.
-        uint256 numberOfSplitGroups = splitGroups.length;
-
         // Set each grouped splits.
-        for (uint256 i; i < numberOfSplitGroups; i++) {
+        for (uint256 i; i < splitGroups.length; i++) {
             // Get a reference to the grouped split being iterated on.
             JBSplitGroup memory splitGroup = splitGroups[i];
 

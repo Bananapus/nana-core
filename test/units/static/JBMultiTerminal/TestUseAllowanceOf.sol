@@ -48,7 +48,7 @@ contract TestUseAllowanceOf_Local is JBMultiTerminalSetup {
             address(feelessAddresses), abi.encodeCall(IJBFeelessAddresses.isFeeless, (address(this))), abi.encode(true)
         );
 
-        vm.expectRevert(JBMultiTerminal.JBMultiTerminal_UnderMinTokensPaidOut.selector);
+        vm.expectRevert(abi.encodeWithSelector(JBMultiTerminal.JBMultiTerminal_UnderMinTokensPaidOut.selector, 0, 1));
         _terminal.useAllowanceOf(_projectId, address(0), 0, 0, 1, payable(address(this)), payable(address(this)), "");
     }
 

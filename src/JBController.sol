@@ -877,18 +877,12 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     /// @param projectId The ID of the project to set up terminals for.
     /// @param terminalConfigs The terminals to set up.
     function _configureTerminals(uint256 projectId, JBTerminalConfig[] calldata terminalConfigs) internal {
-        // Keep a reference to the number of terminals being configured.
-        uint256 numberOfTerminalConfigs = terminalConfigs.length;
-
         // Initialize an array of terminals to populate.
-        IJBTerminal[] memory terminals = new IJBTerminal[](numberOfTerminalConfigs);
+        IJBTerminal[] memory terminals = new IJBTerminal[](terminalConfigs.length);
 
-        // Keep a reference to the terminal configuration being iterated on.
-        JBTerminalConfig memory terminalConfig;
-
-        for (uint256 i; i < numberOfTerminalConfigs; i++) {
+        for (uint256 i; i <  terminalConfigs.length; i++) {
             // Set the terminal configuration being iterated on.
-            terminalConfig = terminalConfigs[i];
+            JBTerminalConfig memory terminalConfig = terminalConfigs[i];
 
             // Add the accounting contexts for the specified tokens.
             terminalConfig.terminal.addAccountingContextsFor({
@@ -901,7 +895,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         }
 
         // Set the terminals in the directory.
-        if (numberOfTerminalConfigs > 0) {
+        if (terminalConfigs.length > 0) {
             DIRECTORY.setTerminalsOf({projectId: projectId, terminals: terminals});
         }
     }
@@ -917,18 +911,9 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         internal
         returns (uint256 rulesetId)
     {
-        // Keep a reference to the number of ruleset configurations being queued.
-        uint256 numberOfConfigurations = rulesetConfigurations.length;
-
-        // Keep a reference to the ruleset config being iterated on.
-        JBRulesetConfig memory rulesetConfig;
-
-        // Keep a reference to the latest queued ruleset.
-        JBRuleset memory ruleset;
-
-        for (uint256 i; i < numberOfConfigurations; i++) {
+        for (uint256 i; i < rulesetConfigurations.length; i++) {
             // Get a reference to the ruleset config being iterated on.
-            rulesetConfig = rulesetConfigurations[i];
+            JBRulesetConfig memory rulesetConfig = rulesetConfigurations[i];
 
             // Make sure its reserved percent is valid.
             if (rulesetConfig.metadata.reservedPercent > JBConstants.MAX_RESERVED_PERCENT) {
@@ -941,7 +926,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
             }
 
             // Queue its ruleset.
-            ruleset = RULESETS.queueFor({
+            JBRuleset memory ruleset = RULESETS.queueFor({
                 projectId: projectId,
                 duration: rulesetConfig.duration,
                 weight: rulesetConfig.weight,
@@ -966,7 +951,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
             });
 
             // If this is the last configuration being queued, return the ruleset's ID.
-            if (i == numberOfConfigurations - 1) {
+            if (i == rulesetConfigurations.length - 1) {
                 rulesetId = ruleset.id;
             }
         }
@@ -1047,16 +1032,13 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         // Keep a reference to the split being iterated on.
         JBSplit memory split;
 
-        // Keep a reference to the split amount being iterated on.
-        uint256 splitTokenCount;
-
         // Send the tokens to the splits.
         for (uint256 i; i < numberOfSplits; i++) {
             // Get a reference to the split being iterated on.
             split = splits[i];
 
             // Calculate the amount to send to the split.
-            splitTokenCount = mulDiv(tokenCount, split.percent, JBConstants.SPLITS_TOTAL_PERCENT);
+            uint256 splitTokenCount = mulDiv(tokenCount, split.percent, JBConstants.SPLITS_TOTAL_PERCENT);
 
             // Mints tokens for the split if needed.
             if (splitTokenCount > 0) {
