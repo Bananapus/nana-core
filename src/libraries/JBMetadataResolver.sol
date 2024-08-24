@@ -80,8 +80,6 @@ library JBMetadataResolver {
         // The last offset stored in the table and its index
         uint256 lastOffset;
 
-        uint256 lastOffsetIndex;
-
         // The number of words taken by the last data stored
         uint256 numberOfWordslastData;
 
@@ -92,7 +90,7 @@ library JBMetadataResolver {
             // If the byte is not 0, this is the last offset we're looking for
             if (originalMetadata[i] != 0) {
                 lastOffset = uint8(originalMetadata[i]);
-                lastOffsetIndex = i;
+                uint256 lastOffsetIndex = i;
 
                 // No rounding as this should be padded to 32B
                 numberOfWordslastData = (originalMetadata.length - lastOffset * WORD_SIZE) / WORD_SIZE;
@@ -167,15 +165,21 @@ library JBMetadataResolver {
         // ... and after the id/offset lookup table, rounding up to 32 bytes words if not a multiple
         offset += ((ids.length * JBMetadataResolver.TOTAL_ID_SIZE) - 1) / JBMetadataResolver.WORD_SIZE + 1;
 
+        // Keep a reference to the number of ids.
+        uint256 numberOfIds = ids.length;
+
         // For each id, add it to the lookup table with the next free offset, then increment the offset by the data
         // length (rounded up)
-        for (uint256 i; i < ids.length; ++i) {
-            if (datas[i].length < 32 || datas[i].length % JBMetadataResolver.WORD_SIZE != 0) {
+        for (uint256 i; i < numberOfIds; ++i) {
+            // Set the data being iterated on.
+            bytes memory data = datas[i];
+
+            if (data.length < 32 || data.length % JBMetadataResolver.WORD_SIZE != 0) {
                 revert JBMetadataResolver_DataNotPadded();
             }
 
             metadata = abi.encodePacked(metadata, ids[i], bytes1(uint8(offset)));
-            offset += datas[i].length / JBMetadataResolver.WORD_SIZE;
+            offset += data.length / JBMetadataResolver.WORD_SIZE;
 
             // Overflowing a bytes1?
             if (offset > 255) revert JBMetadataResolver_MetadataTooLong();
@@ -189,8 +193,11 @@ library JBMetadataResolver {
             mstore(metadata, paddedLength)
         }
 
+        // Keep a reference to the number of datas.
+        uint256 numberOfDatas = datas.length;
+
         // Add each metadata to the array, each padded to 32 bytes
-        for (uint256 i; i < datas.length; i++) {
+        for (uint256 i; i < numberOfDatas; i++) {
             metadata = abi.encodePacked(metadata, datas[i]);
             paddedLength = metadata.length % JBMetadataResolver.WORD_SIZE == 0
                 ? metadata.length
@@ -217,6 +224,7 @@ library JBMetadataResolver {
 
         // Parse the id's to find id, stop when next offset == 0 or current = first offset
         for (uint256 i = RESERVED_SIZE; metadata[i + ID_SIZE] != bytes1(0) && i < firstOffset * WORD_SIZE;) {
+            // Set the current offset.
             uint256 currentOffset = uint256(uint8(metadata[i + ID_SIZE]));
 
             bytes4 parsedId;

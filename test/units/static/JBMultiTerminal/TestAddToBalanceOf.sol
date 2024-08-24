@@ -364,7 +364,9 @@ contract TestAddToBalanceOf_Local is JBMultiTerminalSetup {
         // Setup: use the metadata library to encode.
         bytes memory _packedData = _metadataHelper.createMetadata(_ids, _datas);
 
-        vm.expectRevert(abi.encodeWithSelector(JBMultiTerminal.JBMultiTerminal_PermitAllowanceNotEnough.selector, payAmount, 1));
+        vm.expectRevert(
+            abi.encodeWithSelector(JBMultiTerminal.JBMultiTerminal_PermitAllowanceNotEnough.selector, payAmount, 1)
+        );
 
         vm.startPrank(from);
 

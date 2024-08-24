@@ -207,7 +207,11 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
             hook: IJBSplitHook(address(0))
         });
 
-        vm.expectRevert(abi.encodeWithSelector(JBMultiTerminal.JBMultiTerminal_RecipientProjectTerminalNotFound.selector, _projectId, _native));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                JBMultiTerminal.JBMultiTerminal_RecipientProjectTerminalNotFound.selector, _projectId, _native
+            )
+        );
         vm.prank(address(_terminal));
         JBMultiTerminal(address(_terminal)).executePayout({
             split: _splitMemory,

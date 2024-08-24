@@ -148,9 +148,6 @@ contract JBPermissions is IJBPermissions {
             return true;
         }
 
-        // Keep a reference to the permission being iterated on.
-        uint256 permissionId;
-
         // Keep a reference to the permission item being checked.
         uint256 operatorAccountProjectPermissions = permissionsOf[operator][account][projectId];
 
@@ -160,7 +157,7 @@ contract JBPermissions is IJBPermissions {
 
         for (uint256 i; i < permissionIds.length; i++) {
             // Set the permission being iterated on.
-            permissionId = permissionIds[i];
+            uint256 permissionId = permissionIds[i];
 
             // Indexes above 255 don't exist
             if (permissionId > 255) revert JBPermissions_PermissionIdOutOfBounds(permissionId);
@@ -192,12 +189,9 @@ contract JBPermissions is IJBPermissions {
     /// @param permissionIds The IDs of the permissions to pack.
     /// @return packed The packed value.
     function _packedPermissions(uint8[] calldata permissionIds) internal pure returns (uint256 packed) {
-        // Keep a reference to the permission being iterated on.
-        uint256 permissionId;
-
         for (uint256 i; i < permissionIds.length; i++) {
             // Set the permission being iterated on.
-            permissionId = permissionIds[i];
+            uint256 permissionId = permissionIds[i];
 
             // Turn on the bit at the ID.
             packed |= 1 << permissionId;

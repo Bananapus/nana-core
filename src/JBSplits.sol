@@ -169,12 +169,9 @@ contract JBSplits is JBControlled, IJBSplits {
         // Keep a reference to the number of splits.
         uint256 numberOfSplits = splits.length;
 
-        // Keep a reference to the split being iterated on.
-        JBSplit memory split;
-
         for (uint256 i; i < numberOfSplits; i++) {
             // Set the split being iterated on.
-            split = splits[i];
+            JBSplit memory split = splits[i];
 
             // Check for sameness.
             if (
@@ -252,12 +249,9 @@ contract JBSplits is JBControlled, IJBSplits {
         // Keep a reference to the number of splits to set.
         uint256 numberOfSplits = splits.length;
 
-        // Keep a reference to the split being iterated on.
-        JBSplit memory split;
-
         for (uint256 i; i < numberOfSplits; i++) {
             // Set the split being iterated on.
-            split = splits[i];
+            JBSplit memory split = splits[i];
 
             // The percent should be greater than 0.
             if (split.percent == 0) revert JBSplits_ZeroSplitPercent();

@@ -67,7 +67,9 @@ contract TestAddAccountingContextsFor_Local is JBMultiTerminalSetup {
         JBAccountingContext[] memory _tokens = new JBAccountingContext[](1);
         _tokens[0] = JBAccountingContext({token: _usdc, decimals: 6, currency: uint32(uint160(_usdc))});
 
-        vm.expectRevert(abi.encodeWithSelector(JBMultiTerminal.JBMultiTerminal_AccountingContextAlreadySet.selector, _usdc));
+        vm.expectRevert(
+            abi.encodeWithSelector(JBMultiTerminal.JBMultiTerminal_AccountingContextAlreadySet.selector, _usdc)
+        );
         _terminal.addAccountingContextsFor(_projectId, _tokens);
     }
 

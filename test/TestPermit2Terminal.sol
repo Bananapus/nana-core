@@ -166,7 +166,9 @@ contract TestPermit2Terminal_Local is TestBaseWorkflow {
         IERC20(address(_usdc)).approve(address(permit2()), _coins);
 
         if (_coins == uint256(type(uint160).max) + 1) {
-            vm.expectRevert(abi.encodeWithSelector(JBMultiTerminal.JBMultiTerminal_PermitAllowanceNotEnough.selector, _coins, 0));
+            vm.expectRevert(
+                abi.encodeWithSelector(JBMultiTerminal.JBMultiTerminal_PermitAllowanceNotEnough.selector, _coins, 0)
+            );
         }
 
         vm.prank(from);
@@ -232,7 +234,9 @@ contract TestPermit2Terminal_Local is TestBaseWorkflow {
         IERC20(address(_usdc)).approve(address(permit2()), _coins);
 
         if (_coins == uint256(type(uint160).max) + 1) {
-            vm.expectRevert(abi.encodeWithSelector(JBMultiTerminal.JBMultiTerminal_PermitAllowanceNotEnough.selector, _coins, 0));
+            vm.expectRevert(
+                abi.encodeWithSelector(JBMultiTerminal.JBMultiTerminal_PermitAllowanceNotEnough.selector, _coins, 0)
+            );
         }
 
         // Test: add to balance using permit2 data, which should transfer tokens.
@@ -273,7 +277,11 @@ contract TestPermit2Terminal_Local is TestBaseWorkflow {
             signature: sig
         });
 
-        vm.expectRevert(abi.encodeWithSelector(JBMultiTerminal.JBMultiTerminal_OverflowAlert.selector, _payAmount, type(uint160).max));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                JBMultiTerminal.JBMultiTerminal_OverflowAlert.selector, _payAmount, type(uint160).max
+            )
+        );
 
         vm.prank(from);
         _terminal.pay({

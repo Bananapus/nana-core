@@ -117,7 +117,11 @@ contract TestMigrateController_Local is JBControllerSetup {
     function test_Revert_When_Caller_Is_Not_Directory() external {
         // it should revert
 
-        vm.expectRevert(abi.encodeWithSelector(JBController.JBController_OnlyDirectory.selector, address(this), _controller.DIRECTORY()));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                JBController.JBController_OnlyDirectory.selector, address(this), _controller.DIRECTORY()
+            )
+        );
         IJBMigratable(address(_controller)).migrate(1, IJBMigratable(address(this)));
     }
 

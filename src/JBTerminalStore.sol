@@ -396,15 +396,12 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
             token: accountingContext.token
         });
 
-        // Keep a reference to the payout limit being iterated on.
-        JBCurrencyAmount memory payoutLimit;
-
         // Keep a reference to the number of payout limits being iterated on.
         uint256 numberOfPayoutLimits = payoutLimits.length;
 
         // Loop through each payout limit to determine the cumulative normalized payout limit remaining.
         for (uint256 i; i < numberOfPayoutLimits; i++) {
-            payoutLimit = payoutLimits[i];
+            JBCurrencyAmount memory payoutLimit = payoutLimits[i];
 
             // Set the payout limit value to the amount still available to pay out during the ruleset.
             payoutLimit.amount = uint224(

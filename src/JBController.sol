@@ -170,13 +170,10 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         // Initialize the array being returned.
         rulesets = new JBRulesetWithMetadata[](numberOfRulesets);
 
-        // Keep a reference to the ruleset being iterated on.
-        JBRuleset memory baseRuleset;
-
         // Populate the array with rulesets AND their metadata.
         for (uint256 i; i < numberOfRulesets; i++) {
             // Set the ruleset being iterated on.
-            baseRuleset = baseRulesets[i];
+            JBRuleset memory baseRuleset = baseRulesets[i];
 
             // Set the returned value.
             rulesets[i] = JBRulesetWithMetadata({ruleset: baseRuleset, metadata: baseRuleset.expandMetadata()});
@@ -880,7 +877,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         // Initialize an array of terminals to populate.
         IJBTerminal[] memory terminals = new IJBTerminal[](terminalConfigs.length);
 
-        for (uint256 i; i <  terminalConfigs.length; i++) {
+        for (uint256 i; i < terminalConfigs.length; i++) {
             // Set the terminal configuration being iterated on.
             JBTerminalConfig memory terminalConfig = terminalConfigs[i];
 
@@ -917,12 +914,16 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
 
             // Make sure its reserved percent is valid.
             if (rulesetConfig.metadata.reservedPercent > JBConstants.MAX_RESERVED_PERCENT) {
-                revert JBController_InvalidReservedPercent(rulesetConfig.metadata.reservedPercent, JBConstants.MAX_RESERVED_PERCENT);
+                revert JBController_InvalidReservedPercent(
+                    rulesetConfig.metadata.reservedPercent, JBConstants.MAX_RESERVED_PERCENT
+                );
             }
 
             // Make sure its redemption rate is valid.
             if (rulesetConfig.metadata.redemptionRate > JBConstants.MAX_REDEMPTION_RATE) {
-                revert JBController_InvalidRedemptionRate(rulesetConfig.metadata.redemptionRate, JBConstants.MAX_REDEMPTION_RATE);
+                revert JBController_InvalidRedemptionRate(
+                    rulesetConfig.metadata.redemptionRate, JBConstants.MAX_REDEMPTION_RATE
+                );
             }
 
             // Queue its ruleset.
@@ -1029,13 +1030,10 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         // Keep a reference to the number of splits being iterated on.
         uint256 numberOfSplits = splits.length;
 
-        // Keep a reference to the split being iterated on.
-        JBSplit memory split;
-
         // Send the tokens to the splits.
         for (uint256 i; i < numberOfSplits; i++) {
             // Get a reference to the split being iterated on.
-            split = splits[i];
+            JBSplit memory split = splits[i];
 
             // Calculate the amount to send to the split.
             uint256 splitTokenCount = mulDiv(tokenCount, split.percent, JBConstants.SPLITS_TOTAL_PERCENT);

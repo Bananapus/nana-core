@@ -136,7 +136,7 @@ contract TestPay_Local is JBMultiTerminalSetup {
             abi.encode(returnedRuleset, 0, hookSpecifications)
         );
 
-        vm.expectRevert(abi.encodeWithSelector(JBMultiTerminal.JBMultiTerminal_UnderMinReturnedTokens.selector, 0 ,1));
+        vm.expectRevert(abi.encodeWithSelector(JBMultiTerminal.JBMultiTerminal_UnderMinReturnedTokens.selector, 0, 1));
         _terminal.pay{value: 1e18}({
             projectId: _projectId,
             token: _native,

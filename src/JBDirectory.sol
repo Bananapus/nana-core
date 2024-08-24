@@ -105,13 +105,10 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
         // Keep a reference to the number of terminals the project has.
         uint256 numberOfTerminals = terminals.length;
 
-        // Keep a reference to the terminal being iterated on.
-        IJBTerminal terminal;
-
         // Return the first terminal which accepts the specified token.
         for (uint256 i; i < numberOfTerminals; i++) {
             // Keep a reference to the terminal being iterated on.
-            terminal = terminals[i];
+            IJBTerminal terminal = terminals[i];
 
             // If the terminal accepts the specified token, return it.
             // slither-disable-next-line calls-loop
@@ -140,7 +137,6 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
     /// @param terminal The terminal to check for.
     /// @return A flag indicating whether the project uses the terminal.
     function isTerminalOf(uint256 projectId, IJBTerminal terminal) public view override returns (bool) {
-
         // Keep a reference to the project's terminals.
         IJBTerminal[] memory terminals = _terminalsOf[projectId];
 
