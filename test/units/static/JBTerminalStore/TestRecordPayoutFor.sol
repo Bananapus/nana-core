@@ -100,7 +100,9 @@ contract TestRecordPayoutFor_Local is JBTerminalStoreSetup {
         mockExpect(address(_accessLimits), _payoutsCall, _payoutsReturn);
 
         vm.expectRevert(
-            abi.encodeWithSelector(JBTerminalStore.JBTerminalStore_PayoutLimitExceeded.selector, _defaultValue, 0)
+            abi.encodeWithSelector(
+                JBTerminalStore.JBTerminalStore_InadequateControllerPayoutLimit.selector, _defaultValue, 0
+            )
         );
         _store.recordPayoutFor(_projectId, _contexts[0], _defaultValue, _currency);
     }
