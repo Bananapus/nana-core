@@ -38,8 +38,8 @@ contract TestSetSplitGroupsOf_Local is JBControllerSetup {
 
         // mock call to JBProjects ownerOf for permission check
         bytes memory _ownerOfCall = abi.encodeCall(IERC721.ownerOf, (_projectId));
-        bytes memory _ownerOfReturn = abi.encode(address(0));
-        mockExpect(address(projects), _ownerOfCall, _ownerOfReturn);
+        address _ownerOfReturn = address(0);
+        mockExpect(address(projects), _ownerOfCall, abi.encode(_ownerOfReturn));
 
         // mock call to JBPermissions
         bytes memory _permCall = abi.encodeCall(
@@ -49,7 +49,11 @@ contract TestSetSplitGroupsOf_Local is JBControllerSetup {
         bytes memory _permReturn = abi.encode(false);
         mockExpect(address(permissions), _permCall, _permReturn);
 
-        vm.expectRevert(JBPermissioned.JBPermissioned_Unauthorized.selector);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                JBPermissioned.JBPermissioned_Unauthorized.selector, _ownerOfReturn, address(this), _projectId, 17
+            )
+        );
         _controller.setSplitGroupsOf(_projectId, _rulesetId, _splitGroups);
     }
 }

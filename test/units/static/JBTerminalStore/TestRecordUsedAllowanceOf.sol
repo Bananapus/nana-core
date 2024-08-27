@@ -323,7 +323,11 @@ contract TestRecordUsedAllowanceOf_Local is JBTerminalStoreSetup {
         JBAccountingContext memory _context =
             JBAccountingContext({token: address(_token), decimals: 18, currency: _currency});
 
-        vm.expectRevert(JBTerminalStore.JBTerminalStore_InadequateTerminalStoreBalance.selector);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                JBTerminalStore.JBTerminalStore_InadequateTerminalStoreBalance.selector, _defaultAmount, 0
+            )
+        );
         _store.recordUsedAllowanceOf(_projectId, _context, _defaultAmount, _currency);
     }
 
@@ -414,7 +418,13 @@ contract TestRecordUsedAllowanceOf_Local is JBTerminalStoreSetup {
         JBAccountingContext memory _context =
             JBAccountingContext({token: address(_token), decimals: 18, currency: _currency});
 
-        vm.expectRevert(JBTerminalStore.JBTerminalStore_InadequateControllerAllowance.selector);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                JBTerminalStore.JBTerminalStore_InadequateControllerAllowance.selector,
+                uint256(usedSurplus) + _defaultAmount,
+                1e19
+            )
+        );
         _store.recordUsedAllowanceOf(_projectId, _context, _defaultAmount, _currency);
     }
 }

@@ -9,8 +9,8 @@ abstract contract JBControlled is IJBControlled {
     //*********************************************************************//
     // --------------------------- custom errors -------------------------- //
     //*********************************************************************//
-    
-    error JBControlled_ControllerUnauthorized();
+
+    error JBControlled_ControllerUnauthorized(address controller);
 
     //*********************************************************************//
     // ---------------------------- modifiers ---------------------------- //
@@ -42,7 +42,7 @@ abstract contract JBControlled is IJBControlled {
     /// @notice Only allows the controller of the specified project to proceed.
     function _onlyControllerOf(uint256 projectId) internal view {
         if (address(DIRECTORY.controllerOf(projectId)) != msg.sender) {
-            revert JBControlled_ControllerUnauthorized();
+            revert JBControlled_ControllerUnauthorized(address(DIRECTORY.controllerOf(projectId)));
         }
     }
 }

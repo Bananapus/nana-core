@@ -22,14 +22,14 @@ contract JBTokens is JBControlled, IJBTokens {
     error JBTokens_EmptyName();
     error JBTokens_EmptySymbol();
     error JBTokens_EmptyToken();
-    error JBTokens_InsufficientFunds();
-    error JBTokens_InsufficientCredits();
-    error JBTokens_OverflowAlert();
-    error JBTokens_ProjectAlreadyHasToken();
+    error JBTokens_InsufficientCredits(uint256 count, uint256 creditBalance);
+    error JBTokens_InsufficientTokensToBurn(uint256 count, uint256 tokenBalance);
+    error JBTokens_OverflowAlert(uint256 value, uint256 limit);
+    error JBTokens_ProjectAlreadyHasToken(IJBToken token);
     error JBTokens_RecipientZeroAddress();
-    error JBTokens_TokenAlreadySet();
+    error JBTokens_TokenAlreadyBeingUsed(uint256 projectId);
     error JBTokens_TokenNotFound();
-    error JBTokens_TokensMustHave18Decimals();
+    error JBTokens_TokensMustHave18Decimals(uint256 decimals);
 
     //*********************************************************************//
     // --------------- public immutable stored properties ---------------- //
@@ -87,7 +87,7 @@ contract JBTokens is JBControlled, IJBTokens {
 
         // If the project has a current token, add the holder's balance to the total.
         if (token != IJBToken(address(0))) {
-            balance = balance + token.balanceOf(holder);
+            balance += token.balanceOf(holder);
         }
     }
 
@@ -107,7 +107,7 @@ contract JBTokens is JBControlled, IJBTokens {
 
         // If the project has a current token, add its total supply to the total.
         if (token != IJBToken(address(0))) {
-            totalSupply = totalSupply + token.totalSupply();
+            totalSupply += token.totalSupply();
         }
     }
 
@@ -132,7 +132,9 @@ contract JBTokens is JBControlled, IJBTokens {
         uint256 tokenBalance = token == IJBToken(address(0)) ? 0 : token.balanceOf(holder);
 
         // There must be enough tokens to burn across the holder's combined token and credit balance.
-        if (count > tokenBalance + creditBalance) revert JBTokens_InsufficientFunds();
+        if (count > tokenBalance + creditBalance) {
+            revert JBTokens_InsufficientTokensToBurn(count, tokenBalance + creditBalance);
+        }
 
         // The amount of tokens to burn.
         uint256 tokensToBurn;
@@ -196,14 +198,14 @@ contract JBTokens is JBControlled, IJBTokens {
         uint256 creditBalance = creditBalanceOf[holder][projectId];
 
         // There must be enough credits to claim.
-        if (creditBalance < count) revert JBTokens_InsufficientCredits();
+        if (count > creditBalance) revert JBTokens_InsufficientCredits(count, creditBalance);
 
         unchecked {
             // Subtract the claim amount from the holder's credit balance.
             creditBalanceOf[holder][projectId] = creditBalance - count;
 
             // Subtract the claim amount from the project's total credit supply.
-            totalCreditSupplyOf[projectId] = totalCreditSupplyOf[projectId] - count;
+            totalCreditSupplyOf[projectId] -= count;
         }
 
         emit ClaimTokens({
@@ -246,7 +248,7 @@ contract JBTokens is JBControlled, IJBTokens {
         if (bytes(symbol).length == 0) revert JBTokens_EmptySymbol();
 
         // The project shouldn't already have a token.
-        if (tokenOf[projectId] != IJBToken(address(0))) revert JBTokens_ProjectAlreadyHasToken();
+        if (tokenOf[projectId] != IJBToken(address(0))) revert JBTokens_ProjectAlreadyHasToken(tokenOf[projectId]);
 
         token = salt == bytes32(0)
             ? IJBToken(Clones.clone(address(TOKEN)))
@@ -289,12 +291,14 @@ contract JBTokens is JBControlled, IJBTokens {
             token.mint(holder, count);
         } else {
             // Otherwise, add the tokens to their credits and the credit supply.
-            creditBalanceOf[holder][projectId] = creditBalanceOf[holder][projectId] + count;
-            totalCreditSupplyOf[projectId] = totalCreditSupplyOf[projectId] + count;
+            creditBalanceOf[holder][projectId] += count;
+            totalCreditSupplyOf[projectId] += count;
         }
 
         // The total supply can't exceed the maximum value storable in a uint208.
-        if (totalSupplyOf(projectId) > type(uint208).max) revert JBTokens_OverflowAlert();
+        if (totalSupplyOf(projectId) > type(uint208).max) {
+            revert JBTokens_OverflowAlert(totalSupplyOf(projectId), type(uint208).max);
+        }
 
         emit Mint({
             holder: holder,
@@ -314,13 +318,13 @@ contract JBTokens is JBControlled, IJBTokens {
         if (token == IJBToken(address(0))) revert JBTokens_EmptyToken();
 
         // Can't set a token if the project is already associated with another token.
-        if (tokenOf[projectId] != IJBToken(address(0))) revert JBTokens_TokenAlreadySet();
+        if (tokenOf[projectId] != IJBToken(address(0))) revert JBTokens_ProjectAlreadyHasToken(tokenOf[projectId]);
 
         // Can't set a token if it's already associated with another project.
-        if (projectIdOf[token] != 0) revert JBTokens_TokenAlreadySet();
+        if (projectIdOf[token] != 0) revert JBTokens_TokenAlreadyBeingUsed(projectIdOf[token]);
 
         // Can't change to a token that doesn't use 18 decimals.
-        if (token.decimals() != 18) revert JBTokens_TokensMustHave18Decimals();
+        if (token.decimals() != 18) revert JBTokens_TokensMustHave18Decimals(token.decimals());
 
         // Store the new token.
         tokenOf[projectId] = token;
@@ -354,7 +358,7 @@ contract JBTokens is JBControlled, IJBTokens {
         uint256 creditBalance = creditBalanceOf[holder][projectId];
 
         // The holder must have enough unclaimed tokens to transfer.
-        if (count > creditBalance) revert JBTokens_InsufficientCredits();
+        if (count > creditBalance) revert JBTokens_InsufficientCredits(count, creditBalance);
 
         // Subtract from the holder's unclaimed token balance.
         unchecked {
@@ -362,7 +366,7 @@ contract JBTokens is JBControlled, IJBTokens {
         }
 
         // Add the unclaimed project tokens to the recipient's balance.
-        creditBalanceOf[recipient][projectId] = creditBalanceOf[recipient][projectId] + count;
+        creditBalanceOf[recipient][projectId] += count;
 
         emit TransferCredits({
             holder: holder,

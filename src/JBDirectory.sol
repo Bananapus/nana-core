@@ -21,11 +21,11 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
 
-    error JBDirectory_DuplicateTerminals();
-    error JBDirectory_InvalidProjectIdInDirectory();
+    error JBDirectory_DuplicateTerminals(IJBTerminal terminal);
+    error JBDirectory_InvalidProjectIdInDirectory(uint256 projectId, uint256 limit);
     error JBDirectory_SetControllerNotAllowed();
     error JBDirectory_SetTerminalsNotAllowed();
-    error JBDirectory_TokenNotAccepted();
+    error JBDirectory_TokenNotAccepted(uint256 projectId, address token, IJBTerminal terminal);
 
     //*********************************************************************//
     // ---------------- public immutable stored properties --------------- //
@@ -99,13 +99,16 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
             return primaryTerminal;
         }
 
+        // Keep a reference to the project's terminals.
+        IJBTerminal[] memory terminals = _terminalsOf[projectId];
+
         // Keep a reference to the number of terminals the project has.
-        uint256 numberOfTerminals = _terminalsOf[projectId].length;
+        uint256 numberOfTerminals = terminals.length;
 
         // Return the first terminal which accepts the specified token.
         for (uint256 i; i < numberOfTerminals; i++) {
             // Keep a reference to the terminal being iterated on.
-            IJBTerminal terminal = _terminalsOf[projectId][i];
+            IJBTerminal terminal = terminals[i];
 
             // If the terminal accepts the specified token, return it.
             // slither-disable-next-line calls-loop
@@ -134,12 +137,15 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
     /// @param terminal The terminal to check for.
     /// @return A flag indicating whether the project uses the terminal.
     function isTerminalOf(uint256 projectId, IJBTerminal terminal) public view override returns (bool) {
+        // Keep a reference to the project's terminals.
+        IJBTerminal[] memory terminals = _terminalsOf[projectId];
+
         // Keep a reference to the number of terminals the project has.
-        uint256 numberOfTerminals = _terminalsOf[projectId].length;
+        uint256 numberOfTerminals = terminals.length;
 
         // Loop through and return true if the terminal is found.
         for (uint256 i; i < numberOfTerminals; i++) {
-            if (_terminalsOf[projectId][i] == terminal) return true;
+            if (terminals[i] == terminal) return true;
         }
 
         // Otherwise, return false.
@@ -184,7 +190,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
         });
 
         // The project must exist.
-        if (PROJECTS.count() < projectId) revert JBDirectory_InvalidProjectIdInDirectory();
+        if (projectId > PROJECTS.count()) revert JBDirectory_InvalidProjectIdInDirectory(projectId, PROJECTS.count());
 
         // Keep a reference to the current controller.
         IERC165 currentController = controllerOf[projectId];
@@ -235,7 +241,7 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
 
         // If the terminal doesn't accept the token, revert.
         if (terminal.accountingContextForTokenOf(projectId, token).token == address(0)) {
-            revert JBDirectory_TokenNotAccepted();
+            revert JBDirectory_TokenNotAccepted(projectId, token, terminal);
         }
 
         // If the terminal hasn't already been added to the project, add it.
@@ -277,14 +283,11 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
         // Set the stored terminals for the project.
         _terminalsOf[projectId] = terminals;
 
-        // Keep a reference to the number of terminals being iterated upon.
-        uint256 numberOfTerminals = terminals.length;
-
         // If there are any duplicates, revert.
-        if (numberOfTerminals > 1) {
-            for (uint256 i; i < numberOfTerminals; i++) {
-                for (uint256 j = i + 1; j < numberOfTerminals; j++) {
-                    if (terminals[i] == terminals[j]) revert JBDirectory_DuplicateTerminals();
+        if (terminals.length > 1) {
+            for (uint256 i; i < terminals.length; i++) {
+                for (uint256 j = i + 1; j < terminals.length; j++) {
+                    if (terminals[i] == terminals[j]) revert JBDirectory_DuplicateTerminals(terminals[i]);
                 }
             }
         }

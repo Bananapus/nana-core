@@ -48,7 +48,7 @@ contract TestClaimTokensFor_Local is JBTokensSetup {
         // Set storage
         vm.store(address(_tokens), tokenOfSlot, bytes32(uint256(uint160(address(_token)))));
 
-        vm.expectRevert(JBTokens.JBTokens_InsufficientCredits.selector);
+        vm.expectRevert(abi.encodeWithSelector(JBTokens.JBTokens_InsufficientCredits.selector, _defaultAmount, 0));
         _tokens.claimTokensFor(_holder, _projectId, _defaultAmount, _beneficiary);
     }
 
@@ -101,7 +101,7 @@ contract TestClaimTokensFor_Local is JBTokensSetup {
         // mock call to JBDirectory controllerOf
         mockExpect(address(directory), abi.encodeCall(IJBDirectory.controllerOf, (_projectId)), abi.encode(address(0)));
 
-        vm.expectRevert(JBControlled.JBControlled_ControllerUnauthorized.selector);
+        vm.expectRevert(abi.encodeWithSelector(JBControlled.JBControlled_ControllerUnauthorized.selector, address(0)));
         _tokens.claimTokensFor(_holder, _projectId, _defaultAmount, _beneficiary);
     }
 }

@@ -33,12 +33,12 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
 
-    error JBTerminalStore_InadequateControllerAllowance();
-    error JBTerminalStore_InadequateTerminalStoreBalance();
-    error JBTerminalStore_InsufficientTokens();
-    error JBTerminalStore_InvalidAmountToSendHook();
-    error JBTerminalStore_InvalidRuleset();
-    error JBTerminalStore_PayoutLimitExceeded();
+    error JBTerminalStore_InadequateControllerAllowance(uint256 amount, uint256 allowance);
+    error JBTerminalStore_InadequateTerminalStoreBalance(uint256 amount, uint256 balance);
+    error JBTerminalStore_InsufficientTokens(uint256 count, uint256 totalSupply);
+    error JBTerminalStore_InvalidAmountToForwardHook(uint256 amount, uint256 paidAmount);
+    error JBTerminalStore_PayoutLimitExceeded(uint256 amount, uint256 limit);
+    error JBTerminalStore_RulesetNotFound();
     error JBTerminalStore_RulesetPaymentPaused();
     error JBTerminalStore_TerminalMigrationNotAllowed();
 
@@ -396,15 +396,12 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
             token: accountingContext.token
         });
 
-        // Keep a reference to the payout limit being iterated on.
-        JBCurrencyAmount memory payoutLimit;
-
         // Keep a reference to the number of payout limits being iterated on.
         uint256 numberOfPayoutLimits = payoutLimits.length;
 
         // Loop through each payout limit to determine the cumulative normalized payout limit remaining.
         for (uint256 i; i < numberOfPayoutLimits; i++) {
-            payoutLimit = payoutLimits[i];
+            JBCurrencyAmount memory payoutLimit = payoutLimits[i];
 
             // Set the payout limit value to the amount still available to pay out during the ruleset.
             payoutLimit.amount = uint224(
@@ -494,7 +491,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
         ruleset = RULESETS.currentOf(projectId);
 
         // The project must have a ruleset.
-        if (ruleset.cycleNumber == 0) revert JBTerminalStore_InvalidRuleset();
+        if (ruleset.cycleNumber == 0) revert JBTerminalStore_RulesetNotFound();
 
         // The ruleset must not have payments paused.
         if (ruleset.pausePay()) revert JBTerminalStore_RulesetPaymentPaused();
@@ -542,11 +539,11 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
                     if (specifiedAmount != 0) {
                         // Can't send more to hook than was paid.
                         if (specifiedAmount > balanceDiff) {
-                            revert JBTerminalStore_InvalidAmountToSendHook();
+                            revert JBTerminalStore_InvalidAmountToForwardHook(specifiedAmount, balanceDiff);
                         }
 
                         // Decrement the total amount being added to the local balance.
-                        balanceDiff = balanceDiff - specifiedAmount;
+                        balanceDiff -= specifiedAmount;
                     }
                 }
             }
@@ -619,7 +616,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
 
         // Make sure the new used amount is within the payout limit.
         if (newUsedPayoutLimitOf > payoutLimit || payoutLimit == 0) {
-            revert JBTerminalStore_PayoutLimitExceeded();
+            revert JBTerminalStore_PayoutLimitExceeded(newUsedPayoutLimitOf, payoutLimit);
         }
 
         // Convert the amount to the balance's currency.
@@ -639,7 +636,9 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
 
         // The amount being paid out must be available.
         if (amountPaidOut > balanceOf[msg.sender][projectId][accountingContext.token]) {
-            revert JBTerminalStore_InadequateTerminalStoreBalance();
+            revert JBTerminalStore_InadequateTerminalStoreBalance(
+                amountPaidOut, balanceOf[msg.sender][projectId][accountingContext.token]
+            );
         }
 
         // Store the new amount.
@@ -716,7 +715,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
             IJBController(address(DIRECTORY.controllerOf(projectId))).totalTokenSupplyWithReservedTokensOf(projectId);
 
         // Can't redeem more tokens that are in the supply.
-        if (redeemCount > totalSupply) revert JBTerminalStore_InsufficientTokens();
+        if (redeemCount > totalSupply) revert JBTerminalStore_InsufficientTokens(redeemCount, totalSupply);
 
         // If the ruleset has a data hook which is enabled for redemptions, use it to derive a claim amount and memo.
         if (ruleset.useDataHookForRedeem() && ruleset.dataHook() != address(0)) {
@@ -771,14 +770,16 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
                 // Ensure the amount is non-zero.
                 if (specificationAmount != 0) {
                     // Increment the total amount being subtracted from the balance.
-                    balanceDiff = balanceDiff + specificationAmount;
+                    balanceDiff += specificationAmount;
                 }
             }
         }
 
         // The amount being reclaimed must be within the project's balance.
         if (balanceDiff > balanceOf[msg.sender][projectId][accountingContext.token]) {
-            revert JBTerminalStore_InadequateTerminalStoreBalance();
+            revert JBTerminalStore_InadequateTerminalStoreBalance(
+                balanceDiff, balanceOf[msg.sender][projectId][accountingContext.token]
+            );
         }
 
         // Remove the reclaimed funds from the project's balance.
@@ -859,7 +860,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
 
         // Make sure the new used amount is within the allowance.
         if (newUsedSurplusAllowanceOf > surplusAllowance || surplusAllowance == 0) {
-            revert JBTerminalStore_InadequateControllerAllowance();
+            revert JBTerminalStore_InadequateControllerAllowance(newUsedSurplusAllowanceOf, surplusAllowance);
         }
 
         // Convert the amount to this store's terminal's token.
@@ -881,18 +882,17 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
         JBAccountingContext[] memory accountingContexts = new JBAccountingContext[](1);
         accountingContexts[0] = accountingContext;
 
+        uint256 surplus = _surplusFrom({
+            terminal: msg.sender,
+            projectId: projectId,
+            accountingContexts: accountingContexts,
+            ruleset: ruleset,
+            targetDecimals: accountingContext.decimals,
+            targetCurrency: accountingContext.currency
+        });
+
         // The amount being used must be available in the surplus.
-        if (
-            usedAmount
-                > _surplusFrom({
-                    terminal: msg.sender,
-                    projectId: projectId,
-                    accountingContexts: accountingContexts,
-                    ruleset: ruleset,
-                    targetDecimals: accountingContext.decimals,
-                    targetCurrency: accountingContext.currency
-                })
-        ) revert JBTerminalStore_InadequateTerminalStoreBalance();
+        if (usedAmount > surplus) revert JBTerminalStore_InadequateTerminalStoreBalance(usedAmount, surplus);
 
         // Store the incremented value.
         usedSurplusAllowanceOf[msg.sender][projectId][accountingContext.token][ruleset.id][currency] =

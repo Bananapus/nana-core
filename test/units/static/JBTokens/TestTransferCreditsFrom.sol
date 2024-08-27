@@ -33,7 +33,7 @@ contract TestTransferCreditsFrom_Local is JBTokensSetup {
     function test_GivenCallingAmountGTCreditBalance() external whenCallerIsController {
         // it will revert INSUFFICIENT_CREDITS
 
-        vm.expectRevert(JBTokens.JBTokens_InsufficientCredits.selector);
+        vm.expectRevert(abi.encodeWithSelector(JBTokens.JBTokens_InsufficientCredits.selector, _defaultAmount, 0));
         _tokens.transferCreditsFrom(_holder, _projectId, _recipient, _defaultAmount);
     }
 

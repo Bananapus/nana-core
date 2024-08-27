@@ -136,7 +136,7 @@ contract TestPay_Local is JBMultiTerminalSetup {
             abi.encode(returnedRuleset, 0, hookSpecifications)
         );
 
-        vm.expectRevert(JBMultiTerminal.JBMultiTerminal_UnderMinReturnedTokens.selector);
+        vm.expectRevert(abi.encodeWithSelector(JBMultiTerminal.JBMultiTerminal_UnderMinReturnedTokens.selector, 0, 1));
         _terminal.pay{value: 1e18}({
             projectId: _projectId,
             token: _native,
@@ -391,7 +391,7 @@ contract TestPay_Local is JBMultiTerminalSetup {
     function test_WhenTheProjectDNHAccountingContextForTheToken() external {
         // it will revert TOKEN_NOT_ACCEPTED
 
-        vm.expectRevert(JBMultiTerminal.JBMultiTerminal_TokenNotAccepted.selector);
+        vm.expectRevert(abi.encodeWithSelector(JBMultiTerminal.JBMultiTerminal_TokenNotAccepted.selector, _native));
         _terminal.pay{value: 1e18}({
             projectId: _projectId,
             token: _native,
@@ -411,7 +411,7 @@ contract TestPay_Local is JBMultiTerminalSetup {
     function test_WhenTheTerminalsTokenEqNativeTokenAndMsgvalueEqZero() external {
         // it will revert NO_MSG_VALUE_ALLOWED
 
-        vm.expectRevert(JBMultiTerminal.JBMultiTerminal_TokenNotAccepted.selector);
+        vm.expectRevert(abi.encodeWithSelector(JBMultiTerminal.JBMultiTerminal_TokenNotAccepted.selector, _native));
         _terminal.pay{value: 0}({
             projectId: _projectId,
             token: _native,

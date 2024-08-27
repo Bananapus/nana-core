@@ -59,21 +59,21 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
 
-    error JBMultiTerminal_AccountingContextAlreadySet();
+    error JBMultiTerminal_AccountingContextAlreadySet(address token);
     error JBMultiTerminal_AddingAccountingContextNotAllowed();
     error JBMultiTerminal_FeeTerminalNotFound();
-    error JBMultiTerminal_InvalidAccountingContextCurrency();
-    error JBMultiTerminal_InvalidAccountingContextDecimals();
-    error JBMultiTerminal_NoMsgValueAllowed();
-    error JBMultiTerminal_OverflowAlert();
-    error JBMultiTerminal_PermitAllowanceNotEnough();
-    error JBMultiTerminal_RecipientProjectTerminalNotFound();
-    error JBMultiTerminal_SplitHookInvalid();
+    error JBMultiTerminal_NoMsgValueAllowed(uint256 value);
+    error JBMultiTerminal_OverflowAlert(uint256 value, uint256 limit);
+    error JBMultiTerminal_PermitAllowanceNotEnough(uint256 amount, uint256 allowance);
+    error JBMultiTerminal_RecipientProjectTerminalNotFound(uint256 projectId, address token);
+    error JBMultiTerminal_SplitHookInvalid(IJBSplitHook hook);
     error JBMultiTerminal_TerminalTokensIncompatible();
-    error JBMultiTerminal_TokenNotAccepted();
-    error JBMultiTerminal_UnderMinReturnedTokens();
-    error JBMultiTerminal_UnderMinTokensPaidOut();
-    error JBMultiTerminal_UnderMinTokensReclaimed();
+    error JBMultiTerminal_TokenNotAccepted(address token);
+    error JBMultiTerminal_UnderMinReturnedTokens(uint256 count, uint256 min);
+    error JBMultiTerminal_UnderMinTokensPaidOut(uint256 amount, uint256 min);
+    error JBMultiTerminal_UnderMinTokensReclaimed(uint256 amount, uint256 min);
+    error JBMultiTerminal_ZeroAccountingContextDecimals();
+    error JBMultiTerminal_ZeroAccountingContextCurrency();
 
     //*********************************************************************//
     // ------------------------- public constants ------------------------ //
@@ -331,23 +331,19 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             revert JBMultiTerminal_AddingAccountingContextNotAllowed();
         }
 
-        // Keep a reference to the number of accounting contexts to add.
-        uint256 numberOfAccountingContexts = accountingContexts.length;
-
-        // Keep a reference to the accounting context being iterated on.
-        JBAccountingContext memory accountingContext;
-
         // Start accepting each token.
-        for (uint256 i; i < numberOfAccountingContexts; i++) {
+        for (uint256 i; i < accountingContexts.length; i++) {
             // Set the accounting context being iterated on.
-            accountingContext = accountingContexts[i];
+            JBAccountingContext memory accountingContext = accountingContexts[i];
 
             // Get a storage reference to the currency accounting context for the token.
             JBAccountingContext storage storedAccountingContext =
                 _accountingContextForTokenOf[projectId][accountingContext.token];
 
             // Make sure the token accounting context isn't already set.
-            if (storedAccountingContext.token != address(0)) revert JBMultiTerminal_AccountingContextAlreadySet();
+            if (storedAccountingContext.token != address(0)) {
+                revert JBMultiTerminal_AccountingContextAlreadySet(storedAccountingContext.token);
+            }
 
             // Keep track of a flag indiciating if we know the provided decimals are incorrect.
             bool knownInvalidDecimals;
@@ -370,11 +366,11 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
             // Make sure the decimals are correct.
             if (knownInvalidDecimals) {
-                revert JBMultiTerminal_InvalidAccountingContextDecimals();
+                revert JBMultiTerminal_ZeroAccountingContextDecimals();
             }
 
             // Make sure the currency is non-zero.
-            if (accountingContext.currency == 0) revert JBMultiTerminal_InvalidAccountingContextCurrency();
+            if (accountingContext.currency == 0) revert JBMultiTerminal_ZeroAccountingContextCurrency();
 
             // Define the context from the config.
             storedAccountingContext.token = accountingContext.token;
@@ -448,7 +444,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         if (split.hook != IJBSplitHook(address(0))) {
             // Make sure that the address supports the split hook interface.
             if (!split.hook.supportsInterface(type(IJBSplitHook).interfaceId)) {
-                revert JBMultiTerminal_SplitHookInvalid();
+                revert JBMultiTerminal_SplitHookInvalid(split.hook);
             }
 
             // This payout is eligible for a fee since the funds are leaving this contract and the split hook isn't a
@@ -482,7 +478,9 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             IJBTerminal terminal = DIRECTORY.primaryTerminalOf(split.projectId, token);
 
             // The project must have a terminal to send funds to.
-            if (terminal == IJBTerminal(address(0))) revert JBMultiTerminal_RecipientProjectTerminalNotFound();
+            if (terminal == IJBTerminal(address(0))) {
+                revert JBMultiTerminal_RecipientProjectTerminalNotFound(split.projectId, token);
+            }
 
             // This payout is eligible for a fee if the funds are leaving this contract and the receiving terminal isn't
             // a feelss address.
@@ -682,7 +680,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
         // The token count for the beneficiary must be greater than or equal to the specified minimum.
         if (beneficiaryTokenCount < minReturnedTokens) {
-            revert JBMultiTerminal_UnderMinReturnedTokens();
+            revert JBMultiTerminal_UnderMinReturnedTokens(beneficiaryTokenCount, minReturnedTokens);
         }
     }
 
@@ -729,7 +727,9 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         reclaimAmount = _redeemTokensOf(holder, projectId, tokenToReclaim, redeemCount, beneficiary, metadata);
 
         // The amount being reclaimed must be at least as much as was expected.
-        if (reclaimAmount < minTokensReclaimed) revert JBMultiTerminal_UnderMinTokensReclaimed();
+        if (reclaimAmount < minTokensReclaimed) {
+            revert JBMultiTerminal_UnderMinTokensReclaimed(reclaimAmount, minTokensReclaimed);
+        }
     }
 
     /// @notice Sends payouts to a project's current payout split group, according to its ruleset, up to its current
@@ -765,7 +765,9 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         amountPaidOut = _sendPayoutsOf(projectId, token, amount, currency);
 
         // The amount being paid out must be at least as much as was expected.
-        if (amountPaidOut < minTokensPaidOut) revert JBMultiTerminal_UnderMinTokensPaidOut();
+        if (amountPaidOut < minTokensPaidOut) {
+            revert JBMultiTerminal_UnderMinTokensPaidOut(amountPaidOut, minTokensPaidOut);
+        }
     }
 
     /// @notice Allows a project to pay out funds from its surplus up to the current surplus allowance.
@@ -810,7 +812,9 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         netAmountPaidOut = _useAllowanceOf(projectId, token, amount, currency, beneficiary, feeBeneficiary, memo);
 
         // The amount being withdrawn must be at least as much as was expected.
-        if (netAmountPaidOut < minTokensPaidOut) revert JBMultiTerminal_UnderMinTokensPaidOut();
+        if (netAmountPaidOut < minTokensPaidOut) {
+            revert JBMultiTerminal_UnderMinTokensPaidOut(netAmountPaidOut, minTokensPaidOut);
+        }
     }
 
     //*********************************************************************//
@@ -834,14 +838,14 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     {
         // Make sure the project has an accounting context for the token being paid.
         if (_accountingContextForTokenOf[projectId][token].token == address(0)) {
-            revert JBMultiTerminal_TokenNotAccepted();
+            revert JBMultiTerminal_TokenNotAccepted(token);
         }
 
         // If the terminal's token is the native token, override `amount` with `msg.value`.
         if (token == JBConstants.NATIVE_TOKEN) return msg.value;
 
         // If the terminal's token is not native, revert if there is a non-zero `msg.value`.
-        if (msg.value != 0) revert JBMultiTerminal_NoMsgValueAllowed();
+        if (msg.value != 0) revert JBMultiTerminal_NoMsgValueAllowed(msg.value);
 
         // Unpack the allowance to use, if any, given by the frontend.
         (bool exists, bytes memory parsedMetadata) =
@@ -853,8 +857,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             (JBSingleAllowance memory allowance) = abi.decode(parsedMetadata, (JBSingleAllowance));
 
             // Make sure the permit allowance is enough for this payment. If not we revert early.
-            if (allowance.amount < amount) {
-                revert JBMultiTerminal_PermitAllowanceNotEnough();
+            if (amount > allowance.amount) {
+                revert JBMultiTerminal_PermitAllowanceNotEnough(amount, allowance.amount);
             }
 
             // Keep a reference to the permit rules.
@@ -1061,13 +1065,10 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // Keep a reference to the number of pay hook specifications to iterate through.
         uint256 numberOfSpecifications = specifications.length;
 
-        // Keep a reference to the specification being iterated on.
-        JBPayHookSpecification memory specification;
-
         // Fulfill each specification through their pay hooks.
         for (uint256 i; i < numberOfSpecifications; i++) {
             // Set the specification being iterated on.
-            specification = specifications[i];
+            JBPayHookSpecification memory specification = specifications[i];
 
             // Pass the correct token `forwardedAmount` to the hook.
             context.forwardedAmount = JBTokenAmount({
@@ -1143,12 +1144,9 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // Keep a reference to the number of redeem hook specifications being iterated through.
         uint256 numberOfSpecifications = specifications.length;
 
-        // Keep a reference to the specification being iterated on.
-        JBRedeemHookSpecification memory specification;
-
         for (uint256 i; i < numberOfSpecifications; i++) {
             // Set the specification being iterated on.
-            specification = specifications[i];
+            JBRedeemHookSpecification memory specification = specifications[i];
 
             // Get the fee for the specified amount.
             uint256 specificationAmountFee =
@@ -1338,16 +1336,13 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // Keep a reference to the number of held fees.
         uint256 numberOfHeldFees = heldFees.length;
 
-        // Keep a reference to the fee being iterated on.
-        JBFee memory heldFee;
-
         // Keep a reference to the terminal that'll receive the fees.
         IJBTerminal feeTerminal = DIRECTORY.primaryTerminalOf(_FEE_BENEFICIARY_PROJECT_ID, token);
 
         // Process each fee.
         for (uint256 i; i < numberOfHeldFees; i++) {
             // Keep a reference to the held fee being iterated on.
-            heldFee = heldFees[i];
+            JBFee memory heldFee = heldFees[i];
 
             // Can't process fees that aren't yet unlocked.
             if (!forced && heldFee.unlockTimestamp > block.timestamp) {
@@ -1523,13 +1518,10 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // Keep a reference to the number of held fees.
         uint256 numberOfHeldFees = heldFees.length;
 
-        // Keep a reference to the fee being iterated on.
-        JBFee memory heldFee;
-
         // Process each fee.
         for (uint256 i; i < numberOfHeldFees; i++) {
             // Save the fee being iterated on.
-            heldFee = heldFees[i];
+            JBFee memory heldFee = heldFees[i];
 
             // slither-disable-next-line incorrect-equality
             if (leftoverAmount == 0) {
@@ -1728,13 +1720,10 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // Keep a reference to the number of splits being iterated on.
         uint256 numberOfSplits = splits.length;
 
-        // Keep a reference to the split being iterated on.
-        JBSplit memory split;
-
         // Transfer between all splits.
         for (uint256 i; i < numberOfSplits; i++) {
             // Get a reference to the split being iterated on.
-            split = splits[i];
+            JBSplit memory split = splits[i];
 
             // The amount to send to the split.
             uint256 payoutAmount = mulDiv(amount, split.percent, leftoverPercentage);
@@ -1845,7 +1834,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         }
 
         // Make sure the amount being paid is less than the maximum permit2 allowance.
-        if (amount > type(uint160).max) revert JBMultiTerminal_OverflowAlert();
+        if (amount > type(uint160).max) revert JBMultiTerminal_OverflowAlert(amount, type(uint160).max);
 
         // Otherwise we attempt to use the PERMIT2 method.
         PERMIT2.transferFrom(from, to, uint160(amount), token);

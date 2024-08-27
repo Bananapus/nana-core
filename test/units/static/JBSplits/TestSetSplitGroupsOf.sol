@@ -40,7 +40,7 @@ contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
         mockExpect(address(directory), _controllerCall, _return);
 
         // not controller so revert
-        vm.expectRevert(JBControlled.JBControlled_ControllerUnauthorized.selector);
+        vm.expectRevert(abi.encodeWithSelector(JBControlled.JBControlled_ControllerUnauthorized.selector, _notThis));
         _splits.setSplitGroupsOf(_projectId, _rulesetId, _splitsGroup);
     }
 
@@ -112,7 +112,7 @@ contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
         // outer structure
         _splitsGroup[0] = JBSplitGroup({groupId: 0, splits: _splitsArray});
 
-        vm.expectRevert(JBSplits.JBSplits_InvalidSplitPercent.selector);
+        vm.expectRevert(JBSplits.JBSplits_ZeroSplitPercent.selector);
         _splits.setSplitGroupsOf(_projectId, _rulesetId, _splitsGroup);
     }
 
@@ -146,7 +146,7 @@ contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
         // outer structure
         _splitsGroup[0] = JBSplitGroup({groupId: 0, splits: _splitsArray});
 
-        vm.expectRevert(JBSplits.JBSplits_InvalidTotalPercent.selector);
+        vm.expectRevert(JBSplits.JBSplits_TotalPercentExceeds100.selector);
         _splits.setSplitGroupsOf(_projectId, _rulesetId, _splitsGroup);
     }
 

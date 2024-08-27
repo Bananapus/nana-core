@@ -23,11 +23,11 @@ contract JBRulesets is JBControlled, IJBRulesets {
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
 
-    error JBRulesets_InvalidDecayPercent();
-    error JBRulesets_InvalidRulesetApprovalHook();
-    error JBRulesets_InvalidRulesetDuration();
-    error JBRulesets_InvalidRulesetEndTime();
-    error JBRulesets_InvalidWeight();
+    error JBRulesets_InvalidDecayPercent(uint256 percent);
+    error JBRulesets_InvalidRulesetApprovalHook(IJBRulesetApprovalHook hook);
+    error JBRulesets_InvalidRulesetDuration(uint256 duration, uint256 limit);
+    error JBRulesets_InvalidRulesetEndTime(uint256 timestamp, uint256 limit);
+    error JBRulesets_InvalidWeight(uint256 weight, uint256 limit);
 
     //*********************************************************************//
     // ------------------------- internal constants ----------------------- //
@@ -729,15 +729,15 @@ contract JBRulesets is JBControlled, IJBRulesets {
         returns (JBRuleset memory)
     {
         // Duration must fit in a uint32.
-        if (duration > type(uint32).max) revert JBRulesets_InvalidRulesetDuration();
+        if (duration > type(uint32).max) revert JBRulesets_InvalidRulesetDuration(duration, type(uint32).max);
 
         // Decay rate must be less than or equal to 100%.
         if (decayPercent > JBConstants.MAX_DECAY_PERCENT) {
-            revert JBRulesets_InvalidDecayPercent();
+            revert JBRulesets_InvalidDecayPercent(decayPercent);
         }
 
         // Weight must fit into a uint112.
-        if (weight > type(uint112).max) revert JBRulesets_InvalidWeight();
+        if (weight > type(uint112).max) revert JBRulesets_InvalidWeight(weight, type(uint112).max);
 
         // If the start date is not set, set it to be the current timestamp.
         if (mustStartAtOrAfter == 0) {
@@ -747,21 +747,22 @@ contract JBRulesets is JBControlled, IJBRulesets {
         // Make sure the min start date fits in a uint48, and that the start date of the following ruleset will also fit
         // within the max.
         if (mustStartAtOrAfter + duration > type(uint48).max) {
-            revert JBRulesets_InvalidRulesetEndTime();
+            revert JBRulesets_InvalidRulesetEndTime(mustStartAtOrAfter + duration, type(uint48).max);
         }
 
         // Approval hook should be a valid contract, supporting the correct interface
         if (approvalHook != IJBRulesetApprovalHook(address(0))) {
             // Revert if there isn't a contract at the address
-            if (address(approvalHook).code.length == 0) revert JBRulesets_InvalidRulesetApprovalHook();
+            if (address(approvalHook).code.length == 0) revert JBRulesets_InvalidRulesetApprovalHook(approvalHook);
 
             // Make sure the approval hook supports the expected interface.
             try approvalHook.supportsInterface(type(IJBRulesetApprovalHook).interfaceId) returns (bool doesSupport) {
-                if (!doesSupport) revert JBRulesets_InvalidRulesetApprovalHook(); // Contract exists at the address but
+                if (!doesSupport) revert JBRulesets_InvalidRulesetApprovalHook(approvalHook); // Contract exists at the
+                    // address but
                     // with the
                     // wrong interface
             } catch {
-                revert JBRulesets_InvalidRulesetApprovalHook(); // No ERC165 support
+                revert JBRulesets_InvalidRulesetApprovalHook(approvalHook); // No ERC165 support
             }
         }
 

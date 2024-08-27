@@ -195,7 +195,7 @@ contract TestSetTokenFor_Local is JBControllerSetup {
         bytes memory _currentRulesetCall = abi.encodeCall(IJBRulesets.currentOf, (1));
         mockExpect(address(rulesets), _currentRulesetCall, abi.encode(ruleset));
 
-        vm.expectRevert(JBController.JBController_RulesetSetTokenDisabled.selector);
+        vm.expectRevert(JBController.JBController_RulesetSetTokenNotAllowed.selector);
         _controller.setTokenFor(_projectId, _token);
     }
 
@@ -204,8 +204,8 @@ contract TestSetTokenFor_Local is JBControllerSetup {
 
         // mock ownerOf call as not this address (unauth)
         bytes memory _ownerOfCall = abi.encodeCall(IERC721.ownerOf, (_projectId));
-        bytes memory _ownerOfReturn = abi.encode(address(0));
-        mockExpect(address(projects), _ownerOfCall, _ownerOfReturn);
+        address _ownerOfReturn = address(0);
+        mockExpect(address(projects), _ownerOfCall, abi.encode(_ownerOfReturn));
 
         // mock permissions call as unauth
         bytes memory _permsCall1 = abi.encodeCall(
@@ -214,7 +214,11 @@ contract TestSetTokenFor_Local is JBControllerSetup {
         bytes memory _permsCallReturn1 = abi.encode(false);
         mockExpect(address(permissions), _permsCall1, _permsCallReturn1);
 
-        vm.expectRevert(JBPermissioned.JBPermissioned_Unauthorized.selector);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                JBPermissioned.JBPermissioned_Unauthorized.selector, _ownerOfReturn, address(this), _projectId, 8
+            )
+        );
         _controller.setTokenFor(_projectId, _token);
     }
 }

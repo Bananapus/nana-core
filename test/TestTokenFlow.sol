@@ -111,9 +111,13 @@ contract TestTokenFlow_Local is TestBaseWorkflow {
         assertEq(_tokens.totalBalanceOf(_beneficiary, _projectId), _expectedTokenBalance);
 
         if (_burnAmount == 0) {
-            vm.expectRevert(JBController.JBController_NoBurnableTokens.selector);
+            vm.expectRevert(JBController.JBController_ZeroTokensToBurn.selector);
         } else if (_burnAmount > _expectedTokenBalance) {
-            vm.expectRevert(JBTokens.JBTokens_InsufficientFunds.selector);
+            vm.expectRevert(
+                abi.encodeWithSelector(
+                    JBTokens.JBTokens_InsufficientTokensToBurn.selector, _burnAmount, _expectedTokenBalance
+                )
+            );
         } else {
             _expectedTokenBalance = _expectedTokenBalance - _burnAmount;
         }
@@ -135,7 +139,7 @@ contract TestTokenFlow_Local is TestBaseWorkflow {
     function testMintCreditsAtLimit() public {
         // Pay the project such that the `_beneficiary` receives 1000 project token credits.
         vm.deal(_beneficiary, 1 ether);
-        _terminal.pay{value: 1 ether}({
+        uint256 beneficiaryTokenCount = _terminal.pay{value: 1 ether}({
             projectId: _projectId,
             amount: 1 ether,
             token: JBConstants.NATIVE_TOKEN,
@@ -152,7 +156,11 @@ contract TestTokenFlow_Local is TestBaseWorkflow {
         _controller.deployERC20For({projectId: _projectId, name: "TestName", symbol: "TestSymbol", salt: bytes32(0)});
 
         // Mint claimed tokens to beneficiary: since this is 1,000 over `uint(208)` it will revert.
-        vm.expectRevert(JBTokens.JBTokens_OverflowAlert.selector);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                JBTokens.JBTokens_OverflowAlert.selector, type(uint208).max + beneficiaryTokenCount, type(uint208).max
+            )
+        );
 
         _controller.mintTokensOf({
             projectId: _projectId,

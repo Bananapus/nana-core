@@ -278,11 +278,13 @@ contract TestRecordRedemptionFor_Local is JBTerminalStoreSetup {
     function test_GivenTheRedeemCountGtTotalSupply() external whenCurrentRulesetUseTotalSurplusForRedemptionsEqTrue {
         // it will revert INSUFFICIENT_TOKENS
 
+        uint256 _supply = 1e18;
+
         // mock JBController totalTokenSupplyWithReservedTokensOf
         mockExpect(
             address(_controller),
             abi.encodeCall(IJBController.totalTokenSupplyWithReservedTokensOf, (_projectId)),
-            abi.encode(1e18)
+            abi.encode(_supply)
         );
 
         JBCurrencyAmount[] memory _payoutLimits = new JBCurrencyAmount[](1);
@@ -297,7 +299,9 @@ contract TestRecordRedemptionFor_Local is JBTerminalStoreSetup {
 
         uint256 _redeemCount = 4e18; // greater than token total supply
 
-        vm.expectRevert(JBTerminalStore.JBTerminalStore_InsufficientTokens.selector);
+        vm.expectRevert(
+            abi.encodeWithSelector(JBTerminalStore.JBTerminalStore_InsufficientTokens.selector, _redeemCount, _supply)
+        );
         _store.recordRedemptionFor({
             holder: address(this),
             projectId: _projectId,
@@ -424,15 +428,14 @@ contract TestRecordRedemptionFor_Local is JBTerminalStoreSetup {
     function test_GivenTheAmountReclaimedGtCallerBalance() external whenCallerBalanceIsZero {
         // it will revert INADEQUATE_TERMINAL_STORE_BALANCE
 
+        uint256 _totalTokens = 10e18;
+
         // mock JBController totalTokenSupplyWithReservedTokensOf
         mockExpect(
             address(_controller),
             abi.encodeCall(IJBController.totalTokenSupplyWithReservedTokensOf, (_projectId)),
-            abi.encode(10e18)
+            abi.encode(_totalTokens)
         );
-
-        JBCurrencyAmount[] memory _payoutLimits = new JBCurrencyAmount[](1);
-        _payoutLimits[0] = JBCurrencyAmount({amount: 1e17, currency: _currency});
 
         // call params
         JBAccountingContext memory _accountingContexts =
@@ -443,7 +446,13 @@ contract TestRecordRedemptionFor_Local is JBTerminalStoreSetup {
 
         uint256 _redeemCount = 4e18; // greater than caller balance
 
-        vm.expectRevert(JBTerminalStore.JBTerminalStore_InadequateTerminalStoreBalance.selector);
+        uint256 reclaimAmount = mulDiv(_currentSurplus, _redeemCount, _totalTokens);
+
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                JBTerminalStore.JBTerminalStore_InadequateTerminalStoreBalance.selector, reclaimAmount, 0
+            )
+        );
         _store.recordRedemptionFor({
             holder: address(this),
             projectId: _projectId,

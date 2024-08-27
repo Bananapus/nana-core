@@ -15,9 +15,9 @@ contract JBSplits is JBControlled, IJBSplits {
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
 
-    error JBSplits_InvalidSplitPercent();
-    error JBSplits_InvalidTotalPercent();
+    error JBSplits_TotalPercentExceeds100();
     error JBSplits_PreviousLockedSplitsNotIncluded();
+    error JBSplits_ZeroSplitPercent();
 
     //*********************************************************************//
     // ------------------------- public constants ------------------------ //
@@ -169,12 +169,9 @@ contract JBSplits is JBControlled, IJBSplits {
         // Keep a reference to the number of splits.
         uint256 numberOfSplits = splits.length;
 
-        // Keep a reference to the split being iterated on.
-        JBSplit memory split;
-
         for (uint256 i; i < numberOfSplits; i++) {
             // Set the split being iterated on.
-            split = splits[i];
+            JBSplit memory split = splits[i];
 
             // Check for sameness.
             if (
@@ -210,11 +207,8 @@ contract JBSplits is JBControlled, IJBSplits {
         override
         onlyControllerOf(projectId)
     {
-        // Keep a reference to the number of split groups.
-        uint256 numberOfSplitGroups = splitGroups.length;
-
         // Set each grouped splits.
-        for (uint256 i; i < numberOfSplitGroups; i++) {
+        for (uint256 i; i < splitGroups.length; i++) {
             // Get a reference to the grouped split being iterated on.
             JBSplitGroup memory splitGroup = splitGroups[i];
 
@@ -255,21 +249,18 @@ contract JBSplits is JBControlled, IJBSplits {
         // Keep a reference to the number of splits to set.
         uint256 numberOfSplits = splits.length;
 
-        // Keep a reference to the split being iterated on.
-        JBSplit memory split;
-
         for (uint256 i; i < numberOfSplits; i++) {
             // Set the split being iterated on.
-            split = splits[i];
+            JBSplit memory split = splits[i];
 
             // The percent should be greater than 0.
-            if (split.percent == 0) revert JBSplits_InvalidSplitPercent();
+            if (split.percent == 0) revert JBSplits_ZeroSplitPercent();
 
             // Add to the `percent` total.
             percentTotal = percentTotal + split.percent;
 
             // Ensure the total does not exceed 100%.
-            if (percentTotal > JBConstants.SPLITS_TOTAL_PERCENT) revert JBSplits_InvalidTotalPercent();
+            if (percentTotal > JBConstants.SPLITS_TOTAL_PERCENT) revert JBSplits_TotalPercentExceeds100();
 
             uint256 packedSplitParts1;
 

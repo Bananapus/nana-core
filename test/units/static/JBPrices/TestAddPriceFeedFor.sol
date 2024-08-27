@@ -58,10 +58,10 @@ contract TestAddPriceFeedFor_Local is JBPricesSetup {
     function test_WhenPricingCurrencyOrUnitCurrencyIs0() external whenProjectIsNotDefaultAndHasPermissions {
         // it should revert with INVALID_CURRENCY
 
-        vm.expectRevert(JBPrices.JBPrices_InvalidCurrency.selector);
+        vm.expectRevert(JBPrices.JBPrices_ZeroPricingCurrency.selector);
         _prices.addPriceFeedFor(_projectId, _invalidCurrency, _unitCurrency, _feed);
 
-        vm.expectRevert(JBPrices.JBPrices_InvalidCurrency.selector);
+        vm.expectRevert(JBPrices.JBPrices_ZeroUnitCurrency.selector);
         _prices.addPriceFeedFor(_projectId, _pricingCurrency, _invalidCurrency, _feed);
     }
 
@@ -74,7 +74,7 @@ contract TestAddPriceFeedFor_Local is JBPricesSetup {
         vm.prank(_owner);
         _prices.addPriceFeedFor(DEFAULT_PROJECT_ID, _pricingCurrency, _unitCurrency, _feed);
 
-        vm.expectRevert(JBPrices.JBPrices_PriceFeedAlreadyExists.selector);
+        vm.expectRevert(abi.encodeWithSelector(JBPrices.JBPrices_PriceFeedAlreadyExists.selector, _feed));
         _prices.addPriceFeedFor(_projectId, _pricingCurrency, _unitCurrency, _feed);
     }
 
@@ -86,7 +86,7 @@ contract TestAddPriceFeedFor_Local is JBPricesSetup {
 
         _prices.addPriceFeedFor(_projectId, _pricingCurrency, _unitCurrency, _feed);
 
-        vm.expectRevert(JBPrices.JBPrices_PriceFeedAlreadyExists.selector);
+        vm.expectRevert(abi.encodeWithSelector(JBPrices.JBPrices_PriceFeedAlreadyExists.selector, _feed));
         _prices.addPriceFeedFor(_projectId, _pricingCurrency, _unitCurrency, _feed);
     }
 

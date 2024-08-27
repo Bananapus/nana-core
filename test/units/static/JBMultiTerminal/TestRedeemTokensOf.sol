@@ -39,7 +39,9 @@ contract TestRedeemTokensOf_Local is JBMultiTerminalSetup {
             abi.encode(false)
         );
 
-        vm.expectRevert(JBPermissioned.JBPermissioned_Unauthorized.selector);
+        vm.expectRevert(
+            abi.encodeWithSelector(JBPermissioned.JBPermissioned_Unauthorized.selector, _holder, _bene, _projectId, 3)
+        );
         vm.prank(_bene);
         _terminal.redeemTokensOf(_holder, _projectId, _mockToken, _defaultAmount, _minReclaimed, _bene, "");
     }
@@ -152,9 +154,11 @@ contract TestRedeemTokensOf_Local is JBMultiTerminalSetup {
 
         // mock feeless address check
         mockExpect(address(feelessAddresses), abi.encodeCall(IJBFeelessAddresses.isFeeless, (_bene)), abi.encode(true));
-        vm.expectRevert(JBMultiTerminal.JBMultiTerminal_UnderMinTokensReclaimed.selector);
+        vm.expectRevert(
+            abi.encodeWithSelector(JBMultiTerminal.JBMultiTerminal_UnderMinTokensReclaimed.selector, 1e9, 1e18)
+        );
         _terminal.redeemTokensOf(_holder, _projectId, _mockToken, _defaultAmount, 1e18, _bene, ""); // minReclaimAmount
-            // = 1e18 but only 1e19 reclaimed
+            // = 1e18 but only 1e9 reclaimed
     }
 
     function test_GivenReclaimAmountGtZeroBeneficiaryIsNotFeelessAndRedemptionRateDneqMAX_REDEMPTION_RATE()

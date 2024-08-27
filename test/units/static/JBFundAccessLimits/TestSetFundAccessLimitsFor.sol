@@ -28,7 +28,11 @@ contract TestSetFundAccessLimitsFor_Local is JBFundAccessSetup {
         // Fund Access config
         JBFundAccessLimitGroup[] memory _fundAccessLimitGroup = new JBFundAccessLimitGroup[](2);
 
-        vm.expectRevert(JBControlled.JBControlled_ControllerUnauthorized.selector);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                JBControlled.JBControlled_ControllerUnauthorized.selector, address(makeAddr("notThisContract"))
+            )
+        );
         _fundAccess.setFundAccessLimitsFor(_projectId, _ruleset, _fundAccessLimitGroup);
     }
 

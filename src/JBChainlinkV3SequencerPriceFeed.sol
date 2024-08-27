@@ -13,7 +13,9 @@ contract JBChainlinkV3SequencerPriceFeed is JBChainlinkV3PriceFeed {
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
 
-    error JBChainlinkV3SequencerPriceFeed_SequencerDownOrRestarting();
+    error JBChainlinkV3SequencerPriceFeed_SequencerDownOrRestarting(
+        uint256 timestamp, uint256 gradePeriodTime, uint256 startedAt
+    );
 
     //*********************************************************************//
     // ---------------- public stored immutable properties --------------- //
@@ -58,8 +60,10 @@ contract JBChainlinkV3SequencerPriceFeed is JBChainlinkV3PriceFeed {
         (, int256 answer, uint256 startedAt,,) = SEQUENCER_FEED.latestRoundData();
 
         // Revert if sequencer has too recently restarted or is currently down.
-        if (block.timestamp - startedAt <= GRACE_PERIOD_TIME || answer == 1) {
-            revert JBChainlinkV3SequencerPriceFeed_SequencerDownOrRestarting();
+        if (block.timestamp <= GRACE_PERIOD_TIME + startedAt || answer == 1) {
+            revert JBChainlinkV3SequencerPriceFeed_SequencerDownOrRestarting(
+                block.timestamp, GRACE_PERIOD_TIME, startedAt
+            );
         }
 
         return super.currentUnitPrice(decimals);

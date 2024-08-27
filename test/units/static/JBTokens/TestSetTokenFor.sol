@@ -39,7 +39,7 @@ contract TestSetTokenFor_Local is JBTokensSetup {
         // Set storage
         vm.store(address(_tokens), tokenOfSlot, bytes32(uint256(uint160(address(_token)))));
 
-        vm.expectRevert(JBTokens.JBTokens_TokenAlreadySet.selector);
+        vm.expectRevert(abi.encodeWithSelector(JBTokens.JBTokens_ProjectAlreadyHasToken.selector, _token));
         _tokens.setTokenFor(_projectId, IJBToken(address(_token)));
     }
 
@@ -49,10 +49,12 @@ contract TestSetTokenFor_Local is JBTokensSetup {
         // Find the storage slot to set token
         bytes32 projectIdOfSlot = keccak256(abi.encode(_token, uint256(1)));
 
-        // Set storage
-        vm.store(address(_tokens), projectIdOfSlot, bytes32(uint256(uint160(address(_token)))));
+        uint256 otherProjectId = 1234;
 
-        vm.expectRevert(JBTokens.JBTokens_TokenAlreadySet.selector);
+        // Set storage
+        vm.store(address(_tokens), projectIdOfSlot, bytes32(uint256(otherProjectId)));
+
+        vm.expectRevert(abi.encodeWithSelector(JBTokens.JBTokens_TokenAlreadyBeingUsed.selector, otherProjectId));
         _tokens.setTokenFor(_projectId, IJBToken(address(_token)));
     }
 
@@ -62,7 +64,7 @@ contract TestSetTokenFor_Local is JBTokensSetup {
         //mock call to token decimals
         mockExpect(address(_token), abi.encodeCall(IJBToken.decimals, ()), abi.encode(6));
 
-        vm.expectRevert(JBTokens.JBTokens_TokensMustHave18Decimals.selector);
+        vm.expectRevert(abi.encodeWithSelector(JBTokens.JBTokens_TokensMustHave18Decimals.selector, 6));
         _tokens.setTokenFor(_projectId, IJBToken(address(_token)));
     }
 

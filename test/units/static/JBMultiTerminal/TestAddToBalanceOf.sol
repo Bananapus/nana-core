@@ -207,7 +207,7 @@ contract TestAddToBalanceOf_Local is JBMultiTerminalSetup {
     function test_WhenTheProjectDNHAccountingContextForTheToken() external {
         // it will revert TOKEN_NOT_ACCEPTED
 
-        vm.expectRevert(JBMultiTerminal.JBMultiTerminal_TokenNotAccepted.selector);
+        vm.expectRevert(abi.encodeWithSelector(JBMultiTerminal.JBMultiTerminal_TokenNotAccepted.selector, _native));
 
         _terminal.addToBalanceOf{value: payAmount}({
             projectId: _projectId,
@@ -236,7 +236,7 @@ contract TestAddToBalanceOf_Local is JBMultiTerminalSetup {
         JBAccountingContext memory _storedContext = _terminal.accountingContextForTokenOf(_projectId, _usdc);
         assertEq(_storedContext.token, _usdc);
 
-        vm.expectRevert(JBMultiTerminal.JBMultiTerminal_NoMsgValueAllowed.selector);
+        vm.expectRevert(abi.encodeWithSelector(JBMultiTerminal.JBMultiTerminal_NoMsgValueAllowed.selector, 1));
 
         _terminal.addToBalanceOf{value: 1}({
             projectId: _projectId,
@@ -364,7 +364,9 @@ contract TestAddToBalanceOf_Local is JBMultiTerminalSetup {
         // Setup: use the metadata library to encode.
         bytes memory _packedData = _metadataHelper.createMetadata(_ids, _datas);
 
-        vm.expectRevert(JBMultiTerminal.JBMultiTerminal_PermitAllowanceNotEnough.selector);
+        vm.expectRevert(
+            abi.encodeWithSelector(JBMultiTerminal.JBMultiTerminal_PermitAllowanceNotEnough.selector, payAmount, 1)
+        );
 
         vm.startPrank(from);
 
