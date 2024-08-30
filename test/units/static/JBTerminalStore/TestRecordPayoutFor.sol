@@ -77,31 +77,73 @@ contract TestRecordPayoutFor_Local is JBTerminalStoreSetup {
         _;
     }
 
+    modifier whenThereIsAZeroUsedPayoutLimitOfTheSenderForCurrentRulesetAndAccessLimitsIsntCalled() {
+        JBRulesetMetadata memory _metadata = JBRulesetMetadata({
+            reservedPercent: 0,
+            redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
+            baseCurrency: uint32(uint160(address(_token))),
+            pausePay: false,
+            pauseCreditTransfers: false,
+            allowOwnerMinting: false,
+            allowSetCustomToken: false,
+            allowTerminalMigration: false,
+            allowSetTerminals: false,
+            ownerMustSendPayouts: false,
+            allowSetController: false,
+            allowAddAccountingContext: true,
+            allowAddPriceFeed: false,
+            allowCrosschainSuckerExtension: false,
+            holdFees: false,
+            useTotalSurplusForRedemptions: false,
+            useDataHookForPay: false,
+            useDataHookForRedeem: false,
+            dataHook: address(0),
+            metadata: 0
+        });
+
+        uint256 _packedMetadata = JBRulesetMetadataResolver.packRulesetMetadata(_metadata);
+
+        // JBRulesets return calldata
+        JBRuleset memory _returnedRuleset = JBRuleset({
+            cycleNumber: uint48(block.timestamp),
+            id: uint48(block.timestamp),
+            basedOnId: 0,
+            start: uint48(block.timestamp),
+            duration: uint32(block.timestamp + 1000),
+            weight: 1e18,
+            decayPercent: 0,
+            approvalHook: IJBRulesetApprovalHook(address(0)),
+            metadata: _packedMetadata
+        });
+
+        // mock call to JBRulesets currentOf
+        mockExpect(address(rulesets), abi.encodeCall(IJBRulesets.currentOf, (_projectId)), abi.encode(_returnedRuleset));
+
+        /* // mock call to JBDirectory controllerOf
+        mockExpect(address(directory), abi.encodeCall(IJBDirectory.controllerOf, (_projectId)),
+        abi.encode(_controller));
+
+        // mock call to controller FUND_ACCESS_LIMITS
+        mockExpect(
+        address(_controller), abi.encodeCall(IJBController.FUND_ACCESS_LIMITS, ()), abi.encode(_accessLimits)
+        ); */
+
+        _;
+    }
+
     function test_GivenTheCallingAmountGtWhatIsAvailableToPayout()
         external
-        whenThereIsAZeroUsedPayoutLimitOfTheSenderForCurrentRuleset
+        whenThereIsAZeroUsedPayoutLimitOfTheSenderForCurrentRulesetAndAccessLimitsIsntCalled
     {
-        // it will revert PAYOUT_LIMIT_EXCEEDED
+        // it will revert JBTerminalStore_InadequateTerminalStoreBalance
 
         // setup calldata
         JBAccountingContext[] memory _contexts = new JBAccountingContext[](1);
         _contexts[0] = JBAccountingContext({token: address(_token), decimals: 18, currency: _currency});
 
-        // mock call to JBFundAccessLimits payoutLimitOf
-        bytes memory _payoutsCall = abi.encodeCall(
-            IJBFundAccessLimits.payoutLimitOf, (_projectId, block.timestamp, address(this), address(_token), _currency)
-        );
-
-        // mock return params
-        JBCurrencyAmount[] memory _limits = new JBCurrencyAmount[](1);
-        _limits[0] = JBCurrencyAmount({amount: 0, currency: _currency});
-
-        bytes memory _payoutsReturn = abi.encode(_limits[0].amount);
-        mockExpect(address(_accessLimits), _payoutsCall, _payoutsReturn);
-
         vm.expectRevert(
             abi.encodeWithSelector(
-                JBTerminalStore.JBTerminalStore_InadequateControllerPayoutLimit.selector, _defaultValue, 0
+                JBTerminalStore.JBTerminalStore_InadequateTerminalStoreBalance.selector, _defaultValue, 0
             )
         );
         _store.recordPayoutFor(_projectId, _contexts[0], _defaultValue, _currency);
@@ -114,7 +156,7 @@ contract TestRecordPayoutFor_Local is JBTerminalStoreSetup {
         // it will not convert prices, update balances and return
 
         // Find the storage slot
-        bytes32 balanceOfSlot = keccak256(abi.encode(address(this), uint256(1)));
+        bytes32 balanceOfSlot = keccak256(abi.encode(address(this), uint256(0)));
         bytes32 projectSlot = keccak256(abi.encode(_projectId, uint256(balanceOfSlot)));
         bytes32 slot = keccak256(abi.encode(address(_token), uint256(projectSlot)));
 
@@ -162,7 +204,7 @@ contract TestRecordPayoutFor_Local is JBTerminalStoreSetup {
         // it will convert prices and return
 
         // Find the storage slot
-        bytes32 balanceOfSlot = keccak256(abi.encode(address(this), uint256(1)));
+        bytes32 balanceOfSlot = keccak256(abi.encode(address(this), uint256(0)));
         bytes32 projectSlot = keccak256(abi.encode(_projectId, uint256(balanceOfSlot)));
         bytes32 slot = keccak256(abi.encode(address(_token), uint256(projectSlot)));
 
@@ -199,21 +241,13 @@ contract TestRecordPayoutFor_Local is JBTerminalStoreSetup {
 
     function test_GivenTheAmountPaidOutExceedsBalance()
         external
-        whenThereIsAZeroUsedPayoutLimitOfTheSenderForCurrentRuleset
+        whenThereIsAZeroUsedPayoutLimitOfTheSenderForCurrentRulesetAndAccessLimitsIsntCalled
     {
         // it will revert INADEQUATE_TERMINAL_STORE_BALANCE
 
         // setup calldata
         JBAccountingContext[] memory _contexts = new JBAccountingContext[](1);
         _contexts[0] = JBAccountingContext({token: address(_token), decimals: 18, currency: _currency});
-
-        // mock call to JBFundAccessLimits payoutLimitOf
-        bytes memory _payoutsCall = abi.encodeCall(
-            IJBFundAccessLimits.payoutLimitOf, (_projectId, block.timestamp, address(this), address(_token), _currency)
-        );
-
-        bytes memory _payoutsReturn = abi.encode(_defaultValue);
-        mockExpect(address(_accessLimits), _payoutsCall, _payoutsReturn);
 
         vm.expectRevert(
             abi.encodeWithSelector(
