@@ -8,7 +8,7 @@ contract TestRecordUsedAllowanceOf_Local is JBTerminalStoreSetup {
     uint256 _projectId = 1;
     uint256 _decimals = 18;
     uint256 _defaultAmount = 1e18;
-    uint256 _balance = 10e18;
+    uint256 _balance = 1e19;
     uint256 _payoutLimit = 2e18;
 
     // Mocks
@@ -26,7 +26,7 @@ contract TestRecordUsedAllowanceOf_Local is JBTerminalStoreSetup {
 
     modifier whenAmountIsWithinRangeToUseSurplusAllowance() {
         // Find the storage slot
-        bytes32 balanceOfSlot = keccak256(abi.encode(address(this), uint256(1)));
+        bytes32 balanceOfSlot = keccak256(abi.encode(address(this), uint256(0)));
         bytes32 projectSlot = keccak256(abi.encode(_projectId, uint256(balanceOfSlot)));
         bytes32 slot = keccak256(abi.encode(address(_token), uint256(projectSlot)));
 
@@ -129,7 +129,7 @@ contract TestRecordUsedAllowanceOf_Local is JBTerminalStoreSetup {
         // it will convert prices
 
         // Find the storage slot
-        bytes32 balanceOfSlot = keccak256(abi.encode(address(this), uint256(1)));
+        bytes32 balanceOfSlot = keccak256(abi.encode(address(this), uint256(0)));
         bytes32 projectSlot = keccak256(abi.encode(_projectId, uint256(balanceOfSlot)));
         bytes32 slot = keccak256(abi.encode(address(_nativeAddress), uint256(projectSlot)));
 
@@ -233,19 +233,6 @@ contract TestRecordUsedAllowanceOf_Local is JBTerminalStoreSetup {
         // it will revert INADEQUATE_TERMINAL_STORE_BALANCE
 
         // do not set a balance (will be zero)
-        /* // Find the storage slot
-        bytes32 balanceOfSlot = keccak256(abi.encode(address(this), uint256(1)));
-        bytes32 projectSlot = keccak256(abi.encode(_projectId, uint256(balanceOfSlot)));
-        bytes32 slot = keccak256(abi.encode(address(_token), uint256(projectSlot)));
-
-        bytes32 balanceBytes = bytes32(_balance);
-
-        // Set balance
-        vm.store(address(_store), slot, balanceBytes);
-
-        // Ensure balance is set correctly
-        uint256 _balanceCallReturn = _store.balanceOf(address(this), _projectId, address(_token));
-        assertEq(_balanceCallReturn, _balance); */
 
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: 0,
@@ -297,16 +284,6 @@ contract TestRecordUsedAllowanceOf_Local is JBTerminalStoreSetup {
         // mock call to get JBFundAccessLimits address
         mockExpect(
             address(_controller), abi.encodeCall(IJBController.FUND_ACCESS_LIMITS, ()), abi.encode(_accessLimits)
-        );
-
-        // mock call to JBFundAccessLimits surplusAllowanceOf
-        mockExpect(
-            address(_accessLimits),
-            abi.encodeCall(
-                IJBFundAccessLimits.surplusAllowanceOf,
-                (_projectId, block.timestamp, address(this), address(_token), _currency)
-            ),
-            abi.encode(1e19)
         );
 
         JBCurrencyAmount[] memory _limits = new JBCurrencyAmount[](1);
@@ -334,23 +311,7 @@ contract TestRecordUsedAllowanceOf_Local is JBTerminalStoreSetup {
     function test_WhenAmountIsNotWithinRangeToUseSurplusAllowance() external {
         // it will revert INADEQUATE_CONTROLLER_ALLOWANCE
 
-        // set usedSurplusAllowanceOf to be too high for the subsequent call to succeed
-        // Find the storage slot
-        bytes32 usedSurplusOfSlot = keccak256(abi.encode(address(this), uint256(3)));
-        bytes32 projectSlot = keccak256(abi.encode(_projectId, uint256(usedSurplusOfSlot)));
-        bytes32 tokenSlot = keccak256(abi.encode(address(_token), uint256(projectSlot)));
-        bytes32 rulesetSlot = keccak256(abi.encode(block.timestamp, uint256(tokenSlot)));
-        bytes32 slot = keccak256(abi.encode(_currency, uint256(rulesetSlot)));
-
-        bytes32 usedSurplus = bytes32(_balance);
-
-        // Set balance
-        vm.store(address(_store), slot, usedSurplus);
-
-        // Ensure balance is set correctly
-        uint256 _usedSurplusCallReturn =
-            _store.usedSurplusAllowanceOf(address(this), _projectId, address(_token), block.timestamp, _currency);
-        assertEq(_usedSurplusCallReturn, _balance);
+        // do not set a balance (will be zero)
 
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: 0,
@@ -404,14 +365,17 @@ contract TestRecordUsedAllowanceOf_Local is JBTerminalStoreSetup {
             address(_controller), abi.encodeCall(IJBController.FUND_ACCESS_LIMITS, ()), abi.encode(_accessLimits)
         );
 
-        // mock call to JBFundAccessLimits surplusAllowanceOf
+        // Return data for next mock
+        JBCurrencyAmount[] memory _payoutLimits = new JBCurrencyAmount[](1);
+        _payoutLimits[0] = JBCurrencyAmount({amount: 0, currency: _currency});
+
+        // mock call to JBFundAccessLimits payoutLimitsOf
         mockExpect(
             address(_accessLimits),
             abi.encodeCall(
-                IJBFundAccessLimits.surplusAllowanceOf,
-                (_projectId, block.timestamp, address(this), address(_token), _currency)
+                IJBFundAccessLimits.payoutLimitsOf, (_projectId, block.timestamp, address(this), address(_token))
             ),
-            abi.encode(1e19)
+            abi.encode(_payoutLimits)
         );
 
         // setup calldata
@@ -420,9 +384,9 @@ contract TestRecordUsedAllowanceOf_Local is JBTerminalStoreSetup {
 
         vm.expectRevert(
             abi.encodeWithSelector(
-                JBTerminalStore.JBTerminalStore_InadequateControllerAllowance.selector,
-                uint256(usedSurplus) + _defaultAmount,
-                1e19
+                JBTerminalStore.JBTerminalStore_InadequateTerminalStoreBalance.selector,
+                _defaultAmount,
+                0 // no balance
             )
         );
         _store.recordUsedAllowanceOf(_projectId, _context, _defaultAmount, _currency);

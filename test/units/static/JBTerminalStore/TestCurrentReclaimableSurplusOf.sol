@@ -29,7 +29,7 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
 
     modifier whenProjectHasBalance() {
         // Find the storage slot
-        bytes32 balanceOfSlot = keccak256(abi.encode(address(_terminal), uint256(1)));
+        bytes32 balanceOfSlot = keccak256(abi.encode(address(_terminal), uint256(0)));
         bytes32 projectSlot = keccak256(abi.encode(_projectId, uint256(balanceOfSlot)));
         bytes32 slot = keccak256(abi.encode(address(_token), uint256(projectSlot)));
 

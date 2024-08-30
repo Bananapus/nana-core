@@ -19,7 +19,7 @@ contract TestRecordTerminalMigration_Local is JBTerminalStoreSetup {
         // it will return the current balance and reset balance to zero
 
         // Find the storage slot
-        bytes32 balanceOfSlot = keccak256(abi.encode(address(this), uint256(1)));
+        bytes32 balanceOfSlot = keccak256(abi.encode(address(this), uint256(0)));
         bytes32 projectSlot = keccak256(abi.encode(_projectId, uint256(balanceOfSlot)));
         bytes32 slot = keccak256(abi.encode(address(_token), uint256(projectSlot)));
 

@@ -181,7 +181,9 @@ contract TestSplits_Local is TestBaseWorkflow {
         // brevity).
         vm.expectRevert(
             abi.encodeWithSelector(
-                JBTerminalStore.JBTerminalStore_PayoutLimitExceeded.selector, _nativePayoutLimit * 2, _nativePayoutLimit
+                JBTerminalStore.JBTerminalStore_InadequateControllerPayoutLimit.selector,
+                _nativePayoutLimit * 2,
+                _nativePayoutLimit
             )
         );
 

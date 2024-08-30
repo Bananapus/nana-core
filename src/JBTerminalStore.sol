@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.23;
 
-import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {mulDiv} from "@prb/math/src/Common.sol";
 
 import {IJBController} from "./interfaces/IJBController.sol";
@@ -25,7 +24,7 @@ import {JBTokenAmount} from "./structs/JBTokenAmount.sol";
 
 /// @notice Manages all bookkeeping for inflows and outflows of funds from any terminal address.
 /// @dev This contract expects a project's controller to be an `IJBController`.
-contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
+contract JBTerminalStore is IJBTerminalStore {
     // A library that parses the packed ruleset metadata into a friendlier format.
     using JBRulesetMetadataResolver for JBRuleset;
 
@@ -34,10 +33,10 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     //*********************************************************************//
 
     error JBTerminalStore_InadequateControllerAllowance(uint256 amount, uint256 allowance);
+    error JBTerminalStore_InadequateControllerPayoutLimit(uint256 amount, uint256 limit);
     error JBTerminalStore_InadequateTerminalStoreBalance(uint256 amount, uint256 balance);
     error JBTerminalStore_InsufficientTokens(uint256 count, uint256 totalSupply);
     error JBTerminalStore_InvalidAmountToForwardHook(uint256 amount, uint256 paidAmount);
-    error JBTerminalStore_PayoutLimitExceeded(uint256 amount, uint256 limit);
     error JBTerminalStore_RulesetNotFound();
     error JBTerminalStore_RulesetPaymentPaused();
     error JBTerminalStore_TerminalMigrationNotAllowed();
@@ -484,7 +483,6 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     )
         external
         override
-        nonReentrant
         returns (JBRuleset memory ruleset, uint256 tokenCount, JBPayHookSpecification[] memory hookSpecifications)
     {
         // Get a reference to the project's current ruleset.
@@ -594,30 +592,10 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     )
         external
         override
-        nonReentrant
         returns (JBRuleset memory ruleset, uint256 amountPaidOut)
     {
         // Get a reference to the project's current ruleset.
         ruleset = RULESETS.currentOf(projectId);
-
-        // The new total amount which has been paid out during this ruleset.
-        uint256 newUsedPayoutLimitOf =
-            usedPayoutLimitOf[msg.sender][projectId][accountingContext.token][ruleset.cycleNumber][currency] + amount;
-
-        // Amount must be within what is still available to pay out.
-        uint256 payoutLimit = IJBController(address(DIRECTORY.controllerOf(projectId))).FUND_ACCESS_LIMITS()
-            .payoutLimitOf({
-            projectId: projectId,
-            rulesetId: ruleset.id,
-            terminal: msg.sender,
-            token: accountingContext.token,
-            currency: currency
-        });
-
-        // Make sure the new used amount is within the payout limit.
-        if (newUsedPayoutLimitOf > payoutLimit || payoutLimit == 0) {
-            revert JBTerminalStore_PayoutLimitExceeded(newUsedPayoutLimitOf, payoutLimit);
-        }
 
         // Convert the amount to the balance's currency.
         amountPaidOut = (currency == accountingContext.currency)
@@ -641,14 +619,33 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
             );
         }
 
-        // Store the new amount.
-        usedPayoutLimitOf[msg.sender][projectId][accountingContext.token][ruleset.cycleNumber][currency] =
-            newUsedPayoutLimitOf;
-
         // Removed the paid out funds from the project's token balance.
         unchecked {
             balanceOf[msg.sender][projectId][accountingContext.token] =
                 balanceOf[msg.sender][projectId][accountingContext.token] - amountPaidOut;
+        }
+
+        // The new total amount which has been paid out during this ruleset.
+        uint256 newUsedPayoutLimitOf =
+            usedPayoutLimitOf[msg.sender][projectId][accountingContext.token][ruleset.cycleNumber][currency] + amount;
+
+        // Store the new amount.
+        usedPayoutLimitOf[msg.sender][projectId][accountingContext.token][ruleset.cycleNumber][currency] =
+            newUsedPayoutLimitOf;
+
+        // Amount must be within what is still available to pay out.
+        uint256 payoutLimit = IJBController(address(DIRECTORY.controllerOf(projectId))).FUND_ACCESS_LIMITS()
+            .payoutLimitOf({
+            projectId: projectId,
+            rulesetId: ruleset.id,
+            terminal: msg.sender,
+            token: accountingContext.token,
+            currency: currency
+        });
+
+        // Make sure the new used amount is within the payout limit.
+        if (newUsedPayoutLimitOf > payoutLimit || payoutLimit == 0) {
+            revert JBTerminalStore_InadequateControllerPayoutLimit(newUsedPayoutLimitOf, payoutLimit);
         }
     }
 
@@ -680,7 +677,6 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     )
         external
         override
-        nonReentrant
         returns (
             JBRuleset memory ruleset,
             uint256 reclaimAmount,
@@ -796,15 +792,7 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     /// @param token The token being migrated.
     /// @return balance The project's current balance (which is being migrated), as a fixed point number with the same
     /// amount of decimals as its relative terminal.
-    function recordTerminalMigration(
-        uint256 projectId,
-        address token
-    )
-        external
-        override
-        nonReentrant
-        returns (uint256 balance)
-    {
+    function recordTerminalMigration(uint256 projectId, address token) external override returns (uint256 balance) {
         // Get a reference to the project's current ruleset.
         JBRuleset memory ruleset = RULESETS.currentOf(projectId);
 
@@ -838,30 +826,10 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
     )
         external
         override
-        nonReentrant
         returns (JBRuleset memory ruleset, uint256 usedAmount)
     {
         // Get a reference to the project's current ruleset.
         ruleset = RULESETS.currentOf(projectId);
-
-        // Get a reference to the new used surplus allowance for this ruleset ID.
-        uint256 newUsedSurplusAllowanceOf =
-            usedSurplusAllowanceOf[msg.sender][projectId][accountingContext.token][ruleset.id][currency] + amount;
-
-        // There must be sufficient surplus allowance available.
-        uint256 surplusAllowance = IJBController(address(DIRECTORY.controllerOf(projectId))).FUND_ACCESS_LIMITS()
-            .surplusAllowanceOf({
-            projectId: projectId,
-            rulesetId: ruleset.id,
-            terminal: msg.sender,
-            token: accountingContext.token,
-            currency: currency
-        });
-
-        // Make sure the new used amount is within the allowance.
-        if (newUsedSurplusAllowanceOf > surplusAllowance || surplusAllowance == 0) {
-            revert JBTerminalStore_InadequateControllerAllowance(newUsedSurplusAllowanceOf, surplusAllowance);
-        }
 
         // Convert the amount to this store's terminal's token.
         usedAmount = currency == accountingContext.currency
@@ -894,12 +862,31 @@ contract JBTerminalStore is ReentrancyGuard, IJBTerminalStore {
         // The amount being used must be available in the surplus.
         if (usedAmount > surplus) revert JBTerminalStore_InadequateTerminalStoreBalance(usedAmount, surplus);
 
+        // Update the project's balance.
+        balanceOf[msg.sender][projectId][accountingContext.token] =
+            balanceOf[msg.sender][projectId][accountingContext.token] - usedAmount;
+
+        // Get a reference to the new used surplus allowance for this ruleset ID.
+        uint256 newUsedSurplusAllowanceOf =
+            usedSurplusAllowanceOf[msg.sender][projectId][accountingContext.token][ruleset.id][currency] + amount;
+
         // Store the incremented value.
         usedSurplusAllowanceOf[msg.sender][projectId][accountingContext.token][ruleset.id][currency] =
             newUsedSurplusAllowanceOf;
 
-        // Update the project's balance.
-        balanceOf[msg.sender][projectId][accountingContext.token] =
-            balanceOf[msg.sender][projectId][accountingContext.token] - usedAmount;
+        // There must be sufficient surplus allowance available.
+        uint256 surplusAllowance = IJBController(address(DIRECTORY.controllerOf(projectId))).FUND_ACCESS_LIMITS()
+            .surplusAllowanceOf({
+            projectId: projectId,
+            rulesetId: ruleset.id,
+            terminal: msg.sender,
+            token: accountingContext.token,
+            currency: currency
+        });
+
+        // Make sure the new used amount is within the allowance.
+        if (newUsedSurplusAllowanceOf > surplusAllowance || surplusAllowance == 0) {
+            revert JBTerminalStore_InadequateControllerAllowance(newUsedSurplusAllowanceOf, surplusAllowance);
+        }
     }
 }
