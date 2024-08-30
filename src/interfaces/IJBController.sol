@@ -79,9 +79,7 @@ interface IJBController is IERC165, IJBProjectUriRegistry, IJBDirectoryAccessCon
         external
         view
         returns (JBRulesetWithMetadata[] memory rulesets);
-    function currentRulesetOf(
-        uint256 projectId
-    )
+    function currentRulesetOf(uint256 projectId)
         external
         view
         returns (JBRuleset memory ruleset, JBRulesetMetadata memory metadata);
@@ -92,17 +90,13 @@ interface IJBController is IERC165, IJBProjectUriRegistry, IJBDirectoryAccessCon
         external
         view
         returns (JBRuleset memory ruleset, JBRulesetMetadata memory metadata);
-    function latestQueuedRulesetOf(
-        uint256 projectId
-    )
+    function latestQueuedRulesetOf(uint256 projectId)
         external
         view
         returns (JBRuleset memory, JBRulesetMetadata memory metadata, JBApprovalStatus);
     function pendingReservedTokenBalanceOf(uint256 projectId) external view returns (uint256);
     function totalTokenSupplyWithReservedTokensOf(uint256 projectId) external view returns (uint256);
-    function upcomingRulesetOf(
-        uint256 projectId
-    )
+    function upcomingRulesetOf(uint256 projectId)
         external
         view
         returns (JBRuleset memory ruleset, JBRulesetMetadata memory metadata);
