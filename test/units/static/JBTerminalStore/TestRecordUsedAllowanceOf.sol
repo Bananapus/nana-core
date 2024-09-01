@@ -309,7 +309,7 @@ contract TestRecordUsedAllowanceOf_Local is JBTerminalStoreSetup {
     }
 
     function test_WhenAmountIsNotWithinRangeToUseSurplusAllowance() external {
-        // it will revert INADEQUATE_CONTROLLER_ALLOWANCE
+        // it will revert JBTerminalStore_InadequateTerminalStoreBalance
 
         // do not set a balance (will be zero)
 

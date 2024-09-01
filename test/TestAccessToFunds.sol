@@ -2,7 +2,9 @@
 pragma solidity >=0.8.6;
 
 import /* {*} from */ "./helpers/TestBaseWorkflow.sol";
+import "@openzeppelin/contracts/utils/Address.sol";
 import {MockPriceFeed} from "./mock/MockPriceFeed.sol";
+import {MaliciousBeneficiary, MaliciousPayoutBeneficiary} from "./mock/MockMaliciousBeneficiary.sol";
 
 /// Funds can be accessed in three ways:
 /// 1. project owners set a payout limit to prioritize spending to pre-determined destinations. funds being removed from
@@ -2428,6 +2430,236 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             jbTerminalStore().balanceOf(address(_terminal), _projectId, JBConstants.NATIVE_TOKEN),
             _projectNativeBalance - _nativeReclaimAmount
         );
+    }
+
+    // Tests that recent changes to JBTerminalStore are safe wrt reetrency via useAllowanceOf.
+    function testNativeAllowanceReentry() public {
+        // Hardcode values to use.
+        uint224 _nativeCurrencyPayoutLimit = uint224(10 * 10 ** _NATIVE_DECIMALS);
+        uint224 _nativeCurrencySurplusAllowance = uint224(5 * 10 ** _NATIVE_DECIMALS);
+
+        MaliciousBeneficiary maliciousOwner = new MaliciousBeneficiary();
+
+        // Package up the limits for the given terminal.
+        JBFundAccessLimitGroup[] memory _fundAccessLimitGroup = new JBFundAccessLimitGroup[](1);
+        {
+            // Specify a payout limit.
+            JBCurrencyAmount[] memory _payoutLimits = new JBCurrencyAmount[](1);
+            _payoutLimits[0] = JBCurrencyAmount({
+                amount: _nativeCurrencyPayoutLimit,
+                currency: uint32(uint160(JBConstants.NATIVE_TOKEN))
+            });
+
+            // Specify a surplus allowance.
+            JBCurrencyAmount[] memory _surplusAllowances = new JBCurrencyAmount[](1);
+            _surplusAllowances[0] = JBCurrencyAmount({
+                amount: _nativeCurrencySurplusAllowance,
+                currency: uint32(uint160(JBConstants.NATIVE_TOKEN))
+            });
+
+            _fundAccessLimitGroup[0] = JBFundAccessLimitGroup({
+                terminal: address(_terminal),
+                token: JBConstants.NATIVE_TOKEN,
+                payoutLimits: _payoutLimits,
+                surplusAllowances: _surplusAllowances
+            });
+        }
+
+        {
+            // Package up the ruleset configuration.
+            JBRulesetConfig[] memory _rulesetConfigurations = new JBRulesetConfig[](1);
+            _rulesetConfigurations[0].mustStartAtOrAfter = 0;
+            _rulesetConfigurations[0].duration = 0;
+            _rulesetConfigurations[0].weight = _weight;
+            _rulesetConfigurations[0].decayPercent = 0;
+            _rulesetConfigurations[0].approvalHook = IJBRulesetApprovalHook(address(0));
+            _rulesetConfigurations[0].metadata = _metadata;
+            _rulesetConfigurations[0].splitGroups = new JBSplitGroup[](0);
+            _rulesetConfigurations[0].fundAccessLimitGroups = _fundAccessLimitGroup;
+
+            JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
+            JBAccountingContext[] memory _tokensToAccept = new JBAccountingContext[](1);
+            _tokensToAccept[0] = JBAccountingContext({
+                token: JBConstants.NATIVE_TOKEN,
+                decimals: 18,
+                currency: uint32(uint160(JBConstants.NATIVE_TOKEN))
+            });
+
+            _terminalConfigurations[0] =
+                JBTerminalConfig({terminal: _terminal, accountingContextsToAccept: _tokensToAccept});
+
+            // Create a first project to collect fees.
+            _controller.launchProjectFor({
+                owner: address(420), // Random.
+                projectUri: "whatever",
+                rulesetConfigurations: _rulesetConfigurations,
+                terminalConfigurations: _terminalConfigurations, // Set terminals to receive fees.
+                memo: ""
+            });
+
+            // Create the project to test.
+            _projectId = _controller.launchProjectFor({
+                owner: address(maliciousOwner),
+                projectUri: "myIPFSHash",
+                rulesetConfigurations: _rulesetConfigurations,
+                terminalConfigurations: _terminalConfigurations,
+                memo: ""
+            });
+        }
+
+        // Get a reference to the amount being paid.
+        // The amount being paid is the payout limit plus two times the surplus allowance.
+        uint256 _nativePayAmount = _nativeCurrencyPayoutLimit + (5 * _nativeCurrencySurplusAllowance);
+
+        // Pay the project such that the `_beneficiary` receives project tokens.
+        _terminal.pay{value: _nativePayAmount}({
+            projectId: _projectId,
+            amount: _nativePayAmount,
+            token: JBConstants.NATIVE_TOKEN,
+            beneficiary: _beneficiary,
+            minReturnedTokens: 0,
+            memo: "",
+            metadata: new bytes(0)
+        });
+
+        // Make sure the beneficiary got the expected number of tokens.
+        uint256 _beneficiaryTokenBalance = mulDiv(_nativePayAmount, _weight, 10 ** _NATIVE_DECIMALS)
+            * _metadata.reservedPercent / JBConstants.MAX_RESERVED_PERCENT;
+        assertEq(_tokens.totalBalanceOf(_beneficiary, _projectId), _beneficiaryTokenBalance);
+
+        // Make sure the terminal holds the full native token balance.
+        assertEq(
+            jbTerminalStore().balanceOf(address(_terminal), _projectId, JBConstants.NATIVE_TOKEN), _nativePayAmount
+        );
+
+        // Attempt to use more than surplus allowance via malicious beneficiary contract.
+        // This will fail via the mock contract itself, with an expected revert therein corresponding to the amounts.
+        // See {MockMaliciousBeneficiary}
+        vm.prank(address(maliciousOwner));
+        _terminal.useAllowanceOf({
+            projectId: _projectId,
+            amount: _nativeCurrencySurplusAllowance,
+            currency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
+            token: JBConstants.NATIVE_TOKEN,
+            minTokensPaidOut: 0,
+            beneficiary: payable(address(maliciousOwner)),
+            feeBeneficiary: payable(_projectOwner),
+            memo: "MEMO"
+        });
+    }
+
+    // Tests that recent changes to JBTerminalStore are safe wrt reetrency via sendPayoutsOf.
+    function testNativePayoutReentry() public {
+        // Hardcode values to use.
+        uint224 _nativeCurrencyPayoutLimit = uint224(10 * 10 ** _NATIVE_DECIMALS);
+        uint224 _nativeCurrencySurplusAllowance = uint224(5 * 10 ** _NATIVE_DECIMALS);
+
+        MaliciousPayoutBeneficiary maliciousPayoutCaller = new MaliciousPayoutBeneficiary();
+
+        // Package up the limits for the given terminal.
+        JBFundAccessLimitGroup[] memory _fundAccessLimitGroup = new JBFundAccessLimitGroup[](1);
+        {
+            // Specify a payout limit.
+            JBCurrencyAmount[] memory _payoutLimits = new JBCurrencyAmount[](1);
+            _payoutLimits[0] = JBCurrencyAmount({
+                amount: _nativeCurrencyPayoutLimit,
+                currency: uint32(uint160(JBConstants.NATIVE_TOKEN))
+            });
+
+            // Specify a surplus allowance.
+            JBCurrencyAmount[] memory _surplusAllowances = new JBCurrencyAmount[](1);
+            _surplusAllowances[0] = JBCurrencyAmount({
+                amount: _nativeCurrencySurplusAllowance,
+                currency: uint32(uint160(JBConstants.NATIVE_TOKEN))
+            });
+
+            _fundAccessLimitGroup[0] = JBFundAccessLimitGroup({
+                terminal: address(_terminal),
+                token: JBConstants.NATIVE_TOKEN,
+                payoutLimits: _payoutLimits,
+                surplusAllowances: _surplusAllowances
+            });
+        }
+
+        {
+            // Package up the ruleset configuration.
+            JBRulesetConfig[] memory _rulesetConfigurations = new JBRulesetConfig[](1);
+            _rulesetConfigurations[0].mustStartAtOrAfter = 0;
+            _rulesetConfigurations[0].duration = 0;
+            _rulesetConfigurations[0].weight = _weight;
+            _rulesetConfigurations[0].decayPercent = 0;
+            _rulesetConfigurations[0].approvalHook = IJBRulesetApprovalHook(address(0));
+            _rulesetConfigurations[0].metadata = _metadata;
+            _rulesetConfigurations[0].splitGroups = new JBSplitGroup[](0);
+            _rulesetConfigurations[0].fundAccessLimitGroups = _fundAccessLimitGroup;
+
+            JBTerminalConfig[] memory _terminalConfigurations = new JBTerminalConfig[](1);
+            JBAccountingContext[] memory _tokensToAccept = new JBAccountingContext[](1);
+            _tokensToAccept[0] = JBAccountingContext({
+                token: JBConstants.NATIVE_TOKEN,
+                decimals: 18,
+                currency: uint32(uint160(JBConstants.NATIVE_TOKEN))
+            });
+
+            _terminalConfigurations[0] =
+                JBTerminalConfig({terminal: _terminal, accountingContextsToAccept: _tokensToAccept});
+
+            // Create a first project to collect fees.
+            _controller.launchProjectFor({
+                owner: address(420), // Random.
+                projectUri: "whatever",
+                rulesetConfigurations: _rulesetConfigurations,
+                terminalConfigurations: _terminalConfigurations, // Set terminals to receive fees.
+                memo: ""
+            });
+
+            // Create the project to test.
+            _projectId = _controller.launchProjectFor({
+                owner: address(maliciousPayoutCaller),
+                projectUri: "myIPFSHash",
+                rulesetConfigurations: _rulesetConfigurations,
+                terminalConfigurations: _terminalConfigurations,
+                memo: ""
+            });
+        }
+
+        // Get a reference to the amount being paid.
+        // The amount being paid is the payout limit plus five times the surplus allowance.
+        uint256 _nativePayAmount = _nativeCurrencyPayoutLimit + (5 * _nativeCurrencySurplusAllowance);
+
+        // Pay the project such that the `_beneficiary` receives project tokens.
+        _terminal.pay{value: _nativePayAmount}({
+            projectId: _projectId,
+            amount: _nativePayAmount,
+            token: JBConstants.NATIVE_TOKEN,
+            beneficiary: _beneficiary,
+            minReturnedTokens: 0,
+            memo: "",
+            metadata: new bytes(0)
+        });
+
+        // Make sure the beneficiary got the expected number of tokens.
+        uint256 _beneficiaryTokenBalance = mulDiv(_nativePayAmount, _weight, 10 ** _NATIVE_DECIMALS)
+            * _metadata.reservedPercent / JBConstants.MAX_RESERVED_PERCENT;
+        assertEq(_tokens.totalBalanceOf(_beneficiary, _projectId), _beneficiaryTokenBalance);
+
+        // Make sure the terminal holds the full native token balance.
+        assertEq(
+            jbTerminalStore().balanceOf(address(_terminal), _projectId, JBConstants.NATIVE_TOKEN), _nativePayAmount
+        );
+
+        // Pay out native tokens up to the payout limit. Since `splits[]` is empty, everything goes to project owner.
+        // Project owner is our malicious contract that attempts to hijack control flow and execute subsequent calls
+        // successfully.
+        // This will fail via the mock contract itself, with an expected revert corresponding to the amounts.
+        // See {MockMaliciousBeneficiary}
+        _terminal.sendPayoutsOf({
+            projectId: _projectId,
+            amount: _nativeCurrencyPayoutLimit,
+            currency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
+            token: JBConstants.NATIVE_TOKEN,
+            minTokensPaidOut: 0
+        });
     }
 
     function _toNative(uint256 _usdVal) internal pure returns (uint256) {
