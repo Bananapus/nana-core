@@ -46,7 +46,7 @@ contract MaliciousPayoutBeneficiary is IERC721Receiver, Test {
 
 /// @notice Used for tests in TestAccessToFunds.sol
 /// @dev Attempts to re-enter useAllowanceOf after receiving control-flow.
-contract MaliciousBeneficiary is IERC721Receiver, Test {
+contract MaliciousAllowanceBeneficiary is IERC721Receiver, Test {
     function reEnter(address _terminal) internal {
         vm.expectRevert(
             abi.encodeWithSelector(JBTerminalStore.JBTerminalStore_InadequateControllerAllowance.selector, 1e19, 5e18)

@@ -4,7 +4,7 @@ pragma solidity >=0.8.6;
 import /* {*} from */ "./helpers/TestBaseWorkflow.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import {MockPriceFeed} from "./mock/MockPriceFeed.sol";
-import {MaliciousBeneficiary, MaliciousPayoutBeneficiary} from "./mock/MockMaliciousBeneficiary.sol";
+import {MaliciousAllowanceBeneficiary, MaliciousPayoutBeneficiary} from "./mock/MockMaliciousBeneficiary.sol";
 
 /// Funds can be accessed in three ways:
 /// 1. project owners set a payout limit to prioritize spending to pre-determined destinations. funds being removed from
@@ -2438,7 +2438,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
         uint224 _nativeCurrencyPayoutLimit = uint224(10 * 10 ** _NATIVE_DECIMALS);
         uint224 _nativeCurrencySurplusAllowance = uint224(5 * 10 ** _NATIVE_DECIMALS);
 
-        MaliciousBeneficiary maliciousOwner = new MaliciousBeneficiary();
+        MaliciousAllowanceBeneficiary maliciousOwner = new MaliciousAllowanceBeneficiary();
 
         // Package up the limits for the given terminal.
         JBFundAccessLimitGroup[] memory _fundAccessLimitGroup = new JBFundAccessLimitGroup[](1);
@@ -2534,7 +2534,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
 
         // Attempt to use more than surplus allowance via malicious beneficiary contract.
         // This will fail via the mock contract itself, with an expected revert therein corresponding to the amounts.
-        // See {MockMaliciousBeneficiary}
+        // See {MockMaliciousAllowanceBeneficiary}
         vm.prank(address(maliciousOwner));
         _terminal.useAllowanceOf({
             projectId: _projectId,
@@ -2652,7 +2652,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
         // Project owner is our malicious contract that attempts to hijack control flow and execute subsequent calls
         // successfully.
         // This will fail via the mock contract itself, with an expected revert corresponding to the amounts.
-        // See {MockMaliciousBeneficiary}
+        // See {MockMaliciousPayoutBeneficiary}
         _terminal.sendPayoutsOf({
             projectId: _projectId,
             amount: _nativeCurrencyPayoutLimit,
