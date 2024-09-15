@@ -110,6 +110,18 @@
         "threshold": "1",
         "saltNonce": "19"
       }
+    },
+    "fee-project": {
+      "projectId": "clyw0pt4n0007zss7cc4sh552",
+      "projectName": "fee-project",
+      "defaultSafe": {
+        "safeName": "fee-project",
+        "owners": [
+          "0xba5ed94ab173e1242638F28d1449b24F1A883292"
+        ],
+        "threshold": "1",
+        "saltNonce": "20"
+      }
     }
   }
 }

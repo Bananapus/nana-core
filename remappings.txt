@@ -1,1 +1,1 @@
-@sphinx-labs/contracts/=lib/sphinx/packages/contracts/contracts/foundry
+@sphinx-labs/contracts/=node_modules/@sphinx-labs/contracts/contracts/foundry/
