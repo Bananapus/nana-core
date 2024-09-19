@@ -25,6 +25,34 @@ interface IJBRulesets {
 
     function currentApprovalStatusForLatestRulesetOf(uint256 projectId) external view returns (JBApprovalStatus);
     function currentOf(uint256 projectId) external view returns (JBRuleset memory ruleset);
+    function deriveCycleNumberFrom(
+        uint256 baseRulesetCycleNumber,
+        uint256 baseRulesetStart,
+        uint256 baseRulesetDuration,
+        uint256 start
+    )
+        external
+        returns (uint256);
+    function deriveStartFrom(
+        uint256 baseRulesetStart,
+        uint256 baseRulesetDuration,
+        uint256 mustStartAtOrAfter
+    )
+        external
+        view
+        returns (uint256 start);
+    function deriveWeightFrom(
+        uint256 projectId,
+        uint256 baseRulesetStart,
+        uint256 baseRulesetDuration,
+        uint256 baseRulesetWeight,
+        uint256 baseRulesetDecayPercent,
+        uint256 baseRulesetCacheId,
+        uint256 start
+    )
+        external
+        view
+        returns (uint256 weight);
     function getRulesetOf(uint256 projectId, uint256 rulesetId) external view returns (JBRuleset memory);
     function latestQueuedOf(uint256 projectId)
         external
