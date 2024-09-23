@@ -30,7 +30,7 @@ contract JBChainlinkV3PriceFeed is IJBPriceFeed {
     // --------------------- public stored properties -------------------- //
     //*********************************************************************//
 
-    /// @notice How many blocks old a Chainlink price update is allowed to be before considered "stale".
+    /// @notice How many seconds old a Chainlink price update is allowed to be before considered "stale".
     uint256 public immutable THRESHOLD;
 
     //*********************************************************************//
@@ -38,7 +38,7 @@ contract JBChainlinkV3PriceFeed is IJBPriceFeed {
     //*********************************************************************//
 
     /// @param feed The Chainlink feed to report prices from.
-    /// @param threshold How many blocks old a price update may be.
+    /// @param threshold How many seconds old a price update may be.
     constructor(AggregatorV3Interface feed, uint256 threshold) {
         FEED = feed;
         THRESHOLD = threshold;
