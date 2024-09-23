@@ -140,6 +140,22 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         return projectId;
     }
 
+    function testEmptyConfig() public {
+        // it will revert with JBController_RulesetsArrayEmpty
+
+        // length of zero should revert
+        JBRulesetConfig[] memory _rulesetConfig = new JBRulesetConfig[](0);
+
+        // Deploy a project.
+        uint256 projectId = launchProjectForTest();
+
+        vm.expectRevert(JBController.JBController_RulesetsArrayEmpty.selector);
+
+        // call
+        vm.prank(multisig());
+        _controller.queueRulesetsOf(projectId, _rulesetConfig, "");
+    }
+
     function testReconfigureProject() public {
         // Package a ruleset configuration.
         JBRulesetConfig[] memory _rulesetConfig = new JBRulesetConfig[](1);
