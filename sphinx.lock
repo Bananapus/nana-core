@@ -122,6 +122,18 @@
         "threshold": "1",
         "saltNonce": "20"
       }
+    },
+    "nana-address-registry-testnet": {
+      "projectId": "cm146ovnl0001bss7dlmucv4z",
+      "projectName": "nana-address-registry-testnet",
+      "defaultSafe": {
+        "safeName": "nana-address-registry-testnet",
+        "owners": [
+          "0xba5ed94ab173e1242638F28d1449b24F1A883292"
+        ],
+        "threshold": "1",
+        "saltNonce": "21"
+      }
     }
   }
 }
