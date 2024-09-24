@@ -267,16 +267,6 @@ contract JBFundAccessLimits is JBControlled, IJBFundAccessLimits {
                 // Set the payout limit being iterated on.
                 JBCurrencyAmount calldata payoutLimit = fundAccessLimitGroup.payoutLimits[j];
 
-                // If payout limit amount is larger than 224 bits, revert.
-                if (payoutLimit.amount > type(uint224).max) {
-                    revert JBFundAccessLimits_InvalidPayoutLimit();
-                }
-
-                // If payout limit currency's index is larger than 32 bits, revert.
-                if (payoutLimit.currency > type(uint32).max) {
-                    revert JBFundAccessLimits_InvalidPayoutLimitCurrency();
-                }
-
                 // Make sure the payout limits are passed in strictly increasing order (sorted by currency) to prevent
                 // duplicates.
                 if (j != 0 && payoutLimit.currency <= fundAccessLimitGroup.payoutLimits[j - 1].currency) {
