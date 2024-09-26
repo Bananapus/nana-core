@@ -842,6 +842,8 @@ contract JBRulesets is JBControlled, IJBRulesets {
         cache.weight =
             uint112(_deriveWeightFrom({projectId: projectId, baseRuleset: latestQueuedRuleset, start: start}));
         cache.decayMultiple = decayMultiple;
+
+        emit WeightCacheUpdated(projectId, cache.weight, decayMultiple);
     }
 
     //*********************************************************************//
