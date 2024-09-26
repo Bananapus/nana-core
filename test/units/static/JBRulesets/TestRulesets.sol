@@ -523,7 +523,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
     }
 
     function test_WhenCacheIsUpdatedTooSoon() external {
-        // the decay multiple becomes the difference
+        // the decay multiple will be re-used if it's the same.
 
         // Setup: queueFor will call onlyControllerOf modifier -> Directory.controllerOf to see if caller has proper
         // permissions, encode & mock that.
