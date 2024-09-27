@@ -554,4 +554,66 @@ contract TestJBRulesetsUnits_Local is JBTest {
         emit IJBRulesets.WeightCacheUpdated(_projectId, 0, 20_000);
         _rulesets.updateRulesetWeightCache(_projectId);
     }
+
+    function test_QueueForApprovalHookDNSupportInterface() external {
+        //
+
+        // Setup: queueFor will call onlyControllerOf modifier -> Directory.controllerOf to see if caller has proper
+        // permissions, mock that call.
+        bytes memory _encodedCall = abi.encodeCall(IJBDirectory.controllerOf, (1));
+        bytes memory _willReturn = abi.encode(address(this));
+
+        mockExpect(address(_directory), _encodedCall, _willReturn);
+
+        mockExpect(
+            address(123),
+            abi.encodeCall(IERC165.supportsInterface, (type(IJBRulesetApprovalHook).interfaceId)),
+            abi.encode(false)
+        );
+
+        // Since hook address is not 0 interface support will be checked.
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                JBRulesets.JBRulesets_InvalidRulesetApprovalHook.selector, (IJBRulesetApprovalHook(address(123)))
+            )
+        );
+        _rulesets.queueFor({
+            projectId: _projectId,
+            duration: 1 days, // 3 days
+            weight: 1e18,
+            decayPercent: JBConstants.MAX_DECAY_PERCENT / 10,
+            approvalHook: IJBRulesetApprovalHook(address(123)),
+            metadata: _packedMetadata,
+            mustStartAtOrAfter: 0
+        });
+    }
+
+    function test_QueueForApprovalHookDNSupportInterfaceCatch() external {
+        // Setup: queueFor will call onlyControllerOf modifier -> Directory.controllerOf to see if caller has proper
+        // permissions, mock that call.
+        bytes memory _encodedCall = abi.encodeCall(IJBDirectory.controllerOf, (1));
+        bytes memory _willReturn = abi.encode(address(this));
+
+        mockExpect(address(_directory), _encodedCall, _willReturn);
+
+        vm.mockCallRevert(
+            address(123), abi.encodeCall(IERC165.supportsInterface, (type(IJBRulesetApprovalHook).interfaceId)), "ERROR"
+        );
+
+        // Since hook address is not 0 interface support will be checked.
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                JBRulesets.JBRulesets_InvalidRulesetApprovalHook.selector, (IJBRulesetApprovalHook(address(123)))
+            )
+        );
+        _rulesets.queueFor({
+            projectId: _projectId,
+            duration: 1 days, // 3 days
+            weight: 1e18,
+            decayPercent: JBConstants.MAX_DECAY_PERCENT / 10,
+            approvalHook: IJBRulesetApprovalHook(address(123)),
+            metadata: _packedMetadata,
+            mustStartAtOrAfter: 0
+        });
+    }
 }
