@@ -318,6 +318,17 @@ contract JBDelegateMetadataLib_Test_Local is Test {
         );
     }
 
+    function test_addToMetadata_shortDataToAdd_reverts() public {
+        vm.expectRevert(JBMetadataResolver.JBMetadataResolver_DataNotPadded.selector);
+
+        // Preexisting metadata: 32B + 4B
+        parser.addDataToMetadata(
+            abi.encodePacked(bytes32(uint256(type(uint256).max)), bytes8(uint64(type(uint64).max))),
+            bytes4(uint32(type(uint32).max)),
+            bytes("1234")
+        );
+    }
+
     /**
      * @notice Test behaviour if the ID is not found in the lookup table.
      */
