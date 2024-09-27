@@ -288,16 +288,6 @@ contract JBFundAccessLimits is JBControlled, IJBFundAccessLimits {
                 // Set the payout limit being iterated on.
                 JBCurrencyAmount calldata surplusAllowance = fundAccessLimitGroup.surplusAllowances[j];
 
-                // If surplus allowance is larger than 224 bits, revert.
-                if (surplusAllowance.amount > type(uint224).max) {
-                    revert JBFundAccessLimits_InvalidSurplusAllowance();
-                }
-
-                // If surplus allowance currency value is larger than 32 bits, revert.
-                if (surplusAllowance.currency > type(uint32).max) {
-                    revert JBFundAccessLimits_InvalidSurplusAllowanceCurrency();
-                }
-
                 // Make sure the surplus allowances are passed in strictly increasing order (sorted by currency) to
                 // prevent duplicates.
                 if (j != 0 && surplusAllowance.currency <= fundAccessLimitGroup.surplusAllowances[j - 1].currency) {
