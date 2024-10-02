@@ -546,12 +546,12 @@ contract TestJBRulesetsUnits_Local is JBTest {
 
         // Update the weight cache
         vm.expectEmit();
-        emit IJBRulesets.WeightCacheUpdated(_projectId, 0, 20_000);
+        emit IJBRulesets.WeightCacheUpdated(_projectId, 0, 20_000, address(this));
         _rulesets.updateRulesetWeightCache(_projectId);
 
         // Update the weight cache during the same block, which will mirror the previous call.
         vm.expectEmit();
-        emit IJBRulesets.WeightCacheUpdated(_projectId, 0, 20_000);
+        emit IJBRulesets.WeightCacheUpdated(_projectId, 0, 20_000, address(this));
         _rulesets.updateRulesetWeightCache(_projectId);
     }
 

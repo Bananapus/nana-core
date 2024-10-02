@@ -14,11 +14,7 @@ contract JBFundAccessLimits is JBControlled, IJBFundAccessLimits {
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
 
-    error JBFundAccessLimits_InvalidPayoutLimit();
-    error JBFundAccessLimits_InvalidPayoutLimitCurrency();
     error JBFundAccessLimits_InvalidPayoutLimitCurrencyOrdering();
-    error JBFundAccessLimits_InvalidSurplusAllowance();
-    error JBFundAccessLimits_InvalidSurplusAllowanceCurrency();
     error JBFundAccessLimits_InvalidSurplusAllowanceCurrencyOrdering();
 
     //*********************************************************************//
