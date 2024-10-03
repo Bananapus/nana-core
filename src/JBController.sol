@@ -1120,7 +1120,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
                 }
 
                 // Subtract the amount sent from the leftover.
-                leftoverTokenCount = leftoverTokenCount - splitTokenCount;
+                leftoverTokenCount -= splitTokenCount;
             }
 
             emit SendReservedTokensToSplit({
