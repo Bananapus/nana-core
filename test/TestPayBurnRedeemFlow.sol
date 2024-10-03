@@ -136,7 +136,7 @@ contract TestPayBurnRedeemFlow_Local is TestBaseWorkflow {
                 )
             );
         } else {
-            _beneficiaryTokenBalance = _beneficiaryTokenBalance - _burnTokenAmount;
+            _beneficiaryTokenBalance -= _burnTokenAmount;
         }
 
         vm.prank(_beneficiary);
@@ -160,7 +160,7 @@ contract TestPayBurnRedeemFlow_Local is TestBaseWorkflow {
                 )
             );
         } else {
-            _beneficiaryTokenBalance = _beneficiaryTokenBalance - _redeemTokenAmount;
+            _beneficiaryTokenBalance -= _redeemTokenAmount;
         }
 
         vm.prank(_beneficiary);

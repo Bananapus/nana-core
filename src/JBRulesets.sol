@@ -450,7 +450,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
 
         // Add increments of duration as necessary to satisfy the threshold.
         while (mustStartAtOrAfter > start) {
-            start = start + baseRuleset.duration;
+            start += baseRuleset.duration;
         }
     }
 
