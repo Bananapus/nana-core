@@ -192,4 +192,148 @@ contract TestAddAccountingContextsFor_Local is JBMultiTerminalSetup {
         assertEq(_storedContext.decimals, 18);
         assertEq(_storedContext.currency, uint32(uint160(JBConstants.NATIVE_TOKEN)));
     }
+
+    function test_WhenCallerIsControllerAndRulesetDoesntAllow() external {
+        // it will revert
+
+        // mock call to JBProjects ownerOf(_projectId)
+        bytes memory _projectsCall = abi.encodeCall(IERC721.ownerOf, (_projectId));
+        bytes memory _projectsCallReturn = abi.encode(address(0));
+        mockExpect(address(projects), _projectsCall, _projectsCallReturn);
+
+        // mock call to JBDirectory controllerOf(_projectId)
+        mockExpect(
+            address(directory), abi.encodeCall(IJBDirectory.controllerOf, (_projectId)), abi.encode(address(this))
+        );
+
+        // call params
+        JBAccountingContext[] memory _tokens = new JBAccountingContext[](1);
+        _tokens[0] = JBAccountingContext({
+            token: JBConstants.NATIVE_TOKEN,
+            decimals: 18,
+            currency: uint32(uint160(JBConstants.NATIVE_TOKEN))
+        });
+
+        // setup: return data
+        JBRuleset memory ruleset = generateUnfriendlyRuleset();
+
+        // mock rulesets call
+        mockExpect(address(rulesets), abi.encodeCall(IJBRulesets.currentOf, (_projectId)), abi.encode(ruleset));
+
+        vm.expectRevert(JBMultiTerminal.JBMultiTerminal_AddingAccountingContextNotAllowed.selector);
+        _terminal.addAccountingContextsFor(_projectId, _tokens);
+    }
+
+    function test_WhenCurrencyIsNativeButDecimalsDNEQ18() external {
+        // it will revert JBMultiTerminal_ZeroAccountingContextDecimals
+
+        // mock call to JBProjects ownerOf(_projectId)
+        bytes memory _projectsCall = abi.encodeCall(IERC721.ownerOf, (_projectId));
+        bytes memory _projectsCallReturn = abi.encode(address(0));
+        mockExpect(address(projects), _projectsCall, _projectsCallReturn);
+
+        // mock call to JBDirectory controllerOf(_projectId)
+        mockExpect(
+            address(directory), abi.encodeCall(IJBDirectory.controllerOf, (_projectId)), abi.encode(address(this))
+        );
+
+        // call params
+        JBAccountingContext[] memory _tokens = new JBAccountingContext[](1);
+        _tokens[0] = JBAccountingContext({
+            token: JBConstants.NATIVE_TOKEN,
+            decimals: 17, //invalid
+            currency: uint32(uint160(JBConstants.NATIVE_TOKEN))
+        });
+
+        // setup: return data
+        JBRuleset memory ruleset = generateFriendlyRuleset();
+
+        // mock rulesets call
+        mockExpect(address(rulesets), abi.encodeCall(IJBRulesets.currentOf, (_projectId)), abi.encode(ruleset));
+
+        vm.expectRevert(JBMultiTerminal.JBMultiTerminal_ZeroAccountingContextDecimals.selector);
+        _terminal.addAccountingContextsFor(_projectId, _tokens);
+    }
+
+    function test_WhenTokenDecimalsDoesNotMatchAccountingContext() external {
+        // it will revert JBMultiTerminal_ZeroAccountingContextDecimals
+
+        // mock call to JBProjects ownerOf(_projectId)
+        bytes memory _projectsCall = abi.encodeCall(IERC721.ownerOf, (_projectId));
+        bytes memory _projectsCallReturn = abi.encode(address(0));
+        mockExpect(address(projects), _projectsCall, _projectsCallReturn);
+
+        // mock call to JBDirectory controllerOf(_projectId)
+        mockExpect(
+            address(directory), abi.encodeCall(IJBDirectory.controllerOf, (_projectId)), abi.encode(address(this))
+        );
+
+        address someToken = makeAddr("someToken");
+
+        // call params
+        JBAccountingContext[] memory _tokens = new JBAccountingContext[](1);
+        _tokens[0] = JBAccountingContext({
+            token: someToken,
+            decimals: 17, // invalid- we will mock a return of 18 decimals
+            currency: uint32(uint160(someToken))
+        });
+
+        // setup: return data
+        JBRuleset memory ruleset = generateFriendlyRuleset();
+
+        // mock rulesets call
+        mockExpect(address(rulesets), abi.encodeCall(IJBRulesets.currentOf, (_projectId)), abi.encode(ruleset));
+
+        // mock token interface support call
+        mockExpect(
+            address(someToken),
+            abi.encodeCall(IERC165.supportsInterface, (type(IERC20Metadata).interfaceId)),
+            abi.encode(true)
+        );
+
+        // mock token call
+        mockExpect(address(someToken), abi.encodeCall(IERC20Metadata.decimals, ()), abi.encode(18));
+
+        vm.expectRevert(JBMultiTerminal.JBMultiTerminal_ZeroAccountingContextDecimals.selector);
+        _terminal.addAccountingContextsFor(_projectId, _tokens);
+    }
+
+    function test_WhenCurrencyEQZero() external {
+        // it will revert JBMultiTerminal_ZeroAccountingContextCurrency
+
+        // mock call to JBProjects ownerOf(_projectId)
+        bytes memory _projectsCall = abi.encodeCall(IERC721.ownerOf, (_projectId));
+        bytes memory _projectsCallReturn = abi.encode(address(0));
+        mockExpect(address(projects), _projectsCall, _projectsCallReturn);
+
+        // mock call to JBDirectory controllerOf(_projectId)
+        mockExpect(
+            address(directory), abi.encodeCall(IJBDirectory.controllerOf, (_projectId)), abi.encode(address(this))
+        );
+
+        address someToken = makeAddr("someToken");
+
+        // call params
+        JBAccountingContext[] memory _tokens = new JBAccountingContext[](1);
+        _tokens[0] = JBAccountingContext({token: someToken, decimals: 18, currency: uint32(uint160(0))});
+
+        // setup: return data
+        JBRuleset memory ruleset = generateFriendlyRuleset();
+
+        // mock rulesets call
+        mockExpect(address(rulesets), abi.encodeCall(IJBRulesets.currentOf, (_projectId)), abi.encode(ruleset));
+
+        // mock token interface support call
+        mockExpect(
+            address(someToken),
+            abi.encodeCall(IERC165.supportsInterface, (type(IERC20Metadata).interfaceId)),
+            abi.encode(true)
+        );
+
+        // mock token call
+        mockExpect(address(someToken), abi.encodeCall(IERC20Metadata.decimals, ()), abi.encode(18));
+
+        vm.expectRevert(JBMultiTerminal.JBMultiTerminal_ZeroAccountingContextCurrency.selector);
+        _terminal.addAccountingContextsFor(_projectId, _tokens);
+    }
 }

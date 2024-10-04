@@ -2,6 +2,7 @@
 pragma solidity 0.8.23;
 
 import /* {*} from */ "../../../helpers/TestBaseWorkflow.sol";
+import {JBRulesetWeightCache} from "src/structs/JBRulesetWeightCache.sol";
 
 contract TestJBRulesetsUnits_Local is JBTest {
     // Contracts
@@ -371,7 +372,8 @@ contract TestJBRulesetsUnits_Local is JBTest {
         });
 
         // try another with any length of code deployed and mock interface support to pass other checks
-        deployCodeTo("MockPriceFeed.sol", abi.encode(1, 18), address(_mockApprovalHook));
+        bytes memory code = address(_rulesets).code;
+        vm.etch(address(_mockApprovalHook), code);
 
         bytes memory _encodedCall3 =
             abi.encodeCall(IERC165.supportsInterface, (type(IJBRulesetApprovalHook).interfaceId));
@@ -518,5 +520,100 @@ contract TestJBRulesetsUnits_Local is JBTest {
 
         // check first timestamp
         assertEq(queuedRulesetsOf[2].id, firstId);
+    }
+
+    function test_WhenCacheIsUpdatedTooSoon() external {
+        // the decay multiple will be re-used if it's the same.
+
+        // Setup: queueFor will call onlyControllerOf modifier -> Directory.controllerOf to see if caller has proper
+        // permissions, encode & mock that.
+        bytes memory _encodedCall = abi.encodeCall(IJBDirectory.controllerOf, (1));
+        bytes memory _willReturn = abi.encode(address(this));
+
+        mockExpect(address(_directory), _encodedCall, _willReturn);
+
+        _rulesets.queueFor({
+            projectId: _projectId,
+            duration: 1 days, // 3 days
+            weight: 1e18,
+            decayPercent: JBConstants.MAX_DECAY_PERCENT / 10,
+            approvalHook: _hook,
+            metadata: _packedMetadata,
+            mustStartAtOrAfter: 0
+        });
+
+        vm.warp(block.timestamp + (20_000 days));
+
+        // Update the weight cache
+        vm.expectEmit();
+        emit IJBRulesets.WeightCacheUpdated(_projectId, 0, 20_000, address(this));
+        _rulesets.updateRulesetWeightCache(_projectId);
+
+        // Update the weight cache during the same block, which will mirror the previous call.
+        vm.expectEmit();
+        emit IJBRulesets.WeightCacheUpdated(_projectId, 0, 20_000, address(this));
+        _rulesets.updateRulesetWeightCache(_projectId);
+    }
+
+    function test_QueueForApprovalHookDNSupportInterface() external {
+        //
+
+        // Setup: queueFor will call onlyControllerOf modifier -> Directory.controllerOf to see if caller has proper
+        // permissions, mock that call.
+        bytes memory _encodedCall = abi.encodeCall(IJBDirectory.controllerOf, (1));
+        bytes memory _willReturn = abi.encode(address(this));
+
+        mockExpect(address(_directory), _encodedCall, _willReturn);
+
+        mockExpect(
+            address(123),
+            abi.encodeCall(IERC165.supportsInterface, (type(IJBRulesetApprovalHook).interfaceId)),
+            abi.encode(false)
+        );
+
+        // Since hook address is not 0 interface support will be checked.
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                JBRulesets.JBRulesets_InvalidRulesetApprovalHook.selector, (IJBRulesetApprovalHook(address(123)))
+            )
+        );
+        _rulesets.queueFor({
+            projectId: _projectId,
+            duration: 1 days, // 3 days
+            weight: 1e18,
+            decayPercent: JBConstants.MAX_DECAY_PERCENT / 10,
+            approvalHook: IJBRulesetApprovalHook(address(123)),
+            metadata: _packedMetadata,
+            mustStartAtOrAfter: 0
+        });
+    }
+
+    function test_QueueForApprovalHookDNSupportInterfaceCatch() external {
+        // Setup: queueFor will call onlyControllerOf modifier -> Directory.controllerOf to see if caller has proper
+        // permissions, mock that call.
+        bytes memory _encodedCall = abi.encodeCall(IJBDirectory.controllerOf, (1));
+        bytes memory _willReturn = abi.encode(address(this));
+
+        mockExpect(address(_directory), _encodedCall, _willReturn);
+
+        vm.mockCallRevert(
+            address(123), abi.encodeCall(IERC165.supportsInterface, (type(IJBRulesetApprovalHook).interfaceId)), "ERROR"
+        );
+
+        // Since hook address is not 0 interface support will be checked.
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                JBRulesets.JBRulesets_InvalidRulesetApprovalHook.selector, (IJBRulesetApprovalHook(address(123)))
+            )
+        );
+        _rulesets.queueFor({
+            projectId: _projectId,
+            duration: 1 days, // 3 days
+            weight: 1e18,
+            decayPercent: JBConstants.MAX_DECAY_PERCENT / 10,
+            approvalHook: IJBRulesetApprovalHook(address(123)),
+            metadata: _packedMetadata,
+            mustStartAtOrAfter: 0
+        });
     }
 }

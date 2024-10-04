@@ -31,6 +31,25 @@ contract TestDeployERC20For_Local is JBControllerSetup {
         _controller.deployERC20For(_projectId, _name, _symbol, _salt);
     }
 
+    function test_WhenCallerIsPermissionedAndSaltIsNonZero() external {
+        // it will deploy ERC20 and return IJBToken
+
+        bytes32 _nonZeroSalt = bytes32("somesalt");
+        bytes32 _encodedSalt = keccak256(abi.encodePacked(address(this), _nonZeroSalt));
+
+        // mock call to JBProjects ownerOf which will give permission
+        bytes memory _projectsCall = abi.encodeCall(IERC721.ownerOf, (_projectId));
+        bytes memory _projectsCallReturn = abi.encode(address(this));
+        mockExpect(address(projects), _projectsCall, _projectsCallReturn);
+
+        // mock the call to JBTokens deployERC20For
+        bytes memory _deployCall = abi.encodeCall(IJBTokens.deployERC20For, (_projectId, _name, _symbol, _encodedSalt));
+        bytes memory _deployCallReturn = abi.encode(_token);
+        mockExpect(address(tokens), _deployCall, _deployCallReturn);
+
+        _controller.deployERC20For(_projectId, _name, _symbol, _nonZeroSalt);
+    }
+
     function test_WhenCallerIsNotPermissioned() external {
         // it will revert UNAUTHORIZED
 
