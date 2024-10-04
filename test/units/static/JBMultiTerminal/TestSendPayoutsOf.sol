@@ -158,13 +158,15 @@ contract TestSendPayoutsOf_Local is JBMultiTerminalSetup {
             address(feelessAddresses), abi.encodeCall(IJBFeelessAddresses.isFeeless, (address(this))), abi.encode(true)
         );
 
-        // this expectEmit doesn't work as intended, I suppose because of the catch block which we are testing.
-        // nonetheless we trigger the intended code.
-        /*
-        vm.expectEmit(address(0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f));
-        emit IJBPayoutTerminal.PayoutReverted(_projectId, returnedSplits[0], 0,
-        bytes("0x9996b3150000000000000000000000000000000000000000000000000000000000000000"), address(this)); 
-        */
+        vm.expectEmit(true, true, true, false);
+        emit IJBPayoutTerminal.PayoutReverted(
+            _projectId,
+            returnedSplits[0],
+            0,
+            bytes("0x9996b3150000000000000000000000000000000000000000000000000000000000000000"),
+            address(this)
+        );
+
         _terminal.sendPayoutsOf(_projectId, address(0), 0, 0, 0);
     }
 }
