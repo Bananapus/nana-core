@@ -14,11 +14,7 @@ contract JBFundAccessLimits is JBControlled, IJBFundAccessLimits {
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
 
-    error JBFundAccessLimits_InvalidPayoutLimit();
-    error JBFundAccessLimits_InvalidPayoutLimitCurrency();
     error JBFundAccessLimits_InvalidPayoutLimitCurrencyOrdering();
-    error JBFundAccessLimits_InvalidSurplusAllowance();
-    error JBFundAccessLimits_InvalidSurplusAllowanceCurrency();
     error JBFundAccessLimits_InvalidSurplusAllowanceCurrencyOrdering();
 
     //*********************************************************************//
@@ -267,16 +263,6 @@ contract JBFundAccessLimits is JBControlled, IJBFundAccessLimits {
                 // Set the payout limit being iterated on.
                 JBCurrencyAmount calldata payoutLimit = fundAccessLimitGroup.payoutLimits[j];
 
-                // If payout limit amount is larger than 224 bits, revert.
-                if (payoutLimit.amount > type(uint224).max) {
-                    revert JBFundAccessLimits_InvalidPayoutLimit();
-                }
-
-                // If payout limit currency's index is larger than 32 bits, revert.
-                if (payoutLimit.currency > type(uint32).max) {
-                    revert JBFundAccessLimits_InvalidPayoutLimitCurrency();
-                }
-
                 // Make sure the payout limits are passed in strictly increasing order (sorted by currency) to prevent
                 // duplicates.
                 if (j != 0 && payoutLimit.currency <= fundAccessLimitGroup.payoutLimits[j - 1].currency) {
@@ -297,16 +283,6 @@ contract JBFundAccessLimits is JBControlled, IJBFundAccessLimits {
             for (uint256 j; j < numberOfSurplusAllowances; j++) {
                 // Set the payout limit being iterated on.
                 JBCurrencyAmount calldata surplusAllowance = fundAccessLimitGroup.surplusAllowances[j];
-
-                // If surplus allowance is larger than 224 bits, revert.
-                if (surplusAllowance.amount > type(uint224).max) {
-                    revert JBFundAccessLimits_InvalidSurplusAllowance();
-                }
-
-                // If surplus allowance currency value is larger than 32 bits, revert.
-                if (surplusAllowance.currency > type(uint32).max) {
-                    revert JBFundAccessLimits_InvalidSurplusAllowanceCurrency();
-                }
 
                 // Make sure the surplus allowances are passed in strictly increasing order (sorted by currency) to
                 // prevent duplicates.

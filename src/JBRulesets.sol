@@ -417,7 +417,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
 
         // Add increments of duration as necessary to satisfy the threshold.
         while (mustStartAtOrAfter > start) {
-            start = start + baseRulesetDuration;
+            start += baseRulesetDuration;
         }
     }
 
@@ -895,6 +895,13 @@ contract JBRulesets is JBControlled, IJBRulesets {
             })
         );
         cache.decayMultiple = decayMultiple;
+
+        emit WeightCacheUpdated({
+            projectId: projectId,
+            weight: cache.weight,
+            decayMultiple: decayMultiple,
+            caller: msg.sender
+        });
     }
 
     //*********************************************************************//

@@ -119,7 +119,7 @@ contract TestTokenFlow_Local is TestBaseWorkflow {
                 )
             );
         } else {
-            _expectedTokenBalance = _expectedTokenBalance - _burnAmount;
+            _expectedTokenBalance -= _burnAmount;
         }
 
         // Burn tokens from beneficiary.

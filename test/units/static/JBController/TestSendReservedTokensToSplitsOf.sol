@@ -375,14 +375,215 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
         _controller.sendReservedTokensToSplitsOf(_projectId);
     }
 
-    function test_GivenTheProjectIdOfSplitIsNonzeroAndABeneficiaryAndHookAreNotConfigured()
+    function test_GivenSplitIsPayableToAProjectWhichAcceptsTheToken() external whenTheProjectHasReservedTokensGtZero {
+        // it will mint to the project
+
+        JBRulesetMetadata memory _rulesMetadata = JBRulesetMetadata({
+            reservedPercent: JBConstants.MAX_RESERVED_PERCENT / 2,
+            redemptionRate: JBConstants.MAX_REDEMPTION_RATE / 2,
+            baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
+            pausePay: false,
+            pauseCreditTransfers: false,
+            allowOwnerMinting: false,
+            allowSetCustomToken: false,
+            allowTerminalMigration: false,
+            allowSetTerminals: false,
+            ownerMustSendPayouts: false,
+            allowSetController: false,
+            allowAddAccountingContext: true,
+            allowAddPriceFeed: false,
+            allowCrosschainSuckerExtension: false,
+            holdFees: false,
+            useTotalSurplusForRedemptions: true,
+            useDataHookForPay: false,
+            useDataHookForRedeem: false,
+            dataHook: address(0),
+            metadata: 0
+        });
+
+        uint256 _packed = _rulesMetadata.packRulesetMetadata();
+
+        JBFundAccessLimitGroup[] memory _fundAccessLimitGroup = new JBFundAccessLimitGroup[](0);
+
+        // splits
+        JBSplitGroup[] memory _splitsGroup = new JBSplitGroup[](1);
+        JBSplit[] memory _splits = new JBSplit[](1);
+
+        _splits[0] = JBSplit({
+            preferAddToBalance: false,
+            percent: JBConstants.SPLITS_TOTAL_PERCENT,
+            projectId: 1, // non-zero to execute rest of the function
+            beneficiary: payable(address(0xdead)),
+            lockedUntil: 0,
+            hook: IJBSplitHook(address(0))
+        });
+
+        _splitsGroup[0] = JBSplitGroup({groupId: uint32(uint160(JBConstants.NATIVE_TOKEN)), splits: _splits});
+
+        // Package up the ruleset configuration.
+        JBRulesetConfig[] memory _rulesetConfigurations = new JBRulesetConfig[](1);
+        _rulesetConfigurations[0].mustStartAtOrAfter = 0;
+        _rulesetConfigurations[0].duration = 0;
+        _rulesetConfigurations[0].weight = 1e18;
+        _rulesetConfigurations[0].decayPercent = 0;
+        _rulesetConfigurations[0].approvalHook = IJBRulesetApprovalHook(address(0));
+        _rulesetConfigurations[0].metadata = _rulesMetadata;
+        _rulesetConfigurations[0].splitGroups = _splitsGroup;
+        _rulesetConfigurations[0].fundAccessLimitGroups = _fundAccessLimitGroup;
+
+        // JBRulesets calldata
+        JBRuleset memory _returnedRuleset = JBRuleset({
+            cycleNumber: uint48(block.timestamp),
+            id: uint48(block.timestamp),
+            basedOnId: 0,
+            start: uint48(block.timestamp),
+            duration: _rulesetConfigurations[0].duration,
+            weight: _rulesetConfigurations[0].weight,
+            decayPercent: _rulesetConfigurations[0].decayPercent,
+            approvalHook: _rulesetConfigurations[0].approvalHook,
+            metadata: _packed
+        });
+
+        // mock call to JBRulesets currentOf
+        bytes memory _rulesetsCall = abi.encodeCall(IJBRulesets.currentOf, (_projectId));
+        bytes memory _rulesetsCallReturn = abi.encode(_returnedRuleset);
+        mockExpect(address(rulesets), _rulesetsCall, _rulesetsCallReturn);
+
+        // mock call to JBProjects ownerOf
+        bytes memory _projectsCall = abi.encodeCall(IERC721.ownerOf, (_projectId));
+        bytes memory _projectsCallReturn = abi.encode(address(this));
+        mockExpect(address(projects), _projectsCall, _projectsCallReturn);
+
+        //mock call to JBSplits splitsOf
+        bytes memory _splitsCall = abi.encodeCall(IJBSplits.splitsOf, (_projectId, block.timestamp, 1));
+        bytes memory _splitsCallReturn = abi.encode(_splits);
+        mockExpect(address(splits), _splitsCall, _splitsCallReturn);
+
+        // mock call to JBTokens tokenOf
+        mockExpect(address(tokens), abi.encodeCall(IJBTokens.tokenOf, (_projectId)), abi.encode(_token));
+
+        // mock to JBDirectory primaryTerminalOf
+        address terminal = makeAddr("terminal");
+        mockExpect(
+            address(directory),
+            abi.encodeCall(IJBDirectory.primaryTerminalOf, (1, address(_token))),
+            abi.encode(terminal)
+        );
+
+        // mock to JBTokens mintFor
+        mockExpect(address(tokens), abi.encodeCall(IJBTokens.mintFor, (address(_controller), 1, _tokenCount)), "");
+
+        // mock token approval
+        mockExpect(address(_token), abi.encodeCall(IERC20.approve, (terminal, 1e18)), "");
+
+        vm.expectEmit();
+        emit IJBController.SendReservedTokensToSplit(
+            _projectId, block.timestamp, 1, _splits[0], _tokenCount, address(this)
+        );
+        _controller.sendReservedTokensToSplitsOf(_projectId);
+    }
+
+    function test_GivenSplitIsPayableToAProjectWhichAcceptsTheTokenButTokenIsInvalid()
         external
         whenTheProjectHasReservedTokensGtZero
     {
-        // it will mint to the owner of the project
-    }
+        // it will revert via OZ Address
+        JBRulesetMetadata memory _rulesMetadata = JBRulesetMetadata({
+            reservedPercent: JBConstants.MAX_RESERVED_PERCENT / 2,
+            redemptionRate: JBConstants.MAX_REDEMPTION_RATE / 2,
+            baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
+            pausePay: false,
+            pauseCreditTransfers: false,
+            allowOwnerMinting: false,
+            allowSetCustomToken: false,
+            allowTerminalMigration: false,
+            allowSetTerminals: false,
+            ownerMustSendPayouts: false,
+            allowSetController: false,
+            allowAddAccountingContext: true,
+            allowAddPriceFeed: false,
+            allowCrosschainSuckerExtension: false,
+            holdFees: false,
+            useTotalSurplusForRedemptions: true,
+            useDataHookForPay: false,
+            useDataHookForRedeem: false,
+            dataHook: address(0),
+            metadata: 0
+        });
 
-    function test_GivenProjectIdIsZeroAndNothingIsConfigured() external whenTheProjectHasReservedTokensGtZero {
-        // it will mint to whoever called sendReservedTokens
+        uint256 _packed = _rulesMetadata.packRulesetMetadata();
+
+        JBFundAccessLimitGroup[] memory _fundAccessLimitGroup = new JBFundAccessLimitGroup[](0);
+
+        // splits
+        JBSplitGroup[] memory _splitsGroup = new JBSplitGroup[](1);
+        JBSplit[] memory _splits = new JBSplit[](1);
+
+        _splits[0] = JBSplit({
+            preferAddToBalance: false,
+            percent: JBConstants.SPLITS_TOTAL_PERCENT,
+            projectId: 1, // non-zero to execute rest of the function
+            beneficiary: payable(address(0xdead)),
+            lockedUntil: 0,
+            hook: IJBSplitHook(address(0))
+        });
+
+        _splitsGroup[0] = JBSplitGroup({groupId: uint32(uint160(JBConstants.NATIVE_TOKEN)), splits: _splits});
+
+        // Package up the ruleset configuration.
+        JBRulesetConfig[] memory _rulesetConfigurations = new JBRulesetConfig[](1);
+        _rulesetConfigurations[0].mustStartAtOrAfter = 0;
+        _rulesetConfigurations[0].duration = 0;
+        _rulesetConfigurations[0].weight = 1e18;
+        _rulesetConfigurations[0].decayPercent = 0;
+        _rulesetConfigurations[0].approvalHook = IJBRulesetApprovalHook(address(0));
+        _rulesetConfigurations[0].metadata = _rulesMetadata;
+        _rulesetConfigurations[0].splitGroups = _splitsGroup;
+        _rulesetConfigurations[0].fundAccessLimitGroups = _fundAccessLimitGroup;
+
+        // JBRulesets calldata
+        JBRuleset memory _returnedRuleset = JBRuleset({
+            cycleNumber: uint48(block.timestamp),
+            id: uint48(block.timestamp),
+            basedOnId: 0,
+            start: uint48(block.timestamp),
+            duration: _rulesetConfigurations[0].duration,
+            weight: _rulesetConfigurations[0].weight,
+            decayPercent: _rulesetConfigurations[0].decayPercent,
+            approvalHook: _rulesetConfigurations[0].approvalHook,
+            metadata: _packed
+        });
+
+        // mock call to JBRulesets currentOf
+        bytes memory _rulesetsCall = abi.encodeCall(IJBRulesets.currentOf, (_projectId));
+        bytes memory _rulesetsCallReturn = abi.encode(_returnedRuleset);
+        mockExpect(address(rulesets), _rulesetsCall, _rulesetsCallReturn);
+
+        // mock call to JBProjects ownerOf
+        bytes memory _projectsCall = abi.encodeCall(IERC721.ownerOf, (_projectId));
+        bytes memory _projectsCallReturn = abi.encode(address(this));
+        mockExpect(address(projects), _projectsCall, _projectsCallReturn);
+
+        //mock call to JBSplits splitsOf
+        bytes memory _splitsCall = abi.encodeCall(IJBSplits.splitsOf, (_projectId, block.timestamp, 1));
+        bytes memory _splitsCallReturn = abi.encode(_splits);
+        mockExpect(address(splits), _splitsCall, _splitsCallReturn);
+
+        // mock call to JBTokens tokenOf
+        mockExpect(address(tokens), abi.encodeCall(IJBTokens.tokenOf, (_projectId)), abi.encode(_token));
+
+        // mock to JBDirectory primaryTerminalOf
+        address terminal = makeAddr("terminal");
+        mockExpect(
+            address(directory),
+            abi.encodeCall(IJBDirectory.primaryTerminalOf, (1, address(_token))),
+            abi.encode(terminal)
+        );
+
+        // mock to JBTokens mintFor
+        mockExpect(address(tokens), abi.encodeCall(IJBTokens.mintFor, (address(_controller), 1, _tokenCount)), "");
+
+        vm.expectRevert();
+        _controller.sendReservedTokensToSplitsOf(_projectId);
     }
 }

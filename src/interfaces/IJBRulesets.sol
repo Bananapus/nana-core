@@ -21,6 +21,8 @@ interface IJBRulesets {
         address caller
     );
 
+    event WeightCacheUpdated(uint256 projectId, uint112 weight, uint256 decayMultiple, address caller);
+
     function latestRulesetIdOf(uint256 projectId) external view returns (uint256);
 
     function currentApprovalStatusForLatestRulesetOf(uint256 projectId) external view returns (JBApprovalStatus);
