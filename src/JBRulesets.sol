@@ -347,6 +347,156 @@ contract JBRulesets is JBControlled, IJBRulesets {
     }
 
     //*********************************************************************//
+    // --------------------------- public views -------------------------- //
+    //*********************************************************************//
+
+    /// @notice The cycle number of the next ruleset given the specified ruleset.
+    /// @dev Each time a ruleset starts, whether it was queued or cycled over, the cycle number is incremented by 1.
+    /// @param baseRulesetCycleNumber The cycle number of the base ruleset.
+    /// @param baseRulesetStart The start time of the base ruleset.
+    /// @param baseRulesetDuration The duration of the base ruleset.
+    /// @param start The start time of the ruleset to derive a cycle number for.
+    /// @return The ruleset's cycle number.
+    function deriveCycleNumberFrom(
+        uint256 baseRulesetCycleNumber,
+        uint256 baseRulesetStart,
+        uint256 baseRulesetDuration,
+        uint256 start
+    )
+        public
+        pure
+        returns (uint256)
+    {
+        // A subsequent ruleset to one with a duration of 0 should be the next number.
+        // slither-disable-next-line incorrect-equality
+        if (baseRulesetDuration == 0) {
+            return baseRulesetCycleNumber + 1;
+        }
+
+        // The difference between the start of the base ruleset and the proposed start.
+        uint256 startDistance = start - baseRulesetStart;
+
+        // Find the number of base rulesets that fit in the start distance.
+        return baseRulesetCycleNumber + (startDistance / baseRulesetDuration);
+    }
+
+    /// @notice The date that is the nearest multiple of the base ruleset's duration from the start of the next cycle.
+    /// @param baseRulesetStart The start time of the base ruleset.
+    /// @param baseRulesetDuration The duration of the base ruleset.
+    /// @param mustStartAtOrAfter The earliest time the next ruleset can start. The ruleset cannot start before this
+    /// timestamp.
+    /// @return start The next start time.
+    function deriveStartFrom(
+        uint256 baseRulesetStart,
+        uint256 baseRulesetDuration,
+        uint256 mustStartAtOrAfter
+    )
+        public
+        pure
+        returns (uint256 start)
+    {
+        // A subsequent ruleset to one with a duration of 0 should start as soon as possible.
+        // slither-disable-next-line incorrect-equality
+        if (baseRulesetDuration == 0) return mustStartAtOrAfter;
+
+        // The time when the ruleset immediately after the specified ruleset starts.
+        uint256 nextImmediateStart = baseRulesetStart + baseRulesetDuration;
+
+        // If the next immediate start is now or in the future, return it.
+        if (nextImmediateStart >= mustStartAtOrAfter) {
+            return nextImmediateStart;
+        }
+
+        // The amount of seconds since the `mustStartAtOrAfter` time which results in a start time that might satisfy
+        // the specified limits.
+        // slither-disable-next-line weak-prng
+        uint256 timeFromImmediateStartMultiple = (mustStartAtOrAfter - nextImmediateStart) % baseRulesetDuration;
+
+        // A reference to the first possible start timestamp.
+        start = mustStartAtOrAfter - timeFromImmediateStartMultiple;
+
+        // Add increments of duration as necessary to satisfy the threshold.
+        while (mustStartAtOrAfter > start) {
+            start += baseRulesetDuration;
+        }
+    }
+
+    /// @notice The accumulated weight change since the specified ruleset.
+    /// @param projectId The ID of the project to which the ruleset weights apply.
+    /// @param baseRulesetStart The start time of the base ruleset.
+    /// @param baseRulesetDuration The duration of the base ruleset.
+    /// @param baseRulesetWeight The weight of the base ruleset.
+    /// @param baseRulesetDecayPercent The decay percent of the base ruleset.
+    /// @param baseRulesetCacheId The ID of the ruleset to base the calculation on (the previous ruleset).
+    /// @param start The start time of the ruleset to derive a weight for.
+    /// @return weight The derived weight, as a fixed point number with 18 decimals.
+    function deriveWeightFrom(
+        uint256 projectId,
+        uint256 baseRulesetStart,
+        uint256 baseRulesetDuration,
+        uint256 baseRulesetWeight,
+        uint256 baseRulesetDecayPercent,
+        uint256 baseRulesetCacheId,
+        uint256 start
+    )
+        public
+        view
+        returns (uint256 weight)
+    {
+        // A subsequent ruleset to one with a duration of 0 should have the next possible weight.
+        // slither-disable-next-line incorrect-equality
+        if (baseRulesetDuration == 0) {
+            return mulDiv(
+                baseRulesetWeight,
+                JBConstants.MAX_DECAY_PERCENT - baseRulesetDecayPercent,
+                JBConstants.MAX_DECAY_PERCENT
+            );
+        }
+
+        // The weight should be based off the base ruleset's weight.
+        weight = baseRulesetWeight;
+
+        // If the decay is 0, the weight doesn't change.
+        // slither-disable-next-line incorrect-equality
+        if (baseRulesetDecayPercent == 0) return weight;
+
+        // The difference between the start of the base ruleset and the proposed start.
+        uint256 startDistance = start - baseRulesetStart;
+
+        // Apply the base ruleset's decay percent for each ruleset that has passed.
+        uint256 decayMultiple;
+        unchecked {
+            decayMultiple = startDistance / baseRulesetDuration; // Non-null duration is excluded above
+        }
+
+        // Check the cache if needed.
+        if (baseRulesetCacheId > 0 && decayMultiple > _DECAY_MULTIPLE_CACHE_LOOKUP_THRESHOLD) {
+            // Get a cached weight for the rulesetId.
+            JBRulesetWeightCache memory cache = _weightCacheOf[projectId][baseRulesetCacheId];
+
+            // If a cached value is available, use it.
+            if (cache.decayMultiple > 0) {
+                // Set the starting weight to be the cached value.
+                weight = cache.weight;
+
+                // Set the decay multiple to be the difference between the cached value and the total decay multiple
+                // that should be applied.
+                decayMultiple -= cache.decayMultiple;
+            }
+        }
+
+        for (uint256 i; i < decayMultiple; i++) {
+            // The number of times to apply the decay percent.
+            // Base the new weight on the specified ruleset's weight.
+            weight =
+                mulDiv(weight, JBConstants.MAX_DECAY_PERCENT - baseRulesetDecayPercent, JBConstants.MAX_DECAY_PERCENT);
+
+            // The calculation doesn't need to continue if the weight is 0.
+            if (weight == 0) break;
+        }
+    }
+
+    //*********************************************************************//
     // -------------------------- internal views ------------------------- //
     //*********************************************************************//
 
@@ -394,131 +544,6 @@ contract JBRulesets is JBControlled, IJBRulesets {
         // Return the approval hook's approval status.
         // slither-disable-next-line calls-loop
         return approvalHookRuleset.approvalHook.approvalStatusOf(projectId, rulesetId, start);
-    }
-
-    /// @notice The cycle number of the next ruleset given the specified ruleset.
-    /// @dev Each time a ruleset starts, whether it was queued or cycled over, the cycle number is incremented by 1.
-    /// @param baseRuleset The previously queued ruleset, to base the calculation on.
-    /// @param start The start time of the ruleset to derive a cycle number for.
-    /// @return The ruleset's cycle number.
-    function _deriveCycleNumberFrom(JBRuleset memory baseRuleset, uint256 start) internal pure returns (uint256) {
-        // A subsequent ruleset to one with a duration of 0 should be the next number.
-        // slither-disable-next-line incorrect-equality
-        if (baseRuleset.duration == 0) {
-            return baseRuleset.cycleNumber + 1;
-        }
-
-        // The difference between the start of the base ruleset and the proposed start.
-        uint256 startDistance = start - baseRuleset.start;
-
-        // Find the number of base rulesets that fit in the start distance.
-        return baseRuleset.cycleNumber + (startDistance / baseRuleset.duration);
-    }
-
-    /// @notice The date that is the nearest multiple of the base ruleset's duration from the start of the next cycle.
-    /// @param baseRuleset The ruleset to base the calculation on (the previous ruleset).
-    /// @param mustStartAtOrAfter The earliest time the next ruleset can start. The ruleset cannot start before this
-    /// timestamp.
-    /// @return start The next start time.
-    function _deriveStartFrom(
-        JBRuleset memory baseRuleset,
-        uint256 mustStartAtOrAfter
-    )
-        internal
-        pure
-        returns (uint256 start)
-    {
-        // A subsequent ruleset to one with a duration of 0 should start as soon as possible.
-        // slither-disable-next-line incorrect-equality
-        if (baseRuleset.duration == 0) return mustStartAtOrAfter;
-
-        // The time when the ruleset immediately after the specified ruleset starts.
-        uint256 nextImmediateStart = baseRuleset.start + baseRuleset.duration;
-
-        // If the next immediate start is now or in the future, return it.
-        if (nextImmediateStart >= mustStartAtOrAfter) {
-            return nextImmediateStart;
-        }
-
-        // The amount of seconds since the `mustStartAtOrAfter` time which results in a start time that might satisfy
-        // the specified limits.
-        // slither-disable-next-line weak-prng
-        uint256 timeFromImmediateStartMultiple = (mustStartAtOrAfter - nextImmediateStart) % baseRuleset.duration;
-
-        // A reference to the first possible start timestamp.
-        start = mustStartAtOrAfter - timeFromImmediateStartMultiple;
-
-        // Add increments of duration as necessary to satisfy the threshold.
-        while (mustStartAtOrAfter > start) {
-            start += baseRuleset.duration;
-        }
-    }
-
-    /// @notice The accumulated weight change since the specified ruleset.
-    /// @param projectId The ID of the project to which the ruleset weights apply.
-    /// @param baseRuleset The ruleset to base the calculation on (the previous ruleset).
-    /// @param start The start time of the ruleset to derive a weight for.
-    /// @return weight The derived weight, as a fixed point number with 18 decimals.
-    function _deriveWeightFrom(
-        uint256 projectId,
-        JBRuleset memory baseRuleset,
-        uint256 start
-    )
-        internal
-        view
-        returns (uint256 weight)
-    {
-        // A subsequent ruleset to one with a duration of 0 should have the next possible weight.
-        // slither-disable-next-line incorrect-equality
-        if (baseRuleset.duration == 0) {
-            return mulDiv(
-                baseRuleset.weight,
-                JBConstants.MAX_DECAY_PERCENT - baseRuleset.decayPercent,
-                JBConstants.MAX_DECAY_PERCENT
-            );
-        }
-
-        // The weight should be based off the base ruleset's weight.
-        weight = baseRuleset.weight;
-
-        // If the decay is 0, the weight doesn't change.
-        // slither-disable-next-line incorrect-equality
-        if (baseRuleset.decayPercent == 0) return weight;
-
-        // The difference between the start of the base ruleset and the proposed start.
-        uint256 startDistance = start - baseRuleset.start;
-
-        // Apply the base ruleset's decay percent for each ruleset that has passed.
-        uint256 decayMultiple;
-        unchecked {
-            decayMultiple = startDistance / baseRuleset.duration; // Non-null duration is excluded above
-        }
-
-        // Check the cache if needed.
-        if (decayMultiple > _DECAY_MULTIPLE_CACHE_LOOKUP_THRESHOLD) {
-            // Get a cached weight for the rulesetId.
-            JBRulesetWeightCache memory cache = _weightCacheOf[projectId][baseRuleset.id];
-
-            // If a cached value is available, use it.
-            if (cache.decayMultiple > 0) {
-                // Set the starting weight to be the cached value.
-                weight = cache.weight;
-
-                // Set the decay multiple to be the difference between the cached value and the total decay multiple
-                // that should be applied.
-                decayMultiple -= cache.decayMultiple;
-            }
-        }
-
-        for (uint256 i; i < decayMultiple; i++) {
-            // The number of times to apply the decay percent.
-            // Base the new weight on the specified ruleset's weight.
-            weight =
-                mulDiv(weight, JBConstants.MAX_DECAY_PERCENT - baseRuleset.decayPercent, JBConstants.MAX_DECAY_PERCENT);
-
-            // The calculation doesn't need to continue if the weight is 0.
-            if (weight == 0) break;
-        }
     }
 
     /// @notice The ID of the ruleset which has started and hasn't expired yet, whether or not it has been approved, for
@@ -612,10 +637,19 @@ contract JBRulesets is JBControlled, IJBRulesets {
         uint256 mustStartAtOrAfter = !allowMidRuleset ? block.timestamp + 1 : block.timestamp - baseRuleset.duration + 1;
 
         // Calculate what the start time should be.
-        uint256 start = _deriveStartFrom(baseRuleset, mustStartAtOrAfter);
+        uint256 start = deriveStartFrom({
+            baseRulesetStart: baseRuleset.start,
+            baseRulesetDuration: baseRuleset.duration,
+            mustStartAtOrAfter: mustStartAtOrAfter
+        });
 
         // Calculate what the cycle number should be.
-        uint256 rulesetCycleNumber = _deriveCycleNumberFrom(baseRuleset, start);
+        uint256 rulesetCycleNumber = deriveCycleNumberFrom({
+            baseRulesetCycleNumber: baseRuleset.cycleNumber,
+            baseRulesetStart: baseRuleset.start,
+            baseRulesetDuration: baseRuleset.duration,
+            start: start
+        });
 
         return JBRuleset({
             cycleNumber: uint48(rulesetCycleNumber),
@@ -623,7 +657,17 @@ contract JBRulesets is JBControlled, IJBRulesets {
             basedOnId: baseRuleset.basedOnId,
             start: uint48(start),
             duration: baseRuleset.duration,
-            weight: uint112(_deriveWeightFrom(projectId, baseRuleset, start)),
+            weight: uint112(
+                deriveWeightFrom({
+                    projectId: projectId,
+                    baseRulesetStart: baseRuleset.start,
+                    baseRulesetDuration: baseRuleset.duration,
+                    baseRulesetWeight: baseRuleset.weight,
+                    baseRulesetDecayPercent: baseRuleset.decayPercent,
+                    baseRulesetCacheId: baseRuleset.id,
+                    start: start
+                })
+            ),
             decayPercent: baseRuleset.decayPercent,
             approvalHook: baseRuleset.approvalHook,
             metadata: baseRuleset.metadata
@@ -839,8 +883,17 @@ contract JBRulesets is JBControlled, IJBRulesets {
         }
 
         // Store the new values.
-        cache.weight =
-            uint112(_deriveWeightFrom({projectId: projectId, baseRuleset: latestQueuedRuleset, start: start}));
+        cache.weight = uint112(
+            deriveWeightFrom({
+                projectId: projectId,
+                baseRulesetStart: latestQueuedRuleset.start,
+                baseRulesetDuration: latestQueuedRuleset.duration,
+                baseRulesetWeight: latestQueuedRuleset.weight,
+                baseRulesetDecayPercent: latestQueuedRuleset.decayPercent,
+                baseRulesetCacheId: latestQueuedRuleset.id,
+                start: start
+            })
+        );
         cache.decayMultiple = decayMultiple;
 
         emit WeightCacheUpdated({
@@ -961,15 +1014,34 @@ contract JBRulesets is JBControlled, IJBRulesets {
             });
         } else {
             // Derive the correct next start time from the base.
-            uint256 start = _deriveStartFrom(baseRuleset, mustStartAtOrAfter);
+            uint256 start = deriveStartFrom({
+                baseRulesetStart: baseRuleset.start,
+                baseRulesetDuration: baseRuleset.duration,
+                mustStartAtOrAfter: mustStartAtOrAfter
+            });
 
             // A weight of 1 is treated as a weight of 0.
             // This is to allow a weight of 0 (default) to represent inheriting the decayed weight of the previous
             // ruleset.
-            weight = weight > 0 ? (weight == 1 ? 0 : weight) : _deriveWeightFrom(projectId, baseRuleset, start);
+            weight = weight > 0
+                ? (weight == 1 ? 0 : weight)
+                : deriveWeightFrom({
+                    projectId: projectId,
+                    baseRulesetStart: baseRuleset.start,
+                    baseRulesetDuration: baseRuleset.duration,
+                    baseRulesetWeight: baseRuleset.weight,
+                    baseRulesetDecayPercent: baseRuleset.decayPercent,
+                    baseRulesetCacheId: baseRuleset.id,
+                    start: start
+                });
 
             // Derive the correct ruleset cycle number.
-            uint256 rulesetCycleNumber = _deriveCycleNumberFrom(baseRuleset, start);
+            uint256 rulesetCycleNumber = deriveCycleNumberFrom({
+                baseRulesetCycleNumber: baseRuleset.cycleNumber,
+                baseRulesetStart: baseRuleset.start,
+                baseRulesetDuration: baseRuleset.duration,
+                start: start
+            });
 
             // Update the intrinsic properties.
             _packAndStoreIntrinsicPropertiesOf({
