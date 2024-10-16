@@ -62,7 +62,6 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             allowSetController: false,
             allowAddAccountingContext: true,
             allowAddPriceFeed: true,
-            allowCrosschainSuckerExtension: false,
             holdFees: false,
             useTotalSurplusForRedemptions: true,
             useDataHookForPay: false,

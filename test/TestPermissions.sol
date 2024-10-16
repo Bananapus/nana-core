@@ -35,7 +35,6 @@ contract TestPermissions_Local is TestBaseWorkflow, JBTest {
             allowSetController: false,
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
-            allowCrosschainSuckerExtension: false,
             holdFees: false,
             useTotalSurplusForRedemptions: false,
             useDataHookForPay: false,

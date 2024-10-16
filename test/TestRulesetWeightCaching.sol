@@ -38,7 +38,6 @@ contract TestRulesetWeightCaching_Local is TestBaseWorkflow {
             allowSetController: false,
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
-            allowCrosschainSuckerExtension: false,
             holdFees: false,
             useTotalSurplusForRedemptions: true,
             useDataHookForPay: false,
