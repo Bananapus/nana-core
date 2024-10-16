@@ -55,36 +55,32 @@ library JBRulesetMetadataResolver {
         return ((ruleset.metadata >> 76) & 1) == 1;
     }
 
-    function allowCrosschainSuckerExtension(JBRuleset memory ruleset) internal pure returns (bool) {
+    function ownerMustSendPayouts(JBRuleset memory ruleset) internal pure returns (bool) {
         return ((ruleset.metadata >> 77) & 1) == 1;
     }
 
-    function ownerMustSendPayouts(JBRuleset memory ruleset) internal pure returns (bool) {
+    function holdFees(JBRuleset memory ruleset) internal pure returns (bool) {
         return ((ruleset.metadata >> 78) & 1) == 1;
     }
 
-    function holdFees(JBRuleset memory ruleset) internal pure returns (bool) {
+    function useTotalSurplusForRedemptions(JBRuleset memory ruleset) internal pure returns (bool) {
         return ((ruleset.metadata >> 79) & 1) == 1;
     }
 
-    function useTotalSurplusForRedemptions(JBRuleset memory ruleset) internal pure returns (bool) {
-        return ((ruleset.metadata >> 80) & 1) == 1;
-    }
-
     function useDataHookForPay(JBRuleset memory ruleset) internal pure returns (bool) {
-        return (ruleset.metadata >> 81) & 1 == 1;
+        return (ruleset.metadata >> 80) & 1 == 1;
     }
 
     function useDataHookForRedeem(JBRuleset memory ruleset) internal pure returns (bool) {
-        return (ruleset.metadata >> 82) & 1 == 1;
+        return (ruleset.metadata >> 81) & 1 == 1;
     }
 
     function dataHook(JBRuleset memory ruleset) internal pure returns (address) {
-        return address(uint160(ruleset.metadata >> 83));
+        return address(uint160(ruleset.metadata >> 82));
     }
 
     function metadata(JBRuleset memory ruleset) internal pure returns (uint16) {
-        return uint16(ruleset.metadata >> 243);
+        return uint16(ruleset.metadata >> 242);
     }
 
     /// @notice Pack the funding cycle metadata.
@@ -119,22 +115,20 @@ library JBRulesetMetadataResolver {
         if (rulesetMetadata.allowAddAccountingContext) packed |= 1 << 75;
         // allow add price feed in bit 76.
         if (rulesetMetadata.allowAddPriceFeed) packed |= 1 << 76;
-        // allow crosschain sucker extension in bit 77.
-        if (rulesetMetadata.allowCrosschainSuckerExtension) packed |= 1 << 77;
-        // allow controller migration in bit 78.
-        if (rulesetMetadata.ownerMustSendPayouts) packed |= 1 << 78;
-        // hold fees in bit 79.
-        if (rulesetMetadata.holdFees) packed |= 1 << 79;
-        // useTotalSurplusForRedemptions in bit 80.
-        if (rulesetMetadata.useTotalSurplusForRedemptions) packed |= 1 << 80;
-        // use pay data source in bit 81.
-        if (rulesetMetadata.useDataHookForPay) packed |= 1 << 81;
-        // use redeem data source in bit 82.
-        if (rulesetMetadata.useDataHookForRedeem) packed |= 1 << 82;
-        // data source address in bits 83-242.
-        packed |= uint256(uint160(address(rulesetMetadata.dataHook))) << 83;
-        // metadata in bits 243-255 (13 bits).
-        packed |= (uint256(rulesetMetadata.metadata) >> 3) << 243;
+        // allow controller migration in bit 77.
+        if (rulesetMetadata.ownerMustSendPayouts) packed |= 1 << 77;
+        // hold fees in bit 78.
+        if (rulesetMetadata.holdFees) packed |= 1 << 78;
+        // useTotalSurplusForRedemptions in bit 79.
+        if (rulesetMetadata.useTotalSurplusForRedemptions) packed |= 1 << 79;
+        // use pay data source in bit 80.
+        if (rulesetMetadata.useDataHookForPay) packed |= 1 << 80;
+        // use redeem data source in bit 81.
+        if (rulesetMetadata.useDataHookForRedeem) packed |= 1 << 81;
+        // data source address in bits 82-241.
+        packed |= uint256(uint160(address(rulesetMetadata.dataHook))) << 82;
+        // metadata in bits 242-255 (14 bits).
+        packed |= (uint256(rulesetMetadata.metadata) & 0x3FFF) << 242;
     }
 
     /// @notice Expand the funding cycle metadata.
@@ -154,7 +148,6 @@ library JBRulesetMetadataResolver {
             allowSetController(ruleset),
             allowAddAccountingContext(ruleset),
             allowAddPriceFeed(ruleset),
-            allowCrosschainSuckerExtension(ruleset),
             ownerMustSendPayouts(ruleset),
             holdFees(ruleset),
             useTotalSurplusForRedemptions(ruleset),

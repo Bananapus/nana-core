@@ -20,8 +20,6 @@ pragma solidity ^0.8.0;
 /// terminals to use.
 /// @custom:member allowAddPriceFeed A flag indicating if a project can add new price feeds to calculate exchange rates
 /// between its tokens.
-/// @custom:member allowCrosschainSuckerExtension A flag indicating if the crosschain sucker extension should be
-/// allowed during this ruleset.
 /// @custom:member ownerMustSendPayouts A flag indicating if privileged payout distribution should be
 /// enforced, otherwise payouts can be distributed by anyone.
 /// @custom:member holdFees A flag indicating if fees should be held during this ruleset.
@@ -32,7 +30,8 @@ pragma solidity ^0.8.0;
 /// @custom:member useDataHookForRedeem A flag indicating if the data hook should be used for redeem transactions during
 /// this ruleset.
 /// @custom:member dataHook The data hook to use during this ruleset.
-/// @custom:member metadata Metadata of the metadata, up to uint16 in size though only the first 14 bits can be used.
+/// @custom:member metadata Metadata of the metadata, only the 14 least significant bits can be used, the 2 most
+/// significant bits are disregarded.
 struct JBRulesetMetadata {
     uint16 reservedPercent;
     uint16 redemptionRate;
@@ -46,7 +45,6 @@ struct JBRulesetMetadata {
     bool allowSetController;
     bool allowAddAccountingContext;
     bool allowAddPriceFeed;
-    bool allowCrosschainSuckerExtension;
     bool ownerMustSendPayouts;
     bool holdFees;
     bool useTotalSurplusForRedemptions;

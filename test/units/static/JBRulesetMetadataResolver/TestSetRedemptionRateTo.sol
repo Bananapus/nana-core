@@ -21,6 +21,8 @@ contract TestSetRedemptionRateTo_Local is JBTest {
 
         _fuzzReservedPercent = uint16(bound(_fuzzReservedPercent, 0, JBConstants.MAX_RESERVED_PERCENT));
         _fuzzRedemptionRate = uint16(bound(_fuzzRedemptionRate, 0, JBConstants.MAX_REDEMPTION_RATE));
+        // Ensure the metadata is a max of 14 bits.
+        _fuzzMetadata = uint16(bound(_fuzzRedemptionRate, 0, 16_383));
 
         JBRulesetMetadata memory _rulesMetadata = JBRulesetMetadata({
             reservedPercent: _fuzzReservedPercent,
@@ -36,7 +38,6 @@ contract TestSetRedemptionRateTo_Local is JBTest {
             allowSetController: true,
             allowAddAccountingContext: true,
             allowAddPriceFeed: true,
-            allowCrosschainSuckerExtension: true,
             holdFees: true,
             useTotalSurplusForRedemptions: true,
             useDataHookForPay: true,
@@ -56,17 +57,42 @@ contract TestSetRedemptionRateTo_Local is JBTest {
         assertEq(_reservedPercent, _fuzzReservedPercent);
         assertEq(_redemptionRate, _fuzzRedemptionRate);
 
-        for (uint256 _i = 68; _i < 82; _i++) {
+        for (uint256 _i = 68; _i < 81; _i++) {
             uint256 _flag = uint256(uint16(_packed >> _i) & 1);
             assertEq(_flag, 1);
         }
 
         // Data source address
-        address _packedDataHook = address(uint160(_packed >> 83));
+        address _packedDataHook = address(uint160(_packed >> 82));
         assertEq(_packedDataHook, _hookAddress);
 
         // Metadata
-        uint256 _packedMetadata = uint256(uint16(_packed >> 243));
-        assertEq(_packedMetadata, uint256(_fuzzMetadata >> 3));
+        uint256 _packedMetadata = uint256(uint16(_packed >> 242));
+        assertEq(_packedMetadata, uint256(_fuzzMetadata));
+    }
+
+    function testFuzzEnsureCorrectlyPackedBits_implementationIndependent(JBRulesetMetadata memory _rulesMetadata)
+        external
+    {
+        // Handle the unique constraints of the JBRulesetMetadata.
+        {
+            // First 2 bits of `metadata.metadata` are ignored
+            _rulesMetadata.metadata = _rulesMetadata.metadata % 16_383;
+        }
+
+        // Get the keccak from before.
+        bytes32 _before = keccak256(abi.encode(_rulesMetadata));
+
+        // Pack the metadata.
+        uint256 _packed = _rulesMetadata.packRulesetMetadata();
+
+        // Unpack the metadata and calculate the new keccak.
+        JBRuleset memory _ruleset;
+        _ruleset.metadata = _packed;
+        JBRulesetMetadata memory _unpackedMetadata = JBRulesetMetadataResolver.expandMetadata(_ruleset);
+        bytes32 _after = keccak256(abi.encode(_unpackedMetadata));
+
+        // Compare the before and the after.
+        assertEq(_before, _after);
     }
 }
