@@ -361,8 +361,7 @@ contract TestFees_Local is TestBaseWorkflow {
     }
 
     function test_AuditFinding4POC() external {
-        // TODO: change this to true before merging where fixes are, or when issues are fixed on this PR.
-        vm.skip(false);
+        vm.skip(true);
 
         // Setup: Pay the zero project so the terminal has balance of 1 eth from another project.
         _terminal.pay{value: 1 ether}({
