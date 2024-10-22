@@ -1284,8 +1284,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @notice Process a fee of the specified amount from a project.
     /// @param projectId The ID of the project paying the fee.
     /// @param token The token the fee is being paid in.
-    /// @param amount The fee amount, as a fixed point number with 18 decimals. NOTE: correct this comment if finding is
-    /// correct
+    /// @param amount The fee amount, as a fixed point number with 18 decimals.
     /// @param beneficiary The address which will receive any platform tokens minted.
     /// @param feeTerminal The terminal that'll receive the fee.
     /// @param wasHeld A flag indicating if the fee being processed was being held by this terminal.
