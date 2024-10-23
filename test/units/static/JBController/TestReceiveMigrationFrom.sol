@@ -34,23 +34,20 @@ contract TestReceiveMigrationFrom_Local is JBControllerSetup {
         // mock call to from uriOf
         mockExpect(address(_from), abi.encodeCall(IJBProjectUriRegistry.uriOf, (_projectId)), abi.encode("Juicay"));
 
+        vm.prank(address(_from));
         IJBMigratable(address(_controller)).receiveMigrationFrom(_from, _projectId);
         string memory stored = _controller.uriOf(_projectId);
         assertEq(stored, "Juicay");
     }
 
     function test_GivenThatTheCallerIsNotController() external {
-        // it will not set metadata
+        // it will revert
 
-        // mock supports interface call
-        mockExpect(
-            address(_from),
-            abi.encodeCall(IERC165.supportsInterface, (type(IJBProjectUriRegistry).interfaceId)),
-            abi.encode(false)
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                JBController.JBController_OnlyFromTargetTerminal.selector, address(this), address(_from) 
+            )
         );
-
         IJBMigratable(address(_controller)).receiveMigrationFrom(_from, _projectId);
-        string memory stored = _controller.uriOf(_projectId);
-        assertEq(stored, "");
     }
 }

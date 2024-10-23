@@ -60,6 +60,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     error JBController_InvalidReservedPercent(uint256 percent, uint256 limit);
     error JBController_MintNotAllowedAndNotTerminalOrHook();
     error JBController_NoReservedTokens();
+    error JBController_OnlyFromTargetTerminal(address sender, IERC165 targetTerminal);
     error JBController_OnlyDirectory(address sender, IJBDirectory directory);
     error JBController_RulesetsAlreadyLaunched();
     error JBController_RulesetsArrayEmpty();
@@ -746,6 +747,10 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     /// @param from The controller being migrated from.
     /// @param projectId The ID of the project that will migrate to this controller.
     function receiveMigrationFrom(IERC165 from, uint256 projectId) external override {
+        // Access control.
+        address sender = _msgSender();
+        if (sender != address(from)) revert JBController_OnlyFromTargetTerminal(sender, from);
+
         // If the sending controller is an `IJBProjectUriRegistry`, copy the project's metadata URI.
         if (
             from.supportsInterface(type(IJBProjectUriRegistry).interfaceId) && DIRECTORY.controllerOf(projectId) == from
