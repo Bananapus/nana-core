@@ -45,7 +45,7 @@ contract TestReceiveMigrationFrom_Local is JBControllerSetup {
 
         vm.expectRevert(
             abi.encodeWithSelector(
-                JBController.JBController_OnlyFromTargetTerminal.selector, address(this), address(_from) 
+                JBController.JBController_OnlyFromTargetTerminal.selector, address(this), address(_from)
             )
         );
         IJBMigratable(address(_controller)).receiveMigrationFrom(_from, _projectId);
