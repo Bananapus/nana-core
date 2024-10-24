@@ -218,7 +218,13 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         override
         returns (uint256)
     {
-        return STORE.currentSurplusOf(address(this), projectId, _accountingContextsOf[projectId], decimals, currency);
+        return STORE.currentSurplusOf({
+            terminal: address(this),
+            projectId: projectId,
+            accountingContexts: _accountingContextsOf[projectId],
+            decimals: decimals,
+            currency: currency
+        });
     }
 
     /// @notice Fees that are being held for a project.
@@ -609,7 +615,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
         // Record the migration in the store.
         // slither-disable-next-line reentrancy-events
-        balance = STORE.recordTerminalMigration(projectId, token);
+        balance = STORE.recordTerminalMigration({projectId: projectId, token: token});
 
         emit MigrateTerminal({projectId: projectId, token: token, to: to, amount: balance, caller: _msgSender()});
 
@@ -1299,7 +1305,13 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         internal
     {
         // slither-disable-next-line reentrancy-events
-        try this.executeProcessFee(projectId, token, amount, beneficiary, feeTerminal) {
+        try this.executeProcessFee({
+            projectId: projectId,
+            token: token,
+            amount: amount,
+            beneficiary: beneficiary,
+            feeTerminal: feeTerminal
+        }) {
             emit ProcessFee({
                 projectId: projectId,
                 token: token,
@@ -1318,7 +1330,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                 caller: _msgSender()
             });
 
-            STORE.recordAddedBalanceFor(projectId, token, amount);
+            STORE.recordAddedBalanceFor({projectId: projectId, token: token, amount: amount});
         }
     }
 
@@ -1674,7 +1686,13 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     {
         // Attempt to distribute this split.
         // slither-disable-next-line reentrancy-events
-        try this.executePayout(split, projectId, token, amount, _msgSender()) returns (uint256 netPayoutAmount) {
+        try this.executePayout({
+            split: split,
+            projectId: projectId,
+            token: token,
+            amount: amount,
+            originalMessageSender: _msgSender()
+        }) returns (uint256 netPayoutAmount) {
             return netPayoutAmount;
         } catch (bytes memory failureReason) {
             emit PayoutReverted({
@@ -1686,7 +1704,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             });
 
             // Add balance back to the project.
-            STORE.recordAddedBalanceFor(projectId, token, amount);
+            STORE.recordAddedBalanceFor({projectId: projectId, token: token, amount: amount});
 
             // Since the payout failed the netPayoutAmount is zero.
             return 0;
@@ -1729,7 +1747,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             uint256 payoutAmount = mulDiv(amount, split.percent, leftoverPercentage);
 
             // The final payout amount after taking out any fees.
-            uint256 netPayoutAmount = _sendPayoutToSplit(split, projectId, token, payoutAmount);
+            uint256 netPayoutAmount =
+                _sendPayoutToSplit({split: split, projectId: projectId, token: token, amount: payoutAmount});
 
             // If the split hook is a feeless address, this payout doesn't incur a fee.
             if (netPayoutAmount != 0 && netPayoutAmount != payoutAmount) {
