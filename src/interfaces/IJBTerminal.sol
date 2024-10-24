@@ -26,7 +26,7 @@ interface IJBTerminal is IERC165 {
         address payer,
         address beneficiary,
         uint256 amount,
-        uint256 beneficiaryTokenCount,
+        uint256 newlyIssuedTokenCount,
         string memo,
         bytes metadata,
         address caller

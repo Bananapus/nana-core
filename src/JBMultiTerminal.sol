@@ -30,6 +30,7 @@ import {IJBSplitHook} from "./interfaces/IJBSplitHook.sol";
 import {IJBSplits} from "./interfaces/IJBSplits.sol";
 import {IJBTerminal} from "./interfaces/IJBTerminal.sol";
 import {IJBTerminalStore} from "./interfaces/IJBTerminalStore.sol";
+import {IJBTokens} from "./interfaces/IJBTokens.sol";
 import {JBConstants} from "./libraries/JBConstants.sol";
 import {JBFees} from "./libraries/JBFees.sol";
 import {JBMetadataResolver} from "./libraries/JBMetadataResolver.sol";
@@ -667,8 +668,14 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         override
         returns (uint256 beneficiaryTokenCount)
     {
+        // Get a reference to the project's tokens.
+        IJBTokens tokens = _controllerOf(projectId).TOKENS();
+
+        // Get a reference to the beneficiary's balance before the payment.
+        uint256 beneficiaryBalanceBefore = tokens.totalBalanceOf({holder: beneficiary, projectId: projectId});
+
         // Pay the project.
-        beneficiaryTokenCount = _pay({
+        _pay({
             projectId: projectId,
             token: token,
             amount: _acceptFundsFor(projectId, token, amount, metadata),
@@ -677,6 +684,17 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             memo: memo,
             metadata: metadata
         });
+
+        // Get a reference to the beneficiary's balance after the payment.
+        uint256 beneficiaryBalanceAfter = tokens.totalBalanceOf({holder: beneficiary, projectId: projectId});
+
+        // Set the beneficiary token count.
+        if (beneficiaryBalanceAfter < beneficiaryBalanceBefore) {
+            beneficiaryTokenCount = 0;
+        }
+        else {
+            beneficiaryTokenCount = beneficiaryBalanceAfter - beneficiaryBalanceBefore;
+        }
 
         // The token count for the beneficiary must be greater than or equal to the specified minimum.
         if (beneficiaryTokenCount < minReturnedTokens) {
@@ -1034,7 +1052,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @param payer The address that sent the payment.
     /// @param ruleset The ruleset the payment is being accepted during.
     /// @param beneficiary The address which will receive any tokens that the payment yields.
-    /// @param beneficiaryTokenCount The amount of tokens that are being minted and sent to the beneificary.
+    /// @param newlyIssuedTokenCount The amount of tokens that are being issued and sent to the beneificary.
     /// @param metadata Bytes to send along to the emitted event and pay hooks as applicable.
     function _fulfillPayHookSpecificationsFor(
         uint256 projectId,
@@ -1043,7 +1061,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         address payer,
         JBRuleset memory ruleset,
         address beneficiary,
-        uint256 beneficiaryTokenCount,
+        uint256 newlyIssuedTokenCount,
         bytes memory metadata
     )
         internal
@@ -1056,7 +1074,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             amount: tokenAmount,
             forwardedAmount: tokenAmount,
             weight: ruleset.weight,
-            projectTokenCount: beneficiaryTokenCount,
+            newlyIssuedTokenCount: newlyIssuedTokenCount,
             beneficiary: beneficiary,
             hookMetadata: bytes(""),
             payerMetadata: metadata
@@ -1205,8 +1223,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// applicable.
     /// @param memo A memo to pass along to the emitted event.
     /// @param metadata Bytes to send along to the emitted event, as well as the data hook and pay hook if applicable.
-    /// @return beneficiaryTokenCount The number of tokens minted and sent to the beneficiary, as a fixed point number
-    /// with 18 decimals.
     function _pay(
         uint256 projectId,
         address token,
@@ -1217,7 +1233,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         bytes memory metadata
     )
         internal
-        returns (uint256 beneficiaryTokenCount)
     {
         // Keep a reference to the token amount to forward to the store.
         JBTokenAmount memory tokenAmount;
@@ -1246,12 +1261,15 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             metadata: metadata
         });
 
+        // Keep a reference to the number of tokens issued for the beneficiary.
+        uint256 newlyIssuedTokenCount;
+
         // Mint tokens if needed.
         if (tokenCount != 0) {
             // Set the token count to be the number of tokens minted for the beneficiary instead of the total
             // amount.
             // slither-disable-next-line reentrancy-events
-            beneficiaryTokenCount = _controllerOf(projectId).mintTokensOf({
+            newlyIssuedTokenCount = _controllerOf(projectId).mintTokensOf({
                 projectId: projectId,
                 tokenCount: tokenCount,
                 beneficiary: beneficiary,
@@ -1267,7 +1285,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             payer: payer,
             beneficiary: beneficiary,
             amount: amount,
-            beneficiaryTokenCount: beneficiaryTokenCount,
+            newlyIssuedTokenCount: newlyIssuedTokenCount,
             memo: memo,
             metadata: metadata,
             caller: _msgSender()
@@ -1275,9 +1293,16 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
         // If the data hook returned pay hook specifications, fulfill them.
         if (hookSpecifications.length != 0) {
-            _fulfillPayHookSpecificationsFor(
-                projectId, hookSpecifications, tokenAmount, payer, ruleset, beneficiary, beneficiaryTokenCount, metadata
-            );
+            _fulfillPayHookSpecificationsFor({
+                projectId: projectId,
+                specifications: hookSpecifications,
+                tokenAmount: tokenAmount,
+                payer: payer,
+                ruleset: ruleset,
+                beneficiary: beneficiary,
+                newlyIssuedTokenCount: newlyIssuedTokenCount,
+                metadata: metadata
+            });
         }
     }
 
