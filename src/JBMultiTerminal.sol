@@ -94,6 +94,9 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @notice The number of seconds fees can be held for.
     uint256 internal constant _FEE_HOLDING_SECONDS = 2_419_200; // 28 days
 
+    /// @notice The maximum number of held fee entries, to prevent DOS.
+    uint256 internal constant _MAX_HELD_FEE_ENTRIES = 100;
+
     //*********************************************************************//
     // ---------------- public immutable stored properties --------------- //
     //*********************************************************************//
@@ -1782,7 +1785,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // Get a reference to the fee amount.
         feeAmount = JBFees.feeAmountIn(amount, FEE);
 
-        if (shouldHoldFees) {
+        if (shouldHoldFees && _heldFeesOf[projectId][token].length < _MAX_HELD_FEE_ENTRIES) {
             // Store the held fee.
             _heldFeesOf[projectId][token].push(
                 JBFee({
