@@ -14,7 +14,6 @@ import {IJBToken} from "./interfaces/IJBToken.sol";
 /// `JBController.deployERC20For(...)` or `JBController.setTokenFor(...)`, credits can be redeemed to claim tokens.
 /// @dev `JBController.deployERC20For(...)` deploys a `JBERC20` contract and sets it as the project's token.
 contract JBERC20 is ERC20Votes, ERC20Permit, Ownable, IJBToken {
-
     //*********************************************************************//
     // ---------------- public immutable stored properties --------------- //
     //*********************************************************************//
@@ -102,7 +101,15 @@ contract JBERC20 is ERC20Votes, ERC20Permit, Ownable, IJBToken {
     /// @param symbol_ The token's symbol.
     /// @param projectId_ The project ID.
     /// @param owner The token contract's owner.
-    function initialize(string memory name_, string memory symbol_, uint256 projectId_, address owner) public override {
+    function initialize(
+        string memory name_,
+        string memory symbol_,
+        uint256 projectId_,
+        address owner
+    )
+        public
+        override
+    {
         // Prevent re-initialization by reverting if a name is already set or if the provided name is empty.
         if (bytes(_name).length != 0 || bytes(name_).length == 0) revert();
 
