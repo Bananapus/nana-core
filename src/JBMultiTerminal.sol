@@ -1281,9 +1281,16 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
         // If the data hook returned pay hook specifications, fulfill them.
         if (hookSpecifications.length != 0) {
-            _fulfillPayHookSpecificationsFor(
-                projectId, hookSpecifications, tokenAmount, payer, ruleset, beneficiary, beneficiaryTokenCount, metadata
-            );
+            _fulfillPayHookSpecificationsFor({
+                projectId: projectId,
+                specifications: hookSpecifications,
+                tokenAmount: tokenAmount,
+                payer: payer,
+                ruleset: ruleset,
+                beneficiary: beneficiary,
+                beneficiaryTokenCount: beneficiaryTokenCount,
+                metadata: metadata
+            });
         }
     }
 
@@ -1540,7 +1547,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                 _heldFeesOf[projectId][token].push(heldFee);
             } else {
                 // Notice here we take `feeAmountIn` on the stored `.amount`.
-                uint256 feeAmount = JBFees.feeAmountIn(heldFee.amount, FEE);
+                uint256 feeAmount = JBFees.feeAmountIn({amount: heldFee.amount, feePercent: FEE});
 
                 // Keep a reference to the amount from which the fee was taken.
                 uint256 amountFromFee = heldFee.amount - feeAmount;
@@ -1552,7 +1559,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                     }
                 } else {
                     // And here we overwrite with `feeAmountFrom` the `leftoverAmount`
-                    feeAmount = JBFees.feeAmountFrom(leftoverAmount, FEE);
+                    feeAmount = JBFees.feeAmountFrom({amount: leftoverAmount, feePercent: FEE});
 
                     unchecked {
                         _heldFeesOf[projectId][token].push(
@@ -1631,8 +1638,12 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
         // Send payouts to the splits and get a reference to the amount left over after the splits have been paid.
         // Also get a reference to the amount which was paid out to splits that is eligible for fees.
-        (uint256 leftoverPayoutAmount, uint256 amountEligibleForFees) =
-            _sendPayoutsToSplitGroupOf(projectId, token, ruleset.id, amountPaidOut);
+        (uint256 leftoverPayoutAmount, uint256 amountEligibleForFees) = _sendPayoutsToSplitGroupOf({
+            projectId: projectId,
+            token: token,
+            rulesetId: ruleset.id,
+            amount: amountPaidOut
+        });
 
         // Take the fee.
         uint256 feeTaken = _takeFeeFrom({
@@ -1821,7 +1832,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             });
         } else {
             // Get the terminal that'll receive the fee if one wasn't provided.
-            IJBTerminal feeTerminal = DIRECTORY.primaryTerminalOf(_FEE_BENEFICIARY_PROJECT_ID, token);
+            IJBTerminal feeTerminal =
+                DIRECTORY.primaryTerminalOf({projectId: _FEE_BENEFICIARY_PROJECT_ID, token: token});
 
             // Process the fee.
             _processFee({
@@ -1843,20 +1855,20 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// as this terminal.
     function _transferFrom(address from, address payable to, address token, uint256 amount) internal {
         // If the token is the native token, transfer natively.
-        if (token == JBConstants.NATIVE_TOKEN) return Address.sendValue(to, amount);
+        if (token == JBConstants.NATIVE_TOKEN) return Address.sendValue({recipient: to, amount: amount});
 
-        if (from == address(this)) return IERC20(token).safeTransfer(to, amount);
+        if (from == address(this)) return IERC20(token).safeTransfer({to: to, value: amount});
 
         // If there's sufficient approval, transfer normally.
         if (IERC20(token).allowance(address(from), address(this)) >= amount) {
-            return IERC20(token).safeTransferFrom(from, to, amount);
+            return IERC20(token).safeTransferFrom({from: from, to: to, value: amount});
         }
 
         // Make sure the amount being paid is less than the maximum permit2 allowance.
         if (amount > type(uint160).max) revert JBMultiTerminal_OverflowAlert(amount, type(uint160).max);
 
         // Otherwise we attempt to use the PERMIT2 method.
-        PERMIT2.transferFrom(from, to, uint160(amount), token);
+        PERMIT2.transferFrom({from: from, to: to, amount: uint160(amount), token: token});
     }
 
     /// @notice Allows a project to send out funds from its surplus up to the current surplus allowance.
