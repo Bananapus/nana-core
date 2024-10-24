@@ -747,8 +747,10 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     /// @param from The controller being migrated from.
     /// @param projectId The ID of the project that will migrate to this controller.
     function receiveMigrationFrom(IERC165 from, uint256 projectId) external override {
-        // Access control.
+        // Keep a reference to the sender.
         address sender = _msgSender();
+
+        // Make sure the sender is the expected source controller.
         if (sender != address(from)) revert JBController_OnlyFromTargetTerminal(sender, from);
 
         // If the sending controller is an `IJBProjectUriRegistry`, copy the project's metadata URI.
