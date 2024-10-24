@@ -5,6 +5,7 @@ interface IJBToken {
     function balanceOf(address account) external view returns (uint256);
     function decimals() external view returns (uint8);
     function totalSupply() external view returns (uint256);
+    function projectId() external view returns (uint256);
 
     function initialize(string memory name, string memory symbol, address owner) external;
     function burn(address account, uint256 amount) external;

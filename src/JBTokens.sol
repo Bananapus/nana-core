@@ -26,6 +26,7 @@ contract JBTokens is JBControlled, IJBTokens {
     error JBTokens_InsufficientTokensToBurn(uint256 count, uint256 tokenBalance);
     error JBTokens_OverflowAlert(uint256 value, uint256 limit);
     error JBTokens_ProjectAlreadyHasToken(IJBToken token);
+    error JBTokens_TokenProjectIdMismatch(uint256 tokenProjectId, uint256 projectId);
     error JBTokens_RecipientZeroAddress();
     error JBTokens_TokenAlreadyBeingUsed(uint256 projectId);
     error JBTokens_TokenNotFound();
@@ -316,6 +317,9 @@ contract JBTokens is JBControlled, IJBTokens {
     function setTokenFor(uint256 projectId, IJBToken token) external override onlyControllerOf(projectId) {
         // Can't set to the zero address.
         if (token == IJBToken(address(0))) revert JBTokens_EmptyToken();
+
+        // The token's project ID must match the project ID.
+        if (token.projectId() != projectId) revert JBTokens_TokenProjectIdMismatch(token.projectId(), projectId);
 
         // Can't set a token if the project is already associated with another token.
         if (tokenOf[projectId] != IJBToken(address(0))) revert JBTokens_ProjectAlreadyHasToken(tokenOf[projectId]);
