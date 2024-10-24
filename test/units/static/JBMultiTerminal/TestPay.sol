@@ -269,7 +269,7 @@ contract TestPay_Local is JBMultiTerminalSetup {
             amount: tokenAmount,
             forwardedAmount: tokenAmount,
             weight: returnedRuleset.weight,
-            projectTokenCount: _mintAmount,
+            newlyIssuedTokenCount: _mintAmount,
             beneficiary: _bene,
             hookMetadata: bytes(""),
             payerMetadata: bytes("")
@@ -351,7 +351,7 @@ contract TestPay_Local is JBMultiTerminalSetup {
             amount: tokenAmount,
             forwardedAmount: tokenAmount,
             weight: returnedRuleset.weight,
-            projectTokenCount: _mintAmount,
+            newlyIssuedTokenCount: _mintAmount,
             beneficiary: _bene,
             hookMetadata: bytes(""),
             payerMetadata: bytes("")
