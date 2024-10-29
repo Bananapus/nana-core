@@ -520,6 +520,181 @@ contract TestJBRulesetsUnits_Local is JBTest {
         assertEq(queuedRulesetsOf[2].id, firstId);
     }
 
+    function testQueueOrderingWithEmptyApprovalHook() public {
+        // Setup: queueFor will call onlyControllerOf modifier -> Directory.controllerOf to see if caller has proper
+        // permissions, encode & mock that.
+        bytes memory _encodedCall = abi.encodeCall(IJBDirectory.controllerOf, (1));
+        bytes memory _willReturn = abi.encode(address(this));
+
+        // note: this applies to subsequent calls unless we clear mocks
+        mockExpect(address(_directory), _encodedCall, _willReturn);
+
+        // try another with any length of code deployed and mock interface support to pass other checks
+        bytes memory code = address(_rulesets).code;
+        vm.etch(address(_mockApprovalHook), code);
+
+        bytes memory _encodedCall3 =
+            abi.encodeCall(IERC165.supportsInterface, (type(IJBRulesetApprovalHook).interfaceId));
+        bytes memory _willReturn3 = abi.encode(true);
+
+        mockExpect(address(_mockApprovalHook), _encodedCall3, _willReturn3);
+
+        // Send: Call from this contract as it's been mock authorized above.
+        _rulesets.queueFor({
+            projectId: _projectId,
+            duration: _duration,
+            weight: _weight,
+            decayPercent: _decayPercent,
+            approvalHook: _mockApprovalHook,
+            metadata: _packedWithApprovalHook,
+            mustStartAtOrAfter: _mustStartAt
+        });
+
+        uint256 firstId = block.timestamp;
+
+        // Mock call to approval hook duration
+        bytes memory _encodedDurationCall = abi.encodeCall(IJBRulesetApprovalHook.DURATION, ());
+        bytes memory _willReturnDuration = abi.encode(_hookDuration);
+
+        mockExpect(address(_mockApprovalHook), _encodedDurationCall, _willReturnDuration);
+
+        // avoid overwrite
+        vm.warp(block.timestamp + 1);
+
+        uint256 latestId = block.timestamp;
+
+        // Send: Anotha One! Call from this contract as it's been mock authorized above.
+        _rulesets.queueFor({
+            projectId: _projectId,
+            duration: _duration,
+            weight: _weight,
+            decayPercent: _decayPercent,
+            approvalHook: _mockApprovalHook,
+            metadata: _packedWithApprovalHook,
+            mustStartAtOrAfter: block.timestamp
+        });
+
+        // avoid overwrite
+        vm.warp(block.timestamp + 2 days);
+        uint256 previouslyApprovedDurationEnds = block.timestamp + 3 days - 2 days - 1;
+
+        // Mock call to approvalStatusOf and return an EMPTY status
+        bytes memory _encodedApprovalCall =
+            abi.encodeCall(IJBRulesetApprovalHook.approvalStatusOf, (1, latestId, previouslyApprovedDurationEnds));
+        bytes memory _willReturnStatus = abi.encode(JBApprovalStatus.Empty);
+
+        mockExpect(address(_mockApprovalHook), _encodedApprovalCall, _willReturnStatus);
+
+        // Send: Anotha One! Call from this contract as it's been mock authorized above.
+        _rulesets.queueFor({
+            projectId: _projectId,
+            duration: _duration,
+            weight: _weight,
+            decayPercent: _decayPercent,
+            approvalHook: _mockApprovalHook,
+            metadata: _packedWithApprovalHook,
+            mustStartAtOrAfter: block.timestamp
+        });
+
+        latestId = block.timestamp;
+
+        JBRuleset[] memory queuedRulesetsOf = _rulesets.allOf(_projectId, block.timestamp, 3);
+
+        // Sorted from latest to earliest
+        assertEq(queuedRulesetsOf.length, 2);
+        assertEq(queuedRulesetsOf[0].id, latestId);
+        assertEq(queuedRulesetsOf[1].id, firstId);
+    }
+
+    function test_EnsureNotWronglyQueued() external {
+        // Setup: queueFor will call onlyControllerOf modifier -> Directory.controllerOf to see if caller has proper
+        // permissions, encode & mock that.
+        bytes memory _encodedCall = abi.encodeCall(IJBDirectory.controllerOf, (1));
+        bytes memory _willReturn = abi.encode(address(this));
+
+        // note: this applies to subsequent calls unless we clear mocks
+        mockExpect(address(_directory), _encodedCall, _willReturn);
+
+        // try another with any length of code deployed and mock interface support to pass other checks
+        bytes memory code = address(_rulesets).code;
+        vm.etch(address(_mockApprovalHook), code);
+
+        bytes memory _encodedCall3 =
+            abi.encodeCall(IERC165.supportsInterface, (type(IJBRulesetApprovalHook).interfaceId));
+        bytes memory _willReturn3 = abi.encode(true);
+
+        mockExpect(address(_mockApprovalHook), _encodedCall3, _willReturn3);
+
+        // Send: Call from this contract as it's been mock authorized above.
+        _rulesets.queueFor({
+            projectId: _projectId,
+            duration: 100, // as described
+            weight: _weight,
+            decayPercent: _decayPercent,
+            approvalHook: IJBRulesetApprovalHook(address(0)),
+            metadata: _packedWithApprovalHook,
+            mustStartAtOrAfter: 100 // as described
+        });
+
+        uint256 firstId = block.timestamp;
+
+        // Mock call to approval hook duration
+        bytes memory _encodedDurationCall = abi.encodeCall(IJBRulesetApprovalHook.DURATION, ());
+        bytes memory _willReturnDuration = abi.encode(10); // shorter duration for approval hook
+
+        mockExpect(address(_mockApprovalHook), _encodedDurationCall, _willReturnDuration);
+
+        // avoid overwrite
+        vm.warp(block.timestamp + 1);
+
+        uint256 latestId = block.timestamp;
+
+        // Send: Anotha One! Call from this contract as it's been mock authorized above.
+        _rulesets.queueFor({
+            projectId: _projectId,
+            duration: 50,
+            weight: _weight,
+            decayPercent: _decayPercent,
+            approvalHook: _mockApprovalHook,
+            metadata: _packedWithApprovalHook,
+            mustStartAtOrAfter: 200
+        });
+
+        // avoid overwrite
+        vm.warp(block.timestamp + 1);
+
+        // note: hooks approval status is skipped?
+        /* // Mock call to approvalStatusOf and return an EMPTY status
+        bytes memory _encodedApprovalCall =
+            abi.encodeCall(IJBRulesetApprovalHook.approvalStatusOf, (1, 1643802348, 1643802400));
+        bytes memory _willReturnStatus = abi.encode(JBApprovalStatus.Empty);
+
+        mockExpect(address(_mockApprovalHook), _encodedApprovalCall, _willReturnStatus); */
+
+        // Send: Anotha One! Call from this contract as it's been mock authorized above.
+        _rulesets.queueFor({
+            projectId: _projectId,
+            duration: _duration,
+            weight: _weight,
+            decayPercent: _decayPercent,
+            approvalHook: IJBRulesetApprovalHook(address(0)),
+            metadata: _packedWithApprovalHook,
+            mustStartAtOrAfter: 240
+        });
+
+        latestId = block.timestamp;
+
+        JBRuleset[] memory queuedRulesetsOf = _rulesets.allOf(_projectId, block.timestamp, 3);
+
+        // Sorted from latest to earliest
+        assertEq(queuedRulesetsOf.length, 3);
+        assertEq(queuedRulesetsOf[0].id, latestId);
+        assertEq(queuedRulesetsOf[2].id, firstId);
+
+        // latest ruleset will have longest duration
+        assertEq(queuedRulesetsOf[0].duration, _duration);
+    }
+
     function test_WhenCacheIsUpdatedTooSoon() external {
         // the decay multiple will be re-used if it's the same.
 
