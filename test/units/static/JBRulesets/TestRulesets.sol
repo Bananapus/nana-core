@@ -634,7 +634,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
             duration: 100, // as described
             weight: _weight,
             decayPercent: _decayPercent,
-            approvalHook: IJBRulesetApprovalHook(address(0)),
+            approvalHook: _mockApprovalHook,
             metadata: _packedWithApprovalHook,
             mustStartAtOrAfter: 100 // as described
         });
@@ -650,28 +650,27 @@ contract TestJBRulesetsUnits_Local is JBTest {
         // avoid overwrite
         vm.warp(block.timestamp + 1);
 
-        uint256 latestId = block.timestamp;
+        uint256 middleId = block.timestamp;
 
         _rulesets.queueFor({
             projectId: _projectId,
             duration: 50,
             weight: _weight,
             decayPercent: _decayPercent,
-            approvalHook: _mockApprovalHook,
+            approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: _packedWithApprovalHook,
-            mustStartAtOrAfter: 200
+            mustStartAtOrAfter: 109
         });
 
         // avoid overwrite
-        vm.warp(block.timestamp + 1);
+        vm.warp(block.timestamp + 200);
 
         // note: hooks approval status is skipped?
-        /* // Mock call to approvalStatusOf and return an EMPTY status
-        bytes memory _encodedApprovalCall =
-            abi.encodeCall(IJBRulesetApprovalHook.approvalStatusOf, (1, 1643802348, 1643802400));
+        // Mock call to approvalStatusOf and return an EMPTY status
+        bytes memory _encodedApprovalCall = abi.encodeCall(IJBRulesetApprovalHook.approvalStatusOf, (1, 101, 200));
         bytes memory _willReturnStatus = abi.encode(JBApprovalStatus.Empty);
 
-        mockExpect(address(_mockApprovalHook), _encodedApprovalCall, _willReturnStatus); */
+        mockExpect(address(_mockApprovalHook), _encodedApprovalCall, _willReturnStatus);
 
         _rulesets.queueFor({
             projectId: _projectId,
@@ -683,14 +682,21 @@ contract TestJBRulesetsUnits_Local is JBTest {
             mustStartAtOrAfter: 240
         });
 
-        latestId = block.timestamp;
+        uint256 latestId = block.timestamp;
 
+        // for assertions
         JBRuleset[] memory queuedRulesetsOf = _rulesets.allOf(_projectId, block.timestamp, 3);
+        (JBRuleset memory latestRuleset, JBApprovalStatus latestApprovalStatus) = _rulesets.latestQueuedOf(_projectId);
 
         // Sorted from latest to earliest
         assertEq(queuedRulesetsOf.length, 3);
         assertEq(queuedRulesetsOf[0].id, latestId);
+        assertEq(queuedRulesetsOf[1].id, middleId);
         assertEq(queuedRulesetsOf[2].id, firstId);
+
+        // latest ruleset checks
+        assertEq(latestRuleset.id, latestId);
+        assertEq(uint256(latestApprovalStatus), uint256(JBApprovalStatus.Empty));
 
         // latest ruleset will have longest duration
         assertEq(queuedRulesetsOf[0].duration, _duration);
