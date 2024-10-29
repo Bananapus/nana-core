@@ -625,6 +625,9 @@ contract TestJBRulesetsUnits_Local is JBTest {
 
         mockExpect(address(_mockApprovalHook), _encodedCall3, _willReturn3);
 
+        // Start at 100
+        vm.warp(100);
+
         // Send: Call from this contract as it's been mock authorized above.
         _rulesets.queueFor({
             projectId: _projectId,
@@ -649,7 +652,6 @@ contract TestJBRulesetsUnits_Local is JBTest {
 
         uint256 latestId = block.timestamp;
 
-        // Send: Anotha One! Call from this contract as it's been mock authorized above.
         _rulesets.queueFor({
             projectId: _projectId,
             duration: 50,
@@ -671,7 +673,6 @@ contract TestJBRulesetsUnits_Local is JBTest {
 
         mockExpect(address(_mockApprovalHook), _encodedApprovalCall, _willReturnStatus); */
 
-        // Send: Anotha One! Call from this contract as it's been mock authorized above.
         _rulesets.queueFor({
             projectId: _projectId,
             duration: _duration,
