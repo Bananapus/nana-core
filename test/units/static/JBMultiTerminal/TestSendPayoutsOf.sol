@@ -136,6 +136,7 @@ contract TestSendPayoutsOf_Local is JBMultiTerminalSetup {
             projectId: 0,
             beneficiary: payable(address(this)),
             lockedUntil: uint48(block.timestamp + 1),
+            lockId: 0,
             hook: IJBSplitHook(address(0))
         });
 

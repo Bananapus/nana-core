@@ -150,8 +150,10 @@ contract JBSplits is JBControlled, IJBSplits {
             if (packedSplitPart2 > 0) {
                 // `lockedUntil` in bits 0-47.
                 split.lockedUntil = uint48(packedSplitPart2);
-                // `hook` in bits 48-207.
-                split.hook = IJBSplitHook(address(uint160(packedSplitPart2 >> 48)));
+                // `lockId` in bits 48-95.
+                split.lockId = uint48(packedSplitPart2 >> 48);
+                // `hook` in bits 96-255.
+                split.hook = IJBSplitHook(address(uint160(packedSplitPart2 >> 96)));
             }
 
             // Add the split to the value being returned.
@@ -179,6 +181,7 @@ contract JBSplits is JBControlled, IJBSplits {
                 split.percent == lockedSplit.percent && split.beneficiary == lockedSplit.beneficiary
                     && split.hook == lockedSplit.hook && split.projectId == lockedSplit.projectId
                     && split.preferAddToBalance == lockedSplit.preferAddToBalance
+                    && split.lockId == lockedSplit.lockId
                     && split.lockedUntil >= lockedSplit.lockedUntil
             ) return true;
         }
@@ -280,8 +283,10 @@ contract JBSplits is JBControlled, IJBSplits {
             if (split.lockedUntil > 0 || split.hook != IJBSplitHook(address(0))) {
                 // Pack `lockedUntil` in bits 0-47.
                 uint256 packedSplitParts2 = uint48(split.lockedUntil);
-                // Pack `hook` in bits 48-207.
-                packedSplitParts2 |= uint256(uint160(address(split.hook))) << 48;
+                // Pack `lockId` in bits 48-95.
+                packedSplitParts2 |= uint256(split.lockId) << 48;
+                // Pack `hook` in bits 96-255.
+                packedSplitParts2 |= uint256(uint160(address(split.hook))) << 96;
 
                 // Store the second split part.
                 _packedSplitParts2Of[projectId][rulesetId][groupId][i] = packedSplitParts2;

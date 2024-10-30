@@ -113,6 +113,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
             projectId: _projectId,
             beneficiary: payable(address(0)),
             lockedUntil: 0,
+            lockId: 0,
             hook: _hook
         });
 
@@ -226,6 +227,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
             projectId: 0,
             beneficiary: payable(_beneficiary),
             lockedUntil: 0,
+            lockId: 0,
             hook: IJBSplitHook(address(0))
         });
 
@@ -320,6 +322,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
             projectId: 0,
             beneficiary: payable(address(0xdead)),
             lockedUntil: 0,
+            lockId: 0,
             hook: IJBSplitHook(address(0))
         });
 
@@ -410,6 +413,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
             projectId: 1, // non-zero to execute rest of the function
             beneficiary: payable(address(0xdead)),
             lockedUntil: 0,
+            lockId: 0,
             hook: IJBSplitHook(address(0))
         });
 
@@ -519,6 +523,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
             projectId: 1, // non-zero to execute rest of the function
             beneficiary: payable(address(0xdead)),
             lockedUntil: 0,
+            lockId: 0,
             hook: IJBSplitHook(address(0))
         });
 

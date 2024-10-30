@@ -59,6 +59,7 @@ contract TestSplits_Local is TestBaseWorkflow {
             projectId: 0,
             beneficiary: _splitsGuy,
             lockedUntil: 0,
+            lockId: 0,
             hook: IJBSplitHook(address(0))
         });
 
@@ -69,6 +70,7 @@ contract TestSplits_Local is TestBaseWorkflow {
             projectId: 0,
             beneficiary: _splitsGuy,
             lockedUntil: 0,
+            lockId: 0,
             hook: IJBSplitHook(address(0))
         });
 
@@ -84,6 +86,7 @@ contract TestSplits_Local is TestBaseWorkflow {
             projectId: 0,
             beneficiary: _splitsGuy,
             lockedUntil: 0,
+            lockId: 0,
             hook: IJBSplitHook(address(0))
         });
 
@@ -218,6 +221,7 @@ contract TestSplits_Local is TestBaseWorkflow {
             projectId: _mockProjectId,
             beneficiary: _splitsGuy,
             lockedUntil: 0,
+            lockId: 0,
             hook: IJBSplitHook(address(0))
         });
 
@@ -314,6 +318,7 @@ contract TestSplits_Local is TestBaseWorkflow {
             projectId: 0,
             beneficiary: _splitsGuy,
             lockedUntil: 0,
+            lockId: 0,
             hook: IJBSplitHook(address(0))
         });
 
@@ -324,6 +329,7 @@ contract TestSplits_Local is TestBaseWorkflow {
             projectId: 0,
             beneficiary: _splitsGuy,
             lockedUntil: 0,
+            lockId: 0,
             hook: IJBSplitHook(address(0))
         });
 

@@ -32,6 +32,7 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
             projectId: _noProject,
             beneficiary: _noBene,
             lockedUntil: _lockedUntil,
+            lockId: 0,
             hook: IJBSplitHook(_hook)
         });
         vm.deal(address(_terminal), _defaultAmount);
@@ -59,6 +60,7 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
             projectId: _noProject,
             beneficiary: _noBene,
             lockedUntil: _lockedUntil,
+            lockId: 0,
             hook: IJBSplitHook(_hook)
         });
 
@@ -103,6 +105,7 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
             projectId: _noProject,
             beneficiary: _noBene,
             lockedUntil: _lockedUntil,
+            lockId: 0,
             hook: IJBSplitHook(_hook)
         });
 
@@ -164,6 +167,7 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
             projectId: _noProject,
             beneficiary: _noBene,
             lockedUntil: _lockedUntil,
+            lockId: 0,
             hook: IJBSplitHook(address(0))
         });
 
@@ -204,6 +208,7 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
             projectId: _projectId,
             beneficiary: _noBene,
             lockedUntil: _lockedUntil,
+            lockId: 0,
             hook: IJBSplitHook(address(0))
         });
 
@@ -238,6 +243,7 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
             projectId: _projectId,
             beneficiary: _noBene,
             lockedUntil: _lockedUntil,
+            lockId: 0,
             hook: IJBSplitHook(address(0))
         });
 
@@ -283,6 +289,7 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
             projectId: _projectId,
             beneficiary: _noBene,
             lockedUntil: _lockedUntil,
+            lockId: 0,
             hook: IJBSplitHook(address(0))
         });
 
@@ -333,6 +340,7 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
             projectId: _projectId,
             beneficiary: _noBene,
             lockedUntil: _lockedUntil,
+            lockId: 0,
             hook: IJBSplitHook(address(0))
         });
 
@@ -402,6 +410,7 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
             projectId: _projectId,
             beneficiary: _noBene,
             lockedUntil: _lockedUntil,
+            lockId: 0,
             hook: IJBSplitHook(address(0))
         });
 
@@ -450,6 +459,7 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
             projectId: _noProject,
             beneficiary: _bene,
             lockedUntil: _lockedUntil,
+            lockId: 0,
             hook: IJBSplitHook(address(0))
         });
 
@@ -484,6 +494,7 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
             projectId: _noProject,
             beneficiary: _bene,
             lockedUntil: _lockedUntil,
+            lockId: 0,
             hook: IJBSplitHook(address(0))
         });
 
@@ -519,6 +530,7 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
             projectId: _noProject,
             beneficiary: _noBene,
             lockedUntil: _lockedUntil,
+            lockId: 0,
             hook: IJBSplitHook(address(0))
         });
 
@@ -549,6 +561,7 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
             projectId: _noProject,
             beneficiary: _noBene,
             lockedUntil: _lockedUntil,
+            lockId: 0,
             hook: IJBSplitHook(address(0))
         });
 

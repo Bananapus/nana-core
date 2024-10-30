@@ -179,6 +179,7 @@ contract TestLaunchProjectFor_Local is JBControllerSetup {
             projectId: 1,
             beneficiary: _splitsBeneficiary,
             lockedUntil: 0,
+            lockId: 0,
             hook: IJBSplitHook(address(0))
         });
 

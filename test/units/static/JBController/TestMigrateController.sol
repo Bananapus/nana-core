@@ -162,6 +162,7 @@ contract TestMigrateController_Local is JBControllerSetup {
             projectId: 1,
             beneficiary: payable(address(this)),
             lockedUntil: 0,
+            lockId: 0,
             hook: IJBSplitHook(address(0))
         });
 

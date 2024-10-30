@@ -28,6 +28,7 @@ contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
             projectId: _projectId,
             beneficiary: _bene,
             lockedUntil: 0,
+            lockId: 0,
             hook: IJBSplitHook(address(0))
         });
 
@@ -66,6 +67,7 @@ contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
             projectId: _projectId,
             beneficiary: _bene,
             lockedUntil: uint48(block.timestamp + 100),
+            lockId: 0,
             hook: IJBSplitHook(address(0))
         });
 
@@ -81,6 +83,7 @@ contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
             projectId: _projectId,
             beneficiary: _bene,
             lockedUntil: 0,
+            lockId: 0,
             hook: IJBSplitHook(address(0))
         });
 
@@ -106,6 +109,7 @@ contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
             projectId: _projectId,
             beneficiary: _bene,
             lockedUntil: 0,
+            lockId: 0,
             hook: IJBSplitHook(address(0))
         });
 
@@ -130,6 +134,7 @@ contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
             projectId: _projectId,
             beneficiary: _bene,
             lockedUntil: 0,
+            lockId: 0,
             hook: IJBSplitHook(address(0))
         });
 
@@ -140,6 +145,7 @@ contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
             projectId: _projectId,
             beneficiary: _bene,
             lockedUntil: 0,
+            lockId: 0,
             hook: IJBSplitHook(address(0))
         });
 
@@ -164,6 +170,7 @@ contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
             projectId: _projectId,
             beneficiary: _bene,
             lockedUntil: 0,
+            lockId: 0,
             hook: IJBSplitHook(address(0))
         });
 
@@ -174,6 +181,7 @@ contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
             projectId: _projectId,
             beneficiary: payable(makeAddr("anotherBene")),
             lockedUntil: 0,
+            lockId: 0,
             hook: IJBSplitHook(address(0))
         });
 
@@ -204,6 +212,7 @@ contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
             projectId: _projectId,
             beneficiary: _bene,
             lockedUntil: 0,
+            lockId: 0,
             hook: IJBSplitHook(address(0))
         });
 
@@ -225,6 +234,7 @@ contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
             projectId: _projectId,
             beneficiary: _bene,
             lockedUntil: 0,
+            lockId: 0,
             hook: IJBSplitHook(address(0))
         });
 
@@ -255,6 +265,7 @@ contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
             projectId: _projectId,
             beneficiary: _bene,
             lockedUntil: uint48(block.timestamp + 100),
+            lockId: 1,
             hook: IJBSplitHook(address(0))
         });
 
@@ -277,6 +288,7 @@ contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
             projectId: _projectId,
             beneficiary: _bene,
             lockedUntil: uint48(block.timestamp + 100),
+            lockId: 1,
             hook: IJBSplitHook(address(0))
         });
 
@@ -287,6 +299,7 @@ contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
             projectId: _projectId,
             beneficiary: _bene,
             lockedUntil: uint48(block.timestamp + 200),
+            lockId: 0,
             hook: IJBSplitHook(address(0))
         });
 
@@ -318,6 +331,7 @@ contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
             projectId: _projectId,
             beneficiary: _bene,
             lockedUntil: uint48(block.timestamp + 100),
+            lockId: 1,
             hook: IJBSplitHook(address(0))
         });
 
@@ -340,6 +354,7 @@ contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
             projectId: _projectId,
             beneficiary: _bene,
             lockedUntil: uint48(block.timestamp + 100),
+            lockId: 1,
             hook: IJBSplitHook(address(0))
         });
 
@@ -349,6 +364,7 @@ contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
             projectId: _projectId,
             beneficiary: _bene,
             lockedUntil: 0,
+            lockId: 0,
             hook: IJBSplitHook(address(0))
         });
 
