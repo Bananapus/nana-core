@@ -16,7 +16,7 @@ contract TestSymbol_Local is JBERC20Setup {
     function test_WhenASymbolIsSet() external {
         // it will return a non-empty string
 
-        _erc20.initialize("NANAPUS", "NANA", _owner);
+        _erc20.initialize("NANAPUS", "NANA", 1, _owner);
 
         string memory _setSymbol = _token.symbol();
         assertEq(_setSymbol, "NANA");

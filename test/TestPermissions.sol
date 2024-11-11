@@ -192,7 +192,6 @@ contract TestPermissions_Local is TestBaseWorkflow, JBTest {
 
     function testBasicAccessSetup() public {
         address zeroOwner = makeAddr("zeroOwner");
-        address token = address(usdcToken());
 
         // Pack up our permission data.
         JBPermissionsData[] memory permData = new JBPermissionsData[](1);
@@ -209,17 +208,23 @@ contract TestPermissions_Local is TestBaseWorkflow, JBTest {
         bool _check = _permissions.hasPermission(address(this), zeroOwner, _projectZero, 2, true, true);
         assertEq(_check, true);
 
+        // Create a token
+        IJBToken token = new JBERC20();
+        token.initialize("NANA", "SYMBOL", 1, address(this));
+
         // Will revert attempting to set another projects token
         vm.expectRevert(
             abi.encodeWithSelector(
                 JBPermissioned.JBPermissioned_Unauthorized.selector, _projectOwner, address(this), 2, 8
             )
         );
-        _controller.setTokenFor(2, IJBToken(token));
+
+        // Reverts
+        _controller.setTokenFor(2, token);
 
         // Will succeed when setting the correct projects token
-        mockExpect(token, abi.encodeCall(MockERC20.decimals, ()), abi.encode(18));
-        _controller.setTokenFor(1, IJBToken(token));
+        mockExpect(address(token), abi.encodeCall(MockERC20.decimals, ()), abi.encode(18));
+        _controller.setTokenFor(1, token);
     }
 
     function testCannotForwardRoot() public {

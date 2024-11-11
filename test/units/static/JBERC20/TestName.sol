@@ -15,7 +15,7 @@ contract TestName_Local is JBERC20Setup {
 
     function test_WhenANameIsSet() external {
         // it will return the name
-        _erc20.initialize("NANAPUS", "NANA", _owner);
+        _erc20.initialize("NANAPUS", "NANA", 1, _owner);
 
         string memory _setName = _token.name();
         assertEq(_setName, "NANAPUS");

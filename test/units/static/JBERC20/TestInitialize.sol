@@ -8,6 +8,7 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 contract TestInitialize_Local is JBERC20Setup {
     string _name = "Nana";
     string _symbol = "NANA";
+    uint256 _projectId = 1;
 
     function setUp() public {
         super.erc20Setup();
@@ -16,7 +17,7 @@ contract TestInitialize_Local is JBERC20Setup {
     function test_WhenANameIsAlreadySet() external {
         // it will revert
 
-        _erc20.initialize(_name, _symbol, _owner);
+        _erc20.initialize(_name, _symbol, _projectId, _owner);
 
         // ensure ownership transferred
         address newOwner = Ownable(address(_erc20)).owner();
@@ -24,7 +25,7 @@ contract TestInitialize_Local is JBERC20Setup {
 
         // will fail as internal name is no longer zero length
         vm.expectRevert();
-        _erc20.initialize(_name, _symbol, _owner);
+        _erc20.initialize(_name, _symbol, _projectId, _owner);
     }
 
     function test_WhenName_EQNothing() external {
@@ -32,13 +33,13 @@ contract TestInitialize_Local is JBERC20Setup {
 
         // will fail as internal name is no longer than zero length
         vm.expectRevert();
-        _erc20.initialize("", _symbol, _owner);
+        _erc20.initialize("", _symbol, _projectId, _owner);
     }
 
     function test_WhenNameIsValidAndNotAlreadySet() external {
         // it will set the name and symbol and transfer ownership
 
-        _erc20.initialize(_name, _symbol, _owner);
+        _erc20.initialize(_name, _symbol, _projectId, _owner);
 
         // ensure ownership transferred
         address newOwner = Ownable(address(_erc20)).owner();

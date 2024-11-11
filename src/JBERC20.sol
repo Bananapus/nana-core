@@ -19,7 +19,7 @@ contract JBERC20 is ERC20Votes, ERC20Permit, Ownable, IJBToken {
     //*********************************************************************//
 
     /// @notice The project ID.
-    uint256 public immutable override projectId;
+    uint256 public override projectId;
 
     //*********************************************************************//
     // --------------------- internal stored properties ------------------ //

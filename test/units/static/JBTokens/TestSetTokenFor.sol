@@ -23,6 +23,12 @@ contract TestSetTokenFor_Local is JBTokensSetup {
         _;
     }
 
+    modifier whenTokenHasProjectId() {
+        mockExpect(address(_token), abi.encodeCall(IJBToken.projectId, ()), abi.encode(_projectId));
+
+        _;
+    }
+
     function test_WhenTokenIsTheZeroAddress() external whenCallerIsControllerOfProject {
         // it will revert EMPTY_TOKEN
 
@@ -39,11 +45,17 @@ contract TestSetTokenFor_Local is JBTokensSetup {
         // Set storage
         vm.store(address(_tokens), tokenOfSlot, bytes32(uint256(uint160(address(_token)))));
 
+        mockExpect(address(_token), abi.encodeCall(IJBToken.projectId, ()), abi.encode(_projectId));
+
         vm.expectRevert(abi.encodeWithSelector(JBTokens.JBTokens_ProjectAlreadyHasToken.selector, _token));
         _tokens.setTokenFor(_projectId, IJBToken(address(_token)));
     }
 
-    function test_WhenATokenIsAssociatedWithAnotherProject() external whenCallerIsControllerOfProject {
+    function test_WhenATokenIsAssociatedWithAnotherProject()
+        external
+        whenCallerIsControllerOfProject
+        whenTokenHasProjectId
+    {
         // it will revert TOKEN_ALREADY_SET
 
         // Find the storage slot to set token
@@ -58,7 +70,7 @@ contract TestSetTokenFor_Local is JBTokensSetup {
         _tokens.setTokenFor(_projectId, IJBToken(address(_token)));
     }
 
-    function test_WhenATokensDecimalsDNEQ18() external whenCallerIsControllerOfProject {
+    function test_WhenATokensDecimalsDNEQ18() external whenCallerIsControllerOfProject whenTokenHasProjectId {
         // it will revert TOKENS_MUST_HAVE_18_DECIMALS
 
         //mock call to token decimals
@@ -68,7 +80,7 @@ contract TestSetTokenFor_Local is JBTokensSetup {
         _tokens.setTokenFor(_projectId, IJBToken(address(_token)));
     }
 
-    function test_WhenHappyPath() external whenCallerIsControllerOfProject {
+    function test_WhenHappyPath() external whenCallerIsControllerOfProject whenTokenHasProjectId {
         // it will set token states and emit SetToken
 
         //mock call to token decimals
