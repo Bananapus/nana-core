@@ -271,7 +271,7 @@ contract JBTokens is JBControlled, IJBTokens {
         });
 
         // Initialize the token.
-        token.initialize({name: name, symbol: symbol, owner: address(this)});
+        token.initialize({name: name, symbol: symbol, projectId: projectId, owner: address(this)});
     }
 
     /// @notice Mint (create) new tokens or credits.
