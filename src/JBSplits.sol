@@ -180,8 +180,7 @@ contract JBSplits is JBControlled, IJBSplits {
                 // Allow the lock to be extended.
                 split.percent == lockedSplit.percent && split.beneficiary == lockedSplit.beneficiary
                     && split.hook == lockedSplit.hook && split.projectId == lockedSplit.projectId
-                    && split.preferAddToBalance == lockedSplit.preferAddToBalance
-                    && split.lockId == lockedSplit.lockId
+                    && split.preferAddToBalance == lockedSplit.preferAddToBalance && split.lockId == lockedSplit.lockId
                     && split.lockedUntil >= lockedSplit.lockedUntil
             ) return true;
         }

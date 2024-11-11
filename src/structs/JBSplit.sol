@@ -23,7 +23,8 @@ import {IJBSplitHook} from "./../interfaces/IJBSplitHook.sol";
 /// is specified, the `beneficiary` receives any project tokens minted by this split.
 /// @custom:member lockedUntil The split cannot be changed until this timestamp. The `lockedUntil` timestamp can be
 /// increased while a split is locked. If `lockedUntil` is zero, this split can be changed at any time.
-/// @custom:member lockId An ID used to distinguish a locked split. If two splits are identical and have the same `lockId`, they will not both be locked at the same time – the lockIds must be different.
+/// @custom:member lockId An ID used to distinguish a locked split. If two splits are identical and have the same
+/// `lockId`, they will not both be locked at the same time – the lockIds must be different.
 /// @custom:member hook A contract which will receive this split's tokens and properties, and can define custom
 /// behavior.
 struct JBSplit {
