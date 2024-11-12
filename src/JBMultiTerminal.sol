@@ -578,6 +578,18 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         });
     }
 
+    /// @notice Transfer funds to an address.
+    /// @dev Only accepts calls from this terminal itself.
+    /// @param addr The address to transfer funds to.
+    /// @param token The token to transfer.
+    /// @param amount The amount of tokens to transfer.
+    function executeTransferTo(address payable addr, address token, uint256 amount) external {
+        // NOTICE: May only be called by this terminal itself.
+        require(msg.sender == address(this));
+
+        _transferFrom({from: address(this), to: addr, token: token, amount: amount});
+    }
+
     /// @notice Migrate a project's funds and operations to a new terminal that accepts the same token type.
     /// @dev Only a project's owner or an operator with the `MIGRATE_TERMINAL` permission from that owner can migrate
     /// the project's terminal.
@@ -1640,7 +1652,20 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             netLeftoverPayoutAmount = leftoverPayoutAmount - JBFees.feeAmountIn(leftoverPayoutAmount, FEE);
 
             // Transfer the amount to the project owner.
-            _transferFrom({from: address(this), to: projectOwner, token: token, amount: netLeftoverPayoutAmount});
+            try this.executeTransferTo({addr: projectOwner, token: token, amount: netLeftoverPayoutAmount}) {}
+            catch (bytes memory reason) {
+                emit PayoutTransferReverted({
+                    projectId: projectId,
+                    addr: projectOwner,
+                    token: token,
+                    amount: netLeftoverPayoutAmount,
+                    reason: reason,
+                    caller: _msgSender()
+                });
+
+                // Add balance back to the project.
+                STORE.recordAddedBalanceFor(projectId, token, netLeftoverPayoutAmount);
+            }
         }
 
         emit SendPayouts({
