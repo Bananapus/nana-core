@@ -780,8 +780,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// point number with the same amount of decimals as this terminal.
     /// @param currency The expected currency of the amount being paid out. Must match the currency of one of the
     /// project's current ruleset's surplus allowances.
-    /// @param minTokensPaidOut The minimum number of terminal tokens that should be used from the surplus allowance
-    /// (including fees), as a fixed point number with 18 decimals. If the amount of surplus used would be less than
+    /// @param minTokensPaidOut The minimum number of terminal tokens that should be returned from the surplus allowance
+    /// (excluding fees), as a fixed point number with 18 decimals. If the amount of surplus used would be less than
     /// this amount, the transaction is reverted.
     /// @param beneficiary The address to send the surplus funds to.
     /// @param feeBeneficiary The address to send the tokens resulting from paying the fee.
