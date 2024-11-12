@@ -16,7 +16,7 @@ interface IJBPayoutTerminal is IJBTerminal {
         uint256 amount,
         uint256 amountPaidOut,
         uint256 fee,
-        uint256 netLeftoverPayoutAmount,
+        uint256 leftoverPayoutAmount,
         address caller
     );
     event SendPayoutToSplit(
