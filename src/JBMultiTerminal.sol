@@ -686,7 +686,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         uint256 beneficiaryBalanceAfter = tokens.totalBalanceOf({holder: beneficiary, projectId: projectId});
 
         // Set the beneficiary token count.
-        if (beneficiaryBalanceAfter < beneficiaryBalanceBefore) {
+        if (beneficiaryBalanceAfter <= beneficiaryBalanceBefore) {
             beneficiaryTokenCount = 0;
         }
         else {
