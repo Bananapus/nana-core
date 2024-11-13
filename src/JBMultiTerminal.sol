@@ -1650,7 +1650,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             amount: amount,
             amountPaidOut: amountPaidOut,
             fee: feeTaken,
-            leftoverPayoutAmount: leftoverPayoutAmount,
+            netLeftoverPayoutAmount: leftoverPayoutAmount,
             caller: _msgSender()
         });
     }
