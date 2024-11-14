@@ -1356,7 +1356,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             _processFee({
                 projectId: projectId,
                 token: token,
-                amount: heldFee.amount,
+                amount: JBFees.feeAmountIn(heldFee.amount, FEE),
                 beneficiary: heldFee.beneficiary,
                 feeTerminal: feeTerminal,
                 wasHeld: true
