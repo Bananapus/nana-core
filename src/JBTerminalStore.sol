@@ -173,7 +173,8 @@ contract JBTerminalStore is IJBTerminalStore {
     /// @dev The returned amount in terms of the specified `terminal`'s base currency.
     /// @dev The returned amount is represented as a fixed point number with the same amount of decimals as the
     /// specified terminal.
-    /// @param terminal The terminal that would be redeemed from. If `useTotalSurplus` is true, this is ignored.
+    /// @param terminal The terminal that would be redeemed from. If this is the zero address, surplus within all the
+    /// project's terminals are considered.
     /// @param projectId The ID of the project whose tokens would be redeemed.
     /// @param accountingContexts The accounting contexts of the surplus terminal tokens that would be reclaimed
     /// @param decimals The number of decimals to include in the resulting fixed point number.
