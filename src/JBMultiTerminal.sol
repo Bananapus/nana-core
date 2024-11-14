@@ -1622,26 +1622,25 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         (uint256 leftoverPayoutAmount, uint256 amountEligibleForFees) =
             _sendPayoutsToSplitGroupOf(projectId, token, ruleset.id, amountPaidOut);
 
+        // Send any leftover funds to the project owner and update the fee tracking accordingly.
+        if (leftoverPayoutAmount != 0) {
+            if (!_isFeeless(projectOwner)) {
+                amountEligibleForFees += leftoverPayoutAmount;
+                leftoverPayoutAmount -= JBFees.feeAmountIn(leftoverPayoutAmount, FEE);
+            }
+
+            // Transfer the amount to the project owner.
+            _transferFrom({from: address(this), to: projectOwner, token: token, amount: leftoverPayoutAmount});
+        }
+
         // Take the fee.
         uint256 feeTaken = _takeFeeFrom({
             projectId: projectId,
             token: token,
-            amount: amountEligibleForFees + leftoverPayoutAmount,
+            amount: amountEligibleForFees,
             beneficiary: projectOwner,
             shouldHoldFees: ruleset.holdFees()
         });
-
-        /// The leftover amount that was sent to the project owner.
-        uint256 netLeftoverPayoutAmount;
-
-        // Send any leftover funds to the project owner and update the net leftover (which is returned) accordingly.
-        if (leftoverPayoutAmount != 0) {
-            // Subtract the fee from the net leftover amount.
-            netLeftoverPayoutAmount = leftoverPayoutAmount - JBFees.feeAmountIn(leftoverPayoutAmount, FEE);
-
-            // Transfer the amount to the project owner.
-            _transferFrom({from: address(this), to: projectOwner, token: token, amount: netLeftoverPayoutAmount});
-        }
 
         emit SendPayouts({
             rulesetId: ruleset.id,
@@ -1651,7 +1650,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             amount: amount,
             amountPaidOut: amountPaidOut,
             fee: feeTaken,
-            netLeftoverPayoutAmount: netLeftoverPayoutAmount,
+            netLeftoverPayoutAmount: leftoverPayoutAmount,
             caller: _msgSender()
         });
     }
