@@ -136,6 +136,15 @@ contract TestPay_Local is JBMultiTerminalSetup {
             abi.encode(returnedRuleset, 0, hookSpecifications)
         );
 
+        // mock call to the "controller" which is actually this contract for mocking purposes
+        mockExpect(
+            address(directory), abi.encodeCall(IJBDirectory.controllerOf, (_projectId)), abi.encode(address(this))
+        );
+
+        mockExpect(address(this), abi.encodeCall(IJBController.TOKENS, ()), abi.encode(address(this)));
+
+        mockExpect(address(this), abi.encodeCall(IJBTokens.totalBalanceOf, (_bene, _projectId)), abi.encode(0));
+
         vm.expectRevert(abi.encodeWithSelector(JBMultiTerminal.JBMultiTerminal_UnderMinReturnedTokens.selector, 0, 1));
         _terminal.pay{value: 1e18}({
             projectId: _projectId,
@@ -182,6 +191,19 @@ contract TestPay_Local is JBMultiTerminalSetup {
             address(this),
             abi.encodeCall(IJBController.mintTokensOf, (_projectId, _mintAmount, _bene, "", true)),
             abi.encode(_mintAmount)
+        );
+
+        // mock call to the "controller" which is actually this contract for mocking purposes
+        mockExpect(address(this), abi.encodeCall(IJBController.TOKENS, ()), abi.encode(address(this)));
+
+        // Data for subsequent calls made for balance checks
+        bytes[] memory subsequentReturns = new bytes[](2);
+        subsequentReturns[0] = abi.encode(0);
+        subsequentReturns[1] = abi.encode(_mintAmount);
+
+        // Mock subsequent calls made for balance checks
+        mockExpectSubsequent(
+            address(this), abi.encodeCall(IJBTokens.totalBalanceOf, (_bene, _projectId)), subsequentReturns
         );
 
         vm.expectEmit();
@@ -294,6 +316,19 @@ contract TestPay_Local is JBMultiTerminalSetup {
         vm.expectEmit();
         emit IJBTerminal.HookAfterRecordPay(_mockHook, context, _defaultAmount, address(this));
 
+        // mock call to the "controller" which is actually this contract for mocking purposes
+        mockExpect(address(this), abi.encodeCall(IJBController.TOKENS, ()), abi.encode(address(this)));
+
+        // Data for subsequent calls made for balance checks
+        bytes[] memory subsequentReturns = new bytes[](2);
+        subsequentReturns[0] = abi.encode(0);
+        subsequentReturns[1] = abi.encode(_mintAmount);
+
+        // Mock subsequent calls made for balance checks
+        mockExpectSubsequent(
+            address(this), abi.encodeCall(IJBTokens.totalBalanceOf, (_bene, _projectId)), subsequentReturns
+        );
+
         _terminal.pay({
             projectId: _projectId,
             token: address(_mockToken),
@@ -360,6 +395,19 @@ contract TestPay_Local is JBMultiTerminalSetup {
         // mock call to hook (including msg.value)
         mockExpect(address(_mockHook), abi.encodeCall(IJBPayHook.afterPayRecordedWith, (context)), "");
 
+        // mock call to the "controller" which is actually this contract for mocking purposes
+        mockExpect(address(this), abi.encodeCall(IJBController.TOKENS, ()), abi.encode(address(this)));
+
+        // Data for subsequent calls made for balance checks
+        bytes[] memory subsequentReturns = new bytes[](2);
+        subsequentReturns[0] = abi.encode(0);
+        subsequentReturns[1] = abi.encode(_mintAmount);
+
+        // Mock subsequent calls made for balance checks
+        mockExpectSubsequent(
+            address(this), abi.encodeCall(IJBTokens.totalBalanceOf, (_bene, _projectId)), subsequentReturns
+        );
+
         vm.expectEmit();
         emit IJBTerminal.Pay(
             returnedRuleset.id,
@@ -391,6 +439,15 @@ contract TestPay_Local is JBMultiTerminalSetup {
     function test_WhenTheProjectDNHAccountingContextForTheToken() external {
         // it will revert TOKEN_NOT_ACCEPTED
 
+        // mock call to the "controller" which is actually this contract for mocking purposes
+        mockExpect(
+            address(directory), abi.encodeCall(IJBDirectory.controllerOf, (_projectId)), abi.encode(address(this))
+        );
+
+        mockExpect(address(this), abi.encodeCall(IJBController.TOKENS, ()), abi.encode(address(this)));
+
+        mockExpect(address(this), abi.encodeCall(IJBTokens.totalBalanceOf, (_bene, _projectId)), abi.encode(0));
+
         vm.expectRevert(abi.encodeWithSelector(JBMultiTerminal.JBMultiTerminal_TokenNotAccepted.selector, _native));
         _terminal.pay{value: 1e18}({
             projectId: _projectId,
@@ -410,6 +467,16 @@ contract TestPay_Local is JBMultiTerminalSetup {
 
     function test_WhenTheTerminalsTokenEqNativeTokenAndMsgvalueEqZero() external {
         // it will revert NO_MSG_VALUE_ALLOWED
+
+        // mock call to the "controller" which is actually this contract for mocking purposes
+        mockExpect(
+            address(directory), abi.encodeCall(IJBDirectory.controllerOf, (_projectId)), abi.encode(address(this))
+        );
+
+        // mock call to the "controller" which is actually this contract for mocking purposes
+        mockExpect(address(this), abi.encodeCall(IJBController.TOKENS, ()), abi.encode(address(this)));
+
+        mockExpect(address(this), abi.encodeCall(IJBTokens.totalBalanceOf, (_bene, _projectId)), abi.encode(0));
 
         vm.expectRevert(abi.encodeWithSelector(JBMultiTerminal.JBMultiTerminal_TokenNotAccepted.selector, _native));
         _terminal.pay{value: 0}({
@@ -449,6 +516,19 @@ contract TestPay_Local is JBMultiTerminalSetup {
                 IJBTerminalStore.recordPaymentFrom, (address(_terminal), tokenAmount, _projectId, _bene, bytes(""))
             ),
             abi.encode(returnedRuleset, 0, hookSpecifications)
+        );
+
+        // mock call to the "controller" which is actually this contract for mocking purposes
+        mockExpect(address(this), abi.encodeCall(IJBController.TOKENS, ()), abi.encode(address(this)));
+
+        // Data for subsequent calls made for balance checks
+        bytes[] memory subsequentReturns = new bytes[](2);
+        subsequentReturns[0] = abi.encode(0);
+        subsequentReturns[1] = abi.encode(0);
+
+        // Mock subsequent calls made for balance checks
+        mockExpectSubsequent(
+            address(this), abi.encodeCall(IJBTokens.totalBalanceOf, (_bene, _projectId)), subsequentReturns
         );
 
         vm.deal(address(_terminal), _defaultAmount);
