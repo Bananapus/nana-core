@@ -179,8 +179,6 @@ contract JBTerminalStore is IJBTerminalStore {
     /// @param decimals The number of decimals to include in the resulting fixed point number.
     /// @param currency The currency that the resulting number will be in terms of.
     /// @param tokensRedeemed The number of tokens that would be redeemed, as a fixed point number with 18 decimals.
-    /// @param useTotalSurplus Whether the total surplus should be summed across all of the project's terminals. If
-    /// false, only the `terminal`'s surplus is used.
     /// @return The amount of surplus terminal tokens that would be reclaimed by redeeming `tokensRedeemed` tokens.
     function currentReclaimableSurplusOf(
         address terminal,
@@ -188,8 +186,7 @@ contract JBTerminalStore is IJBTerminalStore {
         JBAccountingContext[] calldata accountingContexts,
         uint256 decimals,
         uint256 currency,
-        uint256 tokensRedeemed,
-        bool useTotalSurplus
+        uint256 tokensRedeemed
     )
         external
         view
@@ -202,7 +199,7 @@ contract JBTerminalStore is IJBTerminalStore {
         // Get the current surplus amount.
         // If `useTotalSurplus` is true, use the total surplus across all terminals. Otherwise, get the `terminal`'s
         // surplus.
-        uint256 currentSurplus = useTotalSurplus
+        uint256 currentSurplus = terminal == address(0)
             ? JBSurplus.currentSurplusOf({
                 projectId: projectId,
                 terminals: DIRECTORY.terminalsOf(projectId),

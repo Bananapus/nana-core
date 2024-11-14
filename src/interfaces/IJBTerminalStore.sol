@@ -52,8 +52,7 @@ interface IJBTerminalStore {
         JBAccountingContext[] calldata accountingContexts,
         uint256 decimals,
         uint256 currency,
-        uint256 tokenCount,
-        bool useTotalSurplus
+        uint256 tokenCount
     )
         external
         view
