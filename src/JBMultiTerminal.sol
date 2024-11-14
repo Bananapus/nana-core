@@ -688,8 +688,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // Set the beneficiary token count.
         if (beneficiaryBalanceAfter <= beneficiaryBalanceBefore) {
             beneficiaryTokenCount = 0;
-        }
-        else {
+        } else {
             beneficiaryTokenCount = beneficiaryBalanceAfter - beneficiaryBalanceBefore;
         }
 
@@ -1028,7 +1027,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                 metadata: metadata
             });
         } else {
-
             // Trigger any inherited pre-transfer logic.
             // slither-disable-next-line reentrancy-events
             _beforeTransferTo({to: address(terminal), token: token, amount: amount});
@@ -1650,8 +1648,12 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
         // Send payouts to the splits and get a reference to the amount left over after the splits have been paid.
         // Also get a reference to the amount which was paid out to splits that is eligible for fees.
-        (uint256 leftoverPayoutAmount, uint256 amountEligibleForFees) =
-            _sendPayoutsToSplitGroupOf({projectId: projectId, token: token, rulesetId: ruleset.id, amount: amountPaidOut});
+        (uint256 leftoverPayoutAmount, uint256 amountEligibleForFees) = _sendPayoutsToSplitGroupOf({
+            projectId: projectId,
+            token: token,
+            rulesetId: ruleset.id,
+            amount: amountPaidOut
+        });
 
         // Take the fee.
         uint256 feeTaken = _takeFeeFrom({
@@ -1668,7 +1670,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // Send any leftover funds to the project owner and update the net leftover (which is returned) accordingly.
         if (leftoverPayoutAmount != 0) {
             // Subtract the fee from the net leftover amount.
-            netLeftoverPayoutAmount = leftoverPayoutAmount - JBFees.feeAmountIn({amount: leftoverPayoutAmount, feePercent: FEE});
+            netLeftoverPayoutAmount =
+                leftoverPayoutAmount - JBFees.feeAmountIn({amount: leftoverPayoutAmount, feePercent: FEE});
 
             // Transfer the amount to the project owner.
             _transferFrom({from: address(this), to: projectOwner, token: token, amount: netLeftoverPayoutAmount});
