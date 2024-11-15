@@ -939,7 +939,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         });
 
         // Record the added funds with any returned fees.
-        STORE.recordAddedBalanceFor({projectId: projectId, token: token, amount: amount + returnedFees});
+        _recordAddedBalanceFor({projectId: projectId, token: token, amount: amount + returnedFees});
     }
 
     /// @notice Logic to be triggered before transferring tokens from this terminal.
@@ -1344,7 +1344,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                 caller: _msgSender()
             });
 
-            STORE.recordAddedBalanceFor({projectId: projectId, token: token, amount: amount});
+            _recordAddedBalanceFor({projectId: projectId, token: token, amount: amount});
         }
     }
 
@@ -1385,6 +1385,15 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                 wasHeld: true
             });
         }
+    }
+    
+    /// @notice Records an added balance for a project.
+    /// @param projectId The ID of the project to record the added balance for.
+    /// @param token The token to record the added balance for.
+    /// @param amount The amount of the token to record, as a fixed point number with the same number of decimals as this
+    /// terminal.
+    function _recordAddedBalanceFor(uint256 projectId, address token, uint256 amount) internal {
+        STORE.recordAddedBalanceFor({projectId: projectId, token: token, amount: amount});
     }
 
     /// @notice Holders can redeem their tokens to claim some of a project's surplus, or to trigger rules determined by
@@ -1666,7 +1675,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                 });
 
                 // Add balance back to the project.
-                STORE.recordAddedBalanceFor(projectId, token, leftoverPayoutAmount);
+                _recordAddedBalanceFor(projectId, token, leftoverPayoutAmount);
             }
         }
 
@@ -1722,7 +1731,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             });
 
             // Add balance back to the project.
-            STORE.recordAddedBalanceFor({projectId: projectId, token: token, amount: amount});
+            _recordAddedBalanceFor({projectId: projectId, token: token, amount: amount});
 
             // Since the payout failed the netPayoutAmount is zero.
             return 0;
