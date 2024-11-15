@@ -1737,8 +1737,13 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     {
         // Attempt to distribute this split.
         // slither-disable-next-line reentrancy-events
-        try this.executePayout({split: split, projectId: projectId, token: token, amount: amount, originalMessageSender: _msgSender()})
-        returns (uint256 netPayoutAmount) {
+        try this.executePayout({
+            split: split,
+            projectId: projectId,
+            token: token,
+            amount: amount,
+            originalMessageSender: _msgSender()
+        }) returns (uint256 netPayoutAmount) {
             return netPayoutAmount;
         } catch (bytes memory failureReason) {
             emit PayoutReverted({
