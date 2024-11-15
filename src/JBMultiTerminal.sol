@@ -1087,11 +1087,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             payerMetadata: metadata
         });
 
-        // Keep a reference to the number of pay hook specifications to iterate through.
-        uint256 numberOfSpecifications = specifications.length;
-
         // Fulfill each specification through their pay hooks.
-        for (uint256 i; i < numberOfSpecifications; i++) {
+        for (uint256 i; i < specifications.length; i++) {
             // Set the specification being iterated on.
             JBPayHookSpecification memory specification = specifications[i];
 
@@ -1362,14 +1359,11 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // Delete the held fees.
         delete _heldFeesOf[projectId][token];
 
-        // Keep a reference to the number of held fees.
-        uint256 numberOfHeldFees = heldFees.length;
-
         // Keep a reference to the terminal that'll receive the fees.
         IJBTerminal feeTerminal = DIRECTORY.primaryTerminalOf({projectId: _FEE_BENEFICIARY_PROJECT_ID, token: token});
 
         // Process each fee.
-        for (uint256 i; i < numberOfHeldFees; i++) {
+        for (uint256 i; i < heldFees.length; i++) {
             // Keep a reference to the held fee being iterated on.
             JBFee memory heldFee = heldFees[i];
 
@@ -1544,11 +1538,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // Get a reference to the leftover amount once all fees have been settled.
         uint256 leftoverAmount = amount;
 
-        // Keep a reference to the number of held fees.
-        uint256 numberOfHeldFees = heldFees.length;
-
         // Process each fee.
-        for (uint256 i; i < numberOfHeldFees; i++) {
+        for (uint256 i; i <  heldFees.length; i++) {
             // Save the fee being iterated on.
             JBFee memory heldFee = heldFees[i];
 
@@ -1762,11 +1753,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         JBSplit[] memory splits =
             SPLITS.splitsOf({projectId: projectId, rulesetId: rulesetId, groupId: uint256(uint160(token))});
 
-        // Keep a reference to the number of splits being iterated on.
-        uint256 numberOfSplits = splits.length;
-
         // Transfer between all splits.
-        for (uint256 i; i < numberOfSplits; i++) {
+        for (uint256 i; i < splits.length; i++) {
             // Get a reference to the split being iterated on.
             JBSplit memory split = splits[i];
 
