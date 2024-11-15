@@ -30,8 +30,9 @@ contract JBMultiTerminalSetup is JBTest {
         mockExpect(address(store), abi.encodeCall(IJBTerminalStore.RULESETS, ()), abi.encode(address(rulesets)));
 
         // Instantiate the contract being tested
-        _terminal =
-            new JBMultiTerminal(feelessAddresses, permissions, projects, splits, store, tokens, permit2, trustedForwarder);
+        _terminal = new JBMultiTerminal(
+            feelessAddresses, permissions, projects, splits, store, tokens, permit2, trustedForwarder
+        );
 
         _metadataHelper = new MetadataResolverHelper();
     }

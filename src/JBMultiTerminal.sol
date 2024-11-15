@@ -172,9 +172,9 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         FEELESS_ADDRESSES = feelessAddresses;
         PROJECTS = projects;
         RULESETS = store.RULESETS();
-        TOKENS = tokens;
         SPLITS = splits;
         STORE = store;
+        TOKENS = tokens;
         PERMIT2 = permit2;
     }
 
@@ -224,7 +224,13 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         override
         returns (uint256)
     {
-        return STORE.currentSurplusOf(address(this), projectId, _accountingContextsOf[projectId], decimals, currency);
+        return STORE.currentSurplusOf({
+            terminal: address(this),
+            projectId: projectId,
+            accountingContexts: _accountingContextsOf[projectId],
+            decimals: decimals,
+            currency: currency
+        });
     }
 
     /// @notice Fees that are being held for a project.
@@ -300,15 +306,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @return The owner of the project.
     function _ownerOf(uint256 projectId) internal view returns (address) {
         return PROJECTS.ownerOf(projectId);
-    }
-
-    /// @notice Returns the value that should be forwarded with transactions, determined by whether or not a token is
-    /// the native token.
-    /// @param token The token being sent.
-    /// @param amount The amount of the token being sent
-    /// @return value The value to attach to the transaction being sent.
-    function _payValueOf(address token, uint256 amount) internal pure returns (uint256) {
-        return token == JBConstants.NATIVE_TOKEN ? amount : 0;
     }
 
     //*********************************************************************//
@@ -477,10 +474,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             });
 
             // Trigger any inherited pre-transfer logic.
-            _beforeTransferTo({to: address(split.hook), token: token, amount: netPayoutAmount});
-
             // Get a reference to the amount being paid in `msg.value`.
-            uint256 payValue = _payValueOf(token, netPayoutAmount);
+            uint256 payValue = _beforeTransferTo({to: address(split.hook), token: token, amount: netPayoutAmount});
 
             // If this terminal's token is the native token, send it in `msg.value`.
             split.hook.processSplitWith{value: payValue}(context);
@@ -618,7 +613,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         });
 
         // The terminal being migrated to must accept the same token as this terminal.
-        if (to.accountingContextForTokenOf(projectId, token).currency == 0) {
+        if (to.accountingContextForTokenOf({projectId: projectId, token: token}).currency == 0) {
             revert JBMultiTerminal_TerminalTokensIncompatible();
         }
 
@@ -631,11 +626,9 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // Transfer the balance if needed.
         if (balance != 0) {
             // Trigger any inherited pre-transfer logic.
-            // slither-disable-next-line reentrancy-events
-            _beforeTransferTo({to: address(to), token: token, amount: balance});
-
             // If this terminal's token is the native token, send it in `msg.value`.
-            uint256 payValue = _payValueOf(token, balance);
+            // slither-disable-next-line reentrancy-events
+            uint256 payValue = _beforeTransferTo({to: address(to), token: token, amount: balance});
 
             // Withdraw the balance to transfer to the new terminal;
             // slither-disable-next-line reentrancy-events
@@ -954,10 +947,12 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @param token The token being transferred.
     /// @param amount The number of tokens being transferred, as a fixed point number with the same number of decimals
     /// as this terminal.
-    function _beforeTransferTo(address to, address token, uint256 amount) internal {
+    /// @return value The value to attach to the transaction being sent.
+    function _beforeTransferTo(address to, address token, uint256 amount) internal returns (uint256) {
         // If the token is the native token, no allowance needed.
-        if (token == JBConstants.NATIVE_TOKEN) return;
-        IERC20(token).safeIncreaseAllowance(to, amount);
+        if (token != JBConstants.NATIVE_TOKEN) IERC20(token).safeIncreaseAllowance(to, amount);
+
+        return token == JBConstants.NATIVE_TOKEN ? amount : 0;
     }
 
     /// @notice Fund a project either by calling this terminal's internal `addToBalance` function or by calling the
@@ -990,11 +985,9 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             });
         } else {
             // Trigger any inherited pre-transfer logic.
+            // Keep a reference to the amount that'll be paid as a `msg.value`.
             // slither-disable-next-line reentrancy-events
-            _beforeTransferTo({to: address(terminal), token: token, amount: amount});
-
-            // Get a reference to the amount being added to balance through `msg.value`.
-            uint256 payValue = _payValueOf(token, amount);
+            uint256 payValue = _beforeTransferTo({to: address(terminal), token: token, amount: amount});
 
             // Add to balance.
             // If this terminal's token is the native token, send it in `msg.value`.
@@ -1040,11 +1033,9 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             });
         } else {
             // Trigger any inherited pre-transfer logic.
+            // Keep a reference to the amount that'll be paid as a `msg.value`.
             // slither-disable-next-line reentrancy-events
-            _beforeTransferTo({to: address(terminal), token: token, amount: amount});
-
-            // Keep a reference to the amount that'll be paid in.
-            uint256 payValue = _payValueOf(token, amount);
+            uint256 payValue = _beforeTransferTo({to: address(terminal), token: token, amount: amount});
 
             // Send the fee.
             // If this terminal's token is ETH, send it in msg.value.
@@ -1116,11 +1107,13 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             context.hookMetadata = specification.metadata;
 
             // Trigger any inherited pre-transfer logic.
-            // slither-disable-next-line reentrancy-events
-            _beforeTransferTo({to: address(specification.hook), token: tokenAmount.token, amount: specification.amount});
-
             // Keep a reference to the amount that'll be paid as a `msg.value`.
-            uint256 payValue = _payValueOf(tokenAmount.token, specification.amount);
+            // slither-disable-next-line reentrancy-events
+            uint256 payValue = _beforeTransferTo({
+                to: address(specification.hook),
+                token: tokenAmount.token,
+                amount: specification.amount
+            });
 
             // Fulfill the specification.
             // slither-disable-next-line reentrancy-events
@@ -1175,10 +1168,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             redeemerMetadata: metadata
         });
 
-        // Keep a reference to the number of redeem hook specifications being iterated through.
-        uint256 numberOfSpecifications = specifications.length;
-
-        for (uint256 i; i < numberOfSpecifications; i++) {
+        for (uint256 i; i < specifications.length; i++) {
             // Set the specification being iterated on.
             JBRedeemHookSpecification memory specification = specifications[i];
 
@@ -1204,15 +1194,13 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             context.hookMetadata = specification.metadata;
 
             // Trigger any inherited pre-transfer logic.
+            // Keep a reference to the amount that'll be paid as a `msg.value`.
             // slither-disable-next-line reentrancy-events
-            _beforeTransferTo({
+            uint256 payValue = _beforeTransferTo({
                 to: address(specification.hook),
                 token: beneficiaryReclaimAmount.token,
                 amount: specification.amount
             });
-
-            // Keep a reference to the amount that'll be paid as a `msg.value`.
-            uint256 payValue = _payValueOf(beneficiaryReclaimAmount.token, specification.amount);
 
             // Fulfill the specification.
             // slither-disable-next-line reentrancy-events
