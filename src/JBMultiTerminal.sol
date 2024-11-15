@@ -1673,19 +1673,19 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             }
 
             // Transfer the amount to the project owner.
-            try this.executeTransferTo({addr: projectOwner, token: token, amount: netLeftoverPayoutAmount}) {}
+            try this.executeTransferTo({addr: projectOwner, token: token, amount: leftoverPayoutAmount}) {}
             catch (bytes memory reason) {
                 emit PayoutTransferReverted({
                     projectId: projectId,
                     addr: projectOwner,
                     token: token,
-                    amount: netLeftoverPayoutAmount,
+                    amount: leftoverPayoutAmount,
                     reason: reason,
                     caller: _msgSender()
                 });
 
                 // Add balance back to the project.
-                STORE.recordAddedBalanceFor(projectId, token, netLeftoverPayoutAmount);
+                STORE.recordAddedBalanceFor(projectId, token, leftoverPayoutAmount);
             }
         }
 
