@@ -792,8 +792,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// point number with the same amount of decimals as this terminal.
     /// @param currency The expected currency of the amount being paid out. Must match the currency of one of the
     /// project's current ruleset's surplus allowances.
-    /// @param minTokensPaidOut The minimum number of terminal tokens that should be used from the surplus allowance
-    /// (including fees), as a fixed point number with 18 decimals. If the amount of surplus used would be less than
+    /// @param minTokensPaidOut The minimum number of terminal tokens that should be returned from the surplus allowance
+    /// (excluding fees), as a fixed point number with 18 decimals. If the amount of surplus used would be less than
     /// this amount, the transaction is reverted.
     /// @param beneficiary The address to send the surplus funds to.
     /// @param feeBeneficiary The address to send the tokens resulting from paying the fee.
@@ -1383,7 +1383,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             _processFee({
                 projectId: projectId,
                 token: token,
-                amount: heldFee.amount,
+                amount: JBFees.feeAmountIn(heldFee.amount, FEE),
                 beneficiary: heldFee.beneficiary,
                 feeTerminal: feeTerminal,
                 wasHeld: true
@@ -1653,27 +1653,25 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             amount: amountPaidOut
         });
 
+        // Send any leftover funds to the project owner and update the fee tracking accordingly.
+        if (leftoverPayoutAmount != 0) {
+            if (!_isFeeless(projectOwner)) {
+                amountEligibleForFees += leftoverPayoutAmount;
+                leftoverPayoutAmount -=  JBFees.feeAmountIn({amount: leftoverPayoutAmount, feePercent: FEE});
+            }
+
+            // Transfer the amount to the project owner.
+            _transferFrom({from: address(this), to: projectOwner, token: token, amount: leftoverPayoutAmount});
+        }
+
         // Take the fee.
         uint256 feeTaken = _takeFeeFrom({
             projectId: projectId,
             token: token,
-            amount: amountEligibleForFees + leftoverPayoutAmount,
+            amount: amountEligibleForFees,
             beneficiary: projectOwner,
             shouldHoldFees: ruleset.holdFees()
         });
-
-        /// The leftover amount that was sent to the project owner.
-        uint256 netLeftoverPayoutAmount;
-
-        // Send any leftover funds to the project owner and update the net leftover (which is returned) accordingly.
-        if (leftoverPayoutAmount != 0) {
-            // Subtract the fee from the net leftover amount.
-            netLeftoverPayoutAmount =
-                leftoverPayoutAmount - JBFees.feeAmountIn({amount: leftoverPayoutAmount, feePercent: FEE});
-
-            // Transfer the amount to the project owner.
-            _transferFrom({from: address(this), to: projectOwner, token: token, amount: netLeftoverPayoutAmount});
-        }
 
         emit SendPayouts({
             rulesetId: ruleset.id,
@@ -1683,7 +1681,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             amount: amount,
             amountPaidOut: amountPaidOut,
             fee: feeTaken,
-            netLeftoverPayoutAmount: netLeftoverPayoutAmount,
+            netLeftoverPayoutAmount: leftoverPayoutAmount,
             caller: _msgSender()
         });
     }
