@@ -1657,7 +1657,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         if (leftoverPayoutAmount != 0) {
             if (!_isFeeless(projectOwner)) {
                 amountEligibleForFees += leftoverPayoutAmount;
-                leftoverPayoutAmount -=  JBFees.feeAmountIn({amount: leftoverPayoutAmount, feePercent: FEE});
+                leftoverPayoutAmount -= JBFees.feeAmountIn({amount: leftoverPayoutAmount, feePercent: FEE});
             }
 
             // Transfer the amount to the project owner.
