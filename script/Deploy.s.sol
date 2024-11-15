@@ -99,6 +99,7 @@ contract Deploy is Script, Sphinx {
                 rulesets: rulesets,
                 prices: prices
             }),
+            tokens: new JBTokens{salt: keccak256(abi.encode(CORE_DEPLOYMENT_NONCE))}(directory, new JBERC20{salt: keccak256(abi.encode(CORE_DEPLOYMENT_NONCE))}()),
             feelessAddresses: feeless,
             permit2: _PERMIT2,
             trustedForwarder: TRUSTED_FORWARDER

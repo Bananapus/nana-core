@@ -249,6 +249,7 @@ contract TestBaseWorkflow is Test, DeployPermit2 {
             _jbProjects,
             _jbSplits,
             _jbTerminalStore,
+            _jbTokens,
             IPermit2(_permit2),
             _trustedForwarder
         );
@@ -259,6 +260,7 @@ contract TestBaseWorkflow is Test, DeployPermit2 {
             _jbProjects,
             _jbSplits,
             _jbTerminalStore,
+            _jbTokens,
             IPermit2(_permit2),
             _trustedForwarder
         );

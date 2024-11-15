@@ -17,6 +17,7 @@ contract JBMultiTerminalSetup is JBTest {
     IJBProjects public projects = IJBProjects(makeAddr("projects"));
     IJBDirectory public directory = IJBDirectory(makeAddr("directory"));
     IJBRulesets public rulesets = IJBRulesets(makeAddr("rulesets"));
+    IJBTokens public tokens = IJBTokens(makeAddr("tokens"));
     IJBSplits public splits = IJBSplits(makeAddr("splits"));
     IJBTerminalStore public store = IJBTerminalStore(makeAddr("store"));
     IJBFeelessAddresses public feelessAddresses = IJBFeelessAddresses(makeAddr("feeless"));
@@ -30,7 +31,7 @@ contract JBMultiTerminalSetup is JBTest {
 
         // Instantiate the contract being tested
         _terminal =
-            new JBMultiTerminal(feelessAddresses, permissions, projects, splits, store, permit2, trustedForwarder);
+            new JBMultiTerminal(feelessAddresses, permissions, projects, splits, store, tokens, permit2, trustedForwarder);
 
         _metadataHelper = new MetadataResolverHelper();
     }

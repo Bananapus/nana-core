@@ -11,6 +11,7 @@ import {IJBRulesets} from "./IJBRulesets.sol";
 import {IJBSplits} from "./IJBSplits.sol";
 import {IJBTerminal} from "./IJBTerminal.sol";
 import {IJBTerminalStore} from "./IJBTerminalStore.sol";
+import {IJBTokens} from "./IJBTokens.sol";
 
 interface IJBMultiTerminal is IJBTerminal, IJBFeeTerminal, IJBRedeemTerminal, IJBPayoutTerminal, IJBPermitTerminal {
     function DIRECTORY() external view returns (IJBDirectory);
@@ -18,4 +19,5 @@ interface IJBMultiTerminal is IJBTerminal, IJBFeeTerminal, IJBRedeemTerminal, IJ
     function RULESETS() external view returns (IJBRulesets);
     function SPLITS() external view returns (IJBSplits);
     function STORE() external view returns (IJBTerminalStore);
+    function TOKENS() external view returns (IJBTokens);
 }

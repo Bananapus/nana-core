@@ -120,6 +120,9 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @notice The contract that stores and manages the terminal's data.
     IJBTerminalStore public immutable override STORE;
 
+    /// @notice The contract storing and managing project rulesets.
+    IJBTokens public immutable override TOKENS;
+
     //*********************************************************************//
     // --------------------- internal stored properties ------------------ //
     //*********************************************************************//
@@ -158,6 +161,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         IJBProjects projects,
         IJBSplits splits,
         IJBTerminalStore store,
+        IJBTokens tokens,
         IPermit2 permit2,
         address trustedForwarder
     )
@@ -168,6 +172,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         FEELESS_ADDRESSES = feelessAddresses;
         PROJECTS = projects;
         RULESETS = store.RULESETS();
+        TOKENS = tokens;
         SPLITS = splits;
         STORE = store;
         PERMIT2 = permit2;
@@ -677,11 +682,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         override
         returns (uint256 beneficiaryTokenCount)
     {
-        // Get a reference to the project's tokens.
-        IJBTokens tokens = _controllerOf(projectId).TOKENS();
-
         // Get a reference to the beneficiary's balance before the payment.
-        uint256 beneficiaryBalanceBefore = tokens.totalBalanceOf({holder: beneficiary, projectId: projectId});
+        uint256 beneficiaryBalanceBefore = TOKENS.totalBalanceOf({holder: beneficiary, projectId: projectId});
 
         // Pay the project.
         _pay({
@@ -695,7 +697,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         });
 
         // Get a reference to the beneficiary's balance after the payment.
-        uint256 beneficiaryBalanceAfter = tokens.totalBalanceOf({holder: beneficiary, projectId: projectId});
+        uint256 beneficiaryBalanceAfter = TOKENS.totalBalanceOf({holder: beneficiary, projectId: projectId});
 
         // Set the beneficiary token count.
         if (beneficiaryBalanceAfter > beneficiaryBalanceBefore) {
