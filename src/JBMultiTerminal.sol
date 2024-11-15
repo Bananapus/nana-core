@@ -963,12 +963,14 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @param token The token being transferred.
     /// @param amount The number of tokens being transferred, as a fixed point number with the same number of decimals
     /// as this terminal.
-    /// @return value The value to attach to the transaction being sent.
+    /// @return payValue The value to attach to the transaction being sent.
     function _beforeTransferTo(address to, address token, uint256 amount) internal returns (uint256) {
-        // If the token is the native token, no allowance needed.
-        if (token != JBConstants.NATIVE_TOKEN) IERC20(token).safeIncreaseAllowance({spender: to, value: amount});
+        // If the token is the native token, no allowance needed, and the full amount should be used as the payValue.
+        if (token == JBConstants.NATIVE_TOKEN) return amount;
 
-        return token == JBConstants.NATIVE_TOKEN ? amount : 0;
+        // Otherwise, set the allowance, and the payValue should be 0.
+        IERC20(token).safeIncreaseAllowance({spender: to, value: amount});
+        return 0;
     }
 
     /// @notice Fund a project either by calling this terminal's internal `addToBalance` function or by calling the
