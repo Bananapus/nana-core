@@ -16,6 +16,17 @@ contract JBTest is Test {
         vm.expectCall(_where, _encodedCall);
     }
 
+    // Multiple calls with different return values
+    function mockExpectSubsequent(address _where, bytes memory _encodedCall, bytes[] memory _returns) public {
+        // Mocks calls with different return values
+        vm.mockCalls(_where, _encodedCall, _returns);
+
+        // Will check that multiple calls are made
+        for (uint256 i = 0; i < _returns.length; i++) {
+            vm.expectCall(_where, _encodedCall);
+        }
+    }
+
     function generateFriendlyRuleset() public view returns (JBRuleset memory) {
         JBRulesetMetadata memory _rulesMetadata = JBRulesetMetadata({
             reservedPercent: JBConstants.MAX_RESERVED_PERCENT,
