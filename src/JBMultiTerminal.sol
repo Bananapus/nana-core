@@ -1539,7 +1539,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         uint256 leftoverAmount = amount;
 
         // Process each fee.
-        for (uint256 i; i <  heldFees.length; i++) {
+        for (uint256 i; i < heldFees.length; i++) {
             // Save the fee being iterated on.
             JBFee memory heldFee = heldFees[i];
 
