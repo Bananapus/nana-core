@@ -67,6 +67,9 @@ contract Deploy is Script, Sphinx {
         JBPrices prices = new JBPrices{salt: keccak256(abi.encode(CORE_DEPLOYMENT_NONCE))}(
             directory, permissions, projects, safeAddress()
         );
+        JBTokens tokens = new JBTokens{salt: keccak256(abi.encode(CORE_DEPLOYMENT_NONCE))}(
+            directory, new JBERC20{salt: keccak256(abi.encode(CORE_DEPLOYMENT_NONCE))}()
+        );
 
         directory.setIsAllowedToSetFirstController(
             address(
@@ -78,9 +81,7 @@ contract Deploy is Script, Sphinx {
                     projects: projects,
                     rulesets: rulesets,
                     splits: splits,
-                    tokens: new JBTokens{salt: keccak256(abi.encode(CORE_DEPLOYMENT_NONCE))}(
-                        directory, new JBERC20{salt: keccak256(abi.encode(CORE_DEPLOYMENT_NONCE))}()
-                    ),
+                    tokens: tokens,
                     trustedForwarder: TRUSTED_FORWARDER
                 })
             ),
@@ -99,9 +100,7 @@ contract Deploy is Script, Sphinx {
                 rulesets: rulesets,
                 prices: prices
             }),
-            tokens: new JBTokens{salt: keccak256(abi.encode(CORE_DEPLOYMENT_NONCE))}(
-                directory, new JBERC20{salt: keccak256(abi.encode(CORE_DEPLOYMENT_NONCE))}()
-            ),
+            tokens: tokens,
             feelessAddresses: feeless,
             permit2: _PERMIT2,
             trustedForwarder: TRUSTED_FORWARDER
