@@ -8,6 +8,9 @@ import {JBSplit} from "../structs/JBSplit.sol";
 /// @notice A terminal that can send payouts.
 interface IJBPayoutTerminal is IJBTerminal {
     event PayoutReverted(uint256 indexed projectId, JBSplit split, uint256 amount, bytes reason, address caller);
+    event PayoutTransferReverted(
+        uint256 indexed projectId, address addr, address token, uint256 amount, bytes reason, address caller
+    );
     event SendPayouts(
         uint256 indexed rulesetId,
         uint256 indexed rulesetCycleNumber,
