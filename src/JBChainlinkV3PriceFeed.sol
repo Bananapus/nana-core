@@ -18,6 +18,7 @@ contract JBChainlinkV3PriceFeed is IJBPriceFeed {
     error JBChainlinkV3PriceFeed_IncompleteRound();
     error JBChainlinkV3PriceFeed_NegativePrice(int256 price);
     error JBChainlinkV3PriceFeed_StalePrice(uint256 timestamp, uint256 threshold, uint256 updatedAt);
+    error JBChainlinkV3PriceFeed_PriceOutOfBounds(int256 price, int256 minAnswer, int256 maxAnswer);
 
     //*********************************************************************//
     // ---------------- public stored immutable properties --------------- //
@@ -25,6 +26,9 @@ contract JBChainlinkV3PriceFeed is IJBPriceFeed {
 
     /// @notice The Chainlink feed that prices are reported from.
     AggregatorV3Interface public immutable FEED;
+
+    int256 private immutable MIN_ANSWER;
+    int256 private immutable MAX_ANSWER;
 
     //*********************************************************************//
     // --------------------- public stored properties -------------------- //
@@ -42,6 +46,24 @@ contract JBChainlinkV3PriceFeed is IJBPriceFeed {
     constructor(AggregatorV3Interface feed, uint256 threshold) {
         FEED = feed;
         THRESHOLD = threshold;
+
+        // Defaults to use if this feed does not have a `minAnswer` and `maxAnswer`.
+        int256 _minAnswer = 0;
+        int256 _maxAnswer = type(int256).max;
+
+        // If the feed has a `minAnswer` and `maxAnswer`, use those.
+        (bool _maxPriceSuccess, bytes memory _maxPrice) =
+            address(feed).call(abi.encodeWithSelector(ChainlinkAggregateExtendedInterface.maxAnswer.selector));
+
+        if (_maxPriceSuccess) {
+            _maxAnswer = abi.decode(_maxPrice, (int192));
+            // We do a regular call since if there is a `maxAnswer` the feed should have a `minAnswer`.
+            _minAnswer = ChainlinkAggregateExtendedInterface(address(feed)).minAnswer();
+        }
+
+        // Set the min/max bounds.
+        MAX_ANSWER = _maxAnswer;
+        MIN_ANSWER = _minAnswer;
     }
 
     //*********************************************************************//
@@ -68,10 +90,20 @@ contract JBChainlinkV3PriceFeed is IJBPriceFeed {
         // Make sure the price is positive.
         if (price <= 0) revert JBChainlinkV3PriceFeed_NegativePrice(price);
 
+        // Make sure the price is within the min/max bounds.
+        if (price < MIN_ANSWER || price > MAX_ANSWER) {
+            revert JBChainlinkV3PriceFeed_PriceOutOfBounds(price, MIN_ANSWER, MAX_ANSWER);
+        }
+
         // Get a reference to the number of decimals the feed uses.
         uint256 feedDecimals = FEED.decimals();
 
         // Return the price, adjusted to the specified number of decimals.
         return uint256(price).adjustDecimals({decimals: feedDecimals, targetDecimals: decimals});
     }
+}
+
+interface ChainlinkAggregateExtendedInterface is AggregatorV3Interface {
+    function minAnswer() external view returns (int192);
+    function maxAnswer() external view returns (int192);
 }
