@@ -1678,7 +1678,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // Send any leftover funds to the project owner and update the fee tracking accordingly.
         if (leftoverPayoutAmount != 0) {
             // Keep a reference to the fee for the leftover payout amount.
-            uint256 fee = _isFeeless(projectOwner) ? 0 : JBFees.feeAmountIn({amount: leftoverPayoutAmount, feePercent: FEE});
+            uint256 fee =
+                _isFeeless(projectOwner) ? 0 : JBFees.feeAmountIn({amount: leftoverPayoutAmount, feePercent: FEE});
 
             // Transfer the amount to the project owner.
             try this.executeTransferTo({addr: projectOwner, token: token, amount: leftoverPayoutAmount - fee}) {
@@ -1686,8 +1687,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                     amountEligibleForFees += leftoverPayoutAmount;
                     leftoverPayoutAmount -= fee;
                 }
-            }
-            catch (bytes memory reason) {
+            } catch (bytes memory reason) {
                 emit PayoutTransferReverted({
                     projectId: projectId,
                     addr: projectOwner,
