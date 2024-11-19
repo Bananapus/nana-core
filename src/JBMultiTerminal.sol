@@ -1677,33 +1677,28 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
         // Send any leftover funds to the project owner and update the fee tracking accordingly.
         if (leftoverPayoutAmount != 0) {
-            // Keep a reference to whether the project owner is feeless.
-            bool isFeeless = _isFeeless(projectOwner);
-
-            if (!isFeeless) {
-                amountEligibleForFees += leftoverPayoutAmount;
-                leftoverPayoutAmount -= JBFees.feeAmountIn({amount: leftoverPayoutAmount, feePercent: FEE});
-            }
+            // Keep a reference to the fee for the leftover payout amount.
+            uint256 fee = _isFeeless(projectOwner) ? 0 : JBFees.feeAmountIn({amount: leftoverPayoutAmount, feePercent: FEE});
 
             // Transfer the amount to the project owner.
-            try this.executeTransferTo({addr: projectOwner, token: token, amount: leftoverPayoutAmount}) {}
+            try this.executeTransferTo({addr: projectOwner, token: token, amount: leftoverPayoutAmount - fee}) {
+                if (fee > 0) {
+                    amountEligibleForFees += leftoverPayoutAmount;
+                    leftoverPayoutAmount -= fee;
+                }
+            }
             catch (bytes memory reason) {
                 emit PayoutTransferReverted({
                     projectId: projectId,
                     addr: projectOwner,
                     token: token,
-                    amount: leftoverPayoutAmount,
+                    amount: leftoverPayoutAmount - fee,
                     reason: reason,
                     caller: _msgSender()
                 });
 
                 // Add balance back to the project.
-                _recordAddedBalanceFor(projectId, token, leftoverPayoutAmount);
-
-                // If the project owner is not feeless, subtract the leftover payout amount from the amount eligible for fees.
-                if (!isFeeless) {
-                    amountEligibleForFees -= leftoverPayoutAmount;
-                }
+                _recordAddedBalanceFor({projectId: projectId, token: token, amount: leftoverPayoutAmount});
             }
         }
 
