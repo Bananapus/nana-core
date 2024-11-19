@@ -1677,7 +1677,10 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
         // Send any leftover funds to the project owner and update the fee tracking accordingly.
         if (leftoverPayoutAmount != 0) {
-            if (!_isFeeless(projectOwner)) {
+            // Keep a reference to whether the project owner is feeless.
+            bool isFeeless = _isFeeless(projectOwner);
+
+            if (!isFeeless) {
                 amountEligibleForFees += leftoverPayoutAmount;
                 leftoverPayoutAmount -= JBFees.feeAmountIn({amount: leftoverPayoutAmount, feePercent: FEE});
             }
@@ -1696,6 +1699,11 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
                 // Add balance back to the project.
                 _recordAddedBalanceFor(projectId, token, leftoverPayoutAmount);
+
+                // If the project owner is not feeless, subtract the leftover payout amount from the amount eligible for fees.
+                if (!isFeeless) {
+                    amountEligibleForFees -= leftoverPayoutAmount;
+                }
             }
         }
 
