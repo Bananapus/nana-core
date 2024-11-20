@@ -11,7 +11,7 @@ import {JBTokenAmount} from "./JBTokenAmount.sol";
 /// @custom:member forwardedAmount The token amount being forwarded to the pay hook. Includes the token
 /// being paid, the value, the number of decimals included, and the currency of the amount.
 /// @custom:member weight The current ruleset's weight (used to determine how many tokens should be minted).
-/// @custom:member projectTokenCount The number of project tokens minted for the beneficiary.
+/// @custom:member newlyIssuedTokenCount The number of project tokens minted for the beneficiary.
 /// @custom:member beneficiary The address which receives any tokens this payment yields.
 /// @custom:member hookMetadata Extra data specified by the data hook, which is sent to the pay hook.
 /// @custom:member payerMetadata Extra data specified by the payer, which is sent to the pay hook.
@@ -22,7 +22,7 @@ struct JBAfterPayRecordedContext {
     JBTokenAmount amount;
     JBTokenAmount forwardedAmount;
     uint256 weight;
-    uint256 projectTokenCount;
+    uint256 newlyIssuedTokenCount;
     address beneficiary;
     bytes hookMetadata;
     bytes payerMetadata;
