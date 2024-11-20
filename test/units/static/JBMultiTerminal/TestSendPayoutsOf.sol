@@ -169,4 +169,75 @@ contract TestSendPayoutsOf_Local is JBMultiTerminalSetup {
 
         _terminal.sendPayoutsOf(_projectId, address(0), 0, 0, 0);
     }
+
+    function test_WhenPayoutFailsDoNotTakeFee() external {
+        // it will revert UNDER_MIN_TOKENS_PAID_OUT
+
+        // needed for terminal store mock call
+        JBRuleset memory returnedRuleset = JBRuleset({
+            cycleNumber: 1,
+            id: 1,
+            basedOnId: 0,
+            start: 0,
+            duration: 0,
+            weight: 0,
+            decayPercent: 0,
+            approvalHook: IJBRulesetApprovalHook(address(0)),
+            metadata: 0
+        });
+
+        JBAccountingContext memory mockTokenContext = JBAccountingContext({token: address(0), decimals: 0, currency: 0});
+
+        // record payout mock call
+        mockExpect(
+            address(store),
+            abi.encodeCall(IJBTerminalStore.recordPayoutFor, (_projectId, mockTokenContext, 0, 100)),
+            abi.encode(returnedRuleset, 100)
+        );
+
+        // projects owner of
+        mockExpect(address(projects), abi.encodeCall(IERC721.ownerOf, (_projectId)), abi.encode(address(this)));
+
+        // mock call to feeless addresses
+        mockExpect(
+            address(feelessAddresses), abi.encodeCall(IJBFeelessAddresses.isFeeless, (address(this))), abi.encode(false)
+        );
+
+        // needed for splits return call
+        JBSplit[] memory returnedSplits = new JBSplit[](1);
+        returnedSplits[0] = JBSplit({
+            preferAddToBalance: false,
+            percent: 0,
+            projectId: 0,
+            beneficiary: payable(address(this)),
+            lockedUntil: uint48(block.timestamp + 1),
+            hook: IJBSplitHook(address(1))
+        });
+
+        // mock splits of call
+        mockExpect(
+            address(splits),
+            abi.encodeCall(IJBSplits.splitsOf, (_projectId, returnedRuleset.id, 0)),
+            abi.encode(returnedSplits)
+        );
+
+        // mock directory call for fee processing
+        mockExpect(
+            address(directory),
+            abi.encodeCall(IJBDirectory.primaryTerminalOf, (1, address(0))),
+            abi.encode(address(_terminal))
+        );
+
+        vm.expectEmit();
+        emit IJBPayoutTerminal.PayoutTransferReverted(
+            _projectId,
+            address(this),
+            address(0),
+            97, // Amount that would have been transferred after fee.
+            bytes(hex"9996b3150000000000000000000000000000000000000000000000000000000000000000"),
+            address(this)
+        );
+
+        _terminal.sendPayoutsOf(_projectId, address(0), 0, 100, 100);
+    }
 }
