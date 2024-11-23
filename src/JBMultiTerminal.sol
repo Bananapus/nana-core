@@ -1459,9 +1459,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                 return;
             }
 
-            // Set the amount to 0 to prevent it from being processed again.
-            _heldFeesOf[projectId][token][startIndex + i].amount = 0;
-
             // Process the fee.
             // slither-disable-next-line reentrancy-no-eth
             _processFee({
@@ -1662,7 +1659,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
                 if (leftoverAmount >= amountFromFee) {
                     unchecked {
-                        _heldFeesOf[projectId][token][i].amount = 0;
                         leftoverAmount -= amountFromFee;
                         returnedFees += feeAmount;
                     }
