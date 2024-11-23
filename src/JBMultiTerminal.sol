@@ -1437,8 +1437,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // Get a reference to the project's held fees.
         (uint256 startIndex, JBFee[] memory heldFees) = _getHeldFeeParams({projectId: projectId, token: token});
 
-        // If the start index is greater than or equal to the number of held fees, return 0.
-        if (startIndex >= heldFees.length) return;
+        // If there are no fees to process, return.
+        if (heldFees.length == 0) return;
 
         // Keep a reference to the terminal that'll receive the fees.
         IJBTerminal feeTerminal = DIRECTORY.primaryTerminalOf({projectId: _FEE_BENEFICIARY_PROJECT_ID, token: token});
