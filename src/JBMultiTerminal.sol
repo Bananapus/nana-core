@@ -256,11 +256,14 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         override
         returns (JBFee[] memory heldFees)
     {
-        // Get the fees being held.
-        (uint256 startIndex, JBFee[] memory storedHeldFees) = _getHeldFeeParams({projectId: projectId, token: token});
+        // Keep a reference to the start index.
+        uint256 startIndex = _nextHeldFeeIndexOf[projectId][token];
+
+        // Get a reference to the project's held fees.
+        JBFee[] memory storedHeldFees = _heldFeesOf[projectId][token];
 
         // If the start index is greater than or equal to the number of held fees, return 0.
-        if (storedHeldFees.length == 0) return new JBFee[](0);
+        if (startIndex >= storedHeldFees.length) return new JBFee[](0);
 
         // If the start index plus the count is greater than the number of fees, set the count to the number of fees
         if (startIndex + count > storedHeldFees.length) count = storedHeldFees.length - startIndex;
@@ -312,29 +315,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @return controller The project's controller.
     function _controllerOf(uint256 projectId) internal view returns (IJBController) {
         return IJBController(address(DIRECTORY.controllerOf(projectId)));
-    }
-
-    /// @notice Get the parameters for the held fees of a project.
-    /// @param projectId The ID of the project to get the held fees of.
-    /// @param token The token to get the held fees of.
-    /// @return startIndex The index of the first held fee to process.
-    /// @return heldFees The held fees of the project.
-    function _getHeldFeeParams(
-        uint256 projectId,
-        address token
-    )
-        internal
-        view
-        returns (uint256 startIndex, JBFee[] memory heldFees)
-    {
-        // Keep a reference to the start index.
-        startIndex = _nextHeldFeeIndexOf[projectId][token];
-
-        // Get a reference to the project's held fees.
-        heldFees = _heldFeesOf[projectId][token];
-
-        // If the start index is greater than or equal to the number of held fees, return 0.
-        if (startIndex >= heldFees.length) return (0, new JBFee[](0));
     }
 
     /// @notice Returns a flag indicating if interacting with an address should not incur fees.
@@ -1434,11 +1414,14 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @param count The number of fees to process.
     /// @param forced If locked held fees should be force processed.
     function _processHeldFeesOf(uint256 projectId, address token, uint256 count, bool forced) internal {
-        // Get a reference to the project's held fees.
-        (uint256 startIndex, JBFee[] memory heldFees) = _getHeldFeeParams({projectId: projectId, token: token});
+        // Keep a reference to the start index.
+        uint256 startIndex = _nextHeldFeeIndexOf[projectId][token];
 
-        // If there are no fees to process, return.
-        if (heldFees.length == 0) return;
+        // Get a reference to the project's held fees.
+        JBFee[] memory heldFees = _heldFeesOf[projectId][token];
+
+        // If the start index is greater than or equal to the number of held fees, return.
+        if (startIndex >= heldFees.length) return;
 
         // Keep a reference to the terminal that'll receive the fees.
         IJBTerminal feeTerminal = DIRECTORY.primaryTerminalOf({projectId: _FEE_BENEFICIARY_PROJECT_ID, token: token});
@@ -1627,11 +1610,14 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         internal
         returns (uint256 returnedFees)
     {
-        // Get a reference to the project's held fees.
-        (uint256 startIndex, JBFee[] memory heldFees) = _getHeldFeeParams({projectId: projectId, token: token});
+        // Keep a reference to the start index.
+        uint256 startIndex = _nextHeldFeeIndexOf[projectId][token];
 
-        // If there are no fees to process, return.
-        if (heldFees.length == 0) return 0;
+        // Get a reference to the project's held fees.
+        JBFee[] memory heldFees = _heldFeesOf[projectId][token];
+
+        // If the start index is greater than or equal to the number of held fees, return 0.
+        if (startIndex >= heldFees.length) return 0;
 
         // Get a reference to the leftover amount once all fees have been settled.
         uint256 leftoverAmount = amount;
