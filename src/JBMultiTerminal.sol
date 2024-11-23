@@ -146,7 +146,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @custom:param token The token that the fees are held in.
     mapping(uint256 projectId => mapping(address token => JBFee[])) internal _heldFeesOf;
 
-    /// @notice The next index to use when processing a next held fee.  
+    /// @notice The next index to use when processing a next held fee.
     /// @custom:param projectId The ID of the project that is holding fees.
     /// @custom:param token The token that the fees are held in.
     mapping(uint256 projectId => mapping(address token => uint256)) internal _nextHeldFeeIndexOf;
@@ -1410,19 +1410,15 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @param token The token to process held fees for.
     /// @param count The number of fees to process.
     /// @param forced If locked held fees should be force processed.
-    function _processHeldFeesOf(
-        uint256 projectId,
-        address token,
-        uint256 count,
-        bool forced
-    )
-        internal
-    {
+    function _processHeldFeesOf(uint256 projectId, address token, uint256 count, bool forced) internal {
         // Keep a reference to the start index.
         uint256 startIndex = _nextHeldFeeIndexOf[projectId][token];
 
         // Get a reference to the project's held fees.
         JBFee[] memory heldFees = _heldFeesOf[projectId][token];
+
+        // If the start index is greater than or equal to the number of held fees, return 0.
+        if (startIndex >= heldFees.length) return;
 
         // Keep a reference to the terminal that'll receive the fees.
         IJBTerminal feeTerminal = DIRECTORY.primaryTerminalOf({projectId: _FEE_BENEFICIARY_PROJECT_ID, token: token});
@@ -1459,7 +1455,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             });
         }
 
-        _nextHeldFeeIndexOf[projectId][token] = startIndex + numberOfIterations;
+        _nextHeldFeeIndexOf[projectId][token] = startIndex + numberOfIterations + 1;
     }
 
     /// @notice Records an added balance for a project.
@@ -1620,6 +1616,9 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // Get a reference to the project's held fees.
         JBFee[] memory heldFees = _heldFeesOf[projectId][token];
 
+        // If the start index is greater than or equal to the number of held fees, return 0.
+        if (startIndex >= heldFees.length) return 0;
+
         // Get a reference to the leftover amount once all fees have been settled.
         uint256 leftoverAmount = amount;
 
@@ -1650,16 +1649,14 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                         leftoverAmount -= amountFromFee;
                         returnedFees += feeAmount;
                     }
-                    
+
                     // Move the start index forward to the held fee after the current one.
                     newStartIndex = startIndex + i + 1;
                 } else {
-                    // And here we overwrite with `feeAmountFrom` the `leftoverAmount`
-                    feeAmount = JBFees.feeAmountFrom({amount: leftoverAmount, feePercent: FEE});
-
+                    // Get fee from `leftoverAmount`.
                     unchecked {
-                        _heldFeesOf[projectId][token][i].amount = amountFromFee - leftoverAmount;
-                        returnedFees += feeAmount;
+                        _heldFeesOf[projectId][token][i].amount = heldFee.amount - leftoverAmount;
+                        returnedFees += JBFees.feeAmountFrom({amount: leftoverAmount, feePercent: FEE});
                     }
                     leftoverAmount = 0;
                 }
@@ -1667,7 +1664,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         }
 
         // Update the next held fee index.
-        _nextHeldFeeIndexOf[projectId][token] = newStartIndex;
+        if (startIndex != newStartIndex) _nextHeldFeeIndexOf[projectId][token] = newStartIndex;
 
         emit ReturnHeldFees({
             projectId: projectId,
