@@ -256,11 +256,11 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         override
         returns (JBFee[] memory heldFees)
     {
-        // Keep a reference to the start index.
-        uint256 startIndex = _nextHeldFeeIndexOf[projectId][token];
+        // Get the fees being held.
+        (uint256 startIndex, JBFee[] memory storedHeldFees) = _getHeldFeeParams({projectId: projectId, token: token});
 
-        // Get the number of fees being held.
-        JBFee[] memory storedHeldFees = _heldFeesOf[projectId][token];
+        // If the start index is greater than or equal to the number of held fees, return 0.
+        if (storedHeldFees.length == 0) return new JBFee[](0);
 
         // If the start index plus the count is greater than the number of fees, set the count to the number of fees
         if (startIndex + count > storedHeldFees.length) count = storedHeldFees.length - startIndex;
@@ -312,6 +312,29 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @return controller The project's controller.
     function _controllerOf(uint256 projectId) internal view returns (IJBController) {
         return IJBController(address(DIRECTORY.controllerOf(projectId)));
+    }
+
+    /// @notice Get the parameters for the held fees of a project.
+    /// @param projectId The ID of the project to get the held fees of.
+    /// @param token The token to get the held fees of.
+    /// @return startIndex The index of the first held fee to process.
+    /// @return heldFees The held fees of the project.
+    function _getHeldFeeParams(
+        uint256 projectId,
+        address token
+    )
+        internal
+        view
+        returns (uint256 startIndex, JBFee[] memory heldFees)
+    {
+        // Keep a reference to the start index.
+        startIndex = _nextHeldFeeIndexOf[projectId][token];
+
+        // Get a reference to the project's held fees.
+        heldFees = _heldFeesOf[projectId][token];
+
+        // If the start index is greater than or equal to the number of held fees, return 0.
+        if (startIndex >= heldFees.length) return (0, new JBFee[](0));
     }
 
     /// @notice Returns a flag indicating if interacting with an address should not incur fees.
@@ -1411,11 +1434,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @param count The number of fees to process.
     /// @param forced If locked held fees should be force processed.
     function _processHeldFeesOf(uint256 projectId, address token, uint256 count, bool forced) internal {
-        // Keep a reference to the start index.
-        uint256 startIndex = _nextHeldFeeIndexOf[projectId][token];
-
         // Get a reference to the project's held fees.
-        JBFee[] memory heldFees = _heldFeesOf[projectId][token];
+        (uint256 startIndex, JBFee[] memory heldFees) = _getHeldFeeParams({projectId: projectId, token: token});
 
         // If the start index is greater than or equal to the number of held fees, return 0.
         if (startIndex >= heldFees.length) return;
@@ -1424,18 +1444,17 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         IJBTerminal feeTerminal = DIRECTORY.primaryTerminalOf({projectId: _FEE_BENEFICIARY_PROJECT_ID, token: token});
 
         // Calculate the number of iterations to perform.
-        uint256 numberOfIterations =
-            startIndex + count > heldFees.length - startIndex ? heldFees.length - startIndex : count;
+        if (startIndex + count > heldFees.length) count = heldFees.length - startIndex;
 
         // Process each fee.
-        for (uint256 i; i < numberOfIterations; i++) {
+        for (uint256 i; i < count; i++) {
             // Keep a reference to the held fee being iterated on.
             JBFee memory heldFee = heldFees[startIndex + i];
 
             // Can't process fees that aren't yet unlocked. Fees unlock sequentially in the array, so nothing left to do
-            // if
-            // the current fee isn't yet unlocked.
+            // if the current fee isn't yet unlocked.
             if (!forced && heldFee.unlockTimestamp > block.timestamp) {
+                // Restart at this index next time.
                 _nextHeldFeeIndexOf[projectId][token] = startIndex + i;
                 return;
             }
@@ -1455,7 +1474,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             });
         }
 
-        _nextHeldFeeIndexOf[projectId][token] = startIndex + numberOfIterations + 1;
+        // Restart at the next fee next time.
+        _nextHeldFeeIndexOf[projectId][token] = startIndex + count + 1;
     }
 
     /// @notice Records an added balance for a project.
@@ -1610,26 +1630,23 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         internal
         returns (uint256 returnedFees)
     {
-        // Keep a reference to the start index.
-        uint256 startIndex = _nextHeldFeeIndexOf[projectId][token];
-
         // Get a reference to the project's held fees.
-        JBFee[] memory heldFees = _heldFeesOf[projectId][token];
+        (uint256 startIndex, JBFee[] memory heldFees) = _getHeldFeeParams({projectId: projectId, token: token});
 
         // If the start index is greater than or equal to the number of held fees, return 0.
-        if (startIndex >= heldFees.length) return 0;
+        if (heldFees.length == 0) return 0;
 
         // Get a reference to the leftover amount once all fees have been settled.
         uint256 leftoverAmount = amount;
 
         // Keep a reference to the number of iterations to perform.
-        uint256 numberOfIterations = heldFees.length - startIndex;
+        uint256 count = heldFees.length - startIndex;
 
         // Keep a reference to the new start index.
         uint256 newStartIndex;
 
         // Process each fee.
-        for (uint256 i; i < numberOfIterations; i++) {
+        for (uint256 i; i < count; i++) {
             // Save the fee being iterated on.
             JBFee memory heldFee = heldFees[startIndex + i];
 
