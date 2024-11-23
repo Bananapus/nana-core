@@ -1657,7 +1657,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
                     // Get fee from `leftoverAmount`.
                     unchecked {
-                        _heldFeesOf[projectId][token][startIndex + i].amount = amountFromFee - leftoverAmount;
+                        _heldFeesOf[projectId][token][startIndex + i].amount = heldFee.amount - leftoverAmount;
                         returnedFees += feeAmount;
                     }
                     leftoverAmount = 0;
