@@ -1626,7 +1626,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         uint256 count = heldFees.length - startIndex;
 
         // Keep a reference to the new start index.
-        uint256 newStartIndex;
+        uint256 newStartIndex = startIndex;
 
         // Process each fee.
         for (uint256 i; i < count; i++) {
