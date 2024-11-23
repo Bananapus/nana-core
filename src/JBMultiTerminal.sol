@@ -96,7 +96,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     uint256 internal constant _FEE_HOLDING_SECONDS = 2_419_200; // 28 days
 
     /// @notice The maximum number of held fee entries, to prevent DOS.
-    uint256 internal constant _MAX_HELD_FEE_ENTRIES = 100;
+    uint256 internal constant _MAX_AUTO_PROCESSABLE_HELD_FEE_ENTRIES = 50;
 
     //*********************************************************************//
     // ---------------- public immutable stored properties --------------- //
@@ -145,6 +145,11 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @custom:param projectId The ID of the project that is holding fees.
     /// @custom:param token The token that the fees are held in.
     mapping(uint256 projectId => mapping(address token => JBFee[])) internal _heldFeesOf;
+
+    /// @notice The next index to use when processing a next held fee.  
+    /// @custom:param projectId The ID of the project that is holding fees.
+    /// @custom:param token The token that the fees are held in.
+    mapping(uint256 projectId => mapping(address token => uint256)) internal _nextHeldFeeIndexOf;
 
     //*********************************************************************//
     // -------------------------- constructor ---------------------------- //
@@ -241,8 +246,32 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @dev Held fees can be processed at any time by this terminal's owner.
     /// @param projectId The ID of the project that is holding fees.
     /// @param token The token that the fees are held in.
-    function heldFeesOf(uint256 projectId, address token) external view override returns (JBFee[] memory) {
-        return _heldFeesOf[projectId][token];
+    function heldFeesOf(
+        uint256 projectId,
+        address token,
+        uint256 count
+    )
+        external
+        view
+        override
+        returns (JBFee[] memory heldFees)
+    {
+        // Keep a reference to the start index.
+        uint256 startIndex = _nextHeldFeeIndexOf[projectId][token];
+
+        // Get the number of fees being held.
+        JBFee[] memory storedHeldFees = _heldFeesOf[projectId][token];
+
+        // If the start index plus the count is greater than the number of fees, set the count to the number of fees
+        if (startIndex + count > storedHeldFees.length) count = storedHeldFees.length - startIndex;
+
+        // Create a new array to hold the fees.
+        heldFees = new JBFee[](count);
+
+        // Copy the fees into the array.
+        for (uint256 i; i < count; i++) {
+            heldFees[i] = storedHeldFees[startIndex + i];
+        }
     }
 
     //*********************************************************************//
@@ -646,7 +675,12 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         }
 
         // Process any held fees.
-        _processHeldFeesOf({projectId: projectId, token: token, forced: true});
+        _processHeldFeesOf({
+            projectId: projectId,
+            token: token,
+            count: _MAX_AUTO_PROCESSABLE_HELD_FEE_ENTRIES,
+            forced: true
+        });
     }
 
     /// @notice Pay a project with tokens.
@@ -709,8 +743,9 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @notice Process any fees that are being held for the project.
     /// @param projectId The ID of the project to process held fees for.
     /// @param token The token to process held fees for.
-    function processHeldFeesOf(uint256 projectId, address token) external override {
-        _processHeldFeesOf({projectId: projectId, token: token, forced: false});
+    /// @param count The number of fees to process.
+    function processHeldFeesOf(uint256 projectId, address token, uint256 count) external override {
+        _processHeldFeesOf({projectId: projectId, token: token, count: count, forced: false});
     }
 
     /// @notice Holders can redeem a project's tokens to reclaim some of that project's surplus tokens, or to trigger
@@ -1373,28 +1408,44 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @notice Process any fees that are being held for the project.
     /// @param projectId The ID of the project to process held fees for.
     /// @param token The token to process held fees for.
+    /// @param count The number of fees to process.
     /// @param forced If locked held fees should be force processed.
-    function _processHeldFeesOf(uint256 projectId, address token, bool forced) internal {
+    function _processHeldFeesOf(
+        uint256 projectId,
+        address token,
+        uint256 count,
+        bool forced
+    )
+        internal
+    {
+        // Keep a reference to the start index.
+        uint256 startIndex = _nextHeldFeeIndexOf[projectId][token];
+
         // Get a reference to the project's held fees.
         JBFee[] memory heldFees = _heldFeesOf[projectId][token];
-
-        // Delete the held fees.
-        delete _heldFeesOf[projectId][token];
 
         // Keep a reference to the terminal that'll receive the fees.
         IJBTerminal feeTerminal = DIRECTORY.primaryTerminalOf({projectId: _FEE_BENEFICIARY_PROJECT_ID, token: token});
 
-        // Process each fee.
-        for (uint256 i; i < heldFees.length; i++) {
-            // Keep a reference to the held fee being iterated on.
-            JBFee memory heldFee = heldFees[i];
+        // Calculate the number of iterations to perform.
+        uint256 numberOfIterations =
+            startIndex + count > heldFees.length - startIndex ? heldFees.length - startIndex : count;
 
-            // Can't process fees that aren't yet unlocked.
+        // Process each fee.
+        for (uint256 i; i < numberOfIterations; i++) {
+            // Keep a reference to the held fee being iterated on.
+            JBFee memory heldFee = heldFees[startIndex + i];
+
+            // Can't process fees that aren't yet unlocked. Fees unlock sequentially in the array, so nothing left to do
+            // if
+            // the current fee isn't yet unlocked.
             if (!forced && heldFee.unlockTimestamp > block.timestamp) {
-                // Add the fee back to storage.
-                _heldFeesOf[projectId][token].push(heldFee);
-                continue;
+                _nextHeldFeeIndexOf[projectId][token] = startIndex + i;
+                return;
             }
+
+            // Set the amount to 0 to prevent it from being processed again.
+            _heldFeesOf[projectId][token][startIndex + i].amount = 0;
 
             // Process the fee.
             // slither-disable-next-line reentrancy-no-eth
@@ -1407,6 +1458,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                 wasHeld: true
             });
         }
+
+        _nextHeldFeeIndexOf[projectId][token] = startIndex + numberOfIterations;
     }
 
     /// @notice Records an added balance for a project.
@@ -1561,23 +1614,29 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         internal
         returns (uint256 returnedFees)
     {
+        // Keep a reference to the start index.
+        uint256 startIndex = _nextHeldFeeIndexOf[projectId][token];
+
         // Get a reference to the project's held fees.
         JBFee[] memory heldFees = _heldFeesOf[projectId][token];
-
-        // Delete the current held fees.
-        delete _heldFeesOf[projectId][token];
 
         // Get a reference to the leftover amount once all fees have been settled.
         uint256 leftoverAmount = amount;
 
+        // Keep a reference to the number of iterations to perform.
+        uint256 numberOfIterations = heldFees.length - startIndex;
+
+        // Keep a reference to the new start index.
+        uint256 newStartIndex;
+
         // Process each fee.
-        for (uint256 i; i < heldFees.length; i++) {
+        for (uint256 i; i < numberOfIterations; i++) {
             // Save the fee being iterated on.
-            JBFee memory heldFee = heldFees[i];
+            JBFee memory heldFee = heldFees[startIndex + i];
 
             // slither-disable-next-line incorrect-equality
             if (leftoverAmount == 0) {
-                _heldFeesOf[projectId][token].push(heldFee);
+                break;
             } else {
                 // Notice here we take `feeAmountIn` on the stored `.amount`.
                 uint256 feeAmount = JBFees.feeAmountIn({amount: heldFee.amount, feePercent: FEE});
@@ -1587,27 +1646,28 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
                 if (leftoverAmount >= amountFromFee) {
                     unchecked {
+                        _heldFeesOf[projectId][token][i].amount = 0;
                         leftoverAmount -= amountFromFee;
                         returnedFees += feeAmount;
                     }
+                    
+                    // Move the start index forward to the held fee after the current one.
+                    newStartIndex = startIndex + i + 1;
                 } else {
                     // And here we overwrite with `feeAmountFrom` the `leftoverAmount`
                     feeAmount = JBFees.feeAmountFrom({amount: leftoverAmount, feePercent: FEE});
 
                     unchecked {
-                        _heldFeesOf[projectId][token].push(
-                            JBFee({
-                                amount: amountFromFee - leftoverAmount,
-                                beneficiary: heldFee.beneficiary,
-                                unlockTimestamp: heldFee.unlockTimestamp
-                            })
-                        );
+                        _heldFeesOf[projectId][token][i].amount = amountFromFee - leftoverAmount;
                         returnedFees += feeAmount;
                     }
                     leftoverAmount = 0;
                 }
             }
         }
+
+        // Update the next held fee index.
+        _nextHeldFeeIndexOf[projectId][token] = newStartIndex;
 
         emit ReturnHeldFees({
             projectId: projectId,
@@ -1857,7 +1917,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // Get a reference to the fee amount.
         feeAmount = JBFees.feeAmountIn({amount: amount, feePercent: FEE});
 
-        if (shouldHoldFees && _heldFeesOf[projectId][token].length < _MAX_HELD_FEE_ENTRIES) {
+        if (shouldHoldFees) {
             // Store the held fee.
             _heldFeesOf[projectId][token].push(
                 JBFee({

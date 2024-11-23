@@ -82,7 +82,7 @@ contract TestAddToBalanceOf_Local is JBMultiTerminalSetup {
 
         vm.store(address(_terminal), firstItemSlot, bytes32(feeAmount));
 
-        JBFee[] memory setFees = _terminal.heldFeesOf(_projectId, _native);
+        JBFee[] memory setFees = _terminal.heldFeesOf(_projectId, _native, 100);
         assertEq(setFees[0].amount, feeAmount);
 
         payAmount = 2e18;
@@ -112,7 +112,7 @@ contract TestAddToBalanceOf_Local is JBMultiTerminalSetup {
         });
 
         // Heldfee should remain
-        JBFee[] memory feesAfter = _terminal.heldFeesOf(_projectId, _native);
+        JBFee[] memory feesAfter = _terminal.heldFeesOf(_projectId, _native, 100);
         assertEq(feesAfter[0].amount, feeAmount);
     }
 
@@ -142,7 +142,7 @@ contract TestAddToBalanceOf_Local is JBMultiTerminalSetup {
         });
 
         // Heldfee should be erased
-        JBFee[] memory feesAfter = _terminal.heldFeesOf(_projectId, _native);
+        JBFee[] memory feesAfter = _terminal.heldFeesOf(_projectId, _native, 100);
         assertEq(feesAfter.length, 0);
     }
 
@@ -177,7 +177,7 @@ contract TestAddToBalanceOf_Local is JBMultiTerminalSetup {
         uint256 newFeeAmount = (feeAmount - feeA) - lowerPayAmount;
 
         // Heldfee should be a new amount
-        JBFee[] memory feesAfter = _terminal.heldFeesOf(_projectId, _native);
+        JBFee[] memory feesAfter = _terminal.heldFeesOf(_projectId, _native, 100);
         assertEq(feesAfter[0].amount, newFeeAmount);
     }
 

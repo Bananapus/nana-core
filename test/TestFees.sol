@@ -301,10 +301,10 @@ contract TestFees_Local is TestBaseWorkflow {
         vm.warp(block.timestamp + 2_419_200);
 
         // Send: Process the fees
-        _terminal.processHeldFeesOf(_projectId, JBConstants.NATIVE_TOKEN);
+        _terminal.processHeldFeesOf(_projectId, JBConstants.NATIVE_TOKEN, 100);
 
         // Check: Reflected in terminal
-        JBFee[] memory _emptyFee = _terminal.heldFeesOf(_projectId, JBConstants.NATIVE_TOKEN);
+        JBFee[] memory _emptyFee = _terminal.heldFeesOf(_projectId, JBConstants.NATIVE_TOKEN, 100);
         assertEq(_emptyFee.length, 0);
     }
 
@@ -344,17 +344,17 @@ contract TestFees_Local is TestBaseWorkflow {
         assertEq(address(_terminal).balance, _nativeDistLimit + _feeAmount);
 
         // Check: Heldfee unlock timestamp
-        JBFee[] memory _checkOgFee = _terminal.heldFeesOf(_projectId, JBConstants.NATIVE_TOKEN);
+        JBFee[] memory _checkOgFee = _terminal.heldFeesOf(_projectId, JBConstants.NATIVE_TOKEN, 100);
         assertEq(_checkOgFee[0].unlockTimestamp, block.timestamp + 2_419_200);
 
         // Setup: fast-forward to next block where fee shouldn't process (too early)
         vm.warp(block.timestamp + 1);
 
         // Send: Fail to process the fees
-        _terminal.processHeldFeesOf(_projectId, JBConstants.NATIVE_TOKEN);
+        _terminal.processHeldFeesOf(_projectId, JBConstants.NATIVE_TOKEN, 100);
 
         // Check: Fee persists in terminal
-        JBFee[] memory _persistingFee = _terminal.heldFeesOf(_projectId, JBConstants.NATIVE_TOKEN);
+        JBFee[] memory _persistingFee = _terminal.heldFeesOf(_projectId, JBConstants.NATIVE_TOKEN, 100);
 
         // Wher go fee..?
         assertEq(_persistingFee.length, 1);
@@ -411,7 +411,7 @@ contract TestFees_Local is TestBaseWorkflow {
         assertEq(address(_terminal).balance, _nativeDistLimit + _feeAmount);
 
         // Check the fee attributes
-        JBFee[] memory _checkOgFee = _terminal.heldFeesOf(_projectId, JBConstants.NATIVE_TOKEN);
+        JBFee[] memory _checkOgFee = _terminal.heldFeesOf(_projectId, JBConstants.NATIVE_TOKEN, 100);
 
         // Check the unlock timestamp
         assertEq(_checkOgFee[0].unlockTimestamp, block.timestamp + 2_419_200);
@@ -435,7 +435,7 @@ contract TestFees_Local is TestBaseWorkflow {
         uint256 feeProjectBalanceBefore = project1BalanceStore;
 
         // Process the held fees, which adds 1 ether 'amount' to the fee project.
-        _terminal.processHeldFeesOf(_projectId, JBConstants.NATIVE_TOKEN);
+        _terminal.processHeldFeesOf(_projectId, JBConstants.NATIVE_TOKEN, 100);
 
         // Reference the balance now (for the fee project).
         uint256 feeProjectBalanceAfter = jbTerminalStore().balanceOf(address(_terminal), 1, JBConstants.NATIVE_TOKEN);

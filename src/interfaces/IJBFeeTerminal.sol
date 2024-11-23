@@ -43,6 +43,13 @@ interface IJBFeeTerminal is IJBTerminal {
     function FEE() external view returns (uint256);
     function FEELESS_ADDRESSES() external view returns (IJBFeelessAddresses);
 
-    function heldFeesOf(uint256 projectId, address token) external view returns (JBFee[] memory);
-    function processHeldFeesOf(uint256 projectId, address token) external;
+    function heldFeesOf(
+        uint256 projectId,
+        address token,
+        uint256 count
+    )
+        external
+        view
+        returns (JBFee[] memory);
+    function processHeldFeesOf(uint256 projectId, address token, uint256 count) external;
 }
