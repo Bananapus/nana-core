@@ -1614,16 +1614,16 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         uint256 startIndex = _nextHeldFeeIndexOf[projectId][token];
 
         // Get a reference to the project's held fees.
-        JBFee[] memory heldFees = _heldFeesOf[projectId][token];
+        uint256 numberOfHeldFees = _heldFeesOf[projectId][token].length;
 
         // If the start index is greater than or equal to the number of held fees, return 0.
-        if (startIndex >= heldFees.length) return 0;
+        if (startIndex >= numberOfHeldFees) return 0;
 
         // Get a reference to the leftover amount once all fees have been settled.
         uint256 leftoverAmount = amount;
 
         // Keep a reference to the number of iterations to perform.
-        uint256 count = heldFees.length - startIndex;
+        uint256 count = numberOfHeldFees - startIndex;
 
         // Keep a reference to the new start index.
         uint256 newStartIndex = startIndex;
@@ -1631,7 +1631,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // Process each fee.
         for (uint256 i; i < count; i++) {
             // Save the fee being iterated on.
-            JBFee memory heldFee = heldFees[startIndex + i];
+            JBFee memory heldFee = _heldFeesOf[projectId][token][startIndex + i];
 
             // slither-disable-next-line incorrect-equality
             if (leftoverAmount == 0) {
@@ -1641,11 +1641,11 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                 uint256 feeAmount = JBFees.feeAmountIn({amount: heldFee.amount, feePercent: FEE});
 
                 // Keep a reference to the amount from which the fee was taken.
-                uint256 amountFromFee = heldFee.amount - feeAmount;
+                uint256 amountPaidOut = heldFee.amount - feeAmount;
 
-                if (leftoverAmount >= amountFromFee) {
+                if (leftoverAmount >= amountPaidOut) {
                     unchecked {
-                        leftoverAmount -= amountFromFee;
+                        leftoverAmount -= amountPaidOut;
                         returnedFees += feeAmount;
                     }
 
@@ -1657,7 +1657,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
                     // Get fee from `leftoverAmount`.
                     unchecked {
-                        _heldFeesOf[projectId][token][startIndex + i].amount = heldFee.amount - leftoverAmount;
+                        _heldFeesOf[projectId][token][startIndex + i].amount = amountPaidOut - leftoverAmount;
                         returnedFees += feeAmount;
                     }
                     leftoverAmount = 0;
