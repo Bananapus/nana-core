@@ -1623,7 +1623,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         uint256 leftoverAmount = amount;
 
         // Keep a reference to the number of iterations to perform.
-        uint256 count = numberOfHeldFees - startIndex;
+        uint256 count = heldFees.length - startIndex;
 
         // Keep a reference to the new start index.
         uint256 newStartIndex = startIndex;
@@ -1657,7 +1657,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
                     // Get fee from `leftoverAmount`.
                     unchecked {
-                        _heldFeesOf[projectId][token][startIndex + i].amount = amountPaidOut - leftoverAmount;
+                        _heldFeesOf[projectId][token][startIndex + i].amount -= (leftoverAmount + feeAmount);
                         returnedFees += feeAmount;
                     }
                     leftoverAmount = 0;
