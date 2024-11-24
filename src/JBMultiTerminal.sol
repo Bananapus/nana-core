@@ -1427,7 +1427,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         IJBTerminal feeTerminal = DIRECTORY.primaryTerminalOf({projectId: _FEE_BENEFICIARY_PROJECT_ID, token: token});
 
         // Calculate the number of iterations to perform.
-        if (startIndex + count > heldFees.length) count = heldFees.length - startIndex;
+        if (startIndex + count > numberOfHeldFees) count = numberOfHeldFees - startIndex;
 
         // Process each fee.
         for (uint256 i; i < count; i++) {
