@@ -1418,10 +1418,10 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         uint256 startIndex = _nextHeldFeeIndexOf[projectId][token];
 
         // Get a reference to the project's held fees.
-        JBFee[] memory heldFees = _heldFeesOf[projectId][token];
+        uint256 numberOfHeldFees = _heldFeesOf[projectId][token].length;
 
         // If the start index is greater than or equal to the number of held fees, return.
-        if (startIndex >= heldFees.length) return;
+        if (startIndex >= numberOfHeldFees) return;
 
         // Keep a reference to the terminal that'll receive the fees.
         IJBTerminal feeTerminal = DIRECTORY.primaryTerminalOf({projectId: _FEE_BENEFICIARY_PROJECT_ID, token: token});
@@ -1432,7 +1432,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // Process each fee.
         for (uint256 i; i < count; i++) {
             // Keep a reference to the held fee being iterated on.
-            JBFee memory heldFee = heldFees[startIndex + i];
+            JBFee memory heldFee =  _heldFeesOf[projectId][token][startIndex + i];
 
             // Can't process fees that aren't yet unlocked. Fees unlock sequentially in the array, so nothing left to do
             // if the current fee isn't yet unlocked.
