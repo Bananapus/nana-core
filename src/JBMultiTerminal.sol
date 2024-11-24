@@ -259,21 +259,21 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // Keep a reference to the start index.
         uint256 startIndex = _nextHeldFeeIndexOf[projectId][token];
 
-        // Get a reference to the project's held fees.
-        JBFee[] memory storedHeldFees = _heldFeesOf[projectId][token];
+        // Get a reference to the number of held fees.
+        uint256 numberOfHeldFees = _heldFeesOf[projectId][token].length;
 
         // If the start index is greater than or equal to the number of held fees, return 0.
-        if (startIndex >= storedHeldFees.length) return new JBFee[](0);
+        if (startIndex >= numberOfHeldFees) return new JBFee[](0);
 
         // If the start index plus the count is greater than the number of fees, set the count to the number of fees
-        if (startIndex + count > storedHeldFees.length) count = storedHeldFees.length - startIndex;
+        if (startIndex + count > numberOfHeldFees) count = numberOfHeldFees - startIndex;
 
         // Create a new array to hold the fees.
         heldFees = new JBFee[](count);
 
         // Copy the fees into the array.
         for (uint256 i; i < count; i++) {
-            heldFees[i] = storedHeldFees[startIndex + i];
+            heldFees[i] = _heldFeesOf[projectId][token][startIndex + i];
         }
     }
 
@@ -1623,7 +1623,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         uint256 leftoverAmount = amount;
 
         // Keep a reference to the number of iterations to perform.
-        uint256 count = heldFees.length - startIndex;
+        uint256 count = numberOfHeldFees - startIndex;
 
         // Keep a reference to the new start index.
         uint256 newStartIndex = startIndex;
