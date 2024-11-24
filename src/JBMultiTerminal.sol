@@ -1432,7 +1432,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // Process each fee.
         for (uint256 i; i < count; i++) {
             // Keep a reference to the held fee being iterated on.
-            JBFee memory heldFee =  _heldFeesOf[projectId][token][startIndex + i];
+            JBFee memory heldFee = _heldFeesOf[projectId][token][startIndex + i];
 
             // Can't process fees that aren't yet unlocked. Fees unlock sequentially in the array, so nothing left to do
             // if the current fee isn't yet unlocked.
