@@ -725,7 +725,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// data hook and cash out hook if applicable.
     /// @param metadata Bytes to send along to the emitted event, as well as the data hook and cash out hook if
     /// applicable.
-    /// @return reclaimAmount The amount of terminal tokens that the project tokens were cashed out for, as a fixed point
+    /// @return reclaimAmount The amount of terminal tokens that the project tokens were cashed out for, as a fixed
+    /// point
     /// number with 18 decimals.
     function cashOutTokensOf(
         address holder,
@@ -1416,9 +1417,11 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         STORE.recordAddedBalanceFor({projectId: projectId, token: token, amount: amount});
     }
 
-    /// @notice Holders can cash out their tokens to claim some of a project's surplus, or to trigger rules determined by
+    /// @notice Holders can cash out their tokens to claim some of a project's surplus, or to trigger rules determined
+    /// by
     /// the project's current ruleset's data hook.
-    /// @dev Only a token holder or a an operator with the `CASH_OUT_TOKENS` permission from that holder can cash out those
+    /// @dev Only a token holder or a an operator with the `CASH_OUT_TOKENS` permission from that holder can cash out
+    /// those
     /// tokens.
     /// @param holder The account cashing out tokens.
     /// @param projectId The ID of the project whose tokens are being cashed out.

@@ -27,7 +27,8 @@ pragma solidity ^0.8.0;
 /// in all terminals instead of the project's local terminal balance from which the cash out is being fulfilled.
 /// @custom:member useDataHookForPay A flag indicating if the data hook should be used for pay transactions during this
 /// ruleset.
-/// @custom:member useDataHookForCashOut A flag indicating if the data hook should be used for cash out transactions during
+/// @custom:member useDataHookForCashOut A flag indicating if the data hook should be used for cash out transactions
+/// during
 /// this ruleset.
 /// @custom:member dataHook The data hook to use during this ruleset.
 /// @custom:member metadata Metadata of the metadata, only the 14 least significant bits can be used, the 2 most

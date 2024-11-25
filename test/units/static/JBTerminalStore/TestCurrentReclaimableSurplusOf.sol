@@ -326,11 +326,7 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
         assertEq(0, reclaimable);
     }
 
-    function test_GivenCashOutRateDneqMAX_CASH_OUT_RATE()
-        external
-        whenUseTotalSurplusEqFalse
-        whenProjectHasBalance
-    {
+    function test_GivenCashOutRateDneqMAX_CASH_OUT_RATE() external whenUseTotalSurplusEqFalse whenProjectHasBalance {
         // it will return the calculated proportion
 
         // setup calldata

@@ -651,7 +651,8 @@ contract JBTerminalStore is IJBTerminalStore {
     }
 
     /// @notice Records a cash out from a project.
-    /// @dev Cashs out the project's tokens according to values provided by the ruleset's data hook. If the ruleset has no
+    /// @dev Cashs out the project's tokens according to values provided by the ruleset's data hook. If the ruleset has
+    /// no
     /// data hook, cashs out tokens along a cash out bonding curve that is a function of the number of tokens being
     /// burned.
     /// @param holder The account that is cashing out tokens.

@@ -3,7 +3,8 @@ pragma solidity ^0.8.6;
 
 import /* {*} from */ "./helpers/TestBaseWorkflow.sol";
 
-// Projects can issue a token, be paid to receieve claimed tokens,  burn some of the claimed tokens, cash out the rest of
+// Projects can issue a token, be paid to receieve claimed tokens,  burn some of the claimed tokens, cash out the rest
+// of
 // tokens
 contract TestCashOut_Local is TestBaseWorkflow {
     IJBController private _controller;

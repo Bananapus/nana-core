@@ -11,7 +11,8 @@ import {MaliciousAllowanceBeneficiary, MaliciousPayoutBeneficiary} from "./mock/
 /// the protocol incurs fees unless the recipients are feeless addresses.
 /// 2. project owners set a surplus allowance to allow spending funds from the project's surplus balance in the terminal
 /// (i.e. the balance in excess of their payout limit). incurs fees unless the caller is a feeless address.
-/// 3. token holders can cash out tokens to access surplus funds. incurs fees if the cash out tax rate != 100%, unless the
+/// 3. token holders can cash out tokens to access surplus funds. incurs fees if the cash out tax rate != 100%, unless
+/// the
 /// beneficiary is a feeless address.
 /// Each of these only incurs protocol fees if the `_FEE_PROJECT_ID` (project with ID #1) accepts the token being
 /// accessed.
@@ -1672,7 +1673,8 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                     metadata: new bytes(0)
                 });
 
-                // Cash out USDC from the surplus using only the `_beneficiary`'s tokens needed to clear the USDC balance.
+                // Cash out USDC from the surplus using only the `_beneficiary`'s tokens needed to clear the USDC
+                // balance.
                 _terminal.cashOutTokensOf({
                     holder: _beneficiary,
                     projectId: _projectId,
@@ -2311,7 +2313,8 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                         JBConstants.MAX_RESERVED_PERCENT,
                         JBConstants.MAX_RESERVED_PERCENT - _metadata.reservedPercent
                     );
-                    // Cash out native tokens from the surplus using only the `_beneficiary`'s tokens needed to clear the
+                    // Cash out native tokens from the surplus using only the `_beneficiary`'s tokens needed to clear
+                    // the
                     // native token balance.
                     _terminal.cashOutTokensOf({
                         holder: _beneficiary,

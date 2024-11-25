@@ -5,7 +5,8 @@ import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
 import {JBAfterCashOutRecordedContext} from "./../structs/JBAfterCashOutRecordedContext.sol";
 
-/// @notice Hook called after a terminal's `cashOutTokensOf(...)` logic completes (if passed by the ruleset's data hook).
+/// @notice Hook called after a terminal's `cashOutTokensOf(...)` logic completes (if passed by the ruleset's data
+/// hook).
 interface IJBCashOutHook is IERC165 {
     /// @notice This function is called by the terminal's `cashOutTokensOf(...)` function after the cash out has been
     /// recorded in the terminal store.
