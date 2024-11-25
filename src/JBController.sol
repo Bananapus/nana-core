@@ -56,7 +56,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
 
     error JBController_AddingPriceFeedNotAllowed();
     error JBController_CreditTransfersPaused();
-    error JBController_InvalidRedemptionRate(uint256 rate, uint256 limit);
+    error JBController_InvalidCashOutTaxRate(uint256 rate, uint256 limit);
     error JBController_InvalidReservedPercent(uint256 percent, uint256 limit);
     error JBController_MintNotAllowedAndNotTerminalOrHook();
     error JBController_NoReservedTokens();
@@ -920,10 +920,10 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
                 );
             }
 
-            // Make sure its redemption rate is valid.
-            if (rulesetConfig.metadata.redemptionRate > JBConstants.MAX_REDEMPTION_RATE) {
-                revert JBController_InvalidRedemptionRate(
-                    rulesetConfig.metadata.redemptionRate, JBConstants.MAX_REDEMPTION_RATE
+            // Make sure its cash out tax rate is valid.
+            if (rulesetConfig.metadata.cashOutTaxRate > JBConstants.MAX_CASH_OUT_TAX_RATE) {
+                revert JBController_InvalidCashOutTaxRate(
+                    rulesetConfig.metadata.cashOutTaxRate, JBConstants.MAX_CASH_OUT_TAX_RATE
                 );
             }
 

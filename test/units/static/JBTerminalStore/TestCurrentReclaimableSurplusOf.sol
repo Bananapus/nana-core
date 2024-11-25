@@ -104,7 +104,7 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
 
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: 0,
-            redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
+            cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
@@ -117,9 +117,9 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: false,
+            useTotalSurplusForCashOuts: false,
             useDataHookForPay: false,
-            useDataHookForRedeem: false,
+            useDataHookForCashOut: false,
             dataHook: address(0),
             metadata: 0
         });
@@ -181,7 +181,7 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
 
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: 0,
-            redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
+            cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
@@ -194,9 +194,9 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: false,
+            useTotalSurplusForCashOuts: false,
             useDataHookForPay: false,
-            useDataHookForRedeem: false,
+            useDataHookForCashOut: false,
             dataHook: address(0),
             metadata: 0
         });
@@ -249,7 +249,7 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
         assertEq(_tokenCount, reclaimable);
     }
 
-    function test_GivenRedemptionRateEqZero() external whenUseTotalSurplusEqFalse whenProjectHasBalance {
+    function test_GivenCashOutTaxRateEqZero() external whenUseTotalSurplusEqFalse whenProjectHasBalance {
         // it will return zero
 
         // setup calldata
@@ -258,7 +258,7 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
 
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: 0,
-            redemptionRate: 0,
+            cashOutTaxRate: 0,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
@@ -271,9 +271,9 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: false,
+            useTotalSurplusForCashOuts: false,
             useDataHookForPay: false,
-            useDataHookForRedeem: false,
+            useDataHookForCashOut: false,
             dataHook: address(0),
             metadata: 0
         });
@@ -326,7 +326,7 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
         assertEq(0, reclaimable);
     }
 
-    function test_GivenRedemptionRateDneqMAX_REDEMPTION_RATE()
+    function test_GivenCashOutRateDneqMAX_CASH_OUT_RATE()
         external
         whenUseTotalSurplusEqFalse
         whenProjectHasBalance
@@ -339,7 +339,7 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
 
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: 0,
-            redemptionRate: JBConstants.MAX_REDEMPTION_RATE / 2,
+            cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE / 2,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
@@ -352,9 +352,9 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: false,
+            useTotalSurplusForCashOuts: false,
             useDataHookForPay: false,
-            useDataHookForRedeem: false,
+            useDataHookForCashOut: false,
             dataHook: address(0),
             metadata: 0
         });
@@ -402,8 +402,8 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
 
         uint256 assumed = mulDiv(
             1e18 - 1e17,
-            5000 + mulDiv(_tokenCount, JBConstants.MAX_REDEMPTION_RATE - 5000, 1e18),
-            JBConstants.MAX_REDEMPTION_RATE
+            5000 + mulDiv(_tokenCount, JBConstants.MAX_CASH_OUT_TAX_RATE - 5000, 1e18),
+            JBConstants.MAX_CASH_OUT_TAX_RATE
         );
 
         uint256 reclaimable = _store.currentReclaimableSurplusOf(
@@ -419,7 +419,7 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
         // Params
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: 0,
-            redemptionRate: JBConstants.MAX_REDEMPTION_RATE / 2,
+            cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE / 2,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
@@ -432,9 +432,9 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: false,
+            useTotalSurplusForCashOuts: false,
             useDataHookForPay: false,
-            useDataHookForRedeem: false,
+            useDataHookForCashOut: false,
             dataHook: address(0),
             metadata: 0
         });

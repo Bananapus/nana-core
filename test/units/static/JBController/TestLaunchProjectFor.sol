@@ -46,7 +46,7 @@ contract TestLaunchProjectFor_Local is JBControllerSetup {
 
         JBRulesetMetadata memory _rulesMetadata = JBRulesetMetadata({
             reservedPercent: JBConstants.MAX_RESERVED_PERCENT + 1, // invalid
-            redemptionRate: JBConstants.MAX_REDEMPTION_RATE / 2, //50%
+            cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE / 2, //50%
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
@@ -59,9 +59,9 @@ contract TestLaunchProjectFor_Local is JBControllerSetup {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: true,
+            useTotalSurplusForCashOuts: true,
             useDataHookForPay: false,
-            useDataHookForRedeem: false,
+            useDataHookForCashOut: false,
             dataHook: address(0),
             metadata: 0
         });
@@ -90,12 +90,12 @@ contract TestLaunchProjectFor_Local is JBControllerSetup {
         _controller.launchProjectFor(address(this), _metadata, _rulesetConfigurations, _terminals, _memo);
     }
 
-    function test_GivenRulesetHasInvalidRedemptionRate() external whenCalledDefault {
-        // it will revert INVALID_REDEMPTION_RATE()
+    function test_GivenRulesetHasInvalidCashOutTaxRate() external whenCalledDefault {
+        // it will revert INVALID_CASH_OUT_RATE()
 
         JBRulesetMetadata memory _rulesMetadata = JBRulesetMetadata({
             reservedPercent: JBConstants.MAX_RESERVED_PERCENT / 2,
-            redemptionRate: JBConstants.MAX_REDEMPTION_RATE + 1, // invalid
+            cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE + 1, // invalid
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
@@ -108,9 +108,9 @@ contract TestLaunchProjectFor_Local is JBControllerSetup {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: true,
+            useTotalSurplusForCashOuts: true,
             useDataHookForPay: false,
-            useDataHookForRedeem: false,
+            useDataHookForCashOut: false,
             dataHook: address(0),
             metadata: 0
         });
@@ -131,9 +131,9 @@ contract TestLaunchProjectFor_Local is JBControllerSetup {
 
         vm.expectRevert(
             abi.encodeWithSelector(
-                JBController.JBController_InvalidRedemptionRate.selector,
-                JBConstants.MAX_REDEMPTION_RATE + 1,
-                JBConstants.MAX_REDEMPTION_RATE
+                JBController.JBController_InvalidCashOutTaxRate.selector,
+                JBConstants.MAX_CASH_OUT_TAX_RATE + 1,
+                JBConstants.MAX_CASH_OUT_TAX_RATE
             )
         );
         _controller.launchProjectFor(address(this), _metadata, _rulesetConfigurations, _terminals, _memo);
@@ -144,7 +144,7 @@ contract TestLaunchProjectFor_Local is JBControllerSetup {
 
         JBRulesetMetadata memory _rulesMetadata = JBRulesetMetadata({
             reservedPercent: JBConstants.MAX_RESERVED_PERCENT / 2,
-            redemptionRate: JBConstants.MAX_REDEMPTION_RATE / 2,
+            cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE / 2,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
@@ -157,9 +157,9 @@ contract TestLaunchProjectFor_Local is JBControllerSetup {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: true,
+            useTotalSurplusForCashOuts: true,
             useDataHookForPay: false,
-            useDataHookForRedeem: false,
+            useDataHookForCashOut: false,
             dataHook: address(0),
             metadata: 0
         });

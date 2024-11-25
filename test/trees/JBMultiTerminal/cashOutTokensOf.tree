@@ -1,0 +1,23 @@
+TestCashOutTokensOf_Local
+├── when caller DN have permission
+│   └── it will revert UNAUTHORIZED
+├── when caller has permission
+│   ├── given cashOutCount gt zero
+│   │   └── it will call directory controller of and burnTokensOf
+│   ├── given reclaimAmount gt zero beneficiary is not feeless and cashOutTaxRate dneq MAX_CASH_OUT_TAX_RATE
+│   │   └── it will subtract the fee for the reclaim
+│   ├── given the token is native
+│   │   └── it will sendValue
+│   ├── given the token is erc20
+│   │   └── it will safeTransfer tokens
+│   └── given amountEligibleForFees dneq zero
+│       └── it will call directory primaryTerminalOf and process the fee
+└── when a data hook is configured
+    ├── given data hook returns cash out hook specs hook is feeless and token is native
+    │   └── it will pass the full amount to the hook and emit HookAfterRecordCashOut
+    ├── given data hook returns cash out hook specs hook is feeless and token is erc20
+    │   └── it will safeIncreaseAllowance pass the full amount to the hook and emit HookAfterRecordCashOut
+    ├── given data hook returns cash out hook specs hook is not feeless and token is native
+    │   └── it will calculate the fee pass the amount to the hook and emit HookAfterRecordCashOut
+    └── given data hook returns cash out hook specs hook is not feeless and token is erc20
+        └── it will safeIncreaseAllowance pass the amount to the hook and emit HookAfterRecordCashOut

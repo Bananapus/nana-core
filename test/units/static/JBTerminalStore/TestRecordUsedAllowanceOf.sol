@@ -41,7 +41,7 @@ contract TestRecordUsedAllowanceOf_Local is JBTerminalStoreSetup {
 
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: 0,
-            redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
+            cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE,
             baseCurrency: uint32(uint160(_nativeAddress)),
             pausePay: false,
             pauseCreditTransfers: false,
@@ -54,9 +54,9 @@ contract TestRecordUsedAllowanceOf_Local is JBTerminalStoreSetup {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: false,
+            useTotalSurplusForCashOuts: false,
             useDataHookForPay: false,
-            useDataHookForRedeem: false,
+            useDataHookForCashOut: false,
             dataHook: address(0),
             metadata: 0
         });
@@ -143,7 +143,7 @@ contract TestRecordUsedAllowanceOf_Local is JBTerminalStoreSetup {
 
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: 0,
-            redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
+            cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE,
             baseCurrency: uint32(uint160(_nativeAddress)),
             pausePay: false,
             pauseCreditTransfers: false,
@@ -156,9 +156,9 @@ contract TestRecordUsedAllowanceOf_Local is JBTerminalStoreSetup {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: false,
+            useTotalSurplusForCashOuts: false,
             useDataHookForPay: false,
-            useDataHookForRedeem: false,
+            useDataHookForCashOut: false,
             dataHook: address(0),
             metadata: 0
         });
@@ -234,7 +234,7 @@ contract TestRecordUsedAllowanceOf_Local is JBTerminalStoreSetup {
 
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: 0,
-            redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
+            cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE,
             baseCurrency: uint32(uint160(_currency)),
             pausePay: false,
             pauseCreditTransfers: false,
@@ -247,9 +247,9 @@ contract TestRecordUsedAllowanceOf_Local is JBTerminalStoreSetup {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: false,
+            useTotalSurplusForCashOuts: false,
             useDataHookForPay: false,
-            useDataHookForRedeem: false,
+            useDataHookForCashOut: false,
             dataHook: address(0),
             metadata: 0
         });
@@ -312,7 +312,7 @@ contract TestRecordUsedAllowanceOf_Local is JBTerminalStoreSetup {
 
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: 0,
-            redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
+            cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE,
             baseCurrency: uint32(uint160(_currency)),
             pausePay: false,
             pauseCreditTransfers: false,
@@ -325,9 +325,9 @@ contract TestRecordUsedAllowanceOf_Local is JBTerminalStoreSetup {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: false,
+            useTotalSurplusForCashOuts: false,
             useDataHookForPay: false,
-            useDataHookForRedeem: false,
+            useDataHookForCashOut: false,
             dataHook: address(0),
             metadata: 0
         });

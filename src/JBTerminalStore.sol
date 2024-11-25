@@ -10,15 +10,15 @@ import {IJBRulesetDataHook} from "./interfaces/IJBRulesetDataHook.sol";
 import {IJBRulesets} from "./interfaces/IJBRulesets.sol";
 import {IJBTerminalStore} from "./interfaces/IJBTerminalStore.sol";
 import {JBFixedPointNumber} from "./libraries/JBFixedPointNumber.sol";
-import {JBRedemptions} from "./libraries/JBRedemptions.sol";
+import {JBCashOuts} from "./libraries/JBCashOuts.sol";
 import {JBRulesetMetadataResolver} from "./libraries/JBRulesetMetadataResolver.sol";
 import {JBSurplus} from "./libraries/JBSurplus.sol";
 import {JBAccountingContext} from "./structs/JBAccountingContext.sol";
 import {JBBeforePayRecordedContext} from "./structs/JBBeforePayRecordedContext.sol";
-import {JBBeforeRedeemRecordedContext} from "./structs/JBBeforeRedeemRecordedContext.sol";
+import {JBBeforeCashOutRecordedContext} from "./structs/JBBeforeCashOutRecordedContext.sol";
 import {JBCurrencyAmount} from "./structs/JBCurrencyAmount.sol";
 import {JBPayHookSpecification} from "./structs/JBPayHookSpecification.sol";
-import {JBRedeemHookSpecification} from "./structs/JBRedeemHookSpecification.sol";
+import {JBCashOutHookSpecification} from "./structs/JBCashOutHookSpecification.sol";
 import {JBRuleset} from "./structs/JBRuleset.sol";
 import {JBTokenAmount} from "./structs/JBTokenAmount.sol";
 
@@ -130,10 +130,10 @@ contract JBTerminalStore is IJBTerminalStore {
     // ------------------------- external views -------------------------- //
     //*********************************************************************//
 
-    /// @notice Returns the number of surplus terminal tokens that would be reclaimed by redeeming a given project's
+    /// @notice Returns the number of surplus terminal tokens that would be reclaimed by cashing out a given project's
     /// tokens based on its current ruleset and the given total project token supply and total terminal token surplus.
-    /// @param projectId The ID of the project whose project tokens would be redeemed.
-    /// @param tokensRedeemed The number of project tokens that would be redeemed, as a fixed point number with 18
+    /// @param projectId The ID of the project whose project tokens would be cashed out.
+    /// @param tokensCashedOut The number of project tokens that would be cashed out, as a fixed point number with 18
     /// decimals.
     /// @param totalSupply The total project token supply, as a fixed point number with 18 decimals.
     /// @param surplus The total terminal token surplus amount, as a fixed point number.
@@ -141,7 +141,7 @@ contract JBTerminalStore is IJBTerminalStore {
     /// number of decimals as the provided `surplus`.
     function currentReclaimableSurplusOf(
         uint256 projectId,
-        uint256 tokensRedeemed,
+        uint256 tokensCashedOut,
         uint256 totalSupply,
         uint256 surplus
     )
@@ -153,42 +153,43 @@ contract JBTerminalStore is IJBTerminalStore {
         // If there's no surplus, nothing can be reclaimed.
         if (surplus == 0) return 0;
 
-        // Can't redeem more tokens than are in the total supply.
-        if (tokensRedeemed > totalSupply) return 0;
+        // Can't cash out more tokens than are in the total supply.
+        if (tokensCashedOut > totalSupply) return 0;
 
         // Get a reference to the project's current ruleset.
         JBRuleset memory ruleset = RULESETS.currentOf(projectId);
 
         // Return the amount of surplus terminal tokens that would be reclaimed.
-        return JBRedemptions.reclaimFrom({
+        return JBCashOuts.cashOutFrom({
             surplus: surplus,
-            tokensRedeemed: tokensRedeemed,
+            tokensCashedOut: tokensCashedOut,
             totalSupply: totalSupply,
-            redemptionRate: ruleset.redemptionRate()
+            cashOutTaxRate: ruleset.cashOutTaxRate()
         });
     }
 
-    /// @notice Returns the number of surplus terminal tokens that would be reclaimed from a terminal by redeeming a
+    /// @notice Returns the number of surplus terminal tokens that would be reclaimed from a terminal by cashing out a
     /// given number of tokens, based on the total token supply and total surplus.
     /// @dev The returned amount in terms of the specified `terminal`'s base currency.
     /// @dev The returned amount is represented as a fixed point number with the same amount of decimals as the
     /// specified terminal.
-    /// @param terminal The terminal that would be redeemed from. If `useTotalSurplus` is true, this is ignored.
-    /// @param projectId The ID of the project whose tokens would be redeemed.
+    /// @param terminal The terminal that would be cashed out from. If `useTotalSurplus` is true, this is ignored.
+    /// @param projectId The ID of the project whose tokens would be cashed out.
     /// @param accountingContexts The accounting contexts of the surplus terminal tokens that would be reclaimed
     /// @param decimals The number of decimals to include in the resulting fixed point number.
     /// @param currency The currency that the resulting number will be in terms of.
-    /// @param tokensRedeemed The number of tokens that would be redeemed, as a fixed point number with 18 decimals.
+    /// @param tokensCashedOut The number of tokens that would be cashed out, as a fixed point number with 18 decimals.
     /// @param useTotalSurplus Whether the total surplus should be summed across all of the project's terminals. If
     /// false, only the `terminal`'s surplus is used.
-    /// @return The amount of surplus terminal tokens that would be reclaimed by redeeming `tokensRedeemed` tokens.
+    /// @return The amount of surplus terminal tokens that would be reclaimed by cashing out `tokensCashedOut`
+    /// tokens.
     function currentReclaimableSurplusOf(
         address terminal,
         uint256 projectId,
         JBAccountingContext[] calldata accountingContexts,
         uint256 decimals,
         uint256 currency,
-        uint256 tokensRedeemed,
+        uint256 tokensCashedOut,
         bool useTotalSurplus
     )
         external
@@ -218,15 +219,15 @@ contract JBTerminalStore is IJBTerminalStore {
         uint256 totalSupply =
             IJBController(address(DIRECTORY.controllerOf(projectId))).totalTokenSupplyWithReservedTokensOf(projectId);
 
-        // Can't redeem more tokens than are in the total supply.
-        if (tokensRedeemed > totalSupply) return 0;
+        // Can't cash out more tokens than are in the total supply.
+        if (tokensCashedOut > totalSupply) return 0;
 
         // Return the amount of surplus terminal tokens that would be reclaimed.
-        return JBRedemptions.reclaimFrom({
+        return JBCashOuts.cashOutFrom({
             surplus: currentSurplus,
-            tokensRedeemed: tokensRedeemed,
+            tokensCashedOut: tokensCashedOut,
             totalSupply: totalSupply,
-            redemptionRate: ruleset.redemptionRate()
+            cashOutTaxRate: ruleset.cashOutTaxRate()
         });
     }
 
@@ -649,28 +650,28 @@ contract JBTerminalStore is IJBTerminalStore {
         }
     }
 
-    /// @notice Records a redemption from a project.
-    /// @dev Redeems the project's tokens according to values provided by the ruleset's data hook. If the ruleset has no
-    /// data hook, redeems tokens along a redemption bonding curve that is a function of the number of tokens being
+    /// @notice Records a cash out from a project.
+    /// @dev Cashs out the project's tokens according to values provided by the ruleset's data hook. If the ruleset has no
+    /// data hook, cashs out tokens along a cash out bonding curve that is a function of the number of tokens being
     /// burned.
-    /// @param holder The account that is redeeming tokens.
-    /// @param projectId The ID of the project being redeemed from.
-    /// @param redeemCount The number of project tokens to redeem, as a fixed point number with 18 decimals.
-    /// @param accountingContext The accounting context of the token being reclaimed by the redemption.
+    /// @param holder The account that is cashing out tokens.
+    /// @param projectId The ID of the project being cashing out from.
+    /// @param cashOutCount The number of project tokens to cash out, as a fixed point number with 18 decimals.
+    /// @param accountingContext The accounting context of the token being reclaimed by the cash out.
     /// @param balanceAccountingContexts The accounting contexts of the tokens whose balances should contribute to the
     /// surplus being reclaimed from.
     /// @param metadata Bytes to send to the data hook, if the project's current ruleset specifies one.
-    /// @return ruleset The ruleset during the redemption was made during, as a `JBRuleset` struct. This ruleset will
-    /// have a redemption rate provided by the redemption hook if applicable.
+    /// @return ruleset The ruleset during the cash out was made during, as a `JBRuleset` struct. This ruleset will
+    /// have a cash out tax rate provided by the cash out hook if applicable.
     /// @return reclaimAmount The amount of tokens reclaimed from the terminal, as a fixed point number with 18
     /// decimals.
-    /// @return redemptionRate The redemption rate influencing the reclaim amount.
-    /// @return hookSpecifications A list of redeem hooks, including data and amounts to send to them. The terminal
+    /// @return cashOutTaxRate The cash out tax rate influencing the reclaim amount.
+    /// @return hookSpecifications A list of cash out hooks, including data and amounts to send to them. The terminal
     /// should fulfill these specifications.
-    function recordRedemptionFor(
+    function recordCashOutFor(
         address holder,
         uint256 projectId,
-        uint256 redeemCount,
+        uint256 cashOutCount,
         JBAccountingContext calldata accountingContext,
         JBAccountingContext[] calldata balanceAccountingContexts,
         bytes memory metadata
@@ -680,8 +681,8 @@ contract JBTerminalStore is IJBTerminalStore {
         returns (
             JBRuleset memory ruleset,
             uint256 reclaimAmount,
-            uint256 redemptionRate,
-            JBRedeemHookSpecification[] memory hookSpecifications
+            uint256 cashOutTaxRate,
+            JBCashOutHookSpecification[] memory hookSpecifications
         )
     {
         // Get a reference to the project's current ruleset.
@@ -690,7 +691,7 @@ contract JBTerminalStore is IJBTerminalStore {
         // Get the current surplus amount.
         // Use the local surplus if the ruleset specifies that it should be used. Otherwise, use the project's total
         // surplus across all of its terminals.
-        uint256 currentSurplus = ruleset.useTotalSurplusForRedemptions()
+        uint256 currentSurplus = ruleset.useTotalSurplusForCashOuts()
             ? JBSurplus.currentSurplusOf({
                 projectId: projectId,
                 terminals: DIRECTORY.terminalsOf(projectId),
@@ -710,18 +711,18 @@ contract JBTerminalStore is IJBTerminalStore {
         uint256 totalSupply =
             IJBController(address(DIRECTORY.controllerOf(projectId))).totalTokenSupplyWithReservedTokensOf(projectId);
 
-        // Can't redeem more tokens that are in the supply.
-        if (redeemCount > totalSupply) revert JBTerminalStore_InsufficientTokens(redeemCount, totalSupply);
+        // Can't cash out more tokens than are in the supply.
+        if (cashOutCount > totalSupply) revert JBTerminalStore_InsufficientTokens(cashOutCount, totalSupply);
 
-        // If the ruleset has a data hook which is enabled for redemptions, use it to derive a claim amount and memo.
-        if (ruleset.useDataHookForRedeem() && ruleset.dataHook() != address(0)) {
-            // Create the redeem context that'll be sent to the data hook.
-            JBBeforeRedeemRecordedContext memory context = JBBeforeRedeemRecordedContext({
+        // If the ruleset has a data hook which is enabled for cash outs, use it to derive a claim amount and memo.
+        if (ruleset.useDataHookForCashOut() && ruleset.dataHook() != address(0)) {
+            // Create the cash out context that'll be sent to the data hook.
+            JBBeforeCashOutRecordedContext memory context = JBBeforeCashOutRecordedContext({
                 terminal: msg.sender,
                 holder: holder,
                 projectId: uint56(projectId),
                 rulesetId: ruleset.id,
-                redeemCount: redeemCount,
+                cashOutCount: cashOutCount,
                 totalSupply: totalSupply,
                 surplus: JBTokenAmount({
                     token: accountingContext.token,
@@ -729,24 +730,24 @@ contract JBTerminalStore is IJBTerminalStore {
                     decimals: accountingContext.decimals,
                     currency: accountingContext.currency
                 }),
-                useTotalSurplus: ruleset.useTotalSurplusForRedemptions(),
-                redemptionRate: ruleset.redemptionRate(),
+                useTotalSurplus: ruleset.useTotalSurplusForCashOuts(),
+                cashOutTaxRate: ruleset.cashOutTaxRate(),
                 metadata: metadata
             });
 
-            (redemptionRate, redeemCount, totalSupply, hookSpecifications) =
-                IJBRulesetDataHook(ruleset.dataHook()).beforeRedeemRecordedWith(context);
+            (cashOutTaxRate, cashOutCount, totalSupply, hookSpecifications) =
+                IJBRulesetDataHook(ruleset.dataHook()).beforeCashOutRecordedWith(context);
         } else {
-            redemptionRate = ruleset.redemptionRate();
+            cashOutTaxRate = ruleset.cashOutTaxRate();
         }
 
         if (currentSurplus != 0) {
             // Calculate reclaim amount using the current surplus amount.
-            reclaimAmount = JBRedemptions.reclaimFrom({
+            reclaimAmount = JBCashOuts.cashOutFrom({
                 surplus: currentSurplus,
-                tokensRedeemed: redeemCount,
+                tokensCashedOut: cashOutCount,
                 totalSupply: totalSupply,
-                redemptionRate: redemptionRate
+                cashOutTaxRate: cashOutTaxRate
             });
         }
 
@@ -755,7 +756,7 @@ contract JBTerminalStore is IJBTerminalStore {
 
         // Ensure that the specifications have valid amounts.
         if (hookSpecifications.length != 0) {
-            // Keep a reference to the number of redeem hooks specified.
+            // Keep a reference to the number of cash out hooks specified.
             uint256 numberOfSpecifications = hookSpecifications.length;
 
             // Loop through each specification.

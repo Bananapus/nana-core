@@ -19,7 +19,7 @@ contract JBERC20Inheritance_Local is JBERC20, TestBaseWorkflow {
     function test_votesUpdateOnTransfer() public {
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: 0,
-            redemptionRate: 0,
+            cashOutTaxRate: 0,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
@@ -32,9 +32,9 @@ contract JBERC20Inheritance_Local is JBERC20, TestBaseWorkflow {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: false,
+            useTotalSurplusForCashOuts: false,
             useDataHookForPay: true,
-            useDataHookForRedeem: true,
+            useDataHookForCashOut: true,
             dataHook: address(0),
             metadata: 0
         });

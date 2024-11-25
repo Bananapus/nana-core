@@ -15,7 +15,7 @@ contract JBFeelessAddresses is Ownable, IJBFeelessAddresses, IERC165 {
     /// @notice Check if the specified address is feeless.
     /// @dev Feeless addresses can receive payouts without incurring a fee.
     /// @dev Feeless addresses can use the surplus allowance without incurring a fee.
-    /// @dev Feeless addresses can be the beneficary of redemptions without incurring a fee.
+    /// @dev Feeless addresses can be the beneficary of cash outs without incurring a fee.
     /// @custom:param addr The address to check.
     mapping(address addr => bool) public override isFeeless;
 

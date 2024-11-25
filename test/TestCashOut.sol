@@ -3,9 +3,9 @@ pragma solidity ^0.8.6;
 
 import /* {*} from */ "./helpers/TestBaseWorkflow.sol";
 
-// Projects can issue a token, be paid to receieve claimed tokens,  burn some of the claimed tokens, redeem rest of
+// Projects can issue a token, be paid to receieve claimed tokens,  burn some of the claimed tokens, cash out the rest of
 // tokens
-contract TestRedeem_Local is TestBaseWorkflow {
+contract TestCashOut_Local is TestBaseWorkflow {
     IJBController private _controller;
     IJBMultiTerminal private _terminal;
     JBTokens private _tokens;
@@ -26,7 +26,7 @@ contract TestRedeem_Local is TestBaseWorkflow {
         _weight = 1000 * 10 ** 18;
         _metadata = JBRulesetMetadata({
             reservedPercent: 0,
-            redemptionRate: JBConstants.MAX_REDEMPTION_RATE / 2,
+            cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE / 2,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
@@ -39,9 +39,9 @@ contract TestRedeem_Local is TestBaseWorkflow {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: false,
+            useTotalSurplusForCashOuts: false,
             useDataHookForPay: false,
-            useDataHookForRedeem: false,
+            useDataHookForCashOut: false,
             dataHook: address(0),
             metadata: 0
         });
@@ -85,7 +85,7 @@ contract TestRedeem_Local is TestBaseWorkflow {
         });
     }
 
-    function testRedeem(uint256 _tokenAmountToRedeem) external {
+    function testCashOut(uint256 _tokenAmountToCashOut) external {
         uint112 _nativePayAmount = 10 ether;
 
         // Issue the project's tokens.
@@ -115,38 +115,38 @@ contract TestRedeem_Local is TestBaseWorkflow {
             _nativeTerminalBalance
         );
 
-        // Fuzz 1 to full balance redemption.
-        _tokenAmountToRedeem = bound(_tokenAmountToRedeem, 1, _beneficiaryTokenBalance);
+        // Fuzz 1 to full balance cash out.
+        _tokenAmountToCashOut = bound(_tokenAmountToCashOut, 1, _beneficiaryTokenBalance);
 
-        // Test: redeem.
+        // Test: cash out.
         vm.prank(_beneficiary);
-        uint256 _nativeReclaimAmt = _terminal.redeemTokensOf({
+        uint256 _nativeReclaimAmt = _terminal.cashOutTokensOf({
             holder: _beneficiary,
             projectId: _projectId,
             tokenToReclaim: JBConstants.NATIVE_TOKEN,
-            redeemCount: _tokenAmountToRedeem,
+            cashOutCount: _tokenAmountToCashOut,
             minTokensReclaimed: 0,
             beneficiary: payable(_beneficiary),
             metadata: new bytes(0)
         });
 
-        // Keep a reference to the expected amount redeemed.
-        uint256 _grossRedeemed = mulDiv(
-            mulDiv(_nativeTerminalBalance, _tokenAmountToRedeem, _beneficiaryTokenBalance),
-            _metadata.redemptionRate
+        // Keep a reference to the expected amount cashed out.
+        uint256 _grossCashedOut = mulDiv(
+            mulDiv(_nativeTerminalBalance, _tokenAmountToCashOut, _beneficiaryTokenBalance),
+            _metadata.cashOutTaxRate
                 + mulDiv(
-                    _tokenAmountToRedeem,
-                    JBConstants.MAX_REDEMPTION_RATE - _metadata.redemptionRate,
+                    _tokenAmountToCashOut,
+                    JBConstants.MAX_CASH_OUT_TAX_RATE - _metadata.cashOutTaxRate,
                     _beneficiaryTokenBalance
                 ),
-            JBConstants.MAX_REDEMPTION_RATE
+            JBConstants.MAX_CASH_OUT_TAX_RATE
         );
 
         // Compute the fee taken.
-        uint256 _fee = _grossRedeemed - mulDiv(_grossRedeemed, 1_000_000_000, 25_000_000 + 1_000_000_000); // 2.5% fee
+        uint256 _fee = _grossCashedOut - mulDiv(_grossCashedOut, 1_000_000_000, 25_000_000 + 1_000_000_000); // 2.5% fee
 
         // Compute the net amount received, still in project.
-        uint256 _netReceived = _grossRedeemed - _fee;
+        uint256 _netReceived = _grossCashedOut - _fee;
 
         // Make sure the correct amount was returned (2 wei precision).
         assertApproxEqAbs(_nativeReclaimAmt, _netReceived, 2, "incorrect amount returned");
@@ -157,7 +157,7 @@ contract TestRedeem_Local is TestBaseWorkflow {
         // Make sure the beneficiary has correct amount of tokens.
         assertEq(
             _tokens.totalBalanceOf(_beneficiary, _projectId),
-            _beneficiaryTokenBalance - _tokenAmountToRedeem,
+            _beneficiaryTokenBalance - _tokenAmountToCashOut,
             "incorrect beneficiary balance"
         );
 

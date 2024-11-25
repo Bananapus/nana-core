@@ -4,8 +4,8 @@ pragma solidity ^0.8.6;
 import /* {*} from */ "./helpers/TestBaseWorkflow.sol";
 
 // Project can issue token, receive payments in exchange for tokens, burn some of the claimed tokens, and allow holders
-// to redeem rest of tokens.
-contract TestPayBurnRedeemFlow_Local is TestBaseWorkflow {
+// to cash out the rest of tokens.
+contract TestPayBurnCashOutFlow_Local is TestBaseWorkflow {
     IJBController private _controller;
     IJBMultiTerminal private _terminal;
     JBTokens private _tokens;
@@ -26,7 +26,7 @@ contract TestPayBurnRedeemFlow_Local is TestBaseWorkflow {
         _weight = 1000 * 10 ** 18;
         _metadata = JBRulesetMetadata({
             reservedPercent: 0,
-            redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
+            cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
@@ -39,9 +39,9 @@ contract TestPayBurnRedeemFlow_Local is TestBaseWorkflow {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: false,
+            useTotalSurplusForCashOuts: false,
             useDataHookForPay: false,
-            useDataHookForRedeem: false,
+            useDataHookForCashOut: false,
             dataHook: address(0),
             metadata: 0
         });
@@ -89,10 +89,10 @@ contract TestPayBurnRedeemFlow_Local is TestBaseWorkflow {
         });
     }
 
-    function testFuzzPayBurnRedeemFlow(
+    function testFuzzPayBurnCashOutFlow(
         uint112 _nativePayAmount,
         uint256 _burnTokenAmount,
-        uint256 _redeemTokenAmount
+        uint256 _cashOutAmount
     )
         external
     {
@@ -149,25 +149,25 @@ contract TestPayBurnRedeemFlow_Local is TestBaseWorkflow {
         // Make sure the beneficiary should has a new balance of project tokens.
         assertEq(_tokens.totalBalanceOf(_beneficiary, _projectId), _beneficiaryTokenBalance);
 
-        // Redeem tokens.
-        if (_redeemTokenAmount > _beneficiaryTokenBalance) {
+        // Cash out tokens.
+        if (_cashOutAmount > _beneficiaryTokenBalance) {
             vm.expectRevert(
                 abi.encodeWithSelector(
                     JBTerminalStore.JBTerminalStore_InsufficientTokens.selector,
-                    _redeemTokenAmount,
+                    _cashOutAmount,
                     _beneficiaryTokenBalance
                 )
             );
         } else {
-            _beneficiaryTokenBalance -= _redeemTokenAmount;
+            _beneficiaryTokenBalance -= _cashOutAmount;
         }
 
         vm.prank(_beneficiary);
-        uint256 _reclaimAmt = _terminal.redeemTokensOf({
+        uint256 _reclaimAmt = _terminal.cashOutTokensOf({
             holder: _beneficiary,
             projectId: _projectId,
             tokenToReclaim: JBConstants.NATIVE_TOKEN, // Unused.
-            redeemCount: _redeemTokenAmount,
+            cashOutCount: _cashOutAmount,
             minTokensReclaimed: 0,
             beneficiary: payable(_beneficiary),
             metadata: new bytes(0)

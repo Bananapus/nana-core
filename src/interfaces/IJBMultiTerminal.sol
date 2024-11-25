@@ -6,14 +6,14 @@ import {IJBFeeTerminal} from "./IJBFeeTerminal.sol";
 import {IJBPayoutTerminal} from "./IJBPayoutTerminal.sol";
 import {IJBPermitTerminal} from "./IJBPermitTerminal.sol";
 import {IJBProjects} from "./IJBProjects.sol";
-import {IJBRedeemTerminal} from "./IJBRedeemTerminal.sol";
+import {IJBCashOutTerminal} from "./IJBCashOutTerminal.sol";
 import {IJBRulesets} from "./IJBRulesets.sol";
 import {IJBSplits} from "./IJBSplits.sol";
 import {IJBTerminal} from "./IJBTerminal.sol";
 import {IJBTerminalStore} from "./IJBTerminalStore.sol";
 import {IJBTokens} from "./IJBTokens.sol";
 
-interface IJBMultiTerminal is IJBTerminal, IJBFeeTerminal, IJBRedeemTerminal, IJBPayoutTerminal, IJBPermitTerminal {
+interface IJBMultiTerminal is IJBTerminal, IJBFeeTerminal, IJBPayoutTerminal, IJBPermitTerminal, IJBCashOutTerminal {
     function DIRECTORY() external view returns (IJBDirectory);
     function PROJECTS() external view returns (IJBProjects);
     function RULESETS() external view returns (IJBRulesets);

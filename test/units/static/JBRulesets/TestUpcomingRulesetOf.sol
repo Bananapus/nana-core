@@ -25,7 +25,7 @@ contract TestUpcomingOf_Local is JBRulesetsSetup {
         // Params for tests
         _metadata = JBRulesetMetadata({
             reservedPercent: 0,
-            redemptionRate: 0,
+            cashOutTaxRate: 0,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
@@ -38,9 +38,9 @@ contract TestUpcomingOf_Local is JBRulesetsSetup {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: false,
+            useTotalSurplusForCashOuts: false,
             useDataHookForPay: false,
-            useDataHookForRedeem: false,
+            useDataHookForCashOut: false,
             dataHook: address(0),
             metadata: 0
         });
@@ -48,7 +48,7 @@ contract TestUpcomingOf_Local is JBRulesetsSetup {
         // Params for tests
         _metadataWithApprovalHook = JBRulesetMetadata({
             reservedPercent: 0,
-            redemptionRate: 0,
+            cashOutTaxRate: 0,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
@@ -61,9 +61,9 @@ contract TestUpcomingOf_Local is JBRulesetsSetup {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: false,
+            useTotalSurplusForCashOuts: false,
             useDataHookForPay: false,
-            useDataHookForRedeem: false,
+            useDataHookForCashOut: false,
             dataHook: address(0),
             metadata: 0
         });

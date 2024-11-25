@@ -30,7 +30,7 @@ contract TestPayHooks_Local is TestBaseWorkflow {
 
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: 0,
-            redemptionRate: 0,
+            cashOutTaxRate: 0,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
@@ -43,9 +43,9 @@ contract TestPayHooks_Local is TestBaseWorkflow {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: false,
+            useTotalSurplusForCashOuts: false,
             useDataHookForPay: true,
-            useDataHookForRedeem: true,
+            useDataHookForCashOut: true,
             dataHook: _DATA_HOOK,
             metadata: 0
         });
