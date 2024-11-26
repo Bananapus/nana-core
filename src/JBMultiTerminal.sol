@@ -95,9 +95,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @notice The number of seconds fees can be held for.
     uint256 internal constant _FEE_HOLDING_SECONDS = 2_419_200; // 28 days
 
-    /// @notice The maximum number of held fee entries, to prevent DOS.
-    uint256 internal constant _MAX_AUTO_PROCESSABLE_HELD_FEE_ENTRIES = 50;
-
     //*********************************************************************//
     // ---------------- public immutable stored properties --------------- //
     //*********************************************************************//
@@ -676,14 +673,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                 metadata: bytes("")
             });
         }
-
-        // Process any held fees.
-        _processHeldFeesOf({
-            projectId: projectId,
-            token: token,
-            count: _MAX_AUTO_PROCESSABLE_HELD_FEE_ENTRIES,
-            forced: true
-        });
     }
 
     /// @notice Pay a project with tokens.
