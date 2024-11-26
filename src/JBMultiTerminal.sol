@@ -737,7 +737,48 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @param token The token to process held fees for.
     /// @param count The number of fees to process.
     function processHeldFeesOf(uint256 projectId, address token, uint256 count) external override {
-        _processHeldFeesOf({projectId: projectId, token: token, count: count, forced: false});
+        // Keep a reference to the start index.
+        uint256 startIndex = _nextHeldFeeIndexOf[projectId][token];
+
+        // Get a reference to the project's held fees.
+        uint256 numberOfHeldFees = _heldFeesOf[projectId][token].length;
+
+        // If the start index is greater than or equal to the number of held fees, return.
+        if (startIndex >= numberOfHeldFees) return;
+
+        // Keep a reference to the terminal that'll receive the fees.
+        IJBTerminal feeTerminal = DIRECTORY.primaryTerminalOf({projectId: _FEE_BENEFICIARY_PROJECT_ID, token: token});
+
+        // Calculate the number of iterations to perform.
+        if (startIndex + count > numberOfHeldFees) count = numberOfHeldFees - startIndex;
+
+        // Process each fee.
+        for (uint256 i; i < count; i++) {
+            // Keep a reference to the held fee being iterated on.
+            JBFee memory heldFee = _heldFeesOf[projectId][token][startIndex + i];
+
+            // Can't process fees that aren't yet unlocked. Fees unlock sequentially in the array, so nothing left to do
+            // if the current fee isn't yet unlocked.
+            if (heldFee.unlockTimestamp > block.timestamp) {
+                // Restart at this index next time.
+                if (i > 0) _nextHeldFeeIndexOf[projectId][token] = startIndex + i;
+                return;
+            }
+
+            // Process the fee.
+            // slither-disable-next-line reentrancy-no-eth
+            _processFee({
+                projectId: projectId,
+                token: token,
+                amount: JBFees.feeAmountIn({amount: heldFee.amount, feePercent: FEE}),
+                beneficiary: heldFee.beneficiary,
+                feeTerminal: feeTerminal,
+                wasHeld: true
+            });
+        }
+
+        // Restart at the next fee next time.
+        _nextHeldFeeIndexOf[projectId][token] = startIndex + count;
     }
 
     /// @notice Holders can redeem a project's tokens to reclaim some of that project's surplus tokens, or to trigger
@@ -1395,56 +1436,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
             _recordAddedBalanceFor({projectId: projectId, token: token, amount: amount});
         }
-    }
-
-    /// @notice Process any fees that are being held for the project.
-    /// @param projectId The ID of the project to process held fees for.
-    /// @param token The token to process held fees for.
-    /// @param count The number of fees to process.
-    /// @param forced If locked held fees should be force processed.
-    function _processHeldFeesOf(uint256 projectId, address token, uint256 count, bool forced) internal {
-        // Keep a reference to the start index.
-        uint256 startIndex = _nextHeldFeeIndexOf[projectId][token];
-
-        // Get a reference to the project's held fees.
-        uint256 numberOfHeldFees = _heldFeesOf[projectId][token].length;
-
-        // If the start index is greater than or equal to the number of held fees, return.
-        if (startIndex >= numberOfHeldFees) return;
-
-        // Keep a reference to the terminal that'll receive the fees.
-        IJBTerminal feeTerminal = DIRECTORY.primaryTerminalOf({projectId: _FEE_BENEFICIARY_PROJECT_ID, token: token});
-
-        // Calculate the number of iterations to perform.
-        if (startIndex + count > numberOfHeldFees) count = numberOfHeldFees - startIndex;
-
-        // Process each fee.
-        for (uint256 i; i < count; i++) {
-            // Keep a reference to the held fee being iterated on.
-            JBFee memory heldFee = _heldFeesOf[projectId][token][startIndex + i];
-
-            // Can't process fees that aren't yet unlocked. Fees unlock sequentially in the array, so nothing left to do
-            // if the current fee isn't yet unlocked.
-            if (!forced && heldFee.unlockTimestamp > block.timestamp) {
-                // Restart at this index next time.
-                if (i > 0) _nextHeldFeeIndexOf[projectId][token] = startIndex + i;
-                return;
-            }
-
-            // Process the fee.
-            // slither-disable-next-line reentrancy-no-eth
-            _processFee({
-                projectId: projectId,
-                token: token,
-                amount: JBFees.feeAmountIn({amount: heldFee.amount, feePercent: FEE}),
-                beneficiary: heldFee.beneficiary,
-                feeTerminal: feeTerminal,
-                wasHeld: true
-            });
-        }
-
-        // Restart at the next fee next time.
-        _nextHeldFeeIndexOf[projectId][token] = startIndex + count;
     }
 
     /// @notice Records an added balance for a project.
