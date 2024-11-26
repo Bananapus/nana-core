@@ -437,7 +437,6 @@ contract TestFees_Local is TestBaseWorkflow {
         assertEq(_emptyFee.length, 0);
     }
 
-
     function testHeldFeeUnlockTooSoon() public {
         // Setup: Pay so we have balance to use
         _terminal.pay{value: _nativePayAmount}({
