@@ -1438,7 +1438,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             // if the current fee isn't yet unlocked.
             if (!forced && heldFee.unlockTimestamp > block.timestamp) {
                 // Restart at this index next time.
-                _nextHeldFeeIndexOf[projectId][token] = startIndex + i;
+                if (i > 0) _nextHeldFeeIndexOf[projectId][token] = startIndex + i;
                 return;
             }
 
@@ -1455,7 +1455,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         }
 
         // Restart at the next fee next time.
-        _nextHeldFeeIndexOf[projectId][token] = startIndex + count + 1;
+        _nextHeldFeeIndexOf[projectId][token] = startIndex + count;
     }
 
     /// @notice Records an added balance for a project.
