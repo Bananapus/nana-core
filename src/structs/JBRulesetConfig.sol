@@ -16,7 +16,8 @@ import {JBSplitGroup} from "./JBSplitGroup.sol";
 /// @custom:member weight A fixed point number with 18 decimals that contracts can use to base arbitrary calculations
 /// on. For example, payment terminals can use this to determine how many tokens should be minted when a payment is
 /// received.
-/// @custom:member weightCutPercent A percent by how much the `weight` of the subsequent ruleset should be reduced, if the
+/// @custom:member weightCutPercent A percent by how much the `weight` of the subsequent ruleset should be reduced, if
+/// the
 /// project owner hasn't queued the subsequent ruleset with an explicit `weight`. If it's 0, each ruleset will have
 /// equal weight. If the number is 90%, the next ruleset will have a 10% smaller weight. This weight is out of
 /// `JBConstants.MAX_WEIGHT_CUT_PERCENT`.

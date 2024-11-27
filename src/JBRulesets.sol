@@ -488,8 +488,11 @@ contract JBRulesets is JBControlled, IJBRulesets {
         for (uint256 i; i < weightCutMultiple; i++) {
             // The number of times to apply the weight cut percent.
             // Base the new weight on the specified ruleset's weight.
-            weight =
-                mulDiv(weight, JBConstants.MAX_WEIGHT_CUT_PERCENT - baseRulesetWeightCutPercent, JBConstants.MAX_WEIGHT_CUT_PERCENT);
+            weight = mulDiv(
+                weight,
+                JBConstants.MAX_WEIGHT_CUT_PERCENT - baseRulesetWeightCutPercent,
+                JBConstants.MAX_WEIGHT_CUT_PERCENT
+            );
 
             // The calculation doesn't need to continue if the weight is 0.
             if (weight == 0) break;
@@ -741,11 +744,13 @@ contract JBRulesets is JBControlled, IJBRulesets {
     /// (except for a new `start` timestamp and a cut `weight`).
     /// @param weight A fixed point number with 18 decimals that contracts can use to base arbitrary calculations on.
     /// Payment terminals generally use this to determine how many tokens should be minted when the project is paid.
-    /// @param weightCutPercent A fraction (out of `JBConstants.MAX_WEIGHT_CUT_PERCENT`) to reduce the next ruleset's `weight`
+    /// @param weightCutPercent A fraction (out of `JBConstants.MAX_WEIGHT_CUT_PERCENT`) to reduce the next ruleset's
+    /// `weight`
     /// by.
     /// - If a ruleset specifies a non-zero `weight`, the `weightCutPercent` does not apply.
     /// - If the `weightCutPercent` is 0, the `weight` stays the same.
-    /// - If the `weightCutPercent` is 10% of `JBConstants.MAX_WEIGHT_CUT_PERCENT`, next ruleset's `weight` will be 90% of the
+    /// - If the `weightCutPercent` is 10% of `JBConstants.MAX_WEIGHT_CUT_PERCENT`, next ruleset's `weight` will be 90%
+    /// of the
     /// current
     /// one.
     /// @param approvalHook A contract which dictates whether a proposed ruleset should be accepted or rejected. It can
