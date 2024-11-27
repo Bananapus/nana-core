@@ -86,7 +86,7 @@ contract TestLaunchRulesetsFor_Local is JBControllerSetup {
         _rulesetConfigs[0].mustStartAtOrAfter = 0;
         _rulesetConfigs[0].duration = 0;
         _rulesetConfigs[0].weight = 0;
-        _rulesetConfigs[0].decayPercent = 0;
+        _rulesetConfigs[0].weightCutPercent = 0;
         _rulesetConfigs[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfigs[0].metadata = _metadata;
         _rulesetConfigs[0].splitGroups = new JBSplitGroup[](0);
@@ -157,7 +157,7 @@ contract TestLaunchRulesetsFor_Local is JBControllerSetup {
             start: _ts,
             duration: 0,
             weight: 0,
-            decayPercent: 0,
+            weightCutPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: 0
         });
@@ -277,7 +277,7 @@ contract TestLaunchRulesetsFor_Local is JBControllerSetup {
             start: _ts,
             duration: 0,
             weight: 0,
-            decayPercent: 0,
+            weightCutPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: 0
         });

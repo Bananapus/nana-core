@@ -14,14 +14,14 @@ interface IJBRulesets {
         uint256 indexed projectId,
         uint256 duration,
         uint256 weight,
-        uint256 decayPercent,
+        uint256 weightCutPercent,
         IJBRulesetApprovalHook approvalHook,
         uint256 metadata,
         uint256 mustStartAtOrAfter,
         address caller
     );
 
-    event WeightCacheUpdated(uint256 projectId, uint112 weight, uint256 decayMultiple, address caller);
+    event WeightCacheUpdated(uint256 projectId, uint112 weight, uint256 weightCutMultiple, address caller);
 
     function latestRulesetIdOf(uint256 projectId) external view returns (uint256);
 
@@ -48,7 +48,7 @@ interface IJBRulesets {
         uint256 baseRulesetStart,
         uint256 baseRulesetDuration,
         uint256 baseRulesetWeight,
-        uint256 baseRulesetDecayPercent,
+        uint256 baseRulesetWeightCutPercent,
         uint256 baseRulesetCacheId,
         uint256 start
     )
@@ -74,7 +74,7 @@ interface IJBRulesets {
         uint256 projectId,
         uint256 duration,
         uint256 weight,
-        uint256 decayPercent,
+        uint256 weightCutPercent,
         IJBRulesetApprovalHook approvalHook,
         uint256 metadata,
         uint256 mustStartAtOrAfter

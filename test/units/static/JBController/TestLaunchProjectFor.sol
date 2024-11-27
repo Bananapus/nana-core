@@ -74,7 +74,7 @@ contract TestLaunchProjectFor_Local is JBControllerSetup {
         _rulesetConfigurations[0].mustStartAtOrAfter = 0;
         _rulesetConfigurations[0].duration = 0;
         _rulesetConfigurations[0].weight = 1e18;
-        _rulesetConfigurations[0].decayPercent = 0;
+        _rulesetConfigurations[0].weightCutPercent = 0;
         _rulesetConfigurations[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfigurations[0].metadata = _rulesMetadata;
         _rulesetConfigurations[0].splitGroups = new JBSplitGroup[](0);
@@ -123,7 +123,7 @@ contract TestLaunchProjectFor_Local is JBControllerSetup {
         _rulesetConfigurations[0].mustStartAtOrAfter = 0;
         _rulesetConfigurations[0].duration = 0;
         _rulesetConfigurations[0].weight = 1e18;
-        _rulesetConfigurations[0].decayPercent = 0;
+        _rulesetConfigurations[0].weightCutPercent = 0;
         _rulesetConfigurations[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfigurations[0].metadata = _rulesMetadata;
         _rulesetConfigurations[0].splitGroups = new JBSplitGroup[](0);
@@ -189,7 +189,7 @@ contract TestLaunchProjectFor_Local is JBControllerSetup {
         _rulesetConfigurations[0].mustStartAtOrAfter = 0;
         _rulesetConfigurations[0].duration = 0;
         _rulesetConfigurations[0].weight = 1e18;
-        _rulesetConfigurations[0].decayPercent = 0;
+        _rulesetConfigurations[0].weightCutPercent = 0;
         _rulesetConfigurations[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfigurations[0].metadata = _rulesMetadata;
         _rulesetConfigurations[0].splitGroups = _splitsGroup;
@@ -203,7 +203,7 @@ contract TestLaunchProjectFor_Local is JBControllerSetup {
             start: uint48(block.timestamp),
             duration: _rulesetConfigurations[0].duration,
             weight: _rulesetConfigurations[0].weight,
-            decayPercent: _rulesetConfigurations[0].decayPercent,
+            weightCutPercent: _rulesetConfigurations[0].weightCutPercent,
             approvalHook: _rulesetConfigurations[0].approvalHook,
             metadata: _packed
         });
@@ -213,7 +213,7 @@ contract TestLaunchProjectFor_Local is JBControllerSetup {
                 1,
                 _rulesetConfigurations[0].duration,
                 _rulesetConfigurations[0].weight,
-                _rulesetConfigurations[0].decayPercent,
+                _rulesetConfigurations[0].weightCutPercent,
                 _rulesetConfigurations[0].approvalHook,
                 _packed,
                 _rulesetConfigurations[0].mustStartAtOrAfter

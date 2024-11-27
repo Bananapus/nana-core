@@ -53,7 +53,7 @@ contract TestAddAccountingContextsFor_Local is JBMultiTerminalSetup {
             start: 0,
             duration: 0,
             weight: 0,
-            decayPercent: 0,
+            weightCutPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: 0
         });
@@ -89,7 +89,7 @@ contract TestAddAccountingContextsFor_Local is JBMultiTerminalSetup {
             start: 0,
             duration: 0,
             weight: 0,
-            decayPercent: 0,
+            weightCutPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: 0
         });
@@ -132,7 +132,7 @@ contract TestAddAccountingContextsFor_Local is JBMultiTerminalSetup {
             start: 0,
             duration: 0,
             weight: 0,
-            decayPercent: 0,
+            weightCutPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: 0
         });
@@ -177,7 +177,7 @@ contract TestAddAccountingContextsFor_Local is JBMultiTerminalSetup {
             start: 0,
             duration: 0,
             weight: 0,
-            decayPercent: 0,
+            weightCutPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: 0
         });
