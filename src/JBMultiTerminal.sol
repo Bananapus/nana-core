@@ -143,6 +143,11 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @custom:param token The token that the fees are held in.
     mapping(uint256 projectId => mapping(address token => JBFee[])) internal _heldFeesOf;
 
+    /// @notice The next index to use when processing a next held fee.
+    /// @custom:param projectId The ID of the project that is holding fees.
+    /// @custom:param token The token that the fees are held in.
+    mapping(uint256 projectId => mapping(address token => uint256)) internal _nextHeldFeeIndexOf;
+
     //*********************************************************************//
     // -------------------------- constructor ---------------------------- //
     //*********************************************************************//
@@ -238,8 +243,35 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @dev Held fees can be processed at any time by this terminal's owner.
     /// @param projectId The ID of the project that is holding fees.
     /// @param token The token that the fees are held in.
-    function heldFeesOf(uint256 projectId, address token) external view override returns (JBFee[] memory) {
-        return _heldFeesOf[projectId][token];
+    function heldFeesOf(
+        uint256 projectId,
+        address token,
+        uint256 count
+    )
+        external
+        view
+        override
+        returns (JBFee[] memory heldFees)
+    {
+        // Keep a reference to the start index.
+        uint256 startIndex = _nextHeldFeeIndexOf[projectId][token];
+
+        // Get a reference to the number of held fees.
+        uint256 numberOfHeldFees = _heldFeesOf[projectId][token].length;
+
+        // If the start index is greater than or equal to the number of held fees, return 0.
+        if (startIndex >= numberOfHeldFees) return new JBFee[](0);
+
+        // If the start index plus the count is greater than the number of fees, set the count to the number of fees
+        if (startIndex + count > numberOfHeldFees) count = numberOfHeldFees - startIndex;
+
+        // Create a new array to hold the fees.
+        heldFees = new JBFee[](count);
+
+        // Copy the fees into the array.
+        for (uint256 i; i < count; i++) {
+            heldFees[i] = _heldFeesOf[projectId][token][startIndex + i];
+        }
     }
 
     //*********************************************************************//
@@ -641,9 +673,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                 metadata: bytes("")
             });
         }
-
-        // Process any held fees.
-        _processHeldFeesOf({projectId: projectId, token: token, forced: true});
     }
 
     /// @notice Pay a project with tokens.
@@ -706,8 +735,50 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @notice Process any fees that are being held for the project.
     /// @param projectId The ID of the project to process held fees for.
     /// @param token The token to process held fees for.
-    function processHeldFeesOf(uint256 projectId, address token) external override {
-        _processHeldFeesOf({projectId: projectId, token: token, forced: false});
+    /// @param count The number of fees to process.
+    function processHeldFeesOf(uint256 projectId, address token, uint256 count) external override {
+        // Keep a reference to the start index.
+        uint256 startIndex = _nextHeldFeeIndexOf[projectId][token];
+
+        // Get a reference to the project's held fees.
+        uint256 numberOfHeldFees = _heldFeesOf[projectId][token].length;
+
+        // If the start index is greater than or equal to the number of held fees, return.
+        if (startIndex >= numberOfHeldFees) return;
+
+        // Keep a reference to the terminal that'll receive the fees.
+        IJBTerminal feeTerminal = DIRECTORY.primaryTerminalOf({projectId: _FEE_BENEFICIARY_PROJECT_ID, token: token});
+
+        // Calculate the number of iterations to perform.
+        if (startIndex + count > numberOfHeldFees) count = numberOfHeldFees - startIndex;
+
+        // Process each fee.
+        for (uint256 i; i < count; i++) {
+            // Keep a reference to the held fee being iterated on.
+            JBFee memory heldFee = _heldFeesOf[projectId][token][startIndex + i];
+
+            // Can't process fees that aren't yet unlocked. Fees unlock sequentially in the array, so nothing left to do
+            // if the current fee isn't yet unlocked.
+            if (heldFee.unlockTimestamp > block.timestamp) {
+                // Restart at this index next time.
+                if (i > 0) _nextHeldFeeIndexOf[projectId][token] = startIndex + i;
+                return;
+            }
+
+            // Process the fee.
+            // slither-disable-next-line reentrancy-no-eth
+            _processFee({
+                projectId: projectId,
+                token: token,
+                amount: JBFees.feeAmountIn({amount: heldFee.amount, feePercent: FEE}),
+                beneficiary: heldFee.beneficiary,
+                feeTerminal: feeTerminal,
+                wasHeld: true
+            });
+        }
+
+        // Restart at the next fee next time.
+        _nextHeldFeeIndexOf[projectId][token] = startIndex + count;
     }
 
     /// @notice Holders can redeem a project's tokens to reclaim some of that project's surplus tokens, or to trigger
@@ -1367,45 +1438,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         }
     }
 
-    /// @notice Process any fees that are being held for the project.
-    /// @param projectId The ID of the project to process held fees for.
-    /// @param token The token to process held fees for.
-    /// @param forced If locked held fees should be force processed.
-    function _processHeldFeesOf(uint256 projectId, address token, bool forced) internal {
-        // Get a reference to the project's held fees.
-        JBFee[] memory heldFees = _heldFeesOf[projectId][token];
-
-        // Delete the held fees.
-        delete _heldFeesOf[projectId][token];
-
-        // Keep a reference to the terminal that'll receive the fees.
-        IJBTerminal feeTerminal = DIRECTORY.primaryTerminalOf({projectId: _FEE_BENEFICIARY_PROJECT_ID, token: token});
-
-        // Process each fee.
-        for (uint256 i; i < heldFees.length; i++) {
-            // Keep a reference to the held fee being iterated on.
-            JBFee memory heldFee = heldFees[i];
-
-            // Can't process fees that aren't yet unlocked.
-            if (!forced && heldFee.unlockTimestamp > block.timestamp) {
-                // Add the fee back to storage.
-                _heldFeesOf[projectId][token].push(heldFee);
-                continue;
-            }
-
-            // Process the fee.
-            // slither-disable-next-line reentrancy-no-eth
-            _processFee({
-                projectId: projectId,
-                token: token,
-                amount: JBFees.feeAmountIn({amount: heldFee.amount, feePercent: FEE}),
-                beneficiary: heldFee.beneficiary,
-                feeTerminal: feeTerminal,
-                wasHeld: true
-            });
-        }
-    }
-
     /// @notice Records an added balance for a project.
     /// @param projectId The ID of the project to record the added balance for.
     /// @param token The token to record the added balance for.
@@ -1558,53 +1590,63 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         internal
         returns (uint256 returnedFees)
     {
-        // Get a reference to the project's held fees.
-        JBFee[] memory heldFees = _heldFeesOf[projectId][token];
+        // Keep a reference to the start index.
+        uint256 startIndex = _nextHeldFeeIndexOf[projectId][token];
 
-        // Delete the current held fees.
-        delete _heldFeesOf[projectId][token];
+        // Get a reference to the project's held fees.
+        uint256 numberOfHeldFees = _heldFeesOf[projectId][token].length;
+
+        // If the start index is greater than or equal to the number of held fees, return 0.
+        if (startIndex >= numberOfHeldFees) return 0;
 
         // Get a reference to the leftover amount once all fees have been settled.
         uint256 leftoverAmount = amount;
 
+        // Keep a reference to the number of iterations to perform.
+        uint256 count = numberOfHeldFees - startIndex;
+
+        // Keep a reference to the new start index.
+        uint256 newStartIndex = startIndex;
+
         // Process each fee.
-        for (uint256 i; i < heldFees.length; i++) {
+        for (uint256 i; i < count; i++) {
             // Save the fee being iterated on.
-            JBFee memory heldFee = heldFees[i];
+            JBFee memory heldFee = _heldFeesOf[projectId][token][startIndex + i];
 
             // slither-disable-next-line incorrect-equality
             if (leftoverAmount == 0) {
-                _heldFeesOf[projectId][token].push(heldFee);
+                break;
             } else {
                 // Notice here we take `feeAmountIn` on the stored `.amount`.
                 uint256 feeAmount = JBFees.feeAmountIn({amount: heldFee.amount, feePercent: FEE});
 
                 // Keep a reference to the amount from which the fee was taken.
-                uint256 amountFromFee = heldFee.amount - feeAmount;
+                uint256 amountPaidOut = heldFee.amount - feeAmount;
 
-                if (leftoverAmount >= amountFromFee) {
+                if (leftoverAmount >= amountPaidOut) {
                     unchecked {
-                        leftoverAmount -= amountFromFee;
+                        leftoverAmount -= amountPaidOut;
                         returnedFees += feeAmount;
                     }
+
+                    // Move the start index forward to the held fee after the current one.
+                    newStartIndex = startIndex + i + 1;
                 } else {
                     // And here we overwrite with `feeAmountFrom` the `leftoverAmount`
                     feeAmount = JBFees.feeAmountFrom({amount: leftoverAmount, feePercent: FEE});
 
+                    // Get fee from `leftoverAmount`.
                     unchecked {
-                        _heldFeesOf[projectId][token].push(
-                            JBFee({
-                                amount: amountFromFee - leftoverAmount,
-                                beneficiary: heldFee.beneficiary,
-                                unlockTimestamp: heldFee.unlockTimestamp
-                            })
-                        );
+                        _heldFeesOf[projectId][token][startIndex + i].amount -= (leftoverAmount + feeAmount);
                         returnedFees += feeAmount;
                     }
                     leftoverAmount = 0;
                 }
             }
         }
+
+        // Update the next held fee index.
+        if (startIndex != newStartIndex) _nextHeldFeeIndexOf[projectId][token] = newStartIndex;
 
         emit ReturnHeldFees({
             projectId: projectId,
