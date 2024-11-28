@@ -165,14 +165,11 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         // Get the rulesets (without metadata).
         JBRuleset[] memory baseRulesets = RULESETS.allOf(projectId, startingId, size);
 
-        // Keep a reference to the number of rulesets.
-        uint256 numberOfRulesets = baseRulesets.length;
-
         // Initialize the array being returned.
-        rulesets = new JBRulesetWithMetadata[](numberOfRulesets);
+        rulesets = new JBRulesetWithMetadata[](baseRulesets.length);
 
         // Populate the array with rulesets AND their metadata.
-        for (uint256 i; i < numberOfRulesets; i++) {
+        for (uint256 i; i < baseRulesets.length; i++) {
             // Set the ruleset being iterated on.
             JBRuleset memory baseRuleset = baseRulesets[i];
 
@@ -1028,11 +1025,8 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         // Get a reference to the split group.
         JBSplit[] memory splits = SPLITS.splitsOf({projectId: projectId, rulesetId: rulesetId, groupId: groupId});
 
-        // Keep a reference to the number of splits being iterated on.
-        uint256 numberOfSplits = splits.length;
-
         // Send the tokens to the splits.
-        for (uint256 i; i < numberOfSplits; i++) {
+        for (uint256 i; i < splits.length; i++) {
             // Get a reference to the split being iterated on.
             JBSplit memory split = splits[i];
 

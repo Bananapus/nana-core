@@ -85,11 +85,8 @@ contract JBFundAccessLimits is JBControlled, IJBFundAccessLimits {
         // Get a reference to the packed payout limits.
         uint256[] memory data = _packedPayoutLimitsDataOf[projectId][rulesetId][terminal][token];
 
-        // Get a reference to the number of payout limits.
-        uint256 numberOfData = data.length;
-
         // Iterate through the stored packed values and return the value of the matching currency.
-        for (uint256 i; i < numberOfData; i++) {
+        for (uint256 i; i < data.length; i++) {
             // Set the data being iterated on.
             uint256 packedPayoutLimitData = data[i];
 
@@ -123,14 +120,11 @@ contract JBFundAccessLimits is JBControlled, IJBFundAccessLimits {
         // Get a reference to the packed payout limits.
         uint256[] memory packedPayoutLimitsData = _packedPayoutLimitsDataOf[projectId][rulesetId][terminal][token];
 
-        // Get a reference to the number of payout limits.
-        uint256 numberOfData = packedPayoutLimitsData.length;
-
         // Initialize the return array.
-        payoutLimits = new JBCurrencyAmount[](numberOfData);
+        payoutLimits = new JBCurrencyAmount[](packedPayoutLimitsData.length);
 
         // Iterate through the packed values and format the returned value.
-        for (uint256 i; i < numberOfData; i++) {
+        for (uint256 i; i < packedPayoutLimitsData.length; i++) {
             // Set the data being iterated on.
             uint256 packedPayoutLimitData = packedPayoutLimitsData[i];
 
@@ -167,11 +161,8 @@ contract JBFundAccessLimits is JBControlled, IJBFundAccessLimits {
         uint256[] memory packedSurplusAllowancesData =
             _packedSurplusAllowancesDataOf[projectId][rulesetId][terminal][token];
 
-        // Get a reference to the number of surplus allowances.
-        uint256 numberOfData = packedSurplusAllowancesData.length;
-
         // Iterate through the stored packed values and format the returned value.
-        for (uint256 i; i < numberOfData; i++) {
+        for (uint256 i; i < packedSurplusAllowancesData.length; i++) {
             // Set the data being iterated on.
             uint256 packedSurplusAllowanceData = packedSurplusAllowancesData[i];
 
@@ -207,14 +198,11 @@ contract JBFundAccessLimits is JBControlled, IJBFundAccessLimits {
         uint256[] memory packedSurplusAllowancesData =
             _packedSurplusAllowancesDataOf[projectId][rulesetId][terminal][token];
 
-        // Get a reference to the number of surplus allowances.
-        uint256 numberOfData = packedSurplusAllowancesData.length;
-
         // Initialize the return array.
-        surplusAllowances = new JBCurrencyAmount[](numberOfData);
+        surplusAllowances = new JBCurrencyAmount[](packedSurplusAllowancesData.length);
 
         // Iterate through the stored packed values and format the returned value.
-        for (uint256 i; i < numberOfData; i++) {
+        for (uint256 i; i < packedSurplusAllowancesData.length; i++) {
             // Set the data being iterated on.
             uint256 packedSurplusAllowanceData = packedSurplusAllowancesData[i];
 
@@ -247,19 +235,13 @@ contract JBFundAccessLimits is JBControlled, IJBFundAccessLimits {
         override
         onlyControllerOf(projectId)
     {
-        // Save the number of fund access limit groups.
-        uint256 numberOfFundAccessLimitGroups = fundAccessLimitGroups.length;
-
         // Set payout limits if there are any.
-        for (uint256 i; i < numberOfFundAccessLimitGroups; i++) {
+        for (uint256 i; i < fundAccessLimitGroups.length; i++) {
             // Set the limits being iterated on.
             JBFundAccessLimitGroup calldata fundAccessLimitGroup = fundAccessLimitGroups[i];
 
-            // Keep a reference to the number of payout limits.
-            uint256 numberOfPayoutLimits = fundAccessLimitGroup.payoutLimits.length;
-
             // Iterate through each payout limit to validate and store them.
-            for (uint256 j; j < numberOfPayoutLimits; j++) {
+            for (uint256 j; j < fundAccessLimitGroup.payoutLimits.length; j++) {
                 // Set the payout limit being iterated on.
                 JBCurrencyAmount calldata payoutLimit = fundAccessLimitGroup.payoutLimits[j];
 
@@ -276,11 +258,8 @@ contract JBFundAccessLimits is JBControlled, IJBFundAccessLimits {
                 }
             }
 
-            // Keep a reference to the number of surplus allowances.
-            uint256 numberOfSurplusAllowances = fundAccessLimitGroup.surplusAllowances.length;
-
             // Iterate through each surplus allowance to validate and store them.
-            for (uint256 j; j < numberOfSurplusAllowances; j++) {
+            for (uint256 j; j < fundAccessLimitGroup.surplusAllowances.length; j++) {
                 // Set the payout limit being iterated on.
                 JBCurrencyAmount calldata surplusAllowance = fundAccessLimitGroup.surplusAllowances[j];
 

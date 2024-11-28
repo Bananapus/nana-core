@@ -102,11 +102,8 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
         // Keep a reference to the project's terminals.
         IJBTerminal[] memory terminals = _terminalsOf[projectId];
 
-        // Keep a reference to the number of terminals the project has.
-        uint256 numberOfTerminals = terminals.length;
-
         // Return the first terminal which accepts the specified token.
-        for (uint256 i; i < numberOfTerminals; i++) {
+        for (uint256 i; i < terminals.length; i++) {
             // Keep a reference to the terminal being iterated on.
             IJBTerminal terminal = terminals[i];
 
@@ -140,11 +137,8 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
         // Keep a reference to the project's terminals.
         IJBTerminal[] memory terminals = _terminalsOf[projectId];
 
-        // Keep a reference to the number of terminals the project has.
-        uint256 numberOfTerminals = terminals.length;
-
         // Loop through and return true if the terminal is found.
-        for (uint256 i; i < numberOfTerminals; i++) {
+        for (uint256 i; i < terminals.length; i++) {
             if (terminals[i] == terminal) return true;
         }
 

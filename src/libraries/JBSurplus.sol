@@ -24,11 +24,8 @@ library JBSurplus {
         view
         returns (uint256 surplus)
     {
-        // Keep a reference to the number of termainls.
-        uint256 numberOfTerminals = terminals.length;
-
         // Add the current surplus for each terminal.
-        for (uint256 i; i < numberOfTerminals; i++) {
+        for (uint256 i; i < terminals.length; i++) {
             surplus += terminals[i].currentSurplusOf(projectId, decimals, currency);
         }
     }

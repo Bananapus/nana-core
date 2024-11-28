@@ -166,10 +166,7 @@ contract JBSplits is JBControlled, IJBSplits {
     /// @param lockedSplit The locked split.
     /// @return A flag indicating if the `lockedSplit` is contained in the `splits`.
     function _includesLockedSplits(JBSplit[] memory splits, JBSplit memory lockedSplit) internal pure returns (bool) {
-        // Keep a reference to the number of splits.
-        uint256 numberOfSplits = splits.length;
-
-        for (uint256 i; i < numberOfSplits; i++) {
+        for (uint256 i; i < splits.length; i++) {
             // Set the split being iterated on.
             JBSplit memory split = splits[i];
 
@@ -232,11 +229,8 @@ contract JBSplits is JBControlled, IJBSplits {
         // Get a reference to the current split structs within the project, ruleset, and group.
         JBSplit[] memory currentSplits = _getStructsFor(projectId, rulesetId, groupId);
 
-        // Keep a reference to the current number of splits within the group.
-        uint256 numberOfCurrentSplits = currentSplits.length;
-
         // Check to see if all locked splits are included in the array of splits which is being set.
-        for (uint256 i; i < numberOfCurrentSplits; i++) {
+        for (uint256 i; i < currentSplits.length; i++) {
             // If not locked, continue.
             if (block.timestamp < currentSplits[i].lockedUntil && !_includesLockedSplits(splits, currentSplits[i])) {
                 revert JBSplits_PreviousLockedSplitsNotIncluded();
@@ -246,10 +240,7 @@ contract JBSplits is JBControlled, IJBSplits {
         // Add up all the `percent`s to make sure their total is under 100%.
         uint256 percentTotal;
 
-        // Keep a reference to the number of splits to set.
-        uint256 numberOfSplits = splits.length;
-
-        for (uint256 i; i < numberOfSplits; i++) {
+        for (uint256 i; i < splits.length; i++) {
             // Set the split being iterated on.
             JBSplit memory split = splits[i];
 

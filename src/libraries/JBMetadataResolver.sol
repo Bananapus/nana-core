@@ -165,12 +165,9 @@ library JBMetadataResolver {
         // ... and after the id/offset lookup table, rounding up to 32 bytes words if not a multiple
         offset += ((ids.length * JBMetadataResolver.TOTAL_ID_SIZE) - 1) / JBMetadataResolver.WORD_SIZE + 1;
 
-        // Keep a reference to the number of ids.
-        uint256 numberOfIds = ids.length;
-
         // For each id, add it to the lookup table with the next free offset, then increment the offset by the data
         // length (rounded up)
-        for (uint256 i; i < numberOfIds; ++i) {
+        for (uint256 i; i < ids.length; ++i) {
             // Set the data being iterated on.
             bytes memory data = datas[i];
 
@@ -193,11 +190,8 @@ library JBMetadataResolver {
             mstore(metadata, paddedLength)
         }
 
-        // Keep a reference to the number of datas.
-        uint256 numberOfDatas = datas.length;
-
         // Add each metadata to the array, each padded to 32 bytes
-        for (uint256 i; i < numberOfDatas; i++) {
+        for (uint256 i; i < datas.length; i++) {
             metadata = abi.encodePacked(metadata, datas[i]);
             paddedLength = metadata.length % JBMetadataResolver.WORD_SIZE == 0
                 ? metadata.length
