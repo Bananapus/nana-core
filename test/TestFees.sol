@@ -301,10 +301,139 @@ contract TestFees_Local is TestBaseWorkflow {
         vm.warp(block.timestamp + 2_419_200);
 
         // Send: Process the fees
-        _terminal.processHeldFeesOf(_projectId, JBConstants.NATIVE_TOKEN);
+        _terminal.processHeldFeesOf(_projectId, JBConstants.NATIVE_TOKEN, 100);
 
         // Check: Reflected in terminal
-        JBFee[] memory _emptyFee = _terminal.heldFeesOf(_projectId, JBConstants.NATIVE_TOKEN);
+        JBFee[] memory _emptyFee = _terminal.heldFeesOf(_projectId, JBConstants.NATIVE_TOKEN, 100);
+        assertEq(_emptyFee.length, 0);
+    }
+
+    function testDoubleHeldFeeUnlockAndProcess() public {
+        // Setup: Pay so we have balance to use.
+        _terminal.pay{value: _nativePayAmount}({
+            projectId: _projectId,
+            amount: _nativePayAmount,
+            token: JBConstants.NATIVE_TOKEN,
+            beneficiary: _beneficiary,
+            minReturnedTokens: 0,
+            memo: "",
+            metadata: new bytes(0)
+        });
+
+        // Half the dist limit to be able to use allowance twice.
+        uint256 _halfDistLimit = _nativeDistLimit / 2;
+
+        // Setup: use allowance so we incur a fee
+        vm.startPrank(_projectOwner);
+        _terminal.useAllowanceOf({
+            projectId: _projectId,
+            amount: _halfDistLimit,
+            currency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
+            token: JBConstants.NATIVE_TOKEN,
+            minTokensPaidOut: 0,
+            beneficiary: payable(_projectOwner),
+            feeBeneficiary: payable(_projectOwner),
+            memo: "MEMO"
+        });
+        // Setup: use allowance so we incur a fee
+        vm.startPrank(_projectOwner);
+        _terminal.useAllowanceOf({
+            projectId: _projectId,
+            amount: _halfDistLimit,
+            currency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
+            token: JBConstants.NATIVE_TOKEN,
+            minTokensPaidOut: 0,
+            beneficiary: payable(_projectOwner),
+            feeBeneficiary: payable(_projectOwner),
+            memo: "MEMO"
+        });
+
+        // Calculate the fee from the allowance use.
+        uint256 _feeAmount =
+            _halfDistLimit - _halfDistLimit * JBConstants.MAX_FEE / (_terminal.FEE() + JBConstants.MAX_FEE);
+
+        uint256 _afterFee = (_halfDistLimit - _feeAmount) * 2;
+
+        // Check: Owner balance is accurate (dist - fee) and fee is in the terminal (held but not processed)
+        assertEq(_projectOwner.balance, _afterFee);
+        assertEq(address(_terminal).balance, _nativeDistLimit + (_feeAmount * 2));
+
+        // Setup: fast-forward to when fees can be processed
+        vm.warp(block.timestamp + 2_419_200);
+
+        // Send: Process the fees
+        _terminal.processHeldFeesOf(_projectId, JBConstants.NATIVE_TOKEN, 2);
+
+        // Check: Reflected in terminal
+        JBFee[] memory _emptyFee = _terminal.heldFeesOf(_projectId, JBConstants.NATIVE_TOKEN, 100);
+        assertEq(_emptyFee.length, 0);
+    }
+
+    function testDoubleSequentialHeldFeeUnlockAndProcess() public {
+        // Setup: Pay so we have balance to use.
+        _terminal.pay{value: _nativePayAmount}({
+            projectId: _projectId,
+            amount: _nativePayAmount,
+            token: JBConstants.NATIVE_TOKEN,
+            beneficiary: _beneficiary,
+            minReturnedTokens: 0,
+            memo: "",
+            metadata: new bytes(0)
+        });
+
+        // Half the dist limit to be able to use allowance twice.
+        uint256 _halfDistLimit = _nativeDistLimit / 2;
+
+        // Setup: use allowance so we incur a fee
+        vm.startPrank(_projectOwner);
+        _terminal.useAllowanceOf({
+            projectId: _projectId,
+            amount: _halfDistLimit,
+            currency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
+            token: JBConstants.NATIVE_TOKEN,
+            minTokensPaidOut: 0,
+            beneficiary: payable(_projectOwner),
+            feeBeneficiary: payable(_projectOwner),
+            memo: "MEMO"
+        });
+        // Setup: use allowance so we incur a fee
+        vm.startPrank(_projectOwner);
+        _terminal.useAllowanceOf({
+            projectId: _projectId,
+            amount: _halfDistLimit,
+            currency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
+            token: JBConstants.NATIVE_TOKEN,
+            minTokensPaidOut: 0,
+            beneficiary: payable(_projectOwner),
+            feeBeneficiary: payable(_projectOwner),
+            memo: "MEMO"
+        });
+
+        // Calculate the fee from the allowance use.
+        uint256 _feeAmount =
+            _halfDistLimit - _halfDistLimit * JBConstants.MAX_FEE / (_terminal.FEE() + JBConstants.MAX_FEE);
+
+        uint256 _afterFee = (_halfDistLimit - _feeAmount) * 2;
+
+        // Check: Owner balance is accurate (dist - fee) and fee is in the terminal (held but not processed)
+        assertEq(_projectOwner.balance, _afterFee);
+        assertEq(address(_terminal).balance, _nativeDistLimit + (_feeAmount * 2));
+
+        // Setup: fast-forward to when fees can be processed
+        vm.warp(block.timestamp + 2_419_200);
+
+        // Send: Process the fees
+        _terminal.processHeldFeesOf(_projectId, JBConstants.NATIVE_TOKEN, 1);
+
+        // Check: Reflected in terminal
+        JBFee[] memory _oneFee = _terminal.heldFeesOf(_projectId, JBConstants.NATIVE_TOKEN, 100);
+        assertEq(_oneFee.length, 1);
+
+        // Send: Process the fees
+        _terminal.processHeldFeesOf(_projectId, JBConstants.NATIVE_TOKEN, 1);
+
+        // Check: Reflected in terminal
+        JBFee[] memory _emptyFee = _terminal.heldFeesOf(_projectId, JBConstants.NATIVE_TOKEN, 100);
         assertEq(_emptyFee.length, 0);
     }
 
@@ -344,17 +473,17 @@ contract TestFees_Local is TestBaseWorkflow {
         assertEq(address(_terminal).balance, _nativeDistLimit + _feeAmount);
 
         // Check: Heldfee unlock timestamp
-        JBFee[] memory _checkOgFee = _terminal.heldFeesOf(_projectId, JBConstants.NATIVE_TOKEN);
+        JBFee[] memory _checkOgFee = _terminal.heldFeesOf(_projectId, JBConstants.NATIVE_TOKEN, 100);
         assertEq(_checkOgFee[0].unlockTimestamp, block.timestamp + 2_419_200);
 
         // Setup: fast-forward to next block where fee shouldn't process (too early)
         vm.warp(block.timestamp + 1);
 
         // Send: Fail to process the fees
-        _terminal.processHeldFeesOf(_projectId, JBConstants.NATIVE_TOKEN);
+        _terminal.processHeldFeesOf(_projectId, JBConstants.NATIVE_TOKEN, 100);
 
         // Check: Fee persists in terminal
-        JBFee[] memory _persistingFee = _terminal.heldFeesOf(_projectId, JBConstants.NATIVE_TOKEN);
+        JBFee[] memory _persistingFee = _terminal.heldFeesOf(_projectId, JBConstants.NATIVE_TOKEN, 100);
 
         // Wher go fee..?
         assertEq(_persistingFee.length, 1);
@@ -411,7 +540,7 @@ contract TestFees_Local is TestBaseWorkflow {
         assertEq(address(_terminal).balance, _nativeDistLimit + _feeAmount);
 
         // Check the fee attributes
-        JBFee[] memory _checkOgFee = _terminal.heldFeesOf(_projectId, JBConstants.NATIVE_TOKEN);
+        JBFee[] memory _checkOgFee = _terminal.heldFeesOf(_projectId, JBConstants.NATIVE_TOKEN, 100);
 
         // Check the unlock timestamp
         assertEq(_checkOgFee[0].unlockTimestamp, block.timestamp + 2_419_200);
@@ -435,7 +564,7 @@ contract TestFees_Local is TestBaseWorkflow {
         uint256 feeProjectBalanceBefore = project1BalanceStore;
 
         // Process the held fees, which adds 1 ether 'amount' to the fee project.
-        _terminal.processHeldFeesOf(_projectId, JBConstants.NATIVE_TOKEN);
+        _terminal.processHeldFeesOf(_projectId, JBConstants.NATIVE_TOKEN, 100);
 
         // Reference the balance now (for the fee project).
         uint256 feeProjectBalanceAfter = jbTerminalStore().balanceOf(address(_terminal), 1, JBConstants.NATIVE_TOKEN);
