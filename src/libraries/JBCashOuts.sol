@@ -39,10 +39,9 @@ library JBCashOuts {
             return base;
         }
 
-        // TODO, im not convinced this is correct yet.
         return mulDiv(
             base,
-            (JBConstants.MAX_CASH_OUT_TAX_RATE - cashOutTaxRate) + mulDiv(cashOutTaxRate, cashOutCount, totalSupply),
+            (JBConstants.MAX_CASH_OUT_TAX_RATE -cashOutTaxRate) + mulDiv(cashOutTaxRate, cashOutCount, totalSupply),
             JBConstants.MAX_CASH_OUT_TAX_RATE
         );
     }
