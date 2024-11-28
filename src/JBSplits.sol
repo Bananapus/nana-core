@@ -291,6 +291,6 @@ contract JBSplits is JBControlled, IJBSplits {
         }
 
         // Store the number of splits for the project, ruleset, and group.
-        _splitCountOf[projectId][rulesetId][groupId] = numberOfSplits;
+        _splitCountOf[projectId][rulesetId][groupId] = splits.length;
     }
 }
