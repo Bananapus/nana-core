@@ -1417,10 +1417,10 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         STORE.recordAddedBalanceFor({projectId: projectId, token: token, amount: amount});
     }
 
-    /// @notice Holders can cash out their tokens to claim some of a project's surplus, or to trigger rules determined
+    /// @notice Holders can cash out their tokens to reclaim some of a project's surplus, or to trigger rules determined
     /// by
     /// the project's current ruleset's data hook.
-    /// @dev Only a token holder or a an operator with the `CASH_OUT_TOKENS` permission from that holder can cash out
+    /// @dev Only a token holder or an operator with the `CASH_OUT_TOKENS` permission from that holder can cash out
     /// those
     /// tokens.
     /// @param holder The account cashing out tokens.
@@ -1452,7 +1452,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // Keep a reference to the cash out tax rate being used.
         uint256 cashOutTaxRate;
 
-        // Keep a reference to the accounting context of the token being cashed out.
+        // Keep a reference to the accounting context of the token being reclaimed.
         JBAccountingContext memory accountingContext = _accountingContextForTokenOf[projectId][tokenToReclaim];
 
         // Scoped section prevents stack too deep.
