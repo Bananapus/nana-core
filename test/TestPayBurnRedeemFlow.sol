@@ -166,8 +166,8 @@ contract TestPayBurnCashOutFlow_Local is TestBaseWorkflow {
         uint256 _reclaimAmt = _terminal.cashOutTokensOf({
             holder: _beneficiary,
             projectId: _projectId,
-            tokenToReclaim: JBConstants.NATIVE_TOKEN, // Unused.
             cashOutCount: _cashOutAmount,
+            tokenToReclaim: JBConstants.NATIVE_TOKEN, // Unused.
             minTokensReclaimed: 0,
             beneficiary: payable(_beneficiary),
             metadata: new bytes(0)

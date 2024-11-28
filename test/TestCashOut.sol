@@ -124,8 +124,8 @@ contract TestCashOut_Local is TestBaseWorkflow {
         uint256 _nativeReclaimAmt = _terminal.cashOutTokensOf({
             holder: _beneficiary,
             projectId: _projectId,
-            tokenToReclaim: JBConstants.NATIVE_TOKEN,
             cashOutCount: _tokenAmountToCashOut,
+            tokenToReclaim: JBConstants.NATIVE_TOKEN,
             minTokensReclaimed: 0,
             beneficiary: payable(_beneficiary),
             metadata: new bytes(0)

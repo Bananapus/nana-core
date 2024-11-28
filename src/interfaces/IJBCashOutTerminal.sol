@@ -30,8 +30,8 @@ interface IJBCashOutTerminal is IJBTerminal {
     function cashOutTokensOf(
         address holder,
         uint256 projectId,
-        address tokenToReclaim,
         uint256 cashOutCount,
+        address tokenToReclaim,
         uint256 minTokensReclaimed,
         address payable beneficiary,
         bytes calldata metadata

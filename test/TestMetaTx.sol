@@ -189,8 +189,8 @@ contract TestMetaTx_Local is TestBaseWorkflow {
             IJBCashOutTerminal.cashOutTokensOf.selector,
             _signer,
             _projectId,
-            JBConstants.NATIVE_TOKEN,
             _beneficiaryTokenBalance,
+            JBConstants.NATIVE_TOKEN,
             0, // minReturnedTokens
             payable(_signer),
             "Gimme my money!", // memo

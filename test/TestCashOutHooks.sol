@@ -194,8 +194,8 @@ contract TestCashOutHooks_Local is TestBaseWorkflow {
         _terminal.cashOutTokensOf({
             holder: address(this),
             projectId: _projectId,
-            tokenToReclaim: JBConstants.NATIVE_TOKEN,
             cashOutCount: _beneficiaryTokenBalance / 2,
+            tokenToReclaim: JBConstants.NATIVE_TOKEN,
             minTokensReclaimed: 0,
             beneficiary: payable(address(this)),
             metadata: new bytes(0)
@@ -309,8 +309,8 @@ contract TestCashOutHooks_Local is TestBaseWorkflow {
         _terminal.cashOutTokensOf({
             holder: address(this),
             projectId: _projectId,
-            tokenToReclaim: JBConstants.NATIVE_TOKEN,
             cashOutCount: _beneficiaryTokenBalance / 2,
+            tokenToReclaim: JBConstants.NATIVE_TOKEN,
             minTokensReclaimed: 0,
             beneficiary: payable(address(this)),
             metadata: new bytes(0)

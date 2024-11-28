@@ -787,8 +787,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// those tokens.
     /// @param holder The account whose tokens are being cashed out.
     /// @param projectId The ID of the project the project tokens belong to.
-    /// @param tokenToReclaim The token being reclaimed.
     /// @param cashOutCount The number of project tokens to cash out, as a fixed point number with 18 decimals.
+    /// @param tokenToReclaim The token being reclaimed.
     /// @param minTokensReclaimed The minimum number of terminal tokens expected in return, as a fixed point number with
     /// the same number of decimals as this terminal. If the amount of tokens minted for the beneficiary would be less
     /// than this amount, the cash out is reverted.
@@ -802,8 +802,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     function cashOutTokensOf(
         address holder,
         uint256 projectId,
-        address tokenToReclaim,
         uint256 cashOutCount,
+        address tokenToReclaim,
         uint256 minTokensReclaimed,
         address payable beneficiary,
         bytes calldata metadata
@@ -818,8 +818,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         reclaimAmount = _cashOutTokensOf({
             holder: holder,
             projectId: projectId,
-            tokenToReclaim: tokenToReclaim,
             cashOutCount: cashOutCount,
+            tokenToReclaim: tokenToReclaim,
             beneficiary: beneficiary,
             metadata: metadata
         });
@@ -1457,8 +1457,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// tokens.
     /// @param holder The account cashing out tokens.
     /// @param projectId The ID of the project whose tokens are being cashed out.
-    /// @param tokenToReclaim The address of the token which is being cashed out.
     /// @param cashOutCount The number of project tokens to cash out, as a fixed point number with 18 decimals.
+    /// @param tokenToReclaim The address of the token which is being cashed out.
     /// @param beneficiary The address to send the reclaimed terminal tokens to.
     /// @param metadata Bytes to send along to the emitted event, as well as the data hook and cash out hook if
     /// applicable.
@@ -1467,8 +1467,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     function _cashOutTokensOf(
         address holder,
         uint256 projectId,
-        address tokenToReclaim,
         uint256 cashOutCount,
+        address tokenToReclaim,
         address payable beneficiary,
         bytes memory metadata
     )

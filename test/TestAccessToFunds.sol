@@ -247,8 +247,8 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
         _terminal.cashOutTokensOf({
             holder: _beneficiary,
             projectId: _projectId,
-            tokenToReclaim: JBConstants.NATIVE_TOKEN,
             cashOutCount: _beneficiaryTokenBalance,
+            tokenToReclaim: JBConstants.NATIVE_TOKEN,
             minTokensReclaimed: 0,
             beneficiary: payable(_beneficiary),
             metadata: new bytes(0)
@@ -530,8 +530,8 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
         _terminal.cashOutTokensOf({
             holder: _beneficiary,
             projectId: _projectId,
-            tokenToReclaim: JBConstants.NATIVE_TOKEN,
             cashOutCount: _beneficiaryTokenBalance,
+            tokenToReclaim: JBConstants.NATIVE_TOKEN,
             minTokensReclaimed: 0,
             beneficiary: payable(_beneficiary),
             metadata: new bytes(0)
@@ -801,8 +801,8 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
         _terminal.cashOutTokensOf({
             holder: _beneficiary,
             projectId: _projectId,
-            tokenToReclaim: JBConstants.NATIVE_TOKEN,
             cashOutCount: _beneficiaryTokenBalance,
+            tokenToReclaim: JBConstants.NATIVE_TOKEN,
             minTokensReclaimed: 0,
             beneficiary: payable(_beneficiary),
             metadata: new bytes(0)
@@ -1063,8 +1063,8 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
         _terminal.cashOutTokensOf({
             holder: _beneficiary,
             projectId: _projectId,
-            tokenToReclaim: JBConstants.NATIVE_TOKEN,
             cashOutCount: _beneficiaryTokenBalance,
+            tokenToReclaim: JBConstants.NATIVE_TOKEN,
             minTokensReclaimed: 0,
             beneficiary: payable(_beneficiary),
             metadata: new bytes(0)
@@ -1666,8 +1666,8 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                 _terminal.cashOutTokensOf({
                     holder: _beneficiary,
                     projectId: _projectId,
-                    tokenToReclaim: JBConstants.NATIVE_TOKEN,
                     cashOutCount: _tokenCountToCashOutForNative,
+                    tokenToReclaim: JBConstants.NATIVE_TOKEN,
                     minTokensReclaimed: 0,
                     beneficiary: payable(_beneficiary),
                     metadata: new bytes(0)
@@ -1678,8 +1678,8 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                 _terminal.cashOutTokensOf({
                     holder: _beneficiary,
                     projectId: _projectId,
-                    tokenToReclaim: address(_usdcToken),
                     cashOutCount: _beneficiaryTokenBalance - _tokenCountToCashOutForNative,
+                    tokenToReclaim: address(_usdcToken),
                     minTokensReclaimed: 0,
                     beneficiary: payable(_beneficiary),
                     metadata: new bytes(0)
@@ -1743,8 +1743,8 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                 _terminal.cashOutTokensOf({
                     holder: _beneficiary,
                     projectId: _projectId,
-                    tokenToReclaim: JBConstants.NATIVE_TOKEN,
                     cashOutCount: _beneficiaryTokenBalance,
+                    tokenToReclaim: JBConstants.NATIVE_TOKEN,
                     minTokensReclaimed: 0,
                     beneficiary: payable(_beneficiary),
                     metadata: new bytes(0)
@@ -1755,8 +1755,8 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             _terminal.cashOutTokensOf({
                 holder: _beneficiary,
                 projectId: _projectId,
-                tokenToReclaim: address(_usdcToken),
                 cashOutCount: _beneficiaryTokenBalance,
+                tokenToReclaim: address(_usdcToken),
                 minTokensReclaimed: 0,
                 beneficiary: payable(_beneficiary),
                 metadata: new bytes(0)
@@ -2319,8 +2319,8 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                     _terminal.cashOutTokensOf({
                         holder: _beneficiary,
                         projectId: _projectId,
-                        tokenToReclaim: JBConstants.NATIVE_TOKEN,
                         cashOutCount: _tokenCountToCashOutForNative,
+                        tokenToReclaim: JBConstants.NATIVE_TOKEN,
                         minTokensReclaimed: 0,
                         beneficiary: payable(_beneficiary),
                         metadata: new bytes(0)
@@ -2331,8 +2331,8 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                     _terminal2.cashOutTokensOf({
                         holder: _beneficiary,
                         projectId: _projectId,
-                        tokenToReclaim: address(_usdcToken),
                         cashOutCount: _beneficiaryTokenBalance - _tokenCountToCashOutForNative,
+                        tokenToReclaim: address(_usdcToken),
                         minTokensReclaimed: 0,
                         beneficiary: payable(_beneficiary),
                         metadata: new bytes(0)
@@ -2400,8 +2400,8 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                 _terminal.cashOutTokensOf({
                     holder: _beneficiary,
                     projectId: _projectId,
-                    tokenToReclaim: JBConstants.NATIVE_TOKEN,
                     cashOutCount: _beneficiaryTokenBalance,
+                    tokenToReclaim: JBConstants.NATIVE_TOKEN,
                     minTokensReclaimed: 0,
                     beneficiary: payable(_beneficiary),
                     metadata: new bytes(0)
@@ -2412,8 +2412,8 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             _terminal2.cashOutTokensOf({
                 holder: _beneficiary,
                 projectId: _projectId,
-                tokenToReclaim: address(_usdcToken),
                 cashOutCount: _beneficiaryTokenBalance,
+                tokenToReclaim: address(_usdcToken),
                 minTokensReclaimed: 0,
                 beneficiary: payable(_beneficiary),
                 metadata: new bytes(0)
