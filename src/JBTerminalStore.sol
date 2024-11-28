@@ -133,7 +133,7 @@ contract JBTerminalStore is IJBTerminalStore {
     /// @notice Returns the number of surplus terminal tokens that would be reclaimed by cashing out a given project's
     /// tokens based on its current ruleset and the given total project token supply and total terminal token surplus.
     /// @param projectId The ID of the project whose project tokens would be cashed out.
-    /// @param tokensCashedOut The number of project tokens that would be cashed out, as a fixed point number with 18
+    /// @param cashOutCount The number of project tokens that would be cashed out, as a fixed point number with 18
     /// decimals.
     /// @param totalSupply The total project token supply, as a fixed point number with 18 decimals.
     /// @param surplus The total terminal token surplus amount, as a fixed point number.
@@ -141,7 +141,7 @@ contract JBTerminalStore is IJBTerminalStore {
     /// number of decimals as the provided `surplus`.
     function currentReclaimableSurplusOf(
         uint256 projectId,
-        uint256 tokensCashedOut,
+        uint256 cashOutCount,
         uint256 totalSupply,
         uint256 surplus
     )
@@ -154,7 +154,7 @@ contract JBTerminalStore is IJBTerminalStore {
         if (surplus == 0) return 0;
 
         // Can't cash out more tokens than are in the total supply.
-        if (tokensCashedOut > totalSupply) return 0;
+        if (cashOutCount > totalSupply) return 0;
 
         // Get a reference to the project's current ruleset.
         JBRuleset memory ruleset = RULESETS.currentOf(projectId);
@@ -162,7 +162,7 @@ contract JBTerminalStore is IJBTerminalStore {
         // Return the amount of surplus terminal tokens that would be reclaimed.
         return JBCashOuts.cashOutFrom({
             surplus: surplus,
-            tokensCashedOut: tokensCashedOut,
+            cashOutCount: cashOutCount,
             totalSupply: totalSupply,
             cashOutTaxRate: ruleset.cashOutTaxRate()
         });
@@ -178,10 +178,10 @@ contract JBTerminalStore is IJBTerminalStore {
     /// @param accountingContexts The accounting contexts of the surplus terminal tokens that would be reclaimed
     /// @param decimals The number of decimals to include in the resulting fixed point number.
     /// @param currency The currency that the resulting number will be in terms of.
-    /// @param tokensCashedOut The number of tokens that would be cashed out, as a fixed point number with 18 decimals.
+    /// @param cashOutCount The number of tokens that would be cashed out, as a fixed point number with 18 decimals.
     /// @param useTotalSurplus Whether the total surplus should be summed across all of the project's terminals. If
     /// false, only the `terminal`'s surplus is used.
-    /// @return The amount of surplus terminal tokens that would be reclaimed by cashing out `tokensCashedOut`
+    /// @return The amount of surplus terminal tokens that would be reclaimed by cashing out `cashOutCount`
     /// tokens.
     function currentReclaimableSurplusOf(
         address terminal,
@@ -189,7 +189,7 @@ contract JBTerminalStore is IJBTerminalStore {
         JBAccountingContext[] calldata accountingContexts,
         uint256 decimals,
         uint256 currency,
-        uint256 tokensCashedOut,
+        uint256 cashOutCount,
         bool useTotalSurplus
     )
         external
@@ -220,12 +220,12 @@ contract JBTerminalStore is IJBTerminalStore {
             IJBController(address(DIRECTORY.controllerOf(projectId))).totalTokenSupplyWithReservedTokensOf(projectId);
 
         // Can't cash out more tokens than are in the total supply.
-        if (tokensCashedOut > totalSupply) return 0;
+        if (cashOutCount > totalSupply) return 0;
 
         // Return the amount of surplus terminal tokens that would be reclaimed.
         return JBCashOuts.cashOutFrom({
             surplus: currentSurplus,
-            tokensCashedOut: tokensCashedOut,
+            cashOutCount: cashOutCount,
             totalSupply: totalSupply,
             cashOutTaxRate: ruleset.cashOutTaxRate()
         });
@@ -746,7 +746,7 @@ contract JBTerminalStore is IJBTerminalStore {
             // Calculate reclaim amount using the current surplus amount.
             reclaimAmount = JBCashOuts.cashOutFrom({
                 surplus: currentSurplus,
-                tokensCashedOut: cashOutCount,
+                cashOutCount: cashOutCount,
                 totalSupply: totalSupply,
                 cashOutTaxRate: cashOutTaxRate
             });
