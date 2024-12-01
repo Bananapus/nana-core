@@ -215,7 +215,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @dev This total surplus only includes tokens that the project accepts (as returned by
     /// `accountingContextsOf(...)`).
     /// @param projectId The ID of the project to get the current total surplus of.
-    /// @param accountingContexts The accounting contexts to use to calculate the surplus.
+    /// @param accountingContexts The accounting contexts to use to calculate the surplus. Pass an empty array to use
+    /// all of the project's accounting contexts.
     /// @param decimals The number of decimals to include in the fixed point returned value.
     /// @param currency The currency to express the returned value in terms of.
     /// @return The current surplus amount the project has in this terminal, in terms of `currency` and with the
