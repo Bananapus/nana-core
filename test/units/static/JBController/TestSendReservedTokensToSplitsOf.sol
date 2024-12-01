@@ -55,7 +55,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
         _rulesetConfigurations[0].mustStartAtOrAfter = 0;
         _rulesetConfigurations[0].duration = 0;
         _rulesetConfigurations[0].weight = 1e18;
-        _rulesetConfigurations[0].decayPercent = 0;
+        _rulesetConfigurations[0].weightCutPercent = 0;
         _rulesetConfigurations[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfigurations[0].metadata = _rulesMetadata;
         _rulesetConfigurations[0].splitGroups = _splitsGroup;
@@ -123,7 +123,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
         _rulesetConfigurations[0].mustStartAtOrAfter = 0;
         _rulesetConfigurations[0].duration = 0;
         _rulesetConfigurations[0].weight = 1e18;
-        _rulesetConfigurations[0].decayPercent = 0;
+        _rulesetConfigurations[0].weightCutPercent = 0;
         _rulesetConfigurations[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfigurations[0].metadata = _rulesMetadata;
         _rulesetConfigurations[0].splitGroups = _splitsGroup;
@@ -137,7 +137,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
             start: uint48(block.timestamp),
             duration: _rulesetConfigurations[0].duration,
             weight: _rulesetConfigurations[0].weight,
-            decayPercent: _rulesetConfigurations[0].decayPercent,
+            weightCutPercent: _rulesetConfigurations[0].weightCutPercent,
             approvalHook: _rulesetConfigurations[0].approvalHook,
             metadata: _packed
         });
@@ -236,7 +236,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
         _rulesetConfigurations[0].mustStartAtOrAfter = 0;
         _rulesetConfigurations[0].duration = 0;
         _rulesetConfigurations[0].weight = 1e18;
-        _rulesetConfigurations[0].decayPercent = 0;
+        _rulesetConfigurations[0].weightCutPercent = 0;
         _rulesetConfigurations[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfigurations[0].metadata = _rulesMetadata;
         _rulesetConfigurations[0].splitGroups = _splitsGroup;
@@ -250,7 +250,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
             start: uint48(block.timestamp),
             duration: _rulesetConfigurations[0].duration,
             weight: _rulesetConfigurations[0].weight,
-            decayPercent: _rulesetConfigurations[0].decayPercent,
+            weightCutPercent: _rulesetConfigurations[0].weightCutPercent,
             approvalHook: _rulesetConfigurations[0].approvalHook,
             metadata: _packed
         });
@@ -330,7 +330,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
         _rulesetConfigurations[0].mustStartAtOrAfter = 0;
         _rulesetConfigurations[0].duration = 0;
         _rulesetConfigurations[0].weight = 1e18;
-        _rulesetConfigurations[0].decayPercent = 0;
+        _rulesetConfigurations[0].weightCutPercent = 0;
         _rulesetConfigurations[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfigurations[0].metadata = _rulesMetadata;
         _rulesetConfigurations[0].splitGroups = _splitsGroup;
@@ -344,7 +344,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
             start: uint48(block.timestamp),
             duration: _rulesetConfigurations[0].duration,
             weight: _rulesetConfigurations[0].weight,
-            decayPercent: _rulesetConfigurations[0].decayPercent,
+            weightCutPercent: _rulesetConfigurations[0].weightCutPercent,
             approvalHook: _rulesetConfigurations[0].approvalHook,
             metadata: _packed
         });
@@ -420,7 +420,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
         _rulesetConfigurations[0].mustStartAtOrAfter = 0;
         _rulesetConfigurations[0].duration = 0;
         _rulesetConfigurations[0].weight = 1e18;
-        _rulesetConfigurations[0].decayPercent = 0;
+        _rulesetConfigurations[0].weightCutPercent = 0;
         _rulesetConfigurations[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfigurations[0].metadata = _rulesMetadata;
         _rulesetConfigurations[0].splitGroups = _splitsGroup;
@@ -434,7 +434,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
             start: uint48(block.timestamp),
             duration: _rulesetConfigurations[0].duration,
             weight: _rulesetConfigurations[0].weight,
-            decayPercent: _rulesetConfigurations[0].decayPercent,
+            weightCutPercent: _rulesetConfigurations[0].weightCutPercent,
             approvalHook: _rulesetConfigurations[0].approvalHook,
             metadata: _packed
         });
@@ -529,7 +529,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
         _rulesetConfigurations[0].mustStartAtOrAfter = 0;
         _rulesetConfigurations[0].duration = 0;
         _rulesetConfigurations[0].weight = 1e18;
-        _rulesetConfigurations[0].decayPercent = 0;
+        _rulesetConfigurations[0].weightCutPercent = 0;
         _rulesetConfigurations[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfigurations[0].metadata = _rulesMetadata;
         _rulesetConfigurations[0].splitGroups = _splitsGroup;
@@ -543,7 +543,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
             start: uint48(block.timestamp),
             duration: _rulesetConfigurations[0].duration,
             weight: _rulesetConfigurations[0].weight,
-            decayPercent: _rulesetConfigurations[0].decayPercent,
+            weightCutPercent: _rulesetConfigurations[0].weightCutPercent,
             approvalHook: _rulesetConfigurations[0].approvalHook,
             metadata: _packed
         });

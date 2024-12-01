@@ -59,7 +59,7 @@ contract JBTest is Test {
             start: uint48(block.timestamp),
             duration: 10 days,
             weight: 0,
-            decayPercent: 0,
+            weightCutPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: packed
         });
@@ -97,7 +97,7 @@ contract JBTest is Test {
             start: uint48(block.timestamp),
             duration: 10 days,
             weight: 0,
-            decayPercent: 0,
+            weightCutPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: packed
         });

@@ -58,7 +58,7 @@ contract TestSetTokenFor_Local is JBControllerSetup {
             start: uint48(block.timestamp),
             duration: 8000,
             weight: 5000,
-            decayPercent: 0,
+            weightCutPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: _packedMetadata
         });
@@ -115,7 +115,7 @@ contract TestSetTokenFor_Local is JBControllerSetup {
             start: 0,
             duration: 0,
             weight: 0,
-            decayPercent: 0,
+            weightCutPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: 0
         });
@@ -127,7 +127,7 @@ contract TestSetTokenFor_Local is JBControllerSetup {
             start: uint48(block.timestamp),
             duration: 8000,
             weight: 5000,
-            decayPercent: 0,
+            weightCutPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: _packedMetadata
         });
@@ -184,7 +184,7 @@ contract TestSetTokenFor_Local is JBControllerSetup {
             start: uint48(block.timestamp),
             duration: 8000,
             weight: 5000,
-            decayPercent: 0,
+            weightCutPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: _packedMetadata
         });

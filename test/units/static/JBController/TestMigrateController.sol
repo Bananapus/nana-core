@@ -53,7 +53,7 @@ contract TestMigrateController_Local is JBControllerSetup {
             start: uint48(block.timestamp),
             duration: 0,
             weight: 0,
-            decayPercent: 0,
+            weightCutPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: _packedMetadata
         });
@@ -99,7 +99,7 @@ contract TestMigrateController_Local is JBControllerSetup {
             start: uint48(block.timestamp),
             duration: 0,
             weight: 0,
-            decayPercent: 0,
+            weightCutPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: _packedMetadata
         });

@@ -9,7 +9,7 @@ contract TestRulesetWeightCaching_Local is TestBaseWorkflow {
     uint256 private constant _GAS_LIMIT = 30_000_000;
     uint8 private constant _WEIGHT_DECIMALS = 18; // FIXED
     uint256 private constant _DURATION = 1;
-    uint256 private constant _DECAY_PERCENT = 1;
+    uint256 private constant _WEIGHT_CUT_PERCENT = 1;
 
     IJBController private _controller;
     IJBRulesets private _rulesets;
@@ -50,7 +50,7 @@ contract TestRulesetWeightCaching_Local is TestBaseWorkflow {
     /// Test that caching a ruleset's weight yields the same result as computing it.
     function testWeightCaching(uint256 _rulesetDiff) public {
         // TODO temporarily removed for faster test suite
-        // // Bound to 8x the decay multiple cache threshold.
+        // // Bound to 8x the weight cut multiple cache threshold.
         // _rulesetDiff = bound(_rulesetDiff, 0, 80000);
 
         // // Keep references to the projects.
@@ -64,7 +64,7 @@ contract TestRulesetWeightCaching_Local is TestBaseWorkflow {
         //     _rulesetConfigurations[0].mustStartAtOrAfter = 0;
         //     _rulesetConfigurations[0].duration = _DURATION;
         //     _rulesetConfigurations[0].weight = 1000 * 10 ** _WEIGHT_DECIMALS;
-        //     _rulesetConfigurations[0].decayPercent = _DECAY_PERCENT;
+        //     _rulesetConfigurations[0].weightCutPercent = _WEIGHT_CUT_PERCENT;
         //     _rulesetConfigurations[0].approvalHook = IJBRulesetApprovalHook(address(0));
         //     _rulesetConfigurations[0].metadata = _metadata;
         //     _rulesetConfigurations[0].splitGroups = new JBSplitGroup[](0);

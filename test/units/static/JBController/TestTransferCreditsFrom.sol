@@ -64,7 +64,7 @@ contract TestTransferCreditsFrom_Local is JBControllerSetup {
             start: uint48(block.timestamp),
             duration: 100,
             weight: 1e18,
-            decayPercent: 0,
+            weightCutPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: _packed
         });
@@ -120,7 +120,7 @@ contract TestTransferCreditsFrom_Local is JBControllerSetup {
             start: uint48(block.timestamp),
             duration: 100,
             weight: 1e18,
-            decayPercent: 0,
+            weightCutPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: _packed
         });

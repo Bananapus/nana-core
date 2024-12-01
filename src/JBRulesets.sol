@@ -23,7 +23,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
 
-    error JBRulesets_InvalidDecayPercent(uint256 percent);
+    error JBRulesets_InvalidWeightCutPercent(uint256 percent);
     error JBRulesets_InvalidRulesetApprovalHook(IJBRulesetApprovalHook hook);
     error JBRulesets_InvalidRulesetDuration(uint256 duration, uint256 limit);
     error JBRulesets_InvalidRulesetEndTime(uint256 timestamp, uint256 limit);
@@ -33,11 +33,11 @@ contract JBRulesets is JBControlled, IJBRulesets {
     // ------------------------- internal constants ----------------------- //
     //*********************************************************************//
 
-    /// @notice The number of decay percent multiples before a cached value is sought.
-    uint256 internal constant _DECAY_MULTIPLE_CACHE_LOOKUP_THRESHOLD = 1000;
+    /// @notice The number of weight cut percent multiples before a cached value is sought.
+    uint256 internal constant _WEIGHT_CUT_MULTIPLE_CACHE_LOOKUP_THRESHOLD = 1000;
 
-    /// @notice The maximum number of decay percent multiples that can be cached at a time.
-    uint256 internal constant _MAX_DECAY_MULTIPLE_CACHE_THRESHOLD = 50_000;
+    /// @notice The maximum number of weight cut percent multiples that can be cached at a time.
+    uint256 internal constant _MAX_WEIGHT_CUT_MULTIPLE_CACHE_THRESHOLD = 50_000;
 
     //*********************************************************************//
     // --------------------- public stored properties -------------------- //
@@ -426,7 +426,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
     /// @param baseRulesetStart The start time of the base ruleset.
     /// @param baseRulesetDuration The duration of the base ruleset.
     /// @param baseRulesetWeight The weight of the base ruleset.
-    /// @param baseRulesetDecayPercent The decay percent of the base ruleset.
+    /// @param baseRulesetWeightCutPercent The weight cut percent of the base ruleset.
     /// @param baseRulesetCacheId The ID of the ruleset to base the calculation on (the previous ruleset).
     /// @param start The start time of the ruleset to derive a weight for.
     /// @return weight The derived weight, as a fixed point number with 18 decimals.
@@ -435,7 +435,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
         uint256 baseRulesetStart,
         uint256 baseRulesetDuration,
         uint256 baseRulesetWeight,
-        uint256 baseRulesetDecayPercent,
+        uint256 baseRulesetWeightCutPercent,
         uint256 baseRulesetCacheId,
         uint256 start
     )
@@ -448,48 +448,51 @@ contract JBRulesets is JBControlled, IJBRulesets {
         if (baseRulesetDuration == 0) {
             return mulDiv(
                 baseRulesetWeight,
-                JBConstants.MAX_DECAY_PERCENT - baseRulesetDecayPercent,
-                JBConstants.MAX_DECAY_PERCENT
+                JBConstants.MAX_WEIGHT_CUT_PERCENT - baseRulesetWeightCutPercent,
+                JBConstants.MAX_WEIGHT_CUT_PERCENT
             );
         }
 
         // The weight should be based off the base ruleset's weight.
         weight = baseRulesetWeight;
 
-        // If the decay is 0, the weight doesn't change.
+        // If the weight cut percent is 0, the weight doesn't change.
         // slither-disable-next-line incorrect-equality
-        if (baseRulesetDecayPercent == 0) return weight;
+        if (baseRulesetWeightCutPercent == 0) return weight;
 
         // The difference between the start of the base ruleset and the proposed start.
         uint256 startDistance = start - baseRulesetStart;
 
-        // Apply the base ruleset's decay percent for each ruleset that has passed.
-        uint256 decayMultiple;
+        // Apply the base ruleset's weight cut percent for each ruleset that has passed.
+        uint256 weightCutMultiple;
         unchecked {
-            decayMultiple = startDistance / baseRulesetDuration; // Non-null duration is excluded above
+            weightCutMultiple = startDistance / baseRulesetDuration; // Non-null duration is excluded above
         }
 
         // Check the cache if needed.
-        if (baseRulesetCacheId > 0 && decayMultiple > _DECAY_MULTIPLE_CACHE_LOOKUP_THRESHOLD) {
+        if (baseRulesetCacheId > 0 && weightCutMultiple > _WEIGHT_CUT_MULTIPLE_CACHE_LOOKUP_THRESHOLD) {
             // Get a cached weight for the rulesetId.
             JBRulesetWeightCache memory cache = _weightCacheOf[projectId][baseRulesetCacheId];
 
             // If a cached value is available, use it.
-            if (cache.decayMultiple > 0) {
+            if (cache.weightCutMultiple > 0) {
                 // Set the starting weight to be the cached value.
                 weight = cache.weight;
 
-                // Set the decay multiple to be the difference between the cached value and the total decay multiple
-                // that should be applied.
-                decayMultiple -= cache.decayMultiple;
+                // Set the weight cut multiple to be the difference between the cached value and the total weight cut
+                // multiple that should be applied.
+                weightCutMultiple -= cache.weightCutMultiple;
             }
         }
 
-        for (uint256 i; i < decayMultiple; i++) {
-            // The number of times to apply the decay percent.
+        for (uint256 i; i < weightCutMultiple; i++) {
+            // The number of times to apply the weight cut percent.
             // Base the new weight on the specified ruleset's weight.
-            weight =
-                mulDiv(weight, JBConstants.MAX_DECAY_PERCENT - baseRulesetDecayPercent, JBConstants.MAX_DECAY_PERCENT);
+            weight = mulDiv(
+                weight,
+                JBConstants.MAX_WEIGHT_CUT_PERCENT - baseRulesetWeightCutPercent,
+                JBConstants.MAX_WEIGHT_CUT_PERCENT
+            );
 
             // The calculation doesn't need to continue if the weight is 0.
             if (weight == 0) break;
@@ -607,8 +610,8 @@ contract JBRulesets is JBControlled, IJBRulesets {
         ruleset.approvalHook = IJBRulesetApprovalHook(address(uint160(packedUserProperties)));
         // `duration` in bits 160-191 bits.
         ruleset.duration = uint32(packedUserProperties >> 160);
-        // decay percent in bits 192-223 bits.
-        ruleset.decayPercent = uint32(packedUserProperties >> 192);
+        // weight cut percent in bits 192-223 bits.
+        ruleset.weightCutPercent = uint32(packedUserProperties >> 192);
 
         ruleset.metadata = _metadataOf[projectId][rulesetId];
     }
@@ -663,12 +666,12 @@ contract JBRulesets is JBControlled, IJBRulesets {
                     baseRulesetStart: baseRuleset.start,
                     baseRulesetDuration: baseRuleset.duration,
                     baseRulesetWeight: baseRuleset.weight,
-                    baseRulesetDecayPercent: baseRuleset.decayPercent,
+                    baseRulesetWeightCutPercent: baseRuleset.weightCutPercent,
                     baseRulesetCacheId: baseRuleset.id,
                     start: start
                 })
             ),
-            decayPercent: baseRuleset.decayPercent,
+            weightCutPercent: baseRuleset.weightCutPercent,
             approvalHook: baseRuleset.approvalHook,
             metadata: baseRuleset.metadata
         });
@@ -738,14 +741,16 @@ contract JBRulesets is JBControlled, IJBRulesets {
     /// - A ruleset with a non-zero `duration` applies until the duration ends – any newly queued rulesets will be
     /// *queued* to take effect afterwards.
     /// - If a duration ends and no new rulesets are queued, the ruleset rolls over to a new ruleset with the same rules
-    /// (except for a new `start` timestamp and a decayed `weight`).
+    /// (except for a new `start` timestamp and a cut `weight`).
     /// @param weight A fixed point number with 18 decimals that contracts can use to base arbitrary calculations on.
     /// Payment terminals generally use this to determine how many tokens should be minted when the project is paid.
-    /// @param decayPercent A fraction (out of `JBConstants.MAX_DECAY_PERCENT`) to reduce the next ruleset's `weight`
+    /// @param weightCutPercent A fraction (out of `JBConstants.MAX_WEIGHT_CUT_PERCENT`) to reduce the next ruleset's
+    /// `weight`
     /// by.
-    /// - If a ruleset specifies a non-zero `weight`, the `decayPercent` does not apply.
-    /// - If the `decayPercent` is 0, the `weight` stays the same.
-    /// - If the `decayPercent` is 10% of `JBConstants.MAX_DECAY_PERCENT`, next ruleset's `weight` will be 90% of the
+    /// - If a ruleset specifies a non-zero `weight`, the `weightCutPercent` does not apply.
+    /// - If the `weightCutPercent` is 0, the `weight` stays the same.
+    /// - If the `weightCutPercent` is 10% of `JBConstants.MAX_WEIGHT_CUT_PERCENT`, next ruleset's `weight` will be 90%
+    /// of the
     /// current
     /// one.
     /// @param approvalHook A contract which dictates whether a proposed ruleset should be accepted or rejected. It can
@@ -758,7 +763,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
         uint256 projectId,
         uint256 duration,
         uint256 weight,
-        uint256 decayPercent,
+        uint256 weightCutPercent,
         IJBRulesetApprovalHook approvalHook,
         uint256 metadata,
         uint256 mustStartAtOrAfter
@@ -771,9 +776,9 @@ contract JBRulesets is JBControlled, IJBRulesets {
         // Duration must fit in a uint32.
         if (duration > type(uint32).max) revert JBRulesets_InvalidRulesetDuration(duration, type(uint32).max);
 
-        // Decay rate must be less than or equal to 100%.
-        if (decayPercent > JBConstants.MAX_DECAY_PERCENT) {
-            revert JBRulesets_InvalidDecayPercent(decayPercent);
+        // Weight cut percent must be less than or equal to 100%.
+        if (weightCutPercent > JBConstants.MAX_WEIGHT_CUT_PERCENT) {
+            revert JBRulesets_InvalidWeightCutPercent(weightCutPercent);
         }
 
         // Weight must fit into a uint112.
@@ -818,15 +823,15 @@ contract JBRulesets is JBControlled, IJBRulesets {
         // Efficiently stores the ruleset's user-defined properties.
         // If all user config properties are zero, no need to store anything as the default value will have the same
         // outcome.
-        if (approvalHook != IJBRulesetApprovalHook(address(0)) || duration > 0 || decayPercent > 0) {
+        if (approvalHook != IJBRulesetApprovalHook(address(0)) || duration > 0 || weightCutPercent > 0) {
             // approval hook in bits 0-159 bytes.
             uint256 packed = uint160(address(approvalHook));
 
             // duration in bits 160-191 bytes.
             packed |= duration << 160;
 
-            // decayPercent in bits 192-223 bytes.
-            packed |= decayPercent << 192;
+            // weightCutPercent in bits 192-223 bytes.
+            packed |= weightCutPercent << 192;
 
             // Set in storage.
             _packedUserPropertiesOf[projectId][rulesetId] = packed;
@@ -840,7 +845,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
             projectId: projectId,
             duration: duration,
             weight: weight,
-            decayPercent: decayPercent,
+            weightCutPercent: weightCutPercent,
             approvalHook: approvalHook,
             metadata: metadata,
             mustStartAtOrAfter: mustStartAtOrAfter,
@@ -858,16 +863,16 @@ contract JBRulesets is JBControlled, IJBRulesets {
         // The cached value will be based on this struct.
         JBRuleset memory latestQueuedRuleset = _getStructFor(projectId, latestRulesetIdOf[projectId]);
 
-        // Nothing to cache if the latest ruleset doesn't have a duration or a decay percent.
+        // Nothing to cache if the latest ruleset doesn't have a duration or a weight cut percent.
         // slither-disable-next-line incorrect-equality
-        if (latestQueuedRuleset.duration == 0 || latestQueuedRuleset.decayPercent == 0) return;
+        if (latestQueuedRuleset.duration == 0 || latestQueuedRuleset.weightCutPercent == 0) return;
 
         // Get a reference to the current cache.
         JBRulesetWeightCache storage cache = _weightCacheOf[projectId][latestQueuedRuleset.id];
 
         // Determine the largest start timestamp the cache can be filled to.
         uint256 maxStart = latestQueuedRuleset.start
-            + (cache.decayMultiple + _MAX_DECAY_MULTIPLE_CACHE_THRESHOLD) * latestQueuedRuleset.duration;
+            + (cache.weightCutMultiple + _MAX_WEIGHT_CUT_MULTIPLE_CACHE_THRESHOLD) * latestQueuedRuleset.duration;
 
         // Determine the start timestamp to derive a weight from for the cache.
         uint256 start = block.timestamp < maxStart ? block.timestamp : maxStart;
@@ -876,10 +881,10 @@ contract JBRulesets is JBControlled, IJBRulesets {
         // weight of.
         uint256 startDistance = start - latestQueuedRuleset.start;
 
-        // Calculate the decay multiple.
-        uint168 decayMultiple;
+        // Calculate the weight cut multiple.
+        uint168 weightCutMultiple;
         unchecked {
-            decayMultiple = uint168(startDistance / latestQueuedRuleset.duration);
+            weightCutMultiple = uint168(startDistance / latestQueuedRuleset.duration);
         }
 
         // Store the new values.
@@ -889,17 +894,17 @@ contract JBRulesets is JBControlled, IJBRulesets {
                 baseRulesetStart: latestQueuedRuleset.start,
                 baseRulesetDuration: latestQueuedRuleset.duration,
                 baseRulesetWeight: latestQueuedRuleset.weight,
-                baseRulesetDecayPercent: latestQueuedRuleset.decayPercent,
+                baseRulesetWeightCutPercent: latestQueuedRuleset.weightCutPercent,
                 baseRulesetCacheId: latestQueuedRuleset.id,
                 start: start
             })
         );
-        cache.decayMultiple = decayMultiple;
+        cache.weightCutMultiple = weightCutMultiple;
 
         emit WeightCacheUpdated({
             projectId: projectId,
             weight: cache.weight,
-            decayMultiple: decayMultiple,
+            weightCutMultiple: weightCutMultiple,
             caller: msg.sender
         });
     }
@@ -1021,7 +1026,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
             });
 
             // A weight of 1 is treated as a weight of 0.
-            // This is to allow a weight of 0 (default) to represent inheriting the decayed weight of the previous
+            // This is to allow a weight of 0 (default) to represent inheriting the cut weight of the previous
             // ruleset.
             weight = weight > 0
                 ? (weight == 1 ? 0 : weight)
@@ -1030,7 +1035,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
                     baseRulesetStart: baseRuleset.start,
                     baseRulesetDuration: baseRuleset.duration,
                     baseRulesetWeight: baseRuleset.weight,
-                    baseRulesetDecayPercent: baseRuleset.decayPercent,
+                    baseRulesetWeightCutPercent: baseRuleset.weightCutPercent,
                     baseRulesetCacheId: baseRuleset.id,
                     start: start
                 });

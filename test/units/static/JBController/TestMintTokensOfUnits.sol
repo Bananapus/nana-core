@@ -53,7 +53,7 @@ contract TestMintTokensOfUnits_Local is JBControllerSetup {
             start: uint48(block.timestamp),
             duration: 8000,
             weight: 5000,
-            decayPercent: 0,
+            weightCutPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0x1234567890123456789012345678901234567890)),
             metadata: _packedMetadata
         });

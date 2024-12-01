@@ -55,7 +55,7 @@ contract TestCashOutHooks_Local is TestBaseWorkflow {
         _rulesetConfig[0].mustStartAtOrAfter = 0;
         _rulesetConfig[0].duration = 0;
         _rulesetConfig[0].weight = _WEIGHT;
-        _rulesetConfig[0].decayPercent = 0;
+        _rulesetConfig[0].weightCutPercent = 0;
         _rulesetConfig[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfig[0].metadata = _metadata;
         _rulesetConfig[0].splitGroups = new JBSplitGroup[](0);

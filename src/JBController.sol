@@ -932,7 +932,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
                 projectId: projectId,
                 duration: rulesetConfig.duration,
                 weight: rulesetConfig.weight,
-                decayPercent: rulesetConfig.decayPercent,
+                weightCutPercent: rulesetConfig.weightCutPercent,
                 approvalHook: rulesetConfig.approvalHook,
                 metadata: JBRulesetMetadataResolver.packRulesetMetadata(rulesetConfig.metadata),
                 mustStartAtOrAfter: rulesetConfig.mustStartAtOrAfter

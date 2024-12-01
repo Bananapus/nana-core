@@ -110,7 +110,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             _rulesetConfigurations[0].mustStartAtOrAfter = 0;
             _rulesetConfigurations[0].duration = 0;
             _rulesetConfigurations[0].weight = _weight;
-            _rulesetConfigurations[0].decayPercent = 0;
+            _rulesetConfigurations[0].weightCutPercent = 0;
             _rulesetConfigurations[0].approvalHook = IJBRulesetApprovalHook(address(0));
             _rulesetConfigurations[0].metadata = _metadata;
             _rulesetConfigurations[0].splitGroups = new JBSplitGroup[](0);
@@ -347,7 +347,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             _rulesetConfigurations[0].mustStartAtOrAfter = 0;
             _rulesetConfigurations[0].duration = 0;
             _rulesetConfigurations[0].weight = _weight;
-            _rulesetConfigurations[0].decayPercent = 0;
+            _rulesetConfigurations[0].weightCutPercent = 0;
             _rulesetConfigurations[0].approvalHook = IJBRulesetApprovalHook(address(0));
             _rulesetConfigurations[0].metadata = _metadata;
             _rulesetConfigurations[0].splitGroups = new JBSplitGroup[](0);
@@ -654,7 +654,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             _rulesetConfigurations[0].mustStartAtOrAfter = 0;
             _rulesetConfigurations[0].duration = 0;
             _rulesetConfigurations[0].weight = _weight;
-            _rulesetConfigurations[0].decayPercent = 0;
+            _rulesetConfigurations[0].weightCutPercent = 0;
             _rulesetConfigurations[0].approvalHook = IJBRulesetApprovalHook(address(0));
             _rulesetConfigurations[0].metadata = _metadata;
             _rulesetConfigurations[0].splitGroups = new JBSplitGroup[](0);
@@ -902,7 +902,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             _rulesetConfigurations[0].mustStartAtOrAfter = 0;
             _rulesetConfigurations[0].duration = 0;
             _rulesetConfigurations[0].weight = _weight;
-            _rulesetConfigurations[0].decayPercent = 0;
+            _rulesetConfigurations[0].weightCutPercent = 0;
             _rulesetConfigurations[0].approvalHook = IJBRulesetApprovalHook(address(0));
             _rulesetConfigurations[0].metadata = _metadata;
             _rulesetConfigurations[0].splitGroups = new JBSplitGroup[](0);
@@ -1178,7 +1178,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             _rulesetConfigurations[0].mustStartAtOrAfter = 0;
             _rulesetConfigurations[0].duration = 0;
             _rulesetConfigurations[0].weight = _weight;
-            _rulesetConfigurations[0].decayPercent = 0;
+            _rulesetConfigurations[0].weightCutPercent = 0;
             _rulesetConfigurations[0].approvalHook = IJBRulesetApprovalHook(address(0));
             _rulesetConfigurations[0].metadata = _metadata;
             _rulesetConfigurations[0].splitGroups = new JBSplitGroup[](0);
@@ -1845,7 +1845,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             _rulesetConfigurations[0].mustStartAtOrAfter = 0;
             _rulesetConfigurations[0].duration = 0;
             _rulesetConfigurations[0].weight = _weight;
-            _rulesetConfigurations[0].decayPercent = 0;
+            _rulesetConfigurations[0].weightCutPercent = 0;
             _rulesetConfigurations[0].approvalHook = IJBRulesetApprovalHook(address(0));
             _rulesetConfigurations[0].metadata = _metadata;
             _rulesetConfigurations[0].splitGroups = new JBSplitGroup[](0);
@@ -2473,7 +2473,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             _rulesetConfigurations[0].mustStartAtOrAfter = 0;
             _rulesetConfigurations[0].duration = 0;
             _rulesetConfigurations[0].weight = _weight;
-            _rulesetConfigurations[0].decayPercent = 0;
+            _rulesetConfigurations[0].weightCutPercent = 0;
             _rulesetConfigurations[0].approvalHook = IJBRulesetApprovalHook(address(0));
             _rulesetConfigurations[0].metadata = _metadata;
             _rulesetConfigurations[0].splitGroups = new JBSplitGroup[](0);
@@ -2589,7 +2589,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             _rulesetConfigurations[0].mustStartAtOrAfter = 0;
             _rulesetConfigurations[0].duration = 0;
             _rulesetConfigurations[0].weight = _weight;
-            _rulesetConfigurations[0].decayPercent = 0;
+            _rulesetConfigurations[0].weightCutPercent = 0;
             _rulesetConfigurations[0].approvalHook = IJBRulesetApprovalHook(address(0));
             _rulesetConfigurations[0].metadata = _metadata;
             _rulesetConfigurations[0].splitGroups = new JBSplitGroup[](0);

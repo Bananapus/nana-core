@@ -19,7 +19,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
     uint56 _projectId = 1;
     uint32 _duration = 3 days;
     uint112 _weight = 0;
-    uint32 _decayPercent = 450_000_000;
+    uint32 _weightCutPercent = 450_000_000;
     uint256 _mustStartAt = 0;
     uint256 _hookDuration = 1 days;
     IJBRulesetApprovalHook private _hook = IJBRulesetApprovalHook(address(0));
@@ -35,7 +35,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
                     queued.start,
                     queued.duration,
                     queued.weight,
-                    queued.decayPercent,
+                    queued.weightCutPercent,
                     queued.approvalHook,
                     queued.metadata
                 )
@@ -48,7 +48,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
                         stored.start,
                         stored.duration,
                         stored.weight,
-                        stored.decayPercent,
+                        stored.weightCutPercent,
                         stored.approvalHook,
                         stored.metadata
                     )
@@ -129,7 +129,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
             _projectId,
             _duration,
             _weight,
-            _decayPercent,
+            _weightCutPercent,
             _hook,
             _packedMetadata,
             block.timestamp,
@@ -141,7 +141,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
             projectId: _projectId,
             duration: _duration,
             weight: _weight,
-            decayPercent: _decayPercent,
+            weightCutPercent: _weightCutPercent,
             approvalHook: _hook,
             metadata: _packedMetadata,
             mustStartAtOrAfter: _mustStartAt
@@ -158,7 +158,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
             start: uint48(block.timestamp),
             duration: _duration,
             weight: _weight,
-            decayPercent: _decayPercent,
+            weightCutPercent: _weightCutPercent,
             approvalHook: _hook,
             metadata: configuredRuleset.metadata
         });
@@ -183,7 +183,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
             _projectId,
             _duration,
             _weight,
-            _decayPercent,
+            _weightCutPercent,
             _hook,
             _packedMetadata,
             block.timestamp - 1,
@@ -195,7 +195,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
             projectId: _projectId,
             duration: _duration,
             weight: _weight,
-            decayPercent: _decayPercent,
+            weightCutPercent: _weightCutPercent,
             approvalHook: _hook,
             metadata: _packedMetadata,
             // Set this in the past
@@ -213,7 +213,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
             start: uint48(block.timestamp - 1),
             duration: _duration,
             weight: _weight,
-            decayPercent: _decayPercent,
+            weightCutPercent: _weightCutPercent,
             approvalHook: _hook,
             metadata: configuredRuleset.metadata
         });
@@ -244,15 +244,15 @@ contract TestJBRulesetsUnits_Local is JBTest {
             projectId: _projectId,
             duration: _invalidDuration,
             weight: _weight,
-            decayPercent: _decayPercent,
+            weightCutPercent: _weightCutPercent,
             approvalHook: _hook,
             metadata: _packedMetadata,
             mustStartAtOrAfter: _mustStartAt
         });
     }
 
-    function testQueueForInvalidDecayPercent() public {
-        uint256 _invalidDecayPercent = JBConstants.MAX_DECAY_PERCENT + 1;
+    function testQueueForInvalidWeightCutPercent() public {
+        uint256 _invalidWeightCutPercent = JBConstants.MAX_WEIGHT_CUT_PERCENT + 1;
 
         // Setup: queueFor will call onlyControllerOf modifier -> Directory.controllerOf to see if caller has proper
         // permissions, encode & mock that.
@@ -262,7 +262,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
         mockExpect(address(_directory), _encodedCall, _willReturn);
 
         vm.expectRevert(
-            abi.encodeWithSelector(JBRulesets.JBRulesets_InvalidDecayPercent.selector, _invalidDecayPercent)
+            abi.encodeWithSelector(JBRulesets.JBRulesets_InvalidWeightCutPercent.selector, _invalidWeightCutPercent)
         );
 
         // Send: Call from this contract as it's been mock authorized above.
@@ -270,7 +270,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
             projectId: _projectId,
             duration: _duration,
             weight: _weight,
-            decayPercent: _invalidDecayPercent,
+            weightCutPercent: _invalidWeightCutPercent,
             approvalHook: _hook,
             metadata: _packedMetadata,
             mustStartAtOrAfter: _mustStartAt
@@ -296,7 +296,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
             projectId: _projectId,
             duration: _duration,
             weight: _invalidWeight,
-            decayPercent: _decayPercent,
+            weightCutPercent: _weightCutPercent,
             approvalHook: _hook,
             metadata: _packedMetadata,
             mustStartAtOrAfter: _mustStartAt
@@ -337,7 +337,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
             projectId: _projectId,
             duration: _bigDuration,
             weight: _weight,
-            decayPercent: _decayPercent,
+            weightCutPercent: _weightCutPercent,
             approvalHook: _hook,
             metadata: _packedMetadata,
             mustStartAtOrAfter: _bigStartAt
@@ -363,7 +363,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
             projectId: _projectId,
             duration: _duration,
             weight: _weight,
-            decayPercent: _decayPercent,
+            weightCutPercent: _weightCutPercent,
             approvalHook: _mockApprovalHook,
             metadata: _packedWithApprovalHook,
             mustStartAtOrAfter: _mustStartAt
@@ -384,7 +384,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
             projectId: _projectId,
             duration: _duration,
             weight: _weight,
-            decayPercent: _decayPercent,
+            weightCutPercent: _weightCutPercent,
             approvalHook: _mockApprovalHook,
             metadata: _packedWithApprovalHook,
             mustStartAtOrAfter: _mustStartAt
@@ -408,7 +408,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
             projectId: _projectId,
             duration: _duration,
             weight: _weight,
-            decayPercent: _decayPercent,
+            weightCutPercent: _weightCutPercent,
             approvalHook: _mockApprovalHook,
             metadata: _packedWithApprovalHook,
             mustStartAtOrAfter: block.timestamp
@@ -430,7 +430,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
             projectId: _projectId,
             duration: _duration,
             weight: _weight,
-            decayPercent: _decayPercent,
+            weightCutPercent: _weightCutPercent,
             approvalHook: _mockApprovalHook,
             metadata: _packedWithApprovalHook,
             mustStartAtOrAfter: block.timestamp
@@ -455,7 +455,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
             projectId: _projectId,
             duration: _duration,
             weight: _weight,
-            decayPercent: _decayPercent,
+            weightCutPercent: _weightCutPercent,
             approvalHook: _mockApprovalHook,
             metadata: _packedWithApprovalHook,
             mustStartAtOrAfter: block.timestamp
@@ -479,7 +479,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
             projectId: _projectId,
             duration: _duration,
             weight: _weight,
-            decayPercent: _decayPercent,
+            weightCutPercent: _weightCutPercent,
             approvalHook: _mockApprovalHook,
             metadata: _packedWithApprovalHook,
             mustStartAtOrAfter: block.timestamp
@@ -504,7 +504,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
             projectId: _projectId,
             duration: _duration,
             weight: _weight,
-            decayPercent: _decayPercent,
+            weightCutPercent: _weightCutPercent,
             approvalHook: _mockApprovalHook,
             metadata: _packedWithApprovalHook,
             mustStartAtOrAfter: block.timestamp
@@ -521,7 +521,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
     }
 
     function test_WhenCacheIsUpdatedTooSoon() external {
-        // the decay multiple will be re-used if it's the same.
+        // the weight cut multiple will be re-used if it's the same.
 
         // Setup: queueFor will call onlyControllerOf modifier -> Directory.controllerOf to see if caller has proper
         // permissions, encode & mock that.
@@ -534,7 +534,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
             projectId: _projectId,
             duration: 1 days, // 3 days
             weight: 1e18,
-            decayPercent: JBConstants.MAX_DECAY_PERCENT / 10,
+            weightCutPercent: JBConstants.MAX_WEIGHT_CUT_PERCENT / 10,
             approvalHook: _hook,
             metadata: _packedMetadata,
             mustStartAtOrAfter: 0
@@ -579,7 +579,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
             projectId: _projectId,
             duration: 1 days, // 3 days
             weight: 1e18,
-            decayPercent: JBConstants.MAX_DECAY_PERCENT / 10,
+            weightCutPercent: JBConstants.MAX_WEIGHT_CUT_PERCENT / 10,
             approvalHook: IJBRulesetApprovalHook(address(123)),
             metadata: _packedMetadata,
             mustStartAtOrAfter: 0
@@ -608,7 +608,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
             projectId: _projectId,
             duration: 1 days, // 3 days
             weight: 1e18,
-            decayPercent: JBConstants.MAX_DECAY_PERCENT / 10,
+            weightCutPercent: JBConstants.MAX_WEIGHT_CUT_PERCENT / 10,
             approvalHook: IJBRulesetApprovalHook(address(123)),
             metadata: _packedMetadata,
             mustStartAtOrAfter: 0
