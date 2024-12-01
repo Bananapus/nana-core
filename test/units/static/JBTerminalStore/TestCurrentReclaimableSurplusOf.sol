@@ -59,7 +59,7 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
             start: uint48(block.timestamp),
             duration: uint32(block.timestamp + 1000),
             weight: 1e18,
-            decayPercent: 0,
+            weightCutPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: 0
         });
@@ -134,7 +134,7 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
             start: uint48(block.timestamp),
             duration: uint32(block.timestamp + 1000),
             weight: 1e18,
-            decayPercent: 0,
+            weightCutPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: _packedMetadata
         });
@@ -211,7 +211,7 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
             start: uint48(block.timestamp),
             duration: uint32(block.timestamp + 1000),
             weight: 1e18,
-            decayPercent: 0,
+            weightCutPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: _packedMetadata
         });
@@ -288,7 +288,7 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
             start: uint48(block.timestamp),
             duration: uint32(block.timestamp + 1000),
             weight: 1e18,
-            decayPercent: 0,
+            weightCutPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: _packedMetadata
         });
@@ -369,7 +369,7 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
             start: uint48(block.timestamp),
             duration: uint32(block.timestamp + 1000),
             weight: 1e18,
-            decayPercent: 0,
+            weightCutPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: _packedMetadata
         });
@@ -449,7 +449,7 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
             start: uint48(block.timestamp),
             duration: uint32(block.timestamp + 1000),
             weight: 1e18,
-            decayPercent: 0,
+            weightCutPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: _packedMetadata
         });
