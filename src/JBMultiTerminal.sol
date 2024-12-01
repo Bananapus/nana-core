@@ -14,6 +14,7 @@ import {IAllowanceTransfer} from "@uniswap/permit2/src/interfaces/IAllowanceTran
 import {IPermit2} from "@uniswap/permit2/src/interfaces/IPermit2.sol";
 
 import {JBPermissioned} from "./abstract/JBPermissioned.sol";
+import {IJBCashOutTerminal} from "./interfaces/IJBCashOutTerminal.sol";
 import {IJBController} from "./interfaces/IJBController.sol";
 import {IJBDirectory} from "./interfaces/IJBDirectory.sol";
 import {IJBFeelessAddresses} from "./interfaces/IJBFeelessAddresses.sol";
@@ -24,7 +25,6 @@ import {IJBPermissioned} from "./interfaces/IJBPermissioned.sol";
 import {IJBPermissions} from "./interfaces/IJBPermissions.sol";
 import {IJBPermitTerminal} from "./interfaces/IJBPermitTerminal.sol";
 import {IJBProjects} from "./interfaces/IJBProjects.sol";
-import {IJBCashOutTerminal} from "./interfaces/IJBCashOutTerminal.sol";
 import {IJBRulesets} from "./interfaces/IJBRulesets.sol";
 import {IJBSplitHook} from "./interfaces/IJBSplitHook.sol";
 import {IJBSplits} from "./interfaces/IJBSplits.sol";
@@ -38,9 +38,9 @@ import {JBRulesetMetadataResolver} from "./libraries/JBRulesetMetadataResolver.s
 import {JBAccountingContext} from "./structs/JBAccountingContext.sol";
 import {JBAfterPayRecordedContext} from "./structs/JBAfterPayRecordedContext.sol";
 import {JBAfterCashOutRecordedContext} from "./structs/JBAfterCashOutRecordedContext.sol";
+import {JBCashOutHookSpecification} from "./structs/JBCashOutHookSpecification.sol";
 import {JBFee} from "./structs/JBFee.sol";
 import {JBPayHookSpecification} from "./structs/JBPayHookSpecification.sol";
-import {JBCashOutHookSpecification} from "./structs/JBCashOutHookSpecification.sol";
 import {JBRuleset} from "./structs/JBRuleset.sol";
 import {JBSingleAllowance} from "./structs/JBSingleAllowance.sol";
 import {JBSplit} from "./structs/JBSplit.sol";

@@ -17,9 +17,9 @@ import {JBSurplus} from "./libraries/JBSurplus.sol";
 import {JBAccountingContext} from "./structs/JBAccountingContext.sol";
 import {JBBeforePayRecordedContext} from "./structs/JBBeforePayRecordedContext.sol";
 import {JBBeforeCashOutRecordedContext} from "./structs/JBBeforeCashOutRecordedContext.sol";
+import {JBCashOutHookSpecification} from "./structs/JBCashOutHookSpecification.sol";
 import {JBCurrencyAmount} from "./structs/JBCurrencyAmount.sol";
 import {JBPayHookSpecification} from "./structs/JBPayHookSpecification.sol";
-import {JBCashOutHookSpecification} from "./structs/JBCashOutHookSpecification.sol";
 import {JBRuleset} from "./structs/JBRuleset.sol";
 import {JBTokenAmount} from "./structs/JBTokenAmount.sol";
 

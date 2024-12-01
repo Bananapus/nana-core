@@ -6,8 +6,8 @@ import {IJBPrices} from "./IJBPrices.sol";
 import {IJBRulesets} from "./IJBRulesets.sol";
 import {IJBTerminal} from "./IJBTerminal.sol";
 import {JBAccountingContext} from "./../structs/JBAccountingContext.sol";
-import {JBPayHookSpecification} from "./../structs/JBPayHookSpecification.sol";
 import {JBCashOutHookSpecification} from "./../structs/JBCashOutHookSpecification.sol";
+import {JBPayHookSpecification} from "./../structs/JBPayHookSpecification.sol";
 import {JBRuleset} from "./../structs/JBRuleset.sol";
 import {JBTokenAmount} from "./../structs/JBTokenAmount.sol";
 

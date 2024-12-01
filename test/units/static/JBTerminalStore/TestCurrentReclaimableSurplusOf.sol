@@ -230,6 +230,10 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
             address(_controller), abi.encodeCall(IJBController.FUND_ACCESS_LIMITS, ()), abi.encode(_accessLimits)
         );
 
+        mockExpect(
+            address(_terminal), abi.encodeCall(IJBMultiTerminal.STORE, ()), abi.encode(_store)
+        );
+
         JBCurrencyAmount[] memory _limits = new JBCurrencyAmount[](1);
         _limits[0] = JBCurrencyAmount({amount: 0, currency: _currency});
 
