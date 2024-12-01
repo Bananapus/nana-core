@@ -25,7 +25,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
 
         JBRulesetMetadata memory _rulesMetadata = JBRulesetMetadata({
             reservedPercent: JBConstants.MAX_RESERVED_PERCENT / 2,
-            redemptionRate: JBConstants.MAX_REDEMPTION_RATE / 2,
+            cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE / 2,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
@@ -38,9 +38,9 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: true,
+            useTotalSurplusForCashOuts: true,
             useDataHookForPay: false,
-            useDataHookForRedeem: false,
+            useDataHookForCashOut: false,
             dataHook: address(0),
             metadata: 0
         });
@@ -55,7 +55,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
         _rulesetConfigurations[0].mustStartAtOrAfter = 0;
         _rulesetConfigurations[0].duration = 0;
         _rulesetConfigurations[0].weight = 1e18;
-        _rulesetConfigurations[0].decayPercent = 0;
+        _rulesetConfigurations[0].weightCutPercent = 0;
         _rulesetConfigurations[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfigurations[0].metadata = _rulesMetadata;
         _rulesetConfigurations[0].splitGroups = _splitsGroup;
@@ -79,7 +79,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
 
         JBRulesetMetadata memory _rulesMetadata = JBRulesetMetadata({
             reservedPercent: JBConstants.MAX_RESERVED_PERCENT / 2,
-            redemptionRate: JBConstants.MAX_REDEMPTION_RATE / 2,
+            cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE / 2,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
@@ -92,9 +92,9 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: true,
+            useTotalSurplusForCashOuts: true,
             useDataHookForPay: false,
-            useDataHookForRedeem: false,
+            useDataHookForCashOut: false,
             dataHook: address(0),
             metadata: 0
         });
@@ -123,7 +123,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
         _rulesetConfigurations[0].mustStartAtOrAfter = 0;
         _rulesetConfigurations[0].duration = 0;
         _rulesetConfigurations[0].weight = 1e18;
-        _rulesetConfigurations[0].decayPercent = 0;
+        _rulesetConfigurations[0].weightCutPercent = 0;
         _rulesetConfigurations[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfigurations[0].metadata = _rulesMetadata;
         _rulesetConfigurations[0].splitGroups = _splitsGroup;
@@ -137,7 +137,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
             start: uint48(block.timestamp),
             duration: _rulesetConfigurations[0].duration,
             weight: _rulesetConfigurations[0].weight,
-            decayPercent: _rulesetConfigurations[0].decayPercent,
+            weightCutPercent: _rulesetConfigurations[0].weightCutPercent,
             approvalHook: _rulesetConfigurations[0].approvalHook,
             metadata: _packed
         });
@@ -192,7 +192,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
 
         JBRulesetMetadata memory _rulesMetadata = JBRulesetMetadata({
             reservedPercent: JBConstants.MAX_RESERVED_PERCENT / 2,
-            redemptionRate: JBConstants.MAX_REDEMPTION_RATE / 2,
+            cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE / 2,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
@@ -205,9 +205,9 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: true,
+            useTotalSurplusForCashOuts: true,
             useDataHookForPay: false,
-            useDataHookForRedeem: false,
+            useDataHookForCashOut: false,
             dataHook: address(0),
             metadata: 0
         });
@@ -236,7 +236,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
         _rulesetConfigurations[0].mustStartAtOrAfter = 0;
         _rulesetConfigurations[0].duration = 0;
         _rulesetConfigurations[0].weight = 1e18;
-        _rulesetConfigurations[0].decayPercent = 0;
+        _rulesetConfigurations[0].weightCutPercent = 0;
         _rulesetConfigurations[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfigurations[0].metadata = _rulesMetadata;
         _rulesetConfigurations[0].splitGroups = _splitsGroup;
@@ -250,7 +250,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
             start: uint48(block.timestamp),
             duration: _rulesetConfigurations[0].duration,
             weight: _rulesetConfigurations[0].weight,
-            decayPercent: _rulesetConfigurations[0].decayPercent,
+            weightCutPercent: _rulesetConfigurations[0].weightCutPercent,
             approvalHook: _rulesetConfigurations[0].approvalHook,
             metadata: _packed
         });
@@ -286,7 +286,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
 
         JBRulesetMetadata memory _rulesMetadata = JBRulesetMetadata({
             reservedPercent: JBConstants.MAX_RESERVED_PERCENT / 2,
-            redemptionRate: JBConstants.MAX_REDEMPTION_RATE / 2,
+            cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE / 2,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
@@ -299,9 +299,9 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: true,
+            useTotalSurplusForCashOuts: true,
             useDataHookForPay: false,
-            useDataHookForRedeem: false,
+            useDataHookForCashOut: false,
             dataHook: address(0),
             metadata: 0
         });
@@ -330,7 +330,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
         _rulesetConfigurations[0].mustStartAtOrAfter = 0;
         _rulesetConfigurations[0].duration = 0;
         _rulesetConfigurations[0].weight = 1e18;
-        _rulesetConfigurations[0].decayPercent = 0;
+        _rulesetConfigurations[0].weightCutPercent = 0;
         _rulesetConfigurations[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfigurations[0].metadata = _rulesMetadata;
         _rulesetConfigurations[0].splitGroups = _splitsGroup;
@@ -344,7 +344,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
             start: uint48(block.timestamp),
             duration: _rulesetConfigurations[0].duration,
             weight: _rulesetConfigurations[0].weight,
-            decayPercent: _rulesetConfigurations[0].decayPercent,
+            weightCutPercent: _rulesetConfigurations[0].weightCutPercent,
             approvalHook: _rulesetConfigurations[0].approvalHook,
             metadata: _packed
         });
@@ -376,7 +376,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
 
         JBRulesetMetadata memory _rulesMetadata = JBRulesetMetadata({
             reservedPercent: JBConstants.MAX_RESERVED_PERCENT / 2,
-            redemptionRate: JBConstants.MAX_REDEMPTION_RATE / 2,
+            cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE / 2,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
@@ -389,9 +389,9 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: true,
+            useTotalSurplusForCashOuts: true,
             useDataHookForPay: false,
-            useDataHookForRedeem: false,
+            useDataHookForCashOut: false,
             dataHook: address(0),
             metadata: 0
         });
@@ -420,7 +420,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
         _rulesetConfigurations[0].mustStartAtOrAfter = 0;
         _rulesetConfigurations[0].duration = 0;
         _rulesetConfigurations[0].weight = 1e18;
-        _rulesetConfigurations[0].decayPercent = 0;
+        _rulesetConfigurations[0].weightCutPercent = 0;
         _rulesetConfigurations[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfigurations[0].metadata = _rulesMetadata;
         _rulesetConfigurations[0].splitGroups = _splitsGroup;
@@ -434,7 +434,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
             start: uint48(block.timestamp),
             duration: _rulesetConfigurations[0].duration,
             weight: _rulesetConfigurations[0].weight,
-            decayPercent: _rulesetConfigurations[0].decayPercent,
+            weightCutPercent: _rulesetConfigurations[0].weightCutPercent,
             approvalHook: _rulesetConfigurations[0].approvalHook,
             metadata: _packed
         });
@@ -485,7 +485,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
         // it will revert via OZ Address
         JBRulesetMetadata memory _rulesMetadata = JBRulesetMetadata({
             reservedPercent: JBConstants.MAX_RESERVED_PERCENT / 2,
-            redemptionRate: JBConstants.MAX_REDEMPTION_RATE / 2,
+            cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE / 2,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
@@ -498,9 +498,9 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: true,
+            useTotalSurplusForCashOuts: true,
             useDataHookForPay: false,
-            useDataHookForRedeem: false,
+            useDataHookForCashOut: false,
             dataHook: address(0),
             metadata: 0
         });
@@ -529,7 +529,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
         _rulesetConfigurations[0].mustStartAtOrAfter = 0;
         _rulesetConfigurations[0].duration = 0;
         _rulesetConfigurations[0].weight = 1e18;
-        _rulesetConfigurations[0].decayPercent = 0;
+        _rulesetConfigurations[0].weightCutPercent = 0;
         _rulesetConfigurations[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfigurations[0].metadata = _rulesMetadata;
         _rulesetConfigurations[0].splitGroups = _splitsGroup;
@@ -543,7 +543,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
             start: uint48(block.timestamp),
             duration: _rulesetConfigurations[0].duration,
             weight: _rulesetConfigurations[0].weight,
-            decayPercent: _rulesetConfigurations[0].decayPercent,
+            weightCutPercent: _rulesetConfigurations[0].weightCutPercent,
             approvalHook: _rulesetConfigurations[0].approvalHook,
             metadata: _packed
         });

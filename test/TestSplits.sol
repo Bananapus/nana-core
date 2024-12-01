@@ -27,7 +27,7 @@ contract TestSplits_Local is TestBaseWorkflow {
 
         _metadata = JBRulesetMetadata({
             reservedPercent: JBConstants.MAX_RESERVED_PERCENT / 2,
-            redemptionRate: 0,
+            cashOutTaxRate: 0,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
@@ -40,9 +40,9 @@ contract TestSplits_Local is TestBaseWorkflow {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: false,
+            useTotalSurplusForCashOuts: false,
             useDataHookForPay: false,
-            useDataHookForRedeem: false,
+            useDataHookForCashOut: false,
             dataHook: address(0),
             metadata: 0
         });
@@ -110,7 +110,7 @@ contract TestSplits_Local is TestBaseWorkflow {
         _rulesetConfig[0].mustStartAtOrAfter = 0;
         _rulesetConfig[0].duration = 0;
         _rulesetConfig[0].weight = _weight;
-        _rulesetConfig[0].decayPercent = 0;
+        _rulesetConfig[0].weightCutPercent = 0;
         _rulesetConfig[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfig[0].metadata = _metadata;
         _rulesetConfig[0].splitGroups = _splitsGroup;
@@ -226,7 +226,7 @@ contract TestSplits_Local is TestBaseWorkflow {
 
         _metadata = JBRulesetMetadata({
             reservedPercent: JBConstants.MAX_RESERVED_PERCENT,
-            redemptionRate: 0,
+            cashOutTaxRate: 0,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
@@ -239,9 +239,9 @@ contract TestSplits_Local is TestBaseWorkflow {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: false,
+            useTotalSurplusForCashOuts: false,
             useDataHookForPay: false,
-            useDataHookForRedeem: false,
+            useDataHookForCashOut: false,
             dataHook: address(0),
             metadata: 0
         });
@@ -251,7 +251,7 @@ contract TestSplits_Local is TestBaseWorkflow {
         _rulesetConfig[0].mustStartAtOrAfter = 0;
         _rulesetConfig[0].duration = 0;
         _rulesetConfig[0].weight = _weight;
-        _rulesetConfig[0].decayPercent = 0;
+        _rulesetConfig[0].weightCutPercent = 0;
         _rulesetConfig[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfig[0].metadata = _metadata;
         _rulesetConfig[0].splitGroups = _splitsGroup;
@@ -348,7 +348,7 @@ contract TestSplits_Local is TestBaseWorkflow {
         _rulesetConfig[0].mustStartAtOrAfter = 0;
         _rulesetConfig[0].duration = 0;
         _rulesetConfig[0].weight = _weight;
-        _rulesetConfig[0].decayPercent = 0;
+        _rulesetConfig[0].weightCutPercent = 0;
         _rulesetConfig[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfig[0].metadata = _metadata;
         _rulesetConfig[0].splitGroups = _splitsGroup;

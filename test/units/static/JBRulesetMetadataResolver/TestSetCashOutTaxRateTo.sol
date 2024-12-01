@@ -3,30 +3,30 @@ pragma solidity 0.8.23;
 
 import /* {*} from */ "../../../helpers/TestBaseWorkflow.sol";
 
-contract TestSetRedemptionRateTo_Local is JBTest {
+contract TestSetCashOutTaxRateTo_Local is JBTest {
     using JBRulesetMetadataResolver for JBRulesetMetadata;
 
     function setUp() external {}
 
     function testFuzzEnsureCorrectlyPackedBits(
         uint16 _fuzzReservedPercent,
-        uint16 _fuzzRedemptionRate,
+        uint16 _fuzzCashOutTaxRate,
         uint16 _fuzzMetadata
     )
         external
     {
-        // redemption rate should be re-set and re-packed correctly
+        // cash out tax rate should be re-set and re-packed correctly
 
         address _hookAddress = makeAddr("someting");
 
         _fuzzReservedPercent = uint16(bound(_fuzzReservedPercent, 0, JBConstants.MAX_RESERVED_PERCENT));
-        _fuzzRedemptionRate = uint16(bound(_fuzzRedemptionRate, 0, JBConstants.MAX_REDEMPTION_RATE));
+        _fuzzCashOutTaxRate = uint16(bound(_fuzzCashOutTaxRate, 0, JBConstants.MAX_CASH_OUT_TAX_RATE));
         // Ensure the metadata is a max of 14 bits.
-        _fuzzMetadata = uint16(bound(_fuzzRedemptionRate, 0, 16_383));
+        _fuzzMetadata = uint16(bound(_fuzzCashOutTaxRate, 0, 16_383));
 
         JBRulesetMetadata memory _rulesMetadata = JBRulesetMetadata({
             reservedPercent: _fuzzReservedPercent,
-            redemptionRate: _fuzzRedemptionRate,
+            cashOutTaxRate: _fuzzCashOutTaxRate,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: true,
             pauseCreditTransfers: true,
@@ -39,9 +39,9 @@ contract TestSetRedemptionRateTo_Local is JBTest {
             allowAddAccountingContext: true,
             allowAddPriceFeed: true,
             holdFees: true,
-            useTotalSurplusForRedemptions: true,
+            useTotalSurplusForCashOuts: true,
             useDataHookForPay: true,
-            useDataHookForRedeem: true,
+            useDataHookForCashOut: true,
             dataHook: _hookAddress,
             metadata: _fuzzMetadata
         });
@@ -51,11 +51,11 @@ contract TestSetRedemptionRateTo_Local is JBTest {
         // Reserved Rate
         uint256 _reservedPercent = uint256(uint16(_packed >> 4));
 
-        // Redemption rate
-        uint256 _redemptionRate = uint256(uint16(_packed >> 20));
+        // Cash out tax rate
+        uint256 _cashOutTaxRate = uint256(uint16(_packed >> 20));
 
         assertEq(_reservedPercent, _fuzzReservedPercent);
-        assertEq(_redemptionRate, _fuzzRedemptionRate);
+        assertEq(_cashOutTaxRate, _fuzzCashOutTaxRate);
 
         for (uint256 _i = 68; _i < 81; _i++) {
             uint256 _flag = uint256(uint16(_packed >> _i) & 1);

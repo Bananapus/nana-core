@@ -16,10 +16,21 @@ contract JBTest is Test {
         vm.expectCall(_where, _encodedCall);
     }
 
+    // Multiple calls with different return values
+    function mockExpectSubsequent(address _where, bytes memory _encodedCall, bytes[] memory _returns) public {
+        // Mocks calls with different return values
+        vm.mockCalls(_where, _encodedCall, _returns);
+
+        // Will check that multiple calls are made
+        for (uint256 i = 0; i < _returns.length; i++) {
+            vm.expectCall(_where, _encodedCall);
+        }
+    }
+
     function generateFriendlyRuleset() public view returns (JBRuleset memory) {
         JBRulesetMetadata memory _rulesMetadata = JBRulesetMetadata({
             reservedPercent: JBConstants.MAX_RESERVED_PERCENT,
-            redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
+            cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
@@ -32,9 +43,9 @@ contract JBTest is Test {
             allowAddAccountingContext: true,
             allowAddPriceFeed: true,
             holdFees: false,
-            useTotalSurplusForRedemptions: true,
+            useTotalSurplusForCashOuts: true,
             useDataHookForPay: false,
-            useDataHookForRedeem: false,
+            useDataHookForCashOut: false,
             dataHook: address(0),
             metadata: 0
         });
@@ -48,7 +59,7 @@ contract JBTest is Test {
             start: uint48(block.timestamp),
             duration: 10 days,
             weight: 0,
-            decayPercent: 0,
+            weightCutPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: packed
         });
@@ -57,7 +68,7 @@ contract JBTest is Test {
     function generateUnfriendlyRuleset() public view returns (JBRuleset memory) {
         JBRulesetMetadata memory _rulesMetadata = JBRulesetMetadata({
             reservedPercent: JBConstants.MAX_RESERVED_PERCENT,
-            redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
+            cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: true,
             pauseCreditTransfers: true,
@@ -70,9 +81,9 @@ contract JBTest is Test {
             allowAddAccountingContext: false,
             allowAddPriceFeed: false,
             holdFees: true,
-            useTotalSurplusForRedemptions: true,
+            useTotalSurplusForCashOuts: true,
             useDataHookForPay: false,
-            useDataHookForRedeem: false,
+            useDataHookForCashOut: false,
             dataHook: address(0),
             metadata: 0
         });
@@ -86,7 +97,7 @@ contract JBTest is Test {
             start: uint48(block.timestamp),
             duration: 10 days,
             weight: 0,
-            decayPercent: 0,
+            weightCutPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: packed
         });

@@ -32,11 +32,11 @@ import {JBMultiTerminal} from "../../src/JBMultiTerminal.sol";
 import {JBAccountingContext} from "../../src/structs/JBAccountingContext.sol";
 import {JBCurrencyAmount} from "../../src/structs/JBCurrencyAmount.sol";
 import {JBAfterPayRecordedContext} from "../../src/structs/JBAfterPayRecordedContext.sol";
-import {JBAfterRedeemRecordedContext} from "../../src/structs/JBAfterRedeemRecordedContext.sol";
+import {JBAfterCashOutRecordedContext} from "../../src/structs/JBAfterCashOutRecordedContext.sol";
 import {JBFee} from "../../src/structs/JBFee.sol";
 import {JBFees} from "../../src/libraries/JBFees.sol";
 import {JBMetadataResolver} from "../../src/libraries/JBMetadataResolver.sol";
-import {JBRedemptions} from "../../src/libraries/JBRedemptions.sol";
+import {JBCashOuts} from "../../src/libraries/JBCashOuts.sol";
 import {JBFundAccessLimitGroup} from "../../src/structs/JBFundAccessLimitGroup.sol";
 import {JBRuleset} from "../../src/structs/JBRuleset.sol";
 import {JBRulesetWithMetadata} from "../../src/structs/JBRulesetWithMetadata.sol";
@@ -45,11 +45,11 @@ import {JBRulesetConfig} from "../../src/structs/JBRulesetConfig.sol";
 import {JBSplitGroup} from "../../src/structs/JBSplitGroup.sol";
 import {JBPermissionsData} from "../../src/structs/JBPermissionsData.sol";
 import {JBBeforePayRecordedContext} from "../../src/structs/JBBeforePayRecordedContext.sol";
-import {JBBeforeRedeemRecordedContext} from "../../src/structs/JBBeforeRedeemRecordedContext.sol";
+import {JBBeforeCashOutRecordedContext} from "../../src/structs/JBBeforeCashOutRecordedContext.sol";
 import {JBSplit} from "../../src/structs/JBSplit.sol";
 import {JBTerminalConfig} from "../../src/structs/JBTerminalConfig.sol";
 import {JBPayHookSpecification} from "../../src/structs/JBPayHookSpecification.sol";
-import {JBRedeemHookSpecification} from "../../src/structs/JBRedeemHookSpecification.sol";
+import {JBCashOutHookSpecification} from "../../src/structs/JBCashOutHookSpecification.sol";
 import {JBTokenAmount} from "../../src/structs/JBTokenAmount.sol";
 import {JBSplitHookContext} from "../../src/structs/JBSplitHookContext.sol";
 import {IJBToken} from "../../src/interfaces/IJBToken.sol";
@@ -71,10 +71,10 @@ import {IJBTokens} from "../../src/interfaces/IJBTokens.sol";
 import {IJBSplitHook} from "../../src/interfaces/IJBSplitHook.sol";
 import {IJBPayHook} from "../../src/interfaces/IJBPayHook.sol";
 import {IJBRulesetDataHook} from "../../src/interfaces/IJBRulesetDataHook.sol";
-import {IJBRedeemHook} from "../../src/interfaces/IJBRedeemHook.sol";
+import {IJBCashOutHook} from "../../src/interfaces/IJBCashOutHook.sol";
 import {IJBRulesetDataHook} from "../../src/interfaces/IJBRulesetDataHook.sol";
 import {IJBMultiTerminal} from "../../src/interfaces/IJBMultiTerminal.sol";
-import {IJBRedeemTerminal} from "../../src/interfaces/IJBRedeemTerminal.sol";
+import {IJBCashOutTerminal} from "../../src/interfaces/IJBCashOutTerminal.sol";
 import {IJBPayoutTerminal} from "../../src/interfaces/IJBPayoutTerminal.sol";
 import {IJBPermitTerminal} from "../../src/interfaces/IJBPermitTerminal.sol";
 import {IJBFeeTerminal} from "../../src/interfaces/IJBFeeTerminal.sol";
@@ -249,6 +249,7 @@ contract TestBaseWorkflow is Test, DeployPermit2 {
             _jbProjects,
             _jbSplits,
             _jbTerminalStore,
+            _jbTokens,
             IPermit2(_permit2),
             _trustedForwarder
         );
@@ -259,6 +260,7 @@ contract TestBaseWorkflow is Test, DeployPermit2 {
             _jbProjects,
             _jbSplits,
             _jbTerminalStore,
+            _jbTokens,
             IPermit2(_permit2),
             _trustedForwarder
         );

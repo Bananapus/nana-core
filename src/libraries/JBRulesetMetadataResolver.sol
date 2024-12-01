@@ -9,8 +9,8 @@ library JBRulesetMetadataResolver {
         return uint16(ruleset.metadata >> 4);
     }
 
-    function redemptionRate(JBRuleset memory ruleset) internal pure returns (uint16) {
-        // Redemption rate is a number 0-10000.
+    function cashOutTaxRate(JBRuleset memory ruleset) internal pure returns (uint16) {
+        // Cash out tax rate is a number 0-10000.
         return uint16(ruleset.metadata >> 20);
     }
 
@@ -63,7 +63,7 @@ library JBRulesetMetadataResolver {
         return ((ruleset.metadata >> 78) & 1) == 1;
     }
 
-    function useTotalSurplusForRedemptions(JBRuleset memory ruleset) internal pure returns (bool) {
+    function useTotalSurplusForCashOuts(JBRuleset memory ruleset) internal pure returns (bool) {
         return ((ruleset.metadata >> 79) & 1) == 1;
     }
 
@@ -71,7 +71,7 @@ library JBRulesetMetadataResolver {
         return (ruleset.metadata >> 80) & 1 == 1;
     }
 
-    function useDataHookForRedeem(JBRuleset memory ruleset) internal pure returns (bool) {
+    function useDataHookForCashOut(JBRuleset memory ruleset) internal pure returns (bool) {
         return (ruleset.metadata >> 81) & 1 == 1;
     }
 
@@ -91,9 +91,9 @@ library JBRulesetMetadataResolver {
         packed = 1;
         // reserved percent in bits 4-19 (16 bits).
         packed |= uint256(rulesetMetadata.reservedPercent) << 4;
-        // redemption rate in bits 20-35 (16 bits).
-        // redemption rate is a number 0-10000.
-        packed |= uint256(rulesetMetadata.redemptionRate) << 20;
+        // cash out tax rate in bits 20-35 (16 bits).
+        // cash out tax rate is a number 0-10000.
+        packed |= uint256(rulesetMetadata.cashOutTaxRate) << 20;
         // base currency in bits 36-67 (32 bits).
         // base currency is a number 0-16777215.
         packed |= uint256(rulesetMetadata.baseCurrency) << 36;
@@ -119,12 +119,12 @@ library JBRulesetMetadataResolver {
         if (rulesetMetadata.ownerMustSendPayouts) packed |= 1 << 77;
         // hold fees in bit 78.
         if (rulesetMetadata.holdFees) packed |= 1 << 78;
-        // useTotalSurplusForRedemptions in bit 79.
-        if (rulesetMetadata.useTotalSurplusForRedemptions) packed |= 1 << 79;
+        // useTotalSurplusForCashOuts in bit 79.
+        if (rulesetMetadata.useTotalSurplusForCashOuts) packed |= 1 << 79;
         // use pay data source in bit 80.
         if (rulesetMetadata.useDataHookForPay) packed |= 1 << 80;
-        // use redeem data source in bit 81.
-        if (rulesetMetadata.useDataHookForRedeem) packed |= 1 << 81;
+        // use cash out data source in bit 81.
+        if (rulesetMetadata.useDataHookForCashOut) packed |= 1 << 81;
         // data source address in bits 82-241.
         packed |= uint256(uint160(address(rulesetMetadata.dataHook))) << 82;
         // metadata in bits 242-255 (14 bits).
@@ -137,7 +137,7 @@ library JBRulesetMetadataResolver {
     function expandMetadata(JBRuleset memory ruleset) internal pure returns (JBRulesetMetadata memory) {
         return JBRulesetMetadata(
             reservedPercent(ruleset),
-            redemptionRate(ruleset),
+            cashOutTaxRate(ruleset),
             baseCurrency(ruleset),
             pausePay(ruleset),
             pauseCreditTransfers(ruleset),
@@ -150,9 +150,9 @@ library JBRulesetMetadataResolver {
             allowAddPriceFeed(ruleset),
             ownerMustSendPayouts(ruleset),
             holdFees(ruleset),
-            useTotalSurplusForRedemptions(ruleset),
+            useTotalSurplusForCashOuts(ruleset),
             useDataHookForPay(ruleset),
-            useDataHookForRedeem(ruleset),
+            useDataHookForCashOut(ruleset),
             dataHook(ruleset),
             metadata(ruleset)
         );

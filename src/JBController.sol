@@ -56,10 +56,11 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
 
     error JBController_AddingPriceFeedNotAllowed();
     error JBController_CreditTransfersPaused();
-    error JBController_InvalidRedemptionRate(uint256 rate, uint256 limit);
+    error JBController_InvalidCashOutTaxRate(uint256 rate, uint256 limit);
     error JBController_InvalidReservedPercent(uint256 percent, uint256 limit);
     error JBController_MintNotAllowedAndNotTerminalOrHook();
     error JBController_NoReservedTokens();
+    error JBController_OnlyFromTargetTerminal(address sender, address targetTerminal);
     error JBController_OnlyDirectory(address sender, IJBDirectory directory);
     error JBController_RulesetsAlreadyLaunched();
     error JBController_RulesetsArrayEmpty();
@@ -746,6 +747,12 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     /// @param from The controller being migrated from.
     /// @param projectId The ID of the project that will migrate to this controller.
     function receiveMigrationFrom(IERC165 from, uint256 projectId) external override {
+        // Keep a reference to the sender.
+        address sender = _msgSender();
+
+        // Make sure the sender is the expected source controller.
+        if (sender != address(from)) revert JBController_OnlyFromTargetTerminal(sender, address(from));
+
         // If the sending controller is an `IJBProjectUriRegistry`, copy the project's metadata URI.
         if (
             from.supportsInterface(type(IJBProjectUriRegistry).interfaceId) && DIRECTORY.controllerOf(projectId) == from
@@ -913,10 +920,10 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
                 );
             }
 
-            // Make sure its redemption rate is valid.
-            if (rulesetConfig.metadata.redemptionRate > JBConstants.MAX_REDEMPTION_RATE) {
-                revert JBController_InvalidRedemptionRate(
-                    rulesetConfig.metadata.redemptionRate, JBConstants.MAX_REDEMPTION_RATE
+            // Make sure its cash out tax rate is valid.
+            if (rulesetConfig.metadata.cashOutTaxRate > JBConstants.MAX_CASH_OUT_TAX_RATE) {
+                revert JBController_InvalidCashOutTaxRate(
+                    rulesetConfig.metadata.cashOutTaxRate, JBConstants.MAX_CASH_OUT_TAX_RATE
                 );
             }
 
@@ -925,7 +932,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
                 projectId: projectId,
                 duration: rulesetConfig.duration,
                 weight: rulesetConfig.weight,
-                decayPercent: rulesetConfig.decayPercent,
+                weightCutPercent: rulesetConfig.weightCutPercent,
                 approvalHook: rulesetConfig.approvalHook,
                 metadata: JBRulesetMetadataResolver.packRulesetMetadata(rulesetConfig.metadata),
                 mustStartAtOrAfter: rulesetConfig.mustStartAtOrAfter

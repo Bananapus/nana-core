@@ -4,7 +4,7 @@ pragma solidity 0.8.23;
 import /* {*} from */ "../../../helpers/TestBaseWorkflow.sol";
 import {JBTerminalStoreSetup} from "./JBTerminalStoreSetup.sol";
 
-contract TestRecordRedemptionFor_Local is JBTerminalStoreSetup {
+contract TestRecordCashOutsFor_Local is JBTerminalStoreSetup {
     uint56 _projectId = 1;
     uint256 _decimals = 18;
     uint256 _balance = 10e18;
@@ -18,7 +18,7 @@ contract TestRecordRedemptionFor_Local is JBTerminalStoreSetup {
     IJBController _controller = IJBController(makeAddr("controller"));
     IJBFundAccessLimits _accessLimits = IJBFundAccessLimits(makeAddr("funds"));
     IJBRulesetDataHook _dataHook = IJBRulesetDataHook(makeAddr("dataHook"));
-    IJBRedeemHook _redeemHook = IJBRedeemHook(makeAddr("redeemHook"));
+    IJBCashOutHook _cashOutHook = IJBCashOutHook(makeAddr("cashOutHook"));
 
     uint32 _currency = uint32(uint160(address(_token)));
     address _nativeAddress = JBConstants.NATIVE_TOKEN;
@@ -28,7 +28,7 @@ contract TestRecordRedemptionFor_Local is JBTerminalStoreSetup {
         super.terminalStoreSetup();
     }
 
-    modifier whenCurrentRulesetUseTotalSurplusForRedemptionsEqTrue() {
+    modifier whenCurrentRulesetUseTotalSurplusForCashOutsEqTrue() {
         // Find the storage slot
         bytes32 balanceOfSlot = keccak256(abi.encode(address(this), uint256(0)));
         bytes32 projectSlot = keccak256(abi.encode(_projectId, uint256(balanceOfSlot)));
@@ -65,7 +65,7 @@ contract TestRecordRedemptionFor_Local is JBTerminalStoreSetup {
 
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: 0,
-            redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
+            cashOutTaxRate: 0,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: true,
             pauseCreditTransfers: false,
@@ -78,9 +78,9 @@ contract TestRecordRedemptionFor_Local is JBTerminalStoreSetup {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: true,
+            useTotalSurplusForCashOuts: true,
             useDataHookForPay: false,
-            useDataHookForRedeem: false,
+            useDataHookForCashOut: false,
             dataHook: address(0),
             metadata: 0
         });
@@ -95,7 +95,7 @@ contract TestRecordRedemptionFor_Local is JBTerminalStoreSetup {
             start: uint48(block.timestamp),
             duration: uint32(block.timestamp + 1000),
             weight: 1e18,
-            decayPercent: 0,
+            weightCutPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: _packedMetadata
         });
@@ -146,7 +146,7 @@ contract TestRecordRedemptionFor_Local is JBTerminalStoreSetup {
 
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: 0,
-            redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
+            cashOutTaxRate: 0,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: true,
             pauseCreditTransfers: false,
@@ -159,9 +159,9 @@ contract TestRecordRedemptionFor_Local is JBTerminalStoreSetup {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: true,
+            useTotalSurplusForCashOuts: true,
             useDataHookForPay: false,
-            useDataHookForRedeem: false,
+            useDataHookForCashOut: false,
             dataHook: address(0),
             metadata: 0
         });
@@ -176,7 +176,7 @@ contract TestRecordRedemptionFor_Local is JBTerminalStoreSetup {
             start: uint48(block.timestamp),
             duration: uint32(block.timestamp + 1000),
             weight: 1e18,
-            decayPercent: 0,
+            weightCutPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: _packedMetadata
         });
@@ -190,7 +190,7 @@ contract TestRecordRedemptionFor_Local is JBTerminalStoreSetup {
         _;
     }
 
-    modifier whenCurrentRulesetUseTotalSurplusForRedemptionsEqTrueWithHook() {
+    modifier whenCurrentRulesetUseTotalSurplusForCashOutsEqTrueWithHook() {
         // Find the storage slot
         bytes32 balanceOfSlot = keccak256(abi.encode(address(this), uint256(0)));
         bytes32 projectSlot = keccak256(abi.encode(_projectId, uint256(balanceOfSlot)));
@@ -227,7 +227,7 @@ contract TestRecordRedemptionFor_Local is JBTerminalStoreSetup {
 
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: 0,
-            redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
+            cashOutTaxRate: 0,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: true,
             pauseCreditTransfers: false,
@@ -240,9 +240,9 @@ contract TestRecordRedemptionFor_Local is JBTerminalStoreSetup {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: true,
+            useTotalSurplusForCashOuts: true,
             useDataHookForPay: false,
-            useDataHookForRedeem: true,
+            useDataHookForCashOut: true,
             dataHook: address(_dataHook),
             metadata: 0
         });
@@ -257,7 +257,7 @@ contract TestRecordRedemptionFor_Local is JBTerminalStoreSetup {
             start: uint48(block.timestamp),
             duration: uint32(block.timestamp + 1000),
             weight: 1e18,
-            decayPercent: 0,
+            weightCutPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: _packedMetadata
         });
@@ -272,7 +272,7 @@ contract TestRecordRedemptionFor_Local is JBTerminalStoreSetup {
         _;
     }
 
-    function test_GivenTheRedeemCountGtTotalSupply() external whenCurrentRulesetUseTotalSurplusForRedemptionsEqTrue {
+    function test_GivenTheCashOutCountGtTotalSupply() external whenCurrentRulesetUseTotalSurplusForCashOutsEqTrue {
         // it will revert INSUFFICIENT_TOKENS
 
         uint256 _supply = 1e18;
@@ -294,22 +294,22 @@ contract TestRecordRedemptionFor_Local is JBTerminalStoreSetup {
 
         _balanceContexts[0] = JBAccountingContext({token: address(_token), decimals: 18, currency: _currency});
 
-        uint256 _redeemCount = 4e18; // greater than token total supply
+        uint256 _cashOutCount = 4e18; // greater than token total supply
 
         vm.expectRevert(
-            abi.encodeWithSelector(JBTerminalStore.JBTerminalStore_InsufficientTokens.selector, _redeemCount, _supply)
+            abi.encodeWithSelector(JBTerminalStore.JBTerminalStore_InsufficientTokens.selector, _cashOutCount, _supply)
         );
-        _store.recordRedemptionFor({
+        _store.recordCashOutFor({
             holder: address(this),
             projectId: _projectId,
-            redeemCount: _redeemCount,
+            cashOutCount: _cashOutCount,
             accountingContext: _accountingContexts,
             balanceAccountingContexts: _balanceContexts,
             metadata: ""
         });
     }
 
-    function test_GivenTheCurrentSurplusGtZero() external whenCurrentRulesetUseTotalSurplusForRedemptionsEqTrue {
+    function test_GivenTheCurrentSurplusGtZero() external whenCurrentRulesetUseTotalSurplusForCashOutsEqTrue {
         // it will set reclaim amount using the currentSurplus
 
         // mock JBController totalTokenSupplyWithReservedTokensOf
@@ -329,24 +329,24 @@ contract TestRecordRedemptionFor_Local is JBTerminalStoreSetup {
 
         _balanceContexts[0] = JBAccountingContext({token: address(_token), decimals: 18, currency: _currency});
 
-        uint256 _redeemCount = 6; // within balance bounds
-        uint256 expectedRedemption = mulDiv(3e18, _redeemCount, _totalSupply);
+        uint256 _cashOutCount = 6; // within balance bounds
+        uint256 expectedCashOuts = mulDiv(3e18, _cashOutCount, _totalSupply);
 
-        (, uint256 reclaimed,,) = _store.recordRedemptionFor({
+        (, uint256 reclaimed,,) = _store.recordCashOutFor({
             holder: address(this),
             projectId: _projectId,
-            redeemCount: _redeemCount,
+            cashOutCount: _cashOutCount,
             accountingContext: _accountingContexts,
             balanceAccountingContexts: _balanceContexts,
             metadata: ""
         });
 
-        assertEq(expectedRedemption, reclaimed);
+        assertEq(expectedCashOuts, reclaimed);
     }
 
-    function test_GivenCurrentRulesetUseDataHookForRedeemEqTrue()
+    function test_GivenCurrentRulesetUseDataHookForCashOutEqTrue()
         external
-        whenCurrentRulesetUseTotalSurplusForRedemptionsEqTrueWithHook
+        whenCurrentRulesetUseTotalSurplusForCashOutsEqTrueWithHook
     {
         // it will call the dataHook for the reclaim amount and hookSpecs
 
@@ -367,8 +367,8 @@ contract TestRecordRedemptionFor_Local is JBTerminalStoreSetup {
 
         _balanceContexts[0] = JBAccountingContext({token: address(_token), decimals: 18, currency: _currency});
 
-        uint256 _redeemCount = 1e18; // within balance bounds
-        uint256 expectedRedemption = mulDiv(3e18, _redeemCount, _totalSupply);
+        uint256 _cashOutCount = 1e18; // within balance bounds
+        uint256 expectedCashOuts = mulDiv(3e18, _cashOutCount, _totalSupply);
 
         // Create the struct that describes the amount being reclaimed.
         JBTokenAmount memory _reclaimedTokenAmount = JBTokenAmount({
@@ -378,37 +378,37 @@ contract TestRecordRedemptionFor_Local is JBTerminalStoreSetup {
             currency: _accountingContexts.currency
         });
 
-        // Create the redeem context that'll be sent to the data hook.
-        JBBeforeRedeemRecordedContext memory _context = JBBeforeRedeemRecordedContext({
+        // Create the cash out context that'll be sent to the data hook.
+        JBBeforeCashOutRecordedContext memory _context = JBBeforeCashOutRecordedContext({
             terminal: address(this),
             holder: address(this),
             projectId: _projectId,
             rulesetId: uint48(block.timestamp),
-            redeemCount: _redeemCount,
+            cashOutCount: _cashOutCount,
             totalSupply: _totalSupply,
             surplus: _reclaimedTokenAmount,
             useTotalSurplus: true,
-            redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
+            cashOutTaxRate: 0,
             metadata: ""
         });
 
         // return data
-        JBRedeemHookSpecification[] memory _spec = new JBRedeemHookSpecification[](1);
-        _spec[0] = JBRedeemHookSpecification({hook: _redeemHook, amount: 0, metadata: ""});
+        JBCashOutHookSpecification[] memory _spec = new JBCashOutHookSpecification[](1);
+        _spec[0] = JBCashOutHookSpecification({hook: _cashOutHook, amount: 0, metadata: ""});
 
-        // mock call to data hook beforeRedeemRecordedWith
+        // mock call to data hook beforeCashOutRecordedWith
         mockExpect(
             address(_dataHook),
-            abi.encodeCall(IJBRulesetDataHook.beforeRedeemRecordedWith, (_context)),
-            abi.encode(JBConstants.MAX_REDEMPTION_RATE, 1e18, _totalSupply, _spec)
+            abi.encodeCall(IJBRulesetDataHook.beforeCashOutRecordedWith, (_context)),
+            abi.encode(0, 1e18, _totalSupply, _spec)
         );
 
         uint256 balanceBefore = _store.balanceOf(address(this), _projectId, _accountingContexts.token);
 
-        (, uint256 reclaimed,,) = _store.recordRedemptionFor({
+        (, uint256 reclaimed,,) = _store.recordCashOutFor({
             holder: address(this),
             projectId: _projectId,
-            redeemCount: _redeemCount,
+            cashOutCount: _cashOutCount,
             accountingContext: _accountingContexts,
             balanceAccountingContexts: _balanceContexts,
             metadata: ""
@@ -416,10 +416,10 @@ contract TestRecordRedemptionFor_Local is JBTerminalStoreSetup {
 
         // covers GivenTheBalanceDiffGtZero()
         assertEq(
-            balanceBefore - expectedRedemption, _store.balanceOf(address(this), _projectId, _accountingContexts.token)
+            balanceBefore - expectedCashOuts, _store.balanceOf(address(this), _projectId, _accountingContexts.token)
         );
 
-        assertEq(expectedRedemption, reclaimed);
+        assertEq(expectedCashOuts, reclaimed);
     }
 
     function test_GivenTheAmountReclaimedGtCallerBalance() external whenCallerBalanceIsZero {
@@ -441,19 +441,19 @@ contract TestRecordRedemptionFor_Local is JBTerminalStoreSetup {
 
         _balanceContexts[0] = JBAccountingContext({token: address(_token), decimals: 18, currency: _currency});
 
-        uint256 _redeemCount = 4e18; // greater than caller balance
+        uint256 _cashOutCount = 4e18; // greater than caller balance
 
-        uint256 reclaimAmount = mulDiv(_currentSurplus, _redeemCount, _totalTokens);
+        uint256 reclaimAmount = mulDiv(_currentSurplus, _cashOutCount, _totalTokens);
 
         vm.expectRevert(
             abi.encodeWithSelector(
                 JBTerminalStore.JBTerminalStore_InadequateTerminalStoreBalance.selector, reclaimAmount, 0
             )
         );
-        _store.recordRedemptionFor({
+        _store.recordCashOutFor({
             holder: address(this),
             projectId: _projectId,
-            redeemCount: _redeemCount,
+            cashOutCount: _cashOutCount,
             accountingContext: _accountingContexts,
             balanceAccountingContexts: _balanceContexts,
             metadata: ""
@@ -461,7 +461,7 @@ contract TestRecordRedemptionFor_Local is JBTerminalStoreSetup {
     }
 
     // Probably unnecessary even though it may give us a bit of cov %.. skipping for now
-    /* function test_WhenTheCurrentRulesetUseTotalSurplusForRedemptionsEqFalse() external {
+    /* function test_WhenTheCurrentRulesetUseTotalSurplusForCashOutsEqFalse() external {
         // it will use the standard surplus calculation
     } */
 }

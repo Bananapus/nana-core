@@ -43,7 +43,7 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
             start: uint48(block.timestamp),
             duration: uint32(block.timestamp + 1000),
             weight: 1e18,
-            decayPercent: 0,
+            weightCutPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: 0
         });
@@ -75,7 +75,7 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
 
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: 0,
-            redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
+            cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: true,
             pauseCreditTransfers: false,
@@ -88,9 +88,9 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: false,
+            useTotalSurplusForCashOuts: false,
             useDataHookForPay: false,
-            useDataHookForRedeem: false,
+            useDataHookForCashOut: false,
             dataHook: address(0),
             metadata: 0
         });
@@ -105,7 +105,7 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
             start: uint48(block.timestamp),
             duration: uint32(block.timestamp + 1000),
             weight: 1e18,
-            decayPercent: 0,
+            weightCutPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: _packedMetadata
         });
@@ -144,7 +144,7 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
 
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: 0,
-            redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
+            cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE,
             baseCurrency: uint32(uint160(address(_token))),
             pausePay: false,
             pauseCreditTransfers: false,
@@ -157,9 +157,9 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: false,
+            useTotalSurplusForCashOuts: false,
             useDataHookForPay: true,
-            useDataHookForRedeem: false,
+            useDataHookForCashOut: false,
             dataHook: address(_dataHook),
             metadata: 0
         });
@@ -174,7 +174,7 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
             start: uint48(block.timestamp),
             duration: uint32(block.timestamp + 1000),
             weight: 1e18,
-            decayPercent: 0,
+            weightCutPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: _packedMetadata
         });
@@ -231,7 +231,7 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
 
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: 0,
-            redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
+            cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE,
             baseCurrency: uint32(uint160(address(_token))),
             pausePay: false,
             pauseCreditTransfers: false,
@@ -244,9 +244,9 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: false,
+            useTotalSurplusForCashOuts: false,
             useDataHookForPay: true,
-            useDataHookForRedeem: false,
+            useDataHookForCashOut: false,
             dataHook: address(_dataHook),
             metadata: 0
         });
@@ -261,7 +261,7 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
             start: uint48(block.timestamp),
             duration: uint32(block.timestamp + 1000),
             weight: 1e18,
-            decayPercent: 0,
+            weightCutPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: _packedMetadata
         });
@@ -323,7 +323,7 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
 
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: 0,
-            redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
+            cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE,
             baseCurrency: uint32(uint160(address(_token))),
             pausePay: false,
             pauseCreditTransfers: false,
@@ -336,9 +336,9 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: false,
+            useTotalSurplusForCashOuts: false,
             useDataHookForPay: true,
-            useDataHookForRedeem: false,
+            useDataHookForCashOut: false,
             dataHook: address(_dataHook),
             metadata: 0
         });
@@ -353,7 +353,7 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
             start: uint48(block.timestamp),
             duration: uint32(block.timestamp + 1000),
             weight: 1e18,
-            decayPercent: 0,
+            weightCutPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: _packedMetadata
         });
@@ -407,7 +407,7 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
 
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: 0,
-            redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
+            cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE,
             baseCurrency: uint32(uint160(address(_token))),
             pausePay: false,
             pauseCreditTransfers: false,
@@ -420,9 +420,9 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: false,
+            useTotalSurplusForCashOuts: false,
             useDataHookForPay: true,
-            useDataHookForRedeem: false,
+            useDataHookForCashOut: false,
             // hook not configured
             dataHook: address(0),
             metadata: 0
@@ -438,7 +438,7 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
             start: uint48(block.timestamp),
             duration: uint32(block.timestamp + 1000),
             weight: 1e18,
-            decayPercent: 0,
+            weightCutPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: _packedMetadata
         });
@@ -474,7 +474,7 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
 
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: 0,
-            redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
+            cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE,
             baseCurrency: _nativeCurrency,
             pausePay: false,
             pauseCreditTransfers: false,
@@ -487,9 +487,9 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: false,
+            useTotalSurplusForCashOuts: false,
             useDataHookForPay: true,
-            useDataHookForRedeem: false,
+            useDataHookForCashOut: false,
             dataHook: address(_dataHook),
             metadata: 0
         });
@@ -504,7 +504,7 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
             start: uint48(block.timestamp),
             duration: uint32(block.timestamp + 1000),
             weight: 1e18,
-            decayPercent: 0,
+            weightCutPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: _packedMetadata
         });

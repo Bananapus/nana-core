@@ -1,5 +1,5 @@
 TestUpdateRulesetWeightCache_Local
-├── when latest ruleset of project duration or decayPercent EQ zero
+├── when latest ruleset of project duration or weightCutPercent EQ zero
 │   └── it will return without updating
-└── when latest ruleset has proper duration and decayPercent
-    └── it will store a new derivedWeightFrom and decayMultiple in storage
+└── when latest ruleset has proper duration and weightCutPercent
+    └── it will store a new derivedWeightFrom and weightCutMultiple in storage

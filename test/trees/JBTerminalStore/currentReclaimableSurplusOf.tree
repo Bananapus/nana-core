@@ -8,9 +8,9 @@ TestCurrentReclaimableSurplusOf_Local
     │   └── it will get the number of outstanding tokens and return the reclaimable surplus
     ├── given tokenCount is eq to totalSupply
     │   └── it will return the rest of the surplus
-    ├── given redemption rate eq zero
+    ├── given cash out tax rate eq zero
     │   └── it will return zero
-    ├── given redemption rate eq MAX_REDEMPTION_RATE
+    ├── given cash out tax rate eq MAX_CASH_OUT_TAX_RATE
     │   └── it will return the linear proportion
-    └── given redemption rate dneq MAX_REDEMPTION_RATE
+    └── given cash out tax rate dneq MAX_CASH_OUT_TAX_RATE
         └── it will return the calculated proportion

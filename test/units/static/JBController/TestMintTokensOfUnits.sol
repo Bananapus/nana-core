@@ -24,7 +24,7 @@ contract TestMintTokensOfUnits_Local is JBControllerSetup {
         // setup: return data
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: JBConstants.MAX_RESERVED_PERCENT / 2, //50%
-            redemptionRate: JBConstants.MAX_REDEMPTION_RATE / 2, //50%
+            cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE / 2, //50%
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
@@ -37,9 +37,9 @@ contract TestMintTokensOfUnits_Local is JBControllerSetup {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: true,
+            useTotalSurplusForCashOuts: true,
             useDataHookForPay: false,
-            useDataHookForRedeem: false,
+            useDataHookForCashOut: false,
             dataHook: address(0),
             metadata: 0
         });
@@ -53,7 +53,7 @@ contract TestMintTokensOfUnits_Local is JBControllerSetup {
             start: uint48(block.timestamp),
             duration: 8000,
             weight: 5000,
-            decayPercent: 0,
+            weightCutPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0x1234567890123456789012345678901234567890)),
             metadata: _packedMetadata
         });

@@ -6,7 +6,7 @@ import {IJBPrices} from "./IJBPrices.sol";
 import {IJBRulesets} from "./IJBRulesets.sol";
 import {JBAccountingContext} from "./../structs/JBAccountingContext.sol";
 import {JBPayHookSpecification} from "./../structs/JBPayHookSpecification.sol";
-import {JBRedeemHookSpecification} from "./../structs/JBRedeemHookSpecification.sol";
+import {JBCashOutHookSpecification} from "./../structs/JBCashOutHookSpecification.sol";
 import {JBRuleset} from "./../structs/JBRuleset.sol";
 import {JBTokenAmount} from "./../structs/JBTokenAmount.sol";
 
@@ -94,10 +94,10 @@ interface IJBTerminalStore {
     )
         external
         returns (JBRuleset memory ruleset, uint256 amountPaidOut);
-    function recordRedemptionFor(
+    function recordCashOutFor(
         address holder,
         uint256 projectId,
-        uint256 redeemCount,
+        uint256 cashOutCount,
         JBAccountingContext calldata accountingContext,
         JBAccountingContext[] calldata balanceAccountingContexts,
         bytes calldata metadata
@@ -106,8 +106,8 @@ interface IJBTerminalStore {
         returns (
             JBRuleset memory ruleset,
             uint256 reclaimAmount,
-            uint256 redemptionRate,
-            JBRedeemHookSpecification[] memory hookSpecifications
+            uint256 cashOutTaxRate,
+            JBCashOutHookSpecification[] memory hookSpecifications
         );
     function recordTerminalMigration(uint256 projectId, address token) external returns (uint256 balance);
     function recordUsedAllowanceOf(

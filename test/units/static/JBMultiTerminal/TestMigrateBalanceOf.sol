@@ -96,13 +96,6 @@ contract TestMigrateBalanceOf_Local is JBMultiTerminalSetup {
             abi.encode(_context)
         );
 
-        // mock call to JBDirectory primaryTerminal
-        mockExpect(
-            address(directory),
-            abi.encodeCall(IJBDirectory.primaryTerminalOf, (_projectId, _usdc)),
-            abi.encode(_terminal)
-        );
-
         // mock call to JBTerminalStore
         mockExpect(
             address(store),
@@ -140,13 +133,6 @@ contract TestMigrateBalanceOf_Local is JBMultiTerminalSetup {
             abi.encode(_context)
         );
 
-        // mock call to JBDirectory primaryTerminal
-        mockExpect(
-            address(directory),
-            abi.encodeCall(IJBDirectory.primaryTerminalOf, (_projectId, _native)),
-            abi.encode(_terminal)
-        );
-
         // mock call to JBTerminalStore
         mockExpect(
             address(store),
@@ -179,13 +165,6 @@ contract TestMigrateBalanceOf_Local is JBMultiTerminalSetup {
             address(_newTerminal),
             abi.encodeCall(IJBTerminal.accountingContextForTokenOf, (_projectId, _native)),
             abi.encode(_context)
-        );
-
-        // mock call to JBDirectory primaryTerminal
-        mockExpect(
-            address(directory),
-            abi.encodeCall(IJBDirectory.primaryTerminalOf, (_projectId, _native)),
-            abi.encode(_terminal)
         );
 
         // mock call to JBTerminalStore

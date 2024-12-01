@@ -29,7 +29,7 @@ contract TestSetTokenFor_Local is JBControllerSetup {
         // setup: return data
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: JBConstants.MAX_RESERVED_PERCENT / 2, //50%
-            redemptionRate: JBConstants.MAX_REDEMPTION_RATE / 2, //50%
+            cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE / 2, //50%
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
@@ -42,9 +42,9 @@ contract TestSetTokenFor_Local is JBControllerSetup {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: true,
+            useTotalSurplusForCashOuts: true,
             useDataHookForPay: false,
-            useDataHookForRedeem: false,
+            useDataHookForCashOut: false,
             dataHook: address(0),
             metadata: 0
         });
@@ -58,7 +58,7 @@ contract TestSetTokenFor_Local is JBControllerSetup {
             start: uint48(block.timestamp),
             duration: 8000,
             weight: 5000,
-            decayPercent: 0,
+            weightCutPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: _packedMetadata
         });
@@ -86,7 +86,7 @@ contract TestSetTokenFor_Local is JBControllerSetup {
         // setup: return data
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: JBConstants.MAX_RESERVED_PERCENT / 2, //50%
-            redemptionRate: JBConstants.MAX_REDEMPTION_RATE / 2, //50%
+            cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE / 2, //50%
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
@@ -99,9 +99,9 @@ contract TestSetTokenFor_Local is JBControllerSetup {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: true,
+            useTotalSurplusForCashOuts: true,
             useDataHookForPay: false,
-            useDataHookForRedeem: false,
+            useDataHookForCashOut: false,
             dataHook: address(0),
             metadata: 0
         });
@@ -115,7 +115,7 @@ contract TestSetTokenFor_Local is JBControllerSetup {
             start: 0,
             duration: 0,
             weight: 0,
-            decayPercent: 0,
+            weightCutPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: 0
         });
@@ -127,7 +127,7 @@ contract TestSetTokenFor_Local is JBControllerSetup {
             start: uint48(block.timestamp),
             duration: 8000,
             weight: 5000,
-            decayPercent: 0,
+            weightCutPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: _packedMetadata
         });
@@ -155,7 +155,7 @@ contract TestSetTokenFor_Local is JBControllerSetup {
         // setup: return data
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: JBConstants.MAX_RESERVED_PERCENT / 2, //50%
-            redemptionRate: JBConstants.MAX_REDEMPTION_RATE / 2, //50%
+            cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE / 2, //50%
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
@@ -168,9 +168,9 @@ contract TestSetTokenFor_Local is JBControllerSetup {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: true,
+            useTotalSurplusForCashOuts: true,
             useDataHookForPay: false,
-            useDataHookForRedeem: false,
+            useDataHookForCashOut: false,
             dataHook: address(0),
             metadata: 0
         });
@@ -184,7 +184,7 @@ contract TestSetTokenFor_Local is JBControllerSetup {
             start: uint48(block.timestamp),
             duration: 8000,
             weight: 5000,
-            decayPercent: 0,
+            weightCutPercent: 0,
             approvalHook: IJBRulesetApprovalHook(address(0)),
             metadata: _packedMetadata
         });

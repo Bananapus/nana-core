@@ -28,7 +28,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
 
         _metadata = JBRulesetMetadata({
             reservedPercent: 0,
-            redemptionRate: 0,
+            cashOutTaxRate: 0,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
@@ -41,9 +41,9 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: false,
+            useTotalSurplusForCashOuts: false,
             useDataHookForPay: false,
-            useDataHookForRedeem: false,
+            useDataHookForCashOut: false,
             dataHook: address(0),
             metadata: 0
         });
@@ -55,7 +55,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         _rulesetConfig[0].mustStartAtOrAfter = 0;
         _rulesetConfig[0].duration = _RULESET_DURATION;
         _rulesetConfig[0].weight = _weight;
-        _rulesetConfig[0].decayPercent = 0;
+        _rulesetConfig[0].weightCutPercent = 0;
         _rulesetConfig[0].approvalHook = _deadline;
         _rulesetConfig[0].metadata = _metadata;
         _rulesetConfig[0].splitGroups = new JBSplitGroup[](0);
@@ -91,7 +91,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         _rulesetConfig[0].mustStartAtOrAfter = 0;
         _rulesetConfig[0].duration = 1 days;
         _rulesetConfig[0].weight = _weight;
-        _rulesetConfig[0].decayPercent = 0;
+        _rulesetConfig[0].weightCutPercent = 0;
         _rulesetConfig[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfig[0].metadata = _metadata;
         _rulesetConfig[0].splitGroups = new JBSplitGroup[](0);
@@ -101,7 +101,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         _rulesetConfig[1].mustStartAtOrAfter = uint48(block.timestamp + 1 days);
         _rulesetConfig[1].duration = 1 days;
         _rulesetConfig[1].weight = _weight + 100;
-        _rulesetConfig[1].decayPercent = 0;
+        _rulesetConfig[1].weightCutPercent = 0;
         _rulesetConfig[1].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfig[1].metadata = _metadata;
         _rulesetConfig[1].splitGroups = new JBSplitGroup[](0);
@@ -111,7 +111,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         _rulesetConfig[2].mustStartAtOrAfter = uint48(block.timestamp + 2 days);
         _rulesetConfig[2].duration = 1 days;
         _rulesetConfig[2].weight = _weight + 200;
-        _rulesetConfig[2].decayPercent = 0;
+        _rulesetConfig[2].weightCutPercent = 0;
         _rulesetConfig[2].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfig[2].metadata = _metadata;
         _rulesetConfig[2].splitGroups = new JBSplitGroup[](0);
@@ -161,7 +161,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         _rulesetConfig[0].mustStartAtOrAfter = 0;
         _rulesetConfig[0].duration = _RULESET_DURATION;
         _rulesetConfig[0].weight = _weight;
-        _rulesetConfig[0].decayPercent = 0;
+        _rulesetConfig[0].weightCutPercent = 0;
         _rulesetConfig[0].approvalHook = _deadline;
         _rulesetConfig[0].metadata = _metadata;
         _rulesetConfig[0].splitGroups = _splitGroup;
@@ -231,7 +231,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         _firstQueued[0].mustStartAtOrAfter = 0;
         _firstQueued[0].duration = _RULESET_DURATION;
         _firstQueued[0].weight = _weightFirstQueued;
-        _firstQueued[0].decayPercent = 0;
+        _firstQueued[0].weightCutPercent = 0;
         _firstQueued[0].approvalHook = _deadline; // 3 day deadline duration.
         _firstQueued[0].metadata = _metadata;
         _firstQueued[0].splitGroups = _splitGroup;
@@ -246,7 +246,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         _secondQueued[0].mustStartAtOrAfter = 0;
         _secondQueued[0].duration = _RULESET_DURATION;
         _secondQueued[0].weight = _weightSecondQueued;
-        _secondQueued[0].decayPercent = 0;
+        _secondQueued[0].weightCutPercent = 0;
         _secondQueued[0].approvalHook = _deadline; // 3 day deadline duration.
         _secondQueued[0].metadata = _metadata;
         _secondQueued[0].splitGroups = _splitGroup;
@@ -293,7 +293,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         _rulesetConfig[0].mustStartAtOrAfter = 0;
         _rulesetConfig[0].duration = _RULESET_DURATION;
         _rulesetConfig[0].weight = 10_000 ether;
-        _rulesetConfig[0].decayPercent = 0;
+        _rulesetConfig[0].weightCutPercent = 0;
         _rulesetConfig[0].approvalHook = _deadline;
         _rulesetConfig[0].metadata = _metadata;
         _rulesetConfig[0].splitGroups = _splitGroup;
@@ -319,7 +319,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
             _config[0].duration = _RULESET_DURATION;
             // Package up a new ruleset with a decremented weight.
             _config[0].weight = uint112(initialRuleset.weight - (i + 1)); // i+1 -> next ruleset
-            _config[0].decayPercent = 0;
+            _config[0].weightCutPercent = 0;
             _config[0].approvalHook = _deadline;
             _config[0].metadata = _metadata;
             _config[0].splitGroups = _splitGroup;
@@ -379,7 +379,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         _rulesetConfig[0].mustStartAtOrAfter = 0;
         _rulesetConfig[0].duration = 0;
         _rulesetConfig[0].weight = _weight;
-        _rulesetConfig[0].decayPercent = 0;
+        _rulesetConfig[0].weightCutPercent = 0;
         _rulesetConfig[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfig[0].metadata = _metadata;
         _rulesetConfig[0].splitGroups = _splitGroup;
@@ -397,7 +397,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         _config[0].mustStartAtOrAfter = 0;
         _config[0].duration = _RULESET_DURATION;
         _config[0].weight = 12_345 * 10 ** 18;
-        _config[0].decayPercent = 0;
+        _config[0].weightCutPercent = 0;
         _config[0].approvalHook = invalidHook;
         _config[0].metadata = _metadata;
         _config[0].splitGroups = _splitGroup;
@@ -430,7 +430,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         _config[0].mustStartAtOrAfter = 0;
         _config[0].duration = _RULESET_DURATION;
         _config[0].weight = 69 * 10 ** 18;
-        _config[0].decayPercent = 0;
+        _config[0].weightCutPercent = 0;
         _config[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _config[0].metadata = _metadata;
         _config[0].splitGroups = _splitGroup;
@@ -468,7 +468,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         _rulesetConfig[0].mustStartAtOrAfter = 0;
         _rulesetConfig[0].duration = 5 minutes;
         _rulesetConfig[0].weight = 10_000 * 10 ** 18;
-        _rulesetConfig[0].decayPercent = 0;
+        _rulesetConfig[0].weightCutPercent = 0;
         _rulesetConfig[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfig[0].metadata = _metadata;
         _rulesetConfig[0].splitGroups = _splitGroup;
@@ -490,7 +490,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         _config[0].mustStartAtOrAfter = 0;
         _config[0].duration = _RULESET_DURATION;
         _config[0].weight = 69 * 10 ** 18;
-        _config[0].decayPercent = 0;
+        _config[0].weightCutPercent = 0;
         _config[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _config[0].metadata = _metadata;
         _config[0].splitGroups = _splitGroup;
@@ -525,7 +525,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         _rulesetConfig[0].mustStartAtOrAfter = 0;
         _rulesetConfig[0].duration = _RULESET_DURATION;
         _rulesetConfig[0].weight = _weightInitial;
-        _rulesetConfig[0].decayPercent = 0;
+        _rulesetConfig[0].weightCutPercent = 0;
         _rulesetConfig[0].approvalHook = _deadline; // day deadline duration.
         _rulesetConfig[0].metadata = _metadata;
         _rulesetConfig[0].splitGroups = _splitGroup;
@@ -547,7 +547,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         _firstQueued[0].mustStartAtOrAfter = 0;
         _firstQueued[0].duration = _RULESET_DURATION;
         _firstQueued[0].weight = _weightFirstQueued;
-        _firstQueued[0].decayPercent = 0;
+        _firstQueued[0].weightCutPercent = 0;
         _firstQueued[0].approvalHook = _deadline; // 3 day deadline duration.
         _firstQueued[0].metadata = _metadata;
         _firstQueued[0].splitGroups = _splitGroup;
@@ -574,7 +574,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         _secondQueued[0].mustStartAtOrAfter = uint48(block.timestamp + 9 days);
         _secondQueued[0].duration = _RULESET_DURATION;
         _secondQueued[0].weight = _weightSecondQueued;
-        _secondQueued[0].decayPercent = 0;
+        _secondQueued[0].weightCutPercent = 0;
         _secondQueued[0].approvalHook = _deadline;
         _secondQueued[0].metadata = _metadata;
         _secondQueued[0].splitGroups = _splitGroup;
@@ -635,7 +635,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         _rulesetConfig[0].mustStartAtOrAfter = 0;
         _rulesetConfig[0].duration = 0;
         _rulesetConfig[0].weight = _weight;
-        _rulesetConfig[0].decayPercent = 0;
+        _rulesetConfig[0].weightCutPercent = 0;
         _rulesetConfig[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfig[0].metadata = _metadata;
         _rulesetConfig[0].splitGroups = _splitGroup;
@@ -657,7 +657,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         _firstQueued[0].mustStartAtOrAfter = uint48(block.timestamp + 3 days);
         _firstQueued[0].duration = _RULESET_DURATION;
         _firstQueued[0].weight = _weightFirstQueued;
-        _firstQueued[0].decayPercent = 0;
+        _firstQueued[0].weightCutPercent = 0;
         _firstQueued[0].approvalHook = _deadline; // 3 day deadline duration.
         _firstQueued[0].metadata = _metadata;
         _firstQueued[0].splitGroups = _splitGroup;
@@ -680,7 +680,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         _secondQueued[0].mustStartAtOrAfter = uint48(block.timestamp + _DEADLINE_DURATION);
         _secondQueued[0].duration = _RULESET_DURATION;
         _secondQueued[0].weight = _weightSecondQueued;
-        _secondQueued[0].decayPercent = 0;
+        _secondQueued[0].weightCutPercent = 0;
         _secondQueued[0].approvalHook = _deadline; // 3 day deadline duration.
         _secondQueued[0].metadata = _metadata;
         _secondQueued[0].splitGroups = _splitGroup;
@@ -829,7 +829,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         _rulesetConfig[0].mustStartAtOrAfter = uint48(block.timestamp - 2 days);
         _rulesetConfig[0].duration = 1 hours;
         _rulesetConfig[0].weight = uint112(_weight);
-        _rulesetConfig[0].decayPercent = 0;
+        _rulesetConfig[0].weightCutPercent = 0;
         _rulesetConfig[0].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfig[0].metadata = _metadata;
         _rulesetConfig[0].splitGroups = new JBSplitGroup[](0);
@@ -839,7 +839,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         _rulesetConfig[1].mustStartAtOrAfter = uint48(block.timestamp - 2 hours);
         _rulesetConfig[1].duration = 1 hours;
         _rulesetConfig[1].weight = uint112(_weight + 100);
-        _rulesetConfig[1].decayPercent = 0;
+        _rulesetConfig[1].weightCutPercent = 0;
         _rulesetConfig[1].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfig[1].metadata = _metadata;
         _rulesetConfig[1].splitGroups = new JBSplitGroup[](0);
@@ -849,7 +849,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         _rulesetConfig[2].mustStartAtOrAfter = uint48(block.timestamp + 1 days);
         _rulesetConfig[2].duration = 1 days;
         _rulesetConfig[2].weight = uint112(_weight + 200);
-        _rulesetConfig[2].decayPercent = 0;
+        _rulesetConfig[2].weightCutPercent = 0;
         _rulesetConfig[2].approvalHook = IJBRulesetApprovalHook(address(0));
         _rulesetConfig[2].metadata = _metadata;
         _rulesetConfig[2].splitGroups = new JBSplitGroup[](0);

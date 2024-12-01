@@ -11,7 +11,7 @@ contract TestGetRulesetOf_Local is JBRulesetsSetup {
     uint256 _projectId = 1;
     uint256 _duration = 3 days;
     uint256 _weight = 0;
-    uint256 _decayPercent = 450_000_000;
+    uint256 _weightCutPercent = 450_000_000;
     uint48 _mustStartAt = 0;
     uint256 _hookDuration = 1 days;
     IJBRulesetApprovalHook private _noHook = IJBRulesetApprovalHook(address(0));
@@ -22,7 +22,7 @@ contract TestGetRulesetOf_Local is JBRulesetsSetup {
         // Params for tests
         _metadata = JBRulesetMetadata({
             reservedPercent: 0,
-            redemptionRate: 0,
+            cashOutTaxRate: 0,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
@@ -35,9 +35,9 @@ contract TestGetRulesetOf_Local is JBRulesetsSetup {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: false,
+            useTotalSurplusForCashOuts: false,
             useDataHookForPay: false,
-            useDataHookForRedeem: false,
+            useDataHookForCashOut: false,
             dataHook: address(0),
             metadata: 0
         });
@@ -62,7 +62,7 @@ contract TestGetRulesetOf_Local is JBRulesetsSetup {
             _projectId,
             _duration,
             _weight,
-            _decayPercent,
+            _weightCutPercent,
             _noHook,
             _packedMetadata,
             block.timestamp,
@@ -74,7 +74,7 @@ contract TestGetRulesetOf_Local is JBRulesetsSetup {
             projectId: _projectId,
             duration: _duration,
             weight: _weight,
-            decayPercent: _decayPercent,
+            weightCutPercent: _weightCutPercent,
             approvalHook: _noHook,
             metadata: _packedMetadata,
             mustStartAtOrAfter: _mustStartAt
