@@ -52,7 +52,7 @@ interface IJBTerminalStore {
         JBAccountingContext[] calldata accountingContexts,
         uint256 decimals,
         uint256 currency,
-        uint256 tokenCount
+        uint256 cashOutCount
     )
         external
         view
