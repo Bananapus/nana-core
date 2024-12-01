@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import {IJBDirectory} from "./IJBDirectory.sol";
 import {IJBPrices} from "./IJBPrices.sol";
 import {IJBRulesets} from "./IJBRulesets.sol";
+import {IJBTerminal} from "./IJBTerminal.sol";
 import {JBAccountingContext} from "./../structs/JBAccountingContext.sol";
 import {JBPayHookSpecification} from "./../structs/JBPayHookSpecification.sol";
 import {JBCashOutHookSpecification} from "./../structs/JBCashOutHookSpecification.sol";
@@ -50,7 +51,7 @@ interface IJBTerminalStore {
     function currentReclaimableSurplusOf(
         uint256 projectId,
         uint256 cashOutCount,
-        address terminal,
+        IJBTerminal[] calldata terminals,
         JBAccountingContext[] calldata accountingContexts,
         uint256 decimals,
         uint256 currency

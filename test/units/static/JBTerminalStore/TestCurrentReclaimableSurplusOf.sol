@@ -85,8 +85,10 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
         bytes memory _payoutLimitsReturn = abi.encode(_limits);
         mockExpect(address(_accessLimits), _payoutLimitsCall, _payoutLimitsReturn);
 
+        IJBTerminal[] memory _terminals = new IJBTerminal[](1);
+        _terminals[0] = _terminal;
         uint256 reclaimable =
-            _store.currentReclaimableSurplusOf(_projectId, _tokenCount, address(_terminal), _contexts, 18, _currency);
+            _store.currentReclaimableSurplusOf(_projectId, _tokenCount, _terminals, _contexts, 18, _currency);
         assertEq(0, reclaimable);
     }
 
@@ -164,8 +166,10 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
         bytes memory _tokenTotal = abi.encode(1e18);
         mockExpect(address(_controller), _totalTokenCall, _tokenTotal);
 
+        IJBTerminal[] memory _terminals = new IJBTerminal[](1);
+        _terminals[0] = _terminal;
         uint256 reclaimable =
-            _store.currentReclaimableSurplusOf(_projectId, 1e18, address(_terminal), _contexts, 18, _currency);
+            _store.currentReclaimableSurplusOf(_projectId, 1e18, _terminals, _contexts, 18, _currency);
         uint256 assumed = mulDiv((1e18 - 1e17), _tokenCount, 1e18);
 
         assertEq(assumed, reclaimable);
@@ -241,8 +245,10 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
         bytes memory _tokenTotal = abi.encode(1e18);
         mockExpect(address(_controller), _totalTokenCall, _tokenTotal);
 
+        IJBTerminal[] memory _terminals = new IJBTerminal[](1);
+        _terminals[0] = _terminal;
         uint256 reclaimable =
-            _store.currentReclaimableSurplusOf(_projectId, _tokenCount, address(_terminal), _contexts, 18, _currency);
+            _store.currentReclaimableSurplusOf(_projectId, _tokenCount, _terminals, _contexts, 18, _currency);
 
         assertEq(_tokenCount, reclaimable);
     }
@@ -317,8 +323,10 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
         bytes memory _tokenTotal = abi.encode(1e18);
         mockExpect(address(_controller), _totalTokenCall, _tokenTotal);
 
+        IJBTerminal[] memory _terminals = new IJBTerminal[](1);
+        _terminals[0] = _terminal;
         uint256 reclaimable =
-            _store.currentReclaimableSurplusOf(_projectId, _tokenCount, address(_terminal), _contexts, 18, _currency);
+            _store.currentReclaimableSurplusOf(_projectId, _tokenCount, _terminals, _contexts, 18, _currency);
 
         assertEq(0, reclaimable);
     }
@@ -393,14 +401,19 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
         bytes memory _tokenTotal = abi.encode(1e18);
         mockExpect(address(_controller), _totalTokenCall, _tokenTotal);
 
+        uint256 reclaimable;
+        {
+            IJBTerminal[] memory _terminals = new IJBTerminal[](1);
+            _terminals[0] = _terminal;
+            reclaimable =
+                _store.currentReclaimableSurplusOf(_projectId, _tokenCount, _terminals, _contexts, 18, _currency);
+        }
+
         uint256 assumed = mulDiv(
             1e18 - 1e17,
             5000 + mulDiv(_tokenCount, JBConstants.MAX_CASH_OUT_TAX_RATE - 5000, 1e18),
             JBConstants.MAX_CASH_OUT_TAX_RATE
         );
-
-        uint256 reclaimable =
-            _store.currentReclaimableSurplusOf(_projectId, _tokenCount, address(_terminal), _contexts, 18, _currency);
 
         assertEq(assumed, reclaimable);
     }
