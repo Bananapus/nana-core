@@ -211,7 +211,7 @@ contract JBTerminalStore is IJBTerminalStore {
         // Get the current surplus amount.
         // If a terminal or accounting contexts weren't provided, use the total surplus across all terminals. Otherwise,
         // get the `terminal`'s surplus.
-        uint256 currentSurplus = terminal == address(0) && accountingContexts.length == 0
+        uint256 currentSurplus = terminal == address(0)
             ? JBSurplus.currentSurplusOf({
                 projectId: projectId,
                 terminals: DIRECTORY.terminalsOf(projectId),
