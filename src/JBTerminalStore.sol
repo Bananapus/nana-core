@@ -174,8 +174,8 @@ contract JBTerminalStore is IJBTerminalStore {
     /// @dev The returned amount in terms of the specified `terminal`'s base currency.
     /// @dev The returned amount is represented as a fixed point number with the same amount of decimals as the
     /// specified terminal.
-    /// @param cashOutCount The number of tokens that would be cashed out, as a fixed point number with 18 decimals.
     /// @param projectId The ID of the project whose tokens would be cashed out.
+    /// @param cashOutCount The number of tokens that would be cashed out, as a fixed point number with 18 decimals.
     /// @param terminal The terminal that would be cashed out from. If this is the zero address, surplus within all the
     /// project's terminals are considered.
     /// @param accountingContexts The accounting contexts of the surplus terminal tokens that would be reclaimed
@@ -184,8 +184,8 @@ contract JBTerminalStore is IJBTerminalStore {
     /// @return The amount of surplus terminal tokens that would be reclaimed by cashing out `cashOutCount`
     /// tokens.
     function currentReclaimableSurplusOf(
-        uint256 cashOutCount,
         uint256 projectId,
+        uint256 cashOutCount,
         address terminal,
         JBAccountingContext[] calldata accountingContexts,
         uint256 decimals,

@@ -48,8 +48,8 @@ interface IJBTerminalStore {
         returns (uint256);
 
     function currentReclaimableSurplusOf(
-        uint256 cashOutCount,
         uint256 projectId,
+        uint256 cashOutCount,
         address terminal,
         JBAccountingContext[] calldata accountingContexts,
         uint256 decimals,
