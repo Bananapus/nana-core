@@ -461,6 +461,145 @@ contract JBTerminalStore is IJBTerminalStore {
         balanceOf[msg.sender][projectId][token] = balanceOf[msg.sender][projectId][token] + amount;
     }
 
+    /// @notice Records a cash out from a project.
+    /// @dev Cashs out the project's tokens according to values provided by the ruleset's data hook. If the ruleset has
+    /// no
+    /// data hook, cashs out tokens along a cash out bonding curve that is a function of the number of tokens being
+    /// burned.
+    /// @param holder The account that is cashing out tokens.
+    /// @param projectId The ID of the project being cashing out from.
+    /// @param cashOutCount The number of project tokens to cash out, as a fixed point number with 18 decimals.
+    /// @param accountingContext The accounting context of the token being reclaimed by the cash out.
+    /// @param balanceAccountingContexts The accounting contexts of the tokens whose balances should contribute to the
+    /// surplus being reclaimed from.
+    /// @param metadata Bytes to send to the data hook, if the project's current ruleset specifies one.
+    /// @return ruleset The ruleset during the cash out was made during, as a `JBRuleset` struct. This ruleset will
+    /// have a cash out tax rate provided by the cash out hook if applicable.
+    /// @return reclaimAmount The amount of tokens reclaimed from the terminal, as a fixed point number with 18
+    /// decimals.
+    /// @return cashOutTaxRate The cash out tax rate influencing the reclaim amount.
+    /// @return hookSpecifications A list of cash out hooks, including data and amounts to send to them. The terminal
+    /// should fulfill these specifications.
+    function recordCashOutFor(
+        address holder,
+        uint256 projectId,
+        uint256 cashOutCount,
+        JBAccountingContext calldata accountingContext,
+        JBAccountingContext[] calldata balanceAccountingContexts,
+        bytes memory metadata
+    )
+        external
+        override
+        returns (
+            JBRuleset memory ruleset,
+            uint256 reclaimAmount,
+            uint256 cashOutTaxRate,
+            JBCashOutHookSpecification[] memory hookSpecifications
+        )
+    {
+        // Get a reference to the project's current ruleset.
+        ruleset = RULESETS.currentOf(projectId);
+
+        // Get the current surplus amount.
+        // Use the local surplus if the ruleset specifies that it should be used. Otherwise, use the project's total
+        // surplus across all of its terminals.
+        uint256 currentSurplus = ruleset.useTotalSurplusForCashOuts()
+            ? JBSurplus.currentSurplusOf({
+                projectId: projectId,
+                terminals: DIRECTORY.terminalsOf(projectId),
+                decimals: accountingContext.decimals,
+                currency: accountingContext.currency
+            })
+            : _surplusFrom({
+                terminal: msg.sender,
+                projectId: projectId,
+                accountingContexts: balanceAccountingContexts,
+                ruleset: ruleset,
+                targetDecimals: accountingContext.decimals,
+                targetCurrency: accountingContext.currency
+            });
+
+        // Get the total number of outstanding project tokens.
+        uint256 totalSupply =
+            IJBController(address(DIRECTORY.controllerOf(projectId))).totalTokenSupplyWithReservedTokensOf(projectId);
+
+        // Can't cash out more tokens than are in the supply.
+        if (cashOutCount > totalSupply) revert JBTerminalStore_InsufficientTokens(cashOutCount, totalSupply);
+
+        // If the ruleset has a data hook which is enabled for cash outs, use it to derive a claim amount and memo.
+        if (ruleset.useDataHookForCashOut() && ruleset.dataHook() != address(0)) {
+            // Create the cash out context that'll be sent to the data hook.
+            JBBeforeCashOutRecordedContext memory context = JBBeforeCashOutRecordedContext({
+                terminal: msg.sender,
+                holder: holder,
+                projectId: uint56(projectId),
+                rulesetId: ruleset.id,
+                cashOutCount: cashOutCount,
+                totalSupply: totalSupply,
+                surplus: JBTokenAmount({
+                    token: accountingContext.token,
+                    value: currentSurplus,
+                    decimals: accountingContext.decimals,
+                    currency: accountingContext.currency
+                }),
+                useTotalSurplus: ruleset.useTotalSurplusForCashOuts(),
+                cashOutTaxRate: ruleset.cashOutTaxRate(),
+                metadata: metadata
+            });
+
+            (cashOutTaxRate, cashOutCount, totalSupply, hookSpecifications) =
+                IJBRulesetDataHook(ruleset.dataHook()).beforeCashOutRecordedWith(context);
+        } else {
+            cashOutTaxRate = ruleset.cashOutTaxRate();
+        }
+
+        if (currentSurplus != 0) {
+            // Calculate reclaim amount using the current surplus amount.
+            reclaimAmount = JBCashOuts.cashOutFrom({
+                surplus: currentSurplus,
+                cashOutCount: cashOutCount,
+                totalSupply: totalSupply,
+                cashOutTaxRate: cashOutTaxRate
+            });
+        }
+
+        // Keep a reference to the amount that should be added to the project's balance.
+        uint256 balanceDiff = reclaimAmount;
+
+        // Ensure that the specifications have valid amounts.
+        if (hookSpecifications.length != 0) {
+            // Keep a reference to the number of cash out hooks specified.
+            uint256 numberOfSpecifications = hookSpecifications.length;
+
+            // Loop through each specification.
+            for (uint256 i; i < numberOfSpecifications; i++) {
+                // Get a reference to the specification's amount.
+                uint256 specificationAmount = hookSpecifications[i].amount;
+
+                // Ensure the amount is non-zero.
+                if (specificationAmount != 0) {
+                    // Increment the total amount being subtracted from the balance.
+                    balanceDiff += specificationAmount;
+                }
+            }
+        }
+
+        // The amount being reclaimed must be within the project's balance.
+        if (balanceDiff > balanceOf[msg.sender][projectId][accountingContext.token]) {
+            revert JBTerminalStore_InadequateTerminalStoreBalance(
+                balanceDiff, balanceOf[msg.sender][projectId][accountingContext.token]
+            );
+        }
+
+        // Remove the reclaimed funds from the project's balance.
+        if (balanceDiff != 0) {
+            unchecked {
+                balanceOf[msg.sender][projectId][accountingContext.token] =
+                    balanceOf[msg.sender][projectId][accountingContext.token] - balanceDiff;
+            }
+        }
+    }
+
     /// @notice Records a payment to a project.
     /// @dev Mints the project's tokens according to values provided by the ruleset's data hook. If the ruleset has no
     /// data hook, mints tokens in proportion with the amount paid.
@@ -647,145 +786,6 @@ contract JBTerminalStore is IJBTerminalStore {
         // Make sure the new used amount is within the payout limit.
         if (newUsedPayoutLimitOf > payoutLimit || payoutLimit == 0) {
             revert JBTerminalStore_InadequateControllerPayoutLimit(newUsedPayoutLimitOf, payoutLimit);
-        }
-    }
-
-    /// @notice Records a cash out from a project.
-    /// @dev Cashs out the project's tokens according to values provided by the ruleset's data hook. If the ruleset has
-    /// no
-    /// data hook, cashs out tokens along a cash out bonding curve that is a function of the number of tokens being
-    /// burned.
-    /// @param holder The account that is cashing out tokens.
-    /// @param projectId The ID of the project being cashing out from.
-    /// @param cashOutCount The number of project tokens to cash out, as a fixed point number with 18 decimals.
-    /// @param accountingContext The accounting context of the token being reclaimed by the cash out.
-    /// @param balanceAccountingContexts The accounting contexts of the tokens whose balances should contribute to the
-    /// surplus being reclaimed from.
-    /// @param metadata Bytes to send to the data hook, if the project's current ruleset specifies one.
-    /// @return ruleset The ruleset during the cash out was made during, as a `JBRuleset` struct. This ruleset will
-    /// have a cash out tax rate provided by the cash out hook if applicable.
-    /// @return reclaimAmount The amount of tokens reclaimed from the terminal, as a fixed point number with 18
-    /// decimals.
-    /// @return cashOutTaxRate The cash out tax rate influencing the reclaim amount.
-    /// @return hookSpecifications A list of cash out hooks, including data and amounts to send to them. The terminal
-    /// should fulfill these specifications.
-    function recordCashOutFor(
-        address holder,
-        uint256 projectId,
-        uint256 cashOutCount,
-        JBAccountingContext calldata accountingContext,
-        JBAccountingContext[] calldata balanceAccountingContexts,
-        bytes memory metadata
-    )
-        external
-        override
-        returns (
-            JBRuleset memory ruleset,
-            uint256 reclaimAmount,
-            uint256 cashOutTaxRate,
-            JBCashOutHookSpecification[] memory hookSpecifications
-        )
-    {
-        // Get a reference to the project's current ruleset.
-        ruleset = RULESETS.currentOf(projectId);
-
-        // Get the current surplus amount.
-        // Use the local surplus if the ruleset specifies that it should be used. Otherwise, use the project's total
-        // surplus across all of its terminals.
-        uint256 currentSurplus = ruleset.useTotalSurplusForCashOuts()
-            ? JBSurplus.currentSurplusOf({
-                projectId: projectId,
-                terminals: DIRECTORY.terminalsOf(projectId),
-                decimals: accountingContext.decimals,
-                currency: accountingContext.currency
-            })
-            : _surplusFrom({
-                terminal: msg.sender,
-                projectId: projectId,
-                accountingContexts: balanceAccountingContexts,
-                ruleset: ruleset,
-                targetDecimals: accountingContext.decimals,
-                targetCurrency: accountingContext.currency
-            });
-
-        // Get the total number of outstanding project tokens.
-        uint256 totalSupply =
-            IJBController(address(DIRECTORY.controllerOf(projectId))).totalTokenSupplyWithReservedTokensOf(projectId);
-
-        // Can't cash out more tokens than are in the supply.
-        if (cashOutCount > totalSupply) revert JBTerminalStore_InsufficientTokens(cashOutCount, totalSupply);
-
-        // If the ruleset has a data hook which is enabled for cash outs, use it to derive a claim amount and memo.
-        if (ruleset.useDataHookForCashOut() && ruleset.dataHook() != address(0)) {
-            // Create the cash out context that'll be sent to the data hook.
-            JBBeforeCashOutRecordedContext memory context = JBBeforeCashOutRecordedContext({
-                terminal: msg.sender,
-                holder: holder,
-                projectId: uint56(projectId),
-                rulesetId: ruleset.id,
-                cashOutCount: cashOutCount,
-                totalSupply: totalSupply,
-                surplus: JBTokenAmount({
-                    token: accountingContext.token,
-                    value: currentSurplus,
-                    decimals: accountingContext.decimals,
-                    currency: accountingContext.currency
-                }),
-                useTotalSurplus: ruleset.useTotalSurplusForCashOuts(),
-                cashOutTaxRate: ruleset.cashOutTaxRate(),
-                metadata: metadata
-            });
-
-            (cashOutTaxRate, cashOutCount, totalSupply, hookSpecifications) =
-                IJBRulesetDataHook(ruleset.dataHook()).beforeCashOutRecordedWith(context);
-        } else {
-            cashOutTaxRate = ruleset.cashOutTaxRate();
-        }
-
-        if (currentSurplus != 0) {
-            // Calculate reclaim amount using the current surplus amount.
-            reclaimAmount = JBCashOuts.cashOutFrom({
-                surplus: currentSurplus,
-                cashOutCount: cashOutCount,
-                totalSupply: totalSupply,
-                cashOutTaxRate: cashOutTaxRate
-            });
-        }
-
-        // Keep a reference to the amount that should be added to the project's balance.
-        uint256 balanceDiff = reclaimAmount;
-
-        // Ensure that the specifications have valid amounts.
-        if (hookSpecifications.length != 0) {
-            // Keep a reference to the number of cash out hooks specified.
-            uint256 numberOfSpecifications = hookSpecifications.length;
-
-            // Loop through each specification.
-            for (uint256 i; i < numberOfSpecifications; i++) {
-                // Get a reference to the specification's amount.
-                uint256 specificationAmount = hookSpecifications[i].amount;
-
-                // Ensure the amount is non-zero.
-                if (specificationAmount != 0) {
-                    // Increment the total amount being subtracted from the balance.
-                    balanceDiff += specificationAmount;
-                }
-            }
-        }
-
-        // The amount being reclaimed must be within the project's balance.
-        if (balanceDiff > balanceOf[msg.sender][projectId][accountingContext.token]) {
-            revert JBTerminalStore_InadequateTerminalStoreBalance(
-                balanceDiff, balanceOf[msg.sender][projectId][accountingContext.token]
-            );
-        }
-
-        // Remove the reclaimed funds from the project's balance.
-        if (balanceDiff != 0) {
-            unchecked {
-                balanceOf[msg.sender][projectId][accountingContext.token] =
-                    balanceOf[msg.sender][projectId][accountingContext.token] - balanceDiff;
-            }
         }
     }
 

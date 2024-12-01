@@ -458,6 +458,55 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         });
     }
 
+    /// @notice Holders can cash out a project's tokens to reclaim some of that project's surplus tokens, or to trigger
+    /// rules determined by the current ruleset's data hook and cash out hook.
+    /// @dev Only a token's holder or an operator with the `CASH_OUT_TOKENS` permission from that holder can cash out
+    /// those tokens.
+    /// @param holder The account whose tokens are being cashed out.
+    /// @param projectId The ID of the project the project tokens belong to.
+    /// @param cashOutCount The number of project tokens to cash out, as a fixed point number with 18 decimals.
+    /// @param tokenToReclaim The token being reclaimed.
+    /// @param minTokensReclaimed The minimum number of terminal tokens expected in return, as a fixed point number with
+    /// the same number of decimals as this terminal. If the amount of tokens minted for the beneficiary would be less
+    /// than this amount, the cash out is reverted.
+    /// @param beneficiary The address to send the cashed out terminal tokens to, and to pass along to the ruleset's
+    /// data hook and cash out hook if applicable.
+    /// @param metadata Bytes to send along to the emitted event, as well as the data hook and cash out hook if
+    /// applicable.
+    /// @return reclaimAmount The amount of terminal tokens that the project tokens were cashed out for, as a fixed
+    /// point
+    /// number with 18 decimals.
+    function cashOutTokensOf(
+        address holder,
+        uint256 projectId,
+        uint256 cashOutCount,
+        address tokenToReclaim,
+        uint256 minTokensReclaimed,
+        address payable beneficiary,
+        bytes calldata metadata
+    )
+        external
+        override
+        returns (uint256 reclaimAmount)
+    {
+        // Enforce permissions.
+        _requirePermissionFrom({account: holder, projectId: projectId, permissionId: JBPermissionIds.CASH_OUT_TOKENS});
+
+        reclaimAmount = _cashOutTokensOf({
+            holder: holder,
+            projectId: projectId,
+            cashOutCount: cashOutCount,
+            tokenToReclaim: tokenToReclaim,
+            beneficiary: beneficiary,
+            metadata: metadata
+        });
+
+        // The amount being reclaimed must be at least as much as was expected.
+        if (reclaimAmount < minTokensReclaimed) {
+            revert JBMultiTerminal_UnderMinTokensReclaimed(reclaimAmount, minTokensReclaimed);
+        }
+    }
+
     /// @notice Executes a payout to a split.
     /// @dev Only accepts calls from this terminal itself.
     /// @param split The split to pay.
@@ -781,55 +830,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         _nextHeldFeeIndexOf[projectId][token] = startIndex + count;
     }
 
-    /// @notice Holders can cash out a project's tokens to reclaim some of that project's surplus tokens, or to trigger
-    /// rules determined by the current ruleset's data hook and cash out hook.
-    /// @dev Only a token's holder or an operator with the `CASH_OUT_TOKENS` permission from that holder can cash out
-    /// those tokens.
-    /// @param holder The account whose tokens are being cashed out.
-    /// @param projectId The ID of the project the project tokens belong to.
-    /// @param cashOutCount The number of project tokens to cash out, as a fixed point number with 18 decimals.
-    /// @param tokenToReclaim The token being reclaimed.
-    /// @param minTokensReclaimed The minimum number of terminal tokens expected in return, as a fixed point number with
-    /// the same number of decimals as this terminal. If the amount of tokens minted for the beneficiary would be less
-    /// than this amount, the cash out is reverted.
-    /// @param beneficiary The address to send the cashed out terminal tokens to, and to pass along to the ruleset's
-    /// data hook and cash out hook if applicable.
-    /// @param metadata Bytes to send along to the emitted event, as well as the data hook and cash out hook if
-    /// applicable.
-    /// @return reclaimAmount The amount of terminal tokens that the project tokens were cashed out for, as a fixed
-    /// point
-    /// number with 18 decimals.
-    function cashOutTokensOf(
-        address holder,
-        uint256 projectId,
-        uint256 cashOutCount,
-        address tokenToReclaim,
-        uint256 minTokensReclaimed,
-        address payable beneficiary,
-        bytes calldata metadata
-    )
-        external
-        override
-        returns (uint256 reclaimAmount)
-    {
-        // Enforce permissions.
-        _requirePermissionFrom({account: holder, projectId: projectId, permissionId: JBPermissionIds.CASH_OUT_TOKENS});
-
-        reclaimAmount = _cashOutTokensOf({
-            holder: holder,
-            projectId: projectId,
-            cashOutCount: cashOutCount,
-            tokenToReclaim: tokenToReclaim,
-            beneficiary: beneficiary,
-            metadata: metadata
-        });
-
-        // The amount being reclaimed must be at least as much as was expected.
-        if (reclaimAmount < minTokensReclaimed) {
-            revert JBMultiTerminal_UnderMinTokensReclaimed(reclaimAmount, minTokensReclaimed);
-        }
-    }
-
     /// @notice Sends payouts to a project's current payout split group, according to its ruleset, up to its current
     /// payout limit.
     /// @dev If the percentages of the splits in the project's payout split group do not add up to 100%, the remainder
@@ -1043,6 +1043,134 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // Otherwise, set the allowance, and the payValue should be 0.
         IERC20(token).safeIncreaseAllowance({spender: to, value: amount});
         return 0;
+    }
+
+    /// @notice Holders can cash out their tokens to reclaim some of a project's surplus, or to trigger rules determined
+    /// by
+    /// the project's current ruleset's data hook.
+    /// @dev Only a token holder or an operator with the `CASH_OUT_TOKENS` permission from that holder can cash out
+    /// those
+    /// tokens.
+    /// @param holder The account cashing out tokens.
+    /// @param projectId The ID of the project whose tokens are being cashed out.
+    /// @param cashOutCount The number of project tokens to cash out, as a fixed point number with 18 decimals.
+    /// @param tokenToReclaim The address of the token which is being cashed out.
+    /// @param beneficiary The address to send the reclaimed terminal tokens to.
+    /// @param metadata Bytes to send along to the emitted event, as well as the data hook and cash out hook if
+    /// applicable.
+    /// @return reclaimAmount The number of terminal tokens reclaimed for the `beneficiary`, as a fixed point number
+    /// with 18 decimals.
+    function _cashOutTokensOf(
+        address holder,
+        uint256 projectId,
+        uint256 cashOutCount,
+        address tokenToReclaim,
+        address payable beneficiary,
+        bytes memory metadata
+    )
+        internal
+        returns (uint256 reclaimAmount)
+    {
+        // Keep a reference to the ruleset the cash out is being made during.
+        JBRuleset memory ruleset;
+
+        // Keep a reference to the cash out hook specifications.
+        JBCashOutHookSpecification[] memory hookSpecifications;
+
+        // Keep a reference to the cash out tax rate being used.
+        uint256 cashOutTaxRate;
+
+        // Keep a reference to the accounting context of the token being reclaimed.
+        JBAccountingContext memory accountingContext = _accountingContextForTokenOf[projectId][tokenToReclaim];
+
+        // Scoped section prevents stack too deep.
+        {
+            JBAccountingContext[] memory balanceAccountingContexts = _accountingContextsOf[projectId];
+
+            // Record the cash out.
+            (ruleset, reclaimAmount, cashOutTaxRate, hookSpecifications) = STORE.recordCashOutFor({
+                holder: holder,
+                projectId: projectId,
+                accountingContext: accountingContext,
+                balanceAccountingContexts: balanceAccountingContexts,
+                cashOutCount: cashOutCount,
+                metadata: metadata
+            });
+        }
+
+        // Burn the project tokens.
+        if (cashOutCount != 0) {
+            _controllerOf(projectId).burnTokensOf({
+                holder: holder,
+                projectId: projectId,
+                tokenCount: cashOutCount,
+                memo: ""
+            });
+        }
+
+        // Keep a reference to the amount being reclaimed that is subject to fees.
+        uint256 amountEligibleForFees;
+
+        // Send the reclaimed funds to the beneficiary.
+        if (reclaimAmount != 0) {
+            // Determine if a fee should be taken. Fees are not taked if the cash out tax rate is zero,
+            // if the beneficiary is feeless, or if the fee beneficiary doesn't accept the given token.
+            if (!_isFeeless(beneficiary) && cashOutTaxRate != 0) {
+                amountEligibleForFees += reclaimAmount;
+                // Subtract the fee for the reclaimed amount.
+                reclaimAmount -= JBFees.feeAmountIn({amount: reclaimAmount, feePercent: FEE});
+            }
+
+            // Subtract the fee from the reclaim amount.
+            if (reclaimAmount != 0) {
+                _transferFrom({from: address(this), to: beneficiary, token: tokenToReclaim, amount: reclaimAmount});
+            }
+        }
+
+        // If the data hook returned cash out hook specifications, fulfill them.
+        if (hookSpecifications.length != 0) {
+            // Fulfill the cash out hook specifications.
+            amountEligibleForFees += _fulfillCashOutHookSpecificationsFor({
+                projectId: projectId,
+                holder: holder,
+                cashOutCount: cashOutCount,
+                ruleset: ruleset,
+                cashOutTaxRate: cashOutTaxRate,
+                beneficiary: beneficiary,
+                beneficiaryReclaimAmount: JBTokenAmount({
+                    token: tokenToReclaim,
+                    decimals: accountingContext.decimals,
+                    currency: accountingContext.currency,
+                    value: reclaimAmount
+                }),
+                specifications: hookSpecifications,
+                metadata: metadata
+            });
+        }
+
+        // Take the fee from all outbound reclaimings.
+        amountEligibleForFees != 0
+            ? _takeFeeFrom({
+                projectId: projectId,
+                token: tokenToReclaim,
+                amount: amountEligibleForFees,
+                beneficiary: beneficiary,
+                shouldHoldFees: false
+            })
+            : 0;
+
+        emit CashOutTokens({
+            rulesetId: ruleset.id,
+            rulesetCycleNumber: ruleset.cycleNumber,
+            projectId: projectId,
+            holder: holder,
+            beneficiary: beneficiary,
+            cashOutCount: cashOutCount,
+            cashOutTaxRate: cashOutTaxRate,
+            reclaimAmount: reclaimAmount,
+            metadata: metadata,
+            caller: _msgSender()
+        });
     }
 
     /// @notice Fund a project either by calling this terminal's internal `addToBalance` function or by calling the
@@ -1447,134 +1575,6 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// terminal.
     function _recordAddedBalanceFor(uint256 projectId, address token, uint256 amount) internal {
         STORE.recordAddedBalanceFor({projectId: projectId, token: token, amount: amount});
-    }
-
-    /// @notice Holders can cash out their tokens to reclaim some of a project's surplus, or to trigger rules determined
-    /// by
-    /// the project's current ruleset's data hook.
-    /// @dev Only a token holder or an operator with the `CASH_OUT_TOKENS` permission from that holder can cash out
-    /// those
-    /// tokens.
-    /// @param holder The account cashing out tokens.
-    /// @param projectId The ID of the project whose tokens are being cashed out.
-    /// @param cashOutCount The number of project tokens to cash out, as a fixed point number with 18 decimals.
-    /// @param tokenToReclaim The address of the token which is being cashed out.
-    /// @param beneficiary The address to send the reclaimed terminal tokens to.
-    /// @param metadata Bytes to send along to the emitted event, as well as the data hook and cash out hook if
-    /// applicable.
-    /// @return reclaimAmount The number of terminal tokens reclaimed for the `beneficiary`, as a fixed point number
-    /// with 18 decimals.
-    function _cashOutTokensOf(
-        address holder,
-        uint256 projectId,
-        uint256 cashOutCount,
-        address tokenToReclaim,
-        address payable beneficiary,
-        bytes memory metadata
-    )
-        internal
-        returns (uint256 reclaimAmount)
-    {
-        // Keep a reference to the ruleset the cash out is being made during.
-        JBRuleset memory ruleset;
-
-        // Keep a reference to the cash out hook specifications.
-        JBCashOutHookSpecification[] memory hookSpecifications;
-
-        // Keep a reference to the cash out tax rate being used.
-        uint256 cashOutTaxRate;
-
-        // Keep a reference to the accounting context of the token being reclaimed.
-        JBAccountingContext memory accountingContext = _accountingContextForTokenOf[projectId][tokenToReclaim];
-
-        // Scoped section prevents stack too deep.
-        {
-            JBAccountingContext[] memory balanceAccountingContexts = _accountingContextsOf[projectId];
-
-            // Record the cash out.
-            (ruleset, reclaimAmount, cashOutTaxRate, hookSpecifications) = STORE.recordCashOutFor({
-                holder: holder,
-                projectId: projectId,
-                accountingContext: accountingContext,
-                balanceAccountingContexts: balanceAccountingContexts,
-                cashOutCount: cashOutCount,
-                metadata: metadata
-            });
-        }
-
-        // Burn the project tokens.
-        if (cashOutCount != 0) {
-            _controllerOf(projectId).burnTokensOf({
-                holder: holder,
-                projectId: projectId,
-                tokenCount: cashOutCount,
-                memo: ""
-            });
-        }
-
-        // Keep a reference to the amount being reclaimed that is subject to fees.
-        uint256 amountEligibleForFees;
-
-        // Send the reclaimed funds to the beneficiary.
-        if (reclaimAmount != 0) {
-            // Determine if a fee should be taken. Fees are not exercised if the cash out tax rate is at its max (100%),
-            // if the beneficiary is feeless, or if the fee beneficiary doesn't accept the given token.
-            if (!_isFeeless(beneficiary) && cashOutTaxRate != JBConstants.MAX_CASH_OUT_TAX_RATE) {
-                amountEligibleForFees += reclaimAmount;
-                // Subtract the fee for the reclaimed amount.
-                reclaimAmount -= JBFees.feeAmountIn({amount: reclaimAmount, feePercent: FEE});
-            }
-
-            // Subtract the fee from the reclaim amount.
-            if (reclaimAmount != 0) {
-                _transferFrom({from: address(this), to: beneficiary, token: tokenToReclaim, amount: reclaimAmount});
-            }
-        }
-
-        // If the data hook returned cash out hook specifications, fulfill them.
-        if (hookSpecifications.length != 0) {
-            // Fulfill the cash out hook specifications.
-            amountEligibleForFees += _fulfillCashOutHookSpecificationsFor({
-                projectId: projectId,
-                holder: holder,
-                cashOutCount: cashOutCount,
-                ruleset: ruleset,
-                cashOutTaxRate: cashOutTaxRate,
-                beneficiary: beneficiary,
-                beneficiaryReclaimAmount: JBTokenAmount({
-                    token: tokenToReclaim,
-                    decimals: accountingContext.decimals,
-                    currency: accountingContext.currency,
-                    value: reclaimAmount
-                }),
-                specifications: hookSpecifications,
-                metadata: metadata
-            });
-        }
-
-        // Take the fee from all outbound reclaimings.
-        amountEligibleForFees != 0
-            ? _takeFeeFrom({
-                projectId: projectId,
-                token: tokenToReclaim,
-                amount: amountEligibleForFees,
-                beneficiary: beneficiary,
-                shouldHoldFees: false
-            })
-            : 0;
-
-        emit CashOutTokens({
-            rulesetId: ruleset.id,
-            rulesetCycleNumber: ruleset.cycleNumber,
-            projectId: projectId,
-            holder: holder,
-            beneficiary: beneficiary,
-            cashOutCount: cashOutCount,
-            cashOutTaxRate: cashOutTaxRate,
-            reclaimAmount: reclaimAmount,
-            metadata: metadata,
-            caller: _msgSender()
-        });
     }
 
     /// @notice Returns held fees to the project who paid them based on the specified amount.

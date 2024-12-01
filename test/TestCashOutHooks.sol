@@ -30,7 +30,7 @@ contract TestCashOutHooks_Local is TestBaseWorkflow {
 
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: 0,
-            cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE,
+            cashOutTaxRate: 0,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
@@ -97,7 +97,7 @@ contract TestCashOutHooks_Local is TestBaseWorkflow {
         // Make sure the project's new project token is set.
         assertEq(address(_tokens.tokenOf(_projectId)), address(_token));
     }
-
+    
     function testCashOutHookWithNoFees() public {
         // Reference and bound pay amount.
         uint256 _nativePayAmount = 10 ether;
@@ -163,7 +163,7 @@ contract TestCashOutHooks_Local is TestBaseWorkflow {
                 _terminal.accountingContextForTokenOf(_projectId, JBConstants.NATIVE_TOKEN).currency,
                 _halfPaid
             ),
-            cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE,
+            cashOutTaxRate: 0, 
             beneficiary: payable(address(this)),
             hookMetadata: "",
             cashOutMetadata: ""
@@ -253,8 +253,8 @@ contract TestCashOutHooks_Local is TestBaseWorkflow {
 
         uint256 _beneficiaryAmount = mulDiv(
             mulDiv(_nativePayAmount, _customCashOutCount, _customTotalSupply),
-            _customCashOutTaxRate
-                + mulDiv(_customCashOutCount, JBConstants.MAX_CASH_OUT_TAX_RATE - _customCashOutTaxRate, _customTotalSupply),
+            (JBConstants.MAX_CASH_OUT_TAX_RATE - _customCashOutTaxRate)
+                + mulDiv(_customCashOutCount, _customCashOutTaxRate, _customTotalSupply),
             JBConstants.MAX_CASH_OUT_TAX_RATE
         );
 

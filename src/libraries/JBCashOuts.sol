@@ -24,8 +24,8 @@ library JBCashOuts {
         pure
         returns (uint256)
     {
-        // If the cash out tax rate is 0, no surplus can be reclaimed.
-        if (cashOutTaxRate == 0) return 0;
+        // If the cash out tax rate is the max, no surplus can be reclaimed.
+        if (cashOutTaxRate == JBConstants.MAX_CASH_OUT_TAX_RATE) return 0;
 
         // If the total supply is being cashed out, return the entire surplus.
         if (cashOutCount >= totalSupply) return surplus;
@@ -35,13 +35,13 @@ library JBCashOuts {
 
         // These conditions are all part of the same curve.
         // Edge conditions are separated to minimize the operations performed in those cases.
-        if (cashOutTaxRate == JBConstants.MAX_CASH_OUT_TAX_RATE) {
+        if (cashOutTaxRate == 0) {
             return base;
         }
 
         return mulDiv(
             base,
-            cashOutTaxRate + mulDiv(JBConstants.MAX_CASH_OUT_TAX_RATE - cashOutTaxRate, cashOutCount, totalSupply),
+            (JBConstants.MAX_CASH_OUT_TAX_RATE - cashOutTaxRate) + mulDiv(cashOutTaxRate, cashOutCount, totalSupply),
             JBConstants.MAX_CASH_OUT_TAX_RATE
         );
     }

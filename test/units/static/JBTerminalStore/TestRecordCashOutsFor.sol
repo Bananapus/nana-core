@@ -65,7 +65,7 @@ contract TestRecordCashOutsFor_Local is JBTerminalStoreSetup {
 
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: 0,
-            cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE,
+            cashOutTaxRate: 0,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: true,
             pauseCreditTransfers: false,
@@ -146,7 +146,7 @@ contract TestRecordCashOutsFor_Local is JBTerminalStoreSetup {
 
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: 0,
-            cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE,
+            cashOutTaxRate: 0,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: true,
             pauseCreditTransfers: false,
@@ -227,7 +227,7 @@ contract TestRecordCashOutsFor_Local is JBTerminalStoreSetup {
 
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: 0,
-            cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE,
+            cashOutTaxRate: 0,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: true,
             pauseCreditTransfers: false,
@@ -388,7 +388,7 @@ contract TestRecordCashOutsFor_Local is JBTerminalStoreSetup {
             totalSupply: _totalSupply,
             surplus: _reclaimedTokenAmount,
             useTotalSurplus: true,
-            cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE,
+            cashOutTaxRate: 0,
             metadata: ""
         });
 
@@ -400,7 +400,7 @@ contract TestRecordCashOutsFor_Local is JBTerminalStoreSetup {
         mockExpect(
             address(_dataHook),
             abi.encodeCall(IJBRulesetDataHook.beforeCashOutRecordedWith, (_context)),
-            abi.encode(JBConstants.MAX_CASH_OUT_TAX_RATE, 1e18, _totalSupply, _spec)
+            abi.encode(0, 1e18, _totalSupply, _spec)
         );
 
         uint256 balanceBefore = _store.balanceOf(address(this), _projectId, _accountingContexts.token);
