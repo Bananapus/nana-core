@@ -11,7 +11,8 @@ import {MaliciousAllowanceBeneficiary, MaliciousPayoutBeneficiary} from "./mock/
 /// the protocol incurs fees unless the recipients are feeless addresses.
 /// 2. project owners set a surplus allowance to allow spending funds from the project's surplus balance in the terminal
 /// (i.e. the balance in excess of their payout limit). incurs fees unless the caller is a feeless address.
-/// 3. token holders can redeem tokens to access surplus funds. incurs fees if the redemption rate != 100%, unless the
+/// 3. token holders can cash out tokens to access surplus funds. incurs fees if the cash out tax rate != 100%, unless
+/// the
 /// beneficiary is a feeless address.
 /// Each of these only incurs protocol fees if the `_FEE_PROJECT_ID` (project with ID #1) accepts the token being
 /// accessed.
@@ -50,7 +51,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
 
         _metadata = JBRulesetMetadata({
             reservedPercent: JBConstants.MAX_RESERVED_PERCENT / 2, //50%
-            redemptionRate: JBConstants.MAX_REDEMPTION_RATE / 2, //50%
+            cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE / 2, //50%
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
@@ -63,9 +64,9 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             allowAddAccountingContext: true,
             allowAddPriceFeed: true,
             holdFees: false,
-            useTotalSurplusForRedemptions: true,
+            useTotalSurplusForCashOuts: true,
             useDataHookForPay: false,
-            useDataHookForRedeem: false,
+            useDataHookForCashOut: false,
             dataHook: address(0),
             metadata: 0
         });
@@ -241,13 +242,13 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             ) * _metadata.reservedPercent / JBConstants.MAX_RESERVED_PERCENT
         );
 
-        // Redeem native tokens from the surplus using all of the `_beneficiary`'s tokens.
+        // Cash out native tokens from the surplus using all of the `_beneficiary`'s tokens.
         vm.prank(_beneficiary);
-        _terminal.redeemTokensOf({
+        _terminal.cashOutTokensOf({
             holder: _beneficiary,
             projectId: _projectId,
+            cashOutCount: _beneficiaryTokenBalance,
             tokenToReclaim: JBConstants.NATIVE_TOKEN,
-            redeemCount: _beneficiaryTokenBalance,
             minTokensReclaimed: 0,
             beneficiary: payable(_beneficiary),
             metadata: new bytes(0)
@@ -256,23 +257,23 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
         // Make sure the beneficiary doesn't have any project tokens left.
         assertEq(_tokens.totalBalanceOf(_beneficiary, _projectId), 0);
 
-        // Get the expected amount of native tokens reclaimed by the redemption.
+        // Get the expected amount of native tokens reclaimed by the cash out.
         uint256 _nativeReclaimAmount = mulDiv(
             mulDiv(
                 _nativePayAmount - _nativeCurrencySurplusAllowance - _nativeCurrencyPayoutLimit,
                 _beneficiaryTokenBalance,
                 mulDiv(_nativePayAmount, _weight, 10 ** _NATIVE_DECIMALS)
             ),
-            _metadata.redemptionRate
+            _metadata.cashOutTaxRate
                 + mulDiv(
                     _beneficiaryTokenBalance,
-                    JBConstants.MAX_REDEMPTION_RATE - _metadata.redemptionRate,
+                    JBConstants.MAX_CASH_OUT_TAX_RATE - _metadata.cashOutTaxRate,
                     mulDiv(_nativePayAmount, _weight, 10 ** _NATIVE_DECIMALS)
                 ),
-            JBConstants.MAX_REDEMPTION_RATE
+            JBConstants.MAX_CASH_OUT_TAX_RATE
         );
 
-        // Calculate the fee from the redemption.
+        // Calculate the fee from the cash out.
         uint256 _feeAmount =
             _nativeReclaimAmount - _nativeReclaimAmount * JBConstants.MAX_FEE / (_terminal.FEE() + JBConstants.MAX_FEE);
         assertEq(_beneficiary.balance, _beneficiaryNativeBalance + _nativeReclaimAmount - _feeAmount);
@@ -524,13 +525,13 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             );
         }
 
-        // Reclaim native tokens from the surplus by redeeming all of the `_beneficiary`'s tokens.
+        // Reclaim native tokens from the surplus by cashing out all of the `_beneficiary`'s tokens.
         vm.prank(_beneficiary);
-        _terminal.redeemTokensOf({
+        _terminal.cashOutTokensOf({
             holder: _beneficiary,
             projectId: _projectId,
+            cashOutCount: _beneficiaryTokenBalance,
             tokenToReclaim: JBConstants.NATIVE_TOKEN,
-            redeemCount: _beneficiaryTokenBalance,
             minTokensReclaimed: 0,
             beneficiary: payable(_beneficiary),
             metadata: new bytes(0)
@@ -548,15 +549,15 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                     _beneficiaryTokenBalance,
                     mulDiv(_nativePayAmount, _weight, 10 ** _NATIVE_DECIMALS)
                 ),
-                _metadata.redemptionRate
+                _metadata.cashOutTaxRate
                     + mulDiv(
                         _beneficiaryTokenBalance,
-                        JBConstants.MAX_REDEMPTION_RATE - _metadata.redemptionRate,
+                        JBConstants.MAX_CASH_OUT_TAX_RATE - _metadata.cashOutTaxRate,
                         mulDiv(_nativePayAmount, _weight, 10 ** _NATIVE_DECIMALS)
                     ),
-                JBConstants.MAX_REDEMPTION_RATE
+                JBConstants.MAX_CASH_OUT_TAX_RATE
             );
-            // Calculate the fee from the redemption.
+            // Calculate the fee from the cash out.
             uint256 _feeAmount = _nativeReclaimAmount
                 - _nativeReclaimAmount * JBConstants.MAX_FEE / (_terminal.FEE() + JBConstants.MAX_FEE);
             assertEq(_beneficiary.balance, _beneficiaryNativeBalance + _nativeReclaimAmount - _feeAmount);
@@ -795,13 +796,13 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             assertEq(_tokens.totalBalanceOf(_projectOwner, _FEE_PROJECT_ID), 0);
         }
 
-        // Reclaim native tokens from the surplus by redeeming all of the `_beneficiary`'s tokens.
+        // Reclaim native tokens from the surplus by cashing out all of the `_beneficiary`'s tokens.
         vm.prank(_beneficiary);
-        _terminal.redeemTokensOf({
+        _terminal.cashOutTokensOf({
             holder: _beneficiary,
             projectId: _projectId,
+            cashOutCount: _beneficiaryTokenBalance,
             tokenToReclaim: JBConstants.NATIVE_TOKEN,
-            redeemCount: _beneficiaryTokenBalance,
             minTokensReclaimed: 0,
             beneficiary: payable(_beneficiary),
             metadata: new bytes(0)
@@ -819,16 +820,16 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                     _beneficiaryTokenBalance,
                     mulDiv(_nativePayAmount, _weight, 10 ** _NATIVE_DECIMALS)
                 ),
-                _metadata.redemptionRate
+                _metadata.cashOutTaxRate
                     + mulDiv(
                         _beneficiaryTokenBalance,
-                        JBConstants.MAX_REDEMPTION_RATE - _metadata.redemptionRate,
+                        JBConstants.MAX_CASH_OUT_TAX_RATE - _metadata.cashOutTaxRate,
                         mulDiv(_nativePayAmount, _weight, 10 ** _NATIVE_DECIMALS)
                     ),
-                JBConstants.MAX_REDEMPTION_RATE
+                JBConstants.MAX_CASH_OUT_TAX_RATE
             );
 
-            // Calculate the fee from the redemption.
+            // Calculate the fee from the cash out.
             uint256 _feeAmount = _nativeReclaimAmount
                 - _nativeReclaimAmount * JBConstants.MAX_FEE / (_terminal.FEE() + JBConstants.MAX_FEE);
             assertEq(_beneficiary.balance, _beneficiaryNativeBalance + _nativeReclaimAmount - _feeAmount);
@@ -1057,13 +1058,13 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             );
         }
 
-        // Reclaim native tokens from the surplus by redeeming all of the `_beneficiary`'s tokens.
+        // Reclaim native tokens from the surplus by cashing out all of the `_beneficiary`'s tokens.
         vm.prank(_beneficiary);
-        _terminal.redeemTokensOf({
+        _terminal.cashOutTokensOf({
             holder: _beneficiary,
             projectId: _projectId,
+            cashOutCount: _beneficiaryTokenBalance,
             tokenToReclaim: JBConstants.NATIVE_TOKEN,
-            redeemCount: _beneficiaryTokenBalance,
             minTokensReclaimed: 0,
             beneficiary: payable(_beneficiary),
             metadata: new bytes(0)
@@ -1082,15 +1083,15 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                     _beneficiaryTokenBalance,
                     mulDiv(_totalPaid, _weight, 10 ** _NATIVE_DECIMALS)
                 ),
-                _metadata.redemptionRate
+                _metadata.cashOutTaxRate
                     + mulDiv(
                         _beneficiaryTokenBalance,
-                        JBConstants.MAX_REDEMPTION_RATE - _metadata.redemptionRate,
+                        JBConstants.MAX_CASH_OUT_TAX_RATE - _metadata.cashOutTaxRate,
                         mulDiv(_totalPaid, _weight, 10 ** _NATIVE_DECIMALS)
                     ),
-                JBConstants.MAX_REDEMPTION_RATE
+                JBConstants.MAX_CASH_OUT_TAX_RATE
             );
-            // Calculate the fee from the redemption.
+            // Calculate the fee from the cash out.
             uint256 _feeAmount = _nativeReclaimAmount
                 - _nativeReclaimAmount * JBConstants.MAX_FEE / (_terminal.FEE() + JBConstants.MAX_FEE);
 
@@ -1632,24 +1633,24 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                         JBConstants.MAX_RESERVED_PERCENT - _metadata.reservedPercent
                     )
                 ),
-                _metadata.redemptionRate
+                _metadata.cashOutTaxRate
                     + mulDiv(
                         _beneficiaryTokenBalance,
-                        JBConstants.MAX_REDEMPTION_RATE - _metadata.redemptionRate,
+                        JBConstants.MAX_CASH_OUT_TAX_RATE - _metadata.cashOutTaxRate,
                         mulDiv(
                             _beneficiaryTokenBalance,
                             JBConstants.MAX_RESERVED_PERCENT,
                             JBConstants.MAX_RESERVED_PERCENT - _metadata.reservedPercent
                         )
                     ),
-                JBConstants.MAX_REDEMPTION_RATE
+                JBConstants.MAX_CASH_OUT_TAX_RATE
             );
 
             // If there is more to reclaim than there are native tokens in the tank.
             if (_nativeReclaimAmount > _nativeSurplus) {
-                // Keep a reference to the amount to redeem for native tokens, a proportion of available surplus in
+                // Keep a reference to the amount to cash out for native tokens, a proportion of available surplus in
                 // native tokens.
-                uint256 _tokenCountToRedeemForNative = mulDiv(
+                uint256 _tokenCountToCashOutForNative = mulDiv(
                     _beneficiaryTokenBalance,
                     _nativeSurplus,
                     _nativeSurplus
@@ -1660,24 +1661,25 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                     JBConstants.MAX_RESERVED_PERCENT,
                     JBConstants.MAX_RESERVED_PERCENT - _metadata.reservedPercent
                 );
-                // Redeem native tokens from the surplus using only the `_beneficiary`'s tokens needed to clear the
+                // Cash out native tokens from the surplus using only the `_beneficiary`'s tokens needed to clear the
                 // native token balance.
-                _terminal.redeemTokensOf({
+                _terminal.cashOutTokensOf({
                     holder: _beneficiary,
                     projectId: _projectId,
+                    cashOutCount: _tokenCountToCashOutForNative,
                     tokenToReclaim: JBConstants.NATIVE_TOKEN,
-                    redeemCount: _tokenCountToRedeemForNative,
                     minTokensReclaimed: 0,
                     beneficiary: payable(_beneficiary),
                     metadata: new bytes(0)
                 });
 
-                // Redeem USDC from the surplus using only the `_beneficiary`'s tokens needed to clear the USDC balance.
-                _terminal.redeemTokensOf({
+                // Cash out USDC from the surplus using only the `_beneficiary`'s tokens needed to clear the USDC
+                // balance.
+                _terminal.cashOutTokensOf({
                     holder: _beneficiary,
                     projectId: _projectId,
+                    cashOutCount: _beneficiaryTokenBalance - _tokenCountToCashOutForNative,
                     tokenToReclaim: address(_usdcToken),
-                    redeemCount: _beneficiaryTokenBalance - _tokenCountToRedeemForNative,
                     minTokensReclaimed: 0,
                     beneficiary: payable(_beneficiary),
                     metadata: new bytes(0)
@@ -1687,16 +1689,16 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                     mulDiv(
                         _toNative(mulDiv(_usdcPayAmount, 10 ** _NATIVE_DECIMALS, 10 ** _usdcToken.decimals()))
                             + _nativeSurplus,
-                        _tokenCountToRedeemForNative,
+                        _tokenCountToCashOutForNative,
                         _tokenSupply
                     ),
-                    _metadata.redemptionRate
+                    _metadata.cashOutTaxRate
                         + mulDiv(
-                            _tokenCountToRedeemForNative,
-                            JBConstants.MAX_REDEMPTION_RATE - _metadata.redemptionRate,
+                            _tokenCountToCashOutForNative,
+                            JBConstants.MAX_CASH_OUT_TAX_RATE - _metadata.cashOutTaxRate,
                             _tokenSupply
                         ),
-                    JBConstants.MAX_REDEMPTION_RATE
+                    JBConstants.MAX_CASH_OUT_TAX_RATE
                 );
 
                 uint256 _usdcReclaimAmount = mulDiv(
@@ -1709,16 +1711,16 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                                     10 ** _NATIVE_DECIMALS
                                 )
                             ),
-                        _beneficiaryTokenBalance - _tokenCountToRedeemForNative,
-                        _tokenSupply - _tokenCountToRedeemForNative
+                        _beneficiaryTokenBalance - _tokenCountToCashOutForNative,
+                        _tokenSupply - _tokenCountToCashOutForNative
                     ),
-                    _metadata.redemptionRate
+                    _metadata.cashOutTaxRate
                         + mulDiv(
-                            _beneficiaryTokenBalance - _tokenCountToRedeemForNative,
-                            JBConstants.MAX_REDEMPTION_RATE - _metadata.redemptionRate,
-                            _tokenSupply - _tokenCountToRedeemForNative
+                            _beneficiaryTokenBalance - _tokenCountToCashOutForNative,
+                            JBConstants.MAX_CASH_OUT_TAX_RATE - _metadata.cashOutTaxRate,
+                            _tokenSupply - _tokenCountToCashOutForNative
                         ),
-                    JBConstants.MAX_REDEMPTION_RATE
+                    JBConstants.MAX_CASH_OUT_TAX_RATE
                 );
 
                 assertEq(
@@ -1737,12 +1739,12 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                 );
                 assertEq(_usdcToken.balanceOf(address(_terminal)), _usdcPayAmount - _usdcReclaimAmount + _usdcFeeAmount);
             } else {
-                // Reclaim native tokens from the surplus by redeeming all of the `_beneficiary`'s tokens.
-                _terminal.redeemTokensOf({
+                // Reclaim native tokens from the surplus by cashing out all of the `_beneficiary`'s tokens.
+                _terminal.cashOutTokensOf({
                     holder: _beneficiary,
                     projectId: _projectId,
+                    cashOutCount: _beneficiaryTokenBalance,
                     tokenToReclaim: JBConstants.NATIVE_TOKEN,
-                    redeemCount: _beneficiaryTokenBalance,
                     minTokensReclaimed: 0,
                     beneficiary: payable(_beneficiary),
                     metadata: new bytes(0)
@@ -1750,11 +1752,11 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             }
             // Burn the tokens.
         } else {
-            _terminal.redeemTokensOf({
+            _terminal.cashOutTokensOf({
                 holder: _beneficiary,
                 projectId: _projectId,
+                cashOutCount: _beneficiaryTokenBalance,
                 tokenToReclaim: address(_usdcToken),
-                redeemCount: _beneficiaryTokenBalance,
                 minTokensReclaimed: 0,
                 beneficiary: payable(_beneficiary),
                 metadata: new bytes(0)
@@ -2281,26 +2283,26 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                         JBConstants.MAX_RESERVED_PERCENT - _metadata.reservedPercent
                     )
                 ),
-                _metadata.redemptionRate
+                _metadata.cashOutTaxRate
                     + mulDiv(
                         _beneficiaryTokenBalance,
-                        JBConstants.MAX_REDEMPTION_RATE - _metadata.redemptionRate,
+                        JBConstants.MAX_CASH_OUT_TAX_RATE - _metadata.cashOutTaxRate,
                         mulDiv(
                             _beneficiaryTokenBalance,
                             JBConstants.MAX_RESERVED_PERCENT,
                             JBConstants.MAX_RESERVED_PERCENT - _metadata.reservedPercent
                         )
                     ),
-                JBConstants.MAX_REDEMPTION_RATE
+                JBConstants.MAX_CASH_OUT_TAX_RATE
             );
 
             // If there is more to reclaim than there are native tokens in the tank.
             if (_nativeReclaimAmount > _nativeSurplus) {
                 uint256 _usdcReclaimAmount;
                 {
-                    // Keep a reference to the amount of project tokens to redeem for native tokens, a proportion of
+                    // Keep a reference to the amount of project tokens to cash out for native tokens, a proportion of
                     // available native token surplus.
-                    uint256 _tokenCountToRedeemForNative = mulDiv(
+                    uint256 _tokenCountToCashOutForNative = mulDiv(
                         _beneficiaryTokenBalance,
                         _nativeSurplus,
                         _nativeSurplus
@@ -2311,25 +2313,26 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                         JBConstants.MAX_RESERVED_PERCENT,
                         JBConstants.MAX_RESERVED_PERCENT - _metadata.reservedPercent
                     );
-                    // Redeem native tokens from the surplus using only the `_beneficiary`'s tokens needed to clear the
+                    // Cash out native tokens from the surplus using only the `_beneficiary`'s tokens needed to clear
+                    // the
                     // native token balance.
-                    _terminal.redeemTokensOf({
+                    _terminal.cashOutTokensOf({
                         holder: _beneficiary,
                         projectId: _projectId,
+                        cashOutCount: _tokenCountToCashOutForNative,
                         tokenToReclaim: JBConstants.NATIVE_TOKEN,
-                        redeemCount: _tokenCountToRedeemForNative,
                         minTokensReclaimed: 0,
                         beneficiary: payable(_beneficiary),
                         metadata: new bytes(0)
                     });
 
-                    // Redeem USDC from the surplus using only the `_beneficiary`'s tokens needed to clear the USDC
+                    // Cash out USDC from the surplus using only the `_beneficiary`'s tokens needed to clear the USDC
                     // balance.
-                    _terminal2.redeemTokensOf({
+                    _terminal2.cashOutTokensOf({
                         holder: _beneficiary,
                         projectId: _projectId,
+                        cashOutCount: _beneficiaryTokenBalance - _tokenCountToCashOutForNative,
                         tokenToReclaim: address(_usdcToken),
-                        redeemCount: _beneficiaryTokenBalance - _tokenCountToRedeemForNative,
                         minTokensReclaimed: 0,
                         beneficiary: payable(_beneficiary),
                         metadata: new bytes(0)
@@ -2339,16 +2342,16 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                         mulDiv(
                             _nativeSurplus
                                 + _toNative(mulDiv(_usdcSurplus, 10 ** _NATIVE_DECIMALS, 10 ** _usdcToken.decimals())),
-                            _tokenCountToRedeemForNative,
+                            _tokenCountToCashOutForNative,
                             _tokenSupply
                         ),
-                        _metadata.redemptionRate
+                        _metadata.cashOutTaxRate
                             + mulDiv(
-                                _tokenCountToRedeemForNative,
-                                JBConstants.MAX_REDEMPTION_RATE - _metadata.redemptionRate,
+                                _tokenCountToCashOutForNative,
+                                JBConstants.MAX_CASH_OUT_TAX_RATE - _metadata.cashOutTaxRate,
                                 _tokenSupply
                             ),
-                        JBConstants.MAX_REDEMPTION_RATE
+                        JBConstants.MAX_CASH_OUT_TAX_RATE
                     );
                     _usdcReclaimAmount = mulDiv(
                         mulDiv(
@@ -2360,16 +2363,16 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                                         10 ** _NATIVE_DECIMALS
                                     )
                                 ),
-                            _beneficiaryTokenBalance - _tokenCountToRedeemForNative,
-                            _tokenSupply - _tokenCountToRedeemForNative
+                            _beneficiaryTokenBalance - _tokenCountToCashOutForNative,
+                            _tokenSupply - _tokenCountToCashOutForNative
                         ),
-                        _metadata.redemptionRate
+                        _metadata.cashOutTaxRate
                             + mulDiv(
-                                _beneficiaryTokenBalance - _tokenCountToRedeemForNative,
-                                JBConstants.MAX_REDEMPTION_RATE - _metadata.redemptionRate,
-                                _tokenSupply - _tokenCountToRedeemForNative
+                                _beneficiaryTokenBalance - _tokenCountToCashOutForNative,
+                                JBConstants.MAX_CASH_OUT_TAX_RATE - _metadata.cashOutTaxRate,
+                                _tokenSupply - _tokenCountToCashOutForNative
                             ),
-                        JBConstants.MAX_REDEMPTION_RATE
+                        JBConstants.MAX_CASH_OUT_TAX_RATE
                     );
                 }
 
@@ -2393,12 +2396,12 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                         - _usdcToken.balanceOf(_projectOwner)
                 );
             } else {
-                // Reclaim native tokens from the surplus by redeeming all of the `_beneficiary`'s tokens.
-                _terminal.redeemTokensOf({
+                // Reclaim native tokens from the surplus by cashing out all of the `_beneficiary`'s tokens.
+                _terminal.cashOutTokensOf({
                     holder: _beneficiary,
                     projectId: _projectId,
+                    cashOutCount: _beneficiaryTokenBalance,
                     tokenToReclaim: JBConstants.NATIVE_TOKEN,
-                    redeemCount: _beneficiaryTokenBalance,
                     minTokensReclaimed: 0,
                     beneficiary: payable(_beneficiary),
                     metadata: new bytes(0)
@@ -2406,11 +2409,11 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             }
             // Burn the tokens.
         } else {
-            _terminal2.redeemTokensOf({
+            _terminal2.cashOutTokensOf({
                 holder: _beneficiary,
                 projectId: _projectId,
+                cashOutCount: _beneficiaryTokenBalance,
                 tokenToReclaim: address(_usdcToken),
-                redeemCount: _beneficiaryTokenBalance,
                 minTokensReclaimed: 0,
                 beneficiary: payable(_beneficiary),
                 metadata: new bytes(0)

@@ -3,7 +3,7 @@ pragma solidity >=0.8.6;
 
 import /* {*} from */ "./helpers/TestBaseWorkflow.sol";
 
-contract TestRedeemHooks_Local is TestBaseWorkflow {
+contract TestCashOutHooks_Local is TestBaseWorkflow {
     using JBRulesetMetadataResolver for JBRuleset;
 
     uint112 private constant _WEIGHT = 1000 * 10 ** 18;
@@ -30,7 +30,7 @@ contract TestRedeemHooks_Local is TestBaseWorkflow {
 
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: 0,
-            redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
+            cashOutTaxRate: 0,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
@@ -43,9 +43,9 @@ contract TestRedeemHooks_Local is TestBaseWorkflow {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: false,
+            useTotalSurplusForCashOuts: false,
             useDataHookForPay: false,
-            useDataHookForRedeem: true,
+            useDataHookForCashOut: true,
             dataHook: _DATA_HOOK,
             metadata: 0
         });
@@ -98,14 +98,14 @@ contract TestRedeemHooks_Local is TestBaseWorkflow {
         assertEq(address(_tokens.tokenOf(_projectId)), address(_token));
     }
 
-    function testRedeemHookWithNoFees() public {
+    function testCashOutHookWithNoFees() public {
         // Reference and bound pay amount.
         uint256 _nativePayAmount = 10 ether;
         uint256 _halfPaid = 5 ether;
 
-        // Redeem hook address.
-        address _redeemHook = makeAddr("SOFA");
-        vm.label(_redeemHook, "Redemption Delegate");
+        // Cash out hook address.
+        address _cashOutHook = makeAddr("SOFA");
+        vm.label(_cashOutHook, "Cash Out Delegate");
 
         // Keep a reference to the current ruleset.
         (JBRuleset memory _ruleset,) = _controller.currentRulesetOf(_projectId);
@@ -134,23 +134,23 @@ contract TestRedeemHooks_Local is TestBaseWorkflow {
             _nativeTerminalBalance
         );
 
-        // Reference redeem hook specifications.
-        JBRedeemHookSpecification[] memory _specifications = new JBRedeemHookSpecification[](1);
+        // Reference cash out hook specifications.
+        JBCashOutHookSpecification[] memory _specifications = new JBCashOutHookSpecification[](1);
 
         _specifications[0] =
-            JBRedeemHookSpecification({hook: IJBRedeemHook(_redeemHook), amount: _halfPaid, metadata: ""});
+            JBCashOutHookSpecification({hook: IJBCashOutHook(_cashOutHook), amount: _halfPaid, metadata: ""});
 
         vm.startPrank(multisig());
         // Set the hook as feeless.
-        _terminal.FEELESS_ADDRESSES().setFeelessAddress(_redeemHook, true);
+        _terminal.FEELESS_ADDRESSES().setFeelessAddress(_cashOutHook, true);
         vm.stopPrank();
 
-        // Redeem context.
-        JBAfterRedeemRecordedContext memory _redeemContext = JBAfterRedeemRecordedContext({
+        // Cash out context.
+        JBAfterCashOutRecordedContext memory _cashOutContext = JBAfterCashOutRecordedContext({
             holder: address(this),
             projectId: _projectId,
             rulesetId: _ruleset.id,
-            redeemCount: _beneficiaryTokenBalance / 2,
+            cashOutCount: _beneficiaryTokenBalance / 2,
             reclaimedAmount: JBTokenAmount(
                 JBConstants.NATIVE_TOKEN,
                 _terminal.accountingContextForTokenOf(_projectId, JBConstants.NATIVE_TOKEN).decimals,
@@ -163,53 +163,53 @@ contract TestRedeemHooks_Local is TestBaseWorkflow {
                 _terminal.accountingContextForTokenOf(_projectId, JBConstants.NATIVE_TOKEN).currency,
                 _halfPaid
             ),
-            redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
+            cashOutTaxRate: 0,
             beneficiary: payable(address(this)),
             hookMetadata: "",
-            redeemerMetadata: ""
+            cashOutMetadata: ""
         });
 
         // Mock the hook.
         vm.mockCall(
-            _redeemHook,
-            abi.encodeWithSelector(IJBRedeemHook.afterRedeemRecordedWith.selector),
-            abi.encode(_redeemContext)
+            _cashOutHook,
+            abi.encodeWithSelector(IJBCashOutHook.afterCashOutRecordedWith.selector),
+            abi.encode(_cashOutContext)
         );
 
         // Assert that the hook gets called with the expected value.
         vm.expectCall(
-            _redeemHook,
+            _cashOutHook,
             _halfPaid,
-            abi.encodeWithSelector(IJBRedeemHook.afterRedeemRecordedWith.selector, _redeemContext)
+            abi.encodeWithSelector(IJBCashOutHook.afterCashOutRecordedWith.selector, _cashOutContext)
         );
 
         vm.mockCall(
             _DATA_HOOK,
-            abi.encodeWithSelector(IJBRulesetDataHook.beforeRedeemRecordedWith.selector),
+            abi.encodeWithSelector(IJBRulesetDataHook.beforeCashOutRecordedWith.selector),
             abi.encode(
-                _ruleset.redemptionRate(), _beneficiaryTokenBalance / 2, _beneficiaryTokenBalance, _specifications
+                _ruleset.cashOutTaxRate(), _beneficiaryTokenBalance / 2, _beneficiaryTokenBalance, _specifications
             )
         );
 
-        _terminal.redeemTokensOf({
+        _terminal.cashOutTokensOf({
             holder: address(this),
             projectId: _projectId,
+            cashOutCount: _beneficiaryTokenBalance / 2,
             tokenToReclaim: JBConstants.NATIVE_TOKEN,
-            redeemCount: _beneficiaryTokenBalance / 2,
             minTokensReclaimed: 0,
             beneficiary: payable(address(this)),
             metadata: new bytes(0)
         });
     }
 
-    function testRedeemHookWithFeesAndCustomInfo() public {
+    function testCashOutHookWithFeesAndCustomInfo() public {
         // Reference and bound pay amount.
         uint256 _nativePayAmount = 10 ether;
         uint256 _halfPaid = 5 ether;
 
-        // Redeem hook address.
-        address _redeemHook = makeAddr("SOFA");
-        vm.label(_redeemHook, "Redemption Delegate");
+        // Cash out hook address.
+        address _cashOutHook = makeAddr("SOFA");
+        vm.label(_cashOutHook, "Cash Out Delegate");
 
         // Keep a reference to the current ruleset.
         (JBRuleset memory _ruleset,) = _controller.currentRulesetOf(_projectId);
@@ -238,36 +238,36 @@ contract TestRedeemHooks_Local is TestBaseWorkflow {
             _nativeTerminalBalance
         );
 
-        // Reference redeem hook specifications.
-        JBRedeemHookSpecification[] memory _specifications = new JBRedeemHookSpecification[](1);
+        // Reference cash out hook specifications.
+        JBCashOutHookSpecification[] memory _specifications = new JBCashOutHookSpecification[](1);
 
         _specifications[0] =
-            JBRedeemHookSpecification({hook: IJBRedeemHook(_redeemHook), amount: _halfPaid, metadata: ""});
+            JBCashOutHookSpecification({hook: IJBCashOutHook(_cashOutHook), amount: _halfPaid, metadata: ""});
 
-        uint256 _customRedemptionRate = JBConstants.MAX_REDEMPTION_RATE / 2;
-        uint256 _customRedeemCount = 1 * 10 ** 18;
+        uint256 _customCashOutTaxRate = JBConstants.MAX_CASH_OUT_TAX_RATE / 2;
+        uint256 _customCashOutCount = 1 * 10 ** 18;
         uint256 _customTotalSupply = 5 * 10 ** 18;
 
         uint256 _forwardedAmount =
             _halfPaid - (_halfPaid - mulDiv(_halfPaid, JBConstants.MAX_FEE, _terminal.FEE() + JBConstants.MAX_FEE));
 
         uint256 _beneficiaryAmount = mulDiv(
-            mulDiv(_nativePayAmount, _customRedeemCount, _customTotalSupply),
-            _customRedemptionRate
-                + mulDiv(_customRedeemCount, JBConstants.MAX_REDEMPTION_RATE - _customRedemptionRate, _customTotalSupply),
-            JBConstants.MAX_REDEMPTION_RATE
+            mulDiv(_nativePayAmount, _customCashOutCount, _customTotalSupply),
+            (JBConstants.MAX_CASH_OUT_TAX_RATE - _customCashOutTaxRate)
+                + mulDiv(_customCashOutCount, _customCashOutTaxRate, _customTotalSupply),
+            JBConstants.MAX_CASH_OUT_TAX_RATE
         );
 
         _beneficiaryAmount -= (
             _beneficiaryAmount - mulDiv(_beneficiaryAmount, JBConstants.MAX_FEE, _terminal.FEE() + JBConstants.MAX_FEE)
         );
 
-        // Redeem context.
-        JBAfterRedeemRecordedContext memory _redeemContext = JBAfterRedeemRecordedContext({
+        // Cash out context.
+        JBAfterCashOutRecordedContext memory _cashOutContext = JBAfterCashOutRecordedContext({
             holder: address(this),
             projectId: _projectId,
             rulesetId: _ruleset.id,
-            redeemCount: _beneficiaryTokenBalance / 2,
+            cashOutCount: _beneficiaryTokenBalance / 2,
             reclaimedAmount: JBTokenAmount(
                 JBConstants.NATIVE_TOKEN,
                 _terminal.accountingContextForTokenOf(_projectId, JBConstants.NATIVE_TOKEN).decimals,
@@ -280,37 +280,37 @@ contract TestRedeemHooks_Local is TestBaseWorkflow {
                 _terminal.accountingContextForTokenOf(_projectId, JBConstants.NATIVE_TOKEN).currency,
                 _forwardedAmount
             ),
-            redemptionRate: uint16(_customRedemptionRate),
+            cashOutTaxRate: uint16(_customCashOutTaxRate),
             beneficiary: payable(address(this)),
             hookMetadata: "",
-            redeemerMetadata: ""
+            cashOutMetadata: ""
         });
 
         // Mock the hook.
         vm.mockCall(
-            _redeemHook,
-            abi.encodeWithSelector(IJBRedeemHook.afterRedeemRecordedWith.selector),
-            abi.encode(_redeemContext)
+            _cashOutHook,
+            abi.encodeWithSelector(IJBCashOutHook.afterCashOutRecordedWith.selector),
+            abi.encode(_cashOutContext)
         );
 
         // Assert that the hook gets called with the expected value.
         vm.expectCall(
-            _redeemHook,
+            _cashOutHook,
             _forwardedAmount,
-            abi.encodeWithSelector(IJBRedeemHook.afterRedeemRecordedWith.selector, _redeemContext)
+            abi.encodeWithSelector(IJBCashOutHook.afterCashOutRecordedWith.selector, _cashOutContext)
         );
 
         vm.mockCall(
             _DATA_HOOK,
-            abi.encodeWithSelector(IJBRulesetDataHook.beforeRedeemRecordedWith.selector),
-            abi.encode(_customRedemptionRate, _customRedeemCount, _customTotalSupply, _specifications)
+            abi.encodeWithSelector(IJBRulesetDataHook.beforeCashOutRecordedWith.selector),
+            abi.encode(_customCashOutTaxRate, _customCashOutCount, _customTotalSupply, _specifications)
         );
 
-        _terminal.redeemTokensOf({
+        _terminal.cashOutTokensOf({
             holder: address(this),
             projectId: _projectId,
+            cashOutCount: _beneficiaryTokenBalance / 2,
             tokenToReclaim: JBConstants.NATIVE_TOKEN,
-            redeemCount: _beneficiaryTokenBalance / 2,
             minTokensReclaimed: 0,
             beneficiary: payable(address(this)),
             metadata: new bytes(0)

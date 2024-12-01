@@ -23,7 +23,7 @@ contract TestMigrateController_Local is JBControllerSetup {
     modifier migrationIsAllowedByRuleset() {
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: JBConstants.MAX_RESERVED_PERCENT / 2, //50%
-            redemptionRate: JBConstants.MAX_REDEMPTION_RATE / 2, //50%
+            cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE / 2, //50%
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
@@ -36,9 +36,9 @@ contract TestMigrateController_Local is JBControllerSetup {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: true,
+            useTotalSurplusForCashOuts: true,
             useDataHookForPay: false,
-            useDataHookForRedeem: false,
+            useDataHookForCashOut: false,
             dataHook: address(0),
             metadata: 0
         });
@@ -69,7 +69,7 @@ contract TestMigrateController_Local is JBControllerSetup {
     modifier migrationIsNotAllowedByRuleset() {
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: JBConstants.MAX_RESERVED_PERCENT / 2, //50%
-            redemptionRate: JBConstants.MAX_REDEMPTION_RATE / 2, //50%
+            cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE / 2, //50%
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
@@ -82,9 +82,9 @@ contract TestMigrateController_Local is JBControllerSetup {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: true,
+            useTotalSurplusForCashOuts: true,
             useDataHookForPay: false,
-            useDataHookForRedeem: false,
+            useDataHookForCashOut: false,
             dataHook: address(0),
             metadata: 0
         });

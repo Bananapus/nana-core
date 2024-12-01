@@ -80,7 +80,7 @@ contract TestMetaTx_Local is TestBaseWorkflow {
 
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: 0,
-            redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
+            cashOutTaxRate: 0,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
@@ -93,9 +93,9 @@ contract TestMetaTx_Local is TestBaseWorkflow {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: false,
+            useTotalSurplusForCashOuts: false,
             useDataHookForPay: false,
-            useDataHookForRedeem: false,
+            useDataHookForCashOut: false,
             dataHook: address(0),
             metadata: 0
         });
@@ -144,7 +144,7 @@ contract TestMetaTx_Local is TestBaseWorkflow {
         assertEq(_erc2771Forwarder.deployed(), true);
     }
 
-    function testMetaPayAndMetaRedeem() public {
+    function testMetaPayAndMetaCashOut() public {
         // Setup: pay amounts, set balances
         uint256 _payAmount = 1 ether;
         vm.deal(_relayer, 1 ether);
@@ -184,20 +184,20 @@ contract TestMetaTx_Local is TestBaseWorkflow {
         uint256 _beneficiaryTokenBalance = UD60x18unwrap(UD60x18mul(UD60x18wrap(_payAmount), UD60x18wrap(_WEIGHT)));
         assertEq(_tokens.totalBalanceOf(_signer, _projectId), _beneficiaryTokenBalance);
 
-        // Setup 2: meta tx data for redeem
+        // Setup 2: meta tx data for cash outs
         bytes memory _data2 = abi.encodeWithSelector(
-            IJBRedeemTerminal.redeemTokensOf.selector,
+            IJBCashOutTerminal.cashOutTokensOf.selector,
             _signer,
             _projectId,
-            JBConstants.NATIVE_TOKEN,
             _beneficiaryTokenBalance,
+            JBConstants.NATIVE_TOKEN,
             0, // minReturnedTokens
             payable(_signer),
             "Gimme my money!", // memo
             "" // metadata, empty bytes
         );
 
-        // Setup 2: forwarder request data with incremented nonce for redeem tx
+        // Setup 2: forwarder request data with incremented nonce for cash out tx
         ERC2771Forwarder.ForwardRequestData memory requestData2 = _forgeRequestData({
             value: 0,
             nonce: 1,

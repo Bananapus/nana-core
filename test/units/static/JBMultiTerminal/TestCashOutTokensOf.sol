@@ -4,16 +4,16 @@ pragma solidity 0.8.23;
 import /* {*} from */ "../../../helpers/TestBaseWorkflow.sol";
 import {JBMultiTerminalSetup} from "./JBMultiTerminalSetup.sol";
 
-contract TestRedeemTokensOf_Local is JBMultiTerminalSetup {
+contract TestCashOutTokensOf_Local is JBMultiTerminalSetup {
     uint56 _projectId = 1;
     uint256 _defaultAmount = 1e18;
-    uint16 _maxRedemptionRate = JBConstants.MAX_REDEMPTION_RATE;
-    uint16 _halfRedemptionRate = JBConstants.MAX_REDEMPTION_RATE / 2;
+    uint16 _maxCashOutTaxRate = JBConstants.MAX_CASH_OUT_TAX_RATE;
+    uint16 _halfCashOutTaxRate = JBConstants.MAX_CASH_OUT_TAX_RATE / 2;
 
     address _holder = makeAddr("holder");
     address payable _bene = payable(makeAddr("beneficiary"));
     address _mockToken = makeAddr("mockToken");
-    IJBRedeemHook _mockHook = IJBRedeemHook(makeAddr("redeemHook"));
+    IJBCashOutHook _mockHook = IJBCashOutHook(makeAddr("cashOutHook"));
 
     // mock erc20 necessary for balance checks
     MockERC20 _mockToken2;
@@ -34,7 +34,7 @@ contract TestRedeemTokensOf_Local is JBMultiTerminalSetup {
             address(permissions),
             abi.encodeCall(
                 IJBPermissions.hasPermission,
-                (address(_bene), address(_holder), _projectId, JBPermissionIds.REDEEM_TOKENS, true, true)
+                (address(_bene), address(_holder), _projectId, JBPermissionIds.CASH_OUT_TOKENS, true, true)
             ),
             abi.encode(false)
         );
@@ -43,7 +43,7 @@ contract TestRedeemTokensOf_Local is JBMultiTerminalSetup {
             abi.encodeWithSelector(JBPermissioned.JBPermissioned_Unauthorized.selector, _holder, _bene, _projectId, 3)
         );
         vm.prank(_bene);
-        _terminal.redeemTokensOf(_holder, _projectId, _mockToken, _defaultAmount, _minReclaimed, _bene, "");
+        _terminal.cashOutTokensOf(_holder, _projectId, _defaultAmount, _mockToken, _minReclaimed, _bene, "");
     }
 
     modifier whenCallerHasPermission() {
@@ -54,7 +54,7 @@ contract TestRedeemTokensOf_Local is JBMultiTerminalSetup {
             address(permissions),
             abi.encodeCall(
                 IJBPermissions.hasPermission,
-                (address(_bene), address(_holder), _projectId, JBPermissionIds.REDEEM_TOKENS, true, true)
+                (address(_bene), address(_holder), _projectId, JBPermissionIds.CASH_OUT_TOKENS, true, true)
             ),
             abi.encode(true)
         );
@@ -62,11 +62,11 @@ contract TestRedeemTokensOf_Local is JBMultiTerminalSetup {
         _;
     }
 
-    function test_GivenRedeemCountLTMinTokensReclaimed() external whenCallerHasPermission {
+    function test_GivenCashOutCountLTMinTokensReclaimed() external whenCallerHasPermission {
         // it will revert UNDER_MIN_TOKENS_RECLAIMED
 
         uint256 reclaimAmount = 1e9;
-        JBRedeemHookSpecification[] memory hookSpecifications = new JBRedeemHookSpecification[](0);
+        JBCashOutHookSpecification[] memory hookSpecifications = new JBCashOutHookSpecification[](0);
         JBAccountingContext[] memory mockBalanceContext = new JBAccountingContext[](0);
         JBAccountingContext memory mockTokenContext = JBAccountingContext({token: address(0), decimals: 0, currency: 0});
         JBRuleset memory returnedRuleset = JBRuleset({
@@ -81,14 +81,14 @@ contract TestRedeemTokensOf_Local is JBMultiTerminalSetup {
             metadata: 0
         });
 
-        // mock call to JBTerminalStore recordRedemptionFor
+        // mock call to JBTerminalStore recordCashOutFor
         mockExpect(
             address(store),
             abi.encodeCall(
-                IJBTerminalStore.recordRedemptionFor,
+                IJBTerminalStore.recordCashOutFor,
                 (_holder, _projectId, _defaultAmount, mockTokenContext, mockBalanceContext, "")
             ),
-            abi.encode(returnedRuleset, reclaimAmount, _maxRedemptionRate, hookSpecifications)
+            abi.encode(returnedRuleset, reclaimAmount, _maxCashOutTaxRate, hookSpecifications)
         );
 
         // mock call to find the controller (we'll just use this contracts address for simplicity)
@@ -107,14 +107,14 @@ contract TestRedeemTokensOf_Local is JBMultiTerminalSetup {
         // mock feeless address check
         mockExpect(address(feelessAddresses), abi.encodeCall(IJBFeelessAddresses.isFeeless, (_bene)), abi.encode(true));
 
-        _terminal.redeemTokensOf(_holder, _projectId, _mockToken, _defaultAmount, _minReclaimed, _bene, "");
+        _terminal.cashOutTokensOf(_holder, _projectId, _defaultAmount, _mockToken, _minReclaimed, _bene, "");
     }
 
-    function test_GivenRedeemCountGtZero() external whenCallerHasPermission {
+    function test_GivenCashOutCountGtZero() external whenCallerHasPermission {
         // it will call directory controller of and burnTokensOf
 
         uint256 reclaimAmount = 1e9;
-        JBRedeemHookSpecification[] memory hookSpecifications = new JBRedeemHookSpecification[](0);
+        JBCashOutHookSpecification[] memory hookSpecifications = new JBCashOutHookSpecification[](0);
         JBAccountingContext[] memory mockBalanceContext = new JBAccountingContext[](0);
         JBAccountingContext memory mockTokenContext = JBAccountingContext({token: address(0), decimals: 0, currency: 0});
         JBRuleset memory returnedRuleset = JBRuleset({
@@ -129,14 +129,14 @@ contract TestRedeemTokensOf_Local is JBMultiTerminalSetup {
             metadata: 0
         });
 
-        // mock call to JBTerminalStore recordRedemptionFor
+        // mock call to JBTerminalStore recordCashOutFor
         mockExpect(
             address(store),
             abi.encodeCall(
-                IJBTerminalStore.recordRedemptionFor,
+                IJBTerminalStore.recordCashOutFor,
                 (_holder, _projectId, _defaultAmount, mockTokenContext, mockBalanceContext, "")
             ),
-            abi.encode(returnedRuleset, reclaimAmount, _maxRedemptionRate, hookSpecifications)
+            abi.encode(returnedRuleset, reclaimAmount, _maxCashOutTaxRate, hookSpecifications)
         );
 
         // mock call to find the controller (we'll just use this contracts address for simplicity)
@@ -157,18 +157,18 @@ contract TestRedeemTokensOf_Local is JBMultiTerminalSetup {
         vm.expectRevert(
             abi.encodeWithSelector(JBMultiTerminal.JBMultiTerminal_UnderMinTokensReclaimed.selector, 1e9, 1e18)
         );
-        _terminal.redeemTokensOf(_holder, _projectId, _mockToken, _defaultAmount, 1e18, _bene, ""); // minReclaimAmount
+        _terminal.cashOutTokensOf(_holder, _projectId, _defaultAmount, _mockToken, 1e18, _bene, ""); // minReclaimAmount
             // = 1e18 but only 1e9 reclaimed
     }
 
-    function test_GivenReclaimAmountGtZeroBeneficiaryIsNotFeelessAndRedemptionRateDneqMAX_REDEMPTION_RATE()
+    function test_GivenReclaimAmountGtZeroBeneficiaryIsNotFeelessAndCashOutRateDneqMAX_CASH_OUT_RATE()
         external
         whenCallerHasPermission
     {
         // it will subtract the fee for the reclaim
 
         uint256 reclaimAmount = 1e9;
-        JBRedeemHookSpecification[] memory hookSpecifications = new JBRedeemHookSpecification[](0);
+        JBCashOutHookSpecification[] memory hookSpecifications = new JBCashOutHookSpecification[](0);
         JBAccountingContext[] memory mockBalanceContext = new JBAccountingContext[](0);
         JBAccountingContext memory mockTokenContext = JBAccountingContext({token: address(0), decimals: 0, currency: 0});
         JBRuleset memory returnedRuleset = JBRuleset({
@@ -183,14 +183,14 @@ contract TestRedeemTokensOf_Local is JBMultiTerminalSetup {
             metadata: 0
         });
 
-        // mock call to JBTerminalStore recordRedemptionFor
+        // mock call to JBTerminalStore recordCashOutFor
         mockExpect(
             address(store),
             abi.encodeCall(
-                IJBTerminalStore.recordRedemptionFor,
+                IJBTerminalStore.recordCashOutFor,
                 (_holder, _projectId, _defaultAmount, mockTokenContext, mockBalanceContext, "")
             ),
-            abi.encode(returnedRuleset, reclaimAmount, _halfRedemptionRate, hookSpecifications)
+            abi.encode(returnedRuleset, reclaimAmount, _halfCashOutTaxRate, hookSpecifications)
         );
 
         // mock call to find the controller (we'll just use this contracts address for simplicity)
@@ -230,7 +230,7 @@ contract TestRedeemTokensOf_Local is JBMultiTerminalSetup {
             ""
         );
 
-        _terminal.redeemTokensOf(_holder, _projectId, _mockToken, _defaultAmount, _minReclaimed, _bene, "");
+        _terminal.cashOutTokensOf(_holder, _projectId, _defaultAmount, _mockToken, _minReclaimed, _bene, "");
     }
 
     // covered above / in other units that test transfers
@@ -250,22 +250,22 @@ contract TestRedeemTokensOf_Local is JBMultiTerminalSetup {
         _;
     }
 
-    /* function test_GivenDataHookReturnsRedeemHookSpecsHookIsFeelessAndTokenIsNative()
+    /* function test_GivenDataHookReturnsCashOutHookSpecsHookIsFeelessAndTokenIsNative()
         external
         whenADataHookIsConfigured
         whenCallerHasPermission
     {
-        // it will pass the full amount to the hook and emit HookAfterRecordRedeem
+        // it will pass the full amount to the hook and emit HookAfterRecordCashOut
 
         
     } */
 
-    function test_GivenDataHookReturnsRedeemHookSpecsHookIsFeelessAndTokenIsErc20()
+    function test_GivenDataHookReturnsCashOutHookSpecsHookIsFeelessAndTokenIsErc20()
         external
         whenADataHookIsConfigured
         whenCallerHasPermission
     {
-        // it will safeIncreaseAllowance pass the full amount to the hook and emit HookAfterRecordRedeem
+        // it will safeIncreaseAllowance pass the full amount to the hook and emit HookAfterRecordCashOut
 
         // mint mocked erc20 tokens to hodler
         _mockToken2.mint(address(_terminal), _defaultAmount * 10);
@@ -279,8 +279,8 @@ contract TestRedeemTokensOf_Local is JBMultiTerminalSetup {
         _mockToken2.approve(address(_mockHook), _defaultAmount);
 
         uint256 reclaimAmount = 1e9;
-        JBRedeemHookSpecification[] memory hookSpecifications = new JBRedeemHookSpecification[](1);
-        hookSpecifications[0] = JBRedeemHookSpecification({hook: _mockHook, amount: _defaultAmount, metadata: ""});
+        JBCashOutHookSpecification[] memory hookSpecifications = new JBCashOutHookSpecification[](1);
+        hookSpecifications[0] = JBCashOutHookSpecification({hook: _mockHook, amount: _defaultAmount, metadata: ""});
         JBAccountingContext[] memory mockBalanceContext = new JBAccountingContext[](0);
         JBAccountingContext memory mockTokenContext = JBAccountingContext({token: address(0), decimals: 0, currency: 0});
         JBRuleset memory returnedRuleset = JBRuleset({
@@ -295,14 +295,14 @@ contract TestRedeemTokensOf_Local is JBMultiTerminalSetup {
             metadata: 0
         });
 
-        // mock call to JBTerminalStore recordRedemptionFor
+        // mock call to JBTerminalStore recordCashOutFor
         mockExpect(
             address(store),
             abi.encodeCall(
-                IJBTerminalStore.recordRedemptionFor,
+                IJBTerminalStore.recordCashOutFor,
                 (_holder, _projectId, _defaultAmount, mockTokenContext, mockBalanceContext, "")
             ),
-            abi.encode(returnedRuleset, reclaimAmount, _maxRedemptionRate, hookSpecifications)
+            abi.encode(returnedRuleset, reclaimAmount, _maxCashOutTaxRate, hookSpecifications)
         );
 
         // mock call to find the controller (we'll just use this contracts address for simplicity)
@@ -327,45 +327,45 @@ contract TestRedeemTokensOf_Local is JBMultiTerminalSetup {
         JBTokenAmount memory forwardedAmount = JBTokenAmount(address(_mockToken2), 0, 0, _defaultAmount);
 
         // needed for hook call
-        JBAfterRedeemRecordedContext memory context = JBAfterRedeemRecordedContext({
+        JBAfterCashOutRecordedContext memory context = JBAfterCashOutRecordedContext({
             holder: _holder,
             projectId: _projectId,
             rulesetId: returnedRuleset.id,
-            redeemCount: _defaultAmount,
+            cashOutCount: _defaultAmount,
             reclaimedAmount: reclaimedAmount,
             forwardedAmount: forwardedAmount,
-            redemptionRate: _maxRedemptionRate,
+            cashOutTaxRate: _maxCashOutTaxRate,
             beneficiary: _bene,
             hookMetadata: "",
-            redeemerMetadata: ""
+            cashOutMetadata: ""
         });
 
-        mockExpect(address(_mockHook), abi.encodeCall(IJBRedeemHook.afterRedeemRecordedWith, (context)), "");
+        mockExpect(address(_mockHook), abi.encodeCall(IJBCashOutHook.afterCashOutRecordedWith, (context)), "");
 
         // ensure approval is increased
         vm.expectCall(address(_mockToken2), abi.encodeCall(IERC20.approve, (address(_mockHook), _defaultAmount * 2)));
 
         vm.expectEmit();
-        emit IJBRedeemTerminal.HookAfterRecordRedeem(_mockHook, context, _defaultAmount, 0, address(_bene));
+        emit IJBCashOutTerminal.HookAfterRecordCashOut(_mockHook, context, _defaultAmount, 0, address(_bene));
 
         vm.prank(_bene);
-        _terminal.redeemTokensOf(_holder, _projectId, address(_mockToken2), _defaultAmount, _minReclaimed, _bene, "");
+        _terminal.cashOutTokensOf(_holder, _projectId, _defaultAmount, address(_mockToken2), _minReclaimed, _bene, "");
     }
 
-    /* function test_GivenDataHookReturnsRedeemHookSpecsHookIsNotFeelessAndTokenIsNative()
+    /* function test_GivenDataHookReturnsCashOutHookSpecsHookIsNotFeelessAndTokenIsNative()
         external
         whenADataHookIsConfigured
         whenCallerHasPermission
     {
-        // it will calculate the fee pass the amount to the hook and emit HookAfterRecordRedeem
+        // it will calculate the fee pass the amount to the hook and emit HookAfterRecordCashOut
     } */
 
-    function test_GivenDataHookReturnsRedeemHookSpecsHookIsNotFeelessAndTokenIsErc20()
+    function test_GivenDataHookReturnsCashOutHookSpecsHookIsNotFeelessAndTokenIsErc20()
         external
         whenADataHookIsConfigured
         whenCallerHasPermission
     {
-        // it will safeIncreaseAllowance pass the amount to the hook and emit HookAfterRecordRedeem
+        // it will safeIncreaseAllowance pass the amount to the hook and emit HookAfterRecordCashOut
 
         // mint mocked erc20 tokens to hodler
         _mockToken2.mint(address(_terminal), _defaultAmount * 10);
@@ -379,9 +379,9 @@ contract TestRedeemTokensOf_Local is JBMultiTerminalSetup {
         _mockToken2.approve(address(_mockHook), _defaultAmount);
 
         uint256 reclaimAmount = 1e9;
-        JBRedeemHookSpecification[] memory hookSpecifications = new JBRedeemHookSpecification[](1);
-        JBRedeemHookSpecification[] memory paySpecs = new JBRedeemHookSpecification[](0);
-        hookSpecifications[0] = JBRedeemHookSpecification({hook: _mockHook, amount: _defaultAmount, metadata: ""});
+        JBCashOutHookSpecification[] memory hookSpecifications = new JBCashOutHookSpecification[](1);
+        JBCashOutHookSpecification[] memory paySpecs = new JBCashOutHookSpecification[](0);
+        hookSpecifications[0] = JBCashOutHookSpecification({hook: _mockHook, amount: _defaultAmount, metadata: ""});
         JBAccountingContext[] memory mockBalanceContext = new JBAccountingContext[](0);
         JBAccountingContext memory mockTokenContext = JBAccountingContext({token: address(0), decimals: 0, currency: 0});
         JBRuleset memory returnedRuleset = JBRuleset({
@@ -396,14 +396,14 @@ contract TestRedeemTokensOf_Local is JBMultiTerminalSetup {
             metadata: 0
         });
 
-        // mock call to JBTerminalStore recordRedemptionFor
+        // mock call to JBTerminalStore recordCashOutFor
         mockExpect(
             address(store),
             abi.encodeCall(
-                IJBTerminalStore.recordRedemptionFor,
+                IJBTerminalStore.recordCashOutFor,
                 (_holder, _projectId, _defaultAmount, mockTokenContext, mockBalanceContext, "")
             ),
-            abi.encode(returnedRuleset, reclaimAmount, _maxRedemptionRate, hookSpecifications)
+            abi.encode(returnedRuleset, reclaimAmount, _maxCashOutTaxRate, hookSpecifications)
         );
 
         // mock call to find the controller (we'll just use this contracts address for simplicity)
@@ -432,20 +432,20 @@ contract TestRedeemTokensOf_Local is JBMultiTerminalSetup {
         JBTokenAmount memory feeRepayAmount = JBTokenAmount(address(_mockToken2), 0, 0, hookTax);
 
         // needed for hook call
-        JBAfterRedeemRecordedContext memory context = JBAfterRedeemRecordedContext({
+        JBAfterCashOutRecordedContext memory context = JBAfterCashOutRecordedContext({
             holder: _holder,
             projectId: _projectId,
             rulesetId: returnedRuleset.id,
-            redeemCount: _defaultAmount,
+            cashOutCount: _defaultAmount,
             reclaimedAmount: reclaimedAmount,
             forwardedAmount: forwardedAmount,
-            redemptionRate: _maxRedemptionRate,
+            cashOutTaxRate: _maxCashOutTaxRate,
             beneficiary: _bene,
             hookMetadata: "",
-            redeemerMetadata: ""
+            cashOutMetadata: ""
         });
 
-        mockExpect(address(_mockHook), abi.encodeCall(IJBRedeemHook.afterRedeemRecordedWith, (context)), "");
+        mockExpect(address(_mockHook), abi.encodeCall(IJBCashOutHook.afterCashOutRecordedWith, (context)), "");
 
         // primary terminal check
         mockExpect(
@@ -464,9 +464,9 @@ contract TestRedeemTokensOf_Local is JBMultiTerminalSetup {
             abi.encode(returnedRuleset, 0, paySpecs)
         );
         vm.expectEmit();
-        emit IJBRedeemTerminal.HookAfterRecordRedeem(_mockHook, context, passedAfterTax, hookTax, address(_bene));
+        emit IJBCashOutTerminal.HookAfterRecordCashOut(_mockHook, context, passedAfterTax, hookTax, address(_bene));
 
         vm.prank(_bene);
-        _terminal.redeemTokensOf(_holder, _projectId, address(_mockToken2), _defaultAmount, _minReclaimed, _bene, "");
+        _terminal.cashOutTokensOf(_holder, _projectId, _defaultAmount, address(_mockToken2), _minReclaimed, _bene, "");
     }
 }

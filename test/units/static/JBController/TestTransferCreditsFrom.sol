@@ -34,7 +34,7 @@ contract TestTransferCreditsFrom_Local is JBControllerSetup {
         // data for JBRulesets currentOf call
         JBRulesetMetadata memory _rulesMetadata = JBRulesetMetadata({
             reservedPercent: JBConstants.MAX_RESERVED_PERCENT / 2,
-            redemptionRate: JBConstants.MAX_REDEMPTION_RATE / 2,
+            cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE / 2,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
@@ -47,9 +47,9 @@ contract TestTransferCreditsFrom_Local is JBControllerSetup {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: true,
+            useTotalSurplusForCashOuts: true,
             useDataHookForPay: false,
-            useDataHookForRedeem: false,
+            useDataHookForCashOut: false,
             dataHook: address(0),
             metadata: 0
         });
@@ -89,7 +89,7 @@ contract TestTransferCreditsFrom_Local is JBControllerSetup {
         // data for JBRulesets currentOf call
         JBRulesetMetadata memory _rulesMetadata = JBRulesetMetadata({
             reservedPercent: JBConstants.MAX_RESERVED_PERCENT / 2,
-            redemptionRate: JBConstants.MAX_REDEMPTION_RATE / 2,
+            cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE / 2,
             baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             // will revert in this case
@@ -103,9 +103,9 @@ contract TestTransferCreditsFrom_Local is JBControllerSetup {
             allowAddAccountingContext: true,
             allowAddPriceFeed: false,
             holdFees: false,
-            useTotalSurplusForRedemptions: true,
+            useTotalSurplusForCashOuts: true,
             useDataHookForPay: false,
-            useDataHookForRedeem: false,
+            useDataHookForCashOut: false,
             dataHook: address(0),
             metadata: 0
         });
