@@ -176,9 +176,8 @@ contract JBTerminalStore is IJBTerminalStore {
     /// specified terminal.
     /// @param projectId The ID of the project whose tokens would be cashed out.
     /// @param cashOutCount The number of tokens that would be cashed out, as a fixed point number with 18 decimals.
-    /// @param terminal The terminal that would be cashed out from. If this is the zero address, surplus within all the
-    /// project's terminals are considered.
-    /// @param accountingContexts The accounting contexts of the surplus terminal tokens that would be reclaimed
+    /// @param terminal The terminal that would be cashed out from.    /// @param accountingContexts The accounting
+    /// contexts of the surplus terminal tokens that would be reclaimed
     /// @param decimals The number of decimals to include in the resulting fixed point number.
     /// @param currency The currency that the resulting number will be in terms of.
     /// @return The amount of surplus terminal tokens that would be reclaimed by cashing out `cashOutCount`
@@ -196,36 +195,20 @@ contract JBTerminalStore is IJBTerminalStore {
         override
         returns (uint256)
     {
-        // If the terminal is the zero address, it must be used with accounting contexts. If it's not the zero address,
-        // it must not be used with accounting contexts.
-        if (
-            (terminal == address(0) && accountingContexts.length != 0)
-                || (terminal != address(0) && accountingContexts.length == 0)
-        ) {
-            revert JBTerminalStore_InvalidArguments(terminal, accountingContexts.length);
-        }
-
         // Get a reference to the project's current ruleset.
         JBRuleset memory ruleset = RULESETS.currentOf(projectId);
 
         // Get the current surplus amount.
         // If a terminal or accounting contexts weren't provided, use the total surplus across all terminals. Otherwise,
         // get the `terminal`'s surplus.
-        uint256 currentSurplus = terminal == address(0)
-            ? JBSurplus.currentSurplusOf({
-                projectId: projectId,
-                terminals: DIRECTORY.terminalsOf(projectId),
-                decimals: decimals,
-                currency: currency
-            })
-            : _surplusFrom({
-                terminal: terminal,
-                projectId: projectId,
-                accountingContexts: accountingContexts,
-                ruleset: ruleset,
-                targetDecimals: decimals,
-                targetCurrency: currency
-            });
+        uint256 currentSurplus = _surplusFrom({
+            terminal: terminal,
+            projectId: projectId,
+            accountingContexts: accountingContexts,
+            ruleset: ruleset,
+            targetDecimals: decimals,
+            targetCurrency: currency
+        });
 
         // If there's no surplus, nothing can be reclaimed.
         if (currentSurplus == 0) return 0;
