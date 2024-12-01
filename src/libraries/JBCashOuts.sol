@@ -24,7 +24,7 @@ library JBCashOuts {
         pure
         returns (uint256)
     {
-        // If the cash out tax rate is 0, no surplus can be reclaimed.
+        // If the cash out tax rate is the max, no surplus can be reclaimed.
         if (cashOutTaxRate == JBConstants.MAX_CASH_OUT_TAX_RATE) return 0;
 
         // If the total supply is being cashed out, return the entire surplus.

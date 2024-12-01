@@ -1113,7 +1113,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
 
         // Send the reclaimed funds to the beneficiary.
         if (reclaimAmount != 0) {
-            // Determine if a fee should be taken. Fees are not exercised if the cash out tax rate is at its max (100%),
+            // Determine if a fee should be taken. Fees are not taked if the cash out tax rate is zero,
             // if the beneficiary is feeless, or if the fee beneficiary doesn't accept the given token.
             if (!_isFeeless(beneficiary) && cashOutTaxRate != 0) {
                 amountEligibleForFees += reclaimAmount;
