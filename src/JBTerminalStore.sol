@@ -37,6 +37,7 @@ contract JBTerminalStore is IJBTerminalStore {
     error JBTerminalStore_InadequateTerminalStoreBalance(uint256 amount, uint256 balance);
     error JBTerminalStore_InsufficientTokens(uint256 count, uint256 totalSupply);
     error JBTerminalStore_InvalidAmountToForwardHook(uint256 amount, uint256 paidAmount);
+    error JBTerminalStore_InvalidArguments(address terminal, uint256 numberOfAccountingContexts);
     error JBTerminalStore_RulesetNotFound();
     error JBTerminalStore_RulesetPaymentPaused();
     error JBTerminalStore_TerminalMigrationNotAllowed();
@@ -173,28 +174,37 @@ contract JBTerminalStore is IJBTerminalStore {
     /// @dev The returned amount in terms of the specified `terminal`'s base currency.
     /// @dev The returned amount is represented as a fixed point number with the same amount of decimals as the
     /// specified terminal.
+    /// @param cashOutCount The number of tokens that would be cashed out, as a fixed point number with 18 decimals.
+    /// @param projectId The ID of the project whose tokens would be cashed out.
     /// @param terminal The terminal that would be cashed out from. If this is the zero address, surplus within all the
     /// project's terminals are considered.
-    /// @param projectId The ID of the project whose tokens would be cashed out.
     /// @param accountingContexts The accounting contexts of the surplus terminal tokens that would be reclaimed
     /// @param decimals The number of decimals to include in the resulting fixed point number.
     /// @param currency The currency that the resulting number will be in terms of.
-    /// @param cashOutCount The number of tokens that would be cashed out, as a fixed point number with 18 decimals.
     /// @return The amount of surplus terminal tokens that would be reclaimed by cashing out `cashOutCount`
     /// tokens.
     function currentReclaimableSurplusOf(
-        address terminal,
+        uint256 cashOutCount,
         uint256 projectId,
+        address terminal,
         JBAccountingContext[] calldata accountingContexts,
         uint256 decimals,
-        uint256 currency,
-        uint256 cashOutCount
+        uint256 currency
     )
         external
         view
         override
         returns (uint256)
     {
+        // If the terminal is the zero address, it must be used with accounting contexts. If it's not the zero address,
+        // it must not be used with accounting contexts.
+        if (
+            (terminal == address(0) && accountingContexts.length != 0)
+                || (terminal != address(0) && accountingContexts.length == 0)
+        ) {
+            revert JBTerminalStore_InvalidArguments(terminal, accountingContexts.length);
+        }
+
         // Get a reference to the project's current ruleset.
         JBRuleset memory ruleset = RULESETS.currentOf(projectId);
 

@@ -46,13 +46,14 @@ interface IJBTerminalStore {
         external
         view
         returns (uint256);
+
     function currentReclaimableSurplusOf(
-        address terminal,
+        uint256 cashOutCount,
         uint256 projectId,
+        address terminal,
         JBAccountingContext[] calldata accountingContexts,
         uint256 decimals,
-        uint256 currency,
-        uint256 cashOutCount
+        uint256 currency
     )
         external
         view
