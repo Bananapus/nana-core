@@ -1415,7 +1415,13 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         internal
     {
         // slither-disable-next-line reentrancy-events
-        try this.executeProcessFee(projectId, token, amount, beneficiary, feeTerminal) {
+        try this.executeProcessFee({
+            projectId: projectId,
+            token: token,
+            amount: amount,
+            beneficiary: beneficiary,
+            feeTerminal: feeTerminal
+        }) {
             emit ProcessFee({
                 projectId: projectId,
                 token: token,
