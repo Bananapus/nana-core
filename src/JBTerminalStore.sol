@@ -208,7 +208,14 @@ contract JBTerminalStore is IJBTerminalStore {
                 decimals: decimals,
                 currency: currency
             })
-            : _surplusFrom(terminal, projectId, accountingContexts, ruleset, decimals, currency);
+            : _surplusFrom({
+                terminal: terminal,
+                projectId: projectId,
+                accountingContexts: accountingContexts,
+                ruleset: ruleset,
+                targetDecimals: decimals,
+                targetCurrency: currency
+            });
 
         // If there's no surplus, nothing can be reclaimed.
         if (currentSurplus == 0) return 0;
