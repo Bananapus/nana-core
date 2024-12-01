@@ -37,7 +37,6 @@ contract JBTerminalStore is IJBTerminalStore {
     error JBTerminalStore_InadequateTerminalStoreBalance(uint256 amount, uint256 balance);
     error JBTerminalStore_InsufficientTokens(uint256 count, uint256 totalSupply);
     error JBTerminalStore_InvalidAmountToForwardHook(uint256 amount, uint256 paidAmount);
-    error JBTerminalStore_InvalidArguments(address terminal, uint256 numberOfAccountingContexts);
     error JBTerminalStore_RulesetNotFound();
     error JBTerminalStore_RulesetPaymentPaused();
     error JBTerminalStore_TerminalMigrationNotAllowed();
@@ -196,15 +195,6 @@ contract JBTerminalStore is IJBTerminalStore {
         override
         returns (uint256)
     {
-        // If the terminal is the zero address, it must be used with accounting contexts. If it's not the zero address,
-        // it must not be used with accounting contexts.
-        if (
-            (terminal == address(0) && accountingContexts.length != 0)
-                || (terminal != address(0) && accountingContexts.length == 0)
-        ) {
-            revert JBTerminalStore_InvalidArguments(terminal, accountingContexts.length);
-        }
-
         // Get a reference to the project's current ruleset.
         JBRuleset memory ruleset = RULESETS.currentOf(projectId);
 
@@ -215,6 +205,7 @@ contract JBTerminalStore is IJBTerminalStore {
             ? JBSurplus.currentSurplusOf({
                 projectId: projectId,
                 terminals: DIRECTORY.terminalsOf(projectId),
+                accountingContexts: accountingContexts,
                 decimals: decimals,
                 currency: currency
             })
@@ -298,6 +289,7 @@ contract JBTerminalStore is IJBTerminalStore {
         return JBSurplus.currentSurplusOf({
             projectId: projectId,
             terminals: DIRECTORY.terminalsOf(projectId),
+            accountingContexts: new JBAccountingContext[](0),
             decimals: decimals,
             currency: currency
         });
@@ -522,6 +514,7 @@ contract JBTerminalStore is IJBTerminalStore {
             ? JBSurplus.currentSurplusOf({
                 projectId: projectId,
                 terminals: DIRECTORY.terminalsOf(projectId),
+                accountingContexts: new JBAccountingContext[](0),
                 decimals: accountingContext.decimals,
                 currency: accountingContext.currency
             })

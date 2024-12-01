@@ -41,7 +41,15 @@ interface IJBTerminal is IERC165 {
         view
         returns (JBAccountingContext memory);
     function accountingContextsOf(uint256 projectId) external view returns (JBAccountingContext[] memory);
-    function currentSurplusOf(uint256 projectId, uint256 decimals, uint256 currency) external view returns (uint256);
+    function currentSurplusOf(
+        uint256 projectId,
+        JBAccountingContext[] memory accountingContexts,
+        uint256 decimals,
+        uint256 currency
+    )
+        external
+        view
+        returns (uint256);
 
     function addAccountingContextsFor(uint256 projectId, JBAccountingContext[] calldata accountingContexts) external;
     function addToBalanceOf(
