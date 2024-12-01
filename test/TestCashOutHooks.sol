@@ -97,7 +97,7 @@ contract TestCashOutHooks_Local is TestBaseWorkflow {
         // Make sure the project's new project token is set.
         assertEq(address(_tokens.tokenOf(_projectId)), address(_token));
     }
-    
+
     function testCashOutHookWithNoFees() public {
         // Reference and bound pay amount.
         uint256 _nativePayAmount = 10 ether;
@@ -163,7 +163,7 @@ contract TestCashOutHooks_Local is TestBaseWorkflow {
                 _terminal.accountingContextForTokenOf(_projectId, JBConstants.NATIVE_TOKEN).currency,
                 _halfPaid
             ),
-            cashOutTaxRate: 0, 
+            cashOutTaxRate: 0,
             beneficiary: payable(address(this)),
             hookMetadata: "",
             cashOutMetadata: ""
