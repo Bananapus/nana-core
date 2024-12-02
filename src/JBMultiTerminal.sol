@@ -343,6 +343,14 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         return PROJECTS.ownerOf(projectId);
     }
 
+    /// @notice The primary terminal of a project for a token.
+    /// @param projectId The ID of the project to get the primary terminal of.
+    /// @param token The token to get the primary terminal of.
+    /// @return The primary terminal of the project for the token.
+    function _primaryTerminalOf(uint256 projectId, address token) internal view returns (IJBTerminal) {
+        return DIRECTORY.primaryTerminalOf({projectId: projectId, token: token});
+    }
+
     //*********************************************************************//
     // ---------------------- external transactions ---------------------- //
     //*********************************************************************//
@@ -567,7 +575,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             // Otherwise, if a project is specified, make a payment to it.
         } else if (split.projectId != 0) {
             // Get a reference to the terminal being used.
-            IJBTerminal terminal = DIRECTORY.primaryTerminalOf({projectId: split.projectId, token: token});
+            IJBTerminal terminal = _primaryTerminalOf({projectId: split.projectId, token: token});
 
             // The project must have a terminal to send funds to.
             if (terminal == IJBTerminal(address(0))) {
@@ -799,7 +807,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         if (startIndex >= numberOfHeldFees) return;
 
         // Keep a reference to the terminal that'll receive the fees.
-        IJBTerminal feeTerminal = DIRECTORY.primaryTerminalOf({projectId: _FEE_BENEFICIARY_PROJECT_ID, token: token});
+        IJBTerminal feeTerminal = _primaryTerminalOf({projectId: _FEE_BENEFICIARY_PROJECT_ID, token: token});
 
         // Calculate the number of iterations to perform.
         if (startIndex + count > numberOfHeldFees) count = numberOfHeldFees - startIndex;
@@ -1927,8 +1935,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             });
         } else {
             // Get the terminal that'll receive the fee if one wasn't provided.
-            IJBTerminal feeTerminal =
-                DIRECTORY.primaryTerminalOf({projectId: _FEE_BENEFICIARY_PROJECT_ID, token: token});
+            IJBTerminal feeTerminal = _primaryTerminalOf({projectId: _FEE_BENEFICIARY_PROJECT_ID, token: token});
 
             // Process the fee.
             _processFee({
