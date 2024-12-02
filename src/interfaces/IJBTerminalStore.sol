@@ -4,9 +4,10 @@ pragma solidity ^0.8.0;
 import {IJBDirectory} from "./IJBDirectory.sol";
 import {IJBPrices} from "./IJBPrices.sol";
 import {IJBRulesets} from "./IJBRulesets.sol";
+import {IJBTerminal} from "./IJBTerminal.sol";
 import {JBAccountingContext} from "./../structs/JBAccountingContext.sol";
-import {JBPayHookSpecification} from "./../structs/JBPayHookSpecification.sol";
 import {JBCashOutHookSpecification} from "./../structs/JBCashOutHookSpecification.sol";
+import {JBPayHookSpecification} from "./../structs/JBPayHookSpecification.sol";
 import {JBRuleset} from "./../structs/JBRuleset.sol";
 import {JBTokenAmount} from "./../structs/JBTokenAmount.sol";
 
@@ -46,14 +47,14 @@ interface IJBTerminalStore {
         external
         view
         returns (uint256);
+
     function currentReclaimableSurplusOf(
-        address terminal,
         uint256 projectId,
+        uint256 cashOutCount,
+        IJBTerminal[] calldata terminals,
         JBAccountingContext[] calldata accountingContexts,
         uint256 decimals,
-        uint256 currency,
-        uint256 tokenCount,
-        bool useTotalSurplus
+        uint256 currency
     )
         external
         view

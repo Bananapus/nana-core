@@ -5,8 +5,8 @@ import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
 import {JBBeforePayRecordedContext} from "./../structs/JBBeforePayRecordedContext.sol";
 import {JBBeforeCashOutRecordedContext} from "./../structs/JBBeforeCashOutRecordedContext.sol";
-import {JBPayHookSpecification} from "./../structs/JBPayHookSpecification.sol";
 import {JBCashOutHookSpecification} from "./../structs/JBCashOutHookSpecification.sol";
+import {JBPayHookSpecification} from "./../structs/JBPayHookSpecification.sol";
 
 /// @notice Data hooks can extend a terminal's core pay/cashout functionality by overriding the weight or memo. They can
 /// also specify pay/cashout hooks for the terminal to fulfill, or allow addresses to mint a project's tokens on-demand.

@@ -2,6 +2,7 @@
 pragma solidity ^0.8.6;
 
 import /* {*} from */ "./helpers/TestBaseWorkflow.sol";
+import {JBCashOuts} from "../src/libraries/JBCashOuts.sol";
 
 // Projects can issue a token, be paid to receieve claimed tokens,  burn some of the claimed tokens, cash out the rest
 // of
@@ -119,6 +120,18 @@ contract TestCashOut_Local is TestBaseWorkflow {
         // Fuzz 1 to full balance cash out.
         _tokenAmountToCashOut = bound(_tokenAmountToCashOut, 1, _beneficiaryTokenBalance);
 
+        JBAccountingContext[] memory _tokensContext = new JBAccountingContext[](1);
+        _tokensContext[0] = JBAccountingContext({
+            token: JBConstants.NATIVE_TOKEN,
+            decimals: 18,
+            currency: uint32(uint160(JBConstants.NATIVE_TOKEN))
+        });
+
+        // Get the expected gross per a different view.
+        uint256 _grossPerReclaimable = jbTerminalStore().currentReclaimableSurplusOf(
+            _projectId, _tokenAmountToCashOut, new IJBTerminal[](0), _tokensContext, 18, _tokensContext[0].currency
+        );
+
         // Test: cash out.
         vm.prank(_beneficiary);
         uint256 _nativeReclaimAmt = _terminal.cashOutTokensOf({
@@ -142,6 +155,9 @@ contract TestCashOut_Local is TestBaseWorkflow {
                 ),
             JBConstants.MAX_CASH_OUT_TAX_RATE
         );
+
+        // Ensure currentReclaimable is correct.
+        assertEq(_grossCashedOut, _grossPerReclaimable);
 
         // Compute the fee taken.
         uint256 _fee = _grossCashedOut - mulDiv(_grossCashedOut, 1_000_000_000, 25_000_000 + 1_000_000_000); // 2.5% fee

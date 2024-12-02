@@ -14,6 +14,7 @@ import {IAllowanceTransfer} from "@uniswap/permit2/src/interfaces/IAllowanceTran
 import {IPermit2} from "@uniswap/permit2/src/interfaces/IPermit2.sol";
 
 import {JBPermissioned} from "./abstract/JBPermissioned.sol";
+import {IJBCashOutTerminal} from "./interfaces/IJBCashOutTerminal.sol";
 import {IJBController} from "./interfaces/IJBController.sol";
 import {IJBDirectory} from "./interfaces/IJBDirectory.sol";
 import {IJBFeelessAddresses} from "./interfaces/IJBFeelessAddresses.sol";
@@ -24,7 +25,6 @@ import {IJBPermissioned} from "./interfaces/IJBPermissioned.sol";
 import {IJBPermissions} from "./interfaces/IJBPermissions.sol";
 import {IJBPermitTerminal} from "./interfaces/IJBPermitTerminal.sol";
 import {IJBProjects} from "./interfaces/IJBProjects.sol";
-import {IJBCashOutTerminal} from "./interfaces/IJBCashOutTerminal.sol";
 import {IJBRulesets} from "./interfaces/IJBRulesets.sol";
 import {IJBSplitHook} from "./interfaces/IJBSplitHook.sol";
 import {IJBSplits} from "./interfaces/IJBSplits.sol";
@@ -38,9 +38,9 @@ import {JBRulesetMetadataResolver} from "./libraries/JBRulesetMetadataResolver.s
 import {JBAccountingContext} from "./structs/JBAccountingContext.sol";
 import {JBAfterPayRecordedContext} from "./structs/JBAfterPayRecordedContext.sol";
 import {JBAfterCashOutRecordedContext} from "./structs/JBAfterCashOutRecordedContext.sol";
+import {JBCashOutHookSpecification} from "./structs/JBCashOutHookSpecification.sol";
 import {JBFee} from "./structs/JBFee.sol";
 import {JBPayHookSpecification} from "./structs/JBPayHookSpecification.sol";
-import {JBCashOutHookSpecification} from "./structs/JBCashOutHookSpecification.sol";
 import {JBRuleset} from "./structs/JBRuleset.sol";
 import {JBSingleAllowance} from "./structs/JBSingleAllowance.sol";
 import {JBSplit} from "./structs/JBSplit.sol";
@@ -215,12 +215,15 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @dev This total surplus only includes tokens that the project accepts (as returned by
     /// `accountingContextsOf(...)`).
     /// @param projectId The ID of the project to get the current total surplus of.
+    /// @param accountingContexts The accounting contexts to use to calculate the surplus. Pass an empty array to use
+    /// all of the project's accounting contexts.
     /// @param decimals The number of decimals to include in the fixed point returned value.
     /// @param currency The currency to express the returned value in terms of.
     /// @return The current surplus amount the project has in this terminal, in terms of `currency` and with the
     /// specified number of decimals.
     function currentSurplusOf(
         uint256 projectId,
+        JBAccountingContext[] memory accountingContexts,
         uint256 decimals,
         uint256 currency
     )
@@ -232,7 +235,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         return STORE.currentSurplusOf({
             terminal: address(this),
             projectId: projectId,
-            accountingContexts: _accountingContextsOf[projectId],
+            accountingContexts: accountingContexts.length != 0 ? accountingContexts : _accountingContextsOf[projectId],
             decimals: decimals,
             currency: currency
         });
@@ -338,6 +341,14 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @return The owner of the project.
     function _ownerOf(uint256 projectId) internal view returns (address) {
         return PROJECTS.ownerOf(projectId);
+    }
+
+    /// @notice The primary terminal of a project for a token.
+    /// @param projectId The ID of the project to get the primary terminal of.
+    /// @param token The token to get the primary terminal of.
+    /// @return The primary terminal of the project for the token.
+    function _primaryTerminalOf(uint256 projectId, address token) internal view returns (IJBTerminal) {
+        return DIRECTORY.primaryTerminalOf({projectId: projectId, token: token});
     }
 
     //*********************************************************************//
@@ -564,7 +575,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             // Otherwise, if a project is specified, make a payment to it.
         } else if (split.projectId != 0) {
             // Get a reference to the terminal being used.
-            IJBTerminal terminal = DIRECTORY.primaryTerminalOf({projectId: split.projectId, token: token});
+            IJBTerminal terminal = _primaryTerminalOf({projectId: split.projectId, token: token});
 
             // The project must have a terminal to send funds to.
             if (terminal == IJBTerminal(address(0))) {
@@ -796,7 +807,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         if (startIndex >= numberOfHeldFees) return;
 
         // Keep a reference to the terminal that'll receive the fees.
-        IJBTerminal feeTerminal = DIRECTORY.primaryTerminalOf({projectId: _FEE_BENEFICIARY_PROJECT_ID, token: token});
+        IJBTerminal feeTerminal = _primaryTerminalOf({projectId: _FEE_BENEFICIARY_PROJECT_ID, token: token});
 
         // Calculate the number of iterations to perform.
         if (startIndex + count > numberOfHeldFees) count = numberOfHeldFees - startIndex;
@@ -1924,8 +1935,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             });
         } else {
             // Get the terminal that'll receive the fee if one wasn't provided.
-            IJBTerminal feeTerminal =
-                DIRECTORY.primaryTerminalOf({projectId: _FEE_BENEFICIARY_PROJECT_ID, token: token});
+            IJBTerminal feeTerminal = _primaryTerminalOf({projectId: _FEE_BENEFICIARY_PROJECT_ID, token: token});
 
             // Process the fee.
             _processFee({

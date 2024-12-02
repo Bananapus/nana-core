@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import {IJBCashOutTerminal} from "./IJBCashOutTerminal.sol";
 import {IJBDirectory} from "./IJBDirectory.sol";
 import {IJBFeeTerminal} from "./IJBFeeTerminal.sol";
 import {IJBPayoutTerminal} from "./IJBPayoutTerminal.sol";
 import {IJBPermitTerminal} from "./IJBPermitTerminal.sol";
 import {IJBProjects} from "./IJBProjects.sol";
-import {IJBCashOutTerminal} from "./IJBCashOutTerminal.sol";
 import {IJBRulesets} from "./IJBRulesets.sol";
 import {IJBSplits} from "./IJBSplits.sol";
 import {IJBTerminal} from "./IJBTerminal.sol";
