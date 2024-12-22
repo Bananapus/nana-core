@@ -16,10 +16,11 @@ import {JBCurrencyAmount} from "./JBCurrencyAmount.sol";
 /// @custom:member token The token that the payout limits and surplus allowances apply to within the `terminal`.
 /// @custom:member payoutLimits An array of payout limits. The payout limits cumulatively dictate the maximum value of
 /// `token`s a project can pay out from its balance in a terminal during a ruleset. Each payout limit can have a unique
-/// currency and amount.
+/// currency and amount. The amount is a fixed point number using the same number of decimals as the specified token.
 /// @custom:member surplusAllowances An array of surplus allowances. The surplus allowances cumulatively dictates the
 /// maximum value of `token`s a project can pay out from its surplus (balance less payouts) in a terminal during a
-/// ruleset. Each surplus allowance can have a unique currency and amount.
+/// ruleset. Each surplus allowance can have a unique currency and amount. The amount is a fixed point number using the
+/// same number of decimals as the specified token.
 struct JBFundAccessLimitGroup {
     address terminal;
     address token;
