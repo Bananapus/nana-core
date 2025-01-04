@@ -1956,10 +1956,12 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @param amount The number of tokens being transferred, as a fixed point number with the same number of decimals
     /// as this terminal.
     function _transferFrom(address from, address payable to, address token, uint256 amount) internal {
-        // If the token is the native token, transfer natively.
-        if (token == JBConstants.NATIVE_TOKEN) return Address.sendValue({recipient: to, amount: amount});
+        if (from == address(this)) {
+            // If the token is the native token, transfer natively.
+            if (token == JBConstants.NATIVE_TOKEN) return Address.sendValue({recipient: to, amount: amount});
 
-        if (from == address(this)) return IERC20(token).safeTransfer({to: to, value: amount});
+            return IERC20(token).safeTransfer({to: to, value: amount});
+        }
 
         // If there's sufficient approval, transfer normally.
         if (IERC20(token).allowance(address(from), address(this)) >= amount) {
