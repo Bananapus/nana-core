@@ -15,11 +15,6 @@ contract JBProjects is ERC721, Ownable, IJBProjects {
     // --------------------- public stored properties -------------------- //
     //*********************************************************************//
 
-    /// @notice The number of projects that have been created using this contract.
-    /// @dev The count is incremented with each new project created.
-    /// @dev The resulting ERC-721 token ID for each project is the newly incremented count value.
-    uint256 public override count;
-
     /// @notice The contract resolving each project ID to its ERC721 URI.
     IJBTokenUriResolver public override tokenUriResolver;
 
@@ -32,7 +27,7 @@ contract JBProjects is ERC721, Ownable, IJBProjects {
     /// be minted.
     constructor(address owner, address feeProjectOwner) ERC721("Juicebox Projects", "JUICEBOX") Ownable(owner) {
         if (feeProjectOwner != address(0)) {
-            createFor(feeProjectOwner);
+            _createFor({ owner: feeProjectOwner, projectId: 1 });
         }
     }
 
@@ -76,17 +71,31 @@ contract JBProjects is ERC721, Ownable, IJBProjects {
     }
 
     //*********************************************************************//
-    // ---------------------- public transactions ---------------------- //
+    // ---------------------- external transactions ---------------------- //
     //*********************************************************************//
 
     /// @notice Create a new project for the specified owner, which mints an NFT (ERC-721) into their wallet.
     /// @dev Anyone can create a project on an owner's behalf.
     /// @param owner The address that will be the owner of the project.
+    /// @param salt The salt to use to determine the project ID.
     /// @return projectId The token ID of the newly created project.
-    function createFor(address owner) public override returns (uint256 projectId) {
-        // Increment the count, which will be used as the ID.
-        projectId = ++count;
+    function createFor(address owner, bytes calldata salt) external override returns (uint256 projectId) {
+        // Set the project's ID as the hash of the owner and salt.
+        projectId = uint56(uint256(keccak256(abi.encode(owner, salt))));
 
+        // Create the project.
+        _createFor({ owner: owner, projectId: projectId });
+    }
+
+    //*********************************************************************//
+    // ------------------------ internal functions ----------------------- //
+    //*********************************************************************//
+
+    /// @notice Create a new project for the specified owner, which mints an NFT (ERC-721) into their wallet.
+    /// @dev Anyone can create a project on an owner's behalf.
+    /// @param owner The address that will be the owner of the project.
+    /// @param projectId The token ID of the newly created project.
+    function _createFor(address owner, uint256 projectId) internal {
         emit Create({projectId: projectId, owner: owner, caller: _msgSender()});
 
         // Mint the project.

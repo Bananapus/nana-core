@@ -515,13 +515,15 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     /// @param rulesetConfigurations The rulesets to queue.
     /// @param terminalConfigurations The terminals to set up for the project.
     /// @param memo A memo to pass along to the emitted event.
+    /// @param salt The salt to use to determine the project ID.
     /// @return projectId The project's ID.
     function launchProjectFor(
         address owner,
         string calldata projectUri,
         JBRulesetConfig[] calldata rulesetConfigurations,
         JBTerminalConfig[] calldata terminalConfigurations,
-        string calldata memo
+        string calldata memo,
+        bytes calldata salt
     )
         external
         override
@@ -529,7 +531,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     {
         // Mint the project ERC-721 into the owner's wallet.
         // slither-disable-next-line reentrancy-benign
-        projectId = PROJECTS.createFor(owner);
+        projectId = PROJECTS.createFor(owner, salt);
 
         // If provided, set the project's metadata URI.
         if (bytes(projectUri).length > 0) {
@@ -547,10 +549,11 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         uint256 rulesetId = _queueRulesets(projectId, rulesetConfigurations);
 
         emit LaunchProject({
-            rulesetId: rulesetId,
             projectId: projectId,
+            rulesetId: rulesetId,
             projectUri: projectUri,
             memo: memo,
+            salt: salt,
             caller: _msgSender()
         });
     }
@@ -606,7 +609,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         // slither-disable-next-line reentrancy-events
         rulesetId = _queueRulesets(projectId, rulesetConfigurations);
 
-        emit LaunchRulesets({rulesetId: rulesetId, projectId: projectId, memo: memo, caller: _msgSender()});
+        emit LaunchRulesets({projectId: projectId, rulesetId: rulesetId, memo: memo, caller: _msgSender()});
     }
 
     /// @notice Migrate a project from this controller to another one.

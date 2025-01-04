@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.23;
 
+/// @custom:member preferAddToBalance If this split were to `pay` a project through its terminal, this flag indicates
+/// whether it should prefer using the terminal's `addToBalance` function instead.
 import {JBPermissionIds} from "@bananapus/permission-ids/src/JBPermissionIds.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
@@ -22,7 +24,6 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
     //*********************************************************************//
 
     error JBDirectory_DuplicateTerminals(IJBTerminal terminal);
-    error JBDirectory_InvalidProjectIdInDirectory(uint256 projectId, uint256 limit);
     error JBDirectory_SetControllerNotAllowed();
     error JBDirectory_SetTerminalsNotAllowed();
     error JBDirectory_TokenNotAccepted(uint256 projectId, address token, IJBTerminal terminal);
@@ -188,9 +189,6 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
             permissionId: JBPermissionIds.SET_CONTROLLER,
             alsoGrantAccessIf: (isAllowedToSetFirstController[msg.sender] && address(controllerOf[projectId]) == address(0))
         });
-
-        // The project must exist.
-        if (projectId > PROJECTS.count()) revert JBDirectory_InvalidProjectIdInDirectory(projectId, PROJECTS.count());
 
         // Keep a reference to the current controller.
         IERC165 currentController = controllerOf[projectId];

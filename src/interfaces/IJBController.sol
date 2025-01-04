@@ -28,8 +28,8 @@ interface IJBController is IERC165, IJBProjectUriRegistry, IJBDirectoryAccessCon
     event BurnTokens(
         address indexed holder, uint256 indexed projectId, uint256 tokenCount, string memo, address caller
     );
-    event LaunchProject(uint256 rulesetId, uint256 projectId, string projectUri, string memo, address caller);
-    event LaunchRulesets(uint256 rulesetId, uint256 projectId, string memo, address caller);
+    event LaunchProject(uint256 indexed projectId, uint256 indexed rulesetId, string projectUri, string memo, bytes salt, address caller);
+    event LaunchRulesets(uint256 indexed projectId, uint256 indexed rulesetId, string memo, address caller);
     event MintTokens(
         address indexed beneficiary,
         uint256 indexed projectId,
@@ -40,7 +40,7 @@ interface IJBController is IERC165, IJBProjectUriRegistry, IJBDirectoryAccessCon
         address caller
     );
     event PrepMigration(uint256 indexed projectId, address from, address caller);
-    event QueueRulesets(uint256 rulesetId, uint256 projectId, string memo, address caller);
+    event QueueRulesets(uint256 indexed projectId, uint256 indexed rulesetId, string memo, address caller);
     event ReservedDistributionReverted(
         uint256 indexed projectId, JBSplit split, uint256 tokenCount, bytes reason, address caller
     );
@@ -122,15 +122,16 @@ interface IJBController is IERC165, IJBProjectUriRegistry, IJBDirectoryAccessCon
         address owner,
         string calldata projectUri,
         JBRulesetConfig[] calldata rulesetConfigurations,
-        JBTerminalConfig[] memory terminalConfigurations,
-        string calldata memo
+        JBTerminalConfig[] calldata terminalConfigurations,
+        string calldata memo,
+        bytes calldata salt
     )
         external
         returns (uint256 projectId);
     function launchRulesetsFor(
         uint256 projectId,
         JBRulesetConfig[] calldata rulesetConfigurations,
-        JBTerminalConfig[] memory terminalConfigurations,
+        JBTerminalConfig[] calldata terminalConfigurations,
         string calldata memo
     )
         external
