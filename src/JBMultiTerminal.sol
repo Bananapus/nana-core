@@ -911,15 +911,19 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         override
         returns (uint256 netAmountPaidOut)
     {
+        // Keep a reference to the project's owner.
+        address owner = _ownerOf(projectId);
+
         // Enforce permissions.
         _requirePermissionFrom({
-            account: _ownerOf(projectId),
+            account: owner,
             projectId: projectId,
             permissionId: JBPermissionIds.USE_ALLOWANCE
         });
 
         netAmountPaidOut = _useAllowanceOf({
             projectId: projectId,
+            owner: owner,
             token: token,
             amount: amount,
             currency: currency,
@@ -1978,6 +1982,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// surplus allowance.
     /// @dev Incurs the protocol fee unless the caller is a feeless address.
     /// @param projectId The ID of the project to use the surplus allowance of.
+    /// @param owner The project's owner.
     /// @param token The token being paid out from the surplus.
     /// @param amount The amount of terminal tokens to use from the project's current surplus allowance, as a fixed
     /// point number with the same amount of decimals as this terminal.
@@ -1989,6 +1994,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @return netAmountPaidOut The amount of tokens paid out.
     function _useAllowanceOf(
         uint256 projectId,
+        address owner,
         address token,
         uint256 amount,
         uint256 currency,
@@ -2018,7 +2024,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // slither-disable-next-line reentrancy-events
         netAmountPaidOut = amountPaidOut
             - (
-                _isFeeless(_msgSender())
+                _isFeeless(owner)
                     ? 0
                     : _takeFeeFrom({
                         projectId: projectId,
