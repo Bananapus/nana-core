@@ -26,7 +26,6 @@ contract JBTokens is JBControlled, IJBTokens {
     error JBTokens_InsufficientTokensToBurn(uint256 count, uint256 tokenBalance);
     error JBTokens_OverflowAlert(uint256 value, uint256 limit);
     error JBTokens_ProjectAlreadyHasToken(IJBToken token);
-    error JBTokens_RecipientZeroAddress();
     error JBTokens_TokenAlreadyBeingUsed(uint256 projectId);
     error JBTokens_TokenNotFound();
     error JBTokens_TokensMustHave18Decimals(uint256 decimals);
@@ -351,9 +350,6 @@ contract JBTokens is JBControlled, IJBTokens {
         override
         onlyControllerOf(projectId)
     {
-        // Can't transfer to the zero address.
-        if (recipient == address(0)) revert JBTokens_RecipientZeroAddress();
-
         // Get a reference to the holder's unclaimed project token balance.
         uint256 creditBalance = creditBalanceOf[holder][projectId];
 
