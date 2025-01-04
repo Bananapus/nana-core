@@ -534,7 +534,7 @@ contract JBTerminalStore is IJBTerminalStore {
             JBBeforeCashOutRecordedContext memory context = JBBeforeCashOutRecordedContext({
                 terminal: msg.sender,
                 holder: holder,
-                projectId: uint56(projectId),
+                projectId: projectId,
                 rulesetId: ruleset.id,
                 cashOutCount: cashOutCount,
                 totalSupply: totalSupply,
