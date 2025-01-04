@@ -209,9 +209,6 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
             revert JBDirectory_SetControllerNotAllowed();
         }
 
-        // Set the new controller.
-        controllerOf[projectId] = controller;
-
         emit SetController({projectId: projectId, controller: controller, caller: msg.sender});
 
         // Migrate if needed.
@@ -221,6 +218,9 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
         ) {
             IJBMigratable(address(currentController)).migrate(projectId, controller);
         }
+
+        // Set the new controller.
+        controllerOf[projectId] = controller;
     }
 
     /// @notice Set a project's primary terminal for a token.
