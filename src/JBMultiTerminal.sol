@@ -406,15 +406,15 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                 knownInvalidDecimals = true;
             } else if (accountingContext.token != JBConstants.NATIVE_TOKEN) {
                 // slither-disable-next-line calls-loop
-                try IERC165(accountingContext.token).supportsInterface(type(IERC20Metadata).interfaceId) returns (
-                    bool doesSupport
-                ) {
+                try IERC20Metadata(accountingContext.token).decimals() returns (uint8 decimals) {
                     // slither-disable-next-line calls-loop
-                    if (doesSupport && accountingContext.decimals != IERC20Metadata(accountingContext.token).decimals())
-                    {
+                    if (accountingContext.decimals != decimals) {
                         knownInvalidDecimals = true;
                     }
-                } catch {}
+                } catch {
+                    // The token didn't support `decimals`.
+                    knownInvalidDecimals = true;
+                }
             }
 
             // Make sure the decimals are correct.
