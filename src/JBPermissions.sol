@@ -211,11 +211,12 @@ contract JBPermissions is IJBPermissions {
         uint256 packed = _packedPermissions(permissionsData.permissionIds);
 
         // Enforce permissions. ROOT operators are allowed to set permissions so long as they are not setting another
-        // ROOT permission.
+        // ROOT permission or setting permissions for a wildcard project ID.
         if (
             msg.sender != account
                 && (
                     _includesPermission({permissions: packed, permissionId: JBPermissionIds.ROOT})
+                        || permissionsData.projectId == WILDCARD_PROJECT_ID
                         || !hasPermission({
                             operator: msg.sender,
                             account: account,
