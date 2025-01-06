@@ -7,7 +7,7 @@ TestSetSplitGroupsOf_Local
     └── given previously locked splits are not included
         ├── given any configured split percent is zero
         │   └── it will revert with INVALID_SPLIT_PERCENT
-        ├── given projectId gt uint56 max
+        ├── given projectId gt uint64 max
         │   └── it will revert with INVALID_PROJECT_ID
         ├── given splits total to over SPLITS_TOTAL_PERCENT
         │   └── it will revert with INVALID_TOTAL_PERCENT

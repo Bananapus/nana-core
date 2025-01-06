@@ -5,7 +5,7 @@ import /* {*} from */ "../../../helpers/TestBaseWorkflow.sol";
 import {JBTerminalStoreSetup} from "./JBTerminalStoreSetup.sol";
 
 contract TestRecordCashOutsFor_Local is JBTerminalStoreSetup {
-    uint56 _projectId = 1;
+    uint64 _projectId = 1;
     uint256 _decimals = 18;
     uint256 _balance = 10e18;
     uint256 _totalSupply = 20e18;

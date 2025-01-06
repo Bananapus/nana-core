@@ -16,7 +16,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
     IJBRulesetApprovalHook private _mockApprovalHook = IJBRulesetApprovalHook(makeAddr("hook"));
     uint256 _packedMetadata;
     uint256 _packedWithApprovalHook;
-    uint56 _projectId = 1;
+    uint64 _projectId = 1;
     uint32 _duration = 3 days;
     uint112 _weight = 0;
     uint32 _weightCutPercent = 450_000_000;

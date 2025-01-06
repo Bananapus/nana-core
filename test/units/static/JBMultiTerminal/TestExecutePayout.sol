@@ -5,8 +5,8 @@ import /* {*} from */ "../../../helpers/TestBaseWorkflow.sol";
 import {JBMultiTerminalSetup} from "./JBMultiTerminalSetup.sol";
 
 contract TestExecutePayout_Local is JBMultiTerminalSetup {
-    uint56 _projectId = 1;
-    uint56 _noProject = 0;
+    uint64 _projectId = 1;
+    uint64 _noProject = 0;
     uint48 _lockedUntil = 0;
     uint256 _defaultAmount = 1e18;
     uint256 _fee = 25;

@@ -7,7 +7,7 @@ import {JBSplitsSetup} from "./JBSplitsSetup.sol";
 contract TestSetSplitGroupsOf_Local is JBSplitsSetup {
     address _notThis = makeAddr("notThis");
     address payable _bene = payable(makeAddr("guy"));
-    uint56 _projectId = 1;
+    uint64 _projectId = 1;
     uint256 _rulesetId = block.timestamp;
 
     function setUp() public {

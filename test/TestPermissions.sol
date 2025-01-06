@@ -10,8 +10,8 @@ contract TestPermissions_Local is TestBaseWorkflow, JBTest {
     IJBPermissions private _permissions;
 
     address private _projectOwner;
-    uint56 private _projectZero;
-    uint56 private _projectOne;
+    uint64 private _projectZero;
+    uint64 private _projectOne;
 
     function setUp() public override {
         super.setUp();
@@ -65,7 +65,7 @@ contract TestPermissions_Local is TestBaseWorkflow, JBTest {
         _terminalConfigurations[0] =
             JBTerminalConfig({terminal: _terminal, accountingContextsToAccept: _tokensToAccept});
 
-        _projectZero = uint56(
+        _projectZero = uint64(
             _controller.launchProjectFor({
                 owner: makeAddr("zeroOwner"),
                 projectUri: "myIPFSHash",
@@ -75,7 +75,7 @@ contract TestPermissions_Local is TestBaseWorkflow, JBTest {
             })
         );
 
-        _projectOne = uint56(
+        _projectOne = uint64(
             _controller.launchProjectFor({
                 owner: _projectOwner,
                 projectUri: "myIPFSHash",
@@ -147,7 +147,7 @@ contract TestPermissions_Local is TestBaseWorkflow, JBTest {
     function testHasPermissions(
         address _account,
         address _operator,
-        uint56 _projectId,
+        uint64 _projectId,
         uint8[] memory _u8_check_permissions,
         uint8[] memory _u8_set_permissions
     )
