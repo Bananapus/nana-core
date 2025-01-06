@@ -13,6 +13,7 @@ contract JBPermissions is IJBPermissions {
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
 
+    error JBPermissions_CantSetRootPermissionForWildcardProject();
     error JBPermissions_PermissionIdOutOfBounds(uint256 permissionId);
     error JBPermissions_Unauthorized();
 
@@ -225,7 +226,17 @@ contract JBPermissions is IJBPermissions {
                             includeWildcardProjectId: true
                         })
                 )
-        ) revert JBPermissions_Unauthorized();
+        ) {
+            revert JBPermissions_Unauthorized();
+        }
+
+        // ROOT permission cannot be set for a wildcard project ID.
+        if (
+            permissionsData.projectId == WILDCARD_PROJECT_ID
+                && _includesPermission({permissions: packed, permissionId: JBPermissionIds.ROOT})
+        ) {
+            revert JBPermissions_CantSetRootPermissionForWildcardProject();
+        }
 
         // Store the new value.
         permissionsOf[permissionsData.operator][account][permissionsData.projectId] = packed;
