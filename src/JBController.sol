@@ -6,6 +6,7 @@ import {ERC2771Context} from "@openzeppelin/contracts/metatx/ERC2771Context.sol"
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {Context} from "@openzeppelin/contracts/utils/Context.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import {mulDiv} from "@prb/math/src/Common.sol";
 
@@ -43,7 +44,7 @@ import {JBTerminalConfig} from "./structs/JBTerminalConfig.sol";
 
 /// @notice `JBController` coordinates rulesets and project tokens, and is the entry point for most operations related
 /// to rulesets and project tokens.
-contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigratable {
+contract JBController is JBPermissioned, ReentrancyGuard, ERC2771Context, IJBController, IJBMigratable {
     // A library that parses packed ruleset metadata into a friendlier format.
     using JBRulesetMetadataResolver for JBRuleset;
 
@@ -764,9 +765,11 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     /// @notice Sends a project's pending reserved tokens to its reserved token splits.
     /// @dev If the project has no reserved token splits, or if they don't add up to 100%, leftover tokens are sent to
     /// the project's owner.
+    /// @dev Nonreentrant so that we can decrement the pending reserved token balance at the end of the function, so hooks
+    /// can call totalTokensOf with the correct token balance.
     /// @param projectId The ID of the project to send reserved tokens for.
     /// @return The amount of reserved tokens minted and sent.
-    function sendReservedTokensToSplitsOf(uint256 projectId) external override returns (uint256) {
+    function sendReservedTokensToSplitsOf(uint256 projectId) external nonReentrant override returns (uint256) {
         return _sendReservedTokensToSplitsOf(projectId);
     }
 
@@ -974,9 +977,6 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         // Get the ruleset to read the reserved percent from.
         JBRuleset memory ruleset = _currentRulesetOf(projectId);
 
-        // Reset the pending reserved token balance.
-        pendingReservedTokenBalanceOf[projectId] = 0;
-
         // Get a reference to the project's owner.
         address owner = PROJECTS.ownerOf(projectId);
 
@@ -989,6 +989,9 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
                 groupId: JBSplitGroupIds.RESERVED_TOKENS,
                 tokenCount: tokenCount
             });
+
+        // Reset the pending reserved token balance.
+        pendingReservedTokenBalanceOf[projectId] = 0;
 
         // Mint any leftover tokens to the project owner.
         if (leftoverTokenCount > 0) {
