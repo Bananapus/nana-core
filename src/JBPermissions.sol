@@ -13,6 +13,7 @@ contract JBPermissions is IJBPermissions {
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
 
+    error JBPermissions_NoZeroPermission();
     error JBPermissions_PermissionIdOutOfBounds(uint256 permissionId);
     error JBPermissions_Unauthorized();
 
@@ -209,6 +210,9 @@ contract JBPermissions is IJBPermissions {
     function setPermissionsFor(address account, JBPermissionsData calldata permissionsData) external override {
         // Pack the permission IDs into a uint256.
         uint256 packed = _packedPermissions(permissionsData.permissionIds);
+
+        // Make sure the 0 permission is not set.
+        if (_includesPermission({permissions: packed, permissionId: 0})) revert JBPermissions_NoZeroPermission();
 
         // Enforce permissions. ROOT operators are allowed to set permissions so long as they are not setting another
         // ROOT permission.
