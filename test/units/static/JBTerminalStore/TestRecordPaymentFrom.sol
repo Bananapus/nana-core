@@ -8,7 +8,7 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
     // A library that parses the packed ruleset metadata into a friendlier format.
     using JBRulesetMetadataResolver for JBRuleset;
 
-    uint56 _projectId = 1;
+    uint64 _projectId = 1;
     uint256 _defaultValue = 1e18;
     uint8 _defaultDecimals = 18;
 

@@ -7,7 +7,7 @@ import {JBPermissionsSetup} from "./JBPermissionsSetup.sol";
 contract TestSetPermissionsFor_Local is JBPermissionsSetup {
     address _op = makeAddr("operator");
     address _account = makeAddr("account");
-    uint56 _projectId = 1;
+    uint64 _projectId = 1;
 
     function setUp() public {
         super.permissionsSetup();

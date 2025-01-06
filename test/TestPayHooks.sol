@@ -17,7 +17,7 @@ contract TestPayHooks_Local is TestBaseWorkflow {
     address private _beneficiary;
     address private _payer;
 
-    uint56 _projectId;
+    uint64 _projectId;
 
     function setUp() public override {
         super.setUp();
@@ -71,7 +71,7 @@ contract TestPayHooks_Local is TestBaseWorkflow {
         _terminalConfigurations[0] =
             JBTerminalConfig({terminal: _terminal, accountingContextsToAccept: _tokensToAccept});
 
-        _projectId = uint56(
+        _projectId = uint64(
             _controller.launchProjectFor({
                 owner: _projectOwner,
                 projectUri: "myIPFSHash",

@@ -8,7 +8,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
     using stdStorage for StdStorage;
     using JBRulesetMetadataResolver for JBRulesetMetadata;
 
-    uint56 _projectId = 1;
+    uint64 _projectId = 1;
     uint256 _tokenCount = 1e18;
     uint8 _decimals = 18;
     string _memo = "JUICAY";
