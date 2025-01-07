@@ -158,12 +158,17 @@ contract TestPermissions_Local is TestBaseWorkflow, JBTest {
 
         // Check if all the items in `check_permissions` also exist in `set_permissions`.
         bool _shouldHavePermissions = true;
+        bool _containsRoot;
         for (uint256 _i; _i < _u8_check_permissions.length; _i++) {
             bool _exists;
             _check_permissions[_i] = _u8_check_permissions[_i];
             for (uint256 _j; _j < _u8_set_permissions.length; _j++) {
                 // We update this lots of times unnecesarily but no need to optimize this.
                 _set_permissions[_j] = _u8_set_permissions[_j % 256];
+
+                // Update if we find root value.
+                if (_u8_set_permissions[_j] == 1) _containsRoot = true;
+
                 // If we find this item we break and mark the flag.
                 if (_u8_check_permissions[_i] == _u8_set_permissions[_j]) {
                     _exists = true;
@@ -178,6 +183,10 @@ contract TestPermissions_Local is TestBaseWorkflow, JBTest {
             }
         }
 
+        if (_containsRoot && _projectId == 0) {
+            vm.expectRevert(JBPermissions.JBPermissions_CantSetRootPermissionForWildcardProject.selector);
+        }
+
         // Set the permissions.
         vm.prank(_account);
         _permissions.setPermissionsFor(
@@ -187,6 +196,20 @@ contract TestPermissions_Local is TestBaseWorkflow, JBTest {
         assertEq(
             _permissions.hasPermissions(_operator, _account, _projectId, _check_permissions, false, false),
             _shouldHavePermissions
+        );
+    }
+
+    function testSetRootWildcardProjectId(address _account, address _operator) public {
+        uint8[] memory _set_permissions = new uint8[](1);
+        _set_permissions[0] = JBPermissionIds.ROOT;
+
+        // Set the permissions.
+        vm.prank(_account);
+
+        vm.expectRevert(JBPermissions.JBPermissions_CantSetRootPermissionForWildcardProject.selector);
+        _permissions.setPermissionsFor(
+            _account,
+            JBPermissionsData({operator: _operator, projectId: 0, /* wildcard */ permissionIds: _set_permissions})
         );
     }
 
