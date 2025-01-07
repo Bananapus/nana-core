@@ -9,7 +9,13 @@ import {JBSplit} from "../structs/JBSplit.sol";
 interface IJBPayoutTerminal is IJBTerminal {
     event PayoutReverted(uint256 indexed projectId, JBSplit split, uint256 amount, bytes reason, address caller);
     event PayoutTransferReverted(
-        uint256 indexed projectId, address addr, address token, uint256 amount, uint256 fee, bytes reason, address caller
+        uint256 indexed projectId,
+        address addr,
+        address token,
+        uint256 amount,
+        uint256 fee,
+        bytes reason,
+        address caller
     );
     event SendPayouts(
         uint256 indexed rulesetId,
