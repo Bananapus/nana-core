@@ -1036,7 +1036,8 @@ contract JBRulesets is JBControlled, IJBRulesets {
                     baseRulesetWeightCutPercent: baseRuleset.weightCutPercent,
                     baseRulesetCacheId: baseRuleset.id,
                     start: start
-                }) : weight;
+                })
+                : weight;
 
             // Derive the correct ruleset cycle number.
             uint256 rulesetCycleNumber = deriveCycleNumberFrom({
