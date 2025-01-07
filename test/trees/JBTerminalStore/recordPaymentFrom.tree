@@ -10,5 +10,5 @@ TestRecordPaymentFrom_Local
 │       └── it will return zero as the tokenCount
 ├── when a hook is not configured
 │   └── it will derive weight from the ruleset
-└── when the terminal should base its weight on a currency other than the ruleset baseCurrency
+└── when the terminal should base its weight on a currency other than the ruleset weightCurrency
     └── it will return an adjusted weightRatio

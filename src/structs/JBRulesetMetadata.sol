@@ -5,7 +5,7 @@ pragma solidity ^0.8.0;
 /// `JBConstants.MAX_RESERVED_PERCENT`.
 /// @custom:member cashOutTaxRate The cash out tax rate of the ruleset. This number is a percentage calculated out of
 /// `JBConstants.MAX_CASH_OUT_TAX_RATE`.
-/// @custom:member baseCurrency The currency on which to base the ruleset's weight. By convention, this is
+/// @custom:member weightCurrency The currency on which to base the ruleset's weight. By convention, this is
 /// `uint32(uint160(tokenAddress))` for tokens, or a constant ID from e.g. `JBCurrencyIds` for other currencies.
 /// @custom:member pausePay A flag indicating if the pay functionality should be paused during the ruleset.
 /// @custom:member pauseCreditTransfers A flag indicating if the project token transfer functionality should be paused
@@ -36,7 +36,7 @@ pragma solidity ^0.8.0;
 struct JBRulesetMetadata {
     uint16 reservedPercent;
     uint16 cashOutTaxRate;
-    uint32 baseCurrency;
+    uint32 weightCurrency;
     bool pausePay;
     bool pauseCreditTransfers;
     bool allowOwnerMinting;

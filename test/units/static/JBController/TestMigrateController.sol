@@ -24,7 +24,7 @@ contract TestMigrateController_Local is JBControllerSetup {
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: JBConstants.MAX_RESERVED_PERCENT / 2, //50%
             cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE / 2, //50%
-            baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
+            weightCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
             allowOwnerMinting: false,
@@ -70,7 +70,7 @@ contract TestMigrateController_Local is JBControllerSetup {
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: JBConstants.MAX_RESERVED_PERCENT / 2, //50%
             cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE / 2, //50%
-            baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
+            weightCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
             allowOwnerMinting: false,

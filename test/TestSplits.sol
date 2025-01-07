@@ -28,7 +28,7 @@ contract TestSplits_Local is TestBaseWorkflow {
         _metadata = JBRulesetMetadata({
             reservedPercent: JBConstants.MAX_RESERVED_PERCENT / 2,
             cashOutTaxRate: 0,
-            baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
+            weightCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
             allowOwnerMinting: false,
@@ -227,7 +227,7 @@ contract TestSplits_Local is TestBaseWorkflow {
         _metadata = JBRulesetMetadata({
             reservedPercent: JBConstants.MAX_RESERVED_PERCENT,
             cashOutTaxRate: 0,
-            baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
+            weightCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
             allowOwnerMinting: true,

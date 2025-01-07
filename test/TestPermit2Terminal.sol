@@ -46,7 +46,7 @@ contract TestPermit2Terminal_Local is TestBaseWorkflow {
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: 0,
             cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE,
-            baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
+            weightCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
             allowOwnerMinting: true,

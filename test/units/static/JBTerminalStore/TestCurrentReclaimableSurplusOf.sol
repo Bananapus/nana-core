@@ -88,7 +88,7 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: 0,
             cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE / 2,
-            baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
+            weightCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
             allowOwnerMinting: false,
@@ -169,7 +169,7 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: 0,
             cashOutTaxRate: 0,
-            baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
+            weightCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
             allowOwnerMinting: false,
@@ -241,7 +241,7 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: 0,
             cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE, // no surplus can be reclaimed.
-            baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
+            weightCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
             allowOwnerMinting: false,
@@ -315,7 +315,7 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: 0,
             cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE / 2,
-            baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
+            weightCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
             allowOwnerMinting: false,
@@ -391,7 +391,7 @@ contract TestCurrentReclaimableSurplusOf_Local is JBTerminalStoreSetup {
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: 0,
             cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE / 2,
-            baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
+            weightCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
             allowOwnerMinting: false,

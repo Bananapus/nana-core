@@ -31,7 +31,7 @@ contract JBTest is Test {
         JBRulesetMetadata memory _rulesMetadata = JBRulesetMetadata({
             reservedPercent: JBConstants.MAX_RESERVED_PERCENT,
             cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE,
-            baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
+            weightCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
             allowOwnerMinting: true,
@@ -69,7 +69,7 @@ contract JBTest is Test {
         JBRulesetMetadata memory _rulesMetadata = JBRulesetMetadata({
             reservedPercent: JBConstants.MAX_RESERVED_PERCENT,
             cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE,
-            baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
+            weightCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: true,
             pauseCreditTransfers: true,
             allowOwnerMinting: false,

@@ -23,7 +23,7 @@ contract TestLaunchProject_Local is TestBaseWorkflow {
         _metadata = JBRulesetMetadata({
             reservedPercent: 0,
             cashOutTaxRate: 0,
-            baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
+            weightCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
             allowOwnerMinting: false,

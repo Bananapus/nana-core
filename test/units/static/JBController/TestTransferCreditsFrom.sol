@@ -35,7 +35,7 @@ contract TestTransferCreditsFrom_Local is JBControllerSetup {
         JBRulesetMetadata memory _rulesMetadata = JBRulesetMetadata({
             reservedPercent: JBConstants.MAX_RESERVED_PERCENT / 2,
             cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE / 2,
-            baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
+            weightCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             pauseCreditTransfers: false,
             allowOwnerMinting: false,
@@ -90,7 +90,7 @@ contract TestTransferCreditsFrom_Local is JBControllerSetup {
         JBRulesetMetadata memory _rulesMetadata = JBRulesetMetadata({
             reservedPercent: JBConstants.MAX_RESERVED_PERCENT / 2,
             cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE / 2,
-            baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
+            weightCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: false,
             // will revert in this case
             pauseCreditTransfers: true,

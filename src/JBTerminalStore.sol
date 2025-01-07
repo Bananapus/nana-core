@@ -705,12 +705,12 @@ contract JBTerminalStore is IJBTerminalStore {
         // factor. The weight is always a fixed point mumber with 18 decimals. To ensure this, the ratio should use the
         // same
         // number of decimals as the `amount`.
-        uint256 weightRatio = amount.currency == ruleset.baseCurrency()
+        uint256 weightRatio = amount.currency == ruleset.weightCurrency()
             ? 10 ** amount.decimals
             : PRICES.pricePerUnitOf({
                 projectId: projectId,
                 pricingCurrency: amount.currency,
-                unitCurrency: ruleset.baseCurrency(),
+                unitCurrency: ruleset.weightCurrency(),
                 decimals: amount.decimals
             });
 

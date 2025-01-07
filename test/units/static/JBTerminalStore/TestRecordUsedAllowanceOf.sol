@@ -42,7 +42,7 @@ contract TestRecordUsedAllowanceOf_Local is JBTerminalStoreSetup {
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: 0,
             cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE,
-            baseCurrency: uint32(uint160(_nativeAddress)),
+            weightCurrency: uint32(uint160(_nativeAddress)),
             pausePay: false,
             pauseCreditTransfers: false,
             allowOwnerMinting: false,
@@ -144,7 +144,7 @@ contract TestRecordUsedAllowanceOf_Local is JBTerminalStoreSetup {
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: 0,
             cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE,
-            baseCurrency: uint32(uint160(_nativeAddress)),
+            weightCurrency: uint32(uint160(_nativeAddress)),
             pausePay: false,
             pauseCreditTransfers: false,
             allowOwnerMinting: false,
@@ -235,7 +235,7 @@ contract TestRecordUsedAllowanceOf_Local is JBTerminalStoreSetup {
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: 0,
             cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE,
-            baseCurrency: uint32(uint160(_currency)),
+            weightCurrency: uint32(uint160(_currency)),
             pausePay: false,
             pauseCreditTransfers: false,
             allowOwnerMinting: false,
@@ -313,7 +313,7 @@ contract TestRecordUsedAllowanceOf_Local is JBTerminalStoreSetup {
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: 0,
             cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE,
-            baseCurrency: uint32(uint160(_currency)),
+            weightCurrency: uint32(uint160(_currency)),
             pausePay: false,
             pauseCreditTransfers: false,
             allowOwnerMinting: false,

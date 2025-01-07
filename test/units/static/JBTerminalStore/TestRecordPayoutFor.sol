@@ -28,7 +28,7 @@ contract TestRecordPayoutFor_Local is JBTerminalStoreSetup {
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: 0,
             cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE,
-            baseCurrency: uint32(uint160(address(_token))),
+            weightCurrency: uint32(uint160(address(_token))),
             pausePay: false,
             pauseCreditTransfers: false,
             allowOwnerMinting: false,
@@ -80,7 +80,7 @@ contract TestRecordPayoutFor_Local is JBTerminalStoreSetup {
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: 0,
             cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE,
-            baseCurrency: uint32(uint160(address(_token))),
+            weightCurrency: uint32(uint160(address(_token))),
             pausePay: false,
             pauseCreditTransfers: false,
             allowOwnerMinting: false,

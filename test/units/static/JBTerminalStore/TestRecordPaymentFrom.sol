@@ -76,7 +76,7 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: 0,
             cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE,
-            baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
+            weightCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: true,
             pauseCreditTransfers: false,
             allowOwnerMinting: false,
@@ -145,7 +145,7 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: 0,
             cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE,
-            baseCurrency: uint32(uint160(address(_token))),
+            weightCurrency: uint32(uint160(address(_token))),
             pausePay: false,
             pauseCreditTransfers: false,
             allowOwnerMinting: false,
@@ -232,7 +232,7 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: 0,
             cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE,
-            baseCurrency: uint32(uint160(address(_token))),
+            weightCurrency: uint32(uint160(address(_token))),
             pausePay: false,
             pauseCreditTransfers: false,
             allowOwnerMinting: false,
@@ -324,7 +324,7 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: 0,
             cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE,
-            baseCurrency: uint32(uint160(address(_token))),
+            weightCurrency: uint32(uint160(address(_token))),
             pausePay: false,
             pauseCreditTransfers: false,
             allowOwnerMinting: false,
@@ -408,7 +408,7 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: 0,
             cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE,
-            baseCurrency: uint32(uint160(address(_token))),
+            weightCurrency: uint32(uint160(address(_token))),
             pausePay: false,
             pauseCreditTransfers: false,
             allowOwnerMinting: false,
@@ -461,7 +461,7 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
         assertEq(tokenCount, 1e18);
     }
 
-    function test_WhenTheTerminalShouldBaseItsWeightOnACurrencyOtherThanTheRulesetBaseCurrency() external {
+    function test_WhenTheTerminalShouldBaseItsWeightOnACurrencyOtherThanTheRulesetweightCurrency() external {
         // it will return an adjusted weightRatio
 
         // call params
@@ -475,7 +475,7 @@ contract TestRecordPaymentFrom_Local is JBTerminalStoreSetup {
         JBRulesetMetadata memory _metadata = JBRulesetMetadata({
             reservedPercent: 0,
             cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE,
-            baseCurrency: _nativeCurrency,
+            weightCurrency: _nativeCurrency,
             pausePay: false,
             pauseCreditTransfers: false,
             allowOwnerMinting: false,

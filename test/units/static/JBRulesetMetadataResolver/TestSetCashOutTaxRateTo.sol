@@ -27,7 +27,7 @@ contract TestSetCashOutTaxRateTo_Local is JBTest {
         JBRulesetMetadata memory _rulesMetadata = JBRulesetMetadata({
             reservedPercent: _fuzzReservedPercent,
             cashOutTaxRate: _fuzzCashOutTaxRate,
-            baseCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
+            weightCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
             pausePay: true,
             pauseCreditTransfers: true,
             allowOwnerMinting: true,
