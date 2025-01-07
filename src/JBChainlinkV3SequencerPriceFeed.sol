@@ -17,6 +17,8 @@ contract JBChainlinkV3SequencerPriceFeed is JBChainlinkV3PriceFeed {
         uint256 timestamp, uint256 gradePeriodTime, uint256 startedAt
     );
 
+    error JBChainlinkV3SequencerPriceFeed_InvalidRound();
+
     //*********************************************************************//
     // ---------------- public stored immutable properties --------------- //
     //*********************************************************************//
@@ -58,6 +60,9 @@ contract JBChainlinkV3SequencerPriceFeed is JBChainlinkV3PriceFeed {
         // Fetch sequencer status.
         // slither-disable-next-line unused-return
         (, int256 answer, uint256 startedAt,,) = SEQUENCER_FEED.latestRoundData();
+
+        // Check if round is valid to prevent an edge-case where Arbitrum uptime contract is not init.
+        if (startedAt == 0) revert JBChainlinkV3SequencerPriceFeed_InvalidRound();
 
         // Revert if sequencer has too recently restarted or is currently down.
         if (block.timestamp <= GRACE_PERIOD_TIME + startedAt || answer == 1) {
