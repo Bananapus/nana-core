@@ -915,11 +915,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         address owner = _ownerOf(projectId);
 
         // Enforce permissions.
-        _requirePermissionFrom({
-            account: owner,
-            projectId: projectId,
-            permissionId: JBPermissionIds.USE_ALLOWANCE
-        });
+        _requirePermissionFrom({account: owner, projectId: projectId, permissionId: JBPermissionIds.USE_ALLOWANCE});
 
         netAmountPaidOut = _useAllowanceOf({
             projectId: projectId,
