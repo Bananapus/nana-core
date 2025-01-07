@@ -228,7 +228,7 @@ contract TestSendPayoutsOf_Local is JBMultiTerminalSetup {
             abi.encode(address(_terminal))
         );
 
-        vm.expectEmit();
+        vm.expectEmit(true, true, true, false);
         emit IJBPayoutTerminal.PayoutTransferReverted(
             _projectId,
             address(this),
