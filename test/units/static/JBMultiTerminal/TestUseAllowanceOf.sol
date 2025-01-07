@@ -52,8 +52,57 @@ contract TestUseAllowanceOf_Local is JBMultiTerminalSetup {
         _terminal.useAllowanceOf(_projectId, address(0), 0, 0, 1, payable(address(this)), payable(address(this)), "");
     }
 
-    function test_WhenMsgSenderEQFeeless() external {
+    function test_WhenOwnerEQFeeless() external {
         // it will not incur fees
+
+        address mockToken = makeAddr("token");
+
+        // mock owner call
+        mockExpect(address(projects), abi.encodeCall(IERC721.ownerOf, (_projectId)), abi.encode(address(this)));
+
+        // needed for terminal store mock call
+        JBRuleset memory returnedRuleset = JBRuleset({
+            cycleNumber: 1,
+            id: 1,
+            basedOnId: 0,
+            start: 0,
+            duration: 0,
+            weight: 0,
+            weightCutPercent: 0,
+            approvalHook: IJBRulesetApprovalHook(address(0)),
+            metadata: 0
+        });
+
+        JBAccountingContext memory mockTokenContext = JBAccountingContext({token: address(0), decimals: 0, currency: 0});
+
+        // recordUsedAllowance
+        mockExpect(
+            address(store),
+            abi.encodeCall(IJBTerminalStore.recordUsedAllowanceOf, (_projectId, mockTokenContext, 100, 0)),
+            abi.encode(returnedRuleset, 100)
+        );
+
+        // feeless check
+        mockExpect(
+            address(feelessAddresses), abi.encodeCall(IJBFeelessAddresses.isFeeless, (address(this))), abi.encode(true)
+        );
+
+        mockExpect(mockToken, abi.encodeCall(IERC20.transfer, (address(this), 100)), abi.encode(true));
+
+        vm.expectEmit();
+        emit IJBPayoutTerminal.UseAllowance({
+            rulesetId: returnedRuleset.id,
+            rulesetCycleNumber: returnedRuleset.cycleNumber,
+            projectId: _projectId,
+            beneficiary: address(this),
+            feeBeneficiary: address(this),
+            amount: 100,
+            amountPaidOut: 100,
+            netAmountPaidOut: 100,
+            memo: "",
+            caller: address(this)
+        });
+        _terminal.useAllowanceOf(_projectId, mockToken, 100, 0, 0, payable(address(this)), payable(address(this)), "");
     }
 
     modifier whenMsgSenderDNEQFeeless() {
