@@ -176,9 +176,8 @@ contract JBTerminalStore is IJBTerminalStore {
     /// specified terminal.
     /// @param projectId The ID of the project whose tokens would be cashed out.
     /// @param cashOutCount The number of tokens that would be cashed out, as a fixed point number with 18 decimals.
-    /// @param terminals The terminals that would be cashed out from. If this is the zero address, surplus within all
-    /// the
-    /// project's terminals are considered.
+    /// @param terminals The terminals that would be cashed out from. If this is an empty array, surplus within all
+    /// the project's terminals are considered.
     /// @param accountingContexts The accounting contexts of the surplus terminal tokens that would be reclaimed. Pass
     /// an empty array to use all of the project's accounting contexts.
     /// @param decimals The number of decimals to include in the resulting fixed point number.
