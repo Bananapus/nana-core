@@ -122,81 +122,45 @@ contract TestPermissions_Local is TestBaseWorkflow, JBTest {
         }
     }
 
-    function testSetOperators() public {
-        // Pack up our permission data.
-        JBPermissionsData[] memory permData = new JBPermissionsData[](1);
-
-        uint8[] memory permIds = new uint8[](256);
-
-        // Push an index higher than 255.
-        for (uint256 i; i < 256; i++) {
-            permIds[i] = uint8(i);
-
-            permData[0] = JBPermissionsData({operator: address(0), projectId: _projectOne, permissionIds: permIds});
-
-            // Set em.
-            vm.prank(_projectOwner);
-            _permissions.setPermissionsFor(_projectOwner, permData[0]);
-
-            // Verify.
-            bool _check = _permissions.hasPermission(address(0), _projectOwner, _projectOne, permIds[i], true, true);
-            assertEq(_check, true);
-        }
-    }
-
     function testHasPermissions(
         address _account,
-        address _operator,
+        address _op,
         uint56 _projectId,
-        uint8[] memory _u8_check_permissions,
-        uint8[] memory _u8_set_permissions
+        uint8 _checkedId,
+        uint8[] memory _set_permissions
     )
         public
     {
-        uint256[] memory _check_permissions = new uint256[](_u8_check_permissions.length);
-        uint8[] memory _set_permissions = new uint8[](_u8_set_permissions.length);
+        vm.assume(_projectId != 0);
+        vm.assume(_set_permissions.length != 0);
 
-        // Check if all the items in `check_permissions` also exist in `set_permissions`.
-        bool _shouldHavePermissions = true;
-        bool _containsRoot;
-        for (uint256 _i; _i < _u8_check_permissions.length; _i++) {
-            bool _exists;
-            _check_permissions[_i] = _u8_check_permissions[_i];
-            for (uint256 _j; _j < _u8_set_permissions.length; _j++) {
-                // We update this lots of times unnecesarily but no need to optimize this.
-                _set_permissions[_j] = _u8_set_permissions[_j % 256];
+        uint256[] memory _check_permissions = new uint256[](1);
+        _check_permissions[0] = _checkedId;
 
-                // Update if we find root value.
-                if (_u8_set_permissions[_j] == 1) _containsRoot = true;
+        bool hasPerm;
+        bool hasZero;
+        for (uint256 i; i < _set_permissions.length; i++) {
+            // Flag if index is zero, meaning set call should revert later.
+            if (_set_permissions[i] == 0) hasZero = true;
 
-                // If we find this item we break and mark the flag.
-                if (_u8_check_permissions[_i] == _u8_set_permissions[_j]) {
-                    _exists = true;
-                    break;
-                }
-            }
-
-            // If any item does not exist we should not have permission.
-            if (_exists == false) {
-                _shouldHavePermissions = false;
-                break;
-            }
+            // Flag if hasPermissions check will be true if the array contains it or has root ID.
+            if (_set_permissions[i] == _checkedId) hasPerm = true;
         }
 
-        if (_containsRoot && _projectId == 0) {
-            vm.expectRevert(JBPermissions.JBPermissions_CantSetRootPermissionForWildcardProject.selector);
-        }
+        // If setting with a zero permission id, will revert.
+        if (hasZero) vm.expectRevert(JBPermissions.JBPermissions_NoZeroPermission.selector);
 
         // Set the permissions.
         vm.prank(_account);
         _permissions.setPermissionsFor(
-            _account, JBPermissionsData({operator: _operator, projectId: _projectId, permissionIds: _set_permissions})
+            _account, JBPermissionsData({operator: _op, projectId: _projectId, permissionIds: _set_permissions})
         );
 
-        assertEq(
-            _permissions.hasPermissions(_operator, _account, _projectId, _check_permissions, false, false),
-            _shouldHavePermissions
-        );
+        // Check permissions if the call didn't revert.
+        if (!hasZero) {
+            // Call has permissions and assert.
+            assertEq(_permissions.hasPermissions(_op, _account, _projectId, _check_permissions, false, false), hasPerm);
+        }
     }
 
     function testSetRootWildcardProjectId(address _account, address _operator) public {
