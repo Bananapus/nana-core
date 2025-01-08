@@ -413,7 +413,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                     }
                 } catch {
                     // The token didn't support `decimals`.
-                    knownInvalidDecimals = true;
+                    knownInvalidDecimals = false;
                 }
             }
 
