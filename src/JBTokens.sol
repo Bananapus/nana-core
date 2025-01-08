@@ -278,7 +278,16 @@ contract JBTokens is JBControlled, IJBTokens {
     /// @param projectId The ID of the project to which the tokens belong.
     /// @param count The number of tokens to mint.
     /// @return token The address of the token that was minted, if the project has a token.
-    function mintFor(address holder, uint256 projectId, uint256 count) external override onlyControllerOf(projectId) returns (IJBToken token) {
+    function mintFor(
+        address holder,
+        uint256 projectId,
+        uint256 count
+    )
+        external
+        override
+        onlyControllerOf(projectId)
+        returns (IJBToken token)
+    {
         // Get a reference to the project's current token.
         token = tokenOf[projectId];
 
