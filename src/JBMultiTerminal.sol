@@ -1554,7 +1554,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     )
         internal
     {
-        // slither-disable-next-line reentrancy-events
+        // slither-disable-next-line reentrancy-events,calls-loop
         try this.executeProcessFee({
             projectId: projectId,
             token: token,
@@ -1591,6 +1591,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// this
     /// terminal.
     function _recordAddedBalanceFor(uint256 projectId, address token, uint256 amount) internal {
+        // slither-disable-next-line calls-loop
         STORE.recordAddedBalanceFor({projectId: projectId, token: token, amount: amount});
     }
 
