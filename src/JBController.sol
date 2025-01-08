@@ -689,7 +689,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
                 mulDiv(tokenCount, JBConstants.MAX_RESERVED_PERCENT - reservedPercent, JBConstants.MAX_RESERVED_PERCENT);
 
             // Mint the tokens.
-            // slither-disable-next-line reentrancy-benign,reentrancy-events
+            // slither-disable-next-line reentrancy-benign,reentrancy-events,unused-return
             TOKENS.mintFor({holder: beneficiary, projectId: projectId, count: beneficiaryTokenCount});
         }
 
