@@ -60,7 +60,6 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     error JBController_InvalidReservedPercent(uint256 percent, uint256 limit);
     error JBController_MintNotAllowedAndNotTerminalOrHook();
     error JBController_NoReservedTokens();
-    error JBController_OnlyFromTargetTerminal(address sender, address targetTerminal);
     error JBController_OnlyDirectory(address sender, IJBDirectory directory);
     error JBController_RulesetsAlreadyLaunched();
     error JBController_RulesetsArrayEmpty();
@@ -623,11 +622,6 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         if (pendingReservedTokenBalanceOf[projectId] != 0) {
             _sendReservedTokensToSplitsOf(projectId);
         }
-
-        // Prepare the new controller to receive the project.
-        if (to.supportsInterface(type(IJBMigratable).interfaceId)) {
-            IJBMigratable(address(to)).receiveMigrationFrom(IERC165(this), projectId);
-        }
     }
 
     /// @notice Add new project tokens or credits to the specified beneficiary's balance. Optionally, reserve a portion
@@ -746,12 +740,12 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     /// @dev This controller should not be the project's controller yet.
     /// @param from The controller being migrated from.
     /// @param projectId The ID of the project that will migrate to this controller.
-    function receiveMigrationFrom(IERC165 from, uint256 projectId) external override {
+    function beforeReceiveMigrationFrom(IERC165 from, uint256 projectId) external override {
         // Keep a reference to the sender.
         address sender = _msgSender();
 
         // Make sure the sender is the expected source controller.
-        if (sender != address(from)) revert JBController_OnlyFromTargetTerminal(sender, address(from));
+        if (sender != address(DIRECTORY)) revert JBController_OnlyDirectory(sender, DIRECTORY);
 
         // If the sending controller is an `IJBProjectUriRegistry`, copy the project's metadata URI.
         if (

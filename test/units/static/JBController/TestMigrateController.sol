@@ -141,7 +141,7 @@ contract TestMigrateController_Local is JBControllerSetup {
             .with_key(uint256(1)).checked_write(uint256(100));
 
         // receive migration call mock
-        bytes memory _encodedCall = abi.encodeCall(IJBMigratable.receiveMigrationFrom, (IERC165(_controller), 1));
+        bytes memory _encodedCall = abi.encodeCall(IJBMigratable.beforeReceiveMigrationFrom, (IERC165(_controller), 1));
         bytes memory _willReturn = "";
 
         mockExpect(address(this), _encodedCall, _willReturn);
@@ -193,7 +193,7 @@ contract TestMigrateController_Local is JBControllerSetup {
 
         // receive migration call mock
         bytes memory _encodedCall =
-            abi.encodeCall(IJBMigratable.receiveMigrationFrom, (IERC165(address(_controller)), 1));
+            abi.encodeCall(IJBMigratable.beforeReceiveMigrationFrom, (IERC165(address(_controller)), 1));
         bytes memory _willReturn = "";
 
         mockExpect(address(this), _encodedCall, _willReturn);

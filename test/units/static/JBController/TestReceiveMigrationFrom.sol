@@ -35,7 +35,7 @@ contract TestReceiveMigrationFrom_Local is JBControllerSetup {
         mockExpect(address(_from), abi.encodeCall(IJBProjectUriRegistry.uriOf, (_projectId)), abi.encode("Juicay"));
 
         vm.prank(address(_from));
-        IJBMigratable(address(_controller)).receiveMigrationFrom(_from, _projectId);
+        IJBMigratable(address(_controller)).beforeReceiveMigrationFrom(_from, _projectId);
         string memory stored = _controller.uriOf(_projectId);
         assertEq(stored, "Juicay");
     }
@@ -44,10 +44,8 @@ contract TestReceiveMigrationFrom_Local is JBControllerSetup {
         // it will revert
 
         vm.expectRevert(
-            abi.encodeWithSelector(
-                JBController.JBController_OnlyFromTargetTerminal.selector, address(this), address(_from)
-            )
+            abi.encodeWithSelector(JBController.JBController_OnlyDirectory.selector, address(this), address(directory))
         );
-        IJBMigratable(address(_controller)).receiveMigrationFrom(_from, _projectId);
+        IJBMigratable(address(_controller)).beforeReceiveMigrationFrom(_from, _projectId);
     }
 }
