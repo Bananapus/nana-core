@@ -24,7 +24,7 @@ interface IJBTokens {
         address caller
     );
     event Mint(
-        address indexed holder, uint256 indexed projectId, uint256 count, bool shouldClaimTokens, address caller
+        address indexed holder, uint256 indexed projectId, uint256 count, bool tokensWereClaimed, address caller
     );
     event SetToken(uint256 indexed projectId, IJBToken indexed token, address caller);
     event TransferCredits(
@@ -49,7 +49,7 @@ interface IJBTokens {
     )
         external
         returns (IJBToken token);
-    function mintFor(address holder, uint256 projectId, uint256 count) external;
+    function mintFor(address holder, uint256 projectId, uint256 count) external returns (IJBToken token);
     function setTokenFor(uint256 projectId, IJBToken token) external;
     function transferCreditsFrom(address holder, uint256 projectId, address recipient, uint256 count) external;
 }
