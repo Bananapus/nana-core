@@ -2020,7 +2020,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // slither-disable-next-line reentrancy-events
         netAmountPaidOut = amountPaidOut
             - (
-                _isFeeless(owner)
+                _isFeeless(owner) || _isFeeless(beneficiary)
                     ? 0
                     : _takeFeeFrom({
                         projectId: projectId,
