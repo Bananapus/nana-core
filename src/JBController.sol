@@ -1126,7 +1126,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
                         }
                     } else if (beneficiary == address(0xdead)) {
                         // If the split has no project ID, and the beneficiary is 0xdead, burn.
-                        TOKENS.burnFrom(address(this), projectId, splitTokenCount);
+                        TOKENS.burnFrom({holder: address(this), projectId: projectId, count: splitTokenCount});
                     } else {
                         // If the split has no project Id, send to beneficiary.
                         _sendTokens({
