@@ -646,7 +646,7 @@ contract JBTerminalStore is IJBTerminalStore {
                 terminal: msg.sender,
                 payer: payer,
                 amount: amount,
-                projectId: uint56(projectId),
+                projectId: projectId,
                 rulesetId: ruleset.id,
                 beneficiary: beneficiary,
                 weight: ruleset.weight,
