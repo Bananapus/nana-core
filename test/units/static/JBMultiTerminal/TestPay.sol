@@ -72,13 +72,6 @@ contract TestPay_Local is JBMultiTerminalSetup {
             address(directory), abi.encodeCall(IJBDirectory.controllerOf, (_projectId)), abi.encode(address(this))
         );
 
-        // mock supports interface call
-        mockExpect(
-            address(_mockToken),
-            abi.encodeCall(IERC165.supportsInterface, (type(IERC20Metadata).interfaceId)),
-            abi.encode(true)
-        );
-
         // mock call to token decimals
         mockExpect(address(_mockToken), abi.encodeCall(IERC20Metadata.decimals, ()), abi.encode(6));
 

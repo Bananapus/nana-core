@@ -4,7 +4,7 @@ pragma solidity 0.8.23;
 import /* {*} from */ "../../../helpers/TestBaseWorkflow.sol";
 import {JBMultiTerminalSetup} from "./JBMultiTerminalSetup.sol";
 
-contract TestAccountingContextsFor_Local is JBMultiTerminalSetup {
+contract TestAccountingContextsOf_Local is JBMultiTerminalSetup {
     uint256 _projectId = 1;
     address _usdc = makeAddr("USDC");
     uint256 _usdcCurrency = uint32(uint160(_usdc));
@@ -29,8 +29,6 @@ contract TestAccountingContextsFor_Local is JBMultiTerminalSetup {
         // mock call to tokens decimals()
         mockExpect(_usdc, abi.encodeCall(IERC20Metadata.decimals, ()), abi.encode(6));
 
-        // mock call to rulesets currentOf returning 0 to bypass ruleset checking
-
         // setup: return data
         JBRuleset memory ruleset = JBRuleset({
             cycleNumber: 1,
@@ -44,12 +42,8 @@ contract TestAccountingContextsFor_Local is JBMultiTerminalSetup {
             metadata: 0
         });
 
+        // mock call to rulesets currentOf returning 0 to bypass ruleset checking
         mockExpect(address(rulesets), abi.encodeCall(IJBRulesets.currentOf, (_projectId)), abi.encode(ruleset));
-
-        // mock supports interface call
-        mockExpect(
-            _usdc, abi.encodeCall(IERC165.supportsInterface, (type(IERC20Metadata).interfaceId)), abi.encode(true)
-        );
 
         // call params
         JBAccountingContext[] memory _tokens = new JBAccountingContext[](1);
