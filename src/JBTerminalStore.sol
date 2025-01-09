@@ -670,21 +670,19 @@ contract JBTerminalStore is IJBTerminalStore {
             uint256 numberOfSpecifications = hookSpecifications.length;
 
             // Ensure that the specifications have valid amounts.
-            if (numberOfSpecifications != 0) {
-                for (uint256 i; i < numberOfSpecifications; i++) {
-                    // Get a reference to the specification's amount.
-                    uint256 specifiedAmount = hookSpecifications[i].amount;
+            for (uint256 i; i < numberOfSpecifications; i++) {
+                // Get a reference to the specification's amount.
+                uint256 specifiedAmount = hookSpecifications[i].amount;
 
-                    // Ensure the amount is non-zero.
-                    if (specifiedAmount != 0) {
-                        // Can't send more to hook than was paid.
-                        if (specifiedAmount > balanceDiff) {
-                            revert JBTerminalStore_InvalidAmountToForwardHook(specifiedAmount, balanceDiff);
-                        }
-
-                        // Decrement the total amount being added to the local balance.
-                        balanceDiff -= specifiedAmount;
+                // Ensure the amount is non-zero.
+                if (specifiedAmount != 0) {
+                    // Can't send more to hook than was paid.
+                    if (specifiedAmount > balanceDiff) {
+                        revert JBTerminalStore_InvalidAmountToForwardHook(specifiedAmount, balanceDiff);
                     }
+
+                    // Decrement the total amount being added to the local balance.
+                    balanceDiff -= specifiedAmount;
                 }
             }
         }
