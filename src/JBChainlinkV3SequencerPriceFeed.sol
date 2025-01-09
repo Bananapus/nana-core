@@ -16,7 +16,6 @@ contract JBChainlinkV3SequencerPriceFeed is JBChainlinkV3PriceFeed {
     error JBChainlinkV3SequencerPriceFeed_SequencerDownOrRestarting(
         uint256 timestamp, uint256 gradePeriodTime, uint256 startedAt
     );
-
     error JBChainlinkV3SequencerPriceFeed_InvalidRound();
 
     //*********************************************************************//
