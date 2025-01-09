@@ -251,7 +251,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
     }
 
     /// @notice The latest ruleset queued for a project. Returns the ruleset's struct and its current approval status.
-    /// @dev Returns struct and status for the ruleset initialized furthest in the future (at the end of the rulset
+    /// @dev Returns struct and status for the ruleset initialized furthest in the future (at the end of the ruleset
     /// queue).
     /// @param projectId The ID of the project to get the latest queued ruleset of.
     /// @return ruleset The project's latest queued ruleset's struct.
