@@ -232,12 +232,6 @@ contract JBPermissions is IJBPermissions {
                 )
         ) revert JBPermissions_Unauthorized();
 
-        // ROOT permission cannot be set for a wildcard project ID.
-        if (
-            permissionsData.projectId == WILDCARD_PROJECT_ID
-                && _includesPermission({permissions: packed, permissionId: JBPermissionIds.ROOT})
-        ) revert JBPermissions_CantSetRootPermissionForWildcardProject();
-
         // Store the new value.
         permissionsOf[permissionsData.operator][account][permissionsData.projectId] = packed;
 
