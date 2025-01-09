@@ -748,9 +748,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         if (sender != address(DIRECTORY)) revert JBController_OnlyDirectory(sender, DIRECTORY);
 
         // If the sending controller is an `IJBProjectUriRegistry`, copy the project's metadata URI.
-        if (
-            from.supportsInterface(type(IJBProjectUriRegistry).interfaceId) && DIRECTORY.controllerOf(projectId) == from
-        ) {
+        if (from.supportsInterface(type(IJBProjectUriRegistry).interfaceId)) {
             uriOf[projectId] = IJBProjectUriRegistry(address(from)).uriOf(projectId);
         }
     }
