@@ -171,13 +171,9 @@ contract TestMigrateController_Local is JBControllerSetup {
         mockExpect(address(splits), _encodedCallSplits, _willReturnSplits);
 
         // mock mint call
-        bytes memory _mintCall = abi.encodeCall(IJBTokens.mintFor, (address(this), 1, 50));
-        bytes memory _mintReturn = abi.encode(splitsArray);
-
+        bytes memory _mintCall = abi.encodeCall(IJBTokens.mintFor, (address(_controller), 1, 100));
+        bytes memory _mintReturn = abi.encode(address(0));
         mockExpect(address(tokens), _mintCall, _mintReturn);
-
-        // mock tokenOf call
-        mockExpect(address(tokens), abi.encodeCall(IJBTokens.tokenOf, (1)), abi.encode(address(0)));
 
         // event as expected
         vm.expectEmit();

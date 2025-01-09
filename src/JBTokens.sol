@@ -277,14 +277,24 @@ contract JBTokens is JBControlled, IJBTokens {
     /// @param holder The address receiving the new tokens.
     /// @param projectId The ID of the project to which the tokens belong.
     /// @param count The number of tokens to mint.
-    function mintFor(address holder, uint256 projectId, uint256 count) external override onlyControllerOf(projectId) {
+    /// @return token The address of the token that was minted, if the project has a token.
+    function mintFor(
+        address holder,
+        uint256 projectId,
+        uint256 count
+    )
+        external
+        override
+        onlyControllerOf(projectId)
+        returns (IJBToken token)
+    {
         // Get a reference to the project's current token.
-        IJBToken token = tokenOf[projectId];
+        token = tokenOf[projectId];
 
         // Save a reference to whether there a token exists.
-        bool shouldClaimTokens = token != IJBToken(address(0));
+        bool tokensWereClaimed = token != IJBToken(address(0));
 
-        if (shouldClaimTokens) {
+        if (tokensWereClaimed) {
             // If tokens should be claimed, mint tokens into the holder's wallet.
             // slither-disable-next-line reentrancy-events
             token.mint(holder, count);
@@ -303,7 +313,7 @@ contract JBTokens is JBControlled, IJBTokens {
             holder: holder,
             projectId: projectId,
             count: count,
-            shouldClaimTokens: shouldClaimTokens,
+            tokensWereClaimed: tokensWereClaimed,
             caller: msg.sender
         });
     }
