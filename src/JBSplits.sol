@@ -281,7 +281,7 @@ contract JBSplits is JBControlled, IJBSplits {
                 // Pack `lockedUntil` in bits 1-48.
                 packedSplitParts2 |= split.lockedUntil << 1;
                 // Pack `hook` in bits 49-208.
-                packedSplitParts2 |= uint160(address(split.hook)) << 48;
+                packedSplitParts2 |= uint256(uint160(address(split.hook))) << 48;
 
                 // Store the second split part.
                 _packedSplitParts2Of[projectId][rulesetId][groupId][i] = packedSplitParts2;
