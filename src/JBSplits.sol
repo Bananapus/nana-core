@@ -138,7 +138,7 @@ contract JBSplits is JBControlled, IJBSplits {
             split.percent = uint32(packedSplitPart1);
             // `projectId` in bits 32-95.
             split.projectId = uint64(packedSplitPart1 >> 32);
-            // `beneficiary` in bits 94-254.
+            // `beneficiary` in bits 96-255.
             split.beneficiary = payable(address(uint160(packedSplitPart1 >> 96)));
 
             // Get a reference to the second part of the split's packed data.
@@ -266,7 +266,7 @@ contract JBSplits is JBControlled, IJBSplits {
 
             // Pack `percent` in bits 0-31.
             packedSplitParts1 = split.percent;
-            // Pack `projectId` in bits 32-96.
+            // Pack `projectId` in bits 32-95.
             packedSplitParts1 |= uint256(split.projectId) << 32;
             // Pack `beneficiary` in bits 96-255.
             packedSplitParts1 |= uint256(uint160(address(split.beneficiary))) << 96;
