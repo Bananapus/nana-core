@@ -180,8 +180,11 @@ contract TestUseAllowanceOf_Local is JBMultiTerminalSetup {
 
         uint32 currencyId = uint32(uint160(mockToken));
 
-        // Start the cascade of issuing project tokens to the fee beneficiary. (recieving platform tokens for paying a fee, or being designated as such).
-        mockExpect(address(directory), abi.encodeCall(IJBDirectory.controllerOf, (_projectId)), abi.encode(address(controller)));
+        // Start the cascade of issuing project tokens to the fee beneficiary. (recieving platform tokens for paying a
+        // fee, or being designated as such).
+        mockExpect(
+            address(directory), abi.encodeCall(IJBDirectory.controllerOf, (_projectId)), abi.encode(address(controller))
+        );
 
         // mock owner call
         mockExpect(address(projects), abi.encodeCall(IERC721.ownerOf, (_projectId)), abi.encode(address(this)));
@@ -199,7 +202,8 @@ contract TestUseAllowanceOf_Local is JBMultiTerminalSetup {
             metadata: 0
         });
 
-        JBAccountingContext memory mockTokenContext = JBAccountingContext({token: mockToken, decimals: 18, currency: currencyId});
+        JBAccountingContext memory mockTokenContext =
+            JBAccountingContext({token: mockToken, decimals: 18, currency: currencyId});
 
         // mock call to tokens decimals()
         mockExpect(mockToken, abi.encodeCall(IERC20Metadata.decimals, ()), abi.encode(18));
@@ -246,7 +250,8 @@ contract TestUseAllowanceOf_Local is JBMultiTerminalSetup {
             abi.encode(address(_terminal))
         );
 
-        JBTokenAmount memory tokenContext = JBTokenAmount({token: mockToken, decimals: 18, currency: currencyId, value: 3});
+        JBTokenAmount memory tokenContext =
+            JBTokenAmount({token: mockToken, decimals: 18, currency: currencyId, value: 3});
 
         // mock call to jbterminalstore
         mockExpect(
@@ -260,7 +265,11 @@ contract TestUseAllowanceOf_Local is JBMultiTerminalSetup {
         );
 
         // Return the mint of call as minting one project token for paying a fee.
-        mockExpect(address(controller), abi.encodeCall(IJBController.mintTokensOf, (_projectId, 1, address(this), "", true)), abi.encode(1));
+        mockExpect(
+            address(controller),
+            abi.encodeCall(IJBController.mintTokensOf, (_projectId, 1, address(this), "", true)),
+            abi.encode(1)
+        );
 
         vm.expectEmit();
         emit IJBPayoutTerminal.UseAllowance({
