@@ -134,12 +134,12 @@ contract JBSplits is JBControlled, IJBSplits {
             // Populate the split struct.
             JBSplit memory split;
 
-            // `percent` in bits 0-31.
-            split.percent = uint32(packedSplitPart1);
-            // `projectId` in bits 32-95.
-            split.projectId = uint64(packedSplitPart1 >> 32);
-            // `beneficiary` in bits 96-255.
-            split.beneficiary = payable(address(uint160(packedSplitPart1 >> 96)));
+            // `percent` in bits 0-30.
+            split.percent = (uint32(packedSplitPart1) << 2) >> 2;
+            // `projectId` in bits 30-94.
+            split.projectId = uint64(packedSplitPart1 >> 30);
+            // `beneficiary` in bits 94-254.
+            split.beneficiary = payable(address(uint160(packedSplitPart1 >> 94)));
 
             // Get a reference to the second part of the split's packed data.
             uint256 packedSplitPart2 = _packedSplitParts2Of[projectId][rulesetId][groupId][i];
@@ -147,7 +147,7 @@ contract JBSplits is JBControlled, IJBSplits {
             // If there's anything in it, unpack.
             if (packedSplitPart2 > 0) {
                 // `preferAddToBalance` in bit 0.
-                split.preferAddToBalance = packedSplitPart1 & 1 == 1;
+                split.preferAddToBalance = packedSplitPart2 & 1 == 1;
                 // `lockedUntil` in bits 1-48.
                 split.lockedUntil = uint48(packedSplitPart2 >> 1);
                 // `hook` in bits 49-208.
@@ -264,12 +264,12 @@ contract JBSplits is JBControlled, IJBSplits {
 
             uint256 packedSplitParts1;
 
-            // Pack `percent` in bits 0-31.
+            // Pack `percent` in bits 0-30 (as its bound in size).
             packedSplitParts1 = split.percent;
-            // Pack `projectId` in bits 32-95.
-            packedSplitParts1 |= split.projectId << 32;
-            // Pack `beneficiary` in bits 96-255.
-            packedSplitParts1 |= uint256(uint160(address(split.beneficiary))) << 96;
+            // Pack `projectId` in bits 30-94.
+            packedSplitParts1 |= uint256(split.projectId) << 30;
+            // Pack `beneficiary` in bits 94-254.
+            packedSplitParts1 |= uint256(uint160(address(split.beneficiary))) << 94;
 
             // Store the first split part.
             _packedSplitParts1Of[projectId][rulesetId][groupId][i] = packedSplitParts1;
@@ -279,9 +279,9 @@ contract JBSplits is JBControlled, IJBSplits {
                 // Pack `preferAddToBalance` in bit 0.
                 uint256 packedSplitParts2 = split.preferAddToBalance ? 1 : 0;
                 // Pack `lockedUntil` in bits 1-48.
-                packedSplitParts2 |= split.lockedUntil << 1;
+                packedSplitParts2 |= uint256(split.lockedUntil) << 1;
                 // Pack `hook` in bits 49-208.
-                packedSplitParts2 |= uint256(uint160(address(split.hook))) << 48;
+                packedSplitParts2 |= uint256(uint160(address(split.hook))) << 49;
 
                 // Store the second split part.
                 _packedSplitParts2Of[projectId][rulesetId][groupId][i] = packedSplitParts2;
