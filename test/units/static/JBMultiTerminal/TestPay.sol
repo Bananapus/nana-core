@@ -5,7 +5,7 @@ import /* {*} from */ "../../../helpers/TestBaseWorkflow.sol";
 import {JBMultiTerminalSetup} from "./JBMultiTerminalSetup.sol";
 
 contract TestPay_Local is JBMultiTerminalSetup {
-    uint56 _projectId = 1;
+    uint64 _projectId = 1;
     uint256 _defaultAmount = 1e18;
     address _bene = makeAddr("beneficiary");
     address _native = JBConstants.NATIVE_TOKEN;

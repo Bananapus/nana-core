@@ -5,7 +5,7 @@ import /* {*} from */ "../../../helpers/TestBaseWorkflow.sol";
 import {JBMultiTerminalSetup} from "./JBMultiTerminalSetup.sol";
 
 contract TestCashOutTokensOf_Local is JBMultiTerminalSetup {
-    uint56 _projectId = 1;
+    uint64 _projectId = 1;
     uint256 _defaultAmount = 1e18;
     uint16 _maxCashOutTaxRate = JBConstants.MAX_CASH_OUT_TAX_RATE;
     uint16 _halfCashOutTaxRate = JBConstants.MAX_CASH_OUT_TAX_RATE / 2;

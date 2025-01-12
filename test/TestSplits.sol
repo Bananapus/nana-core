@@ -207,7 +207,7 @@ contract TestSplits_Local is TestBaseWorkflow {
 
     function testReservedPercentSplitTerminal_reverts() public {
         uint256 _amount = 100 ether;
-        uint56 _mockProjectId = 9_999_999;
+        uint64 _mockProjectId = 9_999_999;
         address _mockTerminal = address(88_888_888);
         JBSplit[] memory _reserveRateSplits = new JBSplit[](1);
 

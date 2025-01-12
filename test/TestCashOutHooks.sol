@@ -15,7 +15,7 @@ contract TestCashOutHooks_Local is TestBaseWorkflow {
     address private _projectOwner;
     address private _beneficiary;
 
-    uint56 _projectId;
+    uint64 _projectId;
 
     function setUp() public override {
         super.setUp();
@@ -80,7 +80,7 @@ contract TestCashOutHooks_Local is TestBaseWorkflow {
             memo: ""
         });
 
-        _projectId = uint56(
+        _projectId = uint64(
             _controller.launchProjectFor({
                 owner: _projectOwner,
                 projectUri: "myIPFSHash",
