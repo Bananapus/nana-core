@@ -172,7 +172,6 @@ contract TestSendPayoutsOf_Local is JBMultiTerminalSetup {
 
     // it will revert UNDER_MIN_TOKENS_PAID_OUT
     function test_WhenPayoutFailsDoNotTakeFee() external {
-
         // needed for terminal store mock call
         JBRuleset memory returnedRuleset = JBRuleset({
             cycleNumber: 1,
