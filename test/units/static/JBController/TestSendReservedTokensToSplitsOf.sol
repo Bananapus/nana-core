@@ -597,7 +597,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
             abi.encode(address(_token))
         );
 
-        vm.expectRevert(abi.encodeWithSignature(("AddressEmptyCode(address)"), address(_token)));
+        vm.expectRevert(abi.encodeWithSignature(("SafeERC20FailedOperation(address)"), address(_token)));
         _controller.sendReservedTokensToSplitsOf(_projectId);
     }
 }
