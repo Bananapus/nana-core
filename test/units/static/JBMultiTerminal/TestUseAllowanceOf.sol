@@ -167,7 +167,6 @@ contract TestUseAllowanceOf_Local is JBMultiTerminalSetup {
         });
     }
 
-    // I'm testing fee project functionality here, looking for a possible bug.
     function test_WhenNotFeeless() external {
         address mockToken = makeAddr("token");
         address beneficiary = makeAddr("bene");
@@ -210,11 +209,6 @@ contract TestUseAllowanceOf_Local is JBMultiTerminalSetup {
 
         // mock call to rulesets currentOf returning 0 to bypass ruleset checking
         mockExpect(address(rulesets), abi.encodeCall(IJBRulesets.currentOf, (_projectId)), abi.encode(returnedRuleset));
-
-        // mock supports interface call
-        mockExpect(
-            mockToken, abi.encodeCall(IERC165.supportsInterface, (type(IERC20Metadata).interfaceId)), abi.encode(true)
-        );
 
         // call params
         JBAccountingContext[] memory _tokens = new JBAccountingContext[](1);
