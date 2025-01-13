@@ -222,7 +222,7 @@ contract JBPermissions is IJBPermissions {
                             projectId: permissionsData.projectId,
                             permissionId: JBPermissionIds.ROOT,
                             includeRoot: true,
-                            includeWildcardProjectId: false
+                            includeWildcardProjectId: true
                         })
                 )
         ) revert JBPermissions_Unauthorized();
