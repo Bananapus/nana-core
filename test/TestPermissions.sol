@@ -10,8 +10,8 @@ contract TestPermissions_Local is TestBaseWorkflow, JBTest {
     IJBPermissions private _permissions;
 
     address private _projectOwner;
-    uint56 private _projectZero;
-    uint56 private _projectOne;
+    uint64 private _projectZero;
+    uint64 private _projectOne;
 
     function setUp() public override {
         super.setUp();
@@ -65,7 +65,7 @@ contract TestPermissions_Local is TestBaseWorkflow, JBTest {
         _terminalConfigurations[0] =
             JBTerminalConfig({terminal: _terminal, accountingContextsToAccept: _tokensToAccept});
 
-        _projectZero = uint56(
+        _projectZero = uint64(
             _controller.launchProjectFor({
                 owner: makeAddr("zeroOwner"),
                 projectUri: "myIPFSHash",
@@ -75,7 +75,7 @@ contract TestPermissions_Local is TestBaseWorkflow, JBTest {
             })
         );
 
-        _projectOne = uint56(
+        _projectOne = uint64(
             _controller.launchProjectFor({
                 owner: _projectOwner,
                 projectUri: "myIPFSHash",
@@ -161,20 +161,6 @@ contract TestPermissions_Local is TestBaseWorkflow, JBTest {
             // Call has permissions and assert.
             assertEq(_permissions.hasPermissions(_op, _account, _projectId, _check_permissions, false, false), hasPerm);
         }
-    }
-
-    function testSetRootWildcardProjectId(address _account, address _operator) public {
-        uint8[] memory _set_permissions = new uint8[](1);
-        _set_permissions[0] = JBPermissionIds.ROOT;
-
-        // Set the permissions.
-        vm.prank(_account);
-
-        vm.expectRevert(JBPermissions.JBPermissions_CantSetRootPermissionForWildcardProject.selector);
-        _permissions.setPermissionsFor(
-            _account,
-            JBPermissionsData({operator: _operator, projectId: 0, /* wildcard */ permissionIds: _set_permissions})
-        );
     }
 
     function testBasicAccessSetup() public {

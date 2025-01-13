@@ -689,7 +689,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
                 mulDiv(tokenCount, JBConstants.MAX_RESERVED_PERCENT - reservedPercent, JBConstants.MAX_RESERVED_PERCENT);
 
             // Mint the tokens.
-            // slither-disable-next-line reentrancy-benign,reentrancy-events
+            // slither-disable-next-line reentrancy-benign,reentrancy-events,unused-return
             TOKENS.mintFor({holder: beneficiary, projectId: projectId, count: beneficiaryTokenCount});
         }
 
@@ -974,11 +974,14 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
         // Get the ruleset to read the reserved percent from.
         JBRuleset memory ruleset = _currentRulesetOf(projectId);
 
+        // Get a reference to the project's owner.
+        address owner = PROJECTS.ownerOf(projectId);
+
         // Reset the pending reserved token balance.
         pendingReservedTokenBalanceOf[projectId] = 0;
 
-        // Get a reference to the project's owner.
-        address owner = PROJECTS.ownerOf(projectId);
+        // Mint the tokens to this contract.
+        IJBToken token = TOKENS.mintFor({holder: address(this), projectId: projectId, count: tokenCount});
 
         // Send reserved tokens to splits and get a reference to the amount left after the splits have all been paid.
         uint256 leftoverTokenCount = tokenCount == 0
@@ -987,12 +990,13 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
                 projectId: projectId,
                 rulesetId: ruleset.id,
                 groupId: JBSplitGroupIds.RESERVED_TOKENS,
-                tokenCount: tokenCount
+                tokenCount: tokenCount,
+                token: token
             });
 
         // Mint any leftover tokens to the project owner.
         if (leftoverTokenCount > 0) {
-            TOKENS.mintFor({holder: owner, projectId: projectId, count: leftoverTokenCount});
+            _sendTokens({projectId: projectId, tokenCount: leftoverTokenCount, recipient: owner, token: token});
         }
 
         emit SendReservedTokensToSplits({
@@ -1012,12 +1016,14 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     /// @param rulesetId The ID of the split group's ruleset.
     /// @param groupId The ID of the split group.
     /// @param tokenCount The number of tokens to send.
+    /// @param token The token to send.
     /// @return leftoverTokenCount If the split percents don't add up to 100%, the leftover amount is returned.
     function _sendReservedTokensToSplitGroupOf(
         uint256 projectId,
         uint256 rulesetId,
         uint256 groupId,
-        uint256 tokenCount
+        uint256 tokenCount,
+        IJBToken token
     )
         internal
         returns (uint256 leftoverTokenCount)
@@ -1049,13 +1055,14 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
 
                 // If the split has a hook, call its `processSplitWith` function.
                 if (split.hook != IJBSplitHook(address(0))) {
-                    // Mint the tokens for the split hook.
+                    // Send the tokens to the split hook.
                     // slither-disable-next-line reentrancy-events
-                    TOKENS.mintFor({holder: address(split.hook), projectId: projectId, count: splitTokenCount});
-
-                    // Get a reference to the project token address. If the project doesn't have a token, this will
-                    // return the 0 address.
-                    IJBToken token = TOKENS.tokenOf(projectId);
+                    _sendTokens({
+                        projectId: projectId,
+                        tokenCount: splitTokenCount,
+                        recipient: address(split.hook),
+                        token: token
+                    });
 
                     // slither-disable-next-line reentrancy-events
                     split.hook.processSplitWith(
@@ -1075,10 +1082,6 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
                     address beneficiary = split.beneficiary != address(0) ? split.beneficiary : _msgSender();
 
                     if (split.projectId != 0) {
-                        // Get a reference to the project's token address. If the project doesn't have a token, this
-                        // will return the 0 address.
-                        IJBToken token = TOKENS.tokenOf(projectId);
-
                         // Get a reference to the receiving project's primary payment terminal for the token.
                         IJBTerminal terminal = token == IJBToken(address(0))
                             ? IJBTerminal(address(0))
@@ -1089,12 +1092,13 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
                         if (address(token) == address(0) || address(terminal) == address(0)) {
                             // Mint the tokens to the beneficiary.
                             // slither-disable-next-line reentrancy-events
-                            TOKENS.mintFor({holder: beneficiary, projectId: projectId, count: splitTokenCount});
+                            _sendTokens({
+                                projectId: projectId,
+                                tokenCount: splitTokenCount,
+                                recipient: beneficiary,
+                                token: token
+                            });
                         } else {
-                            // Mint the tokens to this contract.
-                            // slither-disable-next-line reentrancy-events
-                            TOKENS.mintFor({holder: address(this), projectId: projectId, count: splitTokenCount});
-
                             // Use the `projectId` in the pay metadata.
                             // slither-disable-next-line reentrancy-events
                             bytes memory metadata = bytes(abi.encodePacked(projectId));
@@ -1120,9 +1124,17 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
                                 IERC20(address(token)).safeTransfer(beneficiary, splitTokenCount);
                             }
                         }
-                    } else if (beneficiary != address(0xdead)) {
-                        // If the split has no project ID, mint the tokens to the beneficiary.
-                        TOKENS.mintFor({holder: beneficiary, projectId: projectId, count: splitTokenCount});
+                    } else if (beneficiary == address(0xdead)) {
+                        // If the split has no project ID, and the beneficiary is 0xdead, burn.
+                        TOKENS.burnFrom({holder: address(this), projectId: projectId, count: splitTokenCount});
+                    } else {
+                        // If the split has no project Id, send to beneficiary.
+                        _sendTokens({
+                            projectId: projectId,
+                            tokenCount: splitTokenCount,
+                            recipient: beneficiary,
+                            token: token
+                        });
                     }
                 }
 
@@ -1137,6 +1149,24 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
                 split: split,
                 tokenCount: splitTokenCount,
                 caller: _msgSender()
+            });
+        }
+    }
+
+    /// @notice Send tokens from this contract to a recipient.
+    /// @param projectId The ID of the project the tokens belong to.
+    /// @param tokenCount The number of tokens to send.
+    /// @param recipient The address to send the tokens to.
+    /// @param token The token to send, if one exists
+    function _sendTokens(uint256 projectId, uint256 tokenCount, address recipient, IJBToken token) internal {
+        if (token != IJBToken(address(0))) {
+            IERC20(address(token)).safeTransfer({to: recipient, value: tokenCount});
+        } else {
+            TOKENS.transferCreditsFrom({
+                holder: address(this),
+                projectId: projectId,
+                recipient: recipient,
+                count: tokenCount
             });
         }
     }

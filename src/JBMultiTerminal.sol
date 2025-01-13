@@ -406,15 +406,15 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                 knownInvalidDecimals = true;
             } else if (accountingContext.token != JBConstants.NATIVE_TOKEN) {
                 // slither-disable-next-line calls-loop
-                try IERC165(accountingContext.token).supportsInterface(type(IERC20Metadata).interfaceId) returns (
-                    bool doesSupport
-                ) {
+                try IERC20Metadata(accountingContext.token).decimals() returns (uint8 decimals) {
                     // slither-disable-next-line calls-loop
-                    if (doesSupport && accountingContext.decimals != IERC20Metadata(accountingContext.token).decimals())
-                    {
+                    if (accountingContext.decimals != decimals) {
                         knownInvalidDecimals = true;
                     }
-                } catch {}
+                } catch {
+                    // The token didn't support `decimals`.
+                    knownInvalidDecimals = false;
+                }
             }
 
             // Make sure the decimals are correct.
@@ -1554,7 +1554,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     )
         internal
     {
-        // slither-disable-next-line reentrancy-events
+        // slither-disable-next-line reentrancy-events,calls-loop
         try this.executeProcessFee({
             projectId: projectId,
             token: token,
@@ -1591,6 +1591,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// this
     /// terminal.
     function _recordAddedBalanceFor(uint256 projectId, address token, uint256 amount) internal {
+        // slither-disable-next-line calls-loop
         STORE.recordAddedBalanceFor({projectId: projectId, token: token, amount: amount});
     }
 
@@ -1754,6 +1755,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                     addr: projectOwner,
                     token: token,
                     amount: leftoverPayoutAmount - fee,
+                    fee: fee,
                     reason: reason,
                     caller: _msgSender()
                 });
@@ -1956,10 +1958,12 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
     /// @param amount The number of tokens being transferred, as a fixed point number with the same number of decimals
     /// as this terminal.
     function _transferFrom(address from, address payable to, address token, uint256 amount) internal {
-        // If the token is the native token, transfer natively.
-        if (token == JBConstants.NATIVE_TOKEN) return Address.sendValue({recipient: to, amount: amount});
+        if (from == address(this)) {
+            // If the token is the native token, transfer natively.
+            if (token == JBConstants.NATIVE_TOKEN) return Address.sendValue({recipient: to, amount: amount});
 
-        if (from == address(this)) return IERC20(token).safeTransfer({to: to, value: amount});
+            return IERC20(token).safeTransfer({to: to, value: amount});
+        }
 
         // If there's sufficient approval, transfer normally.
         if (IERC20(token).allowance(address(from), address(this)) >= amount) {

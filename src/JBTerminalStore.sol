@@ -176,9 +176,8 @@ contract JBTerminalStore is IJBTerminalStore {
     /// specified terminal.
     /// @param projectId The ID of the project whose tokens would be cashed out.
     /// @param cashOutCount The number of tokens that would be cashed out, as a fixed point number with 18 decimals.
-    /// @param terminals The terminals that would be cashed out from. If this is the zero address, surplus within all
-    /// the
-    /// project's terminals are considered.
+    /// @param terminals The terminals that would be cashed out from. If this is an empty array, surplus within all
+    /// the project's terminals are considered.
     /// @param accountingContexts The accounting contexts of the surplus terminal tokens that would be reclaimed. Pass
     /// an empty array to use all of the project's accounting contexts.
     /// @param decimals The number of decimals to include in the resulting fixed point number.
@@ -534,7 +533,7 @@ contract JBTerminalStore is IJBTerminalStore {
             JBBeforeCashOutRecordedContext memory context = JBBeforeCashOutRecordedContext({
                 terminal: msg.sender,
                 holder: holder,
-                projectId: uint56(projectId),
+                projectId: projectId,
                 rulesetId: ruleset.id,
                 cashOutCount: cashOutCount,
                 totalSupply: totalSupply,
@@ -646,7 +645,7 @@ contract JBTerminalStore is IJBTerminalStore {
                 terminal: msg.sender,
                 payer: payer,
                 amount: amount,
-                projectId: uint56(projectId),
+                projectId: projectId,
                 rulesetId: ruleset.id,
                 beneficiary: beneficiary,
                 weight: ruleset.weight,
@@ -670,21 +669,19 @@ contract JBTerminalStore is IJBTerminalStore {
             uint256 numberOfSpecifications = hookSpecifications.length;
 
             // Ensure that the specifications have valid amounts.
-            if (numberOfSpecifications != 0) {
-                for (uint256 i; i < numberOfSpecifications; i++) {
-                    // Get a reference to the specification's amount.
-                    uint256 specifiedAmount = hookSpecifications[i].amount;
+            for (uint256 i; i < numberOfSpecifications; i++) {
+                // Get a reference to the specification's amount.
+                uint256 specifiedAmount = hookSpecifications[i].amount;
 
-                    // Ensure the amount is non-zero.
-                    if (specifiedAmount != 0) {
-                        // Can't send more to hook than was paid.
-                        if (specifiedAmount > balanceDiff) {
-                            revert JBTerminalStore_InvalidAmountToForwardHook(specifiedAmount, balanceDiff);
-                        }
-
-                        // Decrement the total amount being added to the local balance.
-                        balanceDiff -= specifiedAmount;
+                // Ensure the amount is non-zero.
+                if (specifiedAmount != 0) {
+                    // Can't send more to hook than was paid.
+                    if (specifiedAmount > balanceDiff) {
+                        revert JBTerminalStore_InvalidAmountToForwardHook(specifiedAmount, balanceDiff);
                     }
+
+                    // Decrement the total amount being added to the local balance.
+                    balanceDiff -= specifiedAmount;
                 }
             }
         }

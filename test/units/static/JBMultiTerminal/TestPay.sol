@@ -5,7 +5,7 @@ import /* {*} from */ "../../../helpers/TestBaseWorkflow.sol";
 import {JBMultiTerminalSetup} from "./JBMultiTerminalSetup.sol";
 
 contract TestPay_Local is JBMultiTerminalSetup {
-    uint56 _projectId = 1;
+    uint64 _projectId = 1;
     uint256 _defaultAmount = 1e18;
     address _bene = makeAddr("beneficiary");
     address _native = JBConstants.NATIVE_TOKEN;
@@ -70,13 +70,6 @@ contract TestPay_Local is JBMultiTerminalSetup {
         // mock call to JBDirectory controllerOf
         mockExpect(
             address(directory), abi.encodeCall(IJBDirectory.controllerOf, (_projectId)), abi.encode(address(this))
-        );
-
-        // mock supports interface call
-        mockExpect(
-            address(_mockToken),
-            abi.encodeCall(IERC165.supportsInterface, (type(IERC20Metadata).interfaceId)),
-            abi.encode(true)
         );
 
         // mock call to token decimals

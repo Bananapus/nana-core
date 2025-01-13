@@ -228,13 +228,14 @@ contract TestSendPayoutsOf_Local is JBMultiTerminalSetup {
             abi.encode(address(_terminal))
         );
 
-        vm.expectEmit(true, true, true, false);
+        vm.expectEmit(true, true, true, true);
         emit IJBPayoutTerminal.PayoutTransferReverted(
             _projectId,
             address(this),
             address(0),
             97, // Amount that would have been transferred after fee.
-            bytes(hex"5274afe70000000000000000000000000000000000000000000000000000000000000000"),
+            3, // fee amount
+            bytes(hex"9996b3150000000000000000000000000000000000000000000000000000000000000000"),
             address(this)
         );
 

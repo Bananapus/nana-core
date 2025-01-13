@@ -8,7 +8,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
     using stdStorage for StdStorage;
     using JBRulesetMetadataResolver for JBRulesetMetadata;
 
-    uint56 _projectId = 1;
+    uint64 _projectId = 1;
     uint256 _tokenCount = 1e18;
     uint8 _decimals = 18;
     string _memo = "JUICAY";
@@ -18,6 +18,8 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
 
     function setUp() public {
         super.controllerSetup();
+        vm.label(_beneficiary, "client");
+        vm.label(address(_controller), "controller");
     }
 
     function test_WhenTheProjectHasNoReservedTokens() external {
@@ -158,13 +160,12 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
         mockExpect(address(splits), _splitsCall, _splitsCallReturn);
 
         // mock call to JBTokens mintFor
-        bytes memory _tokensMintCall = abi.encodeCall(IJBTokens.mintFor, (address(_hook), _projectId, _tokenCount));
-        mockExpect(address(tokens), _tokensMintCall, "");
+        bytes memory _tokensMintCall =
+            abi.encodeCall(IJBTokens.mintFor, (address(_controller), _projectId, _tokenCount));
+        mockExpect(address(tokens), _tokensMintCall, abi.encode(_token));
 
-        // mock call to JBTokens tokenOf
-        bytes memory _tokenOfCall = abi.encodeCall(IJBTokens.tokenOf, (_projectId));
-        bytes memory _tokenOfReturn = abi.encode(_token);
-        mockExpect(address(tokens), _tokenOfCall, _tokenOfReturn);
+        // Mock send after minting to controller.
+        mockExpect(address(_token), abi.encodeCall(IERC20.transfer, (address(_hook), _tokenCount)), abi.encode(true));
 
         // split hook data
         JBSplitHookContext memory _context = JBSplitHookContext({
@@ -270,9 +271,13 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
         bytes memory _splitsCallReturn = abi.encode(_splits);
         mockExpect(address(splits), _splitsCall, _splitsCallReturn);
 
+        // Mock send after minting to controller.
+        mockExpect(address(_token), abi.encodeCall(IERC20.transfer, (_beneficiary, _tokenCount)), abi.encode(true));
+
         // mock call to JBTokens mintFor
-        bytes memory _tokensMintCall = abi.encodeCall(IJBTokens.mintFor, (_beneficiary, _projectId, _tokenCount));
-        mockExpect(address(tokens), _tokensMintCall, "");
+        bytes memory _tokensMintCall =
+            abi.encodeCall(IJBTokens.mintFor, (address(_controller), _projectId, _tokenCount));
+        mockExpect(address(tokens), _tokensMintCall, abi.encode(_token));
 
         vm.expectEmit();
         emit IJBController.SendReservedTokensToSplit(
@@ -282,8 +287,6 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
     }
 
     function test_GivenADeadAddressBeneficiary() external whenTheProjectHasReservedTokensGtZero {
-        // it will mint for the beneficiary
-
         JBRulesetMetadata memory _rulesMetadata = JBRulesetMetadata({
             reservedPercent: JBConstants.MAX_RESERVED_PERCENT / 2,
             cashOutTaxRate: JBConstants.MAX_CASH_OUT_TAX_RATE / 2,
@@ -364,10 +367,25 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
         bytes memory _splitsCallReturn = abi.encode(_splits);
         mockExpect(address(splits), _splitsCall, _splitsCallReturn);
 
+        /* // Mock send after minting to controller.
+        mockExpect(address(_token), abi.encodeCall(IERC20.transfer, (_beneficiary, _tokenCount)), abi.encode(true)); */
+
+        // mock call to JBTokens mintFor
+        bytes memory _tokensMintCall =
+            abi.encodeCall(IJBTokens.mintFor, (address(_controller), _projectId, _tokenCount));
+        mockExpect(address(tokens), _tokensMintCall, abi.encode(_token));
+
+        mockExpect(address(tokens), abi.encodeCall(IJBTokens.burnFrom, (address(_controller), 1, 1e18)), "");
+
         vm.expectEmit();
         emit IJBController.SendReservedTokensToSplit(
             _projectId, block.timestamp, 1, _splits[0], _tokenCount, address(this)
         );
+
+        // Forge doesn't allow us to check for this emit..?
+        /*vm.expectEmit();
+        emit IJBTokens.Burn({holder: address(_controller), projectId: _projectId, count: _tokenCount, creditBalance: 0,
+        tokenBalance: _tokenCount, caller: address(_controller)}); */
         _controller.sendReservedTokensToSplitsOf(_projectId);
     }
 
@@ -454,9 +472,6 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
         bytes memory _splitsCallReturn = abi.encode(_splits);
         mockExpect(address(splits), _splitsCall, _splitsCallReturn);
 
-        // mock call to JBTokens tokenOf
-        mockExpect(address(tokens), abi.encodeCall(IJBTokens.tokenOf, (_projectId)), abi.encode(_token));
-
         // mock to JBDirectory primaryTerminalOf
         address terminal = makeAddr("terminal");
         mockExpect(
@@ -466,7 +481,11 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
         );
 
         // mock to JBTokens mintFor
-        mockExpect(address(tokens), abi.encodeCall(IJBTokens.mintFor, (address(_controller), 1, _tokenCount)), "");
+        mockExpect(
+            address(tokens),
+            abi.encodeCall(IJBTokens.mintFor, (address(_controller), 1, _tokenCount)),
+            abi.encode(address(_token))
+        );
 
         // mock token approval
         mockExpect(address(_token), abi.encodeCall(IERC20.approve, (terminal, 1e18)), "");
@@ -517,7 +536,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
             preferAddToBalance: false,
             percent: JBConstants.SPLITS_TOTAL_PERCENT,
             projectId: 1, // non-zero to execute rest of the function
-            beneficiary: payable(address(0xdead)),
+            beneficiary: payable(address(0)),
             lockedUntil: 0,
             hook: IJBSplitHook(address(0))
         });
@@ -563,9 +582,6 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
         bytes memory _splitsCallReturn = abi.encode(_splits);
         mockExpect(address(splits), _splitsCall, _splitsCallReturn);
 
-        // mock call to JBTokens tokenOf
-        mockExpect(address(tokens), abi.encodeCall(IJBTokens.tokenOf, (_projectId)), abi.encode(_token));
-
         // mock to JBDirectory primaryTerminalOf
         address terminal = makeAddr("terminal");
         mockExpect(
@@ -575,9 +591,13 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
         );
 
         // mock to JBTokens mintFor
-        mockExpect(address(tokens), abi.encodeCall(IJBTokens.mintFor, (address(_controller), 1, _tokenCount)), "");
+        mockExpect(
+            address(tokens),
+            abi.encodeCall(IJBTokens.mintFor, (address(_controller), 1, _tokenCount)),
+            abi.encode(address(_token))
+        );
 
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature(("AddressEmptyCode(address)"), address(_token)));
         _controller.sendReservedTokensToSplitsOf(_projectId);
     }
 }

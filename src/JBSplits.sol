@@ -134,24 +134,24 @@ contract JBSplits is JBControlled, IJBSplits {
             // Populate the split struct.
             JBSplit memory split;
 
-            // `preferAddToBalance` in bit 0.
-            split.preferAddToBalance = packedSplitPart1 & 1 == 1;
-            // `percent` in bits 1-32.
-            split.percent = uint32(packedSplitPart1 >> 1);
-            // `projectId` in bits 33-88.
-            split.projectId = uint56(packedSplitPart1 >> 33);
-            // `beneficiary` in bits 89-248.
-            split.beneficiary = payable(address(uint160(packedSplitPart1 >> 89)));
+            // `percent` in bits 0-31.
+            split.percent = uint32(packedSplitPart1);
+            // `projectId` in bits 32-95.
+            split.projectId = uint64(packedSplitPart1 >> 32);
+            // `beneficiary` in bits 96-255.
+            split.beneficiary = payable(address(uint160(packedSplitPart1 >> 96)));
 
             // Get a reference to the second part of the split's packed data.
             uint256 packedSplitPart2 = _packedSplitParts2Of[projectId][rulesetId][groupId][i];
 
             // If there's anything in it, unpack.
             if (packedSplitPart2 > 0) {
-                // `lockedUntil` in bits 0-47.
-                split.lockedUntil = uint48(packedSplitPart2);
-                // `hook` in bits 48-207.
-                split.hook = IJBSplitHook(address(uint160(packedSplitPart2 >> 48)));
+                // `preferAddToBalance` in bit 0.
+                split.preferAddToBalance = packedSplitPart2 & 1 == 1;
+                // `lockedUntil` in bits 1-48.
+                split.lockedUntil = uint48(packedSplitPart2 >> 1);
+                // `hook` in bits 49-208.
+                split.hook = IJBSplitHook(address(uint160(packedSplitPart2 >> 49)));
             }
 
             // Add the split to the value being returned.
@@ -264,24 +264,24 @@ contract JBSplits is JBControlled, IJBSplits {
 
             uint256 packedSplitParts1;
 
-            // Pack `preferAddToBalance` in bit 0.
-            if (split.preferAddToBalance) packedSplitParts1 = 1;
-            // Pack `percent` in bits 1-32.
-            packedSplitParts1 |= split.percent << 1;
-            // Pack `projectId` in bits 33-88.
-            packedSplitParts1 |= split.projectId << 33;
-            // Pack `beneficiary` in bits 89-248.
-            packedSplitParts1 |= uint256(uint160(address(split.beneficiary))) << 89;
+            // Pack `percent` in bits 0-31.
+            packedSplitParts1 = split.percent;
+            // Pack `projectId` in bits 32-95.
+            packedSplitParts1 |= uint256(split.projectId) << 32;
+            // Pack `beneficiary` in bits 96-255.
+            packedSplitParts1 |= uint256(uint160(address(split.beneficiary))) << 96;
 
             // Store the first split part.
             _packedSplitParts1Of[projectId][rulesetId][groupId][i] = packedSplitParts1;
 
             // If there's data to store in the second packed split part, pack and store.
-            if (split.lockedUntil > 0 || split.hook != IJBSplitHook(address(0))) {
-                // Pack `lockedUntil` in bits 0-47.
-                uint256 packedSplitParts2 = uint48(split.lockedUntil);
-                // Pack `hook` in bits 48-207.
-                packedSplitParts2 |= uint256(uint160(address(split.hook))) << 48;
+            if (split.preferAddToBalance || split.lockedUntil > 0 || split.hook != IJBSplitHook(address(0))) {
+                // Pack `preferAddToBalance` in bit 0.
+                uint256 packedSplitParts2 = split.preferAddToBalance ? 1 : 0;
+                // Pack `lockedUntil` in bits 1-48.
+                packedSplitParts2 |= uint256(split.lockedUntil) << 1;
+                // Pack `hook` in bits 49-208.
+                packedSplitParts2 |= uint256(uint160(address(split.hook))) << 49;
 
                 // Store the second split part.
                 _packedSplitParts2Of[projectId][rulesetId][groupId][i] = packedSplitParts2;
