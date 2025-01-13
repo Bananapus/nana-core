@@ -367,7 +367,6 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
         bytes memory _splitsCallReturn = abi.encode(_splits);
         mockExpect(address(splits), _splitsCall, _splitsCallReturn);
 
-
         // mock call to JBTokens mintFor
         bytes memory _tokensMintCall =
             abi.encodeCall(IJBTokens.mintFor, (address(_controller), _projectId, _tokenCount));
