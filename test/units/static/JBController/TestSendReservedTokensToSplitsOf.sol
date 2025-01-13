@@ -367,25 +367,19 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
         bytes memory _splitsCallReturn = abi.encode(_splits);
         mockExpect(address(splits), _splitsCall, _splitsCallReturn);
 
-        /* // Mock send after minting to controller.
-        mockExpect(address(_token), abi.encodeCall(IERC20.transfer, (_beneficiary, _tokenCount)), abi.encode(true)); */
 
         // mock call to JBTokens mintFor
         bytes memory _tokensMintCall =
             abi.encodeCall(IJBTokens.mintFor, (address(_controller), _projectId, _tokenCount));
         mockExpect(address(tokens), _tokensMintCall, abi.encode(_token));
 
-        mockExpect(address(tokens), abi.encodeCall(IJBTokens.burnFrom, (address(_controller), 1, 1e18)), "");
+        mockExpect(address(tokens), abi.encodeCall(IJBTokens.burnFrom, (address(_controller), 1, _tokenCount)), "");
 
         vm.expectEmit();
         emit IJBController.SendReservedTokensToSplit(
             _projectId, block.timestamp, 1, _splits[0], _tokenCount, address(this)
         );
 
-        // Forge doesn't allow us to check for this emit..?
-        /*vm.expectEmit();
-        emit IJBTokens.Burn({holder: address(_controller), projectId: _projectId, count: _tokenCount, creditBalance: 0,
-        tokenBalance: _tokenCount, caller: address(_controller)}); */
         _controller.sendReservedTokensToSplitsOf(_projectId);
     }
 
@@ -597,7 +591,7 @@ contract TestSendReservedTokensToSplitsOf_Local is JBControllerSetup {
             abi.encode(address(_token))
         );
 
-        vm.expectRevert(abi.encodeWithSignature(("SafeERC20FailedOperation(address)"), address(_token)));
+        vm.expectRevert(abi.encodeWithSignature(("AddressEmptyCode(address)"), address(_token)));
         _controller.sendReservedTokensToSplitsOf(_projectId);
     }
 }
