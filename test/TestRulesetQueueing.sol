@@ -204,7 +204,7 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         assertEq(_newRuleset.weight, _weight + 1);
         assertEq(_newRuleset.basedOnId, _currentRulesetId);
     }
-    
+
     function testReconfigureProjectWithWeightOfZero() public {
         // Package a ruleset configuration.
         JBRulesetConfig[] memory _rulesetConfig = new JBRulesetConfig[](1);
