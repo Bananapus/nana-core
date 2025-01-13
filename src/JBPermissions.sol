@@ -53,7 +53,6 @@ contract JBPermissions is IJBPermissions {
     /// permission.
     /// @param includeWildcardProjectId A flag indicating if the return value should return true if the operator has the
     /// specified permission on the wildcard project ID.
-    /// true.
     /// @return A flag indicating whether the operator has the specified permission.
     function hasPermission(
         address operator,
@@ -223,7 +222,7 @@ contract JBPermissions is IJBPermissions {
                             projectId: permissionsData.projectId,
                             permissionId: JBPermissionIds.ROOT,
                             includeRoot: true,
-                            includeWildcardProjectId: true
+                            includeWildcardProjectId: false
                         })
                 )
         ) revert JBPermissions_Unauthorized();

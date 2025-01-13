@@ -271,4 +271,36 @@ contract TestPermissions_Local is TestBaseWorkflow, JBTest {
         vm.expectRevert(JBPermissions.JBPermissions_Unauthorized.selector);
         _permissions.setPermissionsFor(zeroOwner, permData2[0]);
     }
+
+    function testWildcardCannotBeSetForWildcardRootOperator() public {
+        address zeroOwner = makeAddr("zeroOwner");
+
+        // Pack up our permission data.
+        JBPermissionsData[] memory permData = new JBPermissionsData[](1);
+        uint8[] memory permIds = new uint8[](1);
+        permIds[0] = 1;
+
+        uint56 wildcardProjectId = 0;
+
+        permData[0] = JBPermissionsData({operator: address(this), projectId: wildcardProjectId, permissionIds: permIds});
+
+        // Set em.
+        vm.prank(zeroOwner);
+        _permissions.setPermissionsFor(zeroOwner, permData[0]);
+    
+        // Should be true given root check
+        bool _check = _permissions.hasPermission(address(this), zeroOwner, _projectZero, 2, true, true);
+        assertEq(_check, true);
+
+        // Pack up our non-root wildcard permission data.
+        JBPermissionsData[] memory permData2 = new JBPermissionsData[](1);
+        uint8[] memory permIds2 = new uint8[](1);
+        permIds2[0] = 2;
+
+        permData2[0] = JBPermissionsData({operator: address(0), projectId: wildcardProjectId, permissionIds: permIds2});
+
+        // Shouldn't be able to set permission for wildcard project
+        vm.expectRevert(JBPermissions.JBPermissions_Unauthorized.selector);
+        _permissions.setPermissionsFor(zeroOwner, permData2[0]);
+    }
 }
