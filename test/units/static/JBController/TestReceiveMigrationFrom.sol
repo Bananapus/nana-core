@@ -12,7 +12,16 @@ contract TestReceiveMigrationFrom_Local is JBControllerSetup {
         super.controllerSetup();
     }
 
-    modifier whenCallerSupportsTheCorrectInterface() {
+    function test_GivenThatTheCallerIsAlsoControllerOfProjectId() external {
+        vm.expectRevert(
+            abi.encodeWithSelector(JBController.JBController_OnlyDirectory.selector, address(this), address(directory))
+        );
+
+        vm.prank(address(this));
+        IJBMigratable(address(_controller)).beforeReceiveMigrationFrom(_from, _projectId);
+    }
+
+    function test_GivenThatTheCallerIsDirectory() external {
         // mock supports interface call
         mockExpect(
             address(_from),
@@ -20,21 +29,10 @@ contract TestReceiveMigrationFrom_Local is JBControllerSetup {
             abi.encode(true)
         );
 
-        // mock call to directory controller of
-        mockExpect(
-            address(directory), abi.encodeCall(IJBDirectory.controllerOf, (_projectId)), abi.encode(address(_from))
-        );
-
-        _;
-    }
-
-    function test_GivenThatTheCallerIsAlsoControllerOfProjectId() external whenCallerSupportsTheCorrectInterface {
-        // it should set metadata
-
         // mock call to from uriOf
         mockExpect(address(_from), abi.encodeCall(IJBProjectUriRegistry.uriOf, (_projectId)), abi.encode("Juicay"));
 
-        vm.prank(address(_from));
+        vm.prank(address(directory));
         IJBMigratable(address(_controller)).beforeReceiveMigrationFrom(_from, _projectId);
         string memory stored = _controller.uriOf(_projectId);
         assertEq(stored, "Juicay");

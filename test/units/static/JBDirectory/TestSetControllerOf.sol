@@ -147,6 +147,16 @@ contract TestSetControllerOf_Local is JBDirectorySetup {
             abi.encodeCall(IERC165.supportsInterface, (type(IJBMigratable).interfaceId)),
             abi.encode(true)
         );
+        mockExpect(
+            address(this),
+            abi.encodeCall(IERC165.supportsInterface, (type(IJBMigratable).interfaceId)),
+            abi.encode(true)
+        );
+        mockExpect(
+            address(this),
+            abi.encodeCall(IJBMigratable.beforeReceiveMigrationFrom, (IERC165(address(_bumController)), 1)),
+            abi.encode("")
+        );
 
         // it should set controllerOf and emit SetController
         vm.expectEmit();
