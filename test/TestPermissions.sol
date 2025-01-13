@@ -287,7 +287,7 @@ contract TestPermissions_Local is TestBaseWorkflow, JBTest {
         // Set em.
         vm.prank(zeroOwner);
         _permissions.setPermissionsFor(zeroOwner, permData[0]);
-    
+
         // Should be true given root check
         bool _check = _permissions.hasPermission(address(this), zeroOwner, _projectZero, 2, true, true);
         assertEq(_check, true);
