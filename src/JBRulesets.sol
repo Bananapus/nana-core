@@ -1025,12 +1025,10 @@ contract JBRulesets is JBControlled, IJBRulesets {
                 mustStartAtOrAfter: mustStartAtOrAfter
             });
 
-            // A weight of 1 is treated as a weight of 0.
-            // This is to allow a weight of 0 (default) to represent inheriting the cut weight of the previous
+            // A weight of 1 is a special case that represents inheriting the cut weight of the previous
             // ruleset.
-            weight = weight > 0
-                ? (weight == 1 ? 0 : weight)
-                : deriveWeightFrom({
+            weight = weight == 1
+                ? deriveWeightFrom({
                     projectId: projectId,
                     baseRulesetStart: baseRuleset.start,
                     baseRulesetDuration: baseRuleset.duration,
@@ -1038,7 +1036,8 @@ contract JBRulesets is JBControlled, IJBRulesets {
                     baseRulesetWeightCutPercent: baseRuleset.weightCutPercent,
                     baseRulesetCacheId: baseRuleset.id,
                     start: start
-                });
+                })
+                : weight;
 
             // Derive the correct ruleset cycle number.
             uint256 rulesetCycleNumber = deriveCycleNumberFrom({

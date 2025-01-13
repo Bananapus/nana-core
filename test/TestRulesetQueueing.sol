@@ -205,6 +205,109 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         assertEq(_newRuleset.basedOnId, _currentRulesetId);
     }
 
+    function testReconfigureProjectWithWeightOfZero() public {
+        // Package a ruleset configuration.
+        JBRulesetConfig[] memory _rulesetConfig = new JBRulesetConfig[](1);
+        _rulesetConfig[0].mustStartAtOrAfter = 0;
+        _rulesetConfig[0].duration = _RULESET_DURATION;
+        _rulesetConfig[0].weightCutPercent = 0;
+        _rulesetConfig[0].approvalHook = _deadline;
+        _rulesetConfig[0].metadata = _metadata;
+        _rulesetConfig[0].splitGroups = _splitGroup;
+        _rulesetConfig[0].fundAccessLimitGroups = _fundAccessLimitGroup;
+
+        // Deploy a project.
+        uint256 projectId = launchProjectForTest();
+
+        // Keep a reference to the current ruleset.
+        JBRuleset memory _ruleset = jbRulesets().currentOf(projectId);
+
+        // Make sure the ruleset has a cycle number of 1.
+        assertEq(_ruleset.cycleNumber, 1);
+        // Make sure the ruleset's weight matches.
+        assertEq(_ruleset.weight, _weight);
+
+        // Keep a reference to the ruleset's ID.
+        uint256 _currentRulesetId = _ruleset.id;
+
+        // Increment the weight to create a difference.
+        _rulesetConfig[0].weight = 0;
+
+        // Add a ruleset.
+        vm.prank(multisig());
+        _controller.queueRulesetsOf(projectId, _rulesetConfig, "");
+
+        // Make sure the current ruleset hasn't changed.
+        _ruleset = jbRulesets().currentOf(projectId);
+        assertEq(_ruleset.cycleNumber, 1);
+        assertEq(_ruleset.id, _currentRulesetId);
+        assertEq(_ruleset.weight, _weight);
+
+        // Go to the start of the next ruleset.
+        vm.warp(_ruleset.start + _ruleset.duration);
+
+        // Get the current ruleset.
+        JBRuleset memory _newRuleset = jbRulesets().currentOf(projectId);
+
+        // It should be the second cycle.
+        assertEq(_newRuleset.cycleNumber, 2);
+        assertEq(_newRuleset.weight, 0);
+        assertEq(_newRuleset.basedOnId, _currentRulesetId);
+    }
+
+    function testReconfigureProjectWithWeightOfOne() public {
+        // Package a ruleset configuration.
+        JBRulesetConfig[] memory _rulesetConfig = new JBRulesetConfig[](1);
+        _rulesetConfig[0].mustStartAtOrAfter = 0;
+        _rulesetConfig[0].duration = _RULESET_DURATION;
+        _rulesetConfig[0].weightCutPercent = 0;
+        _rulesetConfig[0].approvalHook = _deadline;
+        _rulesetConfig[0].metadata = _metadata;
+        _rulesetConfig[0].splitGroups = _splitGroup;
+        _rulesetConfig[0].fundAccessLimitGroups = _fundAccessLimitGroup;
+
+        // Deploy a project.
+        uint256 projectId = launchProjectForTest();
+
+        // Keep a reference to the current ruleset.
+        JBRuleset memory _ruleset = jbRulesets().currentOf(projectId);
+
+        // Make sure the ruleset has a cycle number of 1.
+        assertEq(_ruleset.cycleNumber, 1);
+        // Make sure the ruleset's weight matches.
+        assertEq(_ruleset.weight, _weight);
+
+        // Keep a reference to the ruleset's ID.
+        uint256 _currentRulesetId = _ruleset.id;
+
+        // Increment the weight to create a difference.
+        _rulesetConfig[0].weight = 1;
+        _rulesetConfig[0].weightCutPercent = 1_000_000_000 / 2;
+        _rulesetConfig[0].duration = 1 days;
+
+        // Add a ruleset.
+        vm.prank(multisig());
+        _controller.queueRulesetsOf(projectId, _rulesetConfig, "");
+
+        // Make sure the current ruleset hasn't changed.
+        _ruleset = jbRulesets().currentOf(projectId);
+        assertEq(_ruleset.cycleNumber, 1);
+        assertEq(_ruleset.id, _currentRulesetId);
+        assertEq(_ruleset.weight, _weight);
+        assertEq(_ruleset.weightCutPercent, 0);
+
+        // Go to the start of the next ruleset.
+        vm.warp(_ruleset.start + _ruleset.duration + 1 days);
+
+        // Get the current ruleset.
+        JBRuleset memory _newRuleset = jbRulesets().currentOf(projectId);
+
+        // It should be the second cycle.
+        assertEq(_newRuleset.cycleNumber, 3);
+        assertEq(_newRuleset.weight, _weight / 2);
+        assertEq(_newRuleset.basedOnId, _currentRulesetId);
+    }
+
     function testMultipleQueuedOnCycledOver() public {
         // Keep references to two different weights.
         uint112 _weightFirstQueued = uint112(1234 * 10 ** 18);
