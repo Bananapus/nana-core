@@ -167,8 +167,7 @@ contract TestBadAccessToFunds_Local is TestBaseWorkflow {
         assertGt(_tokens.totalSupplyOf(_projectId), ogTotalSupply); // supply now higher than after original payment
         assertEq(totalTokenBalance, _tokens.totalSupplyOf(_projectId));
 
-        // Platform project should have the fee amount that was "paid" (but really, *refunded* to platform project) as a
-        // result of using allowance.
+        // Platform project should have the fee amount that was paid as a result of using allowance.
         // that is only a small amount, but the key is that the feeBeneficiary has received platform project tokens.
         uint256 platformProjectBalance =
             jbTerminalStore().balanceOf(address(_terminal), _projectId, JBConstants.NATIVE_TOKEN);
