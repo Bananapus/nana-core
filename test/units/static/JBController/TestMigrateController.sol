@@ -123,35 +123,11 @@ contract TestMigrateController_Local is JBControllerSetup {
         IJBMigratable(address(_controller)).migrate(1, IJBMigratable(address(this)));
     }
 
-    // Ruleset check happens in JBDirectory now and examples can be found in those units.
-    /* function test_Revert_Given_MigrationIsNotAllowedByRuleset()
-        external
-    {   
-        // it should revert
-        vm.expectRevert(abi.encodeWithSignature("CONTROLLER_MIGRATION_NOT_ALLOWED()"));
-
-        vm.prank(address(directory));
-        IJBMigratable(address(_controller)).migrate(1, IJBMigratable(address(this)));
-    } */
-
     function test_GivenReservedTokenBalanceIsPending() external migrationIsAllowedByRuleset whenCallerHasPermission {
         // it should send reserved tokens to splits
         // set storage since we can't mock internal calls
         stdstore.target(address(IJBMigratable(address(_controller)))).sig("pendingReservedTokenBalanceOf(uint256)")
             .with_key(uint256(1)).checked_write(uint256(100));
-
-        // receive migration call mock
-        bytes memory _encodedCall = abi.encodeCall(IJBMigratable.receiveMigrationFrom, (IERC165(_controller), 1));
-        bytes memory _willReturn = "";
-
-        mockExpect(address(this), _encodedCall, _willReturn);
-
-        // mock supports interface call
-        mockExpect(
-            address(this),
-            abi.encodeCall(IERC165.supportsInterface, (type(IJBMigratable).interfaceId)),
-            abi.encode(true)
-        );
 
         // mock splitsOf call
         JBSplit[] memory splitsArray = new JBSplit[](1);
@@ -184,23 +160,6 @@ contract TestMigrateController_Local is JBControllerSetup {
     }
 
     function test_GivenNoReservedTokenBalanceIsPending() external {
-        // it should prepare new controller for migration
-        // it should emit MigrateController event
-
-        // receive migration call mock
-        bytes memory _encodedCall =
-            abi.encodeCall(IJBMigratable.receiveMigrationFrom, (IERC165(address(_controller)), 1));
-        bytes memory _willReturn = "";
-
-        mockExpect(address(this), _encodedCall, _willReturn);
-
-        // mock supports interface call
-        mockExpect(
-            address(this),
-            abi.encodeCall(IERC165.supportsInterface, (type(IJBMigratable).interfaceId)),
-            abi.encode(true)
-        );
-
         // event as expected
         vm.expectEmit();
         emit IJBMigratable.Migrate(1, IJBMigratable(address(this)), address(directory));

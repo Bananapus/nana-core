@@ -181,19 +181,19 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
     /// @param projectId The ID of the project whose controller is being set.
     /// @param controller The address of the controller to set.
     function setControllerOf(uint256 projectId, IERC165 controller) external override {
+        // Keep a reference to the current controller.
+        IERC165 currentController = controllerOf[projectId];
+
         // Enforce permissions.
         _requirePermissionAllowingOverrideFrom({
             account: PROJECTS.ownerOf(projectId),
             projectId: projectId,
             permissionId: JBPermissionIds.SET_CONTROLLER,
-            alsoGrantAccessIf: (isAllowedToSetFirstController[msg.sender] && address(controllerOf[projectId]) == address(0))
+            alsoGrantAccessIf: (isAllowedToSetFirstController[msg.sender] && address(currentController) == address(0))
         });
 
         // The project must exist.
         if (projectId > PROJECTS.count()) revert JBDirectory_InvalidProjectIdInDirectory(projectId, PROJECTS.count());
-
-        // Keep a reference to the current controller.
-        IERC165 currentController = controllerOf[projectId];
 
         // Get a reference to a flag indicating whether the project is allowed to set its controller.
         // Setting the controller is allowed if the project doesn't have a controller,
@@ -209,7 +209,13 @@ contract JBDirectory is JBPermissioned, Ownable, IJBDirectory {
             revert JBDirectory_SetControllerNotAllowed();
         }
 
+        // Prepare the new controller to receive the project.
+        if (address(currentController) != address(0) && controller.supportsInterface(type(IJBMigratable).interfaceId)) {
+            IJBMigratable(address(controller)).beforeReceiveMigrationFrom(currentController, projectId);
+        }
+
         // Set the new controller.
+        // slither-disable-next-line reentrancy-no-eth
         controllerOf[projectId] = controller;
 
         emit SetController({projectId: projectId, controller: controller, caller: msg.sender});
