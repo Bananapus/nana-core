@@ -8,5 +8,6 @@ interface IJBToken {
 
     function initialize(string memory name, string memory symbol, address owner) external;
     function burn(address account, uint256 amount) external;
+    function canBeAddedTo(uint256 projectId) external returns (bool);
     function mint(address account, uint256 amount) external;
 }
