@@ -1652,7 +1652,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                     // Move the start index forward to the held fee after the current one.
                     newStartIndex = startIndex + i + 1;
                 } else {
-                    // And here we overwrite with `feeAmountFrom` the `leftoverAmount`
+                    // And here we overwrite with `feeAmountResultingIn` the `leftoverAmount`
                     feeAmount = JBFees.feeAmountResultingIn({amountAfterFee: leftoverAmount, feePercent: FEE});
 
                     // Get fee from `leftoverAmount`.
