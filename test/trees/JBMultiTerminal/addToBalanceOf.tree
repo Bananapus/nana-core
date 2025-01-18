@@ -3,7 +3,7 @@ TestAddToBalanceOf_Local
 │   ├── given return amount is zero
 │   │   └── it will set heldFeesOf project to zero
 │   ├── given return amount is non-zero and leftoverAmount GTEQ amountFromFee
-│   │   └── it will return feeAmountIn
+│   │   └── it will return feeAmountResultingIn
 │   └── given return amount is non-zero and leftoverAmount LT amountFromFee
 │       └── it will set heldFeesOf return feeAmountFrom and set leftoverAmount to zero
 ├── when shouldReturnHeldFees eq false

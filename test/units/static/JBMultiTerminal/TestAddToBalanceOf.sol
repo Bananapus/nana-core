@@ -19,7 +19,7 @@ contract TestAddToBalanceOf_Local is JBMultiTerminalSetup {
     // set by modifiers
     uint256 payAmount;
     uint256 feeAmount;
-    uint256 feeAmountIn;
+    uint256 feeAmountFrom;
     uint256 amountFromFee;
     uint256 leftOverAmount;
     bool _shouldReturnHeldFees;
@@ -86,9 +86,9 @@ contract TestAddToBalanceOf_Local is JBMultiTerminalSetup {
         assertEq(setFees[0].amount, feeAmount);
 
         payAmount = 2e18;
-        feeAmountIn = JBFees.feeAmountFrom(feeAmount, 25);
+        feeAmountFrom = JBFees.feeAmountFrom(feeAmount, 25);
 
-        amountFromFee = feeAmount - feeAmountIn;
+        amountFromFee = feeAmount - feeAmountFrom;
         leftOverAmount = payAmount - amountFromFee;
 
         _shouldReturnHeldFees = true;
@@ -125,12 +125,12 @@ contract TestAddToBalanceOf_Local is JBMultiTerminalSetup {
         // mock call to store recordAddedBalanceFor
         mockExpect(
             address(store),
-            abi.encodeCall(IJBTerminalStore.recordAddedBalanceFor, (_projectId, _native, payAmount + feeAmountIn)),
+            abi.encodeCall(IJBTerminalStore.recordAddedBalanceFor, (_projectId, _native, payAmount + feeAmountFrom)),
             ""
         );
 
         vm.expectEmit();
-        emit IJBFeeTerminal.ReturnHeldFees(_projectId, _native, payAmount, feeAmountIn, leftOverAmount, address(this));
+        emit IJBFeeTerminal.ReturnHeldFees(_projectId, _native, payAmount, feeAmountFrom, leftOverAmount, address(this));
 
         _terminal.addToBalanceOf{value: payAmount}({
             projectId: _projectId,
@@ -152,7 +152,7 @@ contract TestAddToBalanceOf_Local is JBMultiTerminalSetup {
     {
         // it will set heldFeesOf return feeAmountFrom and set leftoverAmount to zero
         uint256 lowerPayAmount = 1e8;
-        uint256 returnedFee = JBFees.feeAmountIn(lowerPayAmount, 25);
+        uint256 returnedFee = JBFees.feeAmountResultingIn(lowerPayAmount, 25);
 
         // mock call to store recordAddedBalanceFor
         mockExpect(
@@ -186,7 +186,7 @@ contract TestAddToBalanceOf_Local is JBMultiTerminalSetup {
         // mock call to store recordAddedBalanceFor
         mockExpect(
             address(store),
-            abi.encodeCall(IJBTerminalStore.recordAddedBalanceFor, (_projectId, _native, payAmount + feeAmountIn)),
+            abi.encodeCall(IJBTerminalStore.recordAddedBalanceFor, (_projectId, _native, payAmount + feeAmountFrom)),
             ""
         );
 

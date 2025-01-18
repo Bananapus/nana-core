@@ -1637,7 +1637,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             if (leftoverAmount == 0) {
                 break;
             } else {
-                // Notice here we take `feeAmountIn` on the stored `.amount`.
+                // Notice here we take `feeAmountFrom` on the stored `.amount`.
                 uint256 feeAmount = JBFees.feeAmountFrom({amountBeforeFee: heldFee.amount, feePercent: FEE});
 
                 // Keep a reference to the amount from which the fee was taken.
@@ -1653,7 +1653,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                     newStartIndex = startIndex + i + 1;
                 } else {
                     // And here we overwrite with `feeAmountFrom` the `leftoverAmount`
-                    feeAmount = JBFees.feeAmountIn({amountAfterFee: leftoverAmount, feePercent: FEE});
+                    feeAmount = JBFees.feeAmountResultingIn({amountAfterFee: leftoverAmount, feePercent: FEE});
 
                     // Get fee from `leftoverAmount`.
                     unchecked {
