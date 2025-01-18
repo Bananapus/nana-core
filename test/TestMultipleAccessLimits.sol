@@ -168,8 +168,8 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
         // Make sure the balance has changed, accounting for the fee that stays.
         assertEq(
             address(__terminal).balance,
-            initTerminalBalance
-                - _payoutLimits[0].amount + mulDiv(_payoutLimits[0].amount, __terminal.FEE(), JBConstants.MAX_FEE)
+            initTerminalBalance - _payoutLimits[0].amount
+                + mulDiv(_payoutLimits[0].amount, __terminal.FEE(), JBConstants.MAX_FEE)
         );
 
         // Price for the amount (in USD) that can be paid out based on the terminal's current balance.
@@ -619,8 +619,7 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
 
         assertEq(
             _projectOwner.balance,
-            ownerBalanceBeforeFirst
-                + _amountPaidOut - mulDiv(_amountPaidOut, __terminal.FEE(), JBConstants.MAX_FEE)
+            ownerBalanceBeforeFirst + _amountPaidOut - mulDiv(_amountPaidOut, __terminal.FEE(), JBConstants.MAX_FEE)
         );
 
         // Funds leaving the ecosystem -> fee taken.

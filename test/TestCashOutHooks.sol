@@ -248,8 +248,7 @@ contract TestCashOutHooks_Local is TestBaseWorkflow {
         uint256 _customCashOutCount = 1 * 10 ** 18;
         uint256 _customTotalSupply = 5 * 10 ** 18;
 
-        uint256 _forwardedAmount =
-            _halfPaid - (_halfPaid * _terminal.FEE() / JBConstants.MAX_FEE);
+        uint256 _forwardedAmount = _halfPaid - (_halfPaid * _terminal.FEE() / JBConstants.MAX_FEE);
 
         uint256 _beneficiaryAmount = mulDiv(
             mulDiv(_nativePayAmount, _customCashOutCount, _customTotalSupply),
@@ -258,8 +257,7 @@ contract TestCashOutHooks_Local is TestBaseWorkflow {
             JBConstants.MAX_CASH_OUT_TAX_RATE
         );
 
-        _beneficiaryAmount -= 
-            mulDiv(_beneficiaryAmount, _terminal.FEE(), JBConstants.MAX_FEE);
+        _beneficiaryAmount -= mulDiv(_beneficiaryAmount, _terminal.FEE(), JBConstants.MAX_FEE);
 
         // Cash out context.
         JBAfterCashOutRecordedContext memory _cashOutContext = JBAfterCashOutRecordedContext({

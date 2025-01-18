@@ -194,8 +194,7 @@ contract TestFees_Local is TestBaseWorkflow {
         });
 
         // Calculate the fee from the allowance use.
-        uint256 _feeAmount =
-            _nativeDistLimit * _terminal.FEE() / JBConstants.MAX_FEE;
+        uint256 _feeAmount = _nativeDistLimit * _terminal.FEE() / JBConstants.MAX_FEE;
 
         uint256 _afterFee = _nativeDistLimit - _feeAmount;
 

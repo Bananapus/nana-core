@@ -20,7 +20,8 @@ library JBFees {
 
     /// @notice Returns the fee that would have been paid based on an `amount` which has already had the fee subtracted
     /// from it.
-    /// @param amountBeforeFee The amount that the fee is based on, as a fixed point number with the same amount of decimals as
+    /// @param amountBeforeFee The amount that the fee is based on, as a fixed point number with the same amount of
+    /// decimals as
     /// this terminal.
     /// @param feePercent The fee percent, out of `JBConstants.MAX_FEE`.
     /// @return The amount of the fee, as a fixed point number with the same amount of decimals as this terminal.
