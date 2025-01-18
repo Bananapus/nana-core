@@ -43,6 +43,11 @@ contract JBERC20 is ERC20Votes, ERC20Permit, Ownable, IJBToken {
         return super.balanceOf(account);
     }
 
+    /// @notice This token can only be added to a project when its created by the `JBTokens` contract.
+    function canBeAddedTo(uint256) external view override returns (bool) {
+        return false;
+    }
+
     /// @notice The number of decimals used for this token's fixed point accounting.
     /// @return The number of decimals.
     function decimals() public view override(ERC20, IJBToken) returns (uint8) {
@@ -75,11 +80,6 @@ contract JBERC20 is ERC20Votes, ERC20Permit, Ownable, IJBToken {
     /// @param amount The amount of tokens to burn, as a fixed point number with 18 decimals.
     function burn(address account, uint256 amount) external override onlyOwner {
         return _burn(account, amount);
-    }
-
-    /// @notice This token can only be added to a project when its created by the `JBTokens` contract.
-    function canBeAddedTo(uint256) external override returns (bool) {
-        return false;
     }
 
     /// @notice Mints more of this token.
