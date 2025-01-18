@@ -44,7 +44,7 @@ contract JBERC20 is ERC20Votes, ERC20Permit, Ownable, IJBToken {
     }
 
     /// @notice This token can only be added to a project when its created by the `JBTokens` contract.
-    function canBeAddedTo(uint256) external view override returns (bool) {
+    function canBeAddedTo(uint256) external pure override returns (bool) {
         return false;
     }
 
