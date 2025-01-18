@@ -292,7 +292,7 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
 
         _payoutLimits[1] = JBCurrencyAmount({amount: 1, currency: _payoutCurrency == 0 ? 0 : _payoutCurrency - 1});
 
-        _surplusAllowances[0] = JBCurrencyAmount({amount: 1, currency: 1});
+        _surplusAllowances[0] = JBCurrencyAmount({amount: 1, currency: JBCurrencyIds.USD});
 
         _fundAccessLimitGroup[0] = JBFundAccessLimitGroup({
             terminal: address(__terminal),
@@ -417,7 +417,7 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
 
         _payoutLimits[0] = JBCurrencyAmount({amount: _nativePayoutLimit, currency: _nativeCurrency});
         _payoutLimits[1] = JBCurrencyAmount({amount: _usdPayoutLimit, currency: uint32(uint160(address(usdcToken())))});
-        _surplusAllowances[0] = JBCurrencyAmount({amount: 1, currency: 1});
+        _surplusAllowances[0] = JBCurrencyAmount({amount: 1, currency: JBCurrencyIds.USD});
         _fundAccessLimitGroup[0] = JBFundAccessLimitGroup({
             terminal: address(__terminal),
             token: JBConstants.NATIVE_TOKEN,
