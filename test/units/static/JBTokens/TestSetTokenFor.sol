@@ -73,9 +73,22 @@ contract TestSetTokenFor_Local is JBTokensSetup {
 
         //mock call to token decimals
         mockExpect(address(_token), abi.encodeCall(IJBToken.decimals, ()), abi.encode(18));
+        mockExpect(address(_token), abi.encodeCall(IJBToken.canBeAddedTo, (_projectId)), abi.encode(true));
 
         vm.expectEmit();
         emit IJBTokens.SetToken(_projectId, _token, address(this));
+
+        _tokens.setTokenFor(_projectId, IJBToken(address(_token)));
+    }
+
+    function test_WhenCantBeAddedTo() external whenCallerIsControllerOfProject {
+        // it will set token states and emit SetToken
+
+        //mock call to token decimals
+        mockExpect(address(_token), abi.encodeCall(IJBToken.decimals, ()), abi.encode(18));
+        mockExpect(address(_token), abi.encodeCall(IJBToken.canBeAddedTo, (_projectId)), abi.encode(false));
+
+        vm.expectRevert(abi.encodeWithSelector(JBTokens.JBTokens_TokenCantBeAdded.selector, _projectId));
 
         _tokens.setTokenFor(_projectId, IJBToken(address(_token)));
     }

@@ -85,6 +85,11 @@ contract TestTokenFlow_Local is TestBaseWorkflow {
             IJBToken _newToken = IJBToken(Clones.clone(address(new JBERC20())));
             _newToken.initialize({name: "NewTestName", symbol: "NewTestSymbol", owner: address(_tokens)});
 
+            // Mock the token can be added to the project.
+            vm.mockCall(
+                address(_newToken), abi.encodeWithSelector(IJBToken.canBeAddedTo.selector, _projectId), abi.encode(true)
+            );
+
             // Set the projects token to `_newToken`.
             _controller.setTokenFor(_projectId, _newToken);
 

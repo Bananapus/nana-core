@@ -192,6 +192,7 @@ contract TestPermissions_Local is TestBaseWorkflow, JBTest {
 
         // Will succeed when setting the correct projects token
         mockExpect(token, abi.encodeCall(MockERC20.decimals, ()), abi.encode(18));
+        mockExpect(token, abi.encodeCall(IJBToken.canBeAddedTo, (1)), abi.encode(true));
         _controller.setTokenFor(1, IJBToken(token));
     }
 
