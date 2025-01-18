@@ -43,6 +43,14 @@ contract JBERC20 is ERC20Votes, ERC20Permit, Ownable, IJBToken {
         return super.balanceOf(account);
     }
 
+<<<<<<< Updated upstream
+=======
+    /// @notice This token can only be added to a project when its created by the `JBTokens` contract.
+    function canBeAddedTo(uint256) external pure override returns (bool) {
+        return false;
+    }
+
+>>>>>>> Stashed changes
     /// @notice The number of decimals used for this token's fixed point accounting.
     /// @return The number of decimals.
     function decimals() public view override(ERC20, IJBToken) returns (uint8) {

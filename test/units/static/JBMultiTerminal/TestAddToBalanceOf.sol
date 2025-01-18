@@ -86,7 +86,7 @@ contract TestAddToBalanceOf_Local is JBMultiTerminalSetup {
         assertEq(setFees[0].amount, feeAmount);
 
         payAmount = 2e18;
-        feeAmountIn = JBFees.feeAmountIn(feeAmount, 25);
+        feeAmountIn = JBFees.feeAmountFrom(feeAmount, 25);
 
         amountFromFee = feeAmount - feeAmountIn;
         leftOverAmount = payAmount - amountFromFee;
@@ -152,8 +152,7 @@ contract TestAddToBalanceOf_Local is JBMultiTerminalSetup {
     {
         // it will set heldFeesOf return feeAmountFrom and set leftoverAmount to zero
         uint256 lowerPayAmount = 1e8;
-        uint256 feeA = JBFees.feeAmountFrom(feeAmount, 25);
-        uint256 returnedFee = mulDiv(lowerPayAmount, 25, JBConstants.MAX_FEE);
+        uint256 returnedFee = JBFees.feeAmountIn(lowerPayAmount, 25);
 
         // mock call to store recordAddedBalanceFor
         mockExpect(
@@ -174,7 +173,7 @@ contract TestAddToBalanceOf_Local is JBMultiTerminalSetup {
             metadata: ""
         });
 
-        uint256 newFeeAmount = feeAmount - (lowerPayAmount + JBFees.feeAmountFrom(lowerPayAmount, 25));
+        uint256 newFeeAmount = feeAmount - (lowerPayAmount + returnedFee);
 
         // Heldfee should be a new amount
         JBFee[] memory feesAfter = _terminal.heldFeesOf(_projectId, _native, 100);

@@ -169,7 +169,7 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
         assertEq(
             address(__terminal).balance,
             initTerminalBalance
-                - mulDiv(_payoutLimits[0].amount, JBConstants.MAX_FEE, JBConstants.MAX_FEE + __terminal.FEE())
+                - _payoutLimits[0].amount + mulDiv(_payoutLimits[0].amount, __terminal.FEE(), JBConstants.MAX_FEE)
         );
 
         // Price for the amount (in USD) that can be paid out based on the terminal's current balance.
@@ -620,13 +620,13 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
         assertEq(
             _projectOwner.balance,
             ownerBalanceBeforeFirst
-                + mulDiv(_amountPaidOut, JBConstants.MAX_FEE, JBConstants.MAX_FEE + __terminal.FEE())
+                + _amountPaidOut - mulDiv(_amountPaidOut, __terminal.FEE(), JBConstants.MAX_FEE)
         );
 
         // Funds leaving the ecosystem -> fee taken.
         assertEq(
             address(__terminal).balance,
-            initTerminalBalance - mulDiv(_amountPaidOut, JBConstants.MAX_FEE, JBConstants.MAX_FEE + __terminal.FEE())
+            initTerminalBalance - _amountPaidOut + mulDiv(_amountPaidOut, __terminal.FEE(), JBConstants.MAX_FEE)
         );
 
         uint256 _balanceBeforeNativeDist = address(__terminal).balance;
@@ -643,12 +643,12 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
         // Funds leaving the ecosystem -> fee taken.
         assertEq(
             _projectOwner.balance,
-            _ownerBalanceBeforeNativeDist + mulDiv(1 ether, JBConstants.MAX_FEE, JBConstants.MAX_FEE + __terminal.FEE())
+            _ownerBalanceBeforeNativeDist + 1 ether - mulDiv(1 ether, __terminal.FEE(), JBConstants.MAX_FEE)
         );
 
         assertEq(
             address(__terminal).balance,
-            _balanceBeforeNativeDist - mulDiv(1 ether, JBConstants.MAX_FEE, JBConstants.MAX_FEE + __terminal.FEE())
+            _balanceBeforeNativeDist - 1 ether + mulDiv(1 ether, __terminal.FEE(), JBConstants.MAX_FEE)
         );
     }
 }

@@ -106,7 +106,7 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
             hook: IJBSplitHook(_hook)
         });
 
-        uint256 taxedAmount = JBFees.feeAmountIn(_defaultAmount, _fee);
+        uint256 taxedAmount = JBFees.feeAmountFrom(_defaultAmount, _fee);
 
         // Create the context to send to the split hook.
         JBSplitHookContext memory context = JBSplitHookContext({
@@ -167,7 +167,7 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
             hook: IJBSplitHook(address(0))
         });
 
-        uint256 taxedAmount = JBFees.feeAmountIn(_defaultAmount, _fee);
+        uint256 taxedAmount = JBFees.feeAmountFrom(_defaultAmount, _fee);
 
         // mock call to usdc transfer
         mockExpect(
@@ -286,7 +286,7 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
             hook: IJBSplitHook(address(0))
         });
 
-        uint256 taxedAmount = JBFees.feeAmountIn(_defaultAmount, _fee);
+        uint256 taxedAmount = JBFees.feeAmountFrom(_defaultAmount, _fee);
         uint256 amountAfterTax = _defaultAmount - taxedAmount;
 
         // mock call for SafeERC20s allowance check
@@ -405,7 +405,7 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
             hook: IJBSplitHook(address(0))
         });
 
-        uint256 taxedAmount = JBFees.feeAmountIn(_defaultAmount, _fee);
+        uint256 taxedAmount = JBFees.feeAmountFrom(_defaultAmount, _fee);
         uint256 amountAfterTax = _defaultAmount - taxedAmount;
 
         // mock call for SafeERC20s allowance check
@@ -487,7 +487,7 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
             hook: IJBSplitHook(address(0))
         });
 
-        uint256 taxedAmount = JBFees.feeAmountIn(_defaultAmount, _fee);
+        uint256 taxedAmount = JBFees.feeAmountFrom(_defaultAmount, _fee);
         uint256 amountAfterTax = _defaultAmount - taxedAmount;
 
         // mock call to usdc transfer
@@ -522,7 +522,7 @@ contract TestExecutePayout_Local is JBMultiTerminalSetup {
             hook: IJBSplitHook(address(0))
         });
 
-        uint256 taxedAmount = JBFees.feeAmountIn(_defaultAmount, _fee);
+        uint256 taxedAmount = JBFees.feeAmountFrom(_defaultAmount, _fee);
         uint256 amountAfterTax = _defaultAmount - taxedAmount;
 
         // mock call to usdc transfer

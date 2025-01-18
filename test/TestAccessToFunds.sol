@@ -185,8 +185,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
         });
 
         // Make sure the beneficiary received the funds and that they are no longer in the terminal.
-        uint256 _beneficiaryNativeBalance =
-            mulDiv(_nativeCurrencySurplusAllowance, JBConstants.MAX_FEE, JBConstants.MAX_FEE + _terminal.FEE());
+        uint256 _beneficiaryNativeBalance = _nativeCurrencySurplusAllowance - mulDiv(_nativeCurrencySurplusAllowance, _terminal.FEE(), JBConstants.MAX_FEE);
         assertEq(_beneficiary.balance, _beneficiaryNativeBalance);
         assertEq(
             jbTerminalStore().balanceOf(address(_terminal), _projectId, JBConstants.NATIVE_TOKEN),
@@ -217,8 +216,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
         });
 
         // Make sure the project owner received the funds which were paid out.
-        uint256 _projectOwnerNativeBalance =
-            (_nativeCurrencyPayoutLimit * JBConstants.MAX_FEE) / (_terminal.FEE() + JBConstants.MAX_FEE);
+        uint256 _projectOwnerNativeBalance = _nativeCurrencyPayoutLimit - _nativeCurrencyPayoutLimit * _terminal.FEE() / JBConstants.MAX_FEE;
 
         // Make sure the project owner received the full amount.
         assertEq(_projectOwner.balance, _projectOwnerNativeBalance);
@@ -275,7 +273,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
 
         // Calculate the fee from the cash out.
         uint256 _feeAmount =
-            _nativeReclaimAmount - _nativeReclaimAmount * JBConstants.MAX_FEE / (_terminal.FEE() + JBConstants.MAX_FEE);
+            _nativeReclaimAmount * _terminal.FEE() / JBConstants.MAX_FEE;
         assertEq(_beneficiary.balance, _beneficiaryNativeBalance + _nativeReclaimAmount - _feeAmount);
 
         // Make sure the fee was paid correctly.
@@ -439,7 +437,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
         if (_nativeCurrencySurplusAllowance + _nativeCurrencyPayoutLimit <= _nativePayAmount) {
             // Make sure the beneficiary received the funds and that they are no longer in the terminal.
             _beneficiaryNativeBalance =
-                mulDiv(_nativeCurrencySurplusAllowance, JBConstants.MAX_FEE, JBConstants.MAX_FEE + _terminal.FEE());
+                _nativeCurrencySurplusAllowance - mulDiv(_nativeCurrencySurplusAllowance, _terminal.FEE(), JBConstants.MAX_FEE);
             assertEq(_beneficiary.balance, _beneficiaryNativeBalance);
             assertEq(
                 jbTerminalStore().balanceOf(address(_terminal), _projectId, JBConstants.NATIVE_TOKEN),
@@ -496,7 +494,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
         if (_nativeCurrencyPayoutLimit <= _nativePayAmount && _nativeCurrencyPayoutLimit != 0) {
             // Make sure the project owner received the payout.
             _projectOwnerNativeBalance =
-                (_nativeCurrencyPayoutLimit * JBConstants.MAX_FEE) / (_terminal.FEE() + JBConstants.MAX_FEE);
+                _nativeCurrencyPayoutLimit - _nativeCurrencyPayoutLimit * _terminal.FEE() / JBConstants.MAX_FEE;
             assertEq(_projectOwner.balance, _projectOwnerNativeBalance);
             assertEq(
                 jbTerminalStore().balanceOf(address(_terminal), _projectId, JBConstants.NATIVE_TOKEN),
@@ -558,8 +556,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                 JBConstants.MAX_CASH_OUT_TAX_RATE
             );
             // Calculate the fee from the cash out.
-            uint256 _feeAmount = _nativeReclaimAmount
-                - _nativeReclaimAmount * JBConstants.MAX_FEE / (_terminal.FEE() + JBConstants.MAX_FEE);
+            uint256 _feeAmount = _nativeReclaimAmount * _terminal.FEE() / JBConstants.MAX_FEE;
             assertEq(_beneficiary.balance, _beneficiaryNativeBalance + _nativeReclaimAmount - _feeAmount);
 
             // Make sure the fee was paid correctly.
@@ -726,8 +723,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
         // Check the collected balance if one is expected.
         if (_nativeCurrencySurplusAllowance + _nativeCurrencyPayoutLimit <= _nativePayAmount) {
             // Make sure the beneficiary received the funds and that they are no longer in the terminal.
-            _beneficiaryNativeBalance =
-                mulDiv(_nativeCurrencySurplusAllowance, JBConstants.MAX_FEE, JBConstants.MAX_FEE + _terminal.FEE());
+            _beneficiaryNativeBalance = _nativeCurrencySurplusAllowance - mulDiv(_nativeCurrencySurplusAllowance, _terminal.FEE(), JBConstants.MAX_FEE);
             assertEq(_beneficiary.balance, _beneficiaryNativeBalance);
             // Make sure the fee stays in the terminal.
             assertEq(
@@ -778,7 +774,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
         if (_nativeCurrencyPayoutLimit <= _nativePayAmount && _nativeCurrencyPayoutLimit != 0) {
             // Make sure the project owner received the funds that were paid out.
             _projectOwnerNativeBalance =
-                (_nativeCurrencyPayoutLimit * JBConstants.MAX_FEE) / (_terminal.FEE() + JBConstants.MAX_FEE);
+                _nativeCurrencyPayoutLimit - _nativeCurrencyPayoutLimit * _terminal.FEE() / JBConstants.MAX_FEE;
             assertEq(_projectOwner.balance, _projectOwnerNativeBalance);
             // Make sure the fee stays in the terminal.
             assertEq(
@@ -830,8 +826,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             );
 
             // Calculate the fee from the cash out.
-            uint256 _feeAmount = _nativeReclaimAmount
-                - _nativeReclaimAmount * JBConstants.MAX_FEE / (_terminal.FEE() + JBConstants.MAX_FEE);
+            uint256 _feeAmount = _nativeReclaimAmount * _terminal.FEE() / JBConstants.MAX_FEE;
             assertEq(_beneficiary.balance, _beneficiaryNativeBalance + _nativeReclaimAmount - _feeAmount);
             // Make sure the fee stays in the terminal.
             assertEq(
@@ -984,8 +979,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
         // Check the collected balance if one is expected.
         if (_nativeCurrencySurplusAllowance + _nativeCurrencyPayoutLimit <= _nativePayAmount) {
             // Make sure the beneficiary received the funds and that they are no longer in the terminal.
-            _beneficiaryNativeBalance =
-                mulDiv(_nativeCurrencySurplusAllowance, JBConstants.MAX_FEE, JBConstants.MAX_FEE + _terminal.FEE());
+            _beneficiaryNativeBalance = _nativeCurrencySurplusAllowance - mulDiv(_nativeCurrencySurplusAllowance, _terminal.FEE(), JBConstants.MAX_FEE);
             assertEq(_beneficiary.balance, _beneficiaryNativeBalance);
             assertEq(
                 jbTerminalStore().balanceOf(address(_terminal), _projectId, JBConstants.NATIVE_TOKEN),
@@ -1035,8 +1029,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
         // Check the received payout if one is expected.
         if (_nativeCurrencyPayoutLimit <= _nativePayAmount && _nativeCurrencyPayoutLimit != 0) {
             // Make sure the project owner received the funds that were paid out.
-            _projectOwnerNativeBalance =
-                (_nativeCurrencyPayoutLimit * JBConstants.MAX_FEE) / (_terminal.FEE() + JBConstants.MAX_FEE);
+            _projectOwnerNativeBalance = _nativeCurrencyPayoutLimit - _nativeCurrencyPayoutLimit * _terminal.FEE() / JBConstants.MAX_FEE;
             assertEq(_projectOwner.balance, _projectOwnerNativeBalance);
             assertEq(
                 jbTerminalStore().balanceOf(address(_terminal), _projectId, JBConstants.NATIVE_TOKEN),
@@ -1092,8 +1085,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                 JBConstants.MAX_CASH_OUT_TAX_RATE
             );
             // Calculate the fee from the cash out.
-            uint256 _feeAmount = _nativeReclaimAmount
-                - _nativeReclaimAmount * JBConstants.MAX_FEE / (_terminal.FEE() + JBConstants.MAX_FEE);
+            uint256 _feeAmount = _nativeReclaimAmount * _terminal.FEE() / JBConstants.MAX_FEE;
 
             // Make sure the beneficiary received tokens from the fee just paid.
             assertEq(
@@ -1336,7 +1328,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
         ) {
             // Make sure the beneficiary received the funds and that they are no longer in the terminal.
             _beneficiaryNativeBalance =
-                mulDiv(_nativeCurrencySurplusAllowance, JBConstants.MAX_FEE, JBConstants.MAX_FEE + _terminal.FEE());
+                _nativeCurrencySurplusAllowance - mulDiv(_nativeCurrencySurplusAllowance, _terminal.FEE(), JBConstants.MAX_FEE);
             assertEq(_beneficiary.balance, _beneficiaryNativeBalance);
             assertEq(
                 jbTerminalStore().balanceOf(address(_terminal), _projectId, JBConstants.NATIVE_TOKEN),
@@ -1406,8 +1398,8 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                 + _toNative(_usdCurrencySurplusAllowance + _usdCurrencyPayoutLimit) <= _nativePayAmount
         ) {
             // Make sure the beneficiary received the funds and that they are no longer in the terminal.
-            _beneficiaryNativeBalance += mulDiv(
-                _toNative(_usdCurrencySurplusAllowance), JBConstants.MAX_FEE, JBConstants.MAX_FEE + _terminal.FEE()
+            _beneficiaryNativeBalance += _toNative(_usdCurrencySurplusAllowance) - mulDiv(
+                _toNative(_usdCurrencySurplusAllowance), _terminal.FEE(), JBConstants.MAX_FEE
             );
             assertEq(_beneficiary.balance, _beneficiaryNativeBalance);
             assertEq(
@@ -1475,7 +1467,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             if (_nativeCurrencyPayoutLimit <= _nativePayAmount && _nativeCurrencyPayoutLimit != 0) {
                 // Make sure the project owner received the funds that were paid out.
                 _projectOwnerNativeBalance =
-                    (_nativeCurrencyPayoutLimit * JBConstants.MAX_FEE) / (_terminal.FEE() + JBConstants.MAX_FEE);
+                    _nativeCurrencyPayoutLimit - _nativeCurrencyPayoutLimit * _terminal.FEE() / JBConstants.MAX_FEE;
                 assertEq(_projectOwner.balance, _projectOwnerNativeBalance);
                 assertEq(
                     jbTerminalStore().balanceOf(address(_terminal), _projectId, JBConstants.NATIVE_TOKEN),
@@ -1555,7 +1547,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             ) {
                 // Make sure the project owner received the funds that were paid out.
                 _projectOwnerNativeBalance +=
-                    (_toNative(_usdCurrencyPayoutLimit) * JBConstants.MAX_FEE) / (_terminal.FEE() + JBConstants.MAX_FEE);
+                    _toNative(_usdCurrencyPayoutLimit) - _toNative(_usdCurrencyPayoutLimit) * _terminal.FEE() / JBConstants.MAX_FEE;
                 assertEq(_projectOwner.balance, _projectOwnerNativeBalance);
                 assertEq(
                     jbTerminalStore().balanceOf(address(_terminal), _projectId, JBConstants.NATIVE_TOKEN),
@@ -1728,8 +1720,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                     _usdcPayAmount - _usdcReclaimAmount
                 );
 
-                uint256 _usdcFeeAmount = _usdcReclaimAmount
-                    - _usdcReclaimAmount * JBConstants.MAX_FEE / (_terminal.FEE() + JBConstants.MAX_FEE);
+                uint256 _usdcFeeAmount = _usdcReclaimAmount * _terminal.FEE() / JBConstants.MAX_FEE;
                 assertEq(_usdcToken.balanceOf(_beneficiary), _usdcReclaimAmount - _usdcFeeAmount);
 
                 // Make sure the fee was paid correctly.
@@ -2016,7 +2007,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
         if (_nativeCurrencySurplusAllowance + _nativeCurrencyPayoutLimit <= _nativePayAmount) {
             // Make sure the beneficiary received the funds and that they are no longer in the terminal.
             _beneficiaryNativeBalance =
-                mulDiv(_nativeCurrencySurplusAllowance, JBConstants.MAX_FEE, JBConstants.MAX_FEE + _terminal.FEE());
+                _nativeCurrencySurplusAllowance - mulDiv(_nativeCurrencySurplusAllowance, _terminal.FEE(), JBConstants.MAX_FEE);
             assertEq(_beneficiary.balance, _beneficiaryNativeBalance);
             assertEq(
                 jbTerminalStore().balanceOf(address(_terminal), _projectId, JBConstants.NATIVE_TOKEN),
@@ -2079,7 +2070,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
         if (_usdCurrencySurplusAllowance + _usdCurrencyPayoutLimit <= _usdcPayAmount) {
             // Make sure the beneficiary received the funds and that they are no longer in the terminal.
             _beneficiaryUsdcBalance +=
-                mulDiv(_usdCurrencySurplusAllowance, JBConstants.MAX_FEE, JBConstants.MAX_FEE + _terminal.FEE());
+                _usdCurrencySurplusAllowance - mulDiv(_usdCurrencySurplusAllowance, _terminal.FEE(), JBConstants.MAX_FEE);
             assertEq(_usdcToken.balanceOf(_beneficiary), _beneficiaryUsdcBalance);
             assertEq(
                 jbTerminalStore().balanceOf(address(_terminal2), _projectId, address(_usdcToken)),
@@ -2152,7 +2143,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             if (_nativeCurrencyPayoutLimit <= _nativePayAmount && _nativeCurrencyPayoutLimit != 0) {
                 // Make sure the project owner received the funds that were paid out.
                 _projectOwnerNativeBalance =
-                    (_nativeCurrencyPayoutLimit * JBConstants.MAX_FEE) / (_terminal.FEE() + JBConstants.MAX_FEE);
+                    _nativeCurrencyPayoutLimit - _nativeCurrencyPayoutLimit * _terminal.FEE() / JBConstants.MAX_FEE;
                 assertEq(_projectOwner.balance, _projectOwnerNativeBalance);
                 assertEq(
                     jbTerminalStore().balanceOf(address(_terminal), _projectId, JBConstants.NATIVE_TOKEN),
@@ -2211,7 +2202,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
             if (_usdCurrencyPayoutLimit <= _usdcPayAmount && _usdCurrencyPayoutLimit != 0) {
                 // Make sure the project owner received the funds that were paid out.
                 _projectOwnerUsdcBalance =
-                    (_usdCurrencyPayoutLimit * JBConstants.MAX_FEE) / (_terminal.FEE() + JBConstants.MAX_FEE);
+                    _usdCurrencyPayoutLimit - _usdCurrencyPayoutLimit * _terminal.FEE() / JBConstants.MAX_FEE;
                 assertEq(_usdcToken.balanceOf(_projectOwner), _projectOwnerUsdcBalance);
                 assertEq(
                     jbTerminalStore().balanceOf(address(_terminal2), _projectId, address(_usdcToken)),
@@ -2381,8 +2372,7 @@ contract TestAccessToFunds_Local is TestBaseWorkflow {
                     _usdcSurplus - _usdcReclaimAmount
                 );
 
-                uint256 _usdcFeeAmount = _usdcReclaimAmount
-                    - _usdcReclaimAmount * JBConstants.MAX_FEE / (_terminal.FEE() + JBConstants.MAX_FEE);
+                uint256 _usdcFeeAmount = _usdcReclaimAmount * _terminal.FEE() / JBConstants.MAX_FEE;
 
                 _beneficiaryUsdcBalance += _usdcReclaimAmount - _usdcFeeAmount;
                 assertEq(_usdcToken.balanceOf(_beneficiary), _beneficiaryUsdcBalance);

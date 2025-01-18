@@ -210,7 +210,7 @@ contract TestCashOutTokensOf_Local is JBMultiTerminalSetup {
         mockExpect(address(feelessAddresses), abi.encodeCall(IJBFeelessAddresses.isFeeless, (_bene)), abi.encode(false));
 
         // get fee amount
-        uint256 tax = JBFees.feeAmountIn(reclaimAmount, 25); // 25 = default fee)
+        uint256 tax = JBFees.feeAmountFrom(reclaimAmount, 25); // 25 = default fee)
         uint256 transferredAmount = reclaimAmount - tax;
 
         // transfer reclaimed to beneficiary
@@ -424,7 +424,7 @@ contract TestCashOutTokensOf_Local is JBMultiTerminalSetup {
             abi.encode(false)
         );
 
-        uint256 hookTax = JBFees.feeAmountIn(_defaultAmount, 25);
+        uint256 hookTax = JBFees.feeAmountFrom(_defaultAmount, 25);
         uint256 passedAfterTax = _defaultAmount - hookTax;
 
         JBTokenAmount memory reclaimedAmount = JBTokenAmount(address(_mockToken2), 0, 0, reclaimAmount);

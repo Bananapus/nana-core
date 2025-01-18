@@ -232,8 +232,8 @@ contract TestSendPayoutsOf_Local is JBMultiTerminalSetup {
             _projectId,
             address(this),
             address(0),
-            97, // Amount that would have been transferred after fee.
-            3, // fee amount
+            98, // Amount that would have been transferred after fee.
+            2, // fee amount
             bytes(hex"5274afe70000000000000000000000000000000000000000000000000000000000000000"),
             address(this)
         );
