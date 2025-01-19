@@ -27,6 +27,7 @@ contract JBTokens is JBControlled, IJBTokens {
     error JBTokens_OverflowAlert(uint256 value, uint256 limit);
     error JBTokens_ProjectAlreadyHasToken(IJBToken token);
     error JBTokens_TokenAlreadyBeingUsed(uint256 projectId);
+    error JBTokens_TokenCantBeAdded(uint256 projectId);
     error JBTokens_TokenNotFound();
     error JBTokens_TokensMustHave18Decimals(uint256 decimals);
 
@@ -334,6 +335,9 @@ contract JBTokens is JBControlled, IJBTokens {
 
         // Can't change to a token that doesn't use 18 decimals.
         if (token.decimals() != 18) revert JBTokens_TokensMustHave18Decimals(token.decimals());
+
+        // Make sure the token can be added to the project its being added to.
+        if (!token.canBeAddedTo(projectId)) revert JBTokens_TokenCantBeAdded(projectId);
 
         // Store the new token.
         tokenOf[projectId] = token;
