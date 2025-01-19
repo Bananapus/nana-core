@@ -160,7 +160,7 @@ contract TestCashOut_Local is TestBaseWorkflow {
         assertEq(_grossCashedOut, _grossPerReclaimable);
 
         // Compute the fee taken.
-        uint256 _fee = _grossCashedOut - mulDiv(_grossCashedOut, 1_000_000_000, 25_000_000 + 1_000_000_000); // 2.5% fee
+        uint256 _fee = mulDiv(_grossCashedOut, 25_000_000, 1_000_000_000); // 2.5% fee
 
         // Compute the net amount received, still in project.
         uint256 _netReceived = _grossCashedOut - _fee;
@@ -181,7 +181,7 @@ contract TestCashOut_Local is TestBaseWorkflow {
         // Make sure the native token balance in terminal should be up to date (with 1 wei precision).
         assertApproxEqAbs(
             jbTerminalStore().balanceOf(address(_terminal), _projectId, JBConstants.NATIVE_TOKEN),
-            _nativeTerminalBalance - _nativeReclaimAmt - (_nativeReclaimAmt * 25 / 1000),
+            _nativeTerminalBalance - _grossCashedOut,
             1
         );
     }

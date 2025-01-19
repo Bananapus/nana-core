@@ -235,7 +235,7 @@ contract TestUseAllowanceOf_Local is JBMultiTerminalSetup {
             address(feelessAddresses), abi.encodeCall(IJBFeelessAddresses.isFeeless, (beneficiary)), abi.encode(false)
         );
 
-        mockExpect(mockToken, abi.encodeCall(IERC20.transfer, (beneficiary, 97)), abi.encode(true));
+        mockExpect(mockToken, abi.encodeCall(IERC20.transfer, (beneficiary, 98)), abi.encode(true));
 
         // call to find the primary terminal for fee processing
         mockExpect(
@@ -245,7 +245,7 @@ contract TestUseAllowanceOf_Local is JBMultiTerminalSetup {
         );
 
         JBTokenAmount memory tokenContext =
-            JBTokenAmount({token: mockToken, decimals: 18, currency: currencyId, value: 3});
+            JBTokenAmount({token: mockToken, decimals: 18, currency: currencyId, value: 2});
 
         // mock call to jbterminalstore
         mockExpect(
@@ -262,7 +262,7 @@ contract TestUseAllowanceOf_Local is JBMultiTerminalSetup {
         mockExpect(
             address(controller),
             abi.encodeCall(IJBController.mintTokensOf, (_projectId, 1, address(this), "", true)),
-            abi.encode(1)
+            abi.encode(2)
         );
 
         vm.expectEmit();
@@ -274,7 +274,7 @@ contract TestUseAllowanceOf_Local is JBMultiTerminalSetup {
             feeBeneficiary: address(this),
             amount: 100,
             amountPaidOut: 100,
-            netAmountPaidOut: 97,
+            netAmountPaidOut: 98,
             memo: "",
             caller: address(this)
         });

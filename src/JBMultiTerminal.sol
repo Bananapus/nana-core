@@ -552,7 +552,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             // This payout is eligible for a fee since the funds are leaving this contract and the split hook isn't a
             // feeless address.
             if (!_isFeeless(address(split.hook))) {
-                netPayoutAmount -= JBFees.feeAmountIn({amount: amount, feePercent: FEE});
+                netPayoutAmount -= JBFees.feeAmountFrom({amountBeforeFee: amount, feePercent: FEE});
             }
 
             // Create the context to send to the split hook.
@@ -585,7 +585,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             // This payout is eligible for a fee if the funds are leaving this contract and the receiving terminal isn't
             // a feelss address.
             if (terminal != this && !_isFeeless(address(terminal))) {
-                netPayoutAmount -= JBFees.feeAmountIn({amount: amount, feePercent: FEE});
+                netPayoutAmount -= JBFees.feeAmountFrom({amountBeforeFee: amount, feePercent: FEE});
             }
 
             // Send the `projectId` in the metadata as a referral.
@@ -622,7 +622,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             // This payout is eligible for a fee since the funds are leaving this contract and the recipient isn't a
             // feeless address.
             if (!_isFeeless(recipient)) {
-                netPayoutAmount -= JBFees.feeAmountIn({amount: amount, feePercent: FEE});
+                netPayoutAmount -= JBFees.feeAmountFrom({amountBeforeFee: amount, feePercent: FEE});
             }
 
             // If there's a beneficiary, send the funds directly to the beneficiary. Otherwise send to the
@@ -830,7 +830,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             _processFee({
                 projectId: projectId,
                 token: token,
-                amount: JBFees.feeAmountIn({amount: heldFee.amount, feePercent: FEE}),
+                amount: JBFees.feeAmountFrom({amountBeforeFee: heldFee.amount, feePercent: FEE}),
                 beneficiary: heldFee.beneficiary,
                 feeTerminal: feeTerminal,
                 wasHeld: true
@@ -1129,7 +1129,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             if (!_isFeeless(beneficiary) && cashOutTaxRate != 0) {
                 amountEligibleForFees += reclaimAmount;
                 // Subtract the fee for the reclaimed amount.
-                reclaimAmount -= JBFees.feeAmountIn({amount: reclaimAmount, feePercent: FEE});
+                reclaimAmount -= JBFees.feeAmountFrom({amountBeforeFee: reclaimAmount, feePercent: FEE});
             }
 
             // Subtract the fee from the reclaim amount.
@@ -1401,7 +1401,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             // Get the fee for the specified amount.
             uint256 specificationAmountFee = _isFeeless(address(specification.hook))
                 ? 0
-                : JBFees.feeAmountIn({amount: specification.amount, feePercent: FEE});
+                : JBFees.feeAmountFrom({amountBeforeFee: specification.amount, feePercent: FEE});
 
             // Add the specification's amount to the amount eligible for fees.
             if (specificationAmountFee != 0) {
@@ -1637,8 +1637,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
             if (leftoverAmount == 0) {
                 break;
             } else {
-                // Notice here we take `feeAmountIn` on the stored `.amount`.
-                uint256 feeAmount = JBFees.feeAmountIn({amount: heldFee.amount, feePercent: FEE});
+                // Notice here we take `feeAmountFrom` on the stored `.amount`.
+                uint256 feeAmount = JBFees.feeAmountFrom({amountBeforeFee: heldFee.amount, feePercent: FEE});
 
                 // Keep a reference to the amount from which the fee was taken.
                 uint256 amountPaidOut = heldFee.amount - feeAmount;
@@ -1652,8 +1652,8 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
                     // Move the start index forward to the held fee after the current one.
                     newStartIndex = startIndex + i + 1;
                 } else {
-                    // And here we overwrite with `feeAmountFrom` the `leftoverAmount`
-                    feeAmount = JBFees.feeAmountFrom({amount: leftoverAmount, feePercent: FEE});
+                    // And here we overwrite with `feeAmountResultingIn` the `leftoverAmount`
+                    feeAmount = JBFees.feeAmountResultingIn({amountAfterFee: leftoverAmount, feePercent: FEE});
 
                     // Get fee from `leftoverAmount`.
                     unchecked {
@@ -1740,8 +1740,9 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         // Send any leftover funds to the project owner and update the fee tracking accordingly.
         if (leftoverPayoutAmount != 0) {
             // Keep a reference to the fee for the leftover payout amount.
-            uint256 fee =
-                _isFeeless(projectOwner) ? 0 : JBFees.feeAmountIn({amount: leftoverPayoutAmount, feePercent: FEE});
+            uint256 fee = _isFeeless(projectOwner)
+                ? 0
+                : JBFees.feeAmountFrom({amountBeforeFee: leftoverPayoutAmount, feePercent: FEE});
 
             // Transfer the amount to the project owner.
             try this.executeTransferTo({addr: projectOwner, token: token, amount: leftoverPayoutAmount - fee}) {
@@ -1915,7 +1916,7 @@ contract JBMultiTerminal is JBPermissioned, ERC2771Context, IJBMultiTerminal {
         returns (uint256 feeAmount)
     {
         // Get a reference to the fee amount.
-        feeAmount = JBFees.feeAmountIn({amount: amount, feePercent: FEE});
+        feeAmount = JBFees.feeAmountFrom({amountBeforeFee: amount, feePercent: FEE});
 
         if (shouldHoldFees) {
             // Store the held fee.
