@@ -50,7 +50,7 @@ contract Deploy is Script, Sphinx {
         MANAGER = safeAddress();
         // NOTICE: THIS IS FOR TESTNET ONLY! REPLACE!
         // TEMP set to be the *testing* safe for the nana-fee-project
-        FEE_PROJECT_OWNER = 0x67AB04E9a0D2cc7cD63527D8013f0B1E4b1FA2BB;
+        FEE_PROJECT_OWNER = safeAddress();
 
         // Deploy the protocol.
         deploy();
