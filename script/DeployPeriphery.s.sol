@@ -12,6 +12,7 @@ import {JBProjects} from "src/JBProjects.sol";
 import {JBPrices} from "src/JBPrices.sol";
 import {JBDeadline3Days} from "src/periphery/JBDeadline3Days.sol";
 import {JBDeadline7Days} from "src/periphery/JBDeadline7Days.sol";
+import {JBMatchingPriceFeed} from "src/periphery/JBMatchingPriceFeed.sol";
 import {JBChainlinkV3PriceFeed, AggregatorV3Interface} from "src/JBChainlinkV3PriceFeed.sol";
 import {JBChainlinkV3SequencerPriceFeed} from "src/JBChainlinkV3SequencerPriceFeed.sol";
 import {JBRulesets} from "src/JBRulesets.sol";
@@ -55,6 +56,7 @@ contract DeployPeriphery is Script, Sphinx {
     function deploy() public sphinx {
         // Deploy the ETH/USD price feed.
         IJBPriceFeed feed;
+        IJBPriceFeed matchingPriceFeed = new JBMatchingPriceFeed();
 
         // Perform the deploy for L1(s).
         if (block.chainid == 11_155_111) {
@@ -85,7 +87,12 @@ contract DeployPeriphery is Script, Sphinx {
             feed = new JBChainlinkV3PriceFeed(source, 3600 seconds);
         }
 
-        core.prices.addPriceFeedFor(0, uint160(JBConstants.NATIVE_TOKEN), JBCurrencyIds.USD, feed);
+        core.prices.addPriceFeedFor(0, uint32(uint160(JBConstants.NATIVE_TOKEN)), JBCurrencyIds.USD, feed);
+
+        // If the native asset for this chain is ether, then the conversion from native asset to ether is 1:1.
+        // NOTE: We need to refactor this the moment we add a chain where its native token is *NOT* ether.
+        // As otherwise prices for the `NATIVE_TOKEN` will be incorrect!
+        core.prices.addPriceFeedFor(0, uint32(uint160(JBConstants.NATIVE_TOKEN)), JBCurrencyIds.ETH, matchingPriceFeed);
 
         // Deploy the JBDeadlines
         JBDeadline3Days deadline3Days = new JBDeadline3Days{salt: DEADLINES_SALT}();
