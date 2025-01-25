@@ -14,7 +14,7 @@
           "0x52b76eA545f4779620A666493e885CE20Fda9037",
           "0xba5ed94ab173e1242638F28d1449b24F1A883292"
         ],
-        "threshold": "2",
+        "threshold": "1",
         "saltNonce": "1"
       }
     },
@@ -29,7 +29,7 @@
           "0x52b76eA545f4779620A666493e885CE20Fda9037",
           "0xba5ed94ab173e1242638F28d1449b24F1A883292"
         ],
-        "threshold": "2",
+        "threshold": "1",
         "saltNonce": "1"
       }
     }
