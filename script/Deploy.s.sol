@@ -35,7 +35,7 @@ contract Deploy is Script, Sphinx {
 
     /// @notice The nonce that gets used across all chains to sync deployment addresses and allow for new deployments of
     /// the same bytecode.
-    uint256 private CORE_DEPLOYMENT_NONCE = 12;
+    uint256 private CORE_DEPLOYMENT_NONCE = 14;
 
     function configureSphinx() public override {
         // TODO: Update to contain JB Emergency Developers
@@ -50,7 +50,7 @@ contract Deploy is Script, Sphinx {
         MANAGER = safeAddress();
         // NOTICE: THIS IS FOR TESTNET ONLY! REPLACE!
         // TEMP set to be the *testing* safe for the nana-fee-project
-        FEE_PROJECT_OWNER = 0x67AB04E9a0D2cc7cD63527D8013f0B1E4b1FA2BB;
+        FEE_PROJECT_OWNER = safeAddress();
 
         // Deploy the protocol.
         deploy();
