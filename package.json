@@ -1,6 +1,6 @@
 {
   "name": "@bananapus/core",
-  "version": "0.0.39",
+  "version": "0.0.40",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -26,6 +26,6 @@
     "@uniswap/permit2": "github:Uniswap/permit2"
   },
   "devDependencies": {
-    "@sphinx-labs/plugins": "^0.33.0"
+    "@sphinx-labs/plugins": "^0.33.1"
   }
 }
