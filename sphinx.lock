@@ -3,51 +3,6 @@
   "format": "sphinx-lock-1.0.0",
   "orgId": "ea165b21-7cdc-4d7b-be59-ecdd4c26bee4",
   "projects": {
-    "revnet-core-testnet": {
-      "projectId": "bedd4475-2c93-439c-8d60-5e2763cea01d",
-      "projectName": "revnet-core-testnet",
-      "defaultSafe": {
-        "safeName": "core-test-safe",
-        "owners": [
-          "0x8063549C1b5163931283e76785cF11e56DFdDC3a",
-          "0x7f75Ee000C7178D68Be4cb50243fC438F967e263",
-          "0x52b76eA545f4779620A666493e885CE20Fda9037",
-          "0xba5ed94ab173e1242638F28d1449b24F1A883292"
-        ],
-        "threshold": "1",
-        "saltNonce": "1"
-      }
-    },
-    "nana-fee-project": {
-      "projectId": "32afc9bc-f0d2-4c9c-ab57-d2b81fb6e8c4",
-      "projectName": "nana-fee-project",
-      "defaultSafe": {
-        "safeName": "core-test-safe",
-        "owners": [
-          "0x8063549C1b5163931283e76785cF11e56DFdDC3a",
-          "0x7f75Ee000C7178D68Be4cb50243fC438F967e263",
-          "0x52b76eA545f4779620A666493e885CE20Fda9037",
-          "0xba5ed94ab173e1242638F28d1449b24F1A883292"
-        ],
-        "threshold": "1",
-        "saltNonce": "1"
-      }
-    },
-    "nana-swap-terminal-testnet": {
-      "projectId": "61d6f98f-8817-48af-bce6-e372aa82eead",
-      "projectName": "nana-swap-terminal-testnet",
-      "defaultSafe": {
-        "safeName": "core-test-safe",
-        "owners": [
-          "0x8063549C1b5163931283e76785cF11e56DFdDC3a",
-          "0x7f75Ee000C7178D68Be4cb50243fC438F967e263",
-          "0x52b76eA545f4779620A666493e885CE20Fda9037",
-          "0xba5ed94ab173e1242638F28d1449b24F1A883292"
-        ],
-        "threshold": "1",
-        "saltNonce": "1"
-      }
-    },
     "bannyverse-core-testnet": {
       "projectId": "489741d5-1d97-42ee-a355-038ed56b1696",
       "projectName": "bannyverse-core-testnet",
@@ -63,39 +18,9 @@
         "saltNonce": "1"
       }
     },
-    "croptop-core-testnet": {
-      "projectId": "cbfd9f35-b82e-4eb6-acbd-1f8118122fc0",
-      "projectName": "croptop-core-testnet",
-      "defaultSafe": {
-        "safeName": "core-test-safe",
-        "owners": [
-          "0x8063549C1b5163931283e76785cF11e56DFdDC3a",
-          "0x7f75Ee000C7178D68Be4cb50243fC438F967e263",
-          "0x52b76eA545f4779620A666493e885CE20Fda9037",
-          "0xba5ed94ab173e1242638F28d1449b24F1A883292"
-        ],
-        "threshold": "1",
-        "saltNonce": "1"
-      }
-    },
-    "nana-core-testnet": {
-      "projectId": "e45ec646-f618-41fa-adb4-d4f5e5c17bf4",
-      "projectName": "nana-core-testnet",
-      "defaultSafe": {
-        "safeName": "core-test-safe",
-        "owners": [
-          "0x8063549C1b5163931283e76785cF11e56DFdDC3a",
-          "0x7f75Ee000C7178D68Be4cb50243fC438F967e263",
-          "0x52b76eA545f4779620A666493e885CE20Fda9037",
-          "0xba5ed94ab173e1242638F28d1449b24F1A883292"
-        ],
-        "threshold": "1",
-        "saltNonce": "1"
-      }
-    },
-    "nana-address-registry-testnet": {
-      "projectId": "30294927-9380-442f-9e6f-9caf60fa509b",
-      "projectName": "nana-address-registry-testnet",
+    "revnet-core-testnet": {
+      "projectId": "bedd4475-2c93-439c-8d60-5e2763cea01d",
+      "projectName": "revnet-core-testnet",
       "defaultSafe": {
         "safeName": "core-test-safe",
         "owners": [
@@ -123,6 +48,36 @@
         "saltNonce": "1"
       }
     },
+    "nana-address-registry-testnet": {
+      "projectId": "30294927-9380-442f-9e6f-9caf60fa509b",
+      "projectName": "nana-address-registry-testnet",
+      "defaultSafe": {
+        "safeName": "core-test-safe",
+        "owners": [
+          "0x8063549C1b5163931283e76785cF11e56DFdDC3a",
+          "0x7f75Ee000C7178D68Be4cb50243fC438F967e263",
+          "0x52b76eA545f4779620A666493e885CE20Fda9037",
+          "0xba5ed94ab173e1242638F28d1449b24F1A883292"
+        ],
+        "threshold": "1",
+        "saltNonce": "1"
+      }
+    },
+    "nana-fee-project": {
+      "projectId": "32afc9bc-f0d2-4c9c-ab57-d2b81fb6e8c4",
+      "projectName": "nana-fee-project",
+      "defaultSafe": {
+        "safeName": "core-test-safe",
+        "owners": [
+          "0x8063549C1b5163931283e76785cF11e56DFdDC3a",
+          "0x7f75Ee000C7178D68Be4cb50243fC438F967e263",
+          "0x52b76eA545f4779620A666493e885CE20Fda9037",
+          "0xba5ed94ab173e1242638F28d1449b24F1A883292"
+        ],
+        "threshold": "1",
+        "saltNonce": "1"
+      }
+    },
     "nana-suckers-testnet": {
       "projectId": "7ca25001-6003-4255-becf-f1fb5a5ae548",
       "projectName": "nana-suckers-testnet",
@@ -138,9 +93,54 @@
         "saltNonce": "1"
       }
     },
+    "nana-core-testnet": {
+      "projectId": "e45ec646-f618-41fa-adb4-d4f5e5c17bf4",
+      "projectName": "nana-core-testnet",
+      "defaultSafe": {
+        "safeName": "core-test-safe",
+        "owners": [
+          "0x8063549C1b5163931283e76785cF11e56DFdDC3a",
+          "0x7f75Ee000C7178D68Be4cb50243fC438F967e263",
+          "0x52b76eA545f4779620A666493e885CE20Fda9037",
+          "0xba5ed94ab173e1242638F28d1449b24F1A883292"
+        ],
+        "threshold": "1",
+        "saltNonce": "1"
+      }
+    },
+    "nana-swap-terminal-testnet": {
+      "projectId": "61d6f98f-8817-48af-bce6-e372aa82eead",
+      "projectName": "nana-swap-terminal-testnet",
+      "defaultSafe": {
+        "safeName": "core-test-safe",
+        "owners": [
+          "0x8063549C1b5163931283e76785cF11e56DFdDC3a",
+          "0x7f75Ee000C7178D68Be4cb50243fC438F967e263",
+          "0x52b76eA545f4779620A666493e885CE20Fda9037",
+          "0xba5ed94ab173e1242638F28d1449b24F1A883292"
+        ],
+        "threshold": "1",
+        "saltNonce": "1"
+      }
+    },
     "nana-721-hook-testnet": {
       "projectId": "aeb85a70-c28c-488c-91c5-94c9778ae26e",
       "projectName": "nana-721-hook-testnet",
+      "defaultSafe": {
+        "safeName": "core-test-safe",
+        "owners": [
+          "0x8063549C1b5163931283e76785cF11e56DFdDC3a",
+          "0x7f75Ee000C7178D68Be4cb50243fC438F967e263",
+          "0x52b76eA545f4779620A666493e885CE20Fda9037",
+          "0xba5ed94ab173e1242638F28d1449b24F1A883292"
+        ],
+        "threshold": "1",
+        "saltNonce": "1"
+      }
+    },
+    "croptop-core-testnet": {
+      "projectId": "cbfd9f35-b82e-4eb6-acbd-1f8118122fc0",
+      "projectName": "croptop-core-testnet",
       "defaultSafe": {
         "safeName": "core-test-safe",
         "owners": [
