@@ -4,3 +4,4 @@
 [submodule "lib/sphinx"]
 	path = lib/sphinx
 	url = https://github.com/sphinx-labs/sphinx
+	branch = v0.23.0
