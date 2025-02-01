@@ -161,12 +161,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
         // Resolve the struct for the latest ruleset.
         JBRuleset memory ruleset = _getStructFor(projectId, rulesetId);
 
-        return _approvalStatusOf({
-            projectId: projectId,
-            rulesetId: ruleset.id,
-            start: ruleset.start,
-            approvalHookRulesetId: ruleset.basedOnId
-        });
+        return _approvalStatusOf({projectId: projectId, ruleset: ruleset, approvalHookRulesetId: ruleset.basedOnId});
     }
 
     /// @notice The ruleset that is currently active for the specified project.
@@ -187,7 +182,8 @@ contract JBRulesets is JBControlled, IJBRulesets {
             ruleset = _getStructFor(projectId, rulesetId);
 
             // Get a reference to the approval status.
-            JBApprovalStatus approvalStatus = _approvalStatusOf(projectId, ruleset);
+            JBApprovalStatus approvalStatus =
+                _approvalStatusOf({projectId: projectId, ruleset: ruleset, approvalHookRulesetId: ruleset.basedOnId});
 
             // Check to see if this ruleset's approval hook is approved if it exists.
             // If so, return it.
@@ -212,7 +208,8 @@ contract JBRulesets is JBControlled, IJBRulesets {
             ruleset = _getStructFor(projectId, rulesetId);
 
             // Get a reference to the approval status.
-            JBApprovalStatus approvalStatus = _approvalStatusOf(projectId, ruleset);
+            JBApprovalStatus approvalStatus =
+                _approvalStatusOf({projectId: projectId, ruleset: ruleset, approvalHookRulesetId: ruleset.basedOnId});
 
             // While the ruleset has a approval hook that isn't approved or if it hasn't yet started, get a reference to
             // the ruleset that the latest is based on, which has the latest approved configuration.
@@ -221,8 +218,12 @@ contract JBRulesets is JBControlled, IJBRulesets {
                     || block.timestamp < ruleset.start
             ) {
                 rulesetId = ruleset.basedOnId;
-                ruleset = _getStructFor(projectId, rulesetId);
-                approvalStatus = _approvalStatusOf(projectId, ruleset);
+                ruleset = _getStructFor({projectId: projectId, rulesetId: rulesetId});
+                approvalStatus = _approvalStatusOf({
+                    projectId: projectId,
+                    ruleset: ruleset,
+                    approvalHookRulesetId: ruleset.basedOnId
+                });
             }
         }
 
@@ -269,12 +270,8 @@ contract JBRulesets is JBControlled, IJBRulesets {
         ruleset = _getStructFor(projectId, rulesetId);
 
         // Resolve the approval status.
-        approvalStatus = _approvalStatusOf({
-            projectId: projectId,
-            rulesetId: ruleset.id,
-            start: ruleset.start,
-            approvalHookRulesetId: ruleset.basedOnId
-        });
+        approvalStatus =
+            _approvalStatusOf({projectId: projectId, ruleset: ruleset, approvalHookRulesetId: ruleset.basedOnId});
     }
 
     /// @notice The ruleset that's up next for a project.
@@ -298,7 +295,8 @@ contract JBRulesets is JBControlled, IJBRulesets {
             ruleset = _getStructFor(projectId, upcomingApprovableRulesetId);
 
             // Get a reference to the approval status.
-            approvalStatus = _approvalStatusOf(projectId, ruleset);
+            approvalStatus =
+                _approvalStatusOf({projectId: projectId, ruleset: ruleset, approvalHookRulesetId: ruleset.basedOnId});
 
             // If the approval hook is empty, expects approval, or has approved the ruleset, return it.
             if (
@@ -326,7 +324,8 @@ contract JBRulesets is JBControlled, IJBRulesets {
         if (ruleset.duration == 0) return _getStructFor(0, 0);
 
         // Get a reference to the approval status.
-        approvalStatus = _approvalStatusOf(projectId, ruleset);
+        approvalStatus =
+            _approvalStatusOf({projectId: projectId, ruleset: ruleset, approvalHookRulesetId: ruleset.basedOnId});
 
         // Check to see if this ruleset's approval hook hasn't failed.
         // If so, return a ruleset based on it.
@@ -503,29 +502,14 @@ contract JBRulesets is JBControlled, IJBRulesets {
     // -------------------------- internal views ------------------------- //
     //*********************************************************************//
 
-    /// @notice The approval status of a given project and ruleset struct according to the relevant approval hook.
-    /// @param projectId The ID of the project that the ruleset belongs to.
-    /// @param ruleset The ruleset to get an approval flag for.
-    /// @return The approval status of the project's ruleset.
-    function _approvalStatusOf(uint256 projectId, JBRuleset memory ruleset) internal view returns (JBApprovalStatus) {
-        return _approvalStatusOf({
-            projectId: projectId,
-            rulesetId: ruleset.id,
-            start: ruleset.start,
-            approvalHookRulesetId: ruleset.basedOnId
-        });
-    }
-
     /// @notice The approval status of a given ruleset (ID) for a given project (ID).
     /// @param projectId The ID of the project the ruleset belongs to.
-    /// @param rulesetId The ID of the ruleset to get the approval status of.
-    /// @param start The start time of the ruleset to get the approval status of.
+    /// @param ruleset The ruleset to get the approval status of.
     /// @param approvalHookRulesetId The ID of the ruleset with the approval hook that should be checked against.
     /// @return The approval status of the project.
     function _approvalStatusOf(
         uint256 projectId,
-        uint256 rulesetId,
-        uint256 start,
+        JBRuleset memory ruleset,
         uint256 approvalHookRulesetId
     )
         internal
@@ -546,7 +530,7 @@ contract JBRulesets is JBControlled, IJBRulesets {
 
         // Return the approval hook's approval status.
         // slither-disable-next-line calls-loop
-        return approvalHookRuleset.approvalHook.approvalStatusOf(projectId, rulesetId, start);
+        return approvalHookRuleset.approvalHook.approvalStatusOf({projectId: projectId, ruleset: ruleset});
     }
 
     /// @notice The ID of the ruleset which has started and hasn't expired yet, whether or not it has been approved, for
@@ -947,7 +931,11 @@ contract JBRulesets is JBControlled, IJBRulesets {
         JBRuleset memory baseRuleset = _getStructFor(projectId, latestId);
 
         // Get a reference to the approval status.
-        JBApprovalStatus approvalStatus = _approvalStatusOf(projectId, baseRuleset);
+        JBApprovalStatus approvalStatus = _approvalStatusOf({
+            projectId: projectId,
+            ruleset: baseRuleset,
+            approvalHookRulesetId: baseRuleset.basedOnId
+        });
 
         // If the base ruleset has started but wasn't approved if a approval hook exists
         // OR it hasn't started but is currently approved

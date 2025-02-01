@@ -806,8 +806,19 @@ contract TestRulesetQueuing_Local is TestBaseWorkflow {
         _duration = bound(_duration, 1, block.timestamp);
 
         JBDeadline deadline = new JBDeadline(_duration);
+        JBRuleset memory ruleset = JBRuleset({
+            cycleNumber: 1,
+            id: _rulesetId,
+            basedOnId: 0,
+            start: _start,
+            duration: 0,
+            weight: 0,
+            weightCutPercent: 0,
+            approvalHook: IJBRulesetApprovalHook(address(0)),
+            metadata: 0
+        });
 
-        JBApprovalStatus _currentStatus = deadline.approvalStatusOf(1, _rulesetId, _start); // 1 is the `projectId`,
+        JBApprovalStatus _currentStatus = deadline.approvalStatusOf(1, _ruleset); // 1 is the `projectId`,
             // unused
 
         // Ruleset ID (timestamp) is after deadline -> approval hook failed.

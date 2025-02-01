@@ -5,6 +5,7 @@ import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
 import {JBApprovalStatus} from "./enums/JBApprovalStatus.sol";
 import {IJBRulesetApprovalHook} from "./interfaces/IJBRulesetApprovalHook.sol";
+import {JBRuleset} from "./structs/JBRuleset.sol";
 
 /// @notice `JBDeadline` is a ruleset approval hook which rejects rulesets if they are not queued at least `duration`
 /// seconds before the current ruleset ends. In other words, rulesets must be queued before the deadline to take effect.
@@ -34,31 +35,24 @@ contract JBDeadline is IJBRulesetApprovalHook {
     //*********************************************************************//
 
     /// @notice The approval status of a given ruleset.
-    /// @param rulesetId The ID of the ruleset to check the status of.
-    /// @param start The start timestamp of the ruleset to check the status of.
+    /// @param projectId The ID of the project that the ruleset belongs to.
+    /// @param ruleset The ruleset to check the status of.
     /// @return The ruleset's approval status.
-    function approvalStatusOf(
-        uint256,
-        uint256 rulesetId,
-        uint256 start
-    )
-        public
-        view
-        override
-        returns (JBApprovalStatus)
-    {
+    function approvalStatusOf(uint256, JBRuleset memory ruleset) public view override returns (JBApprovalStatus) {
         // The ruleset ID is the timestamp at which the ruleset was queued.
         // If the provided `rulesetId` timestamp is after the start timestamp, the ruleset has `Failed`.
-        if (rulesetId > start) return JBApprovalStatus.Failed;
+        if (ruleset.id > ruleset.start) return JBApprovalStatus.Failed;
 
         unchecked {
             // If there aren't enough seconds between the time the ruleset was queued and the time it starts, it has
             // `Failed`.
             // Otherwise, if there is still time before the deadline, the ruleset's status is `ApprovalExpected`.
             // If we've already passed the deadline, the ruleset is `Approved`.
-            return (start - rulesetId < DURATION)
+            return (ruleset.start - ruleset.id < DURATION)
                 ? JBApprovalStatus.Failed
-                : (block.timestamp + DURATION < start) ? JBApprovalStatus.ApprovalExpected : JBApprovalStatus.Approved;
+                : (block.timestamp + DURATION < ruleset.start)
+                    ? JBApprovalStatus.ApprovalExpected
+                    : JBApprovalStatus.Approved;
         }
     }
 
