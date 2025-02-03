@@ -117,6 +117,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     /// @param rulesets A contract storing and managing project rulesets.
     /// @param splits A contract that stores splits for each project.
     /// @param tokens A contract that manages token minting and burning.
+    /// @param trustedForwarder The trusted forwarder for the ERC2771Context.
     constructor(
         IJBDirectory directory,
         IJBFundAccessLimits fundAccessLimits,
