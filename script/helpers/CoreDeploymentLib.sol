@@ -16,6 +16,7 @@ import {JBFundAccessLimits} from "../../src/JBFundAccessLimits.sol";
 import {JBController} from "../../src/JBController.sol";
 import {JBTerminalStore} from "../../src/JBTerminalStore.sol";
 import {JBMultiTerminal} from "../../src/JBMultiTerminal.sol";
+import {ERC2771Forwarder} from "@openzeppelin/contracts/metatx/ERC2771Forwarder.sol";
 
 import {SphinxConstants, NetworkInfo} from "@sphinx-labs/contracts/SphinxConstants.sol";
 
@@ -32,12 +33,14 @@ struct CoreDeployment {
     JBFeelessAddresses feeless;
     JBFundAccessLimits fundAccess;
     JBTokens tokens;
+    address trustedForwarder;
 }
 
 library CoreDeploymentLib {
     // Cheat code address, 0x7109709ECfa91a80626fF3989D68f67F5b1DD12D.
     address internal constant VM_ADDRESS = address(uint160(uint256(keccak256("hevm cheat code"))));
     Vm internal constant vm = Vm(VM_ADDRESS);
+    string constant PROJECT_NAME = "nana-core-testnet";
 
     function getDeployment(string memory path) internal returns (CoreDeployment memory deployment) {
         // get chainId for which we need to get the deployment.
@@ -65,36 +68,35 @@ library CoreDeploymentLib {
         view
         returns (CoreDeployment memory deployment)
     {
-        deployment.permissions =
-            JBPermissions(_getDeploymentAddress(path, "nana-core-testnet", network_name, "JBPermissions"));
+        deployment.permissions = JBPermissions(_getDeploymentAddress(path, PROJECT_NAME, network_name, "JBPermissions"));
 
-        deployment.projects = JBProjects(_getDeploymentAddress(path, "nana-core-testnet", network_name, "JBProjects"));
+        deployment.projects = JBProjects(_getDeploymentAddress(path, PROJECT_NAME, network_name, "JBProjects"));
 
-        deployment.directory =
-            JBDirectory(_getDeploymentAddress(path, "nana-core-testnet", network_name, "JBDirectory"));
+        deployment.directory = JBDirectory(_getDeploymentAddress(path, PROJECT_NAME, network_name, "JBDirectory"));
 
-        deployment.splits = JBSplits(_getDeploymentAddress(path, "nana-core-testnet", network_name, "JBSplits"));
+        deployment.splits = JBSplits(_getDeploymentAddress(path, PROJECT_NAME, network_name, "JBSplits"));
 
-        deployment.rulesets = JBRulesets(_getDeploymentAddress(path, "nana-core-testnet", network_name, "JBRulesets"));
+        deployment.rulesets = JBRulesets(_getDeploymentAddress(path, PROJECT_NAME, network_name, "JBRulesets"));
 
-        deployment.controller =
-            JBController(_getDeploymentAddress(path, "nana-core-testnet", network_name, "JBController"));
+        deployment.controller = JBController(_getDeploymentAddress(path, PROJECT_NAME, network_name, "JBController"));
 
         deployment.terminal =
-            JBMultiTerminal(_getDeploymentAddress(path, "nana-core-testnet", network_name, "JBMultiTerminal"));
+            JBMultiTerminal(_getDeploymentAddress(path, PROJECT_NAME, network_name, "JBMultiTerminal"));
 
         deployment.terminalStore =
-            JBTerminalStore(_getDeploymentAddress(path, "nana-core-testnet", network_name, "JBTerminalStore"));
+            JBTerminalStore(_getDeploymentAddress(path, PROJECT_NAME, network_name, "JBTerminalStore"));
 
-        deployment.prices = JBPrices(_getDeploymentAddress(path, "nana-core-testnet", network_name, "JBPrices"));
+        deployment.prices = JBPrices(_getDeploymentAddress(path, PROJECT_NAME, network_name, "JBPrices"));
 
         deployment.feeless =
-            JBFeelessAddresses(_getDeploymentAddress(path, "nana-core-testnet", network_name, "JBFeelessAddresses"));
+            JBFeelessAddresses(_getDeploymentAddress(path, PROJECT_NAME, network_name, "JBFeelessAddresses"));
 
         deployment.fundAccess =
-            JBFundAccessLimits(_getDeploymentAddress(path, "nana-core-testnet", network_name, "JBFundAccessLimits"));
+            JBFundAccessLimits(_getDeploymentAddress(path, PROJECT_NAME, network_name, "JBFundAccessLimits"));
 
-        deployment.tokens = JBTokens(_getDeploymentAddress(path, "nana-core-testnet", network_name, "JBTokens"));
+        deployment.tokens = JBTokens(_getDeploymentAddress(path, PROJECT_NAME, network_name, "JBTokens"));
+
+        deployment.trustedForwarder = _getDeploymentAddress(path, PROJECT_NAME, network_name, "ERC2771Forwarder");
     }
 
     /// @notice Get the address of a contract that was deployed by the Deploy script.
