@@ -35,7 +35,7 @@ contract Deploy is Script, Sphinx {
 
     /// @notice The nonce that gets used across all chains to sync deployment addresses and allow for new deployments of
     /// the same bytecode.
-    uint256 private CORE_DEPLOYMENT_NONCE = 15;
+    uint256 private CORE_DEPLOYMENT_NONCE = 16;
 
     function configureSphinx() public override {
         // TODO: Update to contain JB Emergency Developers
