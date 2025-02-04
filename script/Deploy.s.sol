@@ -20,12 +20,15 @@ import {JBController} from "src/JBController.sol";
 import {JBTerminalStore} from "src/JBTerminalStore.sol";
 import {JBMultiTerminal} from "src/JBMultiTerminal.sol";
 
+import {ERC2771Forwarder} from "@openzeppelin/contracts/metatx/ERC2771Forwarder.sol";
+
 contract Deploy is Script, Sphinx {
     /// @notice The universal PERMIT2 address.
     IPermit2 private constant _PERMIT2 = IPermit2(0x000000000022D473030F116dDEE9F6B43aC78BA3);
 
     /// @notice The address that is allowed to forward calls to the terminal and controller on a users behalf.
-    address private constant TRUSTED_FORWARDER = 0xB2b5841DBeF766d4b521221732F9B618fCf34A87;
+    string private constant TRUSTED_FORWARDER_NAME = "Juicebox";
+    address private TRUSTED_FORWARDER;
 
     /// @notice The address that will manage the few privileged functions of the protocol.
     address private MANAGER;
@@ -35,7 +38,7 @@ contract Deploy is Script, Sphinx {
 
     /// @notice The nonce that gets used across all chains to sync deployment addresses and allow for new deployments of
     /// the same bytecode.
-    uint256 private CORE_DEPLOYMENT_NONCE = 16;
+    uint256 private CORE_DEPLOYMENT_NONCE = 17;
 
     function configureSphinx() public override {
         // TODO: Update to contain JB Emergency Developers
@@ -57,6 +60,9 @@ contract Deploy is Script, Sphinx {
     }
 
     function deploy() public sphinx {
+        TRUSTED_FORWARDER =
+            address(new ERC2771Forwarder{salt: keccak256(abi.encode(CORE_DEPLOYMENT_NONCE))}(TRUSTED_FORWARDER_NAME));
+
         JBPermissions permissions = new JBPermissions{salt: keccak256(abi.encode(CORE_DEPLOYMENT_NONCE))}();
         JBProjects projects =
             new JBProjects{salt: keccak256(abi.encode(CORE_DEPLOYMENT_NONCE))}(safeAddress(), safeAddress());
