@@ -27,7 +27,7 @@ contract TestGetDataFor_Local is JBTest {
         _;
     }
 
-    function test_GivenIdIsFound() external whenMetadataLengthGTMIN_METADATA_LENGTH view {
+    function test_GivenIdIsFound() external view whenMetadataLengthGTMIN_METADATA_LENGTH {
         // it will return found EQ true and targetData
 
         uint256 _data1 = 10_000_000;
@@ -56,7 +56,7 @@ contract TestGetDataFor_Local is JBTest {
         assertEq(abi.decode(_returnedData, (uint256)), _data1);
     }
 
-    function test_GivenIdIsNotFound() external whenMetadataLengthGTMIN_METADATA_LENGTH view {
+    function test_GivenIdIsNotFound() external view whenMetadataLengthGTMIN_METADATA_LENGTH {
         // it will return found EQ false and empty bytes targetData
 
         uint256 _data1 = 10_000_000;
