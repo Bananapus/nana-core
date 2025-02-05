@@ -86,7 +86,7 @@ contract TestPricePerUnitOf_Local is JBPricesSetup {
         _;
     }
 
-    function test_WhenPricingCurrencyIsTheSameAsUnitCurrency() external {
+    function test_WhenPricingCurrencyIsTheSameAsUnitCurrency() external view {
         // it should return 1 with requested decimals
 
         uint256 price = _prices.pricePerUnitOf(_projectId, _pricingCurrency, _pricingCurrency, 18);

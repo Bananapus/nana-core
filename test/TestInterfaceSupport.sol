@@ -7,7 +7,7 @@ import /* {*} from */ "./helpers/TestBaseWorkflow.sol";
 contract TestEIP165_Local is TestBaseWorkflow {
     bytes4 private constant _notSupportedInterface = 0xffffffff;
 
-    function testJBController() public {
+    function testJBController() public view {
         JBController _controller = jbController();
 
         // Should support these interfaces.
@@ -20,7 +20,7 @@ contract TestEIP165_Local is TestBaseWorkflow {
         assertTrue(!_controller.supportsInterface(_notSupportedInterface));
     }
 
-    function testJBMultiTerminal() public {
+    function testJBMultiTerminal() public view {
         JBMultiTerminal _terminal = jbMultiTerminal();
 
         // Should support these interfaces.
@@ -36,7 +36,7 @@ contract TestEIP165_Local is TestBaseWorkflow {
         assertTrue(!_terminal.supportsInterface(_notSupportedInterface));
     }
 
-    function testJBProjects() public {
+    function testJBProjects() public view {
         JBProjects _projects = jbProjects();
 
         // Should support these interfaces.

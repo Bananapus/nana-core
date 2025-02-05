@@ -50,7 +50,7 @@ contract TestSurplusAllowanceOf_Local is JBFundAccessSetup {
         assertEq(_returned, 1e18);
     }
 
-    function test_WhenItDoesntHaveTheSpecificSurplusConfigured() external {
+    function test_WhenItDoesntHaveTheSpecificSurplusConfigured() external view {
         // it will return 0
 
         uint256 _returned = _fundAccess.surplusAllowanceOf(

@@ -201,9 +201,6 @@ contract TestUseAllowanceOf_Local is JBMultiTerminalSetup {
             metadata: 0
         });
 
-        JBAccountingContext memory mockTokenContext =
-            JBAccountingContext({token: mockToken, decimals: 18, currency: currencyId});
-
         // mock call to tokens decimals()
         mockExpect(mockToken, abi.encodeCall(IERC20Metadata.decimals, ()), abi.encode(18));
 

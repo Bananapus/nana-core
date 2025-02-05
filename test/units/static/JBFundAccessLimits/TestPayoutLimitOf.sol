@@ -42,13 +42,13 @@ contract TestPayoutLimitOf_Local is JBFundAccessSetup {
         _fundAccess.setFundAccessLimitsFor(_projectId, _ruleset, _fundAccessLimitGroup);
     }
 
-    function test_WhenTheProjectHasTheSpecificPayoutLimit() external {
+    function test_WhenTheProjectHasTheSpecificPayoutLimit() external view {
         // it will return the uint256 payoutLimit
         uint256 _returnedLimit = _fundAccess.payoutLimitOf(_projectId, _ruleset, _terminal, _token, _currency);
         assertEq(_returnedLimit, _payoutLimit);
     }
 
-    function test_WhenTheProjectDoesntHaveTheSpecificPayoutLimit() external {
+    function test_WhenTheProjectDoesntHaveTheSpecificPayoutLimit() external view {
         // it will return 0
         uint256 empty = _fundAccess.payoutLimitOf(1, 1, address(1), address(2), 1);
         assertEq(empty, 0);

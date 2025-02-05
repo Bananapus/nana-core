@@ -72,7 +72,7 @@ contract TestSetCashOutTaxRateTo_Local is JBTest {
     }
 
     function testFuzzEnsureCorrectlyPackedBits_implementationIndependent(JBRulesetMetadata memory _rulesMetadata)
-        external
+        external pure
     {
         // Handle the unique constraints of the JBRulesetMetadata.
         {

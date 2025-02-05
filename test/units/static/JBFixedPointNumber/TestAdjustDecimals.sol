@@ -7,7 +7,7 @@ import {JBFixedPointNumber} from "../../../../src/libraries/JBFixedPointNumber.s
 contract TestAdjustDecimals_Local is JBTest {
     function setUp() external {}
 
-    function testWhenTargetEqDecimals() external {
+    function testWhenTargetEqDecimals() external pure {
         // it will return the value parameter provided
 
         uint256 returned = JBFixedPointNumber.adjustDecimals(1e18, 6, 6);

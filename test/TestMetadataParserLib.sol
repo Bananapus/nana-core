@@ -23,7 +23,7 @@ contract JBDelegateMetadataLib_Test_Local is Test {
     /**
      * @notice Test the parsing of arbitrary metadata.
      */
-    function test_parse() external {
+    function test_parse() external view {
         bytes4 _id1 = bytes4(0x11111111);
         bytes4 _id2 = bytes4(0x33333333);
 
@@ -57,7 +57,7 @@ contract JBDelegateMetadataLib_Test_Local is Test {
     /**
      * @notice Test creating and parsing bytes only metadata.
      */
-    function test_createAndParse_bytes() external {
+    function test_createAndParse_bytes() external view {
         bytes4[] memory _ids = new bytes4[](10);
         bytes[] memory _datas = new bytes[](10);
 
@@ -115,7 +115,7 @@ contract JBDelegateMetadataLib_Test_Local is Test {
     /**
      * @notice Test creating and parsing metadata of varying length.
      */
-    function test_createAndParse_mixed(uint256 _numberOfIds) external {
+    function test_createAndParse_mixed(uint256 _numberOfIds) external view {
         _numberOfIds = bound(_numberOfIds, 1, 15);
 
         bytes4[] memory _ids = new bytes4[](_numberOfIds);
@@ -159,7 +159,7 @@ contract JBDelegateMetadataLib_Test_Local is Test {
     /**
      * @notice Test adding `uint` to an `uint` metadata.
      */
-    function test_addToMetadata_uint(uint256 _numberOfIds) external {
+    function test_addToMetadata_uint(uint256 _numberOfIds) external view {
         _numberOfIds = bound(_numberOfIds, 1, 219);
 
         bytes4[] memory _ids = new bytes4[](_numberOfIds);
@@ -194,7 +194,7 @@ contract JBDelegateMetadataLib_Test_Local is Test {
     /**
      * @notice Test adding `bytes` to a `bytes` metadata.
      */
-    function test_addToMetadata_bytes() public {
+    function test_addToMetadata_bytes() public view {
         bytes4[] memory _ids = new bytes4[](2);
         bytes[] memory _datas = new bytes[](2);
 
@@ -236,7 +236,7 @@ contract JBDelegateMetadataLib_Test_Local is Test {
     /**
      * @notice Test adding `bytes` to an `uint` metadata.
      */
-    function test_addToMetadata_mixed(uint256 _numberOfIds) external {
+    function test_addToMetadata_mixed(uint256 _numberOfIds) external view {
         _numberOfIds = bound(_numberOfIds, 1, 100);
 
         bytes4[] memory _ids = new bytes4[](_numberOfIds);
@@ -272,7 +272,7 @@ contract JBDelegateMetadataLib_Test_Local is Test {
     /**
      * @notice Test adding `bytes32` and `uint` to an empty metadata.
      */
-    function test_addToMetadata_emptyInitialMetadata() external {
+    function test_addToMetadata_emptyInitialMetadata() external view {
         bytes memory _metadata;
 
         bytes memory _modifiedMetadata = parser.addDataToMetadata(
@@ -290,7 +290,7 @@ contract JBDelegateMetadataLib_Test_Local is Test {
     /**
      * @notice Test adding `bytes32` and `uint` to a metadata which contains something in the first bytes32
      */
-    function test_addToMetadata_preexistingMetadata(uint256 _reserved) external {
+    function test_addToMetadata_preexistingMetadata(uint256 _reserved) external view {
         bytes memory _metadata = abi.encode(_reserved);
 
         bytes memory _modifiedMetadata = parser.addDataToMetadata(
@@ -332,7 +332,7 @@ contract JBDelegateMetadataLib_Test_Local is Test {
     /**
      * @notice Test behaviour if the ID is not found in the lookup table.
      */
-    function test_idNotFound(uint256 _numberOfIds) public {
+    function test_idNotFound(uint256 _numberOfIds) public view {
         _numberOfIds = bound(_numberOfIds, 1, 100);
 
         bytes4[] memory _ids = new bytes4[](_numberOfIds);
@@ -354,7 +354,7 @@ contract JBDelegateMetadataLib_Test_Local is Test {
     /**
      * @notice Test behaviour if the metadata is empty or less than one ID long.
      */
-    function test_emptyMetadata(uint256 _length) public {
+    function test_emptyMetadata(uint256 _length) public view {
         _length = bound(_length, 0, 37);
 
         bytes memory _metadata;

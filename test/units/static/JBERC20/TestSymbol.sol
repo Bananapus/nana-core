@@ -22,7 +22,7 @@ contract TestSymbol_Local is JBERC20Setup {
         assertEq(_setSymbol, "NANA");
     }
 
-    function test_WhenASymbolIsNotSet() external {
+    function test_WhenASymbolIsNotSet() external view {
         // it will return an empty string
 
         string memory _setSymbol = _token.symbol();
