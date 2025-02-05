@@ -1,7 +1,7 @@
 {
 	"_format": "sphinx-sol-ct-artifact-1",
-	"merkleRoot": "0x1f2926da17406e09507841caac45ddded67c701d385353ca49cdfadef7986271",
-	"address": "0xf824367f87bf09ea945d85988f589ce580e3e4df",
+	"merkleRoot": "0x4d5a6fa0ab8571f2d2c5e615742ddf9dce99dfa4c9938c2a28724e879fb044a5",
+	"address": "0x408ea4e4627e1f3f81e2c2d52ff322bd02a5a520",
 	"sourceName": "src/periphery/JBMatchingPriceFeed.sol",
 	"contractName": "JBMatchingPriceFeed",
 	"chainId": "0x66eee",
@@ -32,9 +32,9 @@
 		}
 	],
 	"args": [],
-	"solcInputHash": "d00414ca8c552a4c90a379a4bd430f8f",
+	"solcInputHash": "6ecf2692c6618628afcdbb45502b4ac6",
 	"bytecode": "0x608060405234801561001057600080fd5b506101c4806100206000396000f3fe608060405234801561001057600080fd5b506004361061002b5760003560e01c8063d3f5c15f14610030575b600080fd5b61004361003e366004610068565b610055565b60405190815260200160405180910390f35b600061006282600a61017b565b92915050565b60006020828403121561007a57600080fd5b5035919050565b634e487b7160e01b600052601160045260246000fd5b600181815b808511156100d25781600019048211156100b8576100b8610081565b808516156100c557918102915b93841c939080029061009c565b509250929050565b6000826100e957506001610062565b816100f657506000610062565b816001811461010c576002811461011657610132565b6001915050610062565b60ff84111561012757610127610081565b50506001821b610062565b5060208310610133831016604e8410600b8410161715610155575081810a610062565b61015f8383610097565b806000190482111561017357610173610081565b029392505050565b600061018783836100da565b939250505056fea264697066735822122002c6c95b2d36fd07a6c7a97fb309f408c12de6c80d98f1b02090e54960777ed664736f6c63430008170033",
 	"deployedBytecode": "0x",
 	"metadata": "{\"compiler\":{\"version\":\"0.8.23+commit.f704f362\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"decimals\",\"type\":\"uint256\"}],\"name\":\"currentUnitPrice\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"src/periphery/JBMatchingPriceFeed.sol\":\"JBMatchingPriceFeed\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\"@arbitrum/=node_modules/@arbitrum/\",\"@bananapus/=node_modules/@bananapus/\",\"@chainlink/=node_modules/@chainlink/\",\"@eth-optimism/=node_modules/@eth-optimism/\",\"@offchainlabs/=node_modules/@offchainlabs/\",\"@openzeppelin/=node_modules/@openzeppelin/\",\"@prb/=node_modules/@prb/\",\"@scroll-tech/=node_modules/@scroll-tech/\",\"@sphinx-labs/contracts/=lib/sphinx/packages/contracts/contracts/foundry/\",\"@uniswap/=node_modules/@uniswap/\",\"@zksync/=node_modules/@zksync/\",\"ds-test/=lib/forge-std/lib/ds-test/src/\",\"forge-std/=lib/forge-std/src/\",\"hardhat/=node_modules/hardhat/\",\"solmate/=node_modules/solmate/\",\"sphinx/=lib/sphinx/packages/contracts/contracts/forge-std/src/\"]},\"sources\":{\"src/interfaces/IJBPriceFeed.sol\":{\"keccak256\":\"0x4bd84c0f1a5d4729ed709bcddd43f4c50ec4a165ece79780af8dce482ed07d4a\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://62bac4bfb6982fb002f620c77e5c445e62d50241a5aa64a07e51d929f5a42180\",\"dweb:/ipfs/QmWgJUDreVY2BuMX38a1iUUR5kNbMwGnKG3VvurB7oZtuM\"]},\"src/periphery/JBMatchingPriceFeed.sol\":{\"keccak256\":\"0xe0d4e4bf5c3e5ac788db71d812a31d1682fc1a1bb41a85929fe87a91da6401a8\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://ff6488b2915767d30f27a837331a29f44cd8f5a79a8a81ca684704645c5487c3\",\"dweb:/ipfs/QmbGCcGFWwSmgAt8qCtxBqXfWGu82GDCXY3Rc4aGFrvRD3\"]}},\"version\":1}",
-	"gitCommit": "f896003d62095a0614e77c293794a43d36d6bed3"
+	"gitCommit": "ab9c1d07e31df1ac84c6c16f14b2341d7c9acb08"
 }
