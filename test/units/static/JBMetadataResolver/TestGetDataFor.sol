@@ -10,7 +10,7 @@ contract TestGetDataFor_Local is JBTest {
 
     function setUp() external {}
 
-    function test_WhenMetadataLengthLTEQMIN_METADATA_LENGTH() external {
+    function test_WhenMetadataLengthLTEQMIN_METADATA_LENGTH() external view {
         // it will return false and empty bytes
 
         // malformed data only contains the padding intended for the protocol
@@ -27,7 +27,7 @@ contract TestGetDataFor_Local is JBTest {
         _;
     }
 
-    function test_GivenIdIsFound() external whenMetadataLengthGTMIN_METADATA_LENGTH {
+    function test_GivenIdIsFound() external view whenMetadataLengthGTMIN_METADATA_LENGTH {
         // it will return found EQ true and targetData
 
         uint256 _data1 = 10_000_000;
@@ -56,7 +56,7 @@ contract TestGetDataFor_Local is JBTest {
         assertEq(abi.decode(_returnedData, (uint256)), _data1);
     }
 
-    function test_GivenIdIsNotFound() external whenMetadataLengthGTMIN_METADATA_LENGTH {
+    function test_GivenIdIsNotFound() external view whenMetadataLengthGTMIN_METADATA_LENGTH {
         // it will return found EQ false and empty bytes targetData
 
         uint256 _data1 = 10_000_000;

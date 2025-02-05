@@ -9,7 +9,7 @@ contract TestSupportsInterface_Local is JBFeelessSetup {
         super.feelessAddressesSetup();
     }
 
-    function test_WhenItSupportsEitherIJBFeelessAddressesOrIERC165() external {
+    function test_WhenItSupportsEitherIJBFeelessAddressesOrIERC165() external view {
         // it should return true
         bool result1 = IERC165(address(_feelessAddresses)).supportsInterface(type(IJBFeelessAddresses).interfaceId);
         assertEq(result1, true);
@@ -18,7 +18,7 @@ contract TestSupportsInterface_Local is JBFeelessSetup {
         assertEq(result2, true);
     }
 
-    function test_WhenAskedIfSupportsNonIJBFeelessAddressesOrIERC165() external {
+    function test_WhenAskedIfSupportsNonIJBFeelessAddressesOrIERC165() external view {
         // it should return false
         bool result1 = IERC165(address(_feelessAddresses)).supportsInterface(0x12345678);
         assertEq(result1, false);

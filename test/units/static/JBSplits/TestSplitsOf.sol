@@ -14,7 +14,7 @@ contract TestSplitsOf_Local is JBSplitsSetup {
         // it should return the defined splits
     } */
 
-    function test_WhenThereAreNoSplitsDefined() external {
+    function test_WhenThereAreNoSplitsDefined() external view {
         // it should return the default splits for FALLBACK_RULESET_ID
 
         JBSplit[] memory _current = _splits.splitsOf(1, block.timestamp, 0);

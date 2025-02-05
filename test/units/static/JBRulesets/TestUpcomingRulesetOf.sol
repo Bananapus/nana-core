@@ -72,7 +72,7 @@ contract TestUpcomingOf_Local is JBRulesetsSetup {
         _packedWithApprovalHook = JBRulesetMetadataResolver.packRulesetMetadata(_metadataWithApprovalHook);
     }
 
-    function test_WhenLatestRulesetIdEQZero() external {
+    function test_WhenLatestRulesetIdEQZero() external view {
         // it will return an empty ruleset
 
         JBRuleset memory _upcoming = _rulesets.upcomingOf(_projectId);

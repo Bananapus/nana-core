@@ -47,7 +47,7 @@ contract TestTotalSupplyOf_Local is JBTokensSetup {
         assertEq(supply, _defaultAmount * 2);
     }
 
-    function test_WhenAProjectsTokenEQZeroAddressAndNoCreditSupply() external {
+    function test_WhenAProjectsTokenEQZeroAddressAndNoCreditSupply() external view {
         // it will return zero
 
         uint256 zeroSupply = _tokens.totalSupplyOf(_projectId);

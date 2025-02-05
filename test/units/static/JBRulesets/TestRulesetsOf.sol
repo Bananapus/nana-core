@@ -20,7 +20,7 @@ contract TestRulesetsOf_Local is JBRulesetsSetup {
         // it will return predecessors up to latest ruleset
     }
 
-    function test_WhenSizeIsZero() external {
+    function test_WhenSizeIsZero() external view {
         // it will return an empty array
 
         JBRuleset[] memory _rulesets = _rulesets.allOf(_projectId, 0, 0);

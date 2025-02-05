@@ -72,7 +72,7 @@ contract TestCurrentOf_Local is JBRulesetsSetup {
         _packedWithApprovalHook = JBRulesetMetadataResolver.packRulesetMetadata(_metadataWithApprovalHook);
     }
 
-    function test_WhenLatestrulesetOfProjectEQZero() external {
+    function test_WhenLatestrulesetOfProjectEQZero() external view {
         // it will return an empty ruleset
 
         JBRuleset memory _ruleset = _rulesets.currentOf(_projectId);

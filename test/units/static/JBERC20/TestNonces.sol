@@ -25,7 +25,7 @@ contract TestNonces_Local is JBERC20Setup {
         sigUtils = new SigUtils(_domain);
     }
 
-    function test_WhenAUserHasNotCalledPermit() external {
+    function test_WhenAUserHasNotCalledPermit() external view {
         // it will return zero
 
         uint256 _nonce = _token.nonces(_owner);

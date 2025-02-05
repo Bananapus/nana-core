@@ -241,7 +241,7 @@ contract TestLatestQueuedRulesetOf_Local is JBRulesetsSetup {
         assertEq(_latestRuleset.id, block.timestamp + 1); // second queued ruleset
     }
 
-    function test_WhenTheLatestRulesetIdEqZero() external {
+    function test_WhenTheLatestRulesetIdEqZero() external view {
         // it will return empty ruleset and JBApprovalStatus.Empty
 
         (JBRuleset memory _latestRuleset, JBApprovalStatus _latestApprovalStatus) = _rulesets.latestQueuedOf(_projectId);

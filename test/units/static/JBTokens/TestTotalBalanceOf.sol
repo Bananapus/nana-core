@@ -42,7 +42,7 @@ contract TestTotalBalanceOf_Local is JBTokensSetup {
         assertEq(totalBalance, _tokenBalance + _creditBalance);
     }
 
-    function test_WhenAProjectsTokenEQZeroAddressAndCreditBalanceEQZero() external {
+    function test_WhenAProjectsTokenEQZeroAddressAndCreditBalanceEQZero() external view {
         // it will return zero
 
         uint256 totalBalance = _tokens.totalBalanceOf(_holder, _projectId);

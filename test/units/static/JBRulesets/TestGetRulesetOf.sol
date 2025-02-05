@@ -85,7 +85,7 @@ contract TestGetRulesetOf_Local is JBRulesetsSetup {
         assertEq(_gottenRulesetOf.weight, _weight);
     }
 
-    function test_WhenRulesetIdEqZero() external {
+    function test_WhenRulesetIdEqZero() external view {
         // it will return an empty ruleset
 
         JBRuleset memory _gottenRulesetOf = _rulesets.getRulesetOf(_projectId, 0);

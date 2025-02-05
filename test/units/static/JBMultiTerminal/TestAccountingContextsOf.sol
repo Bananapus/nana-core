@@ -57,7 +57,7 @@ contract TestAccountingContextsOf_Local is JBMultiTerminalSetup {
         assertEq(_storedContexts[0].decimals, 6);
     }
 
-    function test_WhenAccountingContextsAreNotSet() external {
+    function test_WhenAccountingContextsAreNotSet() external view {
         // it will return an empty array
         JBAccountingContext[] memory _storedContexts = _terminal.accountingContextsOf(_projectId);
         assertEq(_storedContexts.length, 0);

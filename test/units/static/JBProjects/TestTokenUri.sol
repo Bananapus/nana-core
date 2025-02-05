@@ -13,7 +13,7 @@ contract TestTokenURI_Local is JBProjectsSetup {
         super.projectsSetup();
     }
 
-    function test_WhenTheresNoResolver() external {
+    function test_WhenTheresNoResolver() external view {
         // it will return empty string
         string memory uri = IERC721Metadata(address(_projects)).tokenURI(0);
 
