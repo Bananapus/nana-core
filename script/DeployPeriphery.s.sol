@@ -10,6 +10,8 @@ import {IJBPriceFeed} from "src/interfaces/IJBPriceFeed.sol";
 import {JBPermissions} from "src/JBPermissions.sol";
 import {JBProjects} from "src/JBProjects.sol";
 import {JBPrices} from "src/JBPrices.sol";
+import {JBDeadline3Hours} from "src/periphery/JBDeadline3Hours.sol";
+import {JBDeadline1Day} from "src/periphery/JBDeadline1Day.sol";
 import {JBDeadline3Days} from "src/periphery/JBDeadline3Days.sol";
 import {JBDeadline7Days} from "src/periphery/JBDeadline7Days.sol";
 import {JBMatchingPriceFeed} from "src/periphery/JBMatchingPriceFeed.sol";
@@ -33,7 +35,7 @@ contract DeployPeriphery is Script, Sphinx {
     /// @notice tracks the deployment of the core contracts for the chain we are deploying to.
     CoreDeployment core;
 
-    bytes32 private DEADLINES_SALT = keccak256("JBDeadlines0");
+    bytes32 private DEADLINES_SALT = keccak256("JBDeadlines");
 
     function configureSphinx() public override {
         // TODO: Update to contain JB Emergency Developers
@@ -43,7 +45,7 @@ contract DeployPeriphery is Script, Sphinx {
     }
 
     /// @notice Deploys the protocol.
-    function run() public sphinx {
+    function run() public {
         // Get the deployment addresses for the nana CORE for this chain.
         // We want to do this outside of the `sphinx` modifier.
         core = CoreDeploymentLib.getDeployment(vm.envOr("NANA_CORE_DEPLOYMENT_PATH", string("deployments/")));
@@ -94,7 +96,40 @@ contract DeployPeriphery is Script, Sphinx {
         core.prices.addPriceFeedFor(0, uint32(uint160(JBConstants.NATIVE_TOKEN)), JBCurrencyIds.ETH, matchingPriceFeed);
 
         // Deploy the JBDeadlines
-        new JBDeadline3Days{salt: DEADLINES_SALT}();
-        new JBDeadline7Days{salt: DEADLINES_SALT}();
+        if (!_isDeployed(DEADLINES_SALT, type(JBDeadline3Hours).creationCode, "")) {
+            new JBDeadline3Hours{salt: DEADLINES_SALT}();
+        }
+
+        if (!_isDeployed(DEADLINES_SALT, type(JBDeadline1Day).creationCode, "")) {
+            new JBDeadline1Day{salt: DEADLINES_SALT}();
+        }
+
+        if (!_isDeployed(DEADLINES_SALT, type(JBDeadline3Days).creationCode, "")) {
+            new JBDeadline3Days{salt: DEADLINES_SALT}();
+        }
+
+        if (!_isDeployed(DEADLINES_SALT, type(JBDeadline7Days).creationCode, "")) {
+            new JBDeadline7Days{salt: DEADLINES_SALT}();
+        }
+    }
+
+    function _isDeployed(
+        bytes32 salt,
+        bytes memory creationCode,
+        bytes memory arguments
+    )
+        internal
+        view
+        returns (bool)
+    {
+        address _deployedTo = vm.computeCreate2Address({
+            salt: salt,
+            initCodeHash: keccak256(abi.encodePacked(creationCode, arguments)),
+            // Arachnid/deterministic-deployment-proxy address.
+            deployer: address(0x4e59b44847b379578588920cA78FbF26c0B4956C)
+        });
+
+        // Return if code is already present at this address.
+        return address(_deployedTo).code.length != 0;
     }
 }
