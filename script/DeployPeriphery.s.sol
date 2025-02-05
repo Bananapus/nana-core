@@ -33,8 +33,7 @@ contract DeployPeriphery is Script, Sphinx {
     /// @notice tracks the deployment of the core contracts for the chain we are deploying to.
     CoreDeployment core;
 
-    uint256 private PERIPHERY_DEPLOYMENT_NONCE = 12;
-    bytes32 private DEADLINES_SALT = keccak256("JBDeadlines");
+    bytes32 private DEADLINES_SALT = keccak256("JBDeadlines0");
 
     function configureSphinx() public override {
         // TODO: Update to contain JB Emergency Developers
@@ -95,7 +94,7 @@ contract DeployPeriphery is Script, Sphinx {
         core.prices.addPriceFeedFor(0, uint32(uint160(JBConstants.NATIVE_TOKEN)), JBCurrencyIds.ETH, matchingPriceFeed);
 
         // Deploy the JBDeadlines
-        JBDeadline3Days deadline3Days = new JBDeadline3Days{salt: DEADLINES_SALT}();
-        JBDeadline7Days deadline7Days = new JBDeadline7Days{salt: DEADLINES_SALT}();
+        new JBDeadline3Days{salt: DEADLINES_SALT}();
+        new JBDeadline7Days{salt: DEADLINES_SALT}();
     }
 }
