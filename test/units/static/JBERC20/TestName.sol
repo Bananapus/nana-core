@@ -21,7 +21,7 @@ contract TestName_Local is JBERC20Setup {
         assertEq(_setName, "NANAPUS");
     }
 
-    function test_WhenANameIsNotSet() external {
+    function test_WhenANameIsNotSet() external view {
         // it will return an empty string
 
         string memory _storedName = _token.name();
