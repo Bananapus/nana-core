@@ -1,0 +1,314 @@
+{
+	"format": "sphinx-sol-ct-artifact-1",
+	"merkleRoot": "0x480e5f52168b7c6b39449d58afd7db4f283f8efc1ab64c8c682b924f69fce927",
+	"address": "0xf5ca295dc286a176e35ebb7833031fd95550eb14",
+	"sourceName": "src/JBPermissions.sol",
+	"contractName": "JBPermissions",
+	"chainId": "0x1",
+	"abi": [
+		{
+			"inputs": [],
+			"name": "WILDCARD_PROJECT_ID",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "operator",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "account",
+					"type": "address"
+				},
+				{
+					"internalType": "uint256",
+					"name": "projectId",
+					"type": "uint256"
+				},
+				{
+					"internalType": "uint256",
+					"name": "permissionId",
+					"type": "uint256"
+				},
+				{
+					"internalType": "bool",
+					"name": "includeRoot",
+					"type": "bool"
+				},
+				{
+					"internalType": "bool",
+					"name": "includeWildcardProjectId",
+					"type": "bool"
+				}
+			],
+			"name": "hasPermission",
+			"outputs": [
+				{
+					"internalType": "bool",
+					"name": "",
+					"type": "bool"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "operator",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "account",
+					"type": "address"
+				},
+				{
+					"internalType": "uint256",
+					"name": "projectId",
+					"type": "uint256"
+				},
+				{
+					"internalType": "uint256[]",
+					"name": "permissionIds",
+					"type": "uint256[]"
+				},
+				{
+					"internalType": "bool",
+					"name": "includeRoot",
+					"type": "bool"
+				},
+				{
+					"internalType": "bool",
+					"name": "includeWildcardProjectId",
+					"type": "bool"
+				}
+			],
+			"name": "hasPermissions",
+			"outputs": [
+				{
+					"internalType": "bool",
+					"name": "",
+					"type": "bool"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "operator",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "account",
+					"type": "address"
+				},
+				{
+					"internalType": "uint256",
+					"name": "projectId",
+					"type": "uint256"
+				}
+			],
+			"name": "permissionsOf",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "account",
+					"type": "address"
+				},
+				{
+					"components": [
+						{
+							"internalType": "address",
+							"name": "operator",
+							"type": "address"
+						},
+						{
+							"internalType": "uint64",
+							"name": "projectId",
+							"type": "uint64"
+						},
+						{
+							"internalType": "uint8[]",
+							"name": "permissionIds",
+							"type": "uint8[]"
+						}
+					],
+					"internalType": "struct JBPermissionsData",
+					"name": "permissionsData",
+					"type": "tuple"
+				}
+			],
+			"name": "setPermissionsFor",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"anonymous": false,
+			"inputs": [
+				{
+					"indexed": true,
+					"internalType": "address",
+					"name": "operator",
+					"type": "address"
+				},
+				{
+					"indexed": true,
+					"internalType": "address",
+					"name": "account",
+					"type": "address"
+				},
+				{
+					"indexed": true,
+					"internalType": "uint256",
+					"name": "projectId",
+					"type": "uint256"
+				},
+				{
+					"indexed": false,
+					"internalType": "uint8[]",
+					"name": "permissionIds",
+					"type": "uint8[]"
+				},
+				{
+					"indexed": false,
+					"internalType": "uint256",
+					"name": "packed",
+					"type": "uint256"
+				},
+				{
+					"indexed": false,
+					"internalType": "address",
+					"name": "caller",
+					"type": "address"
+				}
+			],
+			"name": "OperatorPermissionsSet",
+			"type": "event"
+		},
+		{
+			"inputs": [],
+			"name": "JBPermissions_CantSetRootPermissionForWildcardProject",
+			"type": "error"
+		},
+		{
+			"inputs": [],
+			"name": "JBPermissions_NoZeroPermission",
+			"type": "error"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint256",
+					"name": "permissionId",
+					"type": "uint256"
+				}
+			],
+			"name": "JBPermissions_PermissionIdOutOfBounds",
+			"type": "error"
+		},
+		{
+			"inputs": [],
+			"name": "JBPermissions_Unauthorized",
+			"type": "error"
+		}
+	],
+	"args": [],
+	"solcInputHash": "7c749753dd2355477991557166b5f6de",
+	"receipt": {
+		"type": "0x2",
+		"status": "0x1",
+		"cumulativeGasUsed": "0xa0a9b5",
+		"logs": [
+			{
+				"address": "0xa2ea7657440875bf916cbfc0cfa88f13e38ad463",
+				"topics": [
+					"0x572f161235911da04685a68c06adf558fc7e4a36909dca394650e0adc19cc93d",
+					"0x000000000000000000000000755ff2f75a0a586ecfa2b9a3c959cb662458a105",
+					"0x000000000000000000000000647b5cbcca959a5b3f85d513faa2ba015576d8e9",
+					"0x2f0bc9f079be10ba8e8ffcfac511b4f2828249920195d796003ccf38f991accc"
+				],
+				"data": "0x0000000000000000000000000000000000000000000000000000000000000000",
+				"blockHash": "0x547fc8de15c9084dcf339c2bb1d2b89099ef7f6e9ce4e9ad7c817bdc9d035fde",
+				"blockNumber": "0x14d9ae0",
+				"blockTimestamp": "0x67b29f3f",
+				"transactionHash": "0xf51c5facd712f5a8acbeacb641f1b66dd8a5845c2504311ca938d1f2c6d9b503",
+				"transactionIndex": "0x72",
+				"logIndex": "0xf9",
+				"removed": false
+			},
+			{
+				"address": "0x14293560a2dde4ffa136a647b7a2f927b0774ab6",
+				"topics": [
+					"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
+					"0x000000000000000000000000647b5cbcca959a5b3f85d513faa2ba015576d8e9"
+				],
+				"data": "0x",
+				"blockHash": "0x547fc8de15c9084dcf339c2bb1d2b89099ef7f6e9ce4e9ad7c817bdc9d035fde",
+				"blockNumber": "0x14d9ae0",
+				"blockTimestamp": "0x67b29f3f",
+				"transactionHash": "0xf51c5facd712f5a8acbeacb641f1b66dd8a5845c2504311ca938d1f2c6d9b503",
+				"transactionIndex": "0x72",
+				"logIndex": "0xfa",
+				"removed": false
+			},
+			{
+				"address": "0x647b5cbcca959a5b3f85d513faa2ba015576d8e9",
+				"topics": [
+					"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
+					"0x480e5f52168b7c6b39449d58afd7db4f283f8efc1ab64c8c682b924f69fce927"
+				],
+				"data": "0x0000000000000000000000000000000000000000000000000000000000000002",
+				"blockHash": "0x547fc8de15c9084dcf339c2bb1d2b89099ef7f6e9ce4e9ad7c817bdc9d035fde",
+				"blockNumber": "0x14d9ae0",
+				"blockTimestamp": "0x67b29f3f",
+				"transactionHash": "0xf51c5facd712f5a8acbeacb641f1b66dd8a5845c2504311ca938d1f2c6d9b503",
+				"transactionIndex": "0x72",
+				"logIndex": "0xfb",
+				"removed": false
+			}
+		],
+		"logsBloom": "0x00000000000010000000000000080000020000000000000000002000000000000000000000000000000000000040000000000004000000000000000000000000000000000000200000000000000000000000000000000000000000000000000080000000000000000800000000000000000000000000000000400000000000000800000000000000000104000000000000000000000000000020000000000000004800040000000000000000000000002202000001400000000000000004000000020002000000100000000000000000000000000000000000000000000200000000002000000000000000000000000200000000000080000000000000000000",
+		"transactionHash": "0xf51c5facd712f5a8acbeacb641f1b66dd8a5845c2504311ca938d1f2c6d9b503",
+		"transactionIndex": "0x72",
+		"blockHash": "0x547fc8de15c9084dcf339c2bb1d2b89099ef7f6e9ce4e9ad7c817bdc9d035fde",
+		"blockNumber": "0x14d9ae0",
+		"gasUsed": "0xa002f",
+		"effectiveGasPrice": "0x2f4cba92",
+		"from": "0x755ff2f75a0a586ecfa2b9a3c959cb662458a105",
+		"to": "0xa2ea7657440875bf916cbfc0cfa88f13e38ad463",
+		"contractAddress": null
+	},
+	"bytecode": "0x608060405234801561001057600080fd5b50610944806100206000396000f3fe608060405234801561001057600080fd5b50600436106100575760003560e01c8063348b684e1461005c578063449f24a414610084578063632af95f1461009957806380deb230146100ac5780638affd7eb146100ea575b600080fd5b61006f61006a366004610618565b6100f2565b60405190151581526020015b60405180910390f35b61009761009236600461067e565b61022e565b005b61006f6100a73660046106d3565b610407565b6100dc6100ba366004610795565b6000602081815293815260408082208552928152828120909352825290205481565b60405190815260200161007b565b6100dc600081565b600060ff84111561011e576040516311f31b1160e21b8152600481018590526024015b60405180910390fd5b82801561019d57506001600160a01b03878116600090815260208181526040808320938a16835292815282822088835290522054600190811c8116148061019d575081801561019d57506001600160a01b03878116600090815260208181526040808320938a16835292815282822082805290522054600190811c8116145b156101aa57506001610224565b6001600160a01b03878116600090815260208181526040808320938a16835292815282822088835290522054600190851c81161480610221575081801561022157506001600160a01b03878116600090815260208181526040808320938a16835292815282822082805290522054600190851c8116145b90505b9695505050505050565b600061024561024060408401846107d1565b610594565b905060018082160361026a57604051631d74279f60e31b815260040160405180910390fd5b336001600160a01b038416148015906102da5750600181811c811614806102aa5750600061029e6040840160208501610822565b67ffffffffffffffff16145b806102da57506102d833846102c56040860160208701610822565b67ffffffffffffffff16600180806100f2565b155b156102f857604051635b5fa6b760e11b815260040160405180910390fd5b806000806103096020860186610853565b6001600160a01b03166001600160a01b031681526020019081526020016000206000856001600160a01b03166001600160a01b0316815260200190815260200160002060008460200160208101906103619190610822565b67ffffffffffffffff168152602001908152602001600020819055508160200160208101906103909190610822565b67ffffffffffffffff166001600160a01b0384166103b16020850185610853565b6001600160a01b03167f5324a861114a736770617a7dad3321b8417dc39698b30adfade6d0367b2e5d596103e860408701876107d1565b86336040516103fa949392919061087f565b60405180910390a4505050565b600082801561048857506001600160a01b03888116600090815260208181526040808320938b16835292815282822089835290522054600190811c81161480610488575081801561048857506001600160a01b03888116600090815260208181526040808320938b16835292815282822082805290522054600190811c8116145b1561049557506001610589565b6001600160a01b03808916600090815260208181526040808320938b16835292815282822089835290529081205490836104d05760006104fd565b6001600160a01b03808b16600090815260208181526040808320938d168352928152828220828052905220545b905060005b8681101561058157600088888381811061051e5761051e6108dd565b90506020020135905060ff81111561054c576040516311f31b1160e21b815260048101829052602401610115565b600184821c8116141580156105665750600183821c811614155b15610578576000945050505050610589565b50600101610502565b506001925050505b979650505050505050565b6000805b828110156105e55760008484838181106105b4576105b46108dd565b90506020020160208101906105c991906108f3565b60ff169050806001901b83179250508080600101915050610598565b5092915050565b80356001600160a01b038116811461060357600080fd5b919050565b8035801515811461060357600080fd5b60008060008060008060c0878903121561063157600080fd5b61063a876105ec565b9550610648602088016105ec565b9450604087013593506060870135925061066460808801610608565b915061067260a08801610608565b90509295509295509295565b6000806040838503121561069157600080fd5b61069a836105ec565b9150602083013567ffffffffffffffff8111156106b657600080fd5b8301606081860312156106c857600080fd5b809150509250929050565b600080600080600080600060c0888a0312156106ee57600080fd5b6106f7886105ec565b9650610705602089016105ec565b955060408801359450606088013567ffffffffffffffff8082111561072957600080fd5b818a0191508a601f83011261073d57600080fd5b81358181111561074c57600080fd5b8b60208260051b850101111561076157600080fd5b60208301965080955050505061077960808901610608565b915061078760a08901610608565b905092959891949750929550565b6000806000606084860312156107aa57600080fd5b6107b3846105ec565b92506107c1602085016105ec565b9150604084013590509250925092565b6000808335601e198436030181126107e857600080fd5b83018035915067ffffffffffffffff82111561080357600080fd5b6020019150600581901b360382131561081b57600080fd5b9250929050565b60006020828403121561083457600080fd5b813567ffffffffffffffff8116811461084c57600080fd5b9392505050565b60006020828403121561086557600080fd5b61084c826105ec565b803560ff8116811461060357600080fd5b6060808252810184905260008560808301825b878110156108ba5760ff6108a58461086e565b16825260209283019290910190600101610892565b50602084019590955250506001600160a01b039190911660409091015292915050565b634e487b7160e01b600052603260045260246000fd5b60006020828403121561090557600080fd5b61084c8261086e56fea2646970667358221220aa954ffcf6da44a9b5f7d0c03f48cfe219ae4702268d1580aac65c5347a5d17664736f6c63430008170033",
+	"deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100575760003560e01c8063348b684e1461005c578063449f24a414610084578063632af95f1461009957806380deb230146100ac5780638affd7eb146100ea575b600080fd5b61006f61006a366004610618565b6100f2565b60405190151581526020015b60405180910390f35b61009761009236600461067e565b61022e565b005b61006f6100a73660046106d3565b610407565b6100dc6100ba366004610795565b6000602081815293815260408082208552928152828120909352825290205481565b60405190815260200161007b565b6100dc600081565b600060ff84111561011e576040516311f31b1160e21b8152600481018590526024015b60405180910390fd5b82801561019d57506001600160a01b03878116600090815260208181526040808320938a16835292815282822088835290522054600190811c8116148061019d575081801561019d57506001600160a01b03878116600090815260208181526040808320938a16835292815282822082805290522054600190811c8116145b156101aa57506001610224565b6001600160a01b03878116600090815260208181526040808320938a16835292815282822088835290522054600190851c81161480610221575081801561022157506001600160a01b03878116600090815260208181526040808320938a16835292815282822082805290522054600190851c8116145b90505b9695505050505050565b600061024561024060408401846107d1565b610594565b905060018082160361026a57604051631d74279f60e31b815260040160405180910390fd5b336001600160a01b038416148015906102da5750600181811c811614806102aa5750600061029e6040840160208501610822565b67ffffffffffffffff16145b806102da57506102d833846102c56040860160208701610822565b67ffffffffffffffff16600180806100f2565b155b156102f857604051635b5fa6b760e11b815260040160405180910390fd5b806000806103096020860186610853565b6001600160a01b03166001600160a01b031681526020019081526020016000206000856001600160a01b03166001600160a01b0316815260200190815260200160002060008460200160208101906103619190610822565b67ffffffffffffffff168152602001908152602001600020819055508160200160208101906103909190610822565b67ffffffffffffffff166001600160a01b0384166103b16020850185610853565b6001600160a01b03167f5324a861114a736770617a7dad3321b8417dc39698b30adfade6d0367b2e5d596103e860408701876107d1565b86336040516103fa949392919061087f565b60405180910390a4505050565b600082801561048857506001600160a01b03888116600090815260208181526040808320938b16835292815282822089835290522054600190811c81161480610488575081801561048857506001600160a01b03888116600090815260208181526040808320938b16835292815282822082805290522054600190811c8116145b1561049557506001610589565b6001600160a01b03808916600090815260208181526040808320938b16835292815282822089835290529081205490836104d05760006104fd565b6001600160a01b03808b16600090815260208181526040808320938d168352928152828220828052905220545b905060005b8681101561058157600088888381811061051e5761051e6108dd565b90506020020135905060ff81111561054c576040516311f31b1160e21b815260048101829052602401610115565b600184821c8116141580156105665750600183821c811614155b15610578576000945050505050610589565b50600101610502565b506001925050505b979650505050505050565b6000805b828110156105e55760008484838181106105b4576105b46108dd565b90506020020160208101906105c991906108f3565b60ff169050806001901b83179250508080600101915050610598565b5092915050565b80356001600160a01b038116811461060357600080fd5b919050565b8035801515811461060357600080fd5b60008060008060008060c0878903121561063157600080fd5b61063a876105ec565b9550610648602088016105ec565b9450604087013593506060870135925061066460808801610608565b915061067260a08801610608565b90509295509295509295565b6000806040838503121561069157600080fd5b61069a836105ec565b9150602083013567ffffffffffffffff8111156106b657600080fd5b8301606081860312156106c857600080fd5b809150509250929050565b600080600080600080600060c0888a0312156106ee57600080fd5b6106f7886105ec565b9650610705602089016105ec565b955060408801359450606088013567ffffffffffffffff8082111561072957600080fd5b818a0191508a601f83011261073d57600080fd5b81358181111561074c57600080fd5b8b60208260051b850101111561076157600080fd5b60208301965080955050505061077960808901610608565b915061078760a08901610608565b905092959891949750929550565b6000806000606084860312156107aa57600080fd5b6107b3846105ec565b92506107c1602085016105ec565b9150604084013590509250925092565b6000808335601e198436030181126107e857600080fd5b83018035915067ffffffffffffffff82111561080357600080fd5b6020019150600581901b360382131561081b57600080fd5b9250929050565b60006020828403121561083457600080fd5b813567ffffffffffffffff8116811461084c57600080fd5b9392505050565b60006020828403121561086557600080fd5b61084c826105ec565b803560ff8116811461060357600080fd5b6060808252810184905260008560808301825b878110156108ba5760ff6108a58461086e565b16825260209283019290910190600101610892565b50602084019590955250506001600160a01b039190911660409091015292915050565b634e487b7160e01b600052603260045260246000fd5b60006020828403121561090557600080fd5b61084c8261086e56fea2646970667358221220aa954ffcf6da44a9b5f7d0c03f48cfe219ae4702268d1580aac65c5347a5d17664736f6c63430008170033",
+	"metadata": "{\"compiler\":{\"version\":\"0.8.23+commit.f704f362\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"name\":\"JBPermissions_CantSetRootPermissionForWildcardProject\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"JBPermissions_NoZeroPermission\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"permissionId\",\"type\":\"uint256\"}],\"name\":\"JBPermissions_PermissionIdOutOfBounds\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"JBPermissions_Unauthorized\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint8[]\",\"name\":\"permissionIds\",\"type\":\"uint8[]\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"packed\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"caller\",\"type\":\"address\"}],\"name\":\"OperatorPermissionsSet\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"WILDCARD_PROJECT_ID\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"permissionId\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"includeRoot\",\"type\":\"bool\"},{\"internalType\":\"bool\",\"name\":\"includeWildcardProjectId\",\"type\":\"bool\"}],\"name\":\"hasPermission\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"},{\"internalType\":\"uint256[]\",\"name\":\"permissionIds\",\"type\":\"uint256[]\"},{\"internalType\":\"bool\",\"name\":\"includeRoot\",\"type\":\"bool\"},{\"internalType\":\"bool\",\"name\":\"includeWildcardProjectId\",\"type\":\"bool\"}],\"name\":\"hasPermissions\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"projectId\",\"type\":\"uint256\"}],\"name\":\"permissionsOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"components\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"internalType\":\"uint64\",\"name\":\"projectId\",\"type\":\"uint64\"},{\"internalType\":\"uint8[]\",\"name\":\"permissionIds\",\"type\":\"uint8[]\"}],\"internalType\":\"struct JBPermissionsData\",\"name\":\"permissionsData\",\"type\":\"tuple\"}],\"name\":\"setPermissionsFor\",\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"hasPermission(address,address,uint256,uint256,bool,bool)\":{\"params\":{\"account\":\"The account being operated on behalf of.\",\"includeRoot\":\"A flag indicating if the return value should default to true if the operator has the ROOT permission.\",\"includeWildcardProjectId\":\"A flag indicating if the return value should return true if the operator has the specified permission on the wildcard project ID.\",\"operator\":\"The operator to check.\",\"permissionId\":\"The permission ID to check for.\",\"projectId\":\"The project ID that the operator has permission to operate under. 0 represents all projects.\"},\"returns\":{\"_0\":\"A flag indicating whether the operator has the specified permission.\"}},\"hasPermissions(address,address,uint256,uint256[],bool,bool)\":{\"params\":{\"account\":\"The account being operated on behalf of.\",\"includeRoot\":\"A flag indicating if the return value should default to true if the operator has the ROOT permission.\",\"includeWildcardProjectId\":\"A flag indicating if the return value should return true if the operator has the specified permission on the wildcard project ID.\",\"operator\":\"The operator to check.\",\"permissionIds\":\"An array of permission IDs to check for.\",\"projectId\":\"The project ID that the operator has permission to operate under. 0 represents all projects.\"},\"returns\":{\"_0\":\"A flag indicating whether the operator has all specified permissions.\"}},\"setPermissionsFor(address,(address,uint64,uint8[]))\":{\"details\":\"Only an address can give permissions to or revoke permissions from its operators.\",\"params\":{\"account\":\"The account setting its operators' permissions.\",\"permissionsData\":\"The data which specifies the permissions the operator is being given.\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"WILDCARD_PROJECT_ID()\":{\"notice\":\"The project ID considered a wildcard, meaning it will grant permissions to all projects.\"},\"hasPermission(address,address,uint256,uint256,bool,bool)\":{\"notice\":\"Check if an operator has a specific permission for a specific address and project ID.\"},\"hasPermissions(address,address,uint256,uint256[],bool,bool)\":{\"notice\":\"Check if an operator has all of the specified permissions for a specific address and project ID.\"},\"permissionsOf(address,address,uint256)\":{\"notice\":\"The permissions that an operator has been given by an account for a specific project.\"},\"setPermissionsFor(address,(address,uint64,uint8[]))\":{\"notice\":\"Sets permissions for an operator.\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"src/JBPermissions.sol\":\"JBPermissions\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\"@arbitrum/=node_modules/@arbitrum/\",\"@bananapus/=node_modules/@bananapus/\",\"@chainlink/=node_modules/@chainlink/\",\"@eth-optimism/=node_modules/@eth-optimism/\",\"@offchainlabs/=node_modules/@offchainlabs/\",\"@openzeppelin/=node_modules/@openzeppelin/\",\"@prb/=node_modules/@prb/\",\"@scroll-tech/=node_modules/@scroll-tech/\",\"@sphinx-labs/contracts/=lib/sphinx/packages/contracts/contracts/foundry/\",\"@uniswap/=node_modules/@uniswap/\",\"@zksync/=node_modules/@zksync/\",\"ds-test/=lib/forge-std/lib/ds-test/src/\",\"forge-std/=lib/forge-std/src/\",\"hardhat/=node_modules/hardhat/\",\"solmate/=node_modules/solmate/\",\"sphinx/=lib/sphinx/packages/contracts/contracts/forge-std/src/\"]},\"sources\":{\"node_modules/@bananapus/permission-ids/src/JBPermissionIds.sol\":{\"keccak256\":\"0x04c2a9b2444b205d4623d0324deddaaaa96c0e479ac1f7d8ac51a022e4be5170\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://d600393d575f04bdcb8e7435d25a43488bab92e6d1cc067bef14d9140fd77fb8\",\"dweb:/ipfs/QmbnGGSmCmi4cUzSria6Nyq6eBvQCt9YU46F8be7iu9UJQ\"]},\"src/JBPermissions.sol\":{\"keccak256\":\"0xd616f9aa90548e095fe08f6b1bd96aed3829d107d79419f915ce5fd4f6122d88\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://043b3db5fb7dc9437782ae3967ef0d497aa0599c9944ee2ea22b93668ccb5376\",\"dweb:/ipfs/QmWrvmmJqPrWJuje22wDA6m7fdgaJcV8an3jJCRsTsTB9T\"]},\"src/interfaces/IJBPermissions.sol\":{\"keccak256\":\"0x49d2b91a866004af098a6770b28040071885b048b4b50744b12a1e5b212c5e5e\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://089b4dda50be91412ffe1fbe333f78cc894f073c1a7afe469f10a2cee12fbf9e\",\"dweb:/ipfs/QmYPPBZ6HwBa1RNkNGqGcR2xgj4fnWBzrPHHoJG3kZA6AN\"]},\"src/structs/JBPermissionsData.sol\":{\"keccak256\":\"0x65e26b78a1f00d81a21abd255c9670b600efca60cf36a993b8f48ecb268464a4\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://d108c721c4281b13de34641befd2a1e9fac73a70195ef5ca957abda6fca9acca\",\"dweb:/ipfs/QmWoJo7wzSKY3z4YCpFvR8DoCUTKviiuFEj2tBkcgKUqW1\"]}},\"version\":1}",
+	"gitCommit": "1dbb8ce9b68f10239b75e5db7fcd88bb83fcb147"
+}
