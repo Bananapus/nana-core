@@ -59,7 +59,11 @@ contract DeployPeriphery is Script, Sphinx {
         // Deploy the ETH/USD price feed.
         IJBPriceFeed feed;
         IJBPriceFeed matchingPriceFeed = new JBMatchingPriceFeed();
+        // Same as the chainlink example grace period.
         uint256 L2GracePeriod = 3600 seconds;
+
+        // NOTE: Feeds come from this url `https://data.chain.link/feeds/ethereum/mainnet/eth-usd`.
+        // Sequencer feeds come from this url `https://docs.chain.link/data-feeds/l2-sequencer-feeds`.
 
         // Perform the deploy for L1(s).
         if (block.chainid == 1) {
@@ -121,9 +125,6 @@ contract DeployPeriphery is Script, Sphinx {
             } else {
                 revert("Unsupported chain");
             }
-
-            // TODO: On production these should be `JBChainlinkV3SequencerPriceFeed` but these feeds aren't available
-            // for testnets.
         }
         require(address(feed) != address(0), "Invalid price feed");
 
