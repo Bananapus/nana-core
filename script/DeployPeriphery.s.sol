@@ -59,7 +59,7 @@ contract DeployPeriphery is Script, Sphinx {
         // Deploy the ETH/USD price feed.
         IJBPriceFeed feed;
         IJBPriceFeed matchingPriceFeed = new JBMatchingPriceFeed();
-        uint256 L2GracePeriod = 600 seconds;
+        uint256 L2GracePeriod = 3600 seconds;
 
         // Perform the deploy for L1(s).
         if (block.chainid == 1) {
@@ -125,6 +125,7 @@ contract DeployPeriphery is Script, Sphinx {
             // TODO: On production these should be `JBChainlinkV3SequencerPriceFeed` but these feeds aren't available
             // for testnets.
         }
+        require(address(feed) != address(0), "Invalid price feed");
 
         core.prices.addPriceFeedFor(0, uint32(uint160(JBConstants.NATIVE_TOKEN)), JBCurrencyIds.USD, feed);
 
