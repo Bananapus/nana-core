@@ -23,7 +23,7 @@ contract TestSetFeelessAddress_Local is JBFeelessSetup {
         assertEq(result, true);
     }
 
-    function test_RevertWhen_CallerIsNotOwner() external {
+    function testFail_RevertWhen_CallerIsNotOwner() external {
         // it should revert
         _feelessAddresses.setFeelessAddress(_feeLess, true);
     }
