@@ -16,6 +16,7 @@ import {JBDeadline3Days} from "src/periphery/JBDeadline3Days.sol";
 import {JBDeadline7Days} from "src/periphery/JBDeadline7Days.sol";
 import {JBMatchingPriceFeed} from "src/periphery/JBMatchingPriceFeed.sol";
 import {JBChainlinkV3PriceFeed, AggregatorV3Interface} from "src/JBChainlinkV3PriceFeed.sol";
+import {AggregatorV2V3Interface} from "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV2V3Interface.sol";
 import {JBChainlinkV3SequencerPriceFeed} from "src/JBChainlinkV3SequencerPriceFeed.sol";
 import {JBRulesets} from "src/JBRulesets.sol";
 import {JBDirectory} from "src/JBDirectory.sol";
@@ -58,9 +59,14 @@ contract DeployPeriphery is Script, Sphinx {
         // Deploy the ETH/USD price feed.
         IJBPriceFeed feed;
         IJBPriceFeed matchingPriceFeed = new JBMatchingPriceFeed();
+        uint256 L2GracePeriod = 600 seconds;
 
         // Perform the deploy for L1(s).
-        if (block.chainid == 11_155_111) {
+        if (block.chainid == 1) {
+            feed = new JBChainlinkV3PriceFeed(
+                AggregatorV3Interface(address(0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419)), 3600 seconds
+            );
+        } else if (block.chainid == 11_155_111) {
             feed = new JBChainlinkV3PriceFeed(
                 AggregatorV3Interface(address(0x694AA1769357215DE4FAC081bf1f309aDC325306)), 3600 seconds
             );
@@ -68,24 +74,56 @@ contract DeployPeriphery is Script, Sphinx {
             // Perform the deploy for L2s
             AggregatorV3Interface source;
 
+            // Optimism
+            if (block.chainid == 10) {
+                source = AggregatorV3Interface(0x13e3Ee699D1909E989722E753853AE30b17e08c5);
+                feed = new JBChainlinkV3SequencerPriceFeed(
+                    source,
+                    3600 seconds,
+                    AggregatorV2V3Interface(0x371EAD81c9102C9BF4874A9075FFFf170F2Ee389),
+                    L2GracePeriod
+                );
+            }
             // Optimism Sepolia
-            if (block.chainid == 11_155_420) {
+            else if (block.chainid == 11_155_420) {
                 source = AggregatorV3Interface(address(0x61Ec26aA57019C486B10502285c5A3D4A4750AD7));
+                feed = new JBChainlinkV3PriceFeed(source, 3600 seconds);
+            }
+            // Base
+            else if (block.chainid == 8453) {
+                source = AggregatorV3Interface(0x71041dddad3595F9CEd3DcCFBe3D1F4b0a16Bb70);
+                feed = new JBChainlinkV3SequencerPriceFeed(
+                    source,
+                    3600 seconds,
+                    AggregatorV2V3Interface(0xBCF85224fc0756B9Fa45aA7892530B47e10b6433),
+                    L2GracePeriod
+                );
             }
             // Base Sepolia
             else if (block.chainid == 84_532) {
                 source = AggregatorV3Interface(address(0x4aDC67696bA383F43DD60A9e78F2C97Fbbfc7cb1));
+                feed = new JBChainlinkV3PriceFeed(source, 3600 seconds);
+            }
+            // Arbitrum
+            else if (block.chainid == 42_161) {
+                source = AggregatorV3Interface(0x639Fe6ab55C921f74e7fac1ee960C0B6293ba612);
+                feed = new JBChainlinkV3SequencerPriceFeed(
+                    source,
+                    3600 seconds,
+                    AggregatorV2V3Interface(0xFdB631F5EE196F0ed6FAa767959853A9F217697D),
+                    L2GracePeriod
+                );
             }
             // Arbitrum Sepolia
             else if (block.chainid == 421_614) {
                 source = AggregatorV3Interface(address(0xd30e2101a97dcbAeBCBC04F14C3f624E67A35165));
+                feed = new JBChainlinkV3PriceFeed(source, 3600 seconds);
             } else {
                 revert("Unsupported chain");
             }
 
             // TODO: On production these should be `JBChainlinkV3SequencerPriceFeed` but these feeds aren't available
             // for testnets.
-            feed = new JBChainlinkV3PriceFeed(source, 3600 seconds);
         }
 
         core.prices.addPriceFeedFor(0, uint32(uint160(JBConstants.NATIVE_TOKEN)), JBCurrencyIds.USD, feed);
