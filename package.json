@@ -1,6 +1,6 @@
 {
   "name": "@bananapus/core",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -16,6 +16,7 @@
     "deploy:mainnets": "source ./.env && npx sphinx propose ./script/Deploy.s.sol --networks mainnets",
     "deploy:testnets": "source ./.env && npx sphinx propose ./script/Deploy.s.sol --networks testnets",
     "deploy:testnets:periphery": "source ./.env && npx sphinx propose ./script/DeployPeriphery.s.sol --networks testnets",
+    "deploy:mainnets:periphery": "source ./.env && npx sphinx propose ./script/DeployPeriphery.s.sol --networks mainnets",
     "artifacts": "source ./.env && npx sphinx artifacts --org-id 'ea165b21-7cdc-4d7b-be59-ecdd4c26bee4' --project-name 'nana-core'"
   },
   "dependencies": {

@@ -1,0 +1,114 @@
+{
+	"format": "sphinx-sol-ct-artifact-1",
+	"merkleRoot": "0xbf57fb47ff43cc3183e6d979917cb0bf4d66ba99b46ec5065ba1d133cfe71e43",
+	"address": "0xef8b4a9e02f8364bb1971497423fd56aed3ff834",
+	"sourceName": "src/periphery/JBMatchingPriceFeed.sol",
+	"contractName": "JBMatchingPriceFeed",
+	"chainId": "0xa",
+	"abi": [
+		{
+			"inputs": [],
+			"stateMutability": "nonpayable",
+			"type": "constructor"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint256",
+					"name": "decimals",
+					"type": "uint256"
+				}
+			],
+			"name": "currentUnitPrice",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		}
+	],
+	"args": [],
+	"solcInputHash": "5d51894f92a28e136c3e0b602172e6f6",
+	"receipt": {
+		"type": "0x2",
+		"status": "0x1",
+		"cumulativeGasUsed": "0x16cd79",
+		"logs": [
+			{
+				"address": "0xa2ea7657440875bf916cbfc0cfa88f13e38ad463",
+				"topics": [
+					"0x572f161235911da04685a68c06adf558fc7e4a36909dca394650e0adc19cc93d",
+					"0x000000000000000000000000755ff2f75a0a586ecfa2b9a3c959cb662458a105",
+					"0x000000000000000000000000647b5cbcca959a5b3f85d513faa2ba015576d8e9",
+					"0xb311c586f0bb17f7f3e104be7e269c04e81af49e028ecf55d583c386ce328e3b"
+				],
+				"data": "0x0000000000000000000000000000000000000000000000000000000000000000",
+				"blockHash": "0x067caa4f989dcdd218f872e6737aaff97f5b102468f280e5b681e55e37844237",
+				"blockNumber": "0x7e005e7",
+				"transactionHash": "0xe2c2847f19d847b6196a661ba85439ee3cca6c5523a6edd9eed8871c33598117",
+				"transactionIndex": "0x3",
+				"logIndex": "0x0",
+				"removed": false
+			},
+			{
+				"address": "0x14293560a2dde4ffa136a647b7a2f927b0774ab6",
+				"topics": [
+					"0x4db17dd5e4732fb6da34a148104a592783ca119a1e7bb8829eba6cbadef0b511"
+				],
+				"data": "0x000000000000000000000000ef8b4a9e02f8364bb1971497423fd56aed3ff834",
+				"blockHash": "0x067caa4f989dcdd218f872e6737aaff97f5b102468f280e5b681e55e37844237",
+				"blockNumber": "0x7e005e7",
+				"transactionHash": "0xe2c2847f19d847b6196a661ba85439ee3cca6c5523a6edd9eed8871c33598117",
+				"transactionIndex": "0x3",
+				"logIndex": "0x1",
+				"removed": false
+			},
+			{
+				"address": "0x14293560a2dde4ffa136a647b7a2f927b0774ab6",
+				"topics": [
+					"0x6895c13664aa4f67288b25d7a21d7aaa34916e355fb9b6fae0a139a9085becb8",
+					"0x000000000000000000000000647b5cbcca959a5b3f85d513faa2ba015576d8e9"
+				],
+				"data": "0x",
+				"blockHash": "0x067caa4f989dcdd218f872e6737aaff97f5b102468f280e5b681e55e37844237",
+				"blockNumber": "0x7e005e7",
+				"transactionHash": "0xe2c2847f19d847b6196a661ba85439ee3cca6c5523a6edd9eed8871c33598117",
+				"transactionIndex": "0x3",
+				"logIndex": "0x2",
+				"removed": false
+			},
+			{
+				"address": "0x647b5cbcca959a5b3f85d513faa2ba015576d8e9",
+				"topics": [
+					"0xa65fb05c5808f5f389d72edeaf719ce38f4cc55c1f69ca3cbfb31c21501caa07",
+					"0xbf57fb47ff43cc3183e6d979917cb0bf4d66ba99b46ec5065ba1d133cfe71e43"
+				],
+				"data": "0x0000000000000000000000000000000000000000000000000000000000000001",
+				"blockHash": "0x067caa4f989dcdd218f872e6737aaff97f5b102468f280e5b681e55e37844237",
+				"blockNumber": "0x7e005e7",
+				"transactionHash": "0xe2c2847f19d847b6196a661ba85439ee3cca6c5523a6edd9eed8871c33598117",
+				"transactionIndex": "0x3",
+				"logIndex": "0x3",
+				"removed": false
+			}
+		],
+		"logsBloom": "0x00000000000010000000020000080000020000000000000000000000000000000000000000000000000000020040000000000000000000000000000000000000000000000000200000000000020000000000000000000000000000000000000080000000000000000800000000000000000000000020000000000000000000000800000000000000000104000000000000000000000000000020004000000010004800040000000000000000000000002208000001400000000000000004000000000002000400100000000000000000000000000000000000000000000200000000002000000000000000000000000200000000000080000000000000000000",
+		"transactionHash": "0xe2c2847f19d847b6196a661ba85439ee3cca6c5523a6edd9eed8871c33598117",
+		"transactionIndex": "0x3",
+		"blockHash": "0x067caa4f989dcdd218f872e6737aaff97f5b102468f280e5b681e55e37844237",
+		"blockNumber": "0x7e005e7",
+		"gasUsed": "0x36c5e",
+		"effectiveGasPrice": "0x24a147",
+		"from": "0x755ff2f75a0a586ecfa2b9a3c959cb662458a105",
+		"to": "0xa2ea7657440875bf916cbfc0cfa88f13e38ad463",
+		"contractAddress": null
+	},
+	"bytecode": "0x608060405234801561001057600080fd5b506101c4806100206000396000f3fe608060405234801561001057600080fd5b506004361061002b5760003560e01c8063d3f5c15f14610030575b600080fd5b61004361003e366004610068565b610055565b60405190815260200160405180910390f35b600061006282600a61017b565b92915050565b60006020828403121561007a57600080fd5b5035919050565b634e487b7160e01b600052601160045260246000fd5b600181815b808511156100d25781600019048211156100b8576100b8610081565b808516156100c557918102915b93841c939080029061009c565b509250929050565b6000826100e957506001610062565b816100f657506000610062565b816001811461010c576002811461011657610132565b6001915050610062565b60ff84111561012757610127610081565b50506001821b610062565b5060208310610133831016604e8410600b8410161715610155575081810a610062565b61015f8383610097565b806000190482111561017357610173610081565b029392505050565b600061018783836100da565b939250505056fea264697066735822122002c6c95b2d36fd07a6c7a97fb309f408c12de6c80d98f1b02090e54960777ed664736f6c63430008170033",
+	"deployedBytecode": "0x608060405234801561001057600080fd5b506004361061002b5760003560e01c8063d3f5c15f14610030575b600080fd5b61004361003e366004610068565b610055565b60405190815260200160405180910390f35b600061006282600a61017b565b92915050565b60006020828403121561007a57600080fd5b5035919050565b634e487b7160e01b600052601160045260246000fd5b600181815b808511156100d25781600019048211156100b8576100b8610081565b808516156100c557918102915b93841c939080029061009c565b509250929050565b6000826100e957506001610062565b816100f657506000610062565b816001811461010c576002811461011657610132565b6001915050610062565b60ff84111561012757610127610081565b50506001821b610062565b5060208310610133831016604e8410600b8410161715610155575081810a610062565b61015f8383610097565b806000190482111561017357610173610081565b029392505050565b600061018783836100da565b939250505056fea264697066735822122002c6c95b2d36fd07a6c7a97fb309f408c12de6c80d98f1b02090e54960777ed664736f6c63430008170033",
+	"metadata": "{\"compiler\":{\"version\":\"0.8.23+commit.f704f362\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"decimals\",\"type\":\"uint256\"}],\"name\":\"currentUnitPrice\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"src/periphery/JBMatchingPriceFeed.sol\":\"JBMatchingPriceFeed\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\"@arbitrum/=node_modules/@arbitrum/\",\"@bananapus/=node_modules/@bananapus/\",\"@chainlink/=node_modules/@chainlink/\",\"@eth-optimism/=node_modules/@eth-optimism/\",\"@offchainlabs/=node_modules/@offchainlabs/\",\"@openzeppelin/=node_modules/@openzeppelin/\",\"@prb/=node_modules/@prb/\",\"@scroll-tech/=node_modules/@scroll-tech/\",\"@sphinx-labs/contracts/=lib/sphinx/packages/contracts/contracts/foundry/\",\"@uniswap/=node_modules/@uniswap/\",\"@zksync/=node_modules/@zksync/\",\"ds-test/=lib/forge-std/lib/ds-test/src/\",\"forge-std/=lib/forge-std/src/\",\"hardhat/=node_modules/hardhat/\",\"solmate/=node_modules/solmate/\",\"sphinx/=lib/sphinx/packages/contracts/contracts/forge-std/src/\"]},\"sources\":{\"src/interfaces/IJBPriceFeed.sol\":{\"keccak256\":\"0x4bd84c0f1a5d4729ed709bcddd43f4c50ec4a165ece79780af8dce482ed07d4a\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://62bac4bfb6982fb002f620c77e5c445e62d50241a5aa64a07e51d929f5a42180\",\"dweb:/ipfs/QmWgJUDreVY2BuMX38a1iUUR5kNbMwGnKG3VvurB7oZtuM\"]},\"src/periphery/JBMatchingPriceFeed.sol\":{\"keccak256\":\"0xe0d4e4bf5c3e5ac788db71d812a31d1682fc1a1bb41a85929fe87a91da6401a8\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://ff6488b2915767d30f27a837331a29f44cd8f5a79a8a81ca684704645c5487c3\",\"dweb:/ipfs/QmbGCcGFWwSmgAt8qCtxBqXfWGu82GDCXY3Rc4aGFrvRD3\"]}},\"version\":1}",
+	"gitCommit": "c664e5b34db8181e8ee22c8a07c22dc687da5623"
+}

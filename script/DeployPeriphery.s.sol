@@ -36,11 +36,11 @@ contract DeployPeriphery is Script, Sphinx {
     /// @notice tracks the deployment of the core contracts for the chain we are deploying to.
     CoreDeployment core;
 
-    bytes32 private DEADLINES_SALT = keccak256("JBDeadlines");
+    bytes32 private DEADLINES_SALT = keccak256("JBDeadlines_");
 
     function configureSphinx() public override {
         // TODO: Update to contain JB Emergency Developers
-        sphinxConfig.projectName = "nana-periphery-testnet";
+        sphinxConfig.projectName = "nana-periphery";
         sphinxConfig.mainnets = ["ethereum", "optimism", "base", "arbitrum"];
         sphinxConfig.testnets = ["ethereum_sepolia", "optimism_sepolia", "base_sepolia", "arbitrum_sepolia"];
     }
