@@ -33,14 +33,14 @@ contract JBChainlinkV3SequencerPriceFeed is JBChainlinkV3PriceFeed {
     //*********************************************************************//
 
     /// @param feed The Chainlink feed to report prices from.
-    /// @param gracePeriod How long the sequencer should have been re-active before returning prices.
-    /// @param sequencerFeed The Chainlink feed to report sequencer status.
     /// @param threshold How many blocks old a price update may be.
+    /// @param sequencerFeed The Chainlink feed to report sequencer status.
+    /// @param gracePeriod How long the sequencer should have been re-active before returning prices.
     constructor(
         AggregatorV3Interface feed,
-        uint256 gracePeriod,
+        uint256 threshold,
         AggregatorV2V3Interface sequencerFeed,
-        uint256 threshold
+        uint256 gracePeriod
     )
         JBChainlinkV3PriceFeed(feed, threshold)
     {
