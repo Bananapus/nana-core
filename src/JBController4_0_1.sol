@@ -22,7 +22,7 @@ import {IJBPriceFeed} from "./interfaces/IJBPriceFeed.sol";
 import {IJBPrices} from "./interfaces/IJBPrices.sol";
 import {IJBProjects} from "./interfaces/IJBProjects.sol";
 import {IJBProjectUriRegistry} from "./interfaces/IJBProjectUriRegistry.sol";
-import {IJBRulesetDataHook} from "./interfaces/IJBRulesetDataHook.sol";
+import {IJBRulesetDataHook4_0_1} from "./interfaces/IJBRulesetDataHook4_0_1.sol";
 import {IJBRulesets} from "./interfaces/IJBRulesets.sol";
 import {IJBSplitHook} from "./interfaces/IJBSplitHook.sol";
 import {IJBSplits} from "./interfaces/IJBSplits.sol";
@@ -307,19 +307,23 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     /// @notice Indicates whether the provided address has mint permission for the project byway of the data hook.
     /// @param projectId The ID of the project to check.
     /// @param ruleset The ruleset to check.
-    /// @param addrs The address to check.
+    /// @param addr The address to check.
     /// @return A flag indicating if the provided address has mint permission for the project.
     function _hasDataHookMintPermissionFor(
         uint256 projectId,
         JBRuleset memory ruleset,
-        address addrs
+        address addr
     )
         internal
         view
         returns (bool)
     {
         return ruleset.dataHook() != address(0)
-            && IJBRulesetDataHook(ruleset.dataHook()).hasMintPermissionFor(projectId, addrs);
+            && IJBRulesetDataHook(ruleset.dataHook()).hasMintPermissionFor({
+                projectId: projectId,
+                ruleset: ruleset,
+                addr: addr
+            });
     }
 
     /// @notice The calldata. Preferred to use over `msg.data`.

@@ -12,12 +12,5 @@ import {JBApprovalStatus} from "./../enums/JBApprovalStatus.sol";
 interface IJBRulesetApprovalHook is IERC165 {
     function DURATION() external view returns (uint256);
 
-    function approvalStatusOf(
-        uint256 projectId,
-        uint256 rulesetId,
-        uint256 start
-    )
-        external
-        view
-        returns (JBApprovalStatus);
+    function approvalStatusOf(uint256 projectId, JBRuleset memory ruleset) external view returns (JBApprovalStatus);
 }
