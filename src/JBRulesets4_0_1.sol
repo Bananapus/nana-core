@@ -18,7 +18,7 @@ import {JBRulesetWeightCache} from "./structs/JBRulesetWeightCache.sol";
 /// @dev Throughout this contract, `rulesetId` is an identifier for each ruleset. The `rulesetId` is the unix timestamp
 /// when the ruleset was initialized.
 /// @dev `approvable` means a ruleset which may or may not be approved.
-contract JBRulesets is JBControlled, IJBRulesets {
+contract JBRulesets4_0_1 is JBControlled, IJBRulesets {
     //*********************************************************************//
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//

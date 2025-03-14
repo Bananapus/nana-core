@@ -9,7 +9,7 @@ import {JBApprovalStatus} from "./../enums/JBApprovalStatus.sol";
 /// rejected.
 /// @dev Project rulesets are stored in a queue. Rulesets take effect after the previous ruleset in the queue ends, and
 /// only if they are approved by the previous ruleset's approval hook.
-interface IJBRulesetApprovalHook is IERC165 {
+interface IJBRulesetApprovalHook4_0_1 is IERC165 {
     function DURATION() external view returns (uint256);
 
     function approvalStatusOf(uint256 projectId, JBRuleset memory ruleset) external view returns (JBApprovalStatus);
