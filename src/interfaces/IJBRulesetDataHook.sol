@@ -7,6 +7,7 @@ import {JBBeforePayRecordedContext} from "./../structs/JBBeforePayRecordedContex
 import {JBBeforeCashOutRecordedContext} from "./../structs/JBBeforeCashOutRecordedContext.sol";
 import {JBCashOutHookSpecification} from "./../structs/JBCashOutHookSpecification.sol";
 import {JBPayHookSpecification} from "./../structs/JBPayHookSpecification.sol";
+import {JBRuleset} from "./../structs/JBRuleset.sol";
 
 /// @notice Data hooks can extend a terminal's core pay/cashout functionality by overriding the weight or memo. They can
 /// also specify pay/cashout hooks for the terminal to fulfill, or allow addresses to mint a project's tokens on-demand.
@@ -18,7 +19,14 @@ interface IJBRulesetDataHook is IERC165 {
     /// @param projectId The ID of the project whose token can be minted.
     /// @param addr The address to check the token minting permission of.
     /// @return flag A flag indicating whether the address has permission to mint the project's tokens on-demand.
-    function hasMintPermissionFor(uint256 projectId, address addr) external view returns (bool flag);
+    function hasMintPermissionFor(
+        uint256 projectId,
+        JBRuleset memory ruleset,
+        address addr
+    )
+        external
+        view
+        returns (bool flag);
 
     /// @notice The data calculated before a payment is recorded in the terminal store. This data is provided to the
     /// terminal's `pay(...)` transaction.
