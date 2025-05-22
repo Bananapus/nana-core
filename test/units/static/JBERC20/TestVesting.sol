@@ -8,6 +8,10 @@ import {JBVestedERC20} from "../../../../src/JBVestedERC20.sol";
 contract TestVesting is JBTest {
     address internal _owner = makeAddr("owner");
     address internal _user = makeAddr("user");
+<<<<<<< Updated upstream
+=======
+    address internal _admin = makeAddr("admin");
+>>>>>>> Stashed changes
     JBVestedERC20 internal _vestedToken;
 
     string internal _name = "VestedToken";
@@ -19,7 +23,11 @@ contract TestVesting is JBTest {
 
     function setUp() public {
         _vestedToken = new JBVestedERC20();
+<<<<<<< Updated upstream
         _vestedToken.initialize(_name, _symbol, _owner, _projectId, _cliff, _duration);
+=======
+        _vestedToken.initialize(_name, _symbol, _owner, _projectId, _cliff, _duration, _admin);
+>>>>>>> Stashed changes
         vm.startPrank(_owner);
         _vestedToken.mint(_user, _amount);
         vm.stopPrank();
@@ -82,4 +90,36 @@ contract TestVesting is JBTest {
         }
         assertEq(len, 0);
     }
+<<<<<<< Updated upstream
 }
+=======
+
+    function test_OnlyAdminCanAddRemoveExempt() public {
+        address exempt = makeAddr("exempt");
+        vm.startPrank(_owner);
+        vm.expectRevert();
+        _vestedToken.addExemptAddress(exempt);
+        vm.expectRevert();
+        _vestedToken.removeExemptAddress(exempt);
+        vm.stopPrank();
+        vm.startPrank(_admin);
+        _vestedToken.addExemptAddress(exempt);
+        assertTrue(_vestedToken.isExemptFromVesting(exempt));
+        _vestedToken.removeExemptAddress(exempt);
+        assertFalse(_vestedToken.isExemptFromVesting(exempt));
+        vm.stopPrank();
+    }
+
+    function test_OwnerCanChangeAdmin() public {
+        address newAdmin = makeAddr("newAdmin");
+        vm.startPrank(_owner);
+        _vestedToken.setAdmin(newAdmin);
+        vm.stopPrank();
+        vm.startPrank(newAdmin);
+        _vestedToken.addExemptAddress(makeAddr("exempt2"));
+        assertTrue(_vestedToken.isExemptFromVesting(makeAddr("exempt2")));
+        vm.stopPrank();
+    }
+}
+/ SPDX-License-Identifier: MIT
+>>>>>>> Stashed changes
