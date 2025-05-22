@@ -29,5 +29,7 @@ interface IJBVestedERC20Deployer {
         uint256 cliff,
         uint256 unlockDuration,
         bytes32 salt
-    ) external returns (IJBToken token);
-} 
+    )
+        external
+        returns (IJBToken token);
+}

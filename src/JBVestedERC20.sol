@@ -15,7 +15,6 @@ import {JBVestingSchedule} from "./structs/JBVestingSchedule.sol";
 /// `JBController.deployERC20For(...)` or `JBController.setTokenFor(...)`, credits can be redeemed to claim tokens.
 /// @dev `JBController.deployERC20For(...)` deploys a `JBERC20` contract and sets it as the project's token.
 contract JBVestedERC20 is ERC20Votes, ERC20Permit, Ownable, IJBToken {
-
     //*********************************************************************//
     // --------------------------- custom errors ------------------------- //
     //*********************************************************************//
@@ -88,7 +87,8 @@ contract JBVestedERC20 is ERC20Votes, ERC20Permit, Ownable, IJBToken {
     /// @notice The balance of the given address.
     /// @dev Returns only the vested (available) amount, not the total tokens owned.
     /// @param account The account to get the balance of.
-    /// @return The number of vested (available) tokens owned by the `account`, as a fixed point number with 18 decimals.
+    /// @return The number of vested (available) tokens owned by the `account`, as a fixed point number with 18
+    /// decimals.
     function balanceOf(address account) public view override(ERC20, IJBToken) returns (uint256) {
         if (isExemptFromVesting[account]) {
             return super.balanceOf(account);
@@ -128,14 +128,14 @@ contract JBVestedERC20 is ERC20Votes, ERC20Permit, Ownable, IJBToken {
     /// @return The total amount still vesting for the `account`.
     function vestingAmount(address account) public view returns (uint256) {
         return _vestingAmount(account);
-    } 
+    }
 
     /// @notice The total amount vested for an account.
     /// @param account The address to get the vested amount for.
     /// @return The total amount vested for the `account`.
     function vestedAmount(address account) public view returns (uint256) {
         return balanceOf(account) - _vestingAmount(account);
-    } 
+    }
 
     //*********************************************************************//
     // ---------------------- external transactions ---------------------- //
@@ -157,10 +157,7 @@ contract JBVestedERC20 is ERC20Votes, ERC20Permit, Ownable, IJBToken {
         _mint(account, amount);
 
         // Add a new vesting schedule for the minted tokens
-        _vestingSchedules[account].push(VestingSchedule({
-            totalAmount: amount,
-            startTime: block.timestamp
-        }));
+        _vestingSchedules[account].push(VestingSchedule({totalAmount: amount, startTime: block.timestamp}));
     }
 
     //*********************************************************************//
@@ -175,7 +172,18 @@ contract JBVestedERC20 is ERC20Votes, ERC20Permit, Ownable, IJBToken {
     /// @param cliff The number of seconds to wait before the tokens start to unlock.
     /// @param unlockDuration The number of seconds it takes to unlock the full amount of tokens.
     /// @param vestingAdmin_ The admin address for managing vesting exemptions.
-    function initialize(string memory name_, string memory symbol_, address owner, uint256 projectId, uint256 cliff, uint256 unlockDuration, address vestingAdmin_) public override {
+    function initialize(
+        string memory name_,
+        string memory symbol_,
+        address owner,
+        uint256 projectId,
+        uint256 cliff,
+        uint256 unlockDuration,
+        address vestingAdmin_
+    )
+        public
+        override
+    {
         // Prevent re-initialization by reverting if a name is already set or if the provided name is empty.
         if (bytes(_name).length != 0 || bytes(name_).length == 0) revert();
 
@@ -211,8 +219,8 @@ contract JBVestedERC20 is ERC20Votes, ERC20Permit, Ownable, IJBToken {
     function _beforeTokenTransfer(address from, address to, uint256 amount) internal virtual override {
         super._beforeTokenTransfer(from, to, amount);
 
-        if (from != address(0)) { // Not a minting operation
-
+        if (from != address(0)) {
+            // Not a minting operation
             // Skip vesting checks for exempt addresses
             if (isExemptFromVesting[from]) {
                 return;
@@ -222,7 +230,9 @@ contract JBVestedERC20 is ERC20Votes, ERC20Permit, Ownable, IJBToken {
             uint256 vestingAmount = _vestingAmountFor(from);
 
             // Make sure there is sufficient vested balance to transfer.
-            if(balanceOf(from) - vestingAmount < amount) revert JBVestedERC20_TransferExceedsVestedAmount(amount, vestingAmount);
+            if (balanceOf(from) - vestingAmount < amount) {
+                revert JBVestedERC20_TransferExceedsVestedAmount(amount, vestingAmount);
+            }
 
             // Clean up fully vested schedules
             VestingSchedule[] storage schedules = _vestingSchedules[from];
@@ -255,7 +265,6 @@ contract JBVestedERC20 is ERC20Votes, ERC20Permit, Ownable, IJBToken {
         // Iterate over the vesting schedules for the account.
         VestingSchedule[] storage schedules = _vestingSchedules[account];
         for (uint256 i = schedules.length; i > 0; i--) {
-
             // Get the vesting schedule for the account.
             VestingSchedule storage schedule = schedules[i - 1];
 
@@ -266,11 +275,12 @@ contract JBVestedERC20 is ERC20Votes, ERC20Permit, Ownable, IJBToken {
             if (elapsedTime < CLIFF) {
                 // If the cliff period hasn't passed, the entire amount is still vesting
                 stillVesting += schedule.totalAmount;
-            // If the cliff period has passed, calculate the amount still vesting.
+                // If the cliff period has passed, calculate the amount still vesting.
             } else if (elapsedTime < CLIFF + UNLOCK_DURATION) {
                 uint256 vested = (schedule.totalAmount * elapsedTime) / UNLOCK_DURATION;
                 stillVesting += schedule.totalAmount - vested;
-            // If the schedule is fully vested, no need to add anything else since all other schedules must also be fully vested.
+                // If the schedule is fully vested, no need to add anything else since all other schedules must also be
+                // fully vested.
             } else {
                 return stillVesting;
             }

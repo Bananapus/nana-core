@@ -41,7 +41,10 @@ contract JBVestedERC20Deployer {
         uint256 unlockDuration,
         address vestingAdmin,
         bytes32 salt
-    ) external returns (JBVestedERC20 token) {
+    )
+        external
+        returns (JBVestedERC20 token)
+    {
         token = salt == bytes32(0)
             ? IJBToken(Clones.clone(address(TOKEN)))
             : IJBToken(Clones.cloneDeterministic(address(TOKEN), keccak256(abi.encode(msg.sender, salt))));
@@ -56,10 +59,7 @@ contract JBVestedERC20Deployer {
         });
         // Get the controller for the project from the directory
         IJBController controller = IJBController(address(DIRECTORY.controllerOf(projectId)));
-        controller.setTokenFor({
-            projectId: projectId,
-            token: IJBToken(address(token))
-        });
+        controller.setTokenFor({projectId: projectId, token: IJBToken(address(token))});
         emit VestedERC20Deployed(address(token), projectId, salt);
     }
-} 
+}

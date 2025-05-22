@@ -77,7 +77,9 @@ contract TestVesting is JBTest {
         // (Direct storage access for test purposes)
         bytes32 slot = keccak256(abi.encode(_user, uint256(6))); // _vestingSchedules is at storage slot 6
         uint256 len;
-        assembly { len := sload(slot) }
+        assembly {
+            len := sload(slot)
+        }
         assertEq(len, 0);
     }
-} 
+}
