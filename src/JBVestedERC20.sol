@@ -35,6 +35,9 @@ contract JBVestedERC20 is ERC20Votes, ERC20Permit, Ownable, IJBToken {
     /// @notice The project ID.
     uint256 public immutable override PROJECT_ID;
 
+    /// @notice The JBTokens contract.
+    IJBTokens public immutable override TOKENS;
+
     //*********************************************************************//
     // --------------------- internal stored properties ------------------ //
     //*********************************************************************//
@@ -49,21 +52,48 @@ contract JBVestedERC20 is ERC20Votes, ERC20Permit, Ownable, IJBToken {
 
     mapping(address => VestingSchedule[]) private _vestingSchedules;
 
+    /// @notice Mapping of addresses exempt from vesting restrictions.
+    mapping(address => bool) public isExemptFromVesting;
+
+    /// @notice The admin address for managing vesting exemptions.
+    address public vestingAdmin;
+
+    //*********************************************************************//
+    // -------------------------- events -------------------------------- //
+    //*********************************************************************//
+    event ExemptAddressAdded(address indexed account);
+    event ExemptAddressRemoved(address indexed account);
+
+    //*********************************************************************//
+    // -------------------------- modifiers ----------------------------- //
+    //*********************************************************************//
+    modifier onlyVestingAdmin() {
+        require(msg.sender == vestingAdmin, "NOT_ADMIN");
+        _;
+    }
+
     //*********************************************************************//
     // -------------------------- constructor ---------------------------- //
     //*********************************************************************//
-    
-    constructor() Ownable(address(this)) ERC20("invalid", "invalid") ERC20Permit("JBToken") {}
+
+    /// @param tokens A contract that manages token minting and burning.
+    constructor(IJBTokens tokens) Ownable(address(this)) ERC20("invalid", "invalid") ERC20Permit("JBToken") {
+        TOKENS = tokens;
+    }
 
     //*********************************************************************//
     // -------------------------- public views --------------------------- //
     //*********************************************************************//
 
     /// @notice The balance of the given address.
+    /// @dev Returns only the vested (available) amount, not the total tokens owned.
     /// @param account The account to get the balance of.
-    /// @return The number of tokens owned by the `account`, as a fixed point number with 18 decimals.
+    /// @return The number of vested (available) tokens owned by the `account`, as a fixed point number with 18 decimals.
     function balanceOf(address account) public view override(ERC20, IJBToken) returns (uint256) {
-        return super.balanceOf(account);
+        if (isExemptFromVesting[account]) {
+            return super.balanceOf(account);
+        }
+        return super.balanceOf(account) - _vestingAmount(account);
     }
 
     /// @notice This token can only be added to a project when its created by the `JBTokens` contract.
@@ -144,7 +174,8 @@ contract JBVestedERC20 is ERC20Votes, ERC20Permit, Ownable, IJBToken {
     /// @param projectId The project ID.
     /// @param cliff The number of seconds to wait before the tokens start to unlock.
     /// @param unlockDuration The number of seconds it takes to unlock the full amount of tokens.
-    function initialize(string memory name_, string memory symbol_, address owner, uint256 projectId, uint256 cliff, uint256 unlockDuration) public override {
+    /// @param vestingAdmin_ The admin address for managing vesting exemptions.
+    function initialize(string memory name_, string memory symbol_, address owner, uint256 projectId, uint256 cliff, uint256 unlockDuration, address vestingAdmin_) public override {
         // Prevent re-initialization by reverting if a name is already set or if the provided name is empty.
         if (bytes(_name).length != 0 || bytes(name_).length == 0) revert();
 
@@ -153,6 +184,7 @@ contract JBVestedERC20 is ERC20Votes, ERC20Permit, Ownable, IJBToken {
         PROJECT_ID = projectId;
         CLIFF = cliff;
         UNLOCK_DURATION = unlockDuration;
+        vestingAdmin = vestingAdmin_;
 
         // Transfer ownership to the owner.
         _transferOwnership(owner);
@@ -181,11 +213,38 @@ contract JBVestedERC20 is ERC20Votes, ERC20Permit, Ownable, IJBToken {
 
         if (from != address(0)) { // Not a minting operation
 
+            // Skip vesting checks for exempt addresses
+            if (isExemptFromVesting[from]) {
+                return;
+            }
+
             // Keep track of the amount still vesting for the sender.
             uint256 vestingAmount = _vestingAmountFor(from);
 
             // Make sure there is sufficient vested balance to transfer.
             if(balanceOf(from) - vestingAmount < amount) revert JBVestedERC20_TransferExceedsVestedAmount(amount, vestingAmount);
+
+            // Clean up fully vested schedules
+            VestingSchedule[] storage schedules = _vestingSchedules[from];
+            uint256 len = schedules.length;
+            uint256 cutoff = 0;
+            for (uint256 i = 0; i < len; i++) {
+                VestingSchedule storage schedule = schedules[i];
+                if (block.timestamp >= schedule.startTime + CLIFF + UNLOCK_DURATION) {
+                    cutoff = i + 1;
+                } else {
+                    break;
+                }
+            }
+            if (cutoff > 0) {
+                // Remove all fully vested schedules at the start of the array
+                for (uint256 i = cutoff; i < len; i++) {
+                    schedules[i - cutoff] = schedules[i];
+                }
+                for (uint256 i = 0; i < cutoff; i++) {
+                    schedules.pop();
+                }
+            }
         }
     }
 
@@ -216,5 +275,28 @@ contract JBVestedERC20 is ERC20Votes, ERC20Permit, Ownable, IJBToken {
                 return stillVesting;
             }
         }
+    }
+
+    //*********************************************************************//
+    // ---------------------- external admin functions ------------------ //
+    //*********************************************************************//
+
+    /// @notice Add an address to the vesting exemption list.
+    /// @dev Only callable by the vesting admin.
+    function addExemptAddress(address account) external onlyVestingAdmin {
+        isExemptFromVesting[account] = true;
+        emit ExemptAddressAdded(account);
+    }
+
+    /// @notice Remove an address from the vesting exemption list.
+    /// @dev Only callable by the vesting admin.
+    function removeExemptAddress(address account) external onlyVestingAdmin {
+        isExemptFromVesting[account] = false;
+        emit ExemptAddressRemoved(account);
+    }
+
+    /// @notice Allows the owner to change the admin address.
+    function setVestingAdmin(address newVestingAdmin) external onlyVestingAdmin {
+        vestingAdmin = newVestingAdmin;
     }
 }
