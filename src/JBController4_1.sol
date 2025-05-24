@@ -315,12 +315,12 @@ contract JBController4_1 is JBPermissioned, ERC2771Context, IJBController4_1, IJ
     /// @notice Indicates whether the provided address has mint permission for the project byway of the data hook.
     /// @param projectId The ID of the project to check.
     /// @param ruleset The ruleset to check.
-    /// @param addrs The address to check.
+    /// @param addr The address to check.
     /// @return A flag indicating if the provided address has mint permission for the project.
     function _hasDataHookMintPermissionFor(
         uint256 projectId,
         JBRuleset memory ruleset,
-        address addrs
+        address addr
     )
         internal
         view
@@ -329,7 +329,7 @@ contract JBController4_1 is JBPermissioned, ERC2771Context, IJBController4_1, IJ
         address dataHook = ruleset.dataHook();
 
         return dataHook != address(0) && IERC165(dataHook).supportsInterface(type(IJBRulesetDataHook4_2).interfaceId)
-            && IJBRulesetDataHook4_2(dataHook).hasMintPermissionFor(projectId, ruleset, addrs);
+            && IJBRulesetDataHook4_2(dataHook).hasMintPermissionFor({projectId: projectId, ruleset: ruleset, addr: addr});
     }
 
     /// @notice The calldata. Preferred to use over `msg.data`.
