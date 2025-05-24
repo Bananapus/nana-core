@@ -12,6 +12,7 @@ import {mulDiv} from "@prb/math/src/Common.sol";
 import {JBPermissioned} from "./abstract/JBPermissioned.sol";
 import {JBApprovalStatus} from "./enums/JBApprovalStatus.sol";
 import {IJBController} from "./interfaces/IJBController.sol";
+import {IJBController1_1} from "./interfaces/IJBController1_1.sol";
 import {IJBDirectory} from "./interfaces/IJBDirectory.sol";
 import {IJBDirectoryAccessControl} from "./interfaces/IJBDirectoryAccessControl.sol";
 import {IJBFundAccessLimits} from "./interfaces/IJBFundAccessLimits.sol";
@@ -43,7 +44,7 @@ import {JBTerminalConfig} from "./structs/JBTerminalConfig.sol";
 
 /// @notice `JBController` coordinates rulesets and project tokens, and is the entry point for most operations related
 /// to rulesets and project tokens.
-contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigratable {
+contract JBController is JBPermissioned, ERC2771Context, IJBController1_1, IJBMigratable {
     // A library that parses packed ruleset metadata into a friendlier format.
     using JBRulesetMetadataResolver for JBRuleset;
 
@@ -90,7 +91,7 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     IJBSplits public immutable override SPLITS;
 
     /// @notice The contract that manages token minting and burning.
-    IJBTokens public immutable override TOKENS; 
+    IJBTokens public immutable override TOKENS;
 
     /// @notice The address of the contract that manages omnichain ruleset ops.
     address public immutable override OMNICHAIN_RULESET_OPERATOR;
@@ -281,7 +282,8 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
     /// @param interfaceId The ID of the interface to check for adherence to.
     /// @return A flag indicating if the provided interface ID is supported.
     function supportsInterface(bytes4 interfaceId) public pure override returns (bool) {
-        return interfaceId == type(IJBController).interfaceId || interfaceId == type(IJBProjectUriRegistry).interfaceId
+        return interfaceId == type(IJBController).interfaceId || interfaceId == type(IJBController1_1).interfaceId
+            || interfaceId == type(IJBProjectUriRegistry).interfaceId
             || interfaceId == type(IJBDirectoryAccessControl).interfaceId || interfaceId == type(IJBMigratable).interfaceId
             || interfaceId == type(IJBPermissioned).interfaceId || interfaceId == type(IERC165).interfaceId;
     }
@@ -466,9 +468,20 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController, IJBMigra
             permissionId: JBPermissionIds.DEPLOY_ERC20
         });
 
-        if (salt != bytes32(0)) salt = keccak256(abi.encodePacked(_msgSender(), salt));
+        // If a salt is provided, use it.
+        bytes32 saltHash = salt != bytes32(0) ? keccak256(abi.encodePacked(_msgSender(), salt)) : bytes32(0);
 
-        return TOKENS.deployERC20For({projectId: projectId, name: name, symbol: symbol, salt: salt});
+        // Emit the event.
+        emit DeployERC20({
+            projectId: projectId,
+            deployer: _msgSender(),
+            salt: salt,
+            saltHash: saltHash,
+            caller: _msgSender()
+        });
+
+        // Deploy the ERC-20 token with the hashed salt.
+        return TOKENS.deployERC20For({projectId: projectId, name: name, symbol: symbol, salt: saltHash});
     }
 
     /// @notice When a project receives reserved tokens, if it has a terminal for the token, this is used to pay the
