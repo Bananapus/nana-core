@@ -12,7 +12,7 @@ import {mulDiv} from "@prb/math/src/Common.sol";
 import {JBPermissioned} from "./abstract/JBPermissioned.sol";
 import {JBApprovalStatus} from "./enums/JBApprovalStatus.sol";
 import {IJBController} from "./interfaces/IJBController.sol";
-import {IJBController1_1} from "./interfaces/IJBController1_1.sol";
+import {IJBController4_1} from "./interfaces/IJBController4_1.sol";
 import {IJBDirectory} from "./interfaces/IJBDirectory.sol";
 import {IJBDirectoryAccessControl} from "./interfaces/IJBDirectoryAccessControl.sol";
 import {IJBFundAccessLimits} from "./interfaces/IJBFundAccessLimits.sol";
@@ -23,7 +23,7 @@ import {IJBPriceFeed} from "./interfaces/IJBPriceFeed.sol";
 import {IJBPrices} from "./interfaces/IJBPrices.sol";
 import {IJBProjects} from "./interfaces/IJBProjects.sol";
 import {IJBProjectUriRegistry} from "./interfaces/IJBProjectUriRegistry.sol";
-import {IJBRulesetDataHook} from "./interfaces/IJBRulesetDataHook.sol";
+import {IJBRulesetDataHook4_2} from "./interfaces/IJBRulesetDataHook4_2.sol";
 import {IJBRulesets} from "./interfaces/IJBRulesets.sol";
 import {IJBSplitHook} from "./interfaces/IJBSplitHook.sol";
 import {IJBSplits} from "./interfaces/IJBSplits.sol";
@@ -44,7 +44,7 @@ import {JBTerminalConfig} from "./structs/JBTerminalConfig.sol";
 
 /// @notice `JBController` coordinates rulesets and project tokens, and is the entry point for most operations related
 /// to rulesets and project tokens.
-contract JBController is JBPermissioned, ERC2771Context, IJBController1_1, IJBMigratable {
+contract JBController4_1 is JBPermissioned, ERC2771Context, IJBController4_1, IJBMigratable {
     // A library that parses packed ruleset metadata into a friendlier format.
     using JBRulesetMetadataResolver for JBRuleset;
 
@@ -326,8 +326,10 @@ contract JBController is JBPermissioned, ERC2771Context, IJBController1_1, IJBMi
         view
         returns (bool)
     {
-        return ruleset.dataHook() != address(0)
-            && IJBRulesetDataHook(ruleset.dataHook()).hasMintPermissionFor(projectId, addrs);
+        address dataHook = ruleset.dataHook();
+
+        return dataHook != address(0) && IERC165(dataHook).supportsInterface(type(IJBRulesetDataHook4_2).interfaceId)
+            && IJBRulesetDataHook4_2(dataHook).hasMintPermissionFor(projectId, ruleset, addrs);
     }
 
     /// @notice The calldata. Preferred to use over `msg.data`.
