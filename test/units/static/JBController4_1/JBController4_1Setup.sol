@@ -26,7 +26,16 @@ contract JBController4_1Setup is JBTest {
     function controllerSetup() public virtual {
         // Instantiate the contract being tested
         _controller = new JBController4_1(
-            directory, fundAccessLimits, permissions, prices, projects, rulesets, splits, tokens, omnichainRulesetOperator, trustedForwarder
+            directory,
+            fundAccessLimits,
+            permissions,
+            prices,
+            projects,
+            rulesets,
+            splits,
+            tokens,
+            omnichainRulesetOperator,
+            trustedForwarder
         );
     }
 }

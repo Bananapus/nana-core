@@ -305,6 +305,7 @@ contract TestJBRulesetsUnits_Local is JBTest {
 
     function testFuzzQueueForInvalidEndTime(uint256 _bigDuration, uint256 _bigStartAt) public {
         _bigDuration = bound(_bigDuration, 1, type(uint32).max);
+        _bigStartAt = bound(_bigStartAt, 1, type(uint48).max);
 
         // Setup: queueFor will call onlyControllerOf modifier -> Directory.controllerOf to see if caller has proper
         // permissions, encode & mock that.

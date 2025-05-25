@@ -86,7 +86,7 @@ contract TestPermissions_Local is TestBaseWorkflow, JBTest {
         );
     }
 
-    function testFailMostBasicAccess() public {
+    function test_RevertIf_MostBasicAccess() public {
         // Package up ruleset configuration.
         JBRulesetConfig[] memory _rulesetConfig = new JBRulesetConfig[](1);
         _rulesetConfig[0].mustStartAtOrAfter = 0;
@@ -99,25 +99,35 @@ contract TestPermissions_Local is TestBaseWorkflow, JBTest {
         _rulesetConfig[0].fundAccessLimitGroups = new JBFundAccessLimitGroup[](0);
 
         vm.prank(makeAddr("zeroOwner"));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                JBPermissioned.JBPermissioned_Unauthorized.selector,
+                _projectOwner,
+                makeAddr("zeroOwner"),
+                _projectOne,
+                JBPermissionIds.QUEUE_RULESETS
+            )
+        );
         uint256 queued = _controller.queueRulesetsOf(_projectOne, _rulesetConfig, "");
 
-        assertEq(queued, block.timestamp);
+        assertNotEq(queued, block.timestamp);
     }
 
-    function testFailSetOperators() public {
+    function test_RevertIf_SetOperators() public {
         // Pack up our permission data.
         JBPermissionsData[] memory permData = new JBPermissionsData[](1);
 
-        uint8[] memory permIds = new uint8[](257);
+        uint8[] memory permIds = new uint8[](256);
 
         // Push an index higher than 255.
-        for (uint8 i; i < 257; i++) {
+        for (uint8 i; i < 255; i++) {
             permIds[i] = i;
 
             permData[0] = JBPermissionsData({operator: address(0), projectId: _projectOne, permissionIds: permIds});
 
             // Set em.
             vm.prank(_projectOwner);
+            vm.expectRevert(JBPermissions.JBPermissions_NoZeroPermission.selector);
             _permissions.setPermissionsFor(_projectOwner, permData[0]);
         }
     }
