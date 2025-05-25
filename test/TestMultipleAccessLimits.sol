@@ -48,14 +48,6 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
             dataHook: address(0),
             metadata: 0
         });
-
-        // vm.prank(address(Ownable(address(_prices)).owner()));
-        // _prices.addPriceFeedFor({
-        //     projectId: 0,
-        //     pricingCurrency: JBCurrencyIds.USD,
-        //     unitCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
-        //     feed: IJBPriceFeed(address(new MockPriceFeed(0.0005 * 10 ** 18, 18)))
-        // });
     }
 
     function launchProjectsForTestBelow() public returns (uint256, JBCurrencyAmount[] memory) {
