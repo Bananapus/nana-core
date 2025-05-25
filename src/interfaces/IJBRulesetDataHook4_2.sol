@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
+import {JBRuleset} from "./../structs/JBRuleset.sol";
 import {JBBeforePayRecordedContext} from "./../structs/JBBeforePayRecordedContext.sol";
 import {JBBeforeCashOutRecordedContext} from "./../structs/JBBeforeCashOutRecordedContext.sol";
 import {JBCashOutHookSpecification} from "./../structs/JBCashOutHookSpecification.sol";

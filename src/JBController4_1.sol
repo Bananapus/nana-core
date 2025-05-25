@@ -94,7 +94,7 @@ contract JBController4_1 is JBPermissioned, ERC2771Context, IJBController4_1, IJ
     IJBTokens public immutable override TOKENS;
 
     /// @notice The address of the contract that manages omnichain ruleset ops.
-    address public immutable override OMNICHAIN_RULESET_OPERATOR;
+    address public immutable OMNICHAIN_RULESET_OPERATOR;
 
     //*********************************************************************//
     // --------------------- public stored properties -------------------- //
@@ -282,7 +282,7 @@ contract JBController4_1 is JBPermissioned, ERC2771Context, IJBController4_1, IJ
     /// @param interfaceId The ID of the interface to check for adherence to.
     /// @return A flag indicating if the provided interface ID is supported.
     function supportsInterface(bytes4 interfaceId) public pure override returns (bool) {
-        return interfaceId == type(IJBController).interfaceId || interfaceId == type(IJBController1_1).interfaceId
+        return interfaceId == type(IJBController).interfaceId || interfaceId == type(IJBController4_1).interfaceId
             || interfaceId == type(IJBProjectUriRegistry).interfaceId
             || interfaceId == type(IJBDirectoryAccessControl).interfaceId || interfaceId == type(IJBMigratable).interfaceId
             || interfaceId == type(IJBPermissioned).interfaceId || interfaceId == type(IERC165).interfaceId;
@@ -602,7 +602,7 @@ contract JBController4_1 is JBPermissioned, ERC2771Context, IJBController4_1, IJ
         address sender = _msgSender();
 
         // Enforce permissions.
-        _requirePermissionFrom({
+        _requirePermissionAllowingOverrideFrom({
             account: PROJECTS.ownerOf(projectId),
             projectId: projectId,
             permissionId: JBPermissionIds.QUEUE_RULESETS,
@@ -610,7 +610,7 @@ contract JBController4_1 is JBPermissioned, ERC2771Context, IJBController4_1, IJ
         });
 
         // Enforce permissions.
-        _requirePermissionFrom({
+        _requirePermissionAllowingOverrideFrom({
             account: PROJECTS.ownerOf(projectId),
             projectId: projectId,
             permissionId: JBPermissionIds.SET_TERMINALS,
@@ -750,7 +750,7 @@ contract JBController4_1 is JBPermissioned, ERC2771Context, IJBController4_1, IJ
         if (rulesetConfigurations.length == 0) revert JBController_RulesetsArrayEmpty();
 
         // Enforce permissions.
-        _requirePermissionFrom({
+        _requirePermissionAllowingOverrideFrom({
             account: PROJECTS.ownerOf(projectId),
             projectId: projectId,
             permissionId: JBPermissionIds.QUEUE_RULESETS,
