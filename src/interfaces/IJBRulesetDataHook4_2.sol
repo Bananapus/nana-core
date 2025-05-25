@@ -8,6 +8,7 @@ import {JBBeforePayRecordedContext} from "./../structs/JBBeforePayRecordedContex
 import {JBBeforeCashOutRecordedContext} from "./../structs/JBBeforeCashOutRecordedContext.sol";
 import {JBCashOutHookSpecification} from "./../structs/JBCashOutHookSpecification.sol";
 import {JBPayHookSpecification} from "./../structs/JBPayHookSpecification.sol";
+import {JBRuleset} from "./../structs/JBRuleset.sol";
 
 /// @notice Data hooks can extend a terminal's core pay/cashout functionality by overriding the weight or memo. They can
 /// also specify pay/cashout hooks for the terminal to fulfill, or allow addresses to mint a project's tokens on-demand.
