@@ -23,7 +23,7 @@ import {IJBPriceFeed} from "./interfaces/IJBPriceFeed.sol";
 import {IJBPrices} from "./interfaces/IJBPrices.sol";
 import {IJBProjects} from "./interfaces/IJBProjects.sol";
 import {IJBProjectUriRegistry} from "./interfaces/IJBProjectUriRegistry.sol";
-import {IJBRulesetDataHook4_2} from "./interfaces/IJBRulesetDataHook4_2.sol";
+import {IJBRulesetDataHook4_1} from "./interfaces/IJBRulesetDataHook4_1.sol";
 import {IJBRulesets} from "./interfaces/IJBRulesets.sol";
 import {IJBSplitHook} from "./interfaces/IJBSplitHook.sol";
 import {IJBSplits} from "./interfaces/IJBSplits.sol";
@@ -328,8 +328,8 @@ contract JBController4_1 is JBPermissioned, ERC2771Context, IJBController4_1, IJ
     {
         address dataHook = ruleset.dataHook();
 
-        return dataHook != address(0) && IERC165(dataHook).supportsInterface(type(IJBRulesetDataHook4_2).interfaceId)
-            && IJBRulesetDataHook4_2(dataHook).hasMintPermissionFor({projectId: projectId, ruleset: ruleset, addr: addr});
+        return dataHook != address(0) && IERC165(dataHook).supportsInterface(type(IJBRulesetDataHook4_1).interfaceId)
+            && IJBRulesetDataHook4_1(dataHook).hasMintPermissionFor({projectId: projectId, ruleset: ruleset, addr: addr});
     }
 
     /// @notice The calldata. Preferred to use over `msg.data`.
