@@ -14,7 +14,7 @@ import {JBRuleset} from "./../structs/JBRuleset.sol";
 /// also specify pay/cashout hooks for the terminal to fulfill, or allow addresses to mint a project's tokens on-demand.
 /// @dev If a project's ruleset has `useDataHookForPay` or `useDataHookForCashOut` enabled, its `dataHook` is called by
 /// the terminal upon payments/cashouts (respectively).
-interface IJBRulesetDataHook4_2 is IERC165 {
+interface IJBRulesetDataHook4_1 is IERC165 {
     /// @notice A flag indicating whether an address has permission to mint a project's tokens on-demand.
     /// @dev A project's data hook can allow any address to mint its tokens.
     /// @param projectId The ID of the project whose token can be minted.
