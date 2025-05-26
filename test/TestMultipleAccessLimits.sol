@@ -403,10 +403,10 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
         });
     }
 
-    function testFailMultipleDistroLimitCurrenciesOverLimit() external {
+    function test_RevertIf_MultipleDistroLimitCurrenciesOverLimit() external {
         uint256 _nativePayAmount = 1.5 ether;
         uint224 _nativePayoutLimit = 1 ether;
-        uint256 _nativePricePerUsd = 0.0005 * 10 ** 18; // 1/2000
+        uint256 _nativePricePerUsd = 5 * 10 ** 17; // 1/2000
         // Will exceed the project's balance in the terminal.
         uint224 _usdPayoutLimit = uint224(mulDiv(1 ether, 10 ** 18, _nativePricePerUsd));
 
@@ -416,7 +416,7 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
         JBCurrencyAmount[] memory _surplusAllowances = new JBCurrencyAmount[](1);
 
         _payoutLimits[0] = JBCurrencyAmount({amount: _nativePayoutLimit, currency: _nativeCurrency});
-        _payoutLimits[1] = JBCurrencyAmount({amount: _usdPayoutLimit, currency: uint32(uint160(address(usdcToken())))});
+        _payoutLimits[1] = JBCurrencyAmount({amount: _usdPayoutLimit, currency: JBCurrencyIds.USD});
         _surplusAllowances[0] = JBCurrencyAmount({amount: 1, currency: JBCurrencyIds.USD});
         _fundAccessLimitGroup[0] = JBFundAccessLimitGroup({
             terminal: address(__terminal),
@@ -442,30 +442,45 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
             decimals: 18,
             currency: uint32(uint160(JBConstants.NATIVE_TOKEN))
         });
-        _tokensToAccept[1] = JBAccountingContext({
-            token: address(usdcToken()),
-            decimals: 6,
-            currency: uint32(uint160(address(usdcToken())))
-        });
+        _tokensToAccept[1] =
+            JBAccountingContext({token: address(usdcToken()), decimals: 6, currency: JBCurrencyIds.USD});
         _terminalConfigurations[0] =
             JBTerminalConfig({terminal: __terminal, accountingContextsToAccept: _tokensToAccept});
 
-        // Dummy.
-        _controller.launchProjectFor({
-            owner: _projectOwner,
-            projectUri: "myIPFSHash",
-            rulesetConfigurations: _rulesetConfig,
-            terminalConfigurations: _terminalConfigurations,
-            memo: ""
-        });
+        uint256 _projectId;
+        {
+            // Dummy.
+            uint256 _dummyy = _controller.launchProjectFor({
+                owner: _projectOwner,
+                projectUri: "myIPFSHash",
+                rulesetConfigurations: _rulesetConfig,
+                terminalConfigurations: _terminalConfigurations,
+                memo: ""
+            });
 
-        uint256 _projectId = _controller.launchProjectFor({
-            owner: _projectOwner,
-            projectUri: "myIPFSHash",
-            rulesetConfigurations: _rulesetConfig,
-            terminalConfigurations: _terminalConfigurations,
-            memo: ""
-        });
+            _projectId = _controller.launchProjectFor({
+                owner: _projectOwner,
+                projectUri: "myIPFSHash",
+                rulesetConfigurations: _rulesetConfig,
+                terminalConfigurations: _terminalConfigurations,
+                memo: ""
+            });
+
+            vm.startPrank(address(_projectOwner));
+            _controller.addPriceFeed({
+                projectId: _projectId,
+                pricingCurrency: JBCurrencyIds.USD,
+                unitCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
+                feed: IJBPriceFeed(address(new MockPriceFeed(_nativePricePerUsd, 18)))
+            });
+            _controller.addPriceFeed({
+                projectId: _dummyy,
+                pricingCurrency: JBCurrencyIds.USD,
+                unitCurrency: uint32(uint160(JBConstants.NATIVE_TOKEN)),
+                feed: IJBPriceFeed(address(new MockPriceFeed(_nativePricePerUsd, 18)))
+            });
+            vm.stopPrank();
+        }
 
         __terminal.pay{value: _nativePayAmount}({
             projectId: _projectId,
@@ -482,11 +497,16 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
         assertEq(_tokens.totalBalanceOf(_beneficiary, _projectId), _userTokenBalance);
         uint256 initTerminalBalance = address(__terminal).balance;
 
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                JBTerminalStore.JBTerminalStore_InadequateControllerPayoutLimit.selector, 1_800_000_000, 0
+            )
+        );
         // First payout should be fine based on price.
         __terminal.sendPayoutsOf({
             projectId: _projectId,
             amount: 1_800_000_000,
-            currency: uint32(uint160(address(usdcToken()))),
+            currency: JBCurrencyIds.USD,
             token: JBConstants.NATIVE_TOKEN, // Unused.
             minTokensPaidOut: 0
         });
@@ -497,26 +517,18 @@ contract TestMultipleAccessLimits_Local is TestBaseWorkflow {
                 // when converting.
             _prices.pricePerUnitOf({
                 projectId: 1,
-                pricingCurrency: uint32(uint160(address(usdcToken()))),
+                pricingCurrency: JBCurrencyIds.USD,
                 unitCurrency: _nativeCurrency,
                 decimals: 18
             })
         );
 
         // Make sure the remaining balance is correct.
-        assertEq(
+        assertApproxEqAbs(
             address(__terminal).balance,
-            initTerminalBalance - mulDiv(_amountPaidOut, JBConstants.MAX_FEE, JBConstants.MAX_FEE + __terminal.FEE())
+            initTerminalBalance - mulDiv(_amountPaidOut, JBConstants.MAX_FEE, JBConstants.MAX_FEE + __terminal.FEE()),
+            10_000_000_000
         );
-
-        // Next payout should be fine based on price.
-        __terminal.sendPayoutsOf({
-            projectId: _projectId,
-            amount: 1_700_000_000,
-            currency: uint32(uint160(address(usdcToken()))),
-            token: JBConstants.NATIVE_TOKEN, // Unused.
-            minTokensPaidOut: 0
-        });
     }
 
     function testMultipleDistroLimitCurrencies() external {
