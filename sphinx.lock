@@ -3,9 +3,9 @@
   "format": "sphinx-lock-1.0.0",
   "orgId": "ea165b21-7cdc-4d7b-be59-ecdd4c26bee4",
   "projects": {
-    "nana-suckers": {
-      "projectId": "1b040a9e-0764-4173-880e-b5ebf312bc44",
-      "projectName": "nana-suckers",
+    "nana-721-hook": {
+      "projectId": "67cfcad1-d38b-4b4d-b137-a24797c31991",
+      "projectName": "nana-721-hook",
       "defaultSafe": {
         "safeName": "nana-core",
         "owners": [
@@ -59,53 +59,9 @@
         "saltNonce": "0"
       }
     },
-    "banny-core": {
-      "projectId": "26678812-e6ca-443d-a5e0-7b62fcdd455f",
-      "projectName": "banny-core",
-      "defaultSafe": {
-        "safeName": "banny-core",
-        "owners": [
-          "0x14293560A2dde4fFA136A647b7a2f927b0774AB6",
-          "0x63A2368F4B509438ca90186cb1C15156713D5834",
-          "0x823b92d6a4b2AED4b15675c7917c9f922ea8ADAD",
-          "0xCa81360a91504500674E926b1b301165b2CA9807",
-          "0xe7879a2D05dBA966Fcca34EE9C3F99eEe7eDEFd1"
-        ],
-        "threshold": "2",
-        "saltNonce": "0"
-      }
-    },
-    "nana-721-hook": {
-      "projectId": "67cfcad1-d38b-4b4d-b137-a24797c31991",
-      "projectName": "nana-721-hook",
-      "defaultSafe": {
-        "safeName": "nana-core",
-        "owners": [
-          "0x1bb1e3F6818FeB7c1F1674e6E7D6c30BA2725643",
-          "0x34aA3F359A9D614239015126635CE7732c18fDF3",
-          "0x5a3f5ac3D6f1a0061D3bB91f38606F7103eCdBe8",
-          "0x5EE9F1cdD9588A3c800441CBd7A38Ffeff40cBc2",
-          "0x63A2368F4B509438ca90186cb1C15156713D5834",
-          "0x6849310926127F819d48894DeA667f3ECD18a07c",
-          "0x721b19e30EF791FF2A67FF4b375E591aAf84136B",
-          "0x73aEd5a32E898644Acb841C3Ac40663202CfD485",
-          "0x823b92d6a4b2AED4b15675c7917c9f922ea8ADAD",
-          "0x8d3CC5b1a5268Ff0C119c5c03252EB8c1bFEBbB2",
-          "0x99368d83F73b803Caf924956C5EE6E0b8f86Fb3B",
-          "0xc109636a2b47f8b290cc134dd446Fcd7d7e0cC94",
-          "0xCa81360a91504500674E926b1b301165b2CA9807",
-          "0xD78285eef93E13D1F96062265b68099C480121b8",
-          "0xDc6Dd6Bc601448541A4862a91De1B86291839651",
-          "0xe7879a2D05dBA966Fcca34EE9C3F99eEe7eDEFd1",
-          "0xf33CFe55655B0190eAF5aC2749F954c64E06d887"
-        ],
-        "threshold": "9",
-        "saltNonce": "0"
-      }
-    },
-    "nana-swap-terminal-testnet": {
-      "projectId": "c9732dfe-7f47-4f6b-a3c3-1cea184b1be1",
-      "projectName": "nana-swap-terminal-testnet",
+    "nana-swap-terminal": {
+      "projectId": "a804c33d-fd0c-4dea-930b-ab72fec9f557",
+      "projectName": "nana-swap-terminal",
       "defaultSafe": {
         "safeName": "nana-core-small",
         "owners": [
@@ -131,81 +87,65 @@
         "saltNonce": "0"
       }
     },
-    "nana-periphery-testnet": {
-      "projectId": "9d845bea-52b7-4e64-9cc2-dd800b3a8d9a",
-      "projectName": "nana-periphery-testnet",
-      "defaultSafe": {
-        "safeName": "nana-core",
-        "owners": [
-          "0x1bb1e3F6818FeB7c1F1674e6E7D6c30BA2725643",
-          "0x34aA3F359A9D614239015126635CE7732c18fDF3",
-          "0x5a3f5ac3D6f1a0061D3bB91f38606F7103eCdBe8",
-          "0x5EE9F1cdD9588A3c800441CBd7A38Ffeff40cBc2",
-          "0x63A2368F4B509438ca90186cb1C15156713D5834",
-          "0x6849310926127F819d48894DeA667f3ECD18a07c",
-          "0x721b19e30EF791FF2A67FF4b375E591aAf84136B",
-          "0x73aEd5a32E898644Acb841C3Ac40663202CfD485",
-          "0x823b92d6a4b2AED4b15675c7917c9f922ea8ADAD",
-          "0x8d3CC5b1a5268Ff0C119c5c03252EB8c1bFEBbB2",
-          "0x99368d83F73b803Caf924956C5EE6E0b8f86Fb3B",
-          "0xc109636a2b47f8b290cc134dd446Fcd7d7e0cC94",
-          "0xCa81360a91504500674E926b1b301165b2CA9807",
-          "0xD78285eef93E13D1F96062265b68099C480121b8",
-          "0xDc6Dd6Bc601448541A4862a91De1B86291839651",
-          "0xe7879a2D05dBA966Fcca34EE9C3F99eEe7eDEFd1",
-          "0xf33CFe55655B0190eAF5aC2749F954c64E06d887"
-        ],
-        "threshold": "9",
-        "saltNonce": "0"
-      }
-    },
-    "croptop-core-testnet": {
-      "projectId": "ee87a964-b485-4a1f-a6ef-a99f787c00ec",
-      "projectName": "croptop-core-testnet",
-      "defaultSafe": {
-        "safeName": "croptop",
-        "owners": [
-          "0x14293560A2dde4fFA136A647b7a2f927b0774AB6",
-          "0x6849310926127F819d48894DeA667f3ECD18a07c",
-          "0x823b92d6a4b2AED4b15675c7917c9f922ea8ADAD",
-          "0x8d3CC5b1a5268Ff0C119c5c03252EB8c1bFEBbB2",
-          "0xCa81360a91504500674E926b1b301165b2CA9807"
-        ],
-        "threshold": "2",
-        "saltNonce": "0"
-      }
-    },
-    "nana-fee-project-testnet": {
-      "projectId": "b5c092d4-4e88-4d47-9841-150752abcae5",
-      "projectName": "nana-fee-project-testnet",
-      "defaultSafe": {
-        "safeName": "nana-core",
-        "owners": [
-          "0x1bb1e3F6818FeB7c1F1674e6E7D6c30BA2725643",
-          "0x34aA3F359A9D614239015126635CE7732c18fDF3",
-          "0x5a3f5ac3D6f1a0061D3bB91f38606F7103eCdBe8",
-          "0x5EE9F1cdD9588A3c800441CBd7A38Ffeff40cBc2",
-          "0x63A2368F4B509438ca90186cb1C15156713D5834",
-          "0x6849310926127F819d48894DeA667f3ECD18a07c",
-          "0x721b19e30EF791FF2A67FF4b375E591aAf84136B",
-          "0x73aEd5a32E898644Acb841C3Ac40663202CfD485",
-          "0x823b92d6a4b2AED4b15675c7917c9f922ea8ADAD",
-          "0x8d3CC5b1a5268Ff0C119c5c03252EB8c1bFEBbB2",
-          "0x99368d83F73b803Caf924956C5EE6E0b8f86Fb3B",
-          "0xc109636a2b47f8b290cc134dd446Fcd7d7e0cC94",
-          "0xCa81360a91504500674E926b1b301165b2CA9807",
-          "0xD78285eef93E13D1F96062265b68099C480121b8",
-          "0xDc6Dd6Bc601448541A4862a91De1B86291839651",
-          "0xe7879a2D05dBA966Fcca34EE9C3F99eEe7eDEFd1",
-          "0xf33CFe55655B0190eAF5aC2749F954c64E06d887"
-        ],
-        "threshold": "9",
-        "saltNonce": "0"
-      }
-    },
     "nana-core": {
       "projectId": "290d6007-345d-4bcc-af08-5e5a26ca2dc5",
       "projectName": "nana-core",
+      "defaultSafe": {
+        "safeName": "nana-core",
+        "owners": [
+          "0x1bb1e3F6818FeB7c1F1674e6E7D6c30BA2725643",
+          "0x34aA3F359A9D614239015126635CE7732c18fDF3",
+          "0x5a3f5ac3D6f1a0061D3bB91f38606F7103eCdBe8",
+          "0x5EE9F1cdD9588A3c800441CBd7A38Ffeff40cBc2",
+          "0x63A2368F4B509438ca90186cb1C15156713D5834",
+          "0x6849310926127F819d48894DeA667f3ECD18a07c",
+          "0x721b19e30EF791FF2A67FF4b375E591aAf84136B",
+          "0x73aEd5a32E898644Acb841C3Ac40663202CfD485",
+          "0x823b92d6a4b2AED4b15675c7917c9f922ea8ADAD",
+          "0x8d3CC5b1a5268Ff0C119c5c03252EB8c1bFEBbB2",
+          "0x99368d83F73b803Caf924956C5EE6E0b8f86Fb3B",
+          "0xc109636a2b47f8b290cc134dd446Fcd7d7e0cC94",
+          "0xCa81360a91504500674E926b1b301165b2CA9807",
+          "0xD78285eef93E13D1F96062265b68099C480121b8",
+          "0xDc6Dd6Bc601448541A4862a91De1B86291839651",
+          "0xe7879a2D05dBA966Fcca34EE9C3F99eEe7eDEFd1",
+          "0xf33CFe55655B0190eAF5aC2749F954c64E06d887"
+        ],
+        "threshold": "9",
+        "saltNonce": "0"
+      }
+    },
+    "nana-project-handles": {
+      "projectId": "67c86da0-a089-4b0f-a04d-4dffda844ff9",
+      "projectName": "nana-project-handles",
+      "defaultSafe": {
+        "safeName": "nana-core-small",
+        "owners": [
+          "0x1bb1e3F6818FeB7c1F1674e6E7D6c30BA2725643",
+          "0x34aA3F359A9D614239015126635CE7732c18fDF3",
+          "0x5a3f5ac3D6f1a0061D3bB91f38606F7103eCdBe8",
+          "0x5EE9F1cdD9588A3c800441CBd7A38Ffeff40cBc2",
+          "0x63A2368F4B509438ca90186cb1C15156713D5834",
+          "0x6849310926127F819d48894DeA667f3ECD18a07c",
+          "0x721b19e30EF791FF2A67FF4b375E591aAf84136B",
+          "0x73aEd5a32E898644Acb841C3Ac40663202CfD485",
+          "0x823b92d6a4b2AED4b15675c7917c9f922ea8ADAD",
+          "0x8d3CC5b1a5268Ff0C119c5c03252EB8c1bFEBbB2",
+          "0x99368d83F73b803Caf924956C5EE6E0b8f86Fb3B",
+          "0xc109636a2b47f8b290cc134dd446Fcd7d7e0cC94",
+          "0xCa81360a91504500674E926b1b301165b2CA9807",
+          "0xD78285eef93E13D1F96062265b68099C480121b8",
+          "0xDc6Dd6Bc601448541A4862a91De1B86291839651",
+          "0xe7879a2D05dBA966Fcca34EE9C3F99eEe7eDEFd1",
+          "0xf33CFe55655B0190eAF5aC2749F954c64E06d887"
+        ],
+        "threshold": "5",
+        "saltNonce": "0"
+      }
+    },
+    "nana-suckers": {
+      "projectId": "1b040a9e-0764-4173-880e-b5ebf312bc44",
+      "projectName": "nana-suckers",
       "defaultSafe": {
         "safeName": "nana-core",
         "owners": [
@@ -259,252 +199,6 @@
         "saltNonce": "0"
       }
     },
-    "nana-swap-terminal": {
-      "projectId": "a804c33d-fd0c-4dea-930b-ab72fec9f557",
-      "projectName": "nana-swap-terminal",
-      "defaultSafe": {
-        "safeName": "nana-core-small",
-        "owners": [
-          "0x1bb1e3F6818FeB7c1F1674e6E7D6c30BA2725643",
-          "0x34aA3F359A9D614239015126635CE7732c18fDF3",
-          "0x5a3f5ac3D6f1a0061D3bB91f38606F7103eCdBe8",
-          "0x5EE9F1cdD9588A3c800441CBd7A38Ffeff40cBc2",
-          "0x63A2368F4B509438ca90186cb1C15156713D5834",
-          "0x6849310926127F819d48894DeA667f3ECD18a07c",
-          "0x721b19e30EF791FF2A67FF4b375E591aAf84136B",
-          "0x73aEd5a32E898644Acb841C3Ac40663202CfD485",
-          "0x823b92d6a4b2AED4b15675c7917c9f922ea8ADAD",
-          "0x8d3CC5b1a5268Ff0C119c5c03252EB8c1bFEBbB2",
-          "0x99368d83F73b803Caf924956C5EE6E0b8f86Fb3B",
-          "0xc109636a2b47f8b290cc134dd446Fcd7d7e0cC94",
-          "0xCa81360a91504500674E926b1b301165b2CA9807",
-          "0xD78285eef93E13D1F96062265b68099C480121b8",
-          "0xDc6Dd6Bc601448541A4862a91De1B86291839651",
-          "0xe7879a2D05dBA966Fcca34EE9C3F99eEe7eDEFd1",
-          "0xf33CFe55655B0190eAF5aC2749F954c64E06d887"
-        ],
-        "threshold": "5",
-        "saltNonce": "0"
-      }
-    },
-    "nana-buyback-hook-testnet": {
-      "projectId": "6aaffccb-6327-4096-b202-c1b1586cf005",
-      "projectName": "nana-buyback-hook-testnet",
-      "defaultSafe": {
-        "safeName": "nana-core-small",
-        "owners": [
-          "0x1bb1e3F6818FeB7c1F1674e6E7D6c30BA2725643",
-          "0x34aA3F359A9D614239015126635CE7732c18fDF3",
-          "0x5a3f5ac3D6f1a0061D3bB91f38606F7103eCdBe8",
-          "0x5EE9F1cdD9588A3c800441CBd7A38Ffeff40cBc2",
-          "0x63A2368F4B509438ca90186cb1C15156713D5834",
-          "0x6849310926127F819d48894DeA667f3ECD18a07c",
-          "0x721b19e30EF791FF2A67FF4b375E591aAf84136B",
-          "0x73aEd5a32E898644Acb841C3Ac40663202CfD485",
-          "0x823b92d6a4b2AED4b15675c7917c9f922ea8ADAD",
-          "0x8d3CC5b1a5268Ff0C119c5c03252EB8c1bFEBbB2",
-          "0x99368d83F73b803Caf924956C5EE6E0b8f86Fb3B",
-          "0xc109636a2b47f8b290cc134dd446Fcd7d7e0cC94",
-          "0xCa81360a91504500674E926b1b301165b2CA9807",
-          "0xD78285eef93E13D1F96062265b68099C480121b8",
-          "0xDc6Dd6Bc601448541A4862a91De1B86291839651",
-          "0xe7879a2D05dBA966Fcca34EE9C3F99eEe7eDEFd1",
-          "0xf33CFe55655B0190eAF5aC2749F954c64E06d887"
-        ],
-        "threshold": "5",
-        "saltNonce": "0"
-      }
-    },
-    "croptop-core": {
-      "projectId": "0c213583-47a4-4212-a7cb-b2c0cfdcdac4",
-      "projectName": "croptop-core",
-      "defaultSafe": {
-        "safeName": "croptop",
-        "owners": [
-          "0x14293560A2dde4fFA136A647b7a2f927b0774AB6",
-          "0x6849310926127F819d48894DeA667f3ECD18a07c",
-          "0x823b92d6a4b2AED4b15675c7917c9f922ea8ADAD",
-          "0x8d3CC5b1a5268Ff0C119c5c03252EB8c1bFEBbB2",
-          "0xCa81360a91504500674E926b1b301165b2CA9807"
-        ],
-        "threshold": "2",
-        "saltNonce": "0"
-      }
-    },
-    "nana-core-testnet": {
-      "projectId": "f45ef85e-7a55-4f93-a61f-e21913996405",
-      "projectName": "nana-core-testnet",
-      "defaultSafe": {
-        "safeName": "nana-core",
-        "owners": [
-          "0x1bb1e3F6818FeB7c1F1674e6E7D6c30BA2725643",
-          "0x34aA3F359A9D614239015126635CE7732c18fDF3",
-          "0x5a3f5ac3D6f1a0061D3bB91f38606F7103eCdBe8",
-          "0x5EE9F1cdD9588A3c800441CBd7A38Ffeff40cBc2",
-          "0x63A2368F4B509438ca90186cb1C15156713D5834",
-          "0x6849310926127F819d48894DeA667f3ECD18a07c",
-          "0x721b19e30EF791FF2A67FF4b375E591aAf84136B",
-          "0x73aEd5a32E898644Acb841C3Ac40663202CfD485",
-          "0x823b92d6a4b2AED4b15675c7917c9f922ea8ADAD",
-          "0x8d3CC5b1a5268Ff0C119c5c03252EB8c1bFEBbB2",
-          "0x99368d83F73b803Caf924956C5EE6E0b8f86Fb3B",
-          "0xc109636a2b47f8b290cc134dd446Fcd7d7e0cC94",
-          "0xCa81360a91504500674E926b1b301165b2CA9807",
-          "0xD78285eef93E13D1F96062265b68099C480121b8",
-          "0xDc6Dd6Bc601448541A4862a91De1B86291839651",
-          "0xe7879a2D05dBA966Fcca34EE9C3F99eEe7eDEFd1",
-          "0xf33CFe55655B0190eAF5aC2749F954c64E06d887"
-        ],
-        "threshold": "9",
-        "saltNonce": "0"
-      }
-    },
-    "nana-suckers-testnet": {
-      "projectId": "83692db9-59b8-4bc8-a0a6-a99d50f1682b",
-      "projectName": "nana-suckers-testnet",
-      "defaultSafe": {
-        "safeName": "nana-core",
-        "owners": [
-          "0x1bb1e3F6818FeB7c1F1674e6E7D6c30BA2725643",
-          "0x34aA3F359A9D614239015126635CE7732c18fDF3",
-          "0x5a3f5ac3D6f1a0061D3bB91f38606F7103eCdBe8",
-          "0x5EE9F1cdD9588A3c800441CBd7A38Ffeff40cBc2",
-          "0x63A2368F4B509438ca90186cb1C15156713D5834",
-          "0x6849310926127F819d48894DeA667f3ECD18a07c",
-          "0x721b19e30EF791FF2A67FF4b375E591aAf84136B",
-          "0x73aEd5a32E898644Acb841C3Ac40663202CfD485",
-          "0x823b92d6a4b2AED4b15675c7917c9f922ea8ADAD",
-          "0x8d3CC5b1a5268Ff0C119c5c03252EB8c1bFEBbB2",
-          "0x99368d83F73b803Caf924956C5EE6E0b8f86Fb3B",
-          "0xc109636a2b47f8b290cc134dd446Fcd7d7e0cC94",
-          "0xCa81360a91504500674E926b1b301165b2CA9807",
-          "0xD78285eef93E13D1F96062265b68099C480121b8",
-          "0xDc6Dd6Bc601448541A4862a91De1B86291839651",
-          "0xe7879a2D05dBA966Fcca34EE9C3F99eEe7eDEFd1",
-          "0xf33CFe55655B0190eAF5aC2749F954c64E06d887"
-        ],
-        "threshold": "9",
-        "saltNonce": "0"
-      }
-    },
-    "nana-address-registry-testnet": {
-      "projectId": "c1d6bda5-ed5a-4fda-a66e-a94451916886",
-      "projectName": "nana-address-registry-testnet",
-      "defaultSafe": {
-        "safeName": "nana-core",
-        "owners": [
-          "0x1bb1e3F6818FeB7c1F1674e6E7D6c30BA2725643",
-          "0x34aA3F359A9D614239015126635CE7732c18fDF3",
-          "0x5a3f5ac3D6f1a0061D3bB91f38606F7103eCdBe8",
-          "0x5EE9F1cdD9588A3c800441CBd7A38Ffeff40cBc2",
-          "0x63A2368F4B509438ca90186cb1C15156713D5834",
-          "0x6849310926127F819d48894DeA667f3ECD18a07c",
-          "0x721b19e30EF791FF2A67FF4b375E591aAf84136B",
-          "0x73aEd5a32E898644Acb841C3Ac40663202CfD485",
-          "0x823b92d6a4b2AED4b15675c7917c9f922ea8ADAD",
-          "0x8d3CC5b1a5268Ff0C119c5c03252EB8c1bFEBbB2",
-          "0x99368d83F73b803Caf924956C5EE6E0b8f86Fb3B",
-          "0xc109636a2b47f8b290cc134dd446Fcd7d7e0cC94",
-          "0xCa81360a91504500674E926b1b301165b2CA9807",
-          "0xD78285eef93E13D1F96062265b68099C480121b8",
-          "0xDc6Dd6Bc601448541A4862a91De1B86291839651",
-          "0xe7879a2D05dBA966Fcca34EE9C3F99eEe7eDEFd1",
-          "0xf33CFe55655B0190eAF5aC2749F954c64E06d887"
-        ],
-        "threshold": "9",
-        "saltNonce": "0"
-      }
-    },
-    "nana-buyback-hook": {
-      "projectId": "f348713c-83c9-4a85-9b34-acce562d5593",
-      "projectName": "nana-buyback-hook",
-      "defaultSafe": {
-        "safeName": "nana-core-small",
-        "owners": [
-          "0x1bb1e3F6818FeB7c1F1674e6E7D6c30BA2725643",
-          "0x34aA3F359A9D614239015126635CE7732c18fDF3",
-          "0x5a3f5ac3D6f1a0061D3bB91f38606F7103eCdBe8",
-          "0x5EE9F1cdD9588A3c800441CBd7A38Ffeff40cBc2",
-          "0x63A2368F4B509438ca90186cb1C15156713D5834",
-          "0x6849310926127F819d48894DeA667f3ECD18a07c",
-          "0x721b19e30EF791FF2A67FF4b375E591aAf84136B",
-          "0x73aEd5a32E898644Acb841C3Ac40663202CfD485",
-          "0x823b92d6a4b2AED4b15675c7917c9f922ea8ADAD",
-          "0x8d3CC5b1a5268Ff0C119c5c03252EB8c1bFEBbB2",
-          "0x99368d83F73b803Caf924956C5EE6E0b8f86Fb3B",
-          "0xc109636a2b47f8b290cc134dd446Fcd7d7e0cC94",
-          "0xCa81360a91504500674E926b1b301165b2CA9807",
-          "0xD78285eef93E13D1F96062265b68099C480121b8",
-          "0xDc6Dd6Bc601448541A4862a91De1B86291839651",
-          "0xe7879a2D05dBA966Fcca34EE9C3F99eEe7eDEFd1",
-          "0xf33CFe55655B0190eAF5aC2749F954c64E06d887"
-        ],
-        "threshold": "5",
-        "saltNonce": "0"
-      }
-    },
-    "revnet-core-testnet": {
-      "projectId": "8527270b-d350-4f5c-a559-ef14f94401d5",
-      "projectName": "revnet-core-testnet",
-      "defaultSafe": {
-        "safeName": "revnet",
-        "owners": [
-          "0x14293560A2dde4fFA136A647b7a2f927b0774AB6",
-          "0x1bb1e3F6818FeB7c1F1674e6E7D6c30BA2725643",
-          "0x6849310926127F819d48894DeA667f3ECD18a07c",
-          "0x823b92d6a4b2AED4b15675c7917c9f922ea8ADAD",
-          "0xCa81360a91504500674E926b1b301165b2CA9807",
-          "0xDc6Dd6Bc601448541A4862a91De1B86291839651",
-          "0xf33CFe55655B0190eAF5aC2749F954c64E06d887"
-        ],
-        "threshold": "3",
-        "saltNonce": "0"
-      }
-    },
-    "banny-core-testnet": {
-      "projectId": "524f7121-d63f-48ab-b29a-83b1f083512e",
-      "projectName": "banny-core-testnet",
-      "defaultSafe": {
-        "safeName": "banny-core",
-        "owners": [
-          "0x14293560A2dde4fFA136A647b7a2f927b0774AB6",
-          "0x63A2368F4B509438ca90186cb1C15156713D5834",
-          "0x823b92d6a4b2AED4b15675c7917c9f922ea8ADAD",
-          "0xCa81360a91504500674E926b1b301165b2CA9807",
-          "0xe7879a2D05dBA966Fcca34EE9C3F99eEe7eDEFd1"
-        ],
-        "threshold": "2",
-        "saltNonce": "0"
-      }
-    },
-    "nana-721-hook-testnet": {
-      "projectId": "6218f553-19b5-4142-a137-7963cb51e904",
-      "projectName": "nana-721-hook-testnet",
-      "defaultSafe": {
-        "safeName": "nana-core",
-        "owners": [
-          "0x1bb1e3F6818FeB7c1F1674e6E7D6c30BA2725643",
-          "0x34aA3F359A9D614239015126635CE7732c18fDF3",
-          "0x5a3f5ac3D6f1a0061D3bB91f38606F7103eCdBe8",
-          "0x5EE9F1cdD9588A3c800441CBd7A38Ffeff40cBc2",
-          "0x63A2368F4B509438ca90186cb1C15156713D5834",
-          "0x6849310926127F819d48894DeA667f3ECD18a07c",
-          "0x721b19e30EF791FF2A67FF4b375E591aAf84136B",
-          "0x73aEd5a32E898644Acb841C3Ac40663202CfD485",
-          "0x823b92d6a4b2AED4b15675c7917c9f922ea8ADAD",
-          "0x8d3CC5b1a5268Ff0C119c5c03252EB8c1bFEBbB2",
-          "0x99368d83F73b803Caf924956C5EE6E0b8f86Fb3B",
-          "0xc109636a2b47f8b290cc134dd446Fcd7d7e0cC94",
-          "0xCa81360a91504500674E926b1b301165b2CA9807",
-          "0xD78285eef93E13D1F96062265b68099C480121b8",
-          "0xDc6Dd6Bc601448541A4862a91De1B86291839651",
-          "0xe7879a2D05dBA966Fcca34EE9C3F99eEe7eDEFd1",
-          "0xf33CFe55655B0190eAF5aC2749F954c64E06d887"
-        ],
-        "threshold": "9",
-        "saltNonce": "0"
-      }
-    },
     "revnet-core": {
       "projectId": "ff72a6d2-9324-49ef-a415-57e253550e9e",
       "projectName": "revnet-core",
@@ -520,6 +214,22 @@
           "0xf33CFe55655B0190eAF5aC2749F954c64E06d887"
         ],
         "threshold": "3",
+        "saltNonce": "0"
+      }
+    },
+    "banny-core": {
+      "projectId": "26678812-e6ca-443d-a5e0-7b62fcdd455f",
+      "projectName": "banny-core",
+      "defaultSafe": {
+        "safeName": "banny-core",
+        "owners": [
+          "0x14293560A2dde4fFA136A647b7a2f927b0774AB6",
+          "0x63A2368F4B509438ca90186cb1C15156713D5834",
+          "0x823b92d6a4b2AED4b15675c7917c9f922ea8ADAD",
+          "0xCa81360a91504500674E926b1b301165b2CA9807",
+          "0xe7879a2D05dBA966Fcca34EE9C3F99eEe7eDEFd1"
+        ],
+        "threshold": "2",
         "saltNonce": "0"
       }
     },
@@ -548,6 +258,78 @@
           "0xf33CFe55655B0190eAF5aC2749F954c64E06d887"
         ],
         "threshold": "9",
+        "saltNonce": "0"
+      }
+    },
+    "croptop-core": {
+      "projectId": "0c213583-47a4-4212-a7cb-b2c0cfdcdac4",
+      "projectName": "croptop-core",
+      "defaultSafe": {
+        "safeName": "croptop",
+        "owners": [
+          "0x14293560A2dde4fFA136A647b7a2f927b0774AB6",
+          "0x6849310926127F819d48894DeA667f3ECD18a07c",
+          "0x823b92d6a4b2AED4b15675c7917c9f922ea8ADAD",
+          "0x8d3CC5b1a5268Ff0C119c5c03252EB8c1bFEBbB2",
+          "0xCa81360a91504500674E926b1b301165b2CA9807"
+        ],
+        "threshold": "2",
+        "saltNonce": "0"
+      }
+    },
+    "nana-omnichain-deployers": {
+      "projectId": "4c8b18a7-99c8-431a-b575-e6817503fbd2",
+      "projectName": "nana-omnichain-deployers",
+      "defaultSafe": {
+        "safeName": "nana-core-small",
+        "owners": [
+          "0x1bb1e3F6818FeB7c1F1674e6E7D6c30BA2725643",
+          "0x34aA3F359A9D614239015126635CE7732c18fDF3",
+          "0x5a3f5ac3D6f1a0061D3bB91f38606F7103eCdBe8",
+          "0x5EE9F1cdD9588A3c800441CBd7A38Ffeff40cBc2",
+          "0x63A2368F4B509438ca90186cb1C15156713D5834",
+          "0x6849310926127F819d48894DeA667f3ECD18a07c",
+          "0x721b19e30EF791FF2A67FF4b375E591aAf84136B",
+          "0x73aEd5a32E898644Acb841C3Ac40663202CfD485",
+          "0x823b92d6a4b2AED4b15675c7917c9f922ea8ADAD",
+          "0x8d3CC5b1a5268Ff0C119c5c03252EB8c1bFEBbB2",
+          "0x99368d83F73b803Caf924956C5EE6E0b8f86Fb3B",
+          "0xc109636a2b47f8b290cc134dd446Fcd7d7e0cC94",
+          "0xCa81360a91504500674E926b1b301165b2CA9807",
+          "0xD78285eef93E13D1F96062265b68099C480121b8",
+          "0xDc6Dd6Bc601448541A4862a91De1B86291839651",
+          "0xe7879a2D05dBA966Fcca34EE9C3F99eEe7eDEFd1",
+          "0xf33CFe55655B0190eAF5aC2749F954c64E06d887"
+        ],
+        "threshold": "5",
+        "saltNonce": "0"
+      }
+    },
+    "nana-buyback-hook": {
+      "projectId": "f348713c-83c9-4a85-9b34-acce562d5593",
+      "projectName": "nana-buyback-hook",
+      "defaultSafe": {
+        "safeName": "nana-core-small",
+        "owners": [
+          "0x1bb1e3F6818FeB7c1F1674e6E7D6c30BA2725643",
+          "0x34aA3F359A9D614239015126635CE7732c18fDF3",
+          "0x5a3f5ac3D6f1a0061D3bB91f38606F7103eCdBe8",
+          "0x5EE9F1cdD9588A3c800441CBd7A38Ffeff40cBc2",
+          "0x63A2368F4B509438ca90186cb1C15156713D5834",
+          "0x6849310926127F819d48894DeA667f3ECD18a07c",
+          "0x721b19e30EF791FF2A67FF4b375E591aAf84136B",
+          "0x73aEd5a32E898644Acb841C3Ac40663202CfD485",
+          "0x823b92d6a4b2AED4b15675c7917c9f922ea8ADAD",
+          "0x8d3CC5b1a5268Ff0C119c5c03252EB8c1bFEBbB2",
+          "0x99368d83F73b803Caf924956C5EE6E0b8f86Fb3B",
+          "0xc109636a2b47f8b290cc134dd446Fcd7d7e0cC94",
+          "0xCa81360a91504500674E926b1b301165b2CA9807",
+          "0xD78285eef93E13D1F96062265b68099C480121b8",
+          "0xDc6Dd6Bc601448541A4862a91De1B86291839651",
+          "0xe7879a2D05dBA966Fcca34EE9C3F99eEe7eDEFd1",
+          "0xf33CFe55655B0190eAF5aC2749F954c64E06d887"
+        ],
+        "threshold": "5",
         "saltNonce": "0"
       }
     }
