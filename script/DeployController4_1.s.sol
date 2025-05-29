@@ -35,7 +35,7 @@ contract DeployPeriphery is Script, Sphinx {
             revert("OMNICHAIN_RULESET_OPERATOR must be set before deploying the controller.");
         }
 
-        new JBController4_1{salt: keccak256(abi.encode(CORE_DEPLOYMENT_NONCE))}({
+        JBController4_1 controller = new JBController4_1{salt: keccak256(abi.encode(CORE_DEPLOYMENT_NONCE))}({
             directory: core.directory,
             fundAccessLimits: core.fundAccess,
             permissions: core.permissions,
@@ -47,5 +47,8 @@ contract DeployPeriphery is Script, Sphinx {
             omnichainRulesetOperator: OMNICHAIN_RULESET_OPERATOR,
             trustedForwarder: core.trustedForwarder
         });
+
+        // Allow the controller to set itself as the first controller.
+        core.directory.setIsAllowedToSetFirstController(address(controller), true);
     }
 }
