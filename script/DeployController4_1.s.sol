@@ -12,8 +12,7 @@ contract DeployPeriphery is Script, Sphinx {
     CoreDeployment core;
 
     uint256 CORE_DEPLOYMENT_NONCE = 1;
-
-    address OMNICHAIN_RULESET_OPERATOR = address(0);
+    address OMNICHAIN_RULESET_OPERATOR = address(0xa7E0cbCFB2C6dF7db07cC4cA05df681f1307CeDD);
 
     function configureSphinx() public override {
         sphinxConfig.projectName = "nana-core";
