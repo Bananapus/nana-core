@@ -37,6 +37,10 @@ contract DeployPeriphery is Script, Sphinx {
     CoreDeployment core;
 
     bytes32 private DEADLINES_SALT = keccak256("JBDeadlines_");
+    bytes32 private USD_NATIVE_FEED_SALT = keccak256("USD_FEED");
+    // Temporary flag to skip the contracts we deployed in the initial deployment run. Lets remove this flag after we
+    // re-deploy the needed contracts.
+    bool private SKIP_UNNEEDED = true;
 
     function configureSphinx() public override {
         // TODO: Update to contain JB Emergency Developers
@@ -58,7 +62,12 @@ contract DeployPeriphery is Script, Sphinx {
     function deploy() public sphinx {
         // Deploy the ETH/USD price feed.
         IJBPriceFeed feed;
-        IJBPriceFeed matchingPriceFeed = new JBMatchingPriceFeed();
+
+        IJBPriceFeed matchingPriceFeed;
+        if (!SKIP_UNNEEDED) {
+            matchingPriceFeed = new JBMatchingPriceFeed();
+        }
+
         // Same as the chainlink example grace period.
         uint256 L2GracePeriod = 3600 seconds;
 
@@ -67,11 +76,11 @@ contract DeployPeriphery is Script, Sphinx {
 
         // Perform the deploy for L1(s).
         if (block.chainid == 1) {
-            feed = new JBChainlinkV3PriceFeed(
+            feed = new JBChainlinkV3PriceFeed{salt: USD_NATIVE_FEED_SALT}(
                 AggregatorV3Interface(address(0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419)), 3600 seconds
             );
         } else if (block.chainid == 11_155_111) {
-            feed = new JBChainlinkV3PriceFeed(
+            feed = new JBChainlinkV3PriceFeed{salt: USD_NATIVE_FEED_SALT}(
                 AggregatorV3Interface(address(0x694AA1769357215DE4FAC081bf1f309aDC325306)), 3600 seconds
             );
         } else {
@@ -81,7 +90,7 @@ contract DeployPeriphery is Script, Sphinx {
             // Optimism
             if (block.chainid == 10) {
                 source = AggregatorV3Interface(0x13e3Ee699D1909E989722E753853AE30b17e08c5);
-                feed = new JBChainlinkV3SequencerPriceFeed(
+                feed = new JBChainlinkV3SequencerPriceFeed{salt: USD_NATIVE_FEED_SALT}(
                     source,
                     3600 seconds,
                     AggregatorV2V3Interface(0x371EAD81c9102C9BF4874A9075FFFf170F2Ee389),
@@ -91,12 +100,12 @@ contract DeployPeriphery is Script, Sphinx {
             // Optimism Sepolia
             else if (block.chainid == 11_155_420) {
                 source = AggregatorV3Interface(address(0x61Ec26aA57019C486B10502285c5A3D4A4750AD7));
-                feed = new JBChainlinkV3PriceFeed(source, 3600 seconds);
+                feed = new JBChainlinkV3PriceFeed{salt: USD_NATIVE_FEED_SALT}(source, 3600 seconds);
             }
             // Base
             else if (block.chainid == 8453) {
                 source = AggregatorV3Interface(0x71041dddad3595F9CEd3DcCFBe3D1F4b0a16Bb70);
-                feed = new JBChainlinkV3SequencerPriceFeed(
+                feed = new JBChainlinkV3SequencerPriceFeed{salt: USD_NATIVE_FEED_SALT}(
                     source,
                     3600 seconds,
                     AggregatorV2V3Interface(0xBCF85224fc0756B9Fa45aA7892530B47e10b6433),
@@ -106,12 +115,12 @@ contract DeployPeriphery is Script, Sphinx {
             // Base Sepolia
             else if (block.chainid == 84_532) {
                 source = AggregatorV3Interface(address(0x4aDC67696bA383F43DD60A9e78F2C97Fbbfc7cb1));
-                feed = new JBChainlinkV3PriceFeed(source, 3600 seconds);
+                feed = new JBChainlinkV3PriceFeed{salt: USD_NATIVE_FEED_SALT}(source, 3600 seconds);
             }
             // Arbitrum
             else if (block.chainid == 42_161) {
                 source = AggregatorV3Interface(0x639Fe6ab55C921f74e7fac1ee960C0B6293ba612);
-                feed = new JBChainlinkV3SequencerPriceFeed(
+                feed = new JBChainlinkV3SequencerPriceFeed{salt: USD_NATIVE_FEED_SALT}(
                     source,
                     3600 seconds,
                     AggregatorV2V3Interface(0xFdB631F5EE196F0ed6FAa767959853A9F217697D),
@@ -121,35 +130,43 @@ contract DeployPeriphery is Script, Sphinx {
             // Arbitrum Sepolia
             else if (block.chainid == 421_614) {
                 source = AggregatorV3Interface(address(0xd30e2101a97dcbAeBCBC04F14C3f624E67A35165));
-                feed = new JBChainlinkV3PriceFeed(source, 3600 seconds);
+                feed = new JBChainlinkV3PriceFeed{salt: USD_NATIVE_FEED_SALT}(source, 3600 seconds);
             } else {
                 revert("Unsupported chain");
             }
         }
         require(address(feed) != address(0), "Invalid price feed");
 
-        core.prices.addPriceFeedFor(0, uint32(uint160(JBConstants.NATIVE_TOKEN)), JBCurrencyIds.USD, feed);
+        core.prices.addPriceFeedFor(0, JBCurrencyIds.USD, uint32(uint160(JBConstants.NATIVE_TOKEN)), feed);
+
+        // WARN: We are using the same price feed as the native token for the USD price feed. Which is only valid on
+        // chains where Ether is the native asset. We *NEED* to update this when we deploy to a non-ether chain!
+        core.prices.addPriceFeedFor(0, JBCurrencyIds.USD, JBCurrencyIds.ETH, feed);
 
         // If the native asset for this chain is ether, then the conversion from native asset to ether is 1:1.
         // NOTE: We need to refactor this the moment we add a chain where its native token is *NOT* ether.
         // As otherwise prices for the `NATIVE_TOKEN` will be incorrect!
-        core.prices.addPriceFeedFor(0, uint32(uint160(JBConstants.NATIVE_TOKEN)), JBCurrencyIds.ETH, matchingPriceFeed);
+        if (!SKIP_UNNEEDED) {
+            core.prices.addPriceFeedFor(
+                0, JBCurrencyIds.ETH, uint32(uint160(JBConstants.NATIVE_TOKEN)), matchingPriceFeed
+            );
 
-        // Deploy the JBDeadlines
-        if (!_isDeployed(DEADLINES_SALT, type(JBDeadline3Hours).creationCode, "")) {
-            new JBDeadline3Hours{salt: DEADLINES_SALT}();
-        }
+            // Deploy the JBDeadlines
+            if (!_isDeployed(DEADLINES_SALT, type(JBDeadline3Hours).creationCode, "")) {
+                new JBDeadline3Hours{salt: DEADLINES_SALT}();
+            }
 
-        if (!_isDeployed(DEADLINES_SALT, type(JBDeadline1Day).creationCode, "")) {
-            new JBDeadline1Day{salt: DEADLINES_SALT}();
-        }
+            if (!_isDeployed(DEADLINES_SALT, type(JBDeadline1Day).creationCode, "")) {
+                new JBDeadline1Day{salt: DEADLINES_SALT}();
+            }
 
-        if (!_isDeployed(DEADLINES_SALT, type(JBDeadline3Days).creationCode, "")) {
-            new JBDeadline3Days{salt: DEADLINES_SALT}();
-        }
+            if (!_isDeployed(DEADLINES_SALT, type(JBDeadline3Days).creationCode, "")) {
+                new JBDeadline3Days{salt: DEADLINES_SALT}();
+            }
 
-        if (!_isDeployed(DEADLINES_SALT, type(JBDeadline7Days).creationCode, "")) {
-            new JBDeadline7Days{salt: DEADLINES_SALT}();
+            if (!_isDeployed(DEADLINES_SALT, type(JBDeadline7Days).creationCode, "")) {
+                new JBDeadline7Days{salt: DEADLINES_SALT}();
+            }
         }
     }
 
