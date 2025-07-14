@@ -84,7 +84,11 @@ contract TestSetPrimaryTerminalOf_Local is JBDirectorySetup {
         _directory.setPrimaryTerminalOf(1, _token, _terminalToAdd);
     }
 
-    function testFail_GivenTerminalHasAlreadyBeenAdded() external whenCallerHasPermission givenValidAccountingContext {
+    function test_RevertIf_GivenTerminalHasAlreadyBeenAdded()
+        external
+        whenCallerHasPermission
+        givenValidAccountingContext
+    {
         stdstore.target(address(_directory)).sig("controllerOf(uint256)").with_key(1).depth(0).checked_write(
             _mockController
         );
@@ -106,7 +110,7 @@ contract TestSetPrimaryTerminalOf_Local is JBDirectorySetup {
 
         // prove that the terminal was not added - forces this test to fail as intended
         vm.expectEmit();
-        emit IJBDirectory.AddTerminal(1, _terminals[0], address(this));
+        emit IJBDirectory.SetPrimaryTerminal(1, _token, _terminals[0], address(this));
 
         // set the primary next and mock whatever calls
         _directory.setPrimaryTerminalOf(1, _token, _terminals[0]);

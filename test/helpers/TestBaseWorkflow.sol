@@ -15,6 +15,7 @@ import {JBPermissionIds} from "@bananapus/permission-ids/src/JBPermissionIds.sol
 import {JBControlled} from "../../src/abstract/JBControlled.sol";
 import {JBPermissioned} from "../../src/abstract/JBPermissioned.sol";
 import {JBController} from "../../src/JBController.sol";
+import {JBController4_1} from "../../src/JBController4_1.sol";
 import {JBDirectory} from "../../src/JBDirectory.sol";
 import {JBTerminalStore} from "../../src/JBTerminalStore.sol";
 import {JBFeelessAddresses} from "../../src/JBFeelessAddresses.sol";
@@ -55,6 +56,7 @@ import {JBSplitHookContext} from "../../src/structs/JBSplitHookContext.sol";
 import {IJBToken} from "../../src/interfaces/IJBToken.sol";
 import {JBSingleAllowance} from "../../src/structs/JBSingleAllowance.sol";
 import {IJBController} from "../../src/interfaces/IJBController.sol";
+import {IJBController4_1} from "../../src/interfaces/IJBController4_1.sol";
 import {IJBFeelessAddresses} from "../../src/interfaces/IJBFeelessAddresses.sol";
 import {IJBFundAccessLimits} from "../../src/interfaces/IJBFundAccessLimits.sol";
 import {IJBMigratable} from "../../src/interfaces/IJBMigratable.sol";
