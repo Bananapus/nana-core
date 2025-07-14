@@ -125,6 +125,11 @@ contract DeployUSDCFeeds is Script, Sphinx {
         require(feed.currentUnitPrice(6) > 0, "Invalid price feed");
 
         // Add the price feed.
-        core.prices.addPriceFeedFor(0, uint32(uint160(usdc)), JBCurrencyIds.USD, feed);
+        core.prices.addPriceFeedFor({
+            projectId: 0,
+            pricingCurrency: uint32(uint160(usdc)),
+            unitCurrency: JBCurrencyIds.USD,
+            feed: feed
+        });
     }
 }
