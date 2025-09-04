@@ -21,6 +21,8 @@
     "deploy:mainnets:periphery": "source ./.env && npx sphinx propose ./script/DeployPeriphery.s.sol --networks mainnets",
     "deploy:testnets:41": "source ./.env && npx sphinx propose ./script/DeployController4_1.s.sol --networks testnets",
     "deploy:mainnets:41": "source ./.env && npx sphinx propose ./script/DeployController4_1.s.sol --networks mainnets",
+    "deploy:testnets:usdc": "source ./.env && npx sphinx propose ./script/DeployUSDCFeeds.s.sol --networks testnets",
+    "deploy:mainnets:usdc": "source ./.env && npx sphinx propose ./script/DeployUSDCFeeds.s.sol --networks mainnets",
     "artifacts": "source ./.env && npx sphinx artifacts --org-id 'ea165b21-7cdc-4d7b-be59-ecdd4c26bee4' --project-name 'nana-core'"
   },
   "dependencies": {
